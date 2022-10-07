@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Linter
+        run: npm run lint
+
+      - name: Langium generate
+        run: npm run langium:generate
+
+      - id: changed-generated-files
+        uses: tj-actions/changed-files@v32
+        with:
+          files: |
+            src/language-server/generated/**
+
+      - name: Verify up-to-dateness of generated code
+        if: steps.changed-generated-files.outputs.any_changed == 'true'
+        run: |
+          echo "The generated code is not up to date."
+          echo "Run 'npm run langium:generate' locally and commit the resulting generated code."
+          exit 1
+
+      - name: Build
+        run: npm run build
