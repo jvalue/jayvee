@@ -1,35 +1,53 @@
 import {
-    createDefaultModule, createDefaultSharedModule, DefaultSharedModuleContext, inject,
-    LangiumServices, LangiumSharedServices, Module, PartialLangiumServices
+  DefaultSharedModuleContext,
+  LangiumServices,
+  LangiumSharedServices,
+  Module,
+  PartialLangiumServices,
+  createDefaultModule,
+  createDefaultSharedModule,
+  inject,
 } from 'langium';
-import { OpenDataLanguageGeneratedModule, OpenDataLanguageGeneratedSharedModule } from './generated/module';
-import { OpenDataLanguageValidationRegistry, OpenDataLanguageValidator } from './open-data-language-validator';
+
+import {
+  OpenDataLanguageGeneratedModule,
+  OpenDataLanguageGeneratedSharedModule,
+} from './generated/module';
+import {
+  OpenDataLanguageValidationRegistry,
+  OpenDataLanguageValidator,
+} from './open-data-language-validator';
 
 /**
  * Declaration of custom services - add your own service classes here.
  */
-export type OpenDataLanguageAddedServices = {
-    validation: {
-        OpenDataLanguageValidator: OpenDataLanguageValidator
-    }
+export interface OpenDataLanguageAddedServices {
+  validation: {
+    OpenDataLanguageValidator: OpenDataLanguageValidator;
+  };
 }
 
 /**
  * Union of Langium default services and your custom services - use this as constructor parameter
  * of custom service classes.
  */
-export type OpenDataLanguageServices = LangiumServices & OpenDataLanguageAddedServices
+export type OpenDataLanguageServices = LangiumServices &
+  OpenDataLanguageAddedServices;
 
 /**
  * Dependency injection module that overrides Langium default services and contributes the
  * declared custom services. The Langium defaults can be partially specified to override only
  * selected services, while the custom services must be fully specified.
  */
-export const OpenDataLanguageModule: Module<OpenDataLanguageServices, PartialLangiumServices & OpenDataLanguageAddedServices> = {
-    validation: {
-        ValidationRegistry: (services) => new OpenDataLanguageValidationRegistry(services),
-        OpenDataLanguageValidator: () => new OpenDataLanguageValidator()
-    }
+export const OpenDataLanguageModule: Module<
+  OpenDataLanguageServices,
+  PartialLangiumServices & OpenDataLanguageAddedServices
+> = {
+  validation: {
+    ValidationRegistry: (services) =>
+      new OpenDataLanguageValidationRegistry(services),
+    OpenDataLanguageValidator: () => new OpenDataLanguageValidator(),
+  },
 };
 
 /**
@@ -47,19 +65,21 @@ export const OpenDataLanguageModule: Module<OpenDataLanguageServices, PartialLan
  * @param context Optional module context with the LSP connection
  * @returns An object wrapping the shared services and the language-specific services
  */
-export function createOpenDataLanguageServices(context: DefaultSharedModuleContext): {
-    shared: LangiumSharedServices,
-    OpenDataLanguage: OpenDataLanguageServices
+export function createOpenDataLanguageServices(
+  context: DefaultSharedModuleContext,
+): {
+  shared: LangiumSharedServices;
+  OpenDataLanguage: OpenDataLanguageServices;
 } {
-    const shared = inject(
-        createDefaultSharedModule(context),
-        OpenDataLanguageGeneratedSharedModule
-    );
-    const OpenDataLanguage = inject(
-        createDefaultModule({ shared }),
-        OpenDataLanguageGeneratedModule,
-        OpenDataLanguageModule
-    );
-    shared.ServiceRegistry.register(OpenDataLanguage);
-    return { shared, OpenDataLanguage };
+  const shared = inject(
+    createDefaultSharedModule(context),
+    OpenDataLanguageGeneratedSharedModule,
+  );
+  const OpenDataLanguage = inject(
+    createDefaultModule({ shared }),
+    OpenDataLanguageGeneratedModule,
+    OpenDataLanguageModule,
+  );
+  shared.ServiceRegistry.register(OpenDataLanguage);
+  return { shared, OpenDataLanguage };
 }
