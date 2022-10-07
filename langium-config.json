@@ -1,0 +1,12 @@
+{
+    "projectName": "OpenDataLanguage",
+    "languages": [{
+        "id": "open-data-language",
+        "grammar": "src/language-server/open-data-language.langium",
+        "fileExtensions": [".odl"],
+        "textMate": {
+            "out": "syntaxes/open-data-language.tmLanguage.json"
+        }
+    }],
+    "out": "src/language-server/generated"
+}

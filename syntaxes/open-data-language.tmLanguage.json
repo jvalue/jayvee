@@ -1,0 +1,57 @@
+{
+  "name": "open-data-language",
+  "scopeName": "source.open-data-language",
+  "fileTypes": [
+    ".odl"
+  ],
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "name": "keyword.control.open-data-language",
+      "match": "\\b(Hello|person)\\b"
+    },
+    {
+      "name": "string.quoted.double.open-data-language",
+      "begin": "\"",
+      "end": "\""
+    },
+    {
+      "name": "string.quoted.single.open-data-language",
+      "begin": "'",
+      "end": "'"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.block.open-data-language",
+          "begin": "/\\*",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.open-data-language"
+            }
+          },
+          "end": "\\*/",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.open-data-language"
+            }
+          }
+        },
+        {
+          "begin": "//",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.whitespace.comment.leading.open-data-language"
+            }
+          },
+          "end": "(?=$)",
+          "name": "comment.line.open-data-language"
+        }
+      ]
+    }
+  }
+}

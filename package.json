@@ -1,0 +1,63 @@
+{
+    "name": "open-data-language",
+    "displayName": "open-data-language",
+    "description": "Please enter a brief description here",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.56.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "open-data-language",
+            "aliases": ["Open Data Language", "open-data-language"],
+            "extensions": [".odl"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "open-data-language",
+            "scopeName": "source.open-data-language",
+            "path": "./syntaxes/open-data-language.tmLanguage.json"
+        }]
+    },
+    "activationEvents": [
+        "onLanguage:open-data-language"
+    ],
+    "files": [
+        "bin",
+        "out",
+        "src"
+    ],
+    "bin": {
+        "open-data-language-cli": "./bin/cli"
+    },
+    "main": "./out/extension.js",
+    "scripts": {
+        "vscode:prepublish": "npm run build && npm run lint",
+        "build": "tsc -b tsconfig.json",
+        "watch": "tsc -b tsconfig.json --watch",
+        "lint": "eslint src --ext ts",
+        "langium:generate": "langium generate",
+        "langium:watch": "langium generate --watch"
+    },
+    "dependencies": {
+        "chevrotain": "^9.1.0",
+        "chalk": "^4.1.2",
+        "commander": "^8.0.0",
+        "langium": "^0.5.0",
+        "vscode-languageclient": "^8.0.2",
+        "vscode-languageserver": "^8.0.2",
+        "vscode-uri": "^3.0.2"
+    },
+    "devDependencies": {
+        "@types/node": "^14.17.3",
+        "@types/vscode": "^1.56.0",
+        "@typescript-eslint/eslint-plugin": "^5.28.0",
+        "@typescript-eslint/parser": "^5.28.0",
+        "eslint": "^8.17.0",
+        "langium-cli": "^0.5.0",
+        "typescript": "^4.7.4"
+    }
+}
