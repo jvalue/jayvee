@@ -1,0 +1,104 @@
+{
+    "name": "open-data-language",
+    "displayName": "open-data-language",
+    "description": "Please enter a brief description here",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.56.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "open-data-language",
+                "aliases": [
+                    "Open Data Language",
+                    "open-data-language"
+                ],
+                "extensions": [
+                    ".odl"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "open-data-language",
+                "scopeName": "source.open-data-language",
+                "path": "./syntaxes/open-data-language.tmLanguage.json"
+            }
+        ]
+    },
+    "activationEvents": [
+        "onLanguage:open-data-language"
+    ],
+    "files": [
+        "bin",
+        "out",
+        "src"
+    ],
+    "bin": {
+        "open-data-language-cli": "./bin/cli"
+    },
+    "main": "./out/extension.js",
+    "scripts": {
+        "vscode:prepublish": "npm run build && npm run lint",
+        "build": "tsc -b tsconfig.json",
+        "watch": "tsc -b tsconfig.json --watch",
+        "lint": "eslint src --max-warnings=0",
+        "lint:fix": "eslint src --fix",
+        "langium:generate": "langium generate",
+        "langium:watch": "langium generate --watch",
+        "test": "jest",
+        "test:watch": "jest --watch",
+        "test:cov": "jest --coverage",
+        "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
+    },
+    "dependencies": {
+        "chalk": "^4.1.2",
+        "chevrotain": "^9.1.0",
+        "commander": "^8.0.0",
+        "langium": "^0.5.0",
+        "vscode-languageclient": "^8.0.2",
+        "vscode-languageserver": "^8.0.2",
+        "vscode-uri": "^3.0.2"
+    },
+    "devDependencies": {
+        "@jvalue/eslint-config-jvalue": "^1.2.0",
+        "@types/jest": "^29.1.2",
+        "@types/node": "^14.17.3",
+        "@types/vscode": "^1.56.0",
+        "@typescript-eslint/eslint-plugin": "^5.39.0",
+        "@typescript-eslint/parser": "^5.39.0",
+        "eslint": "^8.24.0",
+        "eslint-config-prettier": "^8.5.0",
+        "eslint-plugin-import": "^2.26.0",
+        "eslint-plugin-jest": "^27.1.1",
+        "eslint-plugin-prettier": "^4.2.1",
+        "jest": "^29.1.2",
+        "langium-cli": "^0.5.0",
+        "prettier": "^2.7.1",
+        "ts-jest": "^29.0.3",
+        "ts-node": "^10.9.1",
+        "typescript": "^4.7.4"
+    },
+    "jest": {
+        "moduleFileExtensions": [
+            "js",
+            "json",
+            "ts"
+        ],
+        "rootDir": "src",
+        "testRegex": ".*\\.spec\\.ts$",
+        "transform": {
+            "^.+\\.(t|j)s$": "ts-jest"
+        },
+        "collectCoverageFrom": [
+            "**/*.(t|j)s"
+        ],
+        "coverageDirectory": "../coverage",
+        "testEnvironment": "node"
+    }
+}
