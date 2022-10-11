@@ -10,7 +10,7 @@
     },
     {
       "name": "keyword.control.open-data-language",
-      "match": "\\b(block|DatabaseSink|export|extends|flow|from|GuardBlock|import|inputs|Integer|LogSink|namespace|outputs|pipeline|requires|SelectionBlock|SourceBlock|String|TableBlock|to|valuetype)\\b"
+      "match": "\\b(as|CSVTable|default|export|extends|File|from|Http|import|inputs|Integer|library|outputs|pipe|pipeline|RelationalDatabase|requires|SchemaGuard|sink|source|step|String|TableSelection|to|typeof|valuetype)\\b"
     },
     {
       "name": "string.quoted.double.open-data-language",

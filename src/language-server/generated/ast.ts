@@ -7,7 +7,15 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import { AstNode, AstReflection, Reference, ReferenceInfo, isAstNode, TypeMetaData } from 'langium';
 
-export type ExportableElement = Pipeline | Valuetype;
+export type Block = Sink | Source | Step;
+
+export const Block = 'Block';
+
+export function isBlock(item: unknown): item is Block {
+    return reflection.isInstance(item, Block);
+}
+
+export type ExportableElement = Block | Valuetype;
 
 export const ExportableElement = 'ExportableElement';
 
@@ -15,15 +23,15 @@ export function isExportableElement(item: unknown): item is ExportableElement {
     return reflection.isInstance(item, ExportableElement);
 }
 
-export type NamespaceElement = Export | Import | Namespace | Pipeline | RuntimeParameter | Valuetype;
+export type LibraryElement = Block | Export | Import | Valuetype;
 
-export const NamespaceElement = 'NamespaceElement';
+export const LibraryElement = 'LibraryElement';
 
-export function isNamespaceElement(item: unknown): item is NamespaceElement {
-    return reflection.isInstance(item, NamespaceElement);
+export function isLibraryElement(item: unknown): item is LibraryElement {
+    return reflection.isInstance(item, LibraryElement);
 }
 
-export type PipelineElement = Block | Flow | RuntimeParameter | Valuetype;
+export type PipelineElement = Block | Import | Pipe | Valuetype;
 
 export const PipelineElement = 'PipelineElement';
 
@@ -34,10 +42,10 @@ export function isPipelineElement(item: unknown): item is PipelineElement {
 export type QualifiedName = string;
 
 export interface Attribute extends AstNode {
-    readonly $container: Block | Valuetype;
+    readonly $container: Sink | Source | Step | Valuetype;
+    defaultValue?: AttributeValue
     name: string
-    runtimeParameter?: Reference<RuntimeParameter>
-    value?: boolean | number | string
+    runtimeParameter: string
 }
 
 export const Attribute = 'Attribute';
@@ -46,24 +54,21 @@ export function isAttribute(item: unknown): item is Attribute {
     return reflection.isInstance(item, Attribute);
 }
 
-export interface Block extends AstNode {
-    readonly $container: Model | Namespace | Pipeline;
-    attributes: Array<Attribute>
-    inputs: Array<Input>
-    name: string
-    outputs: Array<Output>
-    superBlock: 'DatabaseSink' | 'GuardBlock' | 'LogSink' | 'SelectionBlock' | 'SourceBlock' | 'TableBlock'
+export interface AttributeValue extends AstNode {
+    readonly $container: Attribute;
+    value: boolean | number | string
 }
 
-export const Block = 'Block';
+export const AttributeValue = 'AttributeValue';
 
-export function isBlock(item: unknown): item is Block {
-    return reflection.isInstance(item, Block);
+export function isAttributeValue(item: unknown): item is AttributeValue {
+    return reflection.isInstance(item, AttributeValue);
 }
 
 export interface Export extends AstNode {
-    readonly $container: Model | Namespace | Pipeline;
+    readonly $container: Library | Pipeline;
     element: Reference<ExportableElement>
+    rename?: string
 }
 
 export const Export = 'Export';
@@ -72,21 +77,9 @@ export function isExport(item: unknown): item is Export {
     return reflection.isInstance(item, Export);
 }
 
-export interface Flow extends AstNode {
-    readonly $container: Model | Namespace | Pipeline;
-    from: Reference<Output>
-    name: string
-    to: Reference<Input>
-}
-
-export const Flow = 'Flow';
-
-export function isFlow(item: unknown): item is Flow {
-    return reflection.isInstance(item, Flow);
-}
-
 export interface Import extends AstNode {
-    readonly $container: Model | Namespace | Pipeline;
+    readonly $container: Library | Pipeline;
+    rename?: string
     valuetype: Reference<ExportableElement>
 }
 
@@ -97,8 +90,9 @@ export function isImport(item: unknown): item is Import {
 }
 
 export interface Input extends AstNode {
-    readonly $container: Block;
+    readonly $container: InputsAttribute;
     name: string
+    rename: string
 }
 
 export const Input = 'Input';
@@ -107,8 +101,32 @@ export function isInput(item: unknown): item is Input {
     return reflection.isInstance(item, Input);
 }
 
+export interface InputsAttribute extends AstNode {
+    readonly $container: Sink | Step;
+    inputs: Array<Input>
+}
+
+export const InputsAttribute = 'InputsAttribute';
+
+export function isInputsAttribute(item: unknown): item is InputsAttribute {
+    return reflection.isInstance(item, InputsAttribute);
+}
+
+export interface Library extends AstNode {
+    readonly $container: Model;
+    elements: Array<LibraryElement>
+    name: string
+}
+
+export const Library = 'Library';
+
+export function isLibrary(item: unknown): item is Library {
+    return reflection.isInstance(item, Library);
+}
+
 export interface Model extends AstNode {
-    namespaces: Array<Namespace>
+    libraries: Array<Library>
+    pipelines: Array<Pipeline>
 }
 
 export const Model = 'Model';
@@ -117,21 +135,10 @@ export function isModel(item: unknown): item is Model {
     return reflection.isInstance(item, Model);
 }
 
-export interface Namespace extends AstNode {
-    readonly $container: Model | Namespace | Pipeline;
-    elements: Array<NamespaceElement>
-    name: string
-}
-
-export const Namespace = 'Namespace';
-
-export function isNamespace(item: unknown): item is Namespace {
-    return reflection.isInstance(item, Namespace);
-}
-
 export interface Output extends AstNode {
-    readonly $container: Block;
+    readonly $container: OutputsAttribute;
     name: string
+    rename: string
 }
 
 export const Output = 'Output';
@@ -140,8 +147,31 @@ export function isOutput(item: unknown): item is Output {
     return reflection.isInstance(item, Output);
 }
 
+export interface OutputsAttribute extends AstNode {
+    readonly $container: Source | Step;
+    outputs: Array<Output>
+}
+
+export const OutputsAttribute = 'OutputsAttribute';
+
+export function isOutputsAttribute(item: unknown): item is OutputsAttribute {
+    return reflection.isInstance(item, OutputsAttribute);
+}
+
+export interface Pipe extends AstNode {
+    readonly $container: Library | Pipeline;
+    fromOutput: QualifiedName
+    toInput: QualifiedName
+}
+
+export const Pipe = 'Pipe';
+
+export function isPipe(item: unknown): item is Pipe {
+    return reflection.isInstance(item, Pipe);
+}
+
 export interface Pipeline extends AstNode {
-    readonly $container: Model | Namespace | Pipeline;
+    readonly $container: Model;
     elements: Array<PipelineElement>
     name: string
 }
@@ -152,19 +182,51 @@ export function isPipeline(item: unknown): item is Pipeline {
     return reflection.isInstance(item, Pipeline);
 }
 
-export interface RuntimeParameter extends AstNode {
-    readonly $container: Model | Namespace | Pipeline;
+export interface Sink extends AstNode {
+    readonly $container: Library | Pipeline;
+    attributes: Array<Attribute>
+    inputsAttribute?: InputsAttribute
     name: string
+    sourceType: 'File' | 'RelationalDatabase'
 }
 
-export const RuntimeParameter = 'RuntimeParameter';
+export const Sink = 'Sink';
 
-export function isRuntimeParameter(item: unknown): item is RuntimeParameter {
-    return reflection.isInstance(item, RuntimeParameter);
+export function isSink(item: unknown): item is Sink {
+    return reflection.isInstance(item, Sink);
+}
+
+export interface Source extends AstNode {
+    readonly $container: Library | Pipeline;
+    attributes: Array<Attribute>
+    name: string
+    outputsAttribute?: OutputsAttribute
+    sourceType: 'Http'
+}
+
+export const Source = 'Source';
+
+export function isSource(item: unknown): item is Source {
+    return reflection.isInstance(item, Source);
+}
+
+export interface Step extends AstNode {
+    readonly $container: Library | Pipeline;
+    attributes: Array<Attribute>
+    inputsAttribute?: InputsAttribute
+    name: string
+    outputsAttribute?: OutputsAttribute
+    stepType: 'CSVTable' | 'SchemaGuard' | 'TableSelection'
+}
+
+export const Step = 'Step';
+
+export function isStep(item: unknown): item is Step {
+    return reflection.isInstance(item, Step);
 }
 
 export interface Valuetype extends AstNode {
-    readonly $container: Model | Namespace | Pipeline;
+    readonly $container: Library | Pipeline;
     attributes: Array<Attribute>
     hasSuperTypeInteger: boolean
     hasSuperTypeString: boolean
@@ -178,12 +240,12 @@ export function isValuetype(item: unknown): item is Valuetype {
     return reflection.isInstance(item, Valuetype);
 }
 
-export type OpenDataLanguageAstType = 'Attribute' | 'Block' | 'Export' | 'ExportableElement' | 'Flow' | 'Import' | 'Input' | 'Model' | 'Namespace' | 'NamespaceElement' | 'Output' | 'Pipeline' | 'PipelineElement' | 'RuntimeParameter' | 'Valuetype';
+export type OpenDataLanguageAstType = 'Attribute' | 'AttributeValue' | 'Block' | 'Export' | 'ExportableElement' | 'Import' | 'Input' | 'InputsAttribute' | 'Library' | 'LibraryElement' | 'Model' | 'Output' | 'OutputsAttribute' | 'Pipe' | 'Pipeline' | 'PipelineElement' | 'Sink' | 'Source' | 'Step' | 'Valuetype';
 
 export class OpenDataLanguageAstReflection implements AstReflection {
 
     getAllTypes(): string[] {
-        return ['Attribute', 'Block', 'Export', 'ExportableElement', 'Flow', 'Import', 'Input', 'Model', 'Namespace', 'NamespaceElement', 'Output', 'Pipeline', 'PipelineElement', 'RuntimeParameter', 'Valuetype'];
+        return ['Attribute', 'AttributeValue', 'Block', 'Export', 'ExportableElement', 'Import', 'Input', 'InputsAttribute', 'Library', 'LibraryElement', 'Model', 'Output', 'OutputsAttribute', 'Pipe', 'Pipeline', 'PipelineElement', 'Sink', 'Source', 'Step', 'Valuetype'];
     }
 
     isInstance(node: unknown, type: string): boolean {
@@ -195,23 +257,23 @@ export class OpenDataLanguageAstReflection implements AstReflection {
             return true;
         }
         switch (subtype) {
-            case Block:
-            case Flow: {
+            case Export: {
+                return this.isSubtype(LibraryElement, supertype);
+            }
+            case Import: {
+                return this.isSubtype(LibraryElement, supertype) || this.isSubtype(PipelineElement, supertype);
+            }
+            case Pipe: {
                 return this.isSubtype(PipelineElement, supertype);
             }
-            case Export:
-            case Import:
-            case Namespace: {
-                return this.isSubtype(NamespaceElement, supertype);
+            case Sink:
+            case Source:
+            case Step: {
+                return this.isSubtype(Block, supertype);
             }
-            case Pipeline: {
-                return this.isSubtype(NamespaceElement, supertype) || this.isSubtype(ExportableElement, supertype);
-            }
-            case RuntimeParameter: {
-                return this.isSubtype(NamespaceElement, supertype) || this.isSubtype(PipelineElement, supertype);
-            }
-            case Valuetype: {
-                return this.isSubtype(NamespaceElement, supertype) || this.isSubtype(ExportableElement, supertype) || this.isSubtype(PipelineElement, supertype);
+            case Valuetype:
+            case Block: {
+                return this.isSubtype(LibraryElement, supertype) || this.isSubtype(ExportableElement, supertype) || this.isSubtype(PipelineElement, supertype);
             }
             default: {
                 return false;
@@ -222,17 +284,8 @@ export class OpenDataLanguageAstReflection implements AstReflection {
     getReferenceType(refInfo: ReferenceInfo): string {
         const referenceId = `${refInfo.container.$type}:${refInfo.property}`;
         switch (referenceId) {
-            case 'Attribute:runtimeParameter': {
-                return RuntimeParameter;
-            }
             case 'Export:element': {
                 return ExportableElement;
-            }
-            case 'Flow:from': {
-                return Output;
-            }
-            case 'Flow:to': {
-                return Input;
             }
             case 'Import:valuetype': {
                 return ExportableElement;
@@ -248,13 +301,19 @@ export class OpenDataLanguageAstReflection implements AstReflection {
 
     getTypeMetaData(type: string): TypeMetaData {
         switch (type) {
-            case 'Block': {
+            case 'InputsAttribute': {
                 return {
-                    name: 'Block',
+                    name: 'InputsAttribute',
                     mandatory: [
-                        { name: 'attributes', type: 'array' },
-                        { name: 'inputs', type: 'array' },
-                        { name: 'outputs', type: 'array' }
+                        { name: 'inputs', type: 'array' }
+                    ]
+                };
+            }
+            case 'Library': {
+                return {
+                    name: 'Library',
+                    mandatory: [
+                        { name: 'elements', type: 'array' }
                     ]
                 };
             }
@@ -262,15 +321,16 @@ export class OpenDataLanguageAstReflection implements AstReflection {
                 return {
                     name: 'Model',
                     mandatory: [
-                        { name: 'namespaces', type: 'array' }
+                        { name: 'libraries', type: 'array' },
+                        { name: 'pipelines', type: 'array' }
                     ]
                 };
             }
-            case 'Namespace': {
+            case 'OutputsAttribute': {
                 return {
-                    name: 'Namespace',
+                    name: 'OutputsAttribute',
                     mandatory: [
-                        { name: 'elements', type: 'array' }
+                        { name: 'outputs', type: 'array' }
                     ]
                 };
             }
@@ -279,6 +339,30 @@ export class OpenDataLanguageAstReflection implements AstReflection {
                     name: 'Pipeline',
                     mandatory: [
                         { name: 'elements', type: 'array' }
+                    ]
+                };
+            }
+            case 'Sink': {
+                return {
+                    name: 'Sink',
+                    mandatory: [
+                        { name: 'attributes', type: 'array' }
+                    ]
+                };
+            }
+            case 'Source': {
+                return {
+                    name: 'Source',
+                    mandatory: [
+                        { name: 'attributes', type: 'array' }
+                    ]
+                };
+            }
+            case 'Step': {
+                return {
+                    name: 'Step',
+                    mandatory: [
+                        { name: 'attributes', type: 'array' }
                     ]
                 };
             }

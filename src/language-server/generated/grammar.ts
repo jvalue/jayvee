@@ -16,16 +16,33 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
       "name": "Model",
       "entry": true,
       "definition": {
-        "$type": "Assignment",
-        "feature": "namespaces",
-        "operator": "+=",
-        "terminal": {
-          "$type": "RuleCall",
-          "rule": {
-            "$refText": "Namespace"
+        "$type": "Alternatives",
+        "elements": [
+          {
+            "$type": "Assignment",
+            "feature": "libraries",
+            "operator": "+=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "Library"
+              },
+              "arguments": []
+            }
           },
-          "arguments": []
-        },
+          {
+            "$type": "Assignment",
+            "feature": "pipelines",
+            "operator": "+=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "Pipeline"
+              },
+              "arguments": []
+            }
+          }
+        ],
         "cardinality": "*"
       },
       "definesHiddenTokens": false,
@@ -36,13 +53,13 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
     },
     {
       "$type": "ParserRule",
-      "name": "Namespace",
+      "name": "Library",
       "definition": {
         "$type": "Group",
         "elements": [
           {
             "$type": "Keyword",
-            "value": "namespace"
+            "value": "library"
           },
           {
             "$type": "Assignment",
@@ -67,7 +84,7 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$refText": "NamespaceElement"
+                "$refText": "LibraryElement"
               },
               "arguments": []
             },
@@ -88,17 +105,10 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
     },
     {
       "$type": "ParserRule",
-      "name": "NamespaceElement",
+      "name": "LibraryElement",
       "definition": {
         "$type": "Alternatives",
         "elements": [
-          {
-            "$type": "RuleCall",
-            "rule": {
-              "$refText": "Namespace"
-            },
-            "arguments": []
-          },
           {
             "$type": "RuleCall",
             "rule": {
@@ -116,13 +126,6 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
           {
             "$type": "RuleCall",
             "rule": {
-              "$refText": "RuntimeParameter"
-            },
-            "arguments": []
-          },
-          {
-            "$type": "RuleCall",
-            "rule": {
               "$refText": "Valuetype"
             },
             "arguments": []
@@ -130,7 +133,7 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
           {
             "$type": "RuleCall",
             "rule": {
-              "$refText": "Pipeline"
+              "$refText": "Block"
             },
             "arguments": []
           }
@@ -171,6 +174,32 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
               },
               "deprecatedSyntax": false
             }
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": "as"
+              },
+              {
+                "$type": "Assignment",
+                "feature": "rename",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "ID"
+                  },
+                  "arguments": []
+                }
+              }
+            ],
+            "cardinality": "?"
+          },
+          {
+            "$type": "Keyword",
+            "value": ";"
           }
         ]
       },
@@ -209,6 +238,32 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
               },
               "deprecatedSyntax": false
             }
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": "as"
+              },
+              {
+                "$type": "Assignment",
+                "feature": "rename",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "ID"
+                  },
+                  "arguments": []
+                }
+              }
+            ],
+            "cardinality": "?"
+          },
+          {
+            "$type": "Keyword",
+            "value": ";"
           }
         ]
       },
@@ -228,14 +283,14 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
           {
             "$type": "RuleCall",
             "rule": {
-              "$refText": "Pipeline"
+              "$refText": "Valuetype"
             },
             "arguments": []
           },
           {
             "$type": "RuleCall",
             "rule": {
-              "$refText": "Valuetype"
+              "$refText": "Block"
             },
             "arguments": []
           }
@@ -309,7 +364,7 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
           {
             "$type": "RuleCall",
             "rule": {
-              "$refText": "RuntimeParameter"
+              "$refText": "Import"
             },
             "arguments": []
           },
@@ -321,67 +376,18 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
             "arguments": []
           },
           {
-            "$type": "Group",
-            "elements": [
-              {
-                "$type": "Keyword",
-                "value": "block"
-              },
-              {
-                "$type": "RuleCall",
-                "rule": {
-                  "$refText": "Block"
-                },
-                "arguments": []
-              }
-            ]
+            "$type": "RuleCall",
+            "rule": {
+              "$refText": "Block"
+            },
+            "arguments": []
           },
           {
-            "$type": "Group",
-            "elements": [
-              {
-                "$type": "Keyword",
-                "value": "flow"
-              },
-              {
-                "$type": "RuleCall",
-                "rule": {
-                  "$refText": "Flow"
-                },
-                "arguments": []
-              }
-            ]
-          }
-        ]
-      },
-      "definesHiddenTokens": false,
-      "entry": false,
-      "fragment": false,
-      "hiddenTokens": [],
-      "parameters": [],
-      "wildcard": false
-    },
-    {
-      "$type": "ParserRule",
-      "name": "RuntimeParameter",
-      "definition": {
-        "$type": "Group",
-        "elements": [
-          {
-            "$type": "Keyword",
-            "value": "requires"
-          },
-          {
-            "$type": "Assignment",
-            "feature": "name",
-            "operator": "=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$refText": "ID"
-              },
-              "arguments": []
-            }
+            "$type": "RuleCall",
+            "rule": {
+              "$refText": "Pipe"
+            },
+            "arguments": []
           }
         ]
       },
@@ -494,122 +500,202 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
       "$type": "ParserRule",
       "name": "Block",
       "definition": {
-        "$type": "UnorderedGroup",
+        "$type": "Alternatives",
         "elements": [
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$refText": "Source"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$refText": "Sink"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$refText": "Step"
+            },
+            "arguments": []
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "Source",
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "source"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "name",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "ID"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Keyword",
+            "value": "typeof"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "sourceType",
+            "operator": "=",
+            "terminal": {
+              "$type": "Keyword",
+              "value": "Http"
+            }
+          },
+          {
+            "$type": "Keyword",
+            "value": "{"
+          },
           {
             "$type": "Group",
             "elements": [
               {
-                "$type": "Assignment",
-                "feature": "name",
-                "operator": "=",
-                "terminal": {
-                  "$type": "RuleCall",
-                  "rule": {
-                    "$refText": "ID"
-                  },
-                  "arguments": []
-                }
+                "$type": "Keyword",
+                "value": "inputs"
               },
               {
                 "$type": "Keyword",
-                "value": "extends"
-              },
-              {
-                "$type": "Assignment",
-                "feature": "superBlock",
-                "operator": "=",
-                "terminal": {
-                  "$type": "Alternatives",
-                  "elements": [
-                    {
-                      "$type": "Keyword",
-                      "value": "SourceBlock"
-                    },
-                    {
-                      "$type": "Keyword",
-                      "value": "DatabaseSink"
-                    },
-                    {
-                      "$type": "Keyword",
-                      "value": "LogSink"
-                    },
-                    {
-                      "$type": "Keyword",
-                      "value": "TableBlock"
-                    },
-                    {
-                      "$type": "Keyword",
-                      "value": "SelectionBlock"
-                    },
-                    {
-                      "$type": "Keyword",
-                      "value": "GuardBlock"
-                    }
-                  ]
-                }
+                "value": ":"
               },
               {
                 "$type": "Keyword",
-                "value": "{"
+                "value": "["
               },
               {
-                "$type": "Group",
-                "elements": [
-                  {
-                    "$type": "Keyword",
-                    "value": "inputs"
-                  },
-                  {
-                    "$type": "Keyword",
-                    "value": ":"
-                  },
-                  {
-                    "$type": "Keyword",
-                    "value": "["
-                  },
-                  {
-                    "$type": "Assignment",
-                    "feature": "inputs",
-                    "operator": "+=",
-                    "terminal": {
-                      "$type": "RuleCall",
-                      "rule": {
-                        "$refText": "Input"
-                      },
-                      "arguments": []
-                    },
-                    "cardinality": "?"
-                  },
-                  {
-                    "$type": "Group",
-                    "elements": [
-                      {
-                        "$type": "Keyword",
-                        "value": ","
-                      },
-                      {
-                        "$type": "Assignment",
-                        "feature": "inputs",
-                        "operator": "+=",
-                        "terminal": {
-                          "$type": "RuleCall",
-                          "rule": {
-                            "$refText": "Input"
-                          },
-                          "arguments": []
-                        }
-                      }
-                    ],
-                    "cardinality": "*"
-                  },
-                  {
-                    "$type": "Keyword",
-                    "value": "]"
-                  }
-                ]
+                "$type": "Keyword",
+                "value": "]"
+              },
+              {
+                "$type": "Keyword",
+                "value": ";"
               }
-            ]
+            ],
+            "cardinality": "?"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "outputsAttribute",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "OutputsAttribute"
+              },
+              "arguments": []
+            },
+            "cardinality": "?"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "attributes",
+            "operator": "+=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "Attribute"
+              },
+              "arguments": []
+            },
+            "cardinality": "*"
+          },
+          {
+            "$type": "Keyword",
+            "value": "}"
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "Sink",
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "sink"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "name",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "ID"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Keyword",
+            "value": "typeof"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "sourceType",
+            "operator": "=",
+            "terminal": {
+              "$type": "Alternatives",
+              "elements": [
+                {
+                  "$type": "Keyword",
+                  "value": "RelationalDatabase"
+                },
+                {
+                  "$type": "Keyword",
+                  "value": "File"
+                }
+              ]
+            }
+          },
+          {
+            "$type": "Keyword",
+            "value": "{"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "inputsAttribute",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "InputsAttribute"
+              },
+              "arguments": []
+            },
+            "cardinality": "?"
           },
           {
             "$type": "Group",
@@ -627,67 +713,206 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
                 "value": "["
               },
               {
-                "$type": "Assignment",
-                "feature": "outputs",
-                "operator": "+=",
-                "terminal": {
-                  "$type": "RuleCall",
-                  "rule": {
-                    "$refText": "Output"
-                  },
-                  "arguments": []
-                },
-                "cardinality": "?"
-              },
-              {
-                "$type": "Group",
-                "elements": [
-                  {
-                    "$type": "Keyword",
-                    "value": ","
-                  },
-                  {
-                    "$type": "Assignment",
-                    "feature": "outputs",
-                    "operator": "+=",
-                    "terminal": {
-                      "$type": "RuleCall",
-                      "rule": {
-                        "$refText": "Output"
-                      },
-                      "arguments": []
-                    }
-                  }
-                ],
-                "cardinality": "*"
+                "$type": "Keyword",
+                "value": "]"
               },
               {
                 "$type": "Keyword",
-                "value": "]"
+                "value": ";"
               }
-            ]
+            ],
+            "cardinality": "?"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "attributes",
+            "operator": "+=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "Attribute"
+              },
+              "arguments": []
+            },
+            "cardinality": "*"
+          },
+          {
+            "$type": "Keyword",
+            "value": "}"
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "Step",
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "step"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "name",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "ID"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Keyword",
+            "value": "typeof"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "stepType",
+            "operator": "=",
+            "terminal": {
+              "$type": "Alternatives",
+              "elements": [
+                {
+                  "$type": "Keyword",
+                  "value": "CSVTable"
+                },
+                {
+                  "$type": "Keyword",
+                  "value": "TableSelection"
+                },
+                {
+                  "$type": "Keyword",
+                  "value": "SchemaGuard"
+                }
+              ]
+            }
+          },
+          {
+            "$type": "Keyword",
+            "value": "{"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "inputsAttribute",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "InputsAttribute"
+              },
+              "arguments": []
+            },
+            "cardinality": "?"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "outputsAttribute",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "OutputsAttribute"
+              },
+              "arguments": []
+            },
+            "cardinality": "?"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "attributes",
+            "operator": "+=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "Attribute"
+              },
+              "arguments": []
+            },
+            "cardinality": "*"
+          },
+          {
+            "$type": "Keyword",
+            "value": "}"
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "InputsAttribute",
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "inputs"
+          },
+          {
+            "$type": "Keyword",
+            "value": ":"
+          },
+          {
+            "$type": "Keyword",
+            "value": "["
+          },
+          {
+            "$type": "Assignment",
+            "feature": "inputs",
+            "operator": "+=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "Input"
+              },
+              "arguments": []
+            },
+            "cardinality": "?"
           },
           {
             "$type": "Group",
             "elements": [
               {
+                "$type": "Keyword",
+                "value": ","
+              },
+              {
                 "$type": "Assignment",
-                "feature": "attributes",
+                "feature": "inputs",
                 "operator": "+=",
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$refText": "Attribute"
+                    "$refText": "Input"
                   },
                   "arguments": []
-                },
-                "cardinality": "*"
-              },
-              {
-                "$type": "Keyword",
-                "value": "}"
+                }
               }
-            ]
+            ],
+            "cardinality": "*"
+          },
+          {
+            "$type": "Keyword",
+            "value": "]"
+          },
+          {
+            "$type": "Keyword",
+            "value": ";"
           }
         ]
       },
@@ -702,16 +927,107 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
       "$type": "ParserRule",
       "name": "Input",
       "definition": {
-        "$type": "Assignment",
-        "feature": "name",
-        "operator": "=",
-        "terminal": {
-          "$type": "RuleCall",
-          "rule": {
-            "$refText": "ID"
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Assignment",
+            "feature": "name",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "ID"
+              },
+              "arguments": []
+            }
           },
-          "arguments": []
-        }
+          {
+            "$type": "Keyword",
+            "value": "as"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "rename",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "ID"
+              },
+              "arguments": []
+            }
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "OutputsAttribute",
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "outputs"
+          },
+          {
+            "$type": "Keyword",
+            "value": ":"
+          },
+          {
+            "$type": "Keyword",
+            "value": "["
+          },
+          {
+            "$type": "Assignment",
+            "feature": "outputs",
+            "operator": "+=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "Output"
+              },
+              "arguments": []
+            },
+            "cardinality": "?"
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": ","
+              },
+              {
+                "$type": "Assignment",
+                "feature": "outputs",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "Output"
+                  },
+                  "arguments": []
+                }
+              }
+            ],
+            "cardinality": "*"
+          },
+          {
+            "$type": "Keyword",
+            "value": "]"
+          },
+          {
+            "$type": "Keyword",
+            "value": ";"
+          }
+        ]
       },
       "definesHiddenTokens": false,
       "entry": false,
@@ -724,16 +1040,37 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
       "$type": "ParserRule",
       "name": "Output",
       "definition": {
-        "$type": "Assignment",
-        "feature": "name",
-        "operator": "=",
-        "terminal": {
-          "$type": "RuleCall",
-          "rule": {
-            "$refText": "ID"
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Assignment",
+            "feature": "name",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "ID"
+              },
+              "arguments": []
+            }
           },
-          "arguments": []
-        }
+          {
+            "$type": "Keyword",
+            "value": "as"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "rename",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "ID"
+              },
+              "arguments": []
+            }
+          }
+        ]
       },
       "definesHiddenTokens": false,
       "entry": false,
@@ -744,7 +1081,7 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
     },
     {
       "$type": "ParserRule",
-      "name": "Flow",
+      "name": "Pipe",
       "definition": {
         "$type": "UnorderedGroup",
         "elements": [
@@ -752,16 +1089,8 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
             "$type": "Group",
             "elements": [
               {
-                "$type": "Assignment",
-                "feature": "name",
-                "operator": "=",
-                "terminal": {
-                  "$type": "RuleCall",
-                  "rule": {
-                    "$refText": "ID"
-                  },
-                  "arguments": []
-                }
+                "$type": "Keyword",
+                "value": "pipe"
               },
               {
                 "$type": "Keyword",
@@ -780,21 +1109,14 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
                   },
                   {
                     "$type": "Assignment",
-                    "feature": "from",
+                    "feature": "fromOutput",
                     "operator": "=",
                     "terminal": {
-                      "$type": "CrossReference",
-                      "type": {
-                        "$refText": "Output"
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$refText": "QualifiedName"
                       },
-                      "terminal": {
-                        "$type": "RuleCall",
-                        "rule": {
-                          "$refText": "QualifiedName"
-                        },
-                        "arguments": []
-                      },
-                      "deprecatedSyntax": false
+                      "arguments": []
                     }
                   }
                 ]
@@ -817,21 +1139,14 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
                   },
                   {
                     "$type": "Assignment",
-                    "feature": "to",
+                    "feature": "toInput",
                     "operator": "=",
                     "terminal": {
-                      "$type": "CrossReference",
-                      "type": {
-                        "$refText": "Input"
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$refText": "QualifiedName"
                       },
-                      "terminal": {
-                        "$type": "RuleCall",
-                        "rule": {
-                          "$refText": "QualifiedName"
-                        },
-                        "arguments": []
-                      },
-                      "deprecatedSyntax": false
+                      "arguments": []
                     }
                   }
                 ]
@@ -877,65 +1192,110 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
             "$type": "Alternatives",
             "elements": [
               {
-                "$type": "Assignment",
-                "feature": "runtimeParameter",
-                "operator": "=",
-                "terminal": {
-                  "$type": "CrossReference",
-                  "type": {
-                    "$refText": "RuntimeParameter"
-                  },
-                  "terminal": {
-                    "$type": "RuleCall",
-                    "rule": {
-                      "$refText": "QualifiedName"
-                    },
-                    "arguments": []
-                  },
-                  "deprecatedSyntax": false
-                }
+                "$type": "RuleCall",
+                "rule": {
+                  "$refText": "AttributeValue"
+                },
+                "arguments": []
               },
               {
-                "$type": "Assignment",
-                "feature": "value",
-                "operator": "=",
-                "terminal": {
-                  "$type": "Alternatives",
-                  "elements": [
-                    {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Keyword",
+                    "value": "requires"
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "runtimeParameter",
+                    "operator": "=",
+                    "terminal": {
                       "$type": "RuleCall",
                       "rule": {
-                        "$refText": "STRING"
-                      },
-                      "arguments": []
-                    },
-                    {
-                      "$type": "RuleCall",
-                      "rule": {
-                        "$refText": "INT"
-                      },
-                      "arguments": []
-                    },
-                    {
-                      "$type": "RuleCall",
-                      "rule": {
-                        "$refText": "TRUE"
-                      },
-                      "arguments": []
-                    },
-                    {
-                      "$type": "RuleCall",
-                      "rule": {
-                        "$refText": "FALSE"
+                        "$refText": "ID"
                       },
                       "arguments": []
                     }
-                  ]
-                }
+                  },
+                  {
+                    "$type": "Group",
+                    "elements": [
+                      {
+                        "$type": "Keyword",
+                        "value": "default"
+                      },
+                      {
+                        "$type": "Assignment",
+                        "feature": "defaultValue",
+                        "operator": "=",
+                        "terminal": {
+                          "$type": "RuleCall",
+                          "rule": {
+                            "$refText": "AttributeValue"
+                          },
+                          "arguments": []
+                        }
+                      }
+                    ],
+                    "cardinality": "?"
+                  }
+                ]
               }
             ]
+          },
+          {
+            "$type": "Keyword",
+            "value": ";"
           }
         ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "AttributeValue",
+      "definition": {
+        "$type": "Assignment",
+        "feature": "value",
+        "operator": "=",
+        "terminal": {
+          "$type": "Alternatives",
+          "elements": [
+            {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "STRING"
+              },
+              "arguments": []
+            },
+            {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "INT"
+              },
+              "arguments": []
+            },
+            {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "TRUE"
+              },
+              "arguments": []
+            },
+            {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "FALSE"
+              },
+              "arguments": []
+            }
+          ]
+        }
       },
       "definesHiddenTokens": false,
       "entry": false,

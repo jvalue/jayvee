@@ -1,24 +1,24 @@
 grammar OpenDataLanguage
 
 entry Model:
-  (namespaces+=Namespace)*;
+  (libraries+=Library | pipelines+=Pipeline)*;
 
-Namespace:
-  'namespace' name=ID '{'
-    (elements+=NamespaceElement)*
+Library:
+  'library' name=ID '{'
+    (elements+=LibraryElement)*
   '}';
 
-NamespaceElement:
-  Namespace | Export | Import | RuntimeParameter | Valuetype | Pipeline;
+LibraryElement:
+  Export | Import | Valuetype | Block;
 
 Export:
-  'export' element=[ExportableElement:QualifiedName];
+  'export' element=[ExportableElement:QualifiedName] ('as' rename=ID)? ';';
 
 Import:
-  'import' valuetype=[ExportableElement:QualifiedName];
+  'import' valuetype=[ExportableElement:QualifiedName] ('as' rename=ID)? ';';
 
 ExportableElement:
-  Pipeline | Valuetype;
+  Valuetype | Block;
 
 Pipeline:
   'pipeline' name=ID '{'
@@ -26,12 +26,7 @@ Pipeline:
   '}';
 
 PipelineElement:
-  RuntimeParameter | Valuetype | 'block' Block | 'flow' Flow;
-//                               ^-----^         ^----^
-// workaround for otherwise ambiguous alternatives
-
-RuntimeParameter:
-  'requires' name=ID;
+  Import | Valuetype | Block | Pipe;
 
 Valuetype:
   'valuetype' name=ID
@@ -44,36 +39,66 @@ Valuetype:
   '}';
 
 Block:
-  name=ID 'extends' superBlock=(
-    'SourceBlock' |
-    'DatabaseSink' |
-    'LogSink' |
-    'TableBlock' |
-    'SelectionBlock' |
-    'GuardBlock'
+  Source | Sink | Step;
+
+Source:
+  'source' name=ID 'typeof' sourceType=(
+    'Http'
   ) '{'
-    ('inputs' ':' '[' (inputs+=Input)? (',' inputs+=Input)* ']') &
-    ('outputs' ':' '[' (outputs+=Output)? (',' outputs+=Output)* ']') &
+    ('inputs' ':' '[' ']' ';')?
+    (outputsAttribute=OutputsAttribute)?
     (attributes+=Attribute)*
   '}';
 
+Sink:
+  'sink' name=ID 'typeof' sourceType=(
+    'RelationalDatabase' |
+    'File'
+  ) '{'
+    (inputsAttribute=InputsAttribute)?
+    ('outputs' ':' '[' ']' ';')?
+    (attributes+=Attribute)*
+  '}';
+
+Step:
+  'step' name=ID 'typeof' stepType=(
+    'CSVTable' |
+    'TableSelection' |
+    'SchemaGuard'
+  ) '{'
+    (inputsAttribute=InputsAttribute)?
+    (outputsAttribute=OutputsAttribute)?
+    (attributes+=Attribute)*
+  '}';
+
+InputsAttribute:
+  'inputs' ':' '[' (inputs+=Input)? (',' inputs+=Input)* ']' ';';
+
 Input:
-  name=ID;
+  name=ID 'as' rename=ID;
+
+OutputsAttribute:
+  'outputs' ':' '[' (outputs+=Output)? (',' outputs+=Output)* ']' ';';
 
 Output:
-  name=ID;
+  name=ID 'as' rename=ID;
 
-Flow:
-  name=ID '{'
-    ('from' ':' from=[Output:QualifiedName]) &
-    ('to' ':' to=[Input:QualifiedName])
+Pipe:
+  'pipe' '{'
+    ('from' ':' fromOutput=QualifiedName) &
+    ('to' ':' toInput=QualifiedName)
   '}';
 
 Attribute:
   name=ID ':' (
-    runtimeParameter=[RuntimeParameter:QualifiedName] |
-    value=(STRING | INT | TRUE | FALSE)
-  );
+    AttributeValue | 
+    ('requires' runtimeParameter=ID
+      ('default' defaultValue=AttributeValue)?
+    )
+  ) ';';
+
+AttributeValue:
+  value=(STRING | INT | TRUE | FALSE);
 
 QualifiedName returns string:
   ID ('.' ID)*;
