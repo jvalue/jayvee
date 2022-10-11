@@ -29,11 +29,11 @@ jobs:
 
       - name: Langium generate
         run: |
-          HASH_BEFORE=$(sha1sum src/language-server/generated/* | sha1sum)
+          HASH_BEFORE=$(sha1sum src/language-server/generated/*.ts syntaxes/*.tmLanguage.json | sha1sum)
           
           npm run langium:generate
           
-          HASH_AFTER=$(sha1sum src/language-server/generated/* | sha1sum)
+          HASH_AFTER=$(sha1sum src/language-server/generated/*.ts syntaxes/*.tmLanguage.json | sha1sum)
           
           if [[ $HASH_BEFORE != $HASH_AFTER ]]; then
             echo "The generated code is not up to date."
