@@ -6,6 +6,9 @@
         "fileExtensions": [".odl"],
         "textMate": {
             "out": "syntaxes/open-data-language.tmLanguage.json"
+        },
+        "monarch": {
+            "out": "./syntaxes/open-data-language.monarch.ts"
         }
     }],
     "out": "src/language-server/generated"
