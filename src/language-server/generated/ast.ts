@@ -7,20 +7,80 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import { AstNode, AstReflection, Reference, ReferenceInfo, isAstNode, TypeMetaData } from 'langium';
 
-export interface Greeting extends AstNode {
-    readonly $container: Model;
-    person: Reference<Person>
+export type PostgresLoader = string;
+
+export type Section = ColumnSection | RowSection;
+
+export const Section = 'Section';
+
+export function isSection(item: unknown): item is Section {
+    return reflection.isInstance(item, Section);
 }
 
-export const Greeting = 'Greeting';
+export type Type = 'decimal' | 'integer' | 'text';
 
-export function isGreeting(item: unknown): item is Greeting {
-    return reflection.isInstance(item, Greeting);
+export interface Block extends AstNode {
+    readonly $container: Model;
+    name: string
+    type: CSVFileExtractor | LayoutValidator | PostgresLoader
+}
+
+export const Block = 'Block';
+
+export function isBlock(item: unknown): item is Block {
+    return reflection.isInstance(item, Block);
+}
+
+export interface ColumnSection extends AstNode {
+    readonly $container: Layout;
+    columnId: string
+    type: Type
+}
+
+export const ColumnSection = 'ColumnSection';
+
+export function isColumnSection(item: unknown): item is ColumnSection {
+    return reflection.isInstance(item, ColumnSection);
+}
+
+export interface CSVFileExtractor extends AstNode {
+    readonly $container: Block;
+    url: string
+}
+
+export const CSVFileExtractor = 'CSVFileExtractor';
+
+export function isCSVFileExtractor(item: unknown): item is CSVFileExtractor {
+    return reflection.isInstance(item, CSVFileExtractor);
+}
+
+export interface Layout extends AstNode {
+    readonly $container: Model;
+    name: string
+    sections: Array<Section>
+}
+
+export const Layout = 'Layout';
+
+export function isLayout(item: unknown): item is Layout {
+    return reflection.isInstance(item, Layout);
+}
+
+export interface LayoutValidator extends AstNode {
+    readonly $container: Block;
+    layout: Reference<Layout>
+}
+
+export const LayoutValidator = 'LayoutValidator';
+
+export function isLayoutValidator(item: unknown): item is LayoutValidator {
+    return reflection.isInstance(item, LayoutValidator);
 }
 
 export interface Model extends AstNode {
-    greetings: Array<Greeting>
-    persons: Array<Person>
+    blocks: Array<Block>
+    layouts: Array<Layout>
+    pipes: Array<Pipe>
 }
 
 export const Model = 'Model';
@@ -29,23 +89,37 @@ export function isModel(item: unknown): item is Model {
     return reflection.isInstance(item, Model);
 }
 
-export interface Person extends AstNode {
+export interface Pipe extends AstNode {
     readonly $container: Model;
-    name: string
+    from: Reference<Block>
+    to: Reference<Block>
 }
 
-export const Person = 'Person';
+export const Pipe = 'Pipe';
 
-export function isPerson(item: unknown): item is Person {
-    return reflection.isInstance(item, Person);
+export function isPipe(item: unknown): item is Pipe {
+    return reflection.isInstance(item, Pipe);
 }
 
-export type OpenDataLanguageAstType = 'Greeting' | 'Model' | 'Person';
+export interface RowSection extends AstNode {
+    readonly $container: Layout;
+    header: boolean
+    rowId: number
+    type: Type
+}
+
+export const RowSection = 'RowSection';
+
+export function isRowSection(item: unknown): item is RowSection {
+    return reflection.isInstance(item, RowSection);
+}
+
+export type OpenDataLanguageAstType = 'Block' | 'CSVFileExtractor' | 'ColumnSection' | 'Layout' | 'LayoutValidator' | 'Model' | 'Pipe' | 'RowSection' | 'Section';
 
 export class OpenDataLanguageAstReflection implements AstReflection {
 
     getAllTypes(): string[] {
-        return ['Greeting', 'Model', 'Person'];
+        return ['Block', 'CSVFileExtractor', 'ColumnSection', 'Layout', 'LayoutValidator', 'Model', 'Pipe', 'RowSection', 'Section'];
     }
 
     isInstance(node: unknown, type: string): boolean {
@@ -57,6 +131,10 @@ export class OpenDataLanguageAstReflection implements AstReflection {
             return true;
         }
         switch (subtype) {
+            case ColumnSection:
+            case RowSection: {
+                return this.isSubtype(Section, supertype);
+            }
             default: {
                 return false;
             }
@@ -66,8 +144,14 @@ export class OpenDataLanguageAstReflection implements AstReflection {
     getReferenceType(refInfo: ReferenceInfo): string {
         const referenceId = `${refInfo.container.$type}:${refInfo.property}`;
         switch (referenceId) {
-            case 'Greeting:person': {
-                return Person;
+            case 'LayoutValidator:layout': {
+                return Layout;
+            }
+            case 'Pipe:from': {
+                return Block;
+            }
+            case 'Pipe:to': {
+                return Block;
             }
             default: {
                 throw new Error(`${referenceId} is not a valid reference id.`);
@@ -77,12 +161,29 @@ export class OpenDataLanguageAstReflection implements AstReflection {
 
     getTypeMetaData(type: string): TypeMetaData {
         switch (type) {
+            case 'Layout': {
+                return {
+                    name: 'Layout',
+                    mandatory: [
+                        { name: 'sections', type: 'array' }
+                    ]
+                };
+            }
             case 'Model': {
                 return {
                     name: 'Model',
                     mandatory: [
-                        { name: 'greetings', type: 'array' },
-                        { name: 'persons', type: 'array' }
+                        { name: 'blocks', type: 'array' },
+                        { name: 'layouts', type: 'array' },
+                        { name: 'pipes', type: 'array' }
+                    ]
+                };
+            }
+            case 'RowSection': {
+                return {
+                    name: 'RowSection',
+                    mandatory: [
+                        { name: 'header', type: 'boolean' }
                     ]
                 };
             }

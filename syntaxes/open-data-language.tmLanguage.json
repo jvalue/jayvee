@@ -10,7 +10,7 @@
     },
     {
       "name": "keyword.control.open-data-language",
-      "match": "\\b(Hello|person)\\b"
+      "match": "\\b(block|column|CSVFileExtractor|decimal|from|header|integer|layout|LayoutValidator|oftype|pipe|PostgresLoader|row|text|to|url)\\b"
     },
     {
       "name": "string.quoted.double.open-data-language",
@@ -26,21 +26,6 @@
   "repository": {
     "comments": {
       "patterns": [
-        {
-          "name": "comment.block.open-data-language",
-          "begin": "/\\*",
-          "beginCaptures": {
-            "0": {
-              "name": "punctuation.definition.comment.open-data-language"
-            }
-          },
-          "end": "\\*/",
-          "endCaptures": {
-            "0": {
-              "name": "punctuation.definition.comment.open-data-language"
-            }
-          }
-        },
         {
           "begin": "//",
           "beginCaptures": {
