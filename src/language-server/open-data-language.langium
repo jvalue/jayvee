@@ -1,39 +1,37 @@
 grammar OpenDataLanguage
 
 entry Model:
-  (blocks+=Block | schemas+=Schema | pipes+=Pipe)*;
+  (blocks+=Block | layouts+=Layout | pipes+=Pipe)*;
 
 Block:
-  'block' name=ID 'typeof' type=(CSVFileExtractor | SchemaValidator | PostgresLoader);
+  'block' name=ID 'oftype' type=(CSVFileExtractor | LayoutValidator | PostgresLoader);
 
 CSVFileExtractor:
   'CSVFileExtractor' '{'
     'url' ':' url=STRING ';'
   '}';
 
-SchemaValidator:
-  'SchemaValidator' '{'
-    'schema' ':' schema=[Schema] ';'
+LayoutValidator:
+  'LayoutValidator' '{'
+    'layout' ':' layout=[Layout] ';'
   '}';
 
-PostgresLoader:
-  'PostgresLoader' '{'
-    'uri' ':' uri=STRING ';'
+PostgresLoader returns string:
+  'PostgresLoader' '{' '}';
+
+Layout:
+  'layout' name=ID '{'
+    (sections+=Section)*
   '}';
 
-Schema:
-  'schema' name=ID '{'
-    (selections+=Selection)*
-  '}';
+Section:
+  ColumnSection | RowSection;
 
-Selection:
-  ColumnSelection | RowSelection;
-
-ColumnSelection:
+ColumnSection:
   // Uses ID as terminal for columnId because an additional terminal would conflict with ID
   'column' columnId=ID ':' type=Type ';';
 
-RowSelection:
+RowSection:
   (header?='header')? 'row' rowId=INT ':' type=Type ';';
 
 Type returns string:

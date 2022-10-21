@@ -1,7 +1,7 @@
 // Monarch syntax highlighting for the open-data-language language.
 export default {
     keywords: [
-        'block','column','CSVFileExtractor','decimal','from','header','integer','pipe','PostgresLoader','row','schema','SchemaValidator','text','to','typeof','uri','url'
+        'block','column','CSVFileExtractor','decimal','from','header','integer','layout','LayoutValidator','oftype','pipe','PostgresLoader','row','text','to','url'
     ],
     operators: [
         ';',':'

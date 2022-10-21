@@ -32,12 +32,12 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
           },
           {
             "$type": "Assignment",
-            "feature": "schemas",
+            "feature": "layouts",
             "operator": "+=",
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$refText": "Schema"
+                "$refText": "Layout"
               },
               "arguments": []
             }
@@ -87,7 +87,7 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
           },
           {
             "$type": "Keyword",
-            "value": "typeof"
+            "value": "oftype"
           },
           {
             "$type": "Assignment",
@@ -106,7 +106,7 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
                 {
                   "$type": "RuleCall",
                   "rule": {
-                    "$refText": "SchemaValidator"
+                    "$refText": "LayoutValidator"
                   },
                   "arguments": []
                 },
@@ -182,13 +182,13 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
     },
     {
       "$type": "ParserRule",
-      "name": "SchemaValidator",
+      "name": "LayoutValidator",
       "definition": {
         "$type": "Group",
         "elements": [
           {
             "$type": "Keyword",
-            "value": "SchemaValidator"
+            "value": "LayoutValidator"
           },
           {
             "$type": "Keyword",
@@ -196,7 +196,7 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
           },
           {
             "$type": "Keyword",
-            "value": "schema"
+            "value": "layout"
           },
           {
             "$type": "Keyword",
@@ -204,12 +204,12 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
           },
           {
             "$type": "Assignment",
-            "feature": "schema",
+            "feature": "layout",
             "operator": "=",
             "terminal": {
               "$type": "CrossReference",
               "type": {
-                "$refText": "Schema"
+                "$refText": "Layout"
               },
               "deprecatedSyntax": false
             }
@@ -234,6 +234,7 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
     {
       "$type": "ParserRule",
       "name": "PostgresLoader",
+      "dataType": "string",
       "definition": {
         "$type": "Group",
         "elements": [
@@ -244,30 +245,6 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
           {
             "$type": "Keyword",
             "value": "{"
-          },
-          {
-            "$type": "Keyword",
-            "value": "uri"
-          },
-          {
-            "$type": "Keyword",
-            "value": ":"
-          },
-          {
-            "$type": "Assignment",
-            "feature": "uri",
-            "operator": "=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$refText": "STRING"
-              },
-              "arguments": []
-            }
-          },
-          {
-            "$type": "Keyword",
-            "value": ";"
           },
           {
             "$type": "Keyword",
@@ -284,13 +261,13 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
     },
     {
       "$type": "ParserRule",
-      "name": "Schema",
+      "name": "Layout",
       "definition": {
         "$type": "Group",
         "elements": [
           {
             "$type": "Keyword",
-            "value": "schema"
+            "value": "layout"
           },
           {
             "$type": "Assignment",
@@ -310,12 +287,12 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
           },
           {
             "$type": "Assignment",
-            "feature": "selections",
+            "feature": "sections",
             "operator": "+=",
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$refText": "Selection"
+                "$refText": "Section"
               },
               "arguments": []
             },
@@ -336,21 +313,21 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
     },
     {
       "$type": "ParserRule",
-      "name": "Selection",
+      "name": "Section",
       "definition": {
         "$type": "Alternatives",
         "elements": [
           {
             "$type": "RuleCall",
             "rule": {
-              "$refText": "ColumnSelection"
+              "$refText": "ColumnSection"
             },
             "arguments": []
           },
           {
             "$type": "RuleCall",
             "rule": {
-              "$refText": "RowSelection"
+              "$refText": "RowSection"
             },
             "arguments": []
           }
@@ -365,7 +342,7 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
     },
     {
       "$type": "ParserRule",
-      "name": "ColumnSelection",
+      "name": "ColumnSection",
       "definition": {
         "$type": "Group",
         "elements": [
@@ -416,7 +393,7 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
     },
     {
       "$type": "ParserRule",
-      "name": "RowSelection",
+      "name": "RowSection",
       "definition": {
         "$type": "Group",
         "elements": [

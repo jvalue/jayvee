@@ -7,12 +7,14 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import { AstNode, AstReflection, Reference, ReferenceInfo, isAstNode, TypeMetaData } from 'langium';
 
-export type Selection = ColumnSelection | RowSelection;
+export type PostgresLoader = string;
 
-export const Selection = 'Selection';
+export type Section = ColumnSection | RowSection;
 
-export function isSelection(item: unknown): item is Selection {
-    return reflection.isInstance(item, Selection);
+export const Section = 'Section';
+
+export function isSection(item: unknown): item is Section {
+    return reflection.isInstance(item, Section);
 }
 
 export type Type = 'decimal' | 'integer' | 'text';
@@ -20,7 +22,7 @@ export type Type = 'decimal' | 'integer' | 'text';
 export interface Block extends AstNode {
     readonly $container: Model;
     name: string
-    type: CSVFileExtractor | PostgresLoader | SchemaValidator
+    type: CSVFileExtractor | LayoutValidator | PostgresLoader
 }
 
 export const Block = 'Block';
@@ -29,16 +31,16 @@ export function isBlock(item: unknown): item is Block {
     return reflection.isInstance(item, Block);
 }
 
-export interface ColumnSelection extends AstNode {
-    readonly $container: Schema;
+export interface ColumnSection extends AstNode {
+    readonly $container: Layout;
     columnId: string
     type: Type
 }
 
-export const ColumnSelection = 'ColumnSelection';
+export const ColumnSection = 'ColumnSection';
 
-export function isColumnSelection(item: unknown): item is ColumnSelection {
-    return reflection.isInstance(item, ColumnSelection);
+export function isColumnSection(item: unknown): item is ColumnSection {
+    return reflection.isInstance(item, ColumnSection);
 }
 
 export interface CSVFileExtractor extends AstNode {
@@ -52,10 +54,33 @@ export function isCSVFileExtractor(item: unknown): item is CSVFileExtractor {
     return reflection.isInstance(item, CSVFileExtractor);
 }
 
+export interface Layout extends AstNode {
+    readonly $container: Model;
+    name: string
+    sections: Array<Section>
+}
+
+export const Layout = 'Layout';
+
+export function isLayout(item: unknown): item is Layout {
+    return reflection.isInstance(item, Layout);
+}
+
+export interface LayoutValidator extends AstNode {
+    readonly $container: Block;
+    layout: Reference<Layout>
+}
+
+export const LayoutValidator = 'LayoutValidator';
+
+export function isLayoutValidator(item: unknown): item is LayoutValidator {
+    return reflection.isInstance(item, LayoutValidator);
+}
+
 export interface Model extends AstNode {
     blocks: Array<Block>
+    layouts: Array<Layout>
     pipes: Array<Pipe>
-    schemas: Array<Schema>
 }
 
 export const Model = 'Model';
@@ -76,59 +101,25 @@ export function isPipe(item: unknown): item is Pipe {
     return reflection.isInstance(item, Pipe);
 }
 
-export interface PostgresLoader extends AstNode {
-    readonly $container: Block;
-    uri: string
-}
-
-export const PostgresLoader = 'PostgresLoader';
-
-export function isPostgresLoader(item: unknown): item is PostgresLoader {
-    return reflection.isInstance(item, PostgresLoader);
-}
-
-export interface RowSelection extends AstNode {
-    readonly $container: Schema;
+export interface RowSection extends AstNode {
+    readonly $container: Layout;
     header: boolean
     rowId: number
     type: Type
 }
 
-export const RowSelection = 'RowSelection';
+export const RowSection = 'RowSection';
 
-export function isRowSelection(item: unknown): item is RowSelection {
-    return reflection.isInstance(item, RowSelection);
+export function isRowSection(item: unknown): item is RowSection {
+    return reflection.isInstance(item, RowSection);
 }
 
-export interface Schema extends AstNode {
-    readonly $container: Model;
-    name: string
-    selections: Array<Selection>
-}
-
-export const Schema = 'Schema';
-
-export function isSchema(item: unknown): item is Schema {
-    return reflection.isInstance(item, Schema);
-}
-
-export interface SchemaValidator extends AstNode {
-    readonly $container: Block;
-    schema: Reference<Schema>
-}
-
-export const SchemaValidator = 'SchemaValidator';
-
-export function isSchemaValidator(item: unknown): item is SchemaValidator {
-    return reflection.isInstance(item, SchemaValidator);
-}
-
-export type OpenDataLanguageAstType = 'Block' | 'CSVFileExtractor' | 'ColumnSelection' | 'Model' | 'Pipe' | 'PostgresLoader' | 'RowSelection' | 'Schema' | 'SchemaValidator' | 'Selection';
+export type OpenDataLanguageAstType = 'Block' | 'CSVFileExtractor' | 'ColumnSection' | 'Layout' | 'LayoutValidator' | 'Model' | 'Pipe' | 'RowSection' | 'Section';
 
 export class OpenDataLanguageAstReflection implements AstReflection {
 
     getAllTypes(): string[] {
-        return ['Block', 'CSVFileExtractor', 'ColumnSelection', 'Model', 'Pipe', 'PostgresLoader', 'RowSelection', 'Schema', 'SchemaValidator', 'Selection'];
+        return ['Block', 'CSVFileExtractor', 'ColumnSection', 'Layout', 'LayoutValidator', 'Model', 'Pipe', 'RowSection', 'Section'];
     }
 
     isInstance(node: unknown, type: string): boolean {
@@ -140,9 +131,9 @@ export class OpenDataLanguageAstReflection implements AstReflection {
             return true;
         }
         switch (subtype) {
-            case ColumnSelection:
-            case RowSelection: {
-                return this.isSubtype(Selection, supertype);
+            case ColumnSection:
+            case RowSection: {
+                return this.isSubtype(Section, supertype);
             }
             default: {
                 return false;
@@ -153,14 +144,14 @@ export class OpenDataLanguageAstReflection implements AstReflection {
     getReferenceType(refInfo: ReferenceInfo): string {
         const referenceId = `${refInfo.container.$type}:${refInfo.property}`;
         switch (referenceId) {
+            case 'LayoutValidator:layout': {
+                return Layout;
+            }
             case 'Pipe:from': {
                 return Block;
             }
             case 'Pipe:to': {
                 return Block;
-            }
-            case 'SchemaValidator:schema': {
-                return Schema;
             }
             default: {
                 throw new Error(`${referenceId} is not a valid reference id.`);
@@ -170,29 +161,29 @@ export class OpenDataLanguageAstReflection implements AstReflection {
 
     getTypeMetaData(type: string): TypeMetaData {
         switch (type) {
+            case 'Layout': {
+                return {
+                    name: 'Layout',
+                    mandatory: [
+                        { name: 'sections', type: 'array' }
+                    ]
+                };
+            }
             case 'Model': {
                 return {
                     name: 'Model',
                     mandatory: [
                         { name: 'blocks', type: 'array' },
-                        { name: 'pipes', type: 'array' },
-                        { name: 'schemas', type: 'array' }
+                        { name: 'layouts', type: 'array' },
+                        { name: 'pipes', type: 'array' }
                     ]
                 };
             }
-            case 'RowSelection': {
+            case 'RowSection': {
                 return {
-                    name: 'RowSelection',
+                    name: 'RowSection',
                     mandatory: [
                         { name: 'header', type: 'boolean' }
-                    ]
-                };
-            }
-            case 'Schema': {
-                return {
-                    name: 'Schema',
-                    mandatory: [
-                        { name: 'selections', type: 'array' }
                     ]
                 };
             }
