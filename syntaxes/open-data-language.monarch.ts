@@ -1,12 +1,12 @@
 // Monarch syntax highlighting for the open-data-language language.
 export default {
     keywords: [
-        'Hello','person'
+        'block','column','CSVFileExtractor','decimal','from','header','integer','pipe','PostgresLoader','row','schema','SchemaValidator','text','to','typeof','uri','url'
     ],
     operators: [
-        '!'
+        ';',':'
     ],
-    symbols:  /!/,
+    symbols:  /;|:|\{|\}/,
 
     tokenizer: {
         initial: [
@@ -18,13 +18,9 @@ export default {
         ],
         whitespace: [
             { regex: /\s+/, action: {"token":"white"} },
-            { regex: /\/\*/, action: {"token":"comment","next":"@comment"} },
             { regex: /\/\/[^\n\r]*/, action: {"token":"comment"} },
         ],
         comment: [
-            { regex: /[^\/\*]+/, action: {"token":"comment"} },
-            { regex: /\*\//, action: {"token":"comment","next":"@pop"} },
-            { regex: /[\/\*]/, action: {"token":"comment"} },
         ],
     }
 };
