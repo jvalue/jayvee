@@ -58,21 +58,3 @@ export async function extractAstNode<T extends AstNode>(
 ): Promise<T> {
   return (await extractDocument(fileName, services)).parseResult.value as T;
 }
-
-interface FilePathData {
-  destination: string;
-  name: string;
-}
-
-export function extractDestinationAndName(
-  filePath: string,
-  destination: string | undefined,
-): FilePathData {
-  filePath = path
-    .basename(filePath, path.extname(filePath))
-    .replace(/[.-]/g, '');
-  return {
-    destination: destination ?? path.join(path.dirname(filePath), 'generated'),
-    name: path.basename(filePath),
-  };
-}
