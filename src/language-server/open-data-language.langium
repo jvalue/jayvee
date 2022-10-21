@@ -1,111 +1,52 @@
 grammar OpenDataLanguage
 
 entry Model:
-  (libraries+=Library | pipelines+=Pipeline)*;
-
-Library:
-  'library' name=ID '{'
-    (elements+=LibraryElement)*
-  '}';
-
-LibraryElement:
-  Export | Import | Valuetype | Block;
-
-Export:
-  'export' element=[ExportableElement:QualifiedName] ('as' rename=ID)? ';';
-
-Import:
-  'import' valuetype=[ExportableElement:QualifiedName] ('as' rename=ID)? ';';
-
-ExportableElement:
-  Valuetype | Block;
-
-Pipeline:
-  'pipeline' name=ID '{'
-    (elements+=PipelineElement)*
-  '}';
-
-PipelineElement:
-  Import | Valuetype | Block | Pipe;
-
-Valuetype:
-  'valuetype' name=ID
-  'extends' (
-    hasSuperTypeString?='String' |
-    hasSuperTypeInteger?='Integer' |
-    superType=[Valuetype:QualifiedName]
-  ) '{'
-    (attributes+=Attribute)*
-  '}';
+  (blocks+=Block | schemas+=Schema | pipes+=Pipe)*;
 
 Block:
-  Source | Sink | Step;
+  'block' name=ID 'typeof' type=(CSVFileExtractor | SchemaValidator | PostgresLoader);
 
-Source:
-  'source' name=ID 'typeof' sourceType=(
-    'Http'
-  ) '{'
-    ('inputs' ':' '[' ']' ';')?
-    (outputsAttribute=OutputsAttribute)?
-    (attributes+=Attribute)*
+CSVFileExtractor:
+  'CSVFileExtractor' '{'
+    'url' ':' url=STRING ';'
   '}';
 
-Sink:
-  'sink' name=ID 'typeof' sourceType=(
-    'RelationalDatabase' |
-    'File'
-  ) '{'
-    (inputsAttribute=InputsAttribute)?
-    ('outputs' ':' '[' ']' ';')?
-    (attributes+=Attribute)*
+SchemaValidator:
+  'SchemaValidator' '{'
+    'schema' ':' schema=[Schema] ';'
   '}';
 
-Step:
-  'step' name=ID 'typeof' stepType=(
-    'CSVTable' |
-    'TableSelection' |
-    'SchemaGuard'
-  ) '{'
-    (inputsAttribute=InputsAttribute)?
-    (outputsAttribute=OutputsAttribute)?
-    (attributes+=Attribute)*
+PostgresLoader:
+  'PostgresLoader' '{'
+    'uri' ':' uri=STRING ';'
   '}';
 
-InputsAttribute:
-  'inputs' ':' '[' (inputs+=Input)? (',' inputs+=Input)* ']' ';';
+Schema:
+  'schema' name=ID '{'
+    (selections+=Selection)*
+  '}';
 
-Input:
-  name=ID 'as' rename=ID;
+Selection:
+  ColumnSelection | RowSelection;
 
-OutputsAttribute:
-  'outputs' ':' '[' (outputs+=Output)? (',' outputs+=Output)* ']' ';';
+ColumnSelection:
+  // Uses ID as terminal for columnId because an additional terminal would conflict with ID
+  'column' columnId=ID ':' type=Type ';';
 
-Output:
-  name=ID 'as' rename=ID;
+RowSelection:
+  (header?='header')? 'row' rowId=INT ':' type=Type ';';
+
+Type returns string:
+  'text' | 'decimal' | 'integer';
 
 Pipe:
   'pipe' '{'
-    ('from' ':' fromOutput=QualifiedName) &
-    ('to' ':' toInput=QualifiedName)
+    'from' ':' from=[Block] ';'
+    'to' ':' to=[Block] ';' 
   '}';
 
-Attribute:
-  name=ID ':' (
-    AttributeValue | 
-    ('requires' runtimeParameter=ID
-      ('default' defaultValue=AttributeValue)?
-    )
-  ) ';';
-
-AttributeValue:
-  value=(STRING | INT | TRUE | FALSE);
-
-QualifiedName returns string:
-  ID ('.' ID)*;
-
 hidden terminal WS: /\s+/;
-terminal TRUE returns boolean: /true/;
-terminal FALSE returns boolean: /false/;
+
 terminal ID: /[_a-zA-Z][\w_]*/;
 terminal INT returns number: /[0-9]+/;
 terminal STRING: /"[^"]*"|'[^']*'/;

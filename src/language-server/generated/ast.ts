@@ -7,7 +7,21 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import { AstNode, AstReflection, Reference, ReferenceInfo, isAstNode, TypeMetaData } from 'langium';
 
-export type Block = Sink | Source | Step;
+export type Selection = ColumnSelection | RowSelection;
+
+export const Selection = 'Selection';
+
+export function isSelection(item: unknown): item is Selection {
+    return reflection.isInstance(item, Selection);
+}
+
+export type Type = 'decimal' | 'integer' | 'text';
+
+export interface Block extends AstNode {
+    readonly $container: Model;
+    name: string
+    type: CSVFileExtractor | PostgresLoader | SchemaValidator
+}
 
 export const Block = 'Block';
 
@@ -15,118 +29,33 @@ export function isBlock(item: unknown): item is Block {
     return reflection.isInstance(item, Block);
 }
 
-export type ExportableElement = Block | Valuetype;
-
-export const ExportableElement = 'ExportableElement';
-
-export function isExportableElement(item: unknown): item is ExportableElement {
-    return reflection.isInstance(item, ExportableElement);
+export interface ColumnSelection extends AstNode {
+    readonly $container: Schema;
+    columnId: string
+    type: Type
 }
 
-export type LibraryElement = Block | Export | Import | Valuetype;
+export const ColumnSelection = 'ColumnSelection';
 
-export const LibraryElement = 'LibraryElement';
-
-export function isLibraryElement(item: unknown): item is LibraryElement {
-    return reflection.isInstance(item, LibraryElement);
+export function isColumnSelection(item: unknown): item is ColumnSelection {
+    return reflection.isInstance(item, ColumnSelection);
 }
 
-export type PipelineElement = Block | Import | Pipe | Valuetype;
-
-export const PipelineElement = 'PipelineElement';
-
-export function isPipelineElement(item: unknown): item is PipelineElement {
-    return reflection.isInstance(item, PipelineElement);
+export interface CSVFileExtractor extends AstNode {
+    readonly $container: Block;
+    url: string
 }
 
-export type QualifiedName = string;
+export const CSVFileExtractor = 'CSVFileExtractor';
 
-export interface Attribute extends AstNode {
-    readonly $container: Sink | Source | Step | Valuetype;
-    defaultValue?: AttributeValue
-    name: string
-    runtimeParameter: string
-}
-
-export const Attribute = 'Attribute';
-
-export function isAttribute(item: unknown): item is Attribute {
-    return reflection.isInstance(item, Attribute);
-}
-
-export interface AttributeValue extends AstNode {
-    readonly $container: Attribute;
-    value: boolean | number | string
-}
-
-export const AttributeValue = 'AttributeValue';
-
-export function isAttributeValue(item: unknown): item is AttributeValue {
-    return reflection.isInstance(item, AttributeValue);
-}
-
-export interface Export extends AstNode {
-    readonly $container: Library | Pipeline;
-    element: Reference<ExportableElement>
-    rename?: string
-}
-
-export const Export = 'Export';
-
-export function isExport(item: unknown): item is Export {
-    return reflection.isInstance(item, Export);
-}
-
-export interface Import extends AstNode {
-    readonly $container: Library | Pipeline;
-    rename?: string
-    valuetype: Reference<ExportableElement>
-}
-
-export const Import = 'Import';
-
-export function isImport(item: unknown): item is Import {
-    return reflection.isInstance(item, Import);
-}
-
-export interface Input extends AstNode {
-    readonly $container: InputsAttribute;
-    name: string
-    rename: string
-}
-
-export const Input = 'Input';
-
-export function isInput(item: unknown): item is Input {
-    return reflection.isInstance(item, Input);
-}
-
-export interface InputsAttribute extends AstNode {
-    readonly $container: Sink | Step;
-    inputs: Array<Input>
-}
-
-export const InputsAttribute = 'InputsAttribute';
-
-export function isInputsAttribute(item: unknown): item is InputsAttribute {
-    return reflection.isInstance(item, InputsAttribute);
-}
-
-export interface Library extends AstNode {
-    readonly $container: Model;
-    elements: Array<LibraryElement>
-    name: string
-}
-
-export const Library = 'Library';
-
-export function isLibrary(item: unknown): item is Library {
-    return reflection.isInstance(item, Library);
+export function isCSVFileExtractor(item: unknown): item is CSVFileExtractor {
+    return reflection.isInstance(item, CSVFileExtractor);
 }
 
 export interface Model extends AstNode {
-    libraries: Array<Library>
-    pipelines: Array<Pipeline>
+    blocks: Array<Block>
+    pipes: Array<Pipe>
+    schemas: Array<Schema>
 }
 
 export const Model = 'Model';
@@ -135,33 +64,10 @@ export function isModel(item: unknown): item is Model {
     return reflection.isInstance(item, Model);
 }
 
-export interface Output extends AstNode {
-    readonly $container: OutputsAttribute;
-    name: string
-    rename: string
-}
-
-export const Output = 'Output';
-
-export function isOutput(item: unknown): item is Output {
-    return reflection.isInstance(item, Output);
-}
-
-export interface OutputsAttribute extends AstNode {
-    readonly $container: Source | Step;
-    outputs: Array<Output>
-}
-
-export const OutputsAttribute = 'OutputsAttribute';
-
-export function isOutputsAttribute(item: unknown): item is OutputsAttribute {
-    return reflection.isInstance(item, OutputsAttribute);
-}
-
 export interface Pipe extends AstNode {
-    readonly $container: Library | Pipeline;
-    fromOutput: QualifiedName
-    toInput: QualifiedName
+    readonly $container: Model;
+    from: Reference<Block>
+    to: Reference<Block>
 }
 
 export const Pipe = 'Pipe';
@@ -170,82 +76,59 @@ export function isPipe(item: unknown): item is Pipe {
     return reflection.isInstance(item, Pipe);
 }
 
-export interface Pipeline extends AstNode {
+export interface PostgresLoader extends AstNode {
+    readonly $container: Block;
+    uri: string
+}
+
+export const PostgresLoader = 'PostgresLoader';
+
+export function isPostgresLoader(item: unknown): item is PostgresLoader {
+    return reflection.isInstance(item, PostgresLoader);
+}
+
+export interface RowSelection extends AstNode {
+    readonly $container: Schema;
+    header: boolean
+    rowId: number
+    type: Type
+}
+
+export const RowSelection = 'RowSelection';
+
+export function isRowSelection(item: unknown): item is RowSelection {
+    return reflection.isInstance(item, RowSelection);
+}
+
+export interface Schema extends AstNode {
     readonly $container: Model;
-    elements: Array<PipelineElement>
     name: string
+    selections: Array<Selection>
 }
 
-export const Pipeline = 'Pipeline';
+export const Schema = 'Schema';
 
-export function isPipeline(item: unknown): item is Pipeline {
-    return reflection.isInstance(item, Pipeline);
+export function isSchema(item: unknown): item is Schema {
+    return reflection.isInstance(item, Schema);
 }
 
-export interface Sink extends AstNode {
-    readonly $container: Library | Pipeline;
-    attributes: Array<Attribute>
-    inputsAttribute?: InputsAttribute
-    name: string
-    sourceType: 'File' | 'RelationalDatabase'
+export interface SchemaValidator extends AstNode {
+    readonly $container: Block;
+    schema: Reference<Schema>
 }
 
-export const Sink = 'Sink';
+export const SchemaValidator = 'SchemaValidator';
 
-export function isSink(item: unknown): item is Sink {
-    return reflection.isInstance(item, Sink);
+export function isSchemaValidator(item: unknown): item is SchemaValidator {
+    return reflection.isInstance(item, SchemaValidator);
 }
 
-export interface Source extends AstNode {
-    readonly $container: Library | Pipeline;
-    attributes: Array<Attribute>
-    name: string
-    outputsAttribute?: OutputsAttribute
-    sourceType: 'Http'
-}
-
-export const Source = 'Source';
-
-export function isSource(item: unknown): item is Source {
-    return reflection.isInstance(item, Source);
-}
-
-export interface Step extends AstNode {
-    readonly $container: Library | Pipeline;
-    attributes: Array<Attribute>
-    inputsAttribute?: InputsAttribute
-    name: string
-    outputsAttribute?: OutputsAttribute
-    stepType: 'CSVTable' | 'SchemaGuard' | 'TableSelection'
-}
-
-export const Step = 'Step';
-
-export function isStep(item: unknown): item is Step {
-    return reflection.isInstance(item, Step);
-}
-
-export interface Valuetype extends AstNode {
-    readonly $container: Library | Pipeline;
-    attributes: Array<Attribute>
-    hasSuperTypeInteger: boolean
-    hasSuperTypeString: boolean
-    name: string
-    superType?: Reference<Valuetype>
-}
-
-export const Valuetype = 'Valuetype';
-
-export function isValuetype(item: unknown): item is Valuetype {
-    return reflection.isInstance(item, Valuetype);
-}
-
-export type OpenDataLanguageAstType = 'Attribute' | 'AttributeValue' | 'Block' | 'Export' | 'ExportableElement' | 'Import' | 'Input' | 'InputsAttribute' | 'Library' | 'LibraryElement' | 'Model' | 'Output' | 'OutputsAttribute' | 'Pipe' | 'Pipeline' | 'PipelineElement' | 'Sink' | 'Source' | 'Step' | 'Valuetype';
+export type OpenDataLanguageAstType = 'Block' | 'CSVFileExtractor' | 'ColumnSelection' | 'Model' | 'Pipe' | 'PostgresLoader' | 'RowSelection' | 'Schema' | 'SchemaValidator' | 'Selection';
 
 export class OpenDataLanguageAstReflection implements AstReflection {
 
     getAllTypes(): string[] {
-        return ['Attribute', 'AttributeValue', 'Block', 'Export', 'ExportableElement', 'Import', 'Input', 'InputsAttribute', 'Library', 'LibraryElement', 'Model', 'Output', 'OutputsAttribute', 'Pipe', 'Pipeline', 'PipelineElement', 'Sink', 'Source', 'Step', 'Valuetype'];
+        return ['Block', 'CSVFileExtractor', 'ColumnSelection', 'Model', 'Pipe', 'PostgresLoader', 'RowSelection', 'Schema', 'SchemaValidator', 'Selection'];
     }
 
     isInstance(node: unknown, type: string): boolean {
@@ -257,23 +140,9 @@ export class OpenDataLanguageAstReflection implements AstReflection {
             return true;
         }
         switch (subtype) {
-            case Export: {
-                return this.isSubtype(LibraryElement, supertype);
-            }
-            case Import: {
-                return this.isSubtype(LibraryElement, supertype) || this.isSubtype(PipelineElement, supertype);
-            }
-            case Pipe: {
-                return this.isSubtype(PipelineElement, supertype);
-            }
-            case Sink:
-            case Source:
-            case Step: {
-                return this.isSubtype(Block, supertype);
-            }
-            case Valuetype:
-            case Block: {
-                return this.isSubtype(LibraryElement, supertype) || this.isSubtype(ExportableElement, supertype) || this.isSubtype(PipelineElement, supertype);
+            case ColumnSelection:
+            case RowSelection: {
+                return this.isSubtype(Selection, supertype);
             }
             default: {
                 return false;
@@ -284,14 +153,14 @@ export class OpenDataLanguageAstReflection implements AstReflection {
     getReferenceType(refInfo: ReferenceInfo): string {
         const referenceId = `${refInfo.container.$type}:${refInfo.property}`;
         switch (referenceId) {
-            case 'Export:element': {
-                return ExportableElement;
+            case 'Pipe:from': {
+                return Block;
             }
-            case 'Import:valuetype': {
-                return ExportableElement;
+            case 'Pipe:to': {
+                return Block;
             }
-            case 'Valuetype:superType': {
-                return Valuetype;
+            case 'SchemaValidator:schema': {
+                return Schema;
             }
             default: {
                 throw new Error(`${referenceId} is not a valid reference id.`);
@@ -301,78 +170,29 @@ export class OpenDataLanguageAstReflection implements AstReflection {
 
     getTypeMetaData(type: string): TypeMetaData {
         switch (type) {
-            case 'InputsAttribute': {
-                return {
-                    name: 'InputsAttribute',
-                    mandatory: [
-                        { name: 'inputs', type: 'array' }
-                    ]
-                };
-            }
-            case 'Library': {
-                return {
-                    name: 'Library',
-                    mandatory: [
-                        { name: 'elements', type: 'array' }
-                    ]
-                };
-            }
             case 'Model': {
                 return {
                     name: 'Model',
                     mandatory: [
-                        { name: 'libraries', type: 'array' },
-                        { name: 'pipelines', type: 'array' }
+                        { name: 'blocks', type: 'array' },
+                        { name: 'pipes', type: 'array' },
+                        { name: 'schemas', type: 'array' }
                     ]
                 };
             }
-            case 'OutputsAttribute': {
+            case 'RowSelection': {
                 return {
-                    name: 'OutputsAttribute',
+                    name: 'RowSelection',
                     mandatory: [
-                        { name: 'outputs', type: 'array' }
+                        { name: 'header', type: 'boolean' }
                     ]
                 };
             }
-            case 'Pipeline': {
+            case 'Schema': {
                 return {
-                    name: 'Pipeline',
+                    name: 'Schema',
                     mandatory: [
-                        { name: 'elements', type: 'array' }
-                    ]
-                };
-            }
-            case 'Sink': {
-                return {
-                    name: 'Sink',
-                    mandatory: [
-                        { name: 'attributes', type: 'array' }
-                    ]
-                };
-            }
-            case 'Source': {
-                return {
-                    name: 'Source',
-                    mandatory: [
-                        { name: 'attributes', type: 'array' }
-                    ]
-                };
-            }
-            case 'Step': {
-                return {
-                    name: 'Step',
-                    mandatory: [
-                        { name: 'attributes', type: 'array' }
-                    ]
-                };
-            }
-            case 'Valuetype': {
-                return {
-                    name: 'Valuetype',
-                    mandatory: [
-                        { name: 'attributes', type: 'array' },
-                        { name: 'hasSuperTypeInteger', type: 'boolean' },
-                        { name: 'hasSuperTypeString', type: 'boolean' }
+                        { name: 'selections', type: 'array' }
                     ]
                 };
             }
