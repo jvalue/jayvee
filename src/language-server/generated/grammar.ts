@@ -3,7 +3,7 @@
  * DO NOT EDIT MANUALLY!
  ******************************************************************************/
 
-import { Grammar, loadGrammarFromJson } from "langium";
+import { loadGrammarFromJson, Grammar } from 'langium';
 
 let loadedOpenDataLanguageGrammar: Grammar | undefined;
 export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGrammar ?? (loadedOpenDataLanguageGrammar = loadGrammarFromJson(`{

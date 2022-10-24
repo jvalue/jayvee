@@ -5,7 +5,7 @@
 
 /* eslint-disable @typescript-eslint/array-type */
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { AstNode, AstReflection, isAstNode, Reference, ReferenceInfo, TypeMetaData } from "langium";
+import { AstNode, AstReflection, Reference, ReferenceInfo, isAstNode, TypeMetaData } from 'langium';
 
 export type BlockType = CSVFileExtractor | LayoutValidator | PostgresLoader;
 
