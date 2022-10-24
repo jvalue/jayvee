@@ -5,9 +5,15 @@
 
 /* eslint-disable @typescript-eslint/array-type */
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { AstNode, AstReflection, Reference, ReferenceInfo, isAstNode, TypeMetaData } from 'langium';
+import { AstNode, AstReflection, isAstNode, Reference, ReferenceInfo, TypeMetaData } from "langium";
 
-export type PostgresLoader = string;
+export type BlockType = CSVFileExtractor | LayoutValidator | PostgresLoader;
+
+export const BlockType = 'BlockType';
+
+export function isBlockType(item: unknown): item is BlockType {
+    return reflection.isInstance(item, BlockType);
+}
 
 export type Section = ColumnSection | RowSection;
 
@@ -22,7 +28,7 @@ export type Type = 'decimal' | 'integer' | 'text';
 export interface Block extends AstNode {
     readonly $container: Model;
     name: string
-    type: CSVFileExtractor | LayoutValidator | PostgresLoader
+    type: BlockType
 }
 
 export const Block = 'Block';
@@ -101,6 +107,17 @@ export function isPipe(item: unknown): item is Pipe {
     return reflection.isInstance(item, Pipe);
 }
 
+export interface PostgresLoader extends AstNode {
+    readonly $container: Block;
+    name: 'PostgresLoader'
+}
+
+export const PostgresLoader = 'PostgresLoader';
+
+export function isPostgresLoader(item: unknown): item is PostgresLoader {
+    return reflection.isInstance(item, PostgresLoader);
+}
+
 export interface RowSection extends AstNode {
     readonly $container: Layout;
     header: boolean
@@ -114,12 +131,12 @@ export function isRowSection(item: unknown): item is RowSection {
     return reflection.isInstance(item, RowSection);
 }
 
-export type OpenDataLanguageAstType = 'Block' | 'CSVFileExtractor' | 'ColumnSection' | 'Layout' | 'LayoutValidator' | 'Model' | 'Pipe' | 'RowSection' | 'Section';
+export type OpenDataLanguageAstType = 'Block' | 'BlockType' | 'CSVFileExtractor' | 'ColumnSection' | 'Layout' | 'LayoutValidator' | 'Model' | 'Pipe' | 'PostgresLoader' | 'RowSection' | 'Section';
 
 export class OpenDataLanguageAstReflection implements AstReflection {
 
     getAllTypes(): string[] {
-        return ['Block', 'CSVFileExtractor', 'ColumnSection', 'Layout', 'LayoutValidator', 'Model', 'Pipe', 'RowSection', 'Section'];
+        return ['Block', 'BlockType', 'CSVFileExtractor', 'ColumnSection', 'Layout', 'LayoutValidator', 'Model', 'Pipe', 'PostgresLoader', 'RowSection', 'Section'];
     }
 
     isInstance(node: unknown, type: string): boolean {
@@ -134,6 +151,11 @@ export class OpenDataLanguageAstReflection implements AstReflection {
             case ColumnSection:
             case RowSection: {
                 return this.isSubtype(Section, supertype);
+            }
+            case CSVFileExtractor:
+            case LayoutValidator:
+            case PostgresLoader: {
+                return this.isSubtype(BlockType, supertype);
             }
             default: {
                 return false;
