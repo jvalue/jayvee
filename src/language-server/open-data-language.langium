@@ -4,7 +4,10 @@ entry Model:
   (blocks+=Block | layouts+=Layout | pipes+=Pipe)*;
 
 Block:
-  'block' name=ID 'oftype' type=(CSVFileExtractor | LayoutValidator | PostgresLoader);
+  'block' name=ID 'oftype' type=BlockType;
+
+BlockType:
+  CSVFileExtractor | LayoutValidator | PostgresLoader;
 
 CSVFileExtractor:
   'CSVFileExtractor' '{'
@@ -16,8 +19,8 @@ LayoutValidator:
     'layout' ':' layout=[Layout] ';'
   '}';
 
-PostgresLoader returns string:
-  'PostgresLoader' '{' '}';
+PostgresLoader:
+  name='PostgresLoader' '{' '}';
 
 Layout:
   'layout' name=ID '{'
@@ -40,7 +43,7 @@ Type returns string:
 Pipe:
   'pipe' '{'
     'from' ':' from=[Block] ';'
-    'to' ':' to=[Block] ';' 
+    'to' ':' to=[Block] ';'
   '}';
 
 hidden terminal WS: /\s+/;

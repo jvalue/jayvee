@@ -94,31 +94,48 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
             "feature": "type",
             "operator": "=",
             "terminal": {
-              "$type": "Alternatives",
-              "elements": [
-                {
-                  "$type": "RuleCall",
-                  "rule": {
-                    "$refText": "CSVFileExtractor"
-                  },
-                  "arguments": []
-                },
-                {
-                  "$type": "RuleCall",
-                  "rule": {
-                    "$refText": "LayoutValidator"
-                  },
-                  "arguments": []
-                },
-                {
-                  "$type": "RuleCall",
-                  "rule": {
-                    "$refText": "PostgresLoader"
-                  },
-                  "arguments": []
-                }
-              ]
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "BlockType"
+              },
+              "arguments": []
             }
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "BlockType",
+      "definition": {
+        "$type": "Alternatives",
+        "elements": [
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$refText": "CSVFileExtractor"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$refText": "LayoutValidator"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$refText": "PostgresLoader"
+            },
+            "arguments": []
           }
         ]
       },
@@ -234,13 +251,17 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
     {
       "$type": "ParserRule",
       "name": "PostgresLoader",
-      "dataType": "string",
       "definition": {
         "$type": "Group",
         "elements": [
           {
-            "$type": "Keyword",
-            "value": "PostgresLoader"
+            "$type": "Assignment",
+            "feature": "name",
+            "operator": "=",
+            "terminal": {
+              "$type": "Keyword",
+              "value": "PostgresLoader"
+            }
           },
           {
             "$type": "Keyword",
