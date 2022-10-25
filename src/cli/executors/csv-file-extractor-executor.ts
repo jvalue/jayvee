@@ -12,8 +12,8 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
     super(block, undefinedType, sheetType);
   }
 
-  override execute(): Sheet {
+  override execute(): Promise<Sheet> {
     // TODO #8
-    return [['example'], ['csv'], ['table']];
+    return Promise.resolve([['example'], ['csv'], ['table']]);
   }
 }

@@ -19,10 +19,10 @@ export async function runAction(fileName: string): Promise<void> {
   const services =
     createOpenDataLanguageServices(NodeFileSystem).OpenDataLanguage;
   const model = await extractAstNode<Model>(fileName, services);
-  interpretPipelineModel(model);
+  await interpretPipelineModel(model);
 }
 
-function interpretPipelineModel(model: Model): void {
+async function interpretPipelineModel(model: Model): Promise<void> {
   const csvFileExtractors = model.blocks.filter((block) =>
     isCSVFileExtractor(block.type),
   );
@@ -60,7 +60,7 @@ function interpretPipelineModel(model: Model): void {
 
   checkExecutorCompatibility(executorSequence);
 
-  runExecutors(executorSequence);
+  await runExecutors(executorSequence);
 }
 
 function checkExecutorCompatibility(
@@ -82,10 +82,12 @@ function checkExecutorCompatibility(
   }
 }
 
-function runExecutors(executorSequence: Array<BlockExecutor<BlockType>>): void {
+async function runExecutors(
+  executorSequence: Array<BlockExecutor<BlockType>>,
+): Promise<void> {
   let value = undefined;
   for (const executor of executorSequence) {
-    value = executor.execute(value);
+    value = await executor.execute(value);
   }
 }
 
