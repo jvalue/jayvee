@@ -3,7 +3,11 @@ import { Sheet, sheetType, undefinedType } from '../data-types';
 
 import { BlockExecutor } from './block-executor';
 
-export class CSVFileExtractorExecutor extends BlockExecutor<CSVFileExtractor> {
+export class CSVFileExtractorExecutor extends BlockExecutor<
+  CSVFileExtractor,
+  void,
+  Sheet
+> {
   constructor(block: CSVFileExtractor) {
     super(block, undefinedType, sheetType);
   }

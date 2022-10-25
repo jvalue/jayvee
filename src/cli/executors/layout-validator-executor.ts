@@ -3,7 +3,11 @@ import { Sheet, Table, sheetType, tableType } from '../data-types';
 
 import { BlockExecutor } from './block-executor';
 
-export class LayoutValidatorExecutor extends BlockExecutor<LayoutValidator> {
+export class LayoutValidatorExecutor extends BlockExecutor<
+  LayoutValidator,
+  Sheet,
+  Table
+> {
   constructor(block: LayoutValidator) {
     super(block, sheetType, tableType);
   }

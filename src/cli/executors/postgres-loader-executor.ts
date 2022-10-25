@@ -3,7 +3,11 @@ import { Table, tableType, undefinedType } from '../data-types';
 
 import { BlockExecutor } from './block-executor';
 
-export class PostgresLoaderExecutor extends BlockExecutor<PostgresLoader> {
+export class PostgresLoaderExecutor extends BlockExecutor<
+  PostgresLoader,
+  Table,
+  void
+> {
   constructor(block: PostgresLoader) {
     super(block, tableType, undefinedType);
   }
