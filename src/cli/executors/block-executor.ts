@@ -16,5 +16,5 @@ export abstract class BlockExecutor<
     return this.outputDataType === blockAfter.inputDataType;
   }
 
-  abstract execute(input: InType): OutType;
+  abstract execute(input: InType): Promise<OutType>;
 }

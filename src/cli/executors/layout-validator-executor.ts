@@ -12,11 +12,11 @@ export class LayoutValidatorExecutor extends BlockExecutor<
     super(block, sheetType, tableType);
   }
 
-  override execute(input: Sheet): Table {
+  override execute(input: Sheet): Promise<Table> {
     // TODO #9
-    return {
+    return Promise.resolve({
       columnNames: ['col1', 'col2', 'col3'],
       data: input,
-    };
+    });
   }
 }

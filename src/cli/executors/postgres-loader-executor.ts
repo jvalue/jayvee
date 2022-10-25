@@ -12,8 +12,9 @@ export class PostgresLoaderExecutor extends BlockExecutor<
     super(block, tableType, undefinedType);
   }
 
-  override execute(input: Table): void {
+  override execute(input: Table): Promise<void> {
     // TODO #10
     console.log(input);
+    return Promise.resolve();
   }
 }
