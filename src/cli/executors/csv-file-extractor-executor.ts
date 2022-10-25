@@ -1,4 +1,6 @@
-import fetch from 'node-fetch'; // TODO: find other library that does not have compilation errors with latest version
+import { parseString as parseStringAsCsv } from '@fast-csv/parse';
+import { ParserOptionsArgs } from '@fast-csv/parse/build/src/ParserOptions';
+import fetch from 'node-fetch';
 
 import { CSVFileExtractor } from '../../language-server/generated/ast';
 import { Sheet, sheetType, undefinedType } from '../data-types';
@@ -15,13 +17,8 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
   }
 
   override async execute(): Promise<Sheet> {
-    // Fetch
-    await this.fetchRawData();
-
-    // Interpret
-    // TODO
-
-    return Promise.resolve([['example'], ['csv'], ['table']]);
+    const rawData = await this.fetchRawData();
+    return this.parseAsCsv(rawData);
   }
 
   private async fetchRawData(): Promise<string> {
@@ -34,5 +31,22 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
       );
     }
     return body;
+  }
+
+  private parseAsCsv(rawData: string): Promise<Sheet> {
+    return new Promise((resolve) => {
+      const csvData: Sheet = [];
+      const parseOptions: ParserOptionsArgs = {};
+      parseStringAsCsv(rawData, parseOptions)
+        .on('data', (data: string[]) => {
+          csvData.push(data);
+        })
+        .on('error', (error) => {
+          console.warn(`Could not parse row: ${error.message}`);
+        })
+        .on('end', () => {
+          resolve(csvData);
+        });
+    });
   }
 }
