@@ -7,19 +7,11 @@ import {
   isRowSection,
 } from '../../language-server/generated/ast';
 import { Sheet, Table, sheetType, tableType } from '../data-types';
-import { getColumn } from '../data-util';
+import { getColumn, getColumnIndexFromSelector } from '../data-util';
 import { getDataType } from '../datatypes';
 import { AbstractDataType } from '../datatypes/AbstractDataType';
 
 import { BlockExecutor } from './block-executor';
-
-function getColumnIndexFromSelector(selector: string): number {
-  if (!selector.match(/[A-Z,a-z]{1}/)) {
-    throw Error(`Invalid column selector: ${selector}`);
-  }
-  const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
-  return alphabet.indexOf(selector.toLowerCase());
-}
 
 export class LayoutValidatorExecutor extends BlockExecutor<
   LayoutValidator,
