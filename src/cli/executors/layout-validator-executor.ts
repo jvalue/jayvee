@@ -7,12 +7,10 @@ import {
   isRowSection,
 } from '../../language-server/generated/ast';
 import { Sheet, Table, sheetType, tableType } from '../data-types';
-
+import { getDataType } from '../datatypes';
 import { AbstractDataType } from '../datatypes/AbstractDataType';
+
 import { BlockExecutor } from './block-executor';
-import { DecimalDataType } from '../datatypes/DecimalDataType';
-import { IntegerDataType } from '../datatypes/IntegerDataType';
-import { TextDataType } from '../datatypes/TextDataType';
 
 function getColumnIndexFromSelector(selector: string): number {
   if (!selector.match(/[A-Z,a-z]{1}/)) {
@@ -20,20 +18,6 @@ function getColumnIndexFromSelector(selector: string): number {
   }
   const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
   return alphabet.indexOf(selector.toLowerCase());
-}
-
-function getDataType(name: Type): AbstractDataType {
-  switch (name) {
-    case 'text':
-      return new TextDataType();
-    case 'decimal':
-      return new DecimalDataType();
-    case 'integer':
-      return new IntegerDataType();
-    default:
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      throw new Error(`Could not find implementation for data type: ${name}`);
-  }
 }
 
 export class LayoutValidatorExecutor extends BlockExecutor<

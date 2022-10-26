@@ -1,0 +1,20 @@
+import { Type } from '../../language-server/generated/ast';
+
+import { AbstractDataType } from './AbstractDataType';
+import { DecimalDataType } from './DecimalDataType';
+import { IntegerDataType } from './IntegerDataType';
+import { TextDataType } from './TextDataType';
+
+export function getDataType(name: Type): AbstractDataType {
+  switch (name) {
+    case 'text':
+      return new TextDataType();
+    case 'decimal':
+      return new DecimalDataType();
+    case 'integer':
+      return new IntegerDataType();
+    default:
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      throw new Error(`Could not find implementation for data type: ${name}`);
+  }
+}
