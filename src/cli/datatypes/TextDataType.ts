@@ -1,7 +1,7 @@
 import { AbstractDataType } from './AbstractDataType';
 
 export class TextDataType extends AbstractDataType {
-  override isValid(value: any): boolean {
+  override isValid(value: unknown): boolean {
     return typeof value === 'string';
   }
 }

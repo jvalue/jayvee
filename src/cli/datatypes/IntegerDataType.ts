@@ -1,7 +1,7 @@
 import { AbstractDataType } from './AbstractDataType';
 
 export class IntegerDataType extends AbstractDataType {
-  override isValid(value: any): boolean {
+  override isValid(value: unknown): boolean {
     if (typeof value === 'string') {
       return !!value.match(/[+-]?[0-9]+/);
     }
