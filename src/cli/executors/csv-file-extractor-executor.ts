@@ -4,6 +4,7 @@ import { parseString as parseStringAsCsv } from '@fast-csv/parse';
 import { ParserOptionsArgs } from '@fast-csv/parse/build/src/ParserOptions';
 
 import { CSVFileExtractor } from '../../language-server/generated/ast';
+import { getCstTextWithLineNumbers } from '../cli-util';
 import { Sheet, sheetType, undefinedType } from '../data-types';
 
 import { BlockExecutor } from './block-executor';
@@ -36,11 +37,7 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
         const responseCode = response.statusCode;
 
         if (responseCode === undefined || responseCode >= 400) {
-          throw Error(
-            `Error when executing block "${
-              this.block.$type
-            }". HTTP fetch failed with code ${responseCode ?? 'undefined'}.`,
-          );
+          throw Error(this.getFetchErrorMessage(responseCode));
         }
 
         response.on('data', (dataChunk) => {
@@ -73,5 +70,18 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
           resolve(csvData);
         });
     });
+  }
+
+  private getFetchErrorMessage(responseCode: number | undefined): string {
+    return (
+      `Error when executing block "${this.block.$type}".\n` +
+      `HTTP fetch failed with code ${responseCode ?? 'undefined'}.\n` +
+      `Please check your connection and the attribute "url" in block code\n\n` +
+      `${
+        this.block.$cstNode?.parent !== undefined
+          ? getCstTextWithLineNumbers(this.block.$cstNode.parent)
+          : ''
+      }`
+    );
   }
 }
