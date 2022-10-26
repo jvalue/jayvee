@@ -1,3 +1,5 @@
+import * as E from 'fp-ts/lib/Either';
+
 import {
   ColumnSection,
   LayoutValidator,
@@ -11,7 +13,7 @@ import { getColumn, getColumnIndexFromSelector } from '../data-util';
 import { getDataType } from '../datatypes';
 import { AbstractDataType } from '../datatypes/AbstractDataType';
 
-import { BlockExecutor } from './block-executor';
+import { BlockExecutor, ExecutionError } from './block-executor';
 
 export class LayoutValidatorExecutor extends BlockExecutor<
   LayoutValidator,
@@ -22,16 +24,18 @@ export class LayoutValidatorExecutor extends BlockExecutor<
     super(block, sheetType, tableType);
   }
 
-  override execute(input: Sheet): Promise<Table> {
+  override execute(input: Sheet): Promise<E.Either<Table, ExecutionError>> {
     const sections = this.block.layout.ref?.sections || [];
 
     this.ensureValidSections(sections, input.data);
 
-    return Promise.resolve({
-      columnNames: this.getHeader(input),
-      columnTypes: this.getColumnTypes(sections, input.width),
-      data: input.data.filter((_, index) => index !== this.getHeaderIndex()),
-    });
+    return Promise.resolve(
+      E.left({
+        columnNames: this.getHeader(input),
+        columnTypes: this.getColumnTypes(sections, input.width),
+        data: input.data.filter((_, index) => index !== this.getHeaderIndex()),
+      }),
+    );
   }
 
   getHeader(input: Sheet): string[] {

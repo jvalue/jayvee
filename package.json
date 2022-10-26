@@ -62,6 +62,7 @@
         "chevrotain": "^9.1.0",
         "commander": "^8.0.0",
         "fast-csv": "^4.3.6",
+        "fp-ts": "^2.13.1",
         "langium": "^0.5.0",
         "vscode-languageclient": "^8.0.2",
         "vscode-languageserver": "^8.0.2",

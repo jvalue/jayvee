@@ -1,3 +1,4 @@
+import { Either } from 'fp-ts/lib/Either';
 import { NodeFileSystem } from 'langium/node';
 
 import {
@@ -9,8 +10,8 @@ import {
 } from '../language-server/generated/ast';
 import { createOpenDataLanguageServices } from '../language-server/open-data-language-module';
 
-import { extractAstNode } from './cli-util';
-import { BlockExecutor } from './executors/block-executor';
+import { extractAstNode, getCstTextWithLineNumbers } from './cli-util';
+import { BlockExecutor, ExecutionError } from './executors/block-executor';
 import { CSVFileExtractorExecutor } from './executors/csv-file-extractor-executor';
 import { LayoutValidatorExecutor } from './executors/layout-validator-executor';
 import { PostgresLoaderExecutor } from './executors/postgres-loader-executor';
@@ -87,7 +88,18 @@ async function runExecutors(
 ): Promise<void> {
   let value = undefined;
   for (const executor of executorSequence) {
-    value = await executor.execute(value);
+    const r: Either<unknown, ExecutionError> = await executor.execute(value);
+    if (r._tag === 'Right') {
+      const errorObj = r.right;
+      console.error(errorObj.message);
+      console.error(errorObj.hint);
+      console.error();
+      if (errorObj.cstNode !== undefined) {
+        console.error(getCstTextWithLineNumbers(errorObj.cstNode));
+      }
+      return;
+    }
+    value = r.left;
   }
 }
 
