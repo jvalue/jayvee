@@ -23,7 +23,7 @@ export function isSection(item: unknown): item is Section {
     return reflection.isInstance(item, Section);
 }
 
-export type Type = 'decimal' | 'integer' | 'text';
+export type Type = 'boolean' | 'decimal' | 'integer' | 'text';
 
 export interface Block extends AstNode {
     readonly $container: Model;
