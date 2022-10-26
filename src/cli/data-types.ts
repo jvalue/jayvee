@@ -1,4 +1,4 @@
-import { AbstractDataType } from './executors/AbstractDataType';
+import { AbstractDataType } from './datatypes/AbstractDataType';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export class DataType<T = unknown> {}

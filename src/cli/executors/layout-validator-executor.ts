@@ -8,11 +8,11 @@ import {
 } from '../../language-server/generated/ast';
 import { Sheet, Table, sheetType, tableType } from '../data-types';
 
-import { AbstractDataType } from './AbstractDataType';
+import { AbstractDataType } from '../datatypes/AbstractDataType';
 import { BlockExecutor } from './block-executor';
-import { DecimalDataType } from './DecimalDataType';
-import { IntegerDataType } from './IntegerDataType';
-import { TextDataType } from './TextDataType';
+import { DecimalDataType } from '../datatypes/DecimalDataType';
+import { IntegerDataType } from '../datatypes/IntegerDataType';
+import { TextDataType } from '../datatypes/TextDataType';
 
 function getColumnIndexFromSelector(selector: string): number {
   if (!selector.match(/[A-Z,a-z]{1}/)) {
