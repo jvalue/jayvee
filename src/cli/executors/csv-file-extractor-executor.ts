@@ -20,21 +20,22 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
     super(block, undefinedType, sheetType);
   }
 
-  override async execute(): Promise<E.Either<ExecutionError, Sheet>> {
-    return await pipe(
-      this.fetchRawData(),
-      TE.chain((raw) => this.parseAsCsv(raw)),
-      TE.map((data) => {
-        return {
-          data: data,
-          width: this.getSheetWidth(data),
-        };
-      }),
-      TE.map((r) => Object.assign({ height: r.data.length }, r)),
-    )();
+  override executeFn(): TE.TaskEither<ExecutionError, Sheet> {
+    return () =>
+      pipe(
+        this.fetchRawDataFn(),
+        TE.chain((raw) => this.parseAsCsvFn(raw)),
+        TE.map((data) => {
+          return {
+            data: data,
+            width: this.getSheetWidthFn(data),
+          };
+        }),
+        TE.map((r) => Object.assign({ height: r.data.length }, r)),
+      )();
   }
 
-  private fetchRawData(): TE.TaskEither<ExecutionError, string> {
+  private fetchRawDataFn(): TE.TaskEither<ExecutionError, string> {
     const url = this.block.url;
     return () =>
       new Promise((resolve) => {
@@ -77,7 +78,7 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
       });
   }
 
-  private parseAsCsv(
+  private parseAsCsvFn(
     rawData: string,
   ): TE.TaskEither<ExecutionError, string[][]> {
     return () =>
@@ -103,7 +104,7 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
       });
   }
 
-  private getSheetWidth(data: string[][]): number {
+  private getSheetWidthFn(data: string[][]): number {
     return data.reduce((prev, curr) => {
       return curr.length > prev ? curr.length : prev;
     }, 0);

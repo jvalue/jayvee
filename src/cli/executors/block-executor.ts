@@ -1,4 +1,4 @@
-import * as E from 'fp-ts/lib/Either';
+import * as TE from 'fp-ts/lib/TaskEither';
 import { CstNode } from 'langium';
 
 import { BlockType } from '../../language-server/generated/ast';
@@ -19,7 +19,7 @@ export abstract class BlockExecutor<
     return this.outputDataType === blockAfter.inputDataType;
   }
 
-  abstract execute(input: InType): Promise<E.Either<ExecutionError, OutType>>;
+  abstract executeFn(input: InType): TE.TaskEither<ExecutionError, OutType>;
 }
 
 export interface ExecutionError {

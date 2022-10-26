@@ -1,4 +1,5 @@
 import * as E from 'fp-ts/lib/Either';
+import * as TE from 'fp-ts/lib/TaskEither';
 
 import {
   ColumnSection,
@@ -24,18 +25,20 @@ export class LayoutValidatorExecutor extends BlockExecutor<
     super(block, sheetType, tableType);
   }
 
-  override execute(input: Sheet): Promise<E.Either<ExecutionError, Table>> {
-    const sections = this.block.layout.ref?.sections || [];
-
-    this.ensureValidSections(sections, input.data);
-
-    return Promise.resolve(
-      E.right({
-        columnNames: this.getHeader(input),
-        columnTypes: this.getColumnTypes(sections, input.width),
-        data: input.data.filter((_, index) => index !== this.getHeaderIndex()),
-      }),
-    );
+  override executeFn(input: Sheet): TE.TaskEither<ExecutionError, Table> {
+    return () => {
+      const sections = this.block.layout.ref?.sections || [];
+      this.ensureValidSections(sections, input.data);
+      return Promise.resolve(
+        E.right({
+          columnNames: this.getHeader(input),
+          columnTypes: this.getColumnTypes(sections, input.width),
+          data: input.data.filter(
+            (_, index) => index !== this.getHeaderIndex(),
+          ),
+        }),
+      );
+    };
   }
 
   getHeader(input: Sheet): string[] {

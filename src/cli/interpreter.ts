@@ -88,11 +88,12 @@ async function runExecutors(
 ): Promise<void> {
   let value = undefined;
   for (const executor of executorSequence) {
-    const r: Either<ExecutionError, unknown> = await executor.execute(value);
-    if (r._tag === 'Left') {
-      return printError(r.left);
+    const executionFn = executor.executeFn(value);
+    const result: Either<ExecutionError, unknown> = await executionFn();
+    if (result._tag === 'Left') {
+      return printError(result.left);
     }
-    value = r.right;
+    value = result.right;
   }
 }
 
