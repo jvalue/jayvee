@@ -24,13 +24,13 @@ export class LayoutValidatorExecutor extends BlockExecutor<
     super(block, sheetType, tableType);
   }
 
-  override execute(input: Sheet): Promise<E.Either<Table, ExecutionError>> {
+  override execute(input: Sheet): Promise<E.Either<ExecutionError, Table>> {
     const sections = this.block.layout.ref?.sections || [];
 
     this.ensureValidSections(sections, input.data);
 
     return Promise.resolve(
-      E.left({
+      E.right({
         columnNames: this.getHeader(input),
         columnTypes: this.getColumnTypes(sections, input.width),
         data: input.data.filter((_, index) => index !== this.getHeaderIndex()),

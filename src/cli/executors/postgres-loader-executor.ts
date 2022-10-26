@@ -14,9 +14,9 @@ export class PostgresLoaderExecutor extends BlockExecutor<
     super(block, tableType, undefinedType);
   }
 
-  override execute(input: Table): Promise<E.Either<void, ExecutionError>> {
+  override execute(input: Table): Promise<E.Either<ExecutionError, void>> {
     // TODO #10
     console.log(input);
-    return Promise.resolve(E.left(undefined));
+    return Promise.resolve(E.right(undefined));
   }
 }

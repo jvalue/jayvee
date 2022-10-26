@@ -19,7 +19,7 @@ export abstract class BlockExecutor<
     return this.outputDataType === blockAfter.inputDataType;
   }
 
-  abstract execute(input: InType): Promise<E.Either<OutType, ExecutionError>>;
+  abstract execute(input: InType): Promise<E.Either<ExecutionError, OutType>>;
 }
 
 export interface ExecutionError {
