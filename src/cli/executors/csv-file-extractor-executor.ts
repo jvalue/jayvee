@@ -18,7 +18,13 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
 
   override async execute(): Promise<Sheet> {
     const rawData = await this.fetchRawData();
-    return this.parseAsCsv(rawData);
+    const data = await this.parseAsCsv(rawData);
+    const width = data.reduce((prev, curr) => {
+      return curr.length > prev ? curr.length : prev;
+    }, 0);
+    const height = data.length;
+
+    return { data, width, height };
   }
 
   private async fetchRawData(): Promise<string> {
@@ -33,9 +39,9 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
     return body;
   }
 
-  private parseAsCsv(rawData: string): Promise<Sheet> {
+  private parseAsCsv(rawData: string): Promise<string[][]> {
     return new Promise((resolve) => {
-      const csvData: Sheet = [];
+      const csvData: string[][] = [];
       const parseOptions: ParserOptionsArgs = {};
       parseStringAsCsv(rawData, parseOptions)
         .on('data', (data: string[]) => {

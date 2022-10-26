@@ -5,7 +5,12 @@ export class DataType<T = unknown> {}
 
 export const undefinedType = new DataType<undefined>();
 
-export type Sheet = string[][];
+export interface Sheet {
+  data: string[][];
+  width: number;
+  height: number;
+}
+
 export const sheetType = new DataType<Sheet>();
 
 export interface Table {

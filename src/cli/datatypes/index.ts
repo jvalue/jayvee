@@ -8,11 +8,11 @@ import { TextDataType } from './TextDataType';
 export function getDataType(name: Type): AbstractDataType {
   switch (name) {
     case 'text':
-      return new TextDataType();
+      return new TextDataType(name);
     case 'decimal':
-      return new DecimalDataType();
+      return new DecimalDataType(name);
     case 'integer':
-      return new IntegerDataType();
+      return new IntegerDataType(name);
     default:
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       throw new Error(`Could not find implementation for data type: ${name}`);

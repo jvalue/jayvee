@@ -2,11 +2,12 @@ import {
   ColumnSection,
   LayoutValidator,
   RowSection,
-  Type,
+  Section,
   isColumnSection,
   isRowSection,
 } from '../../language-server/generated/ast';
 import { Sheet, Table, sheetType, tableType } from '../data-types';
+import { getColumn } from '../data-util';
 import { getDataType } from '../datatypes';
 import { AbstractDataType } from '../datatypes/AbstractDataType';
 
@@ -30,42 +31,75 @@ export class LayoutValidatorExecutor extends BlockExecutor<
   }
 
   override execute(input: Sheet): Promise<Table> {
-    const sections = this.block.layout.ref?.sections;
+    const sections = this.block.layout.ref?.sections || [];
 
-    if (!sections) {
-      return Promise.resolve({ columnNames: [], columnTypes: [], data: input });
-    }
+    this.ensureValidSections(sections, input.data);
 
-    const headerRowSection = sections.find(
+    return Promise.resolve({
+      columnNames: this.getHeader(input),
+      columnTypes: this.getColumnTypes(sections, input.width),
+      data: input.data.filter((_, index) => index !== this.getHeaderIndex()),
+    });
+  }
+
+  getHeader(input: Sheet): string[] {
+    const headerRowSection = this.block.layout.ref?.sections.find(
       (x) => isRowSection(x) && x.header,
     ) as RowSection | undefined;
 
-    let columnNames: string[] = [];
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const columnNamesIndex = headerRowSection!.rowId - 1;
+    const columnNamesIndex = this.getHeaderIndex();
 
-    if (
-      headerRowSection !== undefined &&
-      input[columnNamesIndex] !== undefined
-    ) {
-      columnNames = input[columnNamesIndex] as string[];
+    if (columnNamesIndex === undefined) {
+      return [];
     }
 
-    const dataType = getDataType(headerRowSection?.type as Type);
+    let columnNames: string[] = [];
+    if (
+      headerRowSection !== undefined &&
+      input.data[columnNamesIndex] !== undefined
+    ) {
+      columnNames = input.data[columnNamesIndex] as string[];
+    }
 
-    columnNames.forEach((columnName) => {
-      if (!dataType.isValid(columnName)) {
-        throw new Error(
-          `${columnName} is not a valid ${
-            headerRowSection?.type as string
-          } in ${this.block.$container.name}.`,
-        );
-      }
+    return columnNames;
+  }
+
+  getHeaderIndex(): number | undefined {
+    const headerRowSection = this.block.layout.ref?.sections.find(
+      (x) => isRowSection(x) && x.header,
+    ) as RowSection | undefined;
+
+    return headerRowSection ? headerRowSection.rowId - 1 : undefined;
+  }
+
+  ensureValidSections(sections: Section[], data: string[][]): void {
+    sections.forEach((section) => {
+      const type = getDataType(section.type);
+      const dataToValidate: Array<string | undefined> = isRowSection(section)
+        ? data[section.rowId] || []
+        : getColumn(
+            data,
+            getColumnIndexFromSelector(section.columnId),
+            undefined,
+          ).filter((_, index) => index !== this.getHeaderIndex());
+      dataToValidate.forEach((value, position) => {
+        if (!type.isValid(value)) {
+          throw new Error(
+            `Invalid value for ${type.languageType} (Value: ${
+              value !== undefined ? value : 'undefined'
+            } in ${
+              isRowSection(section) ? 'row' : 'column'
+            } at offset: ${position}).`,
+          );
+        }
+      });
     });
+  }
 
-    // Assuming that at least one row exists and all rows are the same width
-    const width = input[0]!.length;
-
+  getColumnTypes(
+    sections: Section[],
+    width: number,
+  ): Array<AbstractDataType | undefined> {
     const columnTypes: { [index: number]: AbstractDataType | undefined } = {};
 
     (
@@ -82,25 +116,6 @@ export class LayoutValidatorExecutor extends BlockExecutor<
       columnTypesArray.push(columnTypes[i]);
     }
 
-    const data = input.filter((value, index) => index !== columnNamesIndex);
-
-    data.forEach((row, rowIndex) => {
-      columnTypesArray.forEach((type, columnIndex) => {
-        if (type && !type.isValid(row[columnIndex])) {
-          throw new Error(
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            `Invalid value for ${type.toString()} (Value: ${row[
-              columnIndex
-            ]!} at position: [${rowIndex}:${columnIndex}]).`,
-          );
-        }
-      });
-    });
-
-    return Promise.resolve({
-      columnNames: columnNames,
-      columnTypes: columnTypesArray,
-      data: data,
-    });
+    return columnTypesArray;
   }
 }
