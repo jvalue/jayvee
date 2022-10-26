@@ -38,7 +38,7 @@ RowSection:
   (header?='header')? 'row' rowId=INT ':' type=Type ';';
 
 Type returns string:
-  'text' | 'decimal' | 'integer';
+  'text' | 'decimal' | 'integer' | 'boolean';
 
 Pipe:
   'pipe' '{'

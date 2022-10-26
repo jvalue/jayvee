@@ -491,6 +491,10 @@ export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGram
           {
             "$type": "Keyword",
             "value": "integer"
+          },
+          {
+            "$type": "Keyword",
+            "value": "boolean"
           }
         ]
       },
