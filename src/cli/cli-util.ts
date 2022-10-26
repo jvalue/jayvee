@@ -5,6 +5,8 @@ import chalk from 'chalk';
 import { AstNode, CstNode, LangiumDocument, LangiumServices } from 'langium';
 import { URI } from 'vscode-uri';
 
+import { ExecutionError } from './executors/block-executor';
+
 export async function extractDocument(
   fileName: string,
   services: LangiumServices,
@@ -69,4 +71,13 @@ export function getCstTextWithLineNumbers(cstNode: CstNode): string {
     textWithLineNumbers += `${startLineNumber + i}\t| \t${lines[i] ?? ''}\n`;
   }
   return textWithLineNumbers;
+}
+
+export function printError(errorObj: ExecutionError): void {
+  console.error(chalk.red(errorObj.message));
+  console.error(chalk.red(errorObj.hint));
+  console.error();
+  if (errorObj.cstNode !== undefined) {
+    console.error(chalk.blue(getCstTextWithLineNumbers(errorObj.cstNode)));
+  }
 }
