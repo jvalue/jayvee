@@ -48,13 +48,12 @@ function startLanguageClient(context: vscode.ExtensionContext): LanguageClient {
     },
   };
 
-  const fileSystemWatcher =
-    vscode.workspace.createFileSystemWatcher('**/*.odl');
+  const fileSystemWatcher = vscode.workspace.createFileSystemWatcher('**/*.jv');
   context.subscriptions.push(fileSystemWatcher);
 
   // Options to control the language client
   const clientOptions: LanguageClientOptions = {
-    documentSelector: [{ scheme: 'file', language: 'open-data-language' }],
+    documentSelector: [{ scheme: 'file', language: 'jayvee' }],
     synchronize: {
       // Notify the server about file changes to files contained in the workspace
       fileEvents: fileSystemWatcher,
@@ -63,8 +62,8 @@ function startLanguageClient(context: vscode.ExtensionContext): LanguageClient {
 
   // Create the language client and start the client.
   const client = new LanguageClient(
-    'open-data-language',
-    'Open Data Language',
+    'jayvee',
+    'Jayvee',
     serverOptions,
     clientOptions,
   );

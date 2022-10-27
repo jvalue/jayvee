@@ -1,4 +1,4 @@
-// Monarch syntax highlighting for the open-data-language language.
+// Monarch syntax highlighting for the jayvee language.
 export default {
     keywords: [
         'block','boolean','column','CSVFileExtractor','decimal','from','header','integer','layout','LayoutValidator','oftype','pipe','PostgresLoader','row','text','to','url'

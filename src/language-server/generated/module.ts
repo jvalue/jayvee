@@ -4,21 +4,21 @@
  ******************************************************************************/
 
 import { LangiumGeneratedServices, LangiumGeneratedSharedServices, LangiumSharedServices, LangiumServices, LanguageMetaData, Module } from 'langium';
-import { OpenDataLanguageAstReflection } from './ast';
-import { OpenDataLanguageGrammar } from './grammar';
+import { JayveeAstReflection } from './ast';
+import { JayveeGrammar } from './grammar';
 
-export const OpenDataLanguageLanguageMetaData: LanguageMetaData = {
-    languageId: 'open-data-language',
-    fileExtensions: ['.odl'],
+export const JayveeLanguageMetaData: LanguageMetaData = {
+    languageId: 'jayvee',
+    fileExtensions: ['.jv'],
     caseInsensitive: false
 };
 
-export const OpenDataLanguageGeneratedSharedModule: Module<LangiumSharedServices, LangiumGeneratedSharedServices> = {
-    AstReflection: () => new OpenDataLanguageAstReflection()
+export const JayveeGeneratedSharedModule: Module<LangiumSharedServices, LangiumGeneratedSharedServices> = {
+    AstReflection: () => new JayveeAstReflection()
 };
 
-export const OpenDataLanguageGeneratedModule: Module<LangiumServices, LangiumGeneratedServices> = {
-    Grammar: () => OpenDataLanguageGrammar(),
-    LanguageMetaData: () => OpenDataLanguageLanguageMetaData,
+export const JayveeGeneratedModule: Module<LangiumServices, LangiumGeneratedServices> = {
+    Grammar: () => JayveeGrammar(),
+    LanguageMetaData: () => JayveeLanguageMetaData,
     parser: {}
 };

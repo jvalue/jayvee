@@ -1,14 +1,14 @@
-# Open Data Language
+# Jayvee
 
 ## Project files
 
  * `package.json` - the manifest file in which you declare your language support.
  * `language-configuration.json` - the language configuration used in the VS Code editor, defining the tokens that are used for comments and brackets.
  * `src/extension.ts` - the main code of the extension, which is responsible for launching a language server and client.
- * `src/language-server/open-data-language.langium` - the grammar definition of your language.
+ * `src/language-server/jayvee.langium` - the grammar definition of your language.
  * `src/language-server/main.ts` - the entry point of the language server process.
- * `src/language-server/open-data-language-module.ts` - the dependency injection module of your language implementation. Use this to register overridden and added services.
- * `src/language-server/open-data-language-validator.ts` - an example validator. You should change it to reflect the semantics of your language.
+ * `src/language-server/jayvee-module.ts` - the dependency injection module of your language implementation. Use this to register overridden and added services.
+ * `src/language-server/jayvee-validator.ts` - an example validator. You should change it to reflect the semantics of your language.
  * `src/cli/index.ts` - the entry point of the command line interface (CLI) of your language.
  * `src/cli/interpreter.ts` - the interpreter used by the CLI to run DSL documents.
  * `src/cli/cli-util.ts` - utility code for the CLI.
@@ -18,7 +18,7 @@
  * Run `npm run langium:generate` to generate TypeScript code from the grammar definition.
  * Run `npm run build` to compile all TypeScript code.
  * Press `F5` to open a new window with your extension loaded.
- * Create a new file with a `.odl` file name suffix.
+ * Create a new file with a `.jv` file name suffix.
  * Verify that syntax highlighting, validation, completion etc. are working as expected.
  * Run `./bin/cli` to see options for the CLI; `./bin/cli run <file>` interprets a given DSL file.
 

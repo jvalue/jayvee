@@ -131,9 +131,9 @@ export function isRowSection(item: unknown): item is RowSection {
     return reflection.isInstance(item, RowSection);
 }
 
-export type OpenDataLanguageAstType = 'Block' | 'BlockType' | 'CSVFileExtractor' | 'ColumnSection' | 'Layout' | 'LayoutValidator' | 'Model' | 'Pipe' | 'PostgresLoader' | 'RowSection' | 'Section';
+export type JayveeAstType = 'Block' | 'BlockType' | 'CSVFileExtractor' | 'ColumnSection' | 'Layout' | 'LayoutValidator' | 'Model' | 'Pipe' | 'PostgresLoader' | 'RowSection' | 'Section';
 
-export class OpenDataLanguageAstReflection implements AstReflection {
+export class JayveeAstReflection implements AstReflection {
 
     getAllTypes(): string[] {
         return ['Block', 'BlockType', 'CSVFileExtractor', 'ColumnSection', 'Layout', 'LayoutValidator', 'Model', 'Pipe', 'PostgresLoader', 'RowSection', 'Section'];
@@ -219,4 +219,4 @@ export class OpenDataLanguageAstReflection implements AstReflection {
     }
 }
 
-export const reflection = new OpenDataLanguageAstReflection();
+export const reflection = new JayveeAstReflection();

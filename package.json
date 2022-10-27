@@ -1,6 +1,6 @@
 {
-    "name": "open-data-language",
-    "displayName": "open-data-language",
+    "name": "jayvee",
+    "displayName": "jayvee",
     "description": "Please enter a brief description here",
     "version": "0.0.1",
     "engines": {
@@ -12,27 +12,27 @@
     "contributes": {
         "languages": [
             {
-                "id": "open-data-language",
+                "id": "jayvee",
                 "aliases": [
-                    "Open Data Language",
-                    "open-data-language"
+                    "Jayvee",
+                    "jayvee"
                 ],
                 "extensions": [
-                    ".odl"
+                    ".jv"
                 ],
                 "configuration": "./language-configuration.json"
             }
         ],
         "grammars": [
             {
-                "language": "open-data-language",
-                "scopeName": "source.open-data-language",
-                "path": "./syntaxes/open-data-language.tmLanguage.json"
+                "language": "jayvee",
+                "scopeName": "source.jayvee",
+                "path": "./syntaxes/jayvee.tmLanguage.json"
             }
         ]
     },
     "activationEvents": [
-        "onLanguage:open-data-language"
+        "onLanguage:jayvee"
     ],
     "files": [
         "bin",
@@ -40,13 +40,13 @@
         "src"
     ],
     "bin": {
-        "open-data-language-cli": "./bin/cli"
+        "jayvee-cli": "./bin/cli"
     },
     "main": "./out/extension.js",
     "scripts": {
         "vscode:prepublish": "npm run build && npm run lint",
         "build": "tsc -b tsconfig.json",
-        "start:example": "npm run build && node --enable-source-maps bin/cli run example/cars.odl",
+        "start:example": "npm run build && node --enable-source-maps bin/cli run example/cars.jv",
         "watch": "tsc -b tsconfig.json --watch",
         "lint": "eslint src --max-warnings=0",
         "lint:fix": "eslint src --fix",

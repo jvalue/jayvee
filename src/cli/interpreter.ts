@@ -9,7 +9,7 @@ import {
   isPostgresLoader,
 } from '../language-server/generated/ast';
 // eslint-disable-next-line import/no-cycle
-import { createOpenDataLanguageServices } from '../language-server/open-data-language-module';
+import { createJayveeServices } from '../language-server/jayvee-module';
 
 import { extractAstNode, printError } from './cli-util';
 import { BlockExecutor } from './executors/block-executor';
@@ -20,8 +20,7 @@ import { PostgresLoaderExecutor } from './executors/postgres-loader-executor';
 import { collectChildren } from './model-util';
 
 export async function runAction(fileName: string): Promise<void> {
-  const services =
-    createOpenDataLanguageServices(NodeFileSystem).OpenDataLanguage;
+  const services = createJayveeServices(NodeFileSystem).Jayvee;
   const model = await extractAstNode<Model>(fileName, services);
   await interpretPipelineModel(model);
 }

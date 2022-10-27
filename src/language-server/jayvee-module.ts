@@ -10,21 +10,18 @@ import {
 } from 'langium';
 
 import {
-  OpenDataLanguageGeneratedModule,
-  OpenDataLanguageGeneratedSharedModule,
+  JayveeGeneratedModule,
+  JayveeGeneratedSharedModule,
 } from './generated/module';
 // eslint-disable-next-line import/no-cycle
-import {
-  OpenDataLanguageValidationRegistry,
-  OpenDataLanguageValidator,
-} from './open-data-language-validator';
+import { JayveeValidationRegistry, JayveeValidator } from './jayvee-validator';
 
 /**
  * Declaration of custom services - add your own service classes here.
  */
-export interface OpenDataLanguageAddedServices {
+export interface JayveeAddedServices {
   validation: {
-    OpenDataLanguageValidator: OpenDataLanguageValidator;
+    JayveeValidator: JayveeValidator;
   };
 }
 
@@ -32,22 +29,20 @@ export interface OpenDataLanguageAddedServices {
  * Union of Langium default services and your custom services - use this as constructor parameter
  * of custom service classes.
  */
-export type OpenDataLanguageServices = LangiumServices &
-  OpenDataLanguageAddedServices;
+export type JayveeServices = LangiumServices & JayveeAddedServices;
 
 /**
  * Dependency injection module that overrides Langium default services and contributes the
  * declared custom services. The Langium defaults can be partially specified to override only
  * selected services, while the custom services must be fully specified.
  */
-export const OpenDataLanguageModule: Module<
-  OpenDataLanguageServices,
-  PartialLangiumServices & OpenDataLanguageAddedServices
+export const JayveeModule: Module<
+  JayveeServices,
+  PartialLangiumServices & JayveeAddedServices
 > = {
   validation: {
-    ValidationRegistry: (services) =>
-      new OpenDataLanguageValidationRegistry(services),
-    OpenDataLanguageValidator: () => new OpenDataLanguageValidator(),
+    ValidationRegistry: (services) => new JayveeValidationRegistry(services),
+    JayveeValidator: () => new JayveeValidator(),
   },
 };
 
@@ -66,21 +61,19 @@ export const OpenDataLanguageModule: Module<
  * @param context Optional module context with the LSP connection
  * @returns An object wrapping the shared services and the language-specific services
  */
-export function createOpenDataLanguageServices(
-  context: DefaultSharedModuleContext,
-): {
+export function createJayveeServices(context: DefaultSharedModuleContext): {
   shared: LangiumSharedServices;
-  OpenDataLanguage: OpenDataLanguageServices;
+  Jayvee: JayveeServices;
 } {
   const shared = inject(
     createDefaultSharedModule(context),
-    OpenDataLanguageGeneratedSharedModule,
+    JayveeGeneratedSharedModule,
   );
-  const OpenDataLanguage = inject(
+  const Jayvee = inject(
     createDefaultModule({ shared }),
-    OpenDataLanguageGeneratedModule,
-    OpenDataLanguageModule,
+    JayveeGeneratedModule,
+    JayveeModule,
   );
-  shared.ServiceRegistry.register(OpenDataLanguage);
-  return { shared, OpenDataLanguage };
+  shared.ServiceRegistry.register(Jayvee);
+  return { shared, Jayvee };
 }
