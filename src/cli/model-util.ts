@@ -1,15 +1,15 @@
 import { Block, Pipe } from '../language-server/generated/ast';
 
-export function collectAdjacencyList(block: Block): Block[] {
+export function collectChildren(block: Block): Block[] {
   const outgoingPipes = collectOutgoingPipes(block);
 
-  const adjacencyList = outgoingPipes
+  const children = outgoingPipes
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     .filter((pipe) => pipe.to?.ref !== undefined)
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     .map((pipe) => pipe.to.ref!);
 
-  return adjacencyList;
+  return children;
 }
 
 export function collectOutgoingPipes(block: Block): Pipe[] {
