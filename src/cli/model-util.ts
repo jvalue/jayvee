@@ -12,6 +12,18 @@ export function collectChildren(block: Block): Block[] {
   return children;
 }
 
+export function collectParents(block: Block): Block[] {
+  const ingoingPipes = collectIngoingPipes(block);
+
+  const parents = ingoingPipes
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    .filter((pipe) => pipe.from?.ref !== undefined)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    .map((pipe) => pipe.from.ref!);
+
+  return parents;
+}
+
 export function collectOutgoingPipes(block: Block): Pipe[] {
   const model = block.$container;
   const outgoingPipes: Pipe[] = [];
