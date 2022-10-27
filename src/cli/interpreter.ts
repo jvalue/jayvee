@@ -1,4 +1,4 @@
-import { Either } from 'fp-ts/lib/Either';
+import * as E from 'fp-ts/lib/Either';
 import { NodeFileSystem } from 'langium/node';
 
 import {
@@ -89,8 +89,8 @@ async function runExecutors(
   let value = undefined;
   for (const executor of executorSequence) {
     const executionFn = executor.executeFn(value);
-    const result: Either<ExecutionError, unknown> = await executionFn();
-    if (result._tag === 'Left') {
+    const result: E.Either<ExecutionError, unknown> = await executionFn();
+    if (E.isLeft(result)) {
       return printError(result.left);
     }
     value = result.right;
