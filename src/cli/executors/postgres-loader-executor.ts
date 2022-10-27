@@ -1,3 +1,5 @@
+import { Client } from 'pg';
+
 import { PostgresLoader } from '../../language-server/generated/ast';
 import { Table, tableType, undefinedType } from '../data-types';
 import { AbstractDataType } from '../datatypes/AbstractDataType';
@@ -17,40 +19,61 @@ export class PostgresLoaderExecutor extends BlockExecutor<
   }
 
   override executeFn(input: Table): R.ResultTask<void> {
-    const columnTypeVisitor = new PostgresColumnTypeVisitor();
-    const valueRepresenationVisitor = new PostgresValueRepresentationVisitor();
+    return async () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+      const client = new Client({
+        connectionString: 'postgresql://postgres:@localhost:5432/jvalue',
+      });
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      await client.connect();
 
-    const valueRepresentationFormatters = input.columnTypes.map((type) => {
-      return type?.acceptVisitor(valueRepresenationVisitor);
-    });
+      const columnTypeVisitor = new PostgresColumnTypeVisitor();
+      const valueRepresenationVisitor =
+        new PostgresValueRepresentationVisitor();
 
-    const tableName = this.block.$container.name;
+      const valueRepresentationFormatters = input.columnTypes.map((type) => {
+        return type?.acceptVisitor(valueRepresenationVisitor);
+      });
 
-    const columnPostgresStatements = input.columnNames.map((name, index) => {
-      return `${name} ${(
-        input.columnTypes[index] as AbstractDataType
-      ).acceptVisitor(columnTypeVisitor)}`;
-    });
+      const tableName = this.block.$container.name;
 
-    const createTableStatement = `CREATE TABLE ${tableName} (${columnPostgresStatements.join(
-      ',',
-    )});`;
+      const columnPostgresStatements = input.columnNames
+        .map((x) => x || 'EMPTYNAME')
+        .map((name, index) => {
+          return `${name} ${(
+            input.columnTypes[index] as AbstractDataType
+          ).acceptVisitor(columnTypeVisitor)}`;
+        });
 
-    const valuesStatement = input.data
-      .map((row) => {
-        return `(${row
-          .map((value, index) => valueRepresentationFormatters[index]?.(value))
-          .join(',')})`;
-      })
-      .join(',');
-
-    console.log(createTableStatement);
-    console.log(
-      `INSERT INTO ${tableName} (${input.columnNames.join(
+      const createTableStatement = `CREATE TABLE IF NOT EXISTS ${tableName} (${columnPostgresStatements.join(
         ',',
-      )}) VALUES ${valuesStatement}`,
-    );
+      )});`;
 
-    return () => Promise.resolve(R.ok(undefined));
+      const valuesStatement = input.data
+        .map((row) => {
+          return `(${row
+            .map((value, index) =>
+              valueRepresentationFormatters[index]?.(value),
+            )
+            .join(',')})`;
+        })
+        .join(',');
+
+      const insertValuesStatement = `INSERT INTO ${tableName} (${input.columnNames
+        .map((x) => x || 'EMPTYNAME')
+        .join(',')}) VALUES ${valuesStatement}`;
+
+      console.log(createTableStatement);
+      console.log(insertValuesStatement);
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      await client.query(createTableStatement);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      await client.query(insertValuesStatement);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      await client.end();
+
+      return Promise.resolve(R.ok(undefined));
+    };
   }
 }

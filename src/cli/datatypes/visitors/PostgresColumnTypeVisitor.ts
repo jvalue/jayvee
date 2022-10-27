@@ -5,7 +5,7 @@ export class PostgresColumnTypeVisitor extends DataTypeVisitor<string> {
     return 'boolean';
   }
   override visitDecimal(): string {
-    return 'numeric';
+    return 'real';
   }
   override visitInteger(): string {
     return 'integer';

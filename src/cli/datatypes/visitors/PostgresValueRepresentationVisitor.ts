@@ -12,13 +12,13 @@ export class PostgresValueRepresentationVisitor extends DataTypeVisitor<
         switch (value) {
           case 'True':
           case 'true':
-            return 'true';
+            return String.raw`'true'`;
           default:
-            return 'false';
+            return String.raw`'false'`;
         }
       }
 
-      return 'false';
+      return String.raw`'false'`;
     };
   }
   visitDecimal(): (value: unknown) => string {
@@ -33,7 +33,7 @@ export class PostgresValueRepresentationVisitor extends DataTypeVisitor<
   }
   visitText(): (value: unknown) => string {
     return (value: unknown) => {
-      return (value as string).toString();
+      return `'${(value as string).toString()}'`;
     };
   }
 }

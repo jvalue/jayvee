@@ -1,7 +1,6 @@
 /* eslint-disable import/no-cycle */
-import { DataTypeVisitor } from './visitors/DataTypeVisitor';
-
 import { AbstractDataType } from './AbstractDataType';
+import { DataTypeVisitor } from './visitors/DataTypeVisitor';
 
 export class IntegerDataType extends AbstractDataType {
   override isValid(value: unknown): boolean {
