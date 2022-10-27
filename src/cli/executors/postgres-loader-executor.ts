@@ -1,10 +1,8 @@
-import * as E from 'fp-ts/lib/Either';
-import * as TE from 'fp-ts/lib/TaskEither';
-
 import { PostgresLoader } from '../../language-server/generated/ast';
 import { Table, tableType, undefinedType } from '../data-types';
 
-import { BlockExecutor, ExecutionError } from './block-executor';
+import { BlockExecutor } from './block-executor';
+import * as R from './execution-result';
 
 export class PostgresLoaderExecutor extends BlockExecutor<
   PostgresLoader,
@@ -15,9 +13,9 @@ export class PostgresLoaderExecutor extends BlockExecutor<
     super(block, tableType, undefinedType);
   }
 
-  override executeFn(input: Table): TE.TaskEither<ExecutionError, void> {
+  override executeFn(input: Table): R.ResultTask<void> {
     // TODO #10
     console.log(input);
-    return () => Promise.resolve(E.right(undefined));
+    return () => Promise.resolve(R.ok(undefined));
   }
 }

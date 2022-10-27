@@ -1,6 +1,3 @@
-import * as E from 'fp-ts/lib/Either';
-import * as TE from 'fp-ts/lib/TaskEither';
-
 import {
   ColumnSection,
   LayoutValidator,
@@ -14,7 +11,8 @@ import { getColumn, getColumnIndexFromSelector } from '../data-util';
 import { getDataType } from '../datatypes';
 import { AbstractDataType } from '../datatypes/AbstractDataType';
 
-import { BlockExecutor, ExecutionError } from './block-executor';
+import { BlockExecutor } from './block-executor';
+import * as R from './execution-result';
 
 export class LayoutValidatorExecutor extends BlockExecutor<
   LayoutValidator,
@@ -25,12 +23,12 @@ export class LayoutValidatorExecutor extends BlockExecutor<
     super(block, sheetType, tableType);
   }
 
-  override executeFn(input: Sheet): TE.TaskEither<ExecutionError, Table> {
+  override executeFn(input: Sheet): R.ResultTask<Table> {
     return () => {
       const sections = this.block.layout.ref?.sections || [];
       this.ensureValidSections(sections, input.data);
       return Promise.resolve(
-        E.right({
+        R.ok({
           columnNames: this.getHeader(input),
           columnTypes: this.getColumnTypes(sections, input.width),
           data: input.data.filter(

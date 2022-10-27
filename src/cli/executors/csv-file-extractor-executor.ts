@@ -2,14 +2,14 @@ import * as http from 'https';
 
 import { parseString as parseStringAsCsv } from '@fast-csv/parse';
 import { ParserOptionsArgs } from '@fast-csv/parse/build/src/ParserOptions';
-import * as E from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as TE from 'fp-ts/lib/TaskEither';
 
 import { CSVFileExtractor } from '../../language-server/generated/ast';
 import { Sheet, sheetType, undefinedType } from '../data-types';
 
-import { BlockExecutor, ExecutionError } from './block-executor';
+import { BlockExecutor } from './block-executor';
+import * as R from './execution-result';
 
 export class CSVFileExtractorExecutor extends BlockExecutor<
   CSVFileExtractor,
@@ -20,7 +20,7 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
     super(block, undefinedType, sheetType);
   }
 
-  override executeFn(): TE.TaskEither<ExecutionError, Sheet> {
+  override executeFn(): R.ResultTask<Sheet> {
     return () =>
       pipe(
         this.fetchRawDataFn(),
@@ -35,7 +35,7 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
       )();
   }
 
-  private fetchRawDataFn(): TE.TaskEither<ExecutionError, string> {
+  private fetchRawDataFn(): R.ResultTask<string> {
     const url = this.block.url;
     return () =>
       new Promise((resolve) => {
@@ -45,7 +45,7 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
 
           if (responseCode === undefined || responseCode >= 400) {
             resolve(
-              E.left({
+              R.err({
                 message: `Error when executing block "${
                   this.block.$type
                 }". HTTP fetch failed with code ${
@@ -62,14 +62,14 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
           });
 
           response.on('end', () => {
-            resolve(E.right(rawData));
+            resolve(R.ok(rawData));
           });
 
-          response.on('error', (err) => {
+          response.on('error', (errorObj) => {
             resolve(
-              E.left({
+              R.err({
                 message: `Error when executing block "${this.block.$type}".`,
-                hint: err.message,
+                hint: errorObj.message,
                 cstNode: this.block.$cstNode?.parent,
               }),
             );
@@ -78,9 +78,7 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
       });
   }
 
-  private parseAsCsvFn(
-    rawData: string,
-  ): TE.TaskEither<ExecutionError, string[][]> {
+  private parseAsCsvFn(rawData: string): R.ResultTask<string[][]> {
     return () =>
       new Promise((resolve) => {
         const csvData: string[][] = [];
@@ -91,7 +89,7 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
           })
           .on('error', (error) => {
             resolve(
-              E.left({
+              R.err({
                 message: `Error when executing block "${this.block.$type}". CSV parse failed on row.`,
                 hint: error.message,
                 cstNode: this.block.$cstNode?.parent,
@@ -99,7 +97,7 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
             );
           })
           .on('end', () => {
-            resolve(E.right(csvData));
+            resolve(R.ok(csvData));
           });
       });
   }
