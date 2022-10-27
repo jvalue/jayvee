@@ -87,13 +87,15 @@ async function runExecutors(
   executorSequence: Array<BlockExecutor<BlockType>>,
 ): Promise<void> {
   let value = undefined;
-  for (const executor of executorSequence) {
-    const executionFn = executor.executeFn(value);
-    const result = await executionFn();
-    if (R.isErr(result)) {
-      return printError(R.errDetails(result));
+  try {
+    for (const executor of executorSequence) {
+      value = await R.dataOrThrowAsync(executor.execute(value));
     }
-    value = result.right;
+  } catch (errObj) {
+    if (R.isExecutionErrorDetails(errObj)) {
+      return printError(errObj);
+    }
+    throw errObj;
   }
 }
 
