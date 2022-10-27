@@ -1,13 +1,11 @@
-import * as E from 'fp-ts/lib/Either';
-import * as TE from 'fp-ts/lib/TaskEither';
-
 import { PostgresLoader } from '../../language-server/generated/ast';
 import { Table, tableType, undefinedType } from '../data-types';
 import { AbstractDataType } from '../datatypes/AbstractDataType';
 import { PostgresColumnTypeVisitor } from '../datatypes/visitors/PostgresColumnTypeVisitor';
 import { PostgresValueRepresentationVisitor } from '../datatypes/visitors/PostgresValueRepresentationVisitor';
 
-import { BlockExecutor, ExecutionError } from './block-executor';
+import { BlockExecutor } from './block-executor';
+import * as R from './execution-result';
 
 export class PostgresLoaderExecutor extends BlockExecutor<
   PostgresLoader,
@@ -18,7 +16,7 @@ export class PostgresLoaderExecutor extends BlockExecutor<
     super(block, tableType, undefinedType);
   }
 
-  override executeFn(input: Table): TE.TaskEither<ExecutionError, void> {
+  override executeFn(input: Table): R.ResultTask<void> {
     const columnTypeVisitor = new PostgresColumnTypeVisitor();
     const valueRepresenationVisitor = new PostgresValueRepresentationVisitor();
 
@@ -53,6 +51,6 @@ export class PostgresLoaderExecutor extends BlockExecutor<
       )}) VALUES ${valuesStatement}`,
     );
 
-    return () => Promise.resolve(E.right(undefined));
+    return () => Promise.resolve(R.ok(undefined));
   }
 }

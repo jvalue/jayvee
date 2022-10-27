@@ -1,4 +1,3 @@
-import { Either } from 'fp-ts/lib/Either';
 import { NodeFileSystem } from 'langium/node';
 
 import {
@@ -11,8 +10,9 @@ import {
 import { createOpenDataLanguageServices } from '../language-server/open-data-language-module';
 
 import { extractAstNode, printError } from './cli-util';
-import { BlockExecutor, ExecutionError } from './executors/block-executor';
+import { BlockExecutor } from './executors/block-executor';
 import { CSVFileExtractorExecutor } from './executors/csv-file-extractor-executor';
+import * as R from './executors/execution-result';
 import { LayoutValidatorExecutor } from './executors/layout-validator-executor';
 import { PostgresLoaderExecutor } from './executors/postgres-loader-executor';
 
@@ -89,9 +89,9 @@ async function runExecutors(
   let value = undefined;
   for (const executor of executorSequence) {
     const executionFn = executor.executeFn(value);
-    const result: Either<ExecutionError, unknown> = await executionFn();
-    if (result._tag === 'Left') {
-      return printError(result.left);
+    const result = await executionFn();
+    if (R.isErr(result)) {
+      return printError(R.errDetails(result));
     }
     value = result.right;
   }

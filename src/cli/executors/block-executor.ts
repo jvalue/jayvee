@@ -1,8 +1,7 @@
-import * as TE from 'fp-ts/lib/TaskEither';
-import { CstNode } from 'langium';
-
 import { BlockType } from '../../language-server/generated/ast';
 import { DataType } from '../data-types';
+
+import * as R from './execution-result';
 
 export abstract class BlockExecutor<
   B extends BlockType,
@@ -19,11 +18,5 @@ export abstract class BlockExecutor<
     return this.outputDataType === blockAfter.inputDataType;
   }
 
-  abstract executeFn(input: InType): TE.TaskEither<ExecutionError, OutType>;
-}
-
-export interface ExecutionError {
-  message: string;
-  hint?: string;
-  cstNode?: CstNode | undefined;
+  abstract executeFn(input: InType): R.ResultTask<OutType>;
 }
