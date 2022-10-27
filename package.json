@@ -64,6 +64,7 @@
         "fast-csv": "^4.3.6",
         "fp-ts": "^2.13.1",
         "langium": "^0.5.0",
+        "pg": "^8.8.0",
         "vscode-languageclient": "^8.0.2",
         "vscode-languageserver": "^8.0.2",
         "vscode-uri": "^3.0.2"
@@ -72,6 +73,7 @@
         "@jvalue/eslint-config-jvalue": "^1.2.0",
         "@types/jest": "^29.1.2",
         "@types/node": "^14.17.3",
+        "@types/pg": "^8.6.5",
         "@types/vscode": "^1.56.0",
         "@typescript-eslint/eslint-plugin": "^5.39.0",
         "@typescript-eslint/parser": "^5.39.0",
