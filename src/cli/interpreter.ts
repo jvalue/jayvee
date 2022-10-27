@@ -1,6 +1,7 @@
 import { NodeFileSystem } from 'langium/node';
 
 import {
+  Block,
   BlockType,
   Model,
   isCSVFileExtractor,
@@ -16,6 +17,7 @@ import { CSVFileExtractorExecutor } from './executors/csv-file-extractor-executo
 import * as R from './executors/execution-result';
 import { LayoutValidatorExecutor } from './executors/layout-validator-executor';
 import { PostgresLoaderExecutor } from './executors/postgres-loader-executor';
+import { collectChildren } from './model-util';
 
 export async function runAction(fileName: string): Promise<void> {
   const services =
@@ -25,58 +27,38 @@ export async function runAction(fileName: string): Promise<void> {
 }
 
 async function interpretPipelineModel(model: Model): Promise<void> {
-  const csvFileExtractors = model.blocks.filter((block) =>
-    isCSVFileExtractor(block.type),
-  );
-  if (csvFileExtractors.length !== 1) {
-    throw new Error('The model requires a single extractor');
+  const pipelineRuns: Array<Promise<void>> = [];
+  for (const block of model.blocks) {
+    const blockExecutor = getExecutor(block.type);
+    if (!blockExecutor.hasInput()) {
+      const pipelineRun = runPipeline(block);
+      pipelineRuns.push(pipelineRun);
+    }
   }
-
-  const layoutValidators = model.blocks.filter((block) =>
-    isLayoutValidator(block.type),
-  );
-  if (layoutValidators.length !== 1) {
-    throw new Error('The model requires a single layout validator');
-  }
-
-  const postgresLoaders = model.blocks.filter((block) =>
-    isPostgresLoader(block.type),
-  );
-  if (postgresLoaders.length !== 1) {
-    throw new Error('The model requires a single loader');
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const csvFileExtractorExecutor = getExecutor(csvFileExtractors[0]!.type);
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const layoutValidatorExecutor = getExecutor(layoutValidators[0]!.type);
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const postgresLoaderExecutor = getExecutor(postgresLoaders[0]!.type);
-
-  // Ignore pipes for now
-  const executorSequence = [
-    csvFileExtractorExecutor,
-    layoutValidatorExecutor,
-    postgresLoaderExecutor,
-  ];
-
-  await runExecutors(executorSequence);
+  await Promise.all(pipelineRuns);
 }
 
-async function runExecutors(
-  executorSequence: Array<BlockExecutor<BlockType>>,
-): Promise<void> {
+async function runPipeline(startingBlock: Block): Promise<void> {
+  let currentBlock: Block | undefined = startingBlock;
+  let currentExecutor = getExecutor(currentBlock.type);
   let value = undefined;
-  try {
-    for (const executor of executorSequence) {
-      value = await R.dataOrThrowAsync(executor.execute(value));
+  do {
+    try {
+      value = await R.dataOrThrowAsync(currentExecutor.execute(value));
+    } catch (errObj) {
+      if (R.isExecutionErrorDetails(errObj)) {
+        printError(errObj);
+        return;
+      }
+      throw errObj;
     }
-  } catch (errObj) {
-    if (R.isExecutionErrorDetails(errObj)) {
-      return printError(errObj);
+
+    currentBlock = collectChildren(currentBlock)[0];
+    if (currentBlock === undefined) {
+      return;
     }
-    throw errObj;
-  }
+    currentExecutor = getExecutor(currentBlock.type);
+  } while (currentExecutor.hasInput());
 }
 
 export function getExecutor(blockType: BlockType): BlockExecutor<BlockType> {
