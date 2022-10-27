@@ -12,9 +12,11 @@ import {
   Block,
   CSVFileExtractor,
   ColumnSection,
+  Layout,
   OpenDataLanguageAstType,
   Pipe,
   RowSection,
+  isRowSection,
 } from './generated/ast';
 import type { OpenDataLanguageServices } from './open-data-language-module';
 
@@ -28,6 +30,7 @@ export class OpenDataLanguageValidationRegistry extends ValidationRegistry {
     const checks: ValidationChecks<OpenDataLanguageAstType> = {
       ColumnSection: validator.checkColumnIdFormat,
       RowSection: validator.checkRowIdFormat,
+      Layout: validator.checkSingleHeader,
       Pipe: validator.checkBlockCompatibility,
       Block: [validator.checkIngoingPipes, validator.checkOutgoingPipes],
       CSVFileExtractor: validator.checkUrlFormat,
@@ -64,6 +67,27 @@ export class OpenDataLanguageValidator {
         node: rowSection,
         property: 'rowId',
       });
+    }
+  }
+
+  checkSingleHeader(
+    this: void,
+    layout: Layout,
+    accept: ValidationAcceptor,
+  ): void {
+    const headerRowSections: RowSection[] = [];
+    for (const section of layout.sections) {
+      if (isRowSection(section) && section.header) {
+        headerRowSections.push(section);
+      }
+    }
+    if (headerRowSections.length > 1) {
+      for (const headerRowSection of headerRowSections) {
+        accept('error', `At most a single row can be marked as header`, {
+          node: headerRowSection,
+          keyword: 'header',
+        });
+      }
     }
   }
 
