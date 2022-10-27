@@ -18,62 +18,57 @@ export class PostgresLoaderExecutor extends BlockExecutor<
     super(block, tableType, undefinedType);
   }
 
-  override executeFn(input: Table): Promise<R.Result<void>> {
-    return async () => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-      const client = new Client({
-        connectionString: 'postgresql://postgres:@localhost:5432/jvalue',
+  override async execute(input: Table): Promise<R.Result<void>> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+    const client = new Client({
+      connectionString: 'postgresql://postgres:@localhost:5432/jvalue',
+    });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    await client.connect();
+
+    const columnTypeVisitor = new PostgresColumnTypeVisitor();
+    const valueRepresenationVisitor = new PostgresValueRepresentationVisitor();
+
+    const valueRepresentationFormatters = input.columnTypes.map((type) => {
+      return type?.acceptVisitor(valueRepresenationVisitor);
+    });
+
+    const tableName = this.block.$container.name;
+
+    const columnPostgresStatements = input.columnNames
+      .map((x) => x || 'EMPTYNAME')
+      .map((name, index) => {
+        return `${name} ${(
+          input.columnTypes[index] as AbstractDataType
+        ).acceptVisitor(columnTypeVisitor)}`;
       });
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      await client.connect();
 
-      const columnTypeVisitor = new PostgresColumnTypeVisitor();
-      const valueRepresenationVisitor =
-        new PostgresValueRepresentationVisitor();
+    const createTableStatement = `CREATE TABLE IF NOT EXISTS ${tableName} (${columnPostgresStatements.join(
+      ',',
+    )});`;
 
-      const valueRepresentationFormatters = input.columnTypes.map((type) => {
-        return type?.acceptVisitor(valueRepresenationVisitor);
-      });
+    const valuesStatement = input.data
+      .map((row) => {
+        return `(${row
+          .map((value, index) => valueRepresentationFormatters[index]?.(value))
+          .join(',')})`;
+      })
+      .join(',');
 
-      const tableName = this.block.$container.name;
+    const insertValuesStatement = `INSERT INTO ${tableName} (${input.columnNames
+      .map((x) => x || 'EMPTYNAME')
+      .join(',')}) VALUES ${valuesStatement}`;
 
-      const columnPostgresStatements = input.columnNames
-        .map((x) => x || 'EMPTYNAME')
-        .map((name, index) => {
-          return `${name} ${(
-            input.columnTypes[index] as AbstractDataType
-          ).acceptVisitor(columnTypeVisitor)}`;
-        });
+    console.log(createTableStatement);
+    console.log(insertValuesStatement);
 
-      const createTableStatement = `CREATE TABLE IF NOT EXISTS ${tableName} (${columnPostgresStatements.join(
-        ',',
-      )});`;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    await client.query(createTableStatement);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    await client.query(insertValuesStatement);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    await client.end();
 
-      const valuesStatement = input.data
-        .map((row) => {
-          return `(${row
-            .map((value, index) =>
-              valueRepresentationFormatters[index]?.(value),
-            )
-            .join(',')})`;
-        })
-        .join(',');
-
-      const insertValuesStatement = `INSERT INTO ${tableName} (${input.columnNames
-        .map((x) => x || 'EMPTYNAME')
-        .join(',')}) VALUES ${valuesStatement}`;
-
-      console.log(createTableStatement);
-      console.log(insertValuesStatement);
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      await client.query(createTableStatement);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      await client.query(insertValuesStatement);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      await client.end();
-
-      return Promise.resolve(R.ok(undefined));
-    };
+    return Promise.resolve(R.ok(undefined));
   }
 }
