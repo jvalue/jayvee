@@ -46,7 +46,7 @@
     "scripts": {
         "vscode:prepublish": "npm run build && npm run lint",
         "build": "tsc -b tsconfig.json",
-        "start:example": "npm run langium:generate && npm run build && node --enable-source-maps bin/cli run example/cars.odl",
+        "start:example": "npm run build && node --enable-source-maps bin/cli run example/cars.odl",
         "watch": "tsc -b tsconfig.json --watch",
         "lint": "eslint src --max-warnings=0",
         "lint:fix": "eslint src --fix",
