@@ -13,9 +13,9 @@ export class PostgresLoaderExecutor extends BlockExecutor<
     super(block, tableType, undefinedType);
   }
 
-  override executeFn(input: Table): R.ResultTask<void> {
+  override execute(input: Table): Promise<R.Result<void>> {
     // TODO #10
     console.log(input);
-    return () => Promise.resolve(R.ok(undefined));
+    return Promise.resolve(R.ok(undefined));
   }
 }

@@ -23,20 +23,16 @@ export class LayoutValidatorExecutor extends BlockExecutor<
     super(block, sheetType, tableType);
   }
 
-  override executeFn(input: Sheet): R.ResultTask<Table> {
-    return () => {
-      const sections = this.block.layout.ref?.sections || [];
-      this.ensureValidSections(sections, input.data);
-      return Promise.resolve(
-        R.ok({
-          columnNames: this.getHeader(input),
-          columnTypes: this.getColumnTypes(sections, input.width),
-          data: input.data.filter(
-            (_, index) => index !== this.getHeaderIndex(),
-          ),
-        }),
-      );
-    };
+  override execute(input: Sheet): Promise<R.Result<Table>> {
+    const sections = this.block.layout.ref?.sections || [];
+    this.ensureValidSections(sections, input.data);
+    return Promise.resolve(
+      R.ok({
+        columnNames: this.getHeader(input),
+        columnTypes: this.getColumnTypes(sections, input.width),
+        data: input.data.filter((_, index) => index !== this.getHeaderIndex()),
+      }),
+    );
   }
 
   getHeader(input: Sheet): string[] {
