@@ -13,6 +13,7 @@ import {
   OpenDataLanguageGeneratedModule,
   OpenDataLanguageGeneratedSharedModule,
 } from './generated/module';
+// eslint-disable-next-line import/no-cycle
 import {
   OpenDataLanguageValidationRegistry,
   OpenDataLanguageValidator,

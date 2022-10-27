@@ -7,6 +7,7 @@ import {
   isLayoutValidator,
   isPostgresLoader,
 } from '../language-server/generated/ast';
+// eslint-disable-next-line import/no-cycle
 import { createOpenDataLanguageServices } from '../language-server/open-data-language-module';
 
 import { extractAstNode, printError } from './cli-util';
@@ -59,28 +60,7 @@ async function interpretPipelineModel(model: Model): Promise<void> {
     postgresLoaderExecutor,
   ];
 
-  checkExecutorCompatibility(executorSequence);
-
   await runExecutors(executorSequence);
-}
-
-function checkExecutorCompatibility(
-  executorSequence: Array<BlockExecutor<BlockType>>,
-): void {
-  for (let index = 0; index < executorSequence.length - 1; ++index) {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const executorCurrent = executorSequence[index]!;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const executorAfter = executorSequence[index + 1]!;
-
-    if (!executorCurrent.canExecuteAfter(executorAfter)) {
-      throw new Error(
-        `Encountered incompatible block executors at indices ${index}, ${
-          index + 1
-        }`,
-      );
-    }
-  }
 }
 
 async function runExecutors(
@@ -99,7 +79,7 @@ async function runExecutors(
   }
 }
 
-function getExecutor(blockType: BlockType): BlockExecutor<BlockType> {
+export function getExecutor(blockType: BlockType): BlockExecutor<BlockType> {
   if (isCSVFileExtractor(blockType)) {
     return new CSVFileExtractorExecutor(blockType);
   }
