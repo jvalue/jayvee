@@ -24,4 +24,21 @@ export class BooleanDataType extends AbstractDataType {
 
     return false;
   }
+
+  override getStandardRepresentation(value: unknown): boolean {
+    if (typeof value === 'boolean') {
+      return value;
+    }
+    if (typeof value === 'string') {
+      switch (value.toLowerCase()) {
+        case 'true':
+          return true;
+        default:
+          return false;
+      }
+    }
+
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    throw new Error(`Invalid value: ${value} for type ${this.languageType}`);
+  }
 }

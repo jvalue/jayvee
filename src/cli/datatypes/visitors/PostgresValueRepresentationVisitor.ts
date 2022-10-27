@@ -1,39 +1,33 @@
+import { BooleanDataType } from '../BooleanDataType';
+import { DecimalDataType } from '../DecimalDataType';
+import { IntegerDataType } from '../IntegerDataType';
+import { TextDataType } from '../TextDataType';
+
 import { DataTypeVisitor } from './DataTypeVisitor';
 
 export class PostgresValueRepresentationVisitor extends DataTypeVisitor<
   (value: unknown) => string
 > {
-  visitBoolean(): (value: unknown) => string {
+  visitBoolean(dataType: BooleanDataType): (value: unknown) => string {
     return (value: unknown) => {
-      if (typeof value === 'boolean') {
-        return value ? 'true' : 'false';
-      }
-      if (typeof value === 'string') {
-        switch (value) {
-          case 'True':
-          case 'true':
-            return String.raw`'true'`;
-          default:
-            return String.raw`'false'`;
-        }
-      }
-
-      return String.raw`'false'`;
+      return dataType.getStandardRepresentation(value)
+        ? String.raw`'true'`
+        : String.raw`'false'`;
     };
   }
-  visitDecimal(): (value: unknown) => string {
+  visitDecimal(dataType: DecimalDataType): (value: unknown) => string {
     return (value: unknown) => {
-      return Number.parseFloat(value as string).toString();
+      return dataType.getStandardRepresentation(value).toString();
     };
   }
-  visitInteger(): (value: unknown) => string {
+  visitInteger(dataType: IntegerDataType): (value: unknown) => string {
     return (value: unknown) => {
-      return Number.parseInt(value as string, 10).toString();
+      return dataType.getStandardRepresentation(value).toString();
     };
   }
-  visitText(): (value: unknown) => string {
+  visitText(dataType: TextDataType): (value: unknown) => string {
     return (value: unknown) => {
-      return `'${(value as string).toString()}'`;
+      return `'${dataType.getStandardRepresentation(value)}'`;
     };
   }
 }

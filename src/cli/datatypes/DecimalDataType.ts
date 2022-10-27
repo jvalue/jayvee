@@ -14,4 +14,16 @@ export class DecimalDataType extends AbstractDataType {
   override acceptVisitor<R>(visitor: DataTypeVisitor<R>): R {
     return visitor.visitDecimal(this);
   }
+
+  override getStandardRepresentation(value: unknown): number {
+    if (typeof value === 'number') {
+      return value;
+    }
+    if (typeof value === 'string') {
+      return Number.parseFloat(value);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    throw new Error(`Invalid value: ${value} for type ${this.languageType}`);
+  }
 }
