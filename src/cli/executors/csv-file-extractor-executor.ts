@@ -20,11 +20,11 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
 
   override async execute(): Promise<R.Result<Sheet>> {
     try {
-      const raw = await R.dataOrThrowAsync(this.fetchRawDataFn());
-      const csv = await R.dataOrThrowAsync(this.parseAsCsvFn(raw));
+      const raw = await R.dataOrThrowAsync(this.fetchRawData());
+      const csv = await R.dataOrThrowAsync(this.parseAsCsv(raw));
       return R.ok({
         data: csv,
-        width: this.getSheetWidthFn(csv),
+        width: this.getSheetWidth(csv),
         height: csv.length,
       });
     } catch (errorObj) {
@@ -35,7 +35,7 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
     }
   }
 
-  private fetchRawDataFn(): Promise<R.Result<string>> {
+  private fetchRawData(): Promise<R.Result<string>> {
     const url = this.block.url;
     return new Promise((resolve) => {
       http.get(url, (response) => {
@@ -75,7 +75,7 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
     });
   }
 
-  private parseAsCsvFn(rawData: string): Promise<R.Result<string[][]>> {
+  private parseAsCsv(rawData: string): Promise<R.Result<string[][]>> {
     return new Promise((resolve) => {
       const csvData: string[][] = [];
       const parseOptions: ParserOptionsArgs = {};
@@ -98,7 +98,7 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
     });
   }
 
-  private getSheetWidthFn(data: string[][]): number {
+  private getSheetWidth(data: string[][]): number {
     return data.reduce((prev, curr) => {
       return curr.length > prev ? curr.length : prev;
     }, 0);
