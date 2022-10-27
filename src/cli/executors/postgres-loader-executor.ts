@@ -19,21 +19,27 @@ export class PostgresLoaderExecutor extends BlockExecutor<
   }
 
   override async execute(input: Table): Promise<R.Result<void>> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     const client = new Client({
       connectionString: 'postgresql://postgres:@localhost:5432/jvalue',
     });
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+
     await client.connect();
 
+    await client.query(
+      this.buildCreateTableStatement(this.block.$container.name, input),
+    );
+
+    await client.query(
+      this.buildInsertValuesStatement(this.block.$container.name, input),
+    );
+
+    await client.end();
+
+    return Promise.resolve(R.ok(undefined));
+  }
+
+  private buildCreateTableStatement(tableName: string, input: Table): string {
     const columnTypeVisitor = new PostgresColumnTypeVisitor();
-    const valueRepresenationVisitor = new PostgresValueRepresentationVisitor();
-
-    const valueRepresentationFormatters = input.columnTypes.map((type) => {
-      return type?.acceptVisitor(valueRepresenationVisitor);
-    });
-
-    const tableName = this.block.$container.name;
 
     const columnPostgresStatements = input.columnNames
       .map((x) => x || 'EMPTYNAME')
@@ -43,9 +49,17 @@ export class PostgresLoaderExecutor extends BlockExecutor<
         ).acceptVisitor(columnTypeVisitor)}`;
       });
 
-    const createTableStatement = `CREATE TABLE IF NOT EXISTS ${tableName} (${columnPostgresStatements.join(
+    return `CREATE TABLE IF NOT EXISTS ${tableName} (${columnPostgresStatements.join(
       ',',
     )});`;
+  }
+
+  private buildInsertValuesStatement(tableName: string, input: Table): string {
+    const valueRepresenationVisitor = new PostgresValueRepresentationVisitor();
+
+    const valueRepresentationFormatters = input.columnTypes.map((type) => {
+      return type?.acceptVisitor(valueRepresenationVisitor);
+    });
 
     const valuesStatement = input.data
       .map((row) => {
@@ -55,20 +69,8 @@ export class PostgresLoaderExecutor extends BlockExecutor<
       })
       .join(',');
 
-    const insertValuesStatement = `INSERT INTO ${tableName} (${input.columnNames
+    return `INSERT INTO ${tableName} (${input.columnNames
       .map((x) => x || 'EMPTYNAME')
       .join(',')}) VALUES ${valuesStatement}`;
-
-    console.log(createTableStatement);
-    console.log(insertValuesStatement);
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    await client.query(createTableStatement);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    await client.query(insertValuesStatement);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    await client.end();
-
-    return Promise.resolve(R.ok(undefined));
   }
 }
