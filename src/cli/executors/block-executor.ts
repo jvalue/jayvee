@@ -18,5 +18,5 @@ export abstract class BlockExecutor<
     return this.outputDataType === blockAfter.inputDataType;
   }
 
-  abstract executeFn(input: InType): R.ResultTask<OutType>;
+  abstract execute(input: InType): Promise<R.Result<OutType>>;
 }

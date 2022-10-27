@@ -18,7 +18,7 @@ export class PostgresLoaderExecutor extends BlockExecutor<
     super(block, tableType, undefinedType);
   }
 
-  override executeFn(input: Table): R.ResultTask<void> {
+  override executeFn(input: Table): Promise<R.Result<void>> {
     return async () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
       const client = new Client({
