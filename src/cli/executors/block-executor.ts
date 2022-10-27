@@ -1,6 +1,8 @@
 import { BlockType } from '../../language-server/generated/ast';
 import { DataType, undefinedType } from '../data-types';
 
+import * as R from './execution-result';
+
 export abstract class BlockExecutor<
   B extends BlockType,
   InType = unknown,
@@ -24,5 +26,5 @@ export abstract class BlockExecutor<
     return this.outputDataType !== undefinedType;
   }
 
-  abstract execute(input: InType): Promise<OutType>;
+  abstract execute(input: InType): Promise<R.Result<OutType>>;
 }

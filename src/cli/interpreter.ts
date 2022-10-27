@@ -10,9 +10,10 @@ import {
 // eslint-disable-next-line import/no-cycle
 import { createOpenDataLanguageServices } from '../language-server/open-data-language-module';
 
-import { extractAstNode } from './cli-util';
+import { extractAstNode, printError } from './cli-util';
 import { BlockExecutor } from './executors/block-executor';
 import { CSVFileExtractorExecutor } from './executors/csv-file-extractor-executor';
+import * as R from './executors/execution-result';
 import { LayoutValidatorExecutor } from './executors/layout-validator-executor';
 import { PostgresLoaderExecutor } from './executors/postgres-loader-executor';
 
@@ -66,8 +67,15 @@ async function runExecutors(
   executorSequence: Array<BlockExecutor<BlockType>>,
 ): Promise<void> {
   let value = undefined;
-  for (const executor of executorSequence) {
-    value = await executor.execute(value);
+  try {
+    for (const executor of executorSequence) {
+      value = await R.dataOrThrowAsync(executor.execute(value));
+    }
+  } catch (errObj) {
+    if (R.isExecutionErrorDetails(errObj)) {
+      return printError(errObj);
+    }
+    throw errObj;
   }
 }
 

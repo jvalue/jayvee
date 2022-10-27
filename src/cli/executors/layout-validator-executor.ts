@@ -12,6 +12,7 @@ import { getDataType } from '../datatypes';
 import { AbstractDataType } from '../datatypes/AbstractDataType';
 
 import { BlockExecutor } from './block-executor';
+import * as R from './execution-result';
 
 export class LayoutValidatorExecutor extends BlockExecutor<
   LayoutValidator,
@@ -22,16 +23,16 @@ export class LayoutValidatorExecutor extends BlockExecutor<
     super(block, sheetType, tableType);
   }
 
-  override execute(input: Sheet): Promise<Table> {
+  override execute(input: Sheet): Promise<R.Result<Table>> {
     const sections = this.block.layout.ref?.sections || [];
-
     this.ensureValidSections(sections, input.data);
-
-    return Promise.resolve({
-      columnNames: this.getHeader(input),
-      columnTypes: this.getColumnTypes(sections, input.width),
-      data: input.data.filter((_, index) => index !== this.getHeaderIndex()),
-    });
+    return Promise.resolve(
+      R.ok({
+        columnNames: this.getHeader(input),
+        columnTypes: this.getColumnTypes(sections, input.width),
+        data: input.data.filter((_, index) => index !== this.getHeaderIndex()),
+      }),
+    );
   }
 
   getHeader(input: Sheet): string[] {

@@ -2,8 +2,10 @@ import fs from 'fs';
 import path from 'path';
 
 import chalk from 'chalk';
-import { AstNode, LangiumDocument, LangiumServices } from 'langium';
+import { AstNode, CstNode, LangiumDocument, LangiumServices } from 'langium';
 import { URI } from 'vscode-uri';
+
+import { ExecutionErrorDetails } from './executors/execution-result';
 
 export async function extractDocument(
   fileName: string,
@@ -57,4 +59,25 @@ export async function extractAstNode<T extends AstNode>(
   services: LangiumServices,
 ): Promise<T> {
   return (await extractDocument(fileName, services)).parseResult.value as T;
+}
+
+export function getCstTextWithLineNumbers(cstNode: CstNode): string {
+  const text = cstNode.text;
+  const lines = text.split('\n');
+  const startLineNumber = cstNode.range.start.line + 1;
+
+  let textWithLineNumbers = '';
+  for (let i = 0; i < lines.length; ++i) {
+    textWithLineNumbers += `${startLineNumber + i}\t| \t${lines[i] ?? ''}\n`;
+  }
+  return textWithLineNumbers;
+}
+
+export function printError(errDetails: ExecutionErrorDetails): void {
+  console.error(chalk.red(errDetails.message));
+  console.error(chalk.red(errDetails.hint));
+  console.error();
+  if (errDetails.cstNode !== undefined) {
+    console.error(chalk.blue(getCstTextWithLineNumbers(errDetails.cstNode)));
+  }
 }

@@ -7,6 +7,7 @@ import { CSVFileExtractor } from '../../language-server/generated/ast';
 import { Sheet, sheetType, undefinedType } from '../data-types';
 
 import { BlockExecutor } from './block-executor';
+import * as R from './execution-result';
 
 export class CSVFileExtractorExecutor extends BlockExecutor<
   CSVFileExtractor,
@@ -17,18 +18,24 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
     super(block, undefinedType, sheetType);
   }
 
-  override async execute(): Promise<Sheet> {
-    const rawData = await this.fetchRawData();
-    const data = await this.parseAsCsv(rawData);
-    const width = data.reduce((prev, curr) => {
-      return curr.length > prev ? curr.length : prev;
-    }, 0);
-    const height = data.length;
-
-    return { data, width, height };
+  override async execute(): Promise<R.Result<Sheet>> {
+    try {
+      const raw = await R.dataOrThrowAsync(this.fetchRawData());
+      const csv = await R.dataOrThrowAsync(this.parseAsCsv(raw));
+      return R.ok({
+        data: csv,
+        width: this.getSheetWidth(csv),
+        height: csv.length,
+      });
+    } catch (errorObj) {
+      if (R.isExecutionErrorDetails(errorObj)) {
+        return R.err(errorObj);
+      }
+      throw errorObj;
+    }
   }
 
-  private async fetchRawData(): Promise<string> {
+  private fetchRawData(): Promise<R.Result<string>> {
     const url = this.block.url;
     return new Promise((resolve) => {
       http.get(url, (response) => {
@@ -36,10 +43,14 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
         const responseCode = response.statusCode;
 
         if (responseCode === undefined || responseCode >= 400) {
-          throw Error(
-            `Error when executing block "${
-              this.block.$type
-            }". HTTP fetch failed with code ${responseCode ?? 'undefined'}.`,
+          resolve(
+            R.err({
+              message: `Error when executing block "${
+                this.block.$type
+              }". HTTP fetch failed with code ${responseCode ?? 'undefined'}.`,
+              hint: `Please check your connection and the attribute "url".`,
+              cstNode: this.block.$cstNode?.parent,
+            }),
           );
         }
 
@@ -48,17 +59,23 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
         });
 
         response.on('end', () => {
-          resolve(rawData);
+          resolve(R.ok(rawData));
         });
 
-        response.on('error', (err) => {
-          throw err;
+        response.on('error', (errorObj) => {
+          resolve(
+            R.err({
+              message: `Error when executing block "${this.block.$type}".`,
+              hint: errorObj.message,
+              cstNode: this.block.$cstNode?.parent,
+            }),
+          );
         });
       });
     });
   }
 
-  private parseAsCsv(rawData: string): Promise<string[][]> {
+  private parseAsCsv(rawData: string): Promise<R.Result<string[][]>> {
     return new Promise((resolve) => {
       const csvData: string[][] = [];
       const parseOptions: ParserOptionsArgs = {};
@@ -67,11 +84,23 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
           csvData.push(data);
         })
         .on('error', (error) => {
-          console.warn(`Could not parse row: ${error.message}`);
+          resolve(
+            R.err({
+              message: `Error when executing block "${this.block.$type}". CSV parse failed on row.`,
+              hint: error.message,
+              cstNode: this.block.$cstNode?.parent,
+            }),
+          );
         })
         .on('end', () => {
-          resolve(csvData);
+          resolve(R.ok(csvData));
         });
     });
+  }
+
+  private getSheetWidth(data: string[][]): number {
+    return data.reduce((prev, curr) => {
+      return curr.length > prev ? curr.length : prev;
+    }, 0);
   }
 }
