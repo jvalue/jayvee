@@ -1,3 +1,6 @@
+/* eslint-disable import/no-cycle */
+import { DataTypeVisitor } from './visitors/DataTypeVisitor';
+
 import { AbstractDataType } from './AbstractDataType';
 
 export class DecimalDataType extends AbstractDataType {
@@ -7,5 +10,9 @@ export class DecimalDataType extends AbstractDataType {
     }
 
     return !Number.isNaN(value);
+  }
+
+  override acceptVisitor<R>(visitor: DataTypeVisitor<R>): R {
+    return visitor.visitDecimal(this);
   }
 }

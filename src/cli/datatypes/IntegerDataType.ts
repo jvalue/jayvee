@@ -1,3 +1,6 @@
+/* eslint-disable import/no-cycle */
+import { DataTypeVisitor } from './visitors/DataTypeVisitor';
+
 import { AbstractDataType } from './AbstractDataType';
 
 export class IntegerDataType extends AbstractDataType {
@@ -7,5 +10,9 @@ export class IntegerDataType extends AbstractDataType {
     }
 
     return Number.isInteger(value);
+  }
+
+  override acceptVisitor<R>(visitor: DataTypeVisitor<R>): R {
+    return visitor.visitInteger(this);
   }
 }
