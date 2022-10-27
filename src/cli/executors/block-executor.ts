@@ -1,5 +1,5 @@
 import { BlockType } from '../../language-server/generated/ast';
-import { DataType } from '../data-types';
+import { DataType, undefinedType } from '../data-types';
 
 export abstract class BlockExecutor<
   B extends BlockType,
@@ -14,6 +14,14 @@ export abstract class BlockExecutor<
 
   canExecuteAfter<T extends BlockType>(blockAfter: BlockExecutor<T>): boolean {
     return this.outputDataType === blockAfter.inputDataType;
+  }
+
+  hasInput(): boolean {
+    return this.inputDataType !== undefinedType;
+  }
+
+  hasOutput(): boolean {
+    return this.outputDataType !== undefinedType;
   }
 
   abstract execute(input: InType): Promise<OutType>;
