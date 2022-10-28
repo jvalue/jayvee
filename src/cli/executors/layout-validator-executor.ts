@@ -6,7 +6,8 @@ import {
   isColumnSection,
   isRowSection,
 } from '../../language-server/generated/ast';
-import { Sheet, Table, sheetType, tableType } from '../data-types';
+import { LayoutValidatorMetaInformation } from '../../language-server/meta-information/layout-validator-meta-inf';
+import { Sheet, Table } from '../data-types';
 import { getColumn, getColumnIndexFromSelector } from '../data-util';
 import { getDataType } from '../datatypes';
 import { AbstractDataType } from '../datatypes/AbstractDataType';
@@ -17,12 +18,9 @@ import * as R from './execution-result';
 export class LayoutValidatorExecutor extends BlockExecutor<
   LayoutValidator,
   Sheet,
-  Table
+  Table,
+  LayoutValidatorMetaInformation
 > {
-  constructor(block: LayoutValidator) {
-    super(block, sheetType, tableType);
-  }
-
   override execute(input: Sheet): Promise<R.Result<Table>> {
     const sections = this.block.layout.ref?.sections || [];
     this.ensureValidSections(sections, input.data);

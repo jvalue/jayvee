@@ -1,7 +1,8 @@
 import { Client } from 'pg';
 
 import { PostgresLoader } from '../../language-server/generated/ast';
-import { Table, tableType, undefinedType } from '../data-types';
+import { PostgresLoaderMetaInformation } from '../../language-server/meta-information/postgres-loader-meta-inf';
+import { Table } from '../data-types';
 import { AbstractDataType } from '../datatypes/AbstractDataType';
 import { PostgresColumnTypeVisitor } from '../datatypes/visitors/PostgresColumnTypeVisitor';
 import { PostgresValueRepresentationVisitor } from '../datatypes/visitors/PostgresValueRepresentationVisitor';
@@ -12,12 +13,9 @@ import * as R from './execution-result';
 export class PostgresLoaderExecutor extends BlockExecutor<
   PostgresLoader,
   Table,
-  void
+  void,
+  PostgresLoaderMetaInformation
 > {
-  constructor(block: PostgresLoader) {
-    super(block, tableType, undefinedType);
-  }
-
   override async execute(input: Table): Promise<R.Result<void>> {
     const client = new Client({
       connectionString: 'postgresql://postgres:@localhost:5432/jvalue',

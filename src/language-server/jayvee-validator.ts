@@ -4,8 +4,6 @@ import {
   ValidationRegistry,
 } from 'langium';
 
-// eslint-disable-next-line import/no-cycle
-import { getExecutor } from '../cli/interpreter';
 import { collectIngoingPipes, collectOutgoingPipes } from '../cli/model-util';
 
 import {
@@ -19,6 +17,7 @@ import {
   isRowSection,
 } from './generated/ast';
 import type { JayveeServices } from './jayvee-module';
+import { getMetaInformation } from './meta-information/meta-inf-util';
 
 /**
  * Registry for validation checks.
@@ -108,10 +107,10 @@ export class JayveeValidator {
       return;
     }
 
-    const fromBlockExecutor = getExecutor(fromBlock.type);
-    const toBlockExecutor = getExecutor(toBlock.type);
+    const fromBlockMetaInf = getMetaInformation(fromBlock.type);
+    const toBlockMetaInf = getMetaInformation(toBlock.type);
 
-    if (!fromBlockExecutor.canExecuteAfter(toBlockExecutor)) {
+    if (!fromBlockMetaInf.canBeConnectedTo(toBlockMetaInf)) {
       accept(
         'error',
         `The output of block ${fromBlock.type.$type} is incompatible with the input of block ${toBlock.type.$type}`,
@@ -143,7 +142,7 @@ export class JayveeValidator {
     whatToCheck: 'input' | 'output',
     accept: ValidationAcceptor,
   ): void {
-    const blockExecutor = getExecutor(block.type);
+    const blockMetaInf = getMetaInformation(block.type);
 
     let pipes: Pipe[];
     switch (whatToCheck) {
@@ -158,8 +157,8 @@ export class JayveeValidator {
     }
 
     if (
-      (whatToCheck === 'input' && !blockExecutor.hasInput()) ||
-      (whatToCheck === 'output' && !blockExecutor.hasOutput())
+      (whatToCheck === 'input' && !blockMetaInf.hasInput()) ||
+      (whatToCheck === 'output' && !blockMetaInf.hasOutput())
     ) {
       for (const pipe of pipes) {
         accept(
