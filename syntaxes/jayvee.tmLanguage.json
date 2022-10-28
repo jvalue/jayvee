@@ -1,24 +1,24 @@
 {
-  "name": "open-data-language",
-  "scopeName": "source.open-data-language",
+  "name": "jayvee",
+  "scopeName": "source.jayvee",
   "fileTypes": [
-    ".odl"
+    ".jv"
   ],
   "patterns": [
     {
       "include": "#comments"
     },
     {
-      "name": "keyword.control.open-data-language",
+      "name": "keyword.control.jayvee",
       "match": "\\b(block|boolean|column|CSVFileExtractor|decimal|from|header|integer|layout|LayoutValidator|oftype|pipe|PostgresLoader|row|text|to|url)\\b"
     },
     {
-      "name": "string.quoted.double.open-data-language",
+      "name": "string.quoted.double.jayvee",
       "begin": "\"",
       "end": "\""
     },
     {
-      "name": "string.quoted.single.open-data-language",
+      "name": "string.quoted.single.jayvee",
       "begin": "'",
       "end": "'"
     }
@@ -30,11 +30,11 @@
           "begin": "//",
           "beginCaptures": {
             "1": {
-              "name": "punctuation.whitespace.comment.leading.open-data-language"
+              "name": "punctuation.whitespace.comment.leading.jayvee"
             }
           },
           "end": "(?=$)",
-          "name": "comment.line.open-data-language"
+          "name": "comment.line.jayvee"
         }
       ]
     }

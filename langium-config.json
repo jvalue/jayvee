@@ -1,14 +1,14 @@
 {
-    "projectName": "OpenDataLanguage",
+    "projectName": "Jayvee",
     "languages": [{
-        "id": "open-data-language",
-        "grammar": "src/language-server/open-data-language.langium",
-        "fileExtensions": [".odl"],
+        "id": "jayvee",
+        "grammar": "src/language-server/jayvee.langium",
+        "fileExtensions": [".jv"],
         "textMate": {
-            "out": "syntaxes/open-data-language.tmLanguage.json"
+            "out": "syntaxes/jayvee.tmLanguage.json"
         },
         "monarch": {
-            "out": "./syntaxes/open-data-language.monarch.ts"
+            "out": "./syntaxes/jayvee.monarch.ts"
         }
     }],
     "out": "src/language-server/generated"

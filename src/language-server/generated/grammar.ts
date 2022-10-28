@@ -5,11 +5,11 @@
 
 import { loadGrammarFromJson, Grammar } from 'langium';
 
-let loadedOpenDataLanguageGrammar: Grammar | undefined;
-export const OpenDataLanguageGrammar = (): Grammar => loadedOpenDataLanguageGrammar ?? (loadedOpenDataLanguageGrammar = loadGrammarFromJson(`{
+let loadedJayveeGrammar: Grammar | undefined;
+export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayveeGrammar = loadGrammarFromJson(`{
   "$type": "Grammar",
   "isDeclared": true,
-  "name": "OpenDataLanguage",
+  "name": "Jayvee",
   "rules": [
     {
       "$type": "ParserRule",

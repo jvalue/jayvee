@@ -12,22 +12,22 @@ import {
   Block,
   CSVFileExtractor,
   ColumnSection,
+  JayveeAstType,
   Layout,
-  OpenDataLanguageAstType,
   Pipe,
   RowSection,
   isRowSection,
 } from './generated/ast';
-import type { OpenDataLanguageServices } from './open-data-language-module';
+import type { JayveeServices } from './jayvee-module';
 
 /**
  * Registry for validation checks.
  */
-export class OpenDataLanguageValidationRegistry extends ValidationRegistry {
-  constructor(services: OpenDataLanguageServices) {
+export class JayveeValidationRegistry extends ValidationRegistry {
+  constructor(services: JayveeServices) {
     super(services);
-    const validator = services.validation.OpenDataLanguageValidator;
-    const checks: ValidationChecks<OpenDataLanguageAstType> = {
+    const validator = services.validation.JayveeValidator;
+    const checks: ValidationChecks<JayveeAstType> = {
       ColumnSection: validator.checkColumnIdFormat,
       RowSection: validator.checkRowIdFormat,
       Layout: validator.checkSingleHeader,
@@ -42,7 +42,7 @@ export class OpenDataLanguageValidationRegistry extends ValidationRegistry {
 /**
  * Implementation of custom validations.
  */
-export class OpenDataLanguageValidator {
+export class JayveeValidator {
   checkColumnIdFormat(
     this: void,
     columnSection: ColumnSection,
@@ -127,7 +127,7 @@ export class OpenDataLanguageValidator {
     block: Block,
     accept: ValidationAcceptor,
   ): void {
-    OpenDataLanguageValidator.checkPipesOfBlock(block, 'input', accept);
+    JayveeValidator.checkPipesOfBlock(block, 'input', accept);
   }
 
   checkOutgoingPipes(
@@ -135,7 +135,7 @@ export class OpenDataLanguageValidator {
     block: Block,
     accept: ValidationAcceptor,
   ): void {
-    OpenDataLanguageValidator.checkPipesOfBlock(block, 'output', accept);
+    JayveeValidator.checkPipesOfBlock(block, 'output', accept);
   }
 
   private static checkPipesOfBlock(

@@ -1,14 +1,13 @@
 import { Command } from 'commander';
 
-import { OpenDataLanguageLanguageMetaData } from '../language-server/generated/module';
+import { JayveeLanguageMetaData } from '../language-server/generated/module';
 
 import { runAction } from './interpreter';
 
 export default function (): void {
   const program = new Command();
 
-  const fileExtensions =
-    OpenDataLanguageLanguageMetaData.fileExtensions.join(', ');
+  const fileExtensions = JayveeLanguageMetaData.fileExtensions.join(', ');
   program
     .command('run')
     .argument(

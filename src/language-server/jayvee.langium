@@ -1,4 +1,4 @@
-grammar OpenDataLanguage
+grammar Jayvee
 
 entry Model:
   (blocks+=Block | layouts+=Layout | pipes+=Pipe)*;
