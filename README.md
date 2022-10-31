@@ -15,12 +15,21 @@
 
 ## Get up and running straight away
 
+### VS Code
+
  * Run `npm run langium:generate` to generate TypeScript code from the grammar definition.
- * Run `npm run build` to compile all TypeScript code.
+ * Run `npm run build` to compile the TypeScript code.
  * Press `F5` to open a new window with your extension loaded.
  * Create a new file with a `.jv` file name suffix.
  * Verify that syntax highlighting, validation, completion etc. are working as expected.
  * Run `./bin/cli` to see options for the CLI; `./bin/cli run <file>` interprets a given DSL file.
+
+### Web editor
+
+* Run `npm run langium:generate` to generate TypeScript code from the grammar definition.
+* Run `npm run build:web` to compile the TypeScript code.
+* Run `npm run serve` to start the server.
+* Open <http://localhost:3000> in your browser to access the editor.
 
 ## Make changes
 
