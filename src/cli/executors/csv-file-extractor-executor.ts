@@ -4,7 +4,8 @@ import { parseString as parseStringAsCsv } from '@fast-csv/parse';
 import { ParserOptionsArgs } from '@fast-csv/parse/build/src/ParserOptions';
 
 import { CSVFileExtractor } from '../../language-server/generated/ast';
-import { Sheet, sheetType, undefinedType } from '../data-types';
+import { CSVFileExtractorMetaInformation } from '../../language-server/meta-information/csv-file-extractor-meta-inf';
+import { Sheet } from '../data-types';
 
 import { BlockExecutor } from './block-executor';
 import * as R from './execution-result';
@@ -12,12 +13,9 @@ import * as R from './execution-result';
 export class CSVFileExtractorExecutor extends BlockExecutor<
   CSVFileExtractor,
   void,
-  Sheet
+  Sheet,
+  CSVFileExtractorMetaInformation
 > {
-  constructor(block: CSVFileExtractor) {
-    super(block, undefinedType, sheetType);
-  }
-
   override async execute(): Promise<R.Result<Sheet>> {
     try {
       const raw = await R.dataOrThrowAsync(this.fetchRawData());

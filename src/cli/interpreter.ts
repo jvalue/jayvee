@@ -8,8 +8,8 @@ import {
   isLayoutValidator,
   isPostgresLoader,
 } from '../language-server/generated/ast';
-// eslint-disable-next-line import/no-cycle
 import { createJayveeServices } from '../language-server/jayvee-module';
+import { getMetaInformation } from '../language-server/meta-information/meta-inf-util';
 
 import { extractAstNode, printError } from './cli-util';
 import { BlockExecutor } from './executors/block-executor';
@@ -28,8 +28,8 @@ export async function runAction(fileName: string): Promise<void> {
 async function interpretPipelineModel(model: Model): Promise<void> {
   const pipelineRuns: Array<Promise<void>> = [];
   for (const block of model.blocks) {
-    const blockExecutor = getExecutor(block.type);
-    if (!blockExecutor.hasInput()) {
+    const blockMetaInf = getMetaInformation(block.type);
+    if (!blockMetaInf.hasInput()) {
       const pipelineRun = runPipeline(block);
       pipelineRuns.push(pipelineRun);
     }
@@ -39,11 +39,12 @@ async function interpretPipelineModel(model: Model): Promise<void> {
 
 async function runPipeline(startingBlock: Block): Promise<void> {
   let currentBlock: Block | undefined = startingBlock;
-  let currentExecutor = getExecutor(currentBlock.type);
+  let blockMetaInf = getMetaInformation(currentBlock.type);
+  let blockExecutor = getExecutor(currentBlock.type);
   let value = undefined;
   do {
     try {
-      value = await R.dataOrThrowAsync(currentExecutor.execute(value));
+      value = await R.dataOrThrowAsync(blockExecutor.execute(value));
     } catch (errObj) {
       if (R.isExecutionErrorDetails(errObj)) {
         printError(errObj);
@@ -56,8 +57,9 @@ async function runPipeline(startingBlock: Block): Promise<void> {
     if (currentBlock === undefined) {
       return;
     }
-    currentExecutor = getExecutor(currentBlock.type);
-  } while (currentExecutor.hasInput());
+    blockMetaInf = getMetaInformation(currentBlock.type);
+    blockExecutor = getExecutor(currentBlock.type);
+  } while (blockMetaInf.hasInput());
 }
 
 export function getExecutor(blockType: BlockType): BlockExecutor<BlockType> {

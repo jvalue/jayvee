@@ -13,7 +13,6 @@ import {
   JayveeGeneratedModule,
   JayveeGeneratedSharedModule,
 } from './generated/module';
-// eslint-disable-next-line import/no-cycle
 import { JayveeValidationRegistry, JayveeValidator } from './jayvee-validator';
 
 /**
