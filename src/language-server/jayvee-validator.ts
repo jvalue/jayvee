@@ -166,7 +166,7 @@ export class JayveeValidator {
           `Blocks of type ${block.type.$type} do not have an ${whatToCheck}`,
           {
             node: pipe,
-            property: 'from',
+            property: whatToCheck === 'input' ? 'to' : 'from',
           },
         );
       }
@@ -174,10 +174,10 @@ export class JayveeValidator {
       for (const pipe of pipes) {
         accept(
           'error',
-          `At most one pipe can connect to the ${whatToCheck} of a ${block.type.$type}`,
+          `At most one pipe can be connected to the ${whatToCheck} of a ${block.type.$type}`,
           {
             node: pipe,
-            property: 'from',
+            property: whatToCheck === 'input' ? 'to' : 'from',
           },
         );
       }
