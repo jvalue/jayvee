@@ -105,3 +105,6 @@ dist
 
 # Langium build
 out/
+
+# Web build
+public/
