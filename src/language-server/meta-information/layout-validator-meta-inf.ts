@@ -1,4 +1,9 @@
-import { Sheet, Table, sheetType, tableType } from '../../cli/data-types';
+import {
+  Sheet,
+  Table,
+  sheetType,
+  tableType,
+} from '../../interpreter/data-types';
 import { LayoutValidator } from '../generated/ast';
 
 import { BlockMetaInformation } from './block-meta-inf';

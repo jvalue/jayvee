@@ -1,4 +1,4 @@
-import { Sheet, sheetType, undefinedType } from '../../cli/data-types';
+import { Sheet, sheetType, undefinedType } from '../../interpreter/data-types';
 import { CSVFileExtractor } from '../generated/ast';
 
 import { BlockMetaInformation } from './block-meta-inf';

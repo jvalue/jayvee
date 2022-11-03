@@ -1,4 +1,4 @@
-import { DataType, undefinedType } from '../../cli/data-types';
+import { DataType, undefinedType } from '../../interpreter/data-types';
 import { BlockType } from '../generated/ast';
 
 export abstract class BlockMetaInformation<

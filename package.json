@@ -42,11 +42,11 @@
     "bin": {
         "jayvee-cli": "./bin/cli"
     },
-    "main": "./out/extension.js",
+    "main": "./out/vs-code-extension/extension.js",
     "scripts": {
         "vscode:prepublish": "npm run build && npm run lint",
         "build": "tsc -b tsconfig.json",
-        "prepare:public": "npx shx mkdir -p public; npx shx cp -fr src/web/static/* public/",
+        "prepare:public": "npx shx mkdir -p public; npx shx cp -fr src/web-editor/static/* public/",
         "copy:monaco-editor-wrapper": "npx shx cp -fr node_modules/monaco-editor-wrapper/bundle public/monaco-editor-wrapper",
         "copy:monaco-workers": "npx shx cp -fr node_modules/monaco-editor-workers/dist/ public/monaco-editor-workers",
         "build:worker": "esbuild --minify out/language-server/main-browser.js --bundle --format=iife --outfile=public/jayvee-server-worker.js",

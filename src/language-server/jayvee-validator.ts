@@ -4,7 +4,10 @@ import {
   ValidationRegistry,
 } from 'langium';
 
-import { collectIngoingPipes, collectOutgoingPipes } from '../cli/model-util';
+import {
+  collectIngoingPipes,
+  collectOutgoingPipes,
+} from '../interpreter/model-util';
 
 import {
   Block,

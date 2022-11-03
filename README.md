@@ -4,14 +4,14 @@
 
  * `package.json` - the manifest file in which you declare your language support.
  * `language-configuration.json` - the language configuration used in the VS Code editor, defining the tokens that are used for comments and brackets.
- * `src/extension.ts` - the main code of the extension, which is responsible for launching a language server and client.
+ * `src/vs-code-extension/extension.ts` - the main code of the extension, which is responsible for launching a language server and client.
  * `src/language-server/jayvee.langium` - the grammar definition of your language.
  * `src/language-server/main.ts` - the entry point of the language server process.
  * `src/language-server/jayvee-module.ts` - the dependency injection module of your language implementation. Use this to register overridden and added services.
  * `src/language-server/jayvee-validator.ts` - an example validator. You should change it to reflect the semantics of your language.
- * `src/cli/index.ts` - the entry point of the command line interface (CLI) of your language.
- * `src/cli/interpreter.ts` - the interpreter used by the CLI to run DSL documents.
- * `src/cli/cli-util.ts` - utility code for the CLI.
+ * `src/interpreter/index.ts` - the entry point of the command line interface (CLI) of your language.
+ * `src/interpreter/interpreter.ts` - the interpreter used by the CLI to run DSL documents.
+ * `src/interpreter/cli-util.ts` - utility code for the CLI.
 
 ## Get up and running straight away
 

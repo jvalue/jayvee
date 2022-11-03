@@ -1,4 +1,4 @@
-import { Table, tableType, undefinedType } from '../../cli/data-types';
+import { Table, tableType, undefinedType } from '../../interpreter/data-types';
 import { PostgresLoader } from '../generated/ast';
 
 import { BlockMetaInformation } from './block-meta-inf';
