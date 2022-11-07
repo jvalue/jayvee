@@ -1,0 +1,38 @@
+{
+    "name": "jayvee",
+    "displayName": "jayvee",
+    "description": "Please enter a brief description here",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.56.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "jayvee",
+                "aliases": [
+                    "Jayvee",
+                    "jayvee"
+                ],
+                "extensions": [
+                    ".jv"
+                ],
+                "configuration": "../../libs/language-server/language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "jayvee",
+                "scopeName": "source.jayvee",
+                "path": "../../libs/language-server/syntaxes/jayvee.tmLanguage.json"
+            }
+        ]
+    },
+    "activationEvents": [
+        "onLanguage:jayvee"
+    ],
+    "main": "../../dist/apps/vs-code-extension/extension.cjs"
+}

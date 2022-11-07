@@ -1,0 +1,40 @@
+{
+  "name": "language-server",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/language-server/src",
+  "projectType": "library",
+  "targets": {
+    "generate": {
+      "executor": "nx:run-commands",
+      "options": {
+          "command": "langium generate -f libs/language-server/langium-config.json"
+      }
+    },
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/language-server",
+        "main": "libs/language-server/src/index.ts",
+        "tsConfig": "libs/language-server/tsconfig.lib.json",
+        "assets": ["libs/language-server/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/language-server/src/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/language-server/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

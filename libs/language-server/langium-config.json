@@ -1,0 +1,15 @@
+{
+    "projectName": "Jayvee",
+    "languages": [{
+        "id": "jayvee",
+        "grammar": "src/lib/jayvee.langium",
+        "fileExtensions": [".jv"],
+        "textMate": {
+            "out": "syntaxes/jayvee.tmLanguage.json"
+        },
+        "monarch": {
+            "out": "syntaxes/jayvee.monarch.ts"
+        }
+    }],
+    "out": "src/lib/generated"
+}
