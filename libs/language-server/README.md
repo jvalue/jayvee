@@ -1,11 +1,7 @@
-# language-server
+# Language Server
 
-This library was generated with [Nx](https://nx.dev).
+## Important project files
 
-## Building
-
-Run `nx build language-server` to build the library.
-
-## Running unit tests
-
-Run `nx test language-server` to execute the unit tests via [Jest](https://jestjs.io).
+- `language-configuration.json` - the language configuration used in monaco editors, defining the tokens that are used for comments and brackets.
+- `src/lib/jayvee.langium` - the grammar definition of the language.
+- `language-configuration.json` - the configuration for the Langium generator.
