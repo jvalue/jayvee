@@ -35,7 +35,11 @@
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
-        "commands": ["npm publish dist/apps/interpreter"]
+        "commands": [
+          // Prepend shebang to the binary file
+          "sed -e '1i#!/usr/bin/env node' -i '1i#!/usr/bin/env node' dist/apps/interpreter/main.js",
+          "npm publish dist/apps/interpreter"
+        ]
       }
     }
   },
