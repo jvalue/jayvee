@@ -1,5 +1,5 @@
 {
-  "name": "@jayvee/interpreter",
+  "name": "@jvalue/interpreter",
   "version": "0.0.1",
   "description": "Interpreter for .jv files",
   "main": "main.js",
