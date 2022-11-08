@@ -1,0 +1,25 @@
+name: Publish Interpreter
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+
+# https://docs.github.com/en/actions/guides/publishing-nodejs-packages
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+          always-auth: true
+          registry-url: 'https://npm.pkg.github.com'
+      - run: npm ci
+      - run: npx nx run interpreter:publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
