@@ -16,15 +16,14 @@
       "options": {
         "outputPath": "dist/libs/language-server",
         "main": "libs/language-server/src/index.ts",
-        "tsConfig": "libs/language-server/tsconfig.lib.json",
-        "assets": ["libs/language-server/*.md"]
+        "tsConfig": "libs/language-server/tsconfig.lib.json"
       }
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/language-server/src/**/*.ts"]
+        "lintFilePatterns": ["libs/language-server/**/*.ts"]
       }
     },
     "test": {

@@ -22,18 +22,13 @@
       "executor": "@nrwl/js:node",
       "options": {
         "buildTarget": "vs-code-extension:build"
-      },
-      "configurations": {
-        "production": {
-          "buildTarget": "vs-code-extension:build:production"
-        }
       }
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/vs-code-extension/src/**/*.ts"]
+        "lintFilePatterns": ["apps/vs-code-extension/**/*.ts"]
       }
     },
     "test": {

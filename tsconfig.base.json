@@ -1,16 +1,14 @@
 {
-  "compileOnSave": false,
   "compilerOptions": {
     "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
-    "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2015",
+    "target": "ES6",
     "module": "CommonJS",
-    "lib": ["es2017", "dom"],
+    "lib": ["ES2017"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "strict": true,
@@ -26,6 +24,5 @@
     "paths": {
       "@jayvee/language-server": ["libs/language-server/src/index.ts"]
     }
-  },
-  "exclude": ["node_modules", "tmp"]
+  }
 }
