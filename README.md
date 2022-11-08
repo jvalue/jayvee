@@ -3,7 +3,7 @@
 ## Projects overview
 
 | Name                                                      | Description                                                   |
-|-----------------------------------------------------------|---------------------------------------------------------------|
+| --------------------------------------------------------- | ------------------------------------------------------------- |
 | [`language-server`](./libs/language-server/README.md)     | Jayvee language definition and language server implementation |
 | [`vs-code-extension`](./apps/vs-code-extension/README.md) | Visual Studio Code extension for the language                 |
 | [`interpreter`](./apps/interpreter/README.md)             | Command line tool for interpreting `.jv` files                |
