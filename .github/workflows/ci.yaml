@@ -44,6 +44,8 @@ jobs:
         run: npx nx workspace-lint
 
       - name: Check for unformatted files
+        # to prevent the entire step from failing when the formatting command fails:
+        shell: bash {0}
         run: |
           npx nx format:check
 
