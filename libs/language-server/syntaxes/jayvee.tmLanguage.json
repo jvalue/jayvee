@@ -1,7 +1,9 @@
 {
   "name": "jayvee",
   "scopeName": "source.jayvee",
-  "fileTypes": [".jv"],
+  "fileTypes": [
+    ".jv"
+  ],
   "patterns": [
     {
       "include": "#comments"

@@ -3,35 +3,22 @@
  * DO NOT EDIT MANUALLY!
  ******************************************************************************/
 
-import {
-  LangiumGeneratedServices,
-  LangiumGeneratedSharedServices,
-  LangiumSharedServices,
-  LangiumServices,
-  LanguageMetaData,
-  Module,
-} from 'langium';
+import { LangiumGeneratedServices, LangiumGeneratedSharedServices, LangiumSharedServices, LangiumServices, LanguageMetaData, Module } from 'langium';
 import { JayveeAstReflection } from './ast';
 import { JayveeGrammar } from './grammar';
 
 export const JayveeLanguageMetaData: LanguageMetaData = {
-  languageId: 'jayvee',
-  fileExtensions: ['.jv'],
-  caseInsensitive: false,
+    languageId: 'jayvee',
+    fileExtensions: ['.jv'],
+    caseInsensitive: false
 };
 
-export const JayveeGeneratedSharedModule: Module<
-  LangiumSharedServices,
-  LangiumGeneratedSharedServices
-> = {
-  AstReflection: () => new JayveeAstReflection(),
+export const JayveeGeneratedSharedModule: Module<LangiumSharedServices, LangiumGeneratedSharedServices> = {
+    AstReflection: () => new JayveeAstReflection()
 };
 
-export const JayveeGeneratedModule: Module<
-  LangiumServices,
-  LangiumGeneratedServices
-> = {
-  Grammar: () => JayveeGrammar(),
-  LanguageMetaData: () => JayveeLanguageMetaData,
-  parser: {},
+export const JayveeGeneratedModule: Module<LangiumServices, LangiumGeneratedServices> = {
+    Grammar: () => JayveeGrammar(),
+    LanguageMetaData: () => JayveeLanguageMetaData,
+    parser: {}
 };
