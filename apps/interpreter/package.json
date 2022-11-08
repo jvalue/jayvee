@@ -1,0 +1,22 @@
+{
+  "name": "@jayvee/interpreter",
+  "version": "0.0.1",
+  "description": "Interpreter for .jv files",
+  "main": "main.js",
+  "bin": {
+    "jv": "main.js",
+    "jayvee": "main.js"
+  },
+  "bugs": {
+    "url": "https://github.com/jvalue/jayvee/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jvalue/jayvee/issues"
+  },
+  "homepage": "https://github.com/jvalue/jayvee#readme",
+  "publishConfig": {
+    "access": "restricted",
+    "registry": "https://npm.pkg.github.com"
+  }
+}
