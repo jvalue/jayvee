@@ -5,14 +5,21 @@
 
 /* eslint-disable @typescript-eslint/array-type */
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { AstNode, AstReflection, Reference, ReferenceInfo, isAstNode, TypeMetaData } from 'langium';
+import {
+  AstNode,
+  AstReflection,
+  Reference,
+  ReferenceInfo,
+  isAstNode,
+  TypeMetaData,
+} from 'langium';
 
 export type BlockType = CSVFileExtractor | LayoutValidator | PostgresLoader;
 
 export const BlockType = 'BlockType';
 
 export function isBlockType(item: unknown): item is BlockType {
-    return reflection.isInstance(item, BlockType);
+  return reflection.isInstance(item, BlockType);
 }
 
 export type Section = ColumnSection | RowSection;
@@ -20,203 +27,221 @@ export type Section = ColumnSection | RowSection;
 export const Section = 'Section';
 
 export function isSection(item: unknown): item is Section {
-    return reflection.isInstance(item, Section);
+  return reflection.isInstance(item, Section);
 }
 
 export type Type = 'boolean' | 'decimal' | 'integer' | 'text';
 
 export interface Block extends AstNode {
-    readonly $container: Model;
-    name: string
-    type: BlockType
+  readonly $container: Model;
+  name: string;
+  type: BlockType;
 }
 
 export const Block = 'Block';
 
 export function isBlock(item: unknown): item is Block {
-    return reflection.isInstance(item, Block);
+  return reflection.isInstance(item, Block);
 }
 
 export interface ColumnSection extends AstNode {
-    readonly $container: Layout;
-    columnId: string
-    type: Type
+  readonly $container: Layout;
+  columnId: string;
+  type: Type;
 }
 
 export const ColumnSection = 'ColumnSection';
 
 export function isColumnSection(item: unknown): item is ColumnSection {
-    return reflection.isInstance(item, ColumnSection);
+  return reflection.isInstance(item, ColumnSection);
 }
 
 export interface CSVFileExtractor extends AstNode {
-    readonly $container: Block;
-    url: string
+  readonly $container: Block;
+  url: string;
 }
 
 export const CSVFileExtractor = 'CSVFileExtractor';
 
 export function isCSVFileExtractor(item: unknown): item is CSVFileExtractor {
-    return reflection.isInstance(item, CSVFileExtractor);
+  return reflection.isInstance(item, CSVFileExtractor);
 }
 
 export interface Layout extends AstNode {
-    readonly $container: Model;
-    name: string
-    sections: Array<Section>
+  readonly $container: Model;
+  name: string;
+  sections: Array<Section>;
 }
 
 export const Layout = 'Layout';
 
 export function isLayout(item: unknown): item is Layout {
-    return reflection.isInstance(item, Layout);
+  return reflection.isInstance(item, Layout);
 }
 
 export interface LayoutValidator extends AstNode {
-    readonly $container: Block;
-    layout: Reference<Layout>
+  readonly $container: Block;
+  layout: Reference<Layout>;
 }
 
 export const LayoutValidator = 'LayoutValidator';
 
 export function isLayoutValidator(item: unknown): item is LayoutValidator {
-    return reflection.isInstance(item, LayoutValidator);
+  return reflection.isInstance(item, LayoutValidator);
 }
 
 export interface Model extends AstNode {
-    blocks: Array<Block>
-    layouts: Array<Layout>
-    pipes: Array<Pipe>
+  blocks: Array<Block>;
+  layouts: Array<Layout>;
+  pipes: Array<Pipe>;
 }
 
 export const Model = 'Model';
 
 export function isModel(item: unknown): item is Model {
-    return reflection.isInstance(item, Model);
+  return reflection.isInstance(item, Model);
 }
 
 export interface Pipe extends AstNode {
-    readonly $container: Model;
-    from: Reference<Block>
-    to: Reference<Block>
+  readonly $container: Model;
+  from: Reference<Block>;
+  to: Reference<Block>;
 }
 
 export const Pipe = 'Pipe';
 
 export function isPipe(item: unknown): item is Pipe {
-    return reflection.isInstance(item, Pipe);
+  return reflection.isInstance(item, Pipe);
 }
 
 export interface PostgresLoader extends AstNode {
-    readonly $container: Block;
-    name: 'PostgresLoader'
+  readonly $container: Block;
+  name: 'PostgresLoader';
 }
 
 export const PostgresLoader = 'PostgresLoader';
 
 export function isPostgresLoader(item: unknown): item is PostgresLoader {
-    return reflection.isInstance(item, PostgresLoader);
+  return reflection.isInstance(item, PostgresLoader);
 }
 
 export interface RowSection extends AstNode {
-    readonly $container: Layout;
-    header: boolean
-    rowId: number
-    type: Type
+  readonly $container: Layout;
+  header: boolean;
+  rowId: number;
+  type: Type;
 }
 
 export const RowSection = 'RowSection';
 
 export function isRowSection(item: unknown): item is RowSection {
-    return reflection.isInstance(item, RowSection);
+  return reflection.isInstance(item, RowSection);
 }
 
-export type JayveeAstType = 'Block' | 'BlockType' | 'CSVFileExtractor' | 'ColumnSection' | 'Layout' | 'LayoutValidator' | 'Model' | 'Pipe' | 'PostgresLoader' | 'RowSection' | 'Section';
+export type JayveeAstType =
+  | 'Block'
+  | 'BlockType'
+  | 'CSVFileExtractor'
+  | 'ColumnSection'
+  | 'Layout'
+  | 'LayoutValidator'
+  | 'Model'
+  | 'Pipe'
+  | 'PostgresLoader'
+  | 'RowSection'
+  | 'Section';
 
 export class JayveeAstReflection implements AstReflection {
+  getAllTypes(): string[] {
+    return [
+      'Block',
+      'BlockType',
+      'CSVFileExtractor',
+      'ColumnSection',
+      'Layout',
+      'LayoutValidator',
+      'Model',
+      'Pipe',
+      'PostgresLoader',
+      'RowSection',
+      'Section',
+    ];
+  }
 
-    getAllTypes(): string[] {
-        return ['Block', 'BlockType', 'CSVFileExtractor', 'ColumnSection', 'Layout', 'LayoutValidator', 'Model', 'Pipe', 'PostgresLoader', 'RowSection', 'Section'];
-    }
+  isInstance(node: unknown, type: string): boolean {
+    return isAstNode(node) && this.isSubtype(node.$type, type);
+  }
 
-    isInstance(node: unknown, type: string): boolean {
-        return isAstNode(node) && this.isSubtype(node.$type, type);
+  isSubtype(subtype: string, supertype: string): boolean {
+    if (subtype === supertype) {
+      return true;
     }
+    switch (subtype) {
+      case ColumnSection:
+      case RowSection: {
+        return this.isSubtype(Section, supertype);
+      }
+      case CSVFileExtractor:
+      case LayoutValidator:
+      case PostgresLoader: {
+        return this.isSubtype(BlockType, supertype);
+      }
+      default: {
+        return false;
+      }
+    }
+  }
 
-    isSubtype(subtype: string, supertype: string): boolean {
-        if (subtype === supertype) {
-            return true;
-        }
-        switch (subtype) {
-            case ColumnSection:
-            case RowSection: {
-                return this.isSubtype(Section, supertype);
-            }
-            case CSVFileExtractor:
-            case LayoutValidator:
-            case PostgresLoader: {
-                return this.isSubtype(BlockType, supertype);
-            }
-            default: {
-                return false;
-            }
-        }
+  getReferenceType(refInfo: ReferenceInfo): string {
+    const referenceId = `${refInfo.container.$type}:${refInfo.property}`;
+    switch (referenceId) {
+      case 'LayoutValidator:layout': {
+        return Layout;
+      }
+      case 'Pipe:from': {
+        return Block;
+      }
+      case 'Pipe:to': {
+        return Block;
+      }
+      default: {
+        throw new Error(`${referenceId} is not a valid reference id.`);
+      }
     }
+  }
 
-    getReferenceType(refInfo: ReferenceInfo): string {
-        const referenceId = `${refInfo.container.$type}:${refInfo.property}`;
-        switch (referenceId) {
-            case 'LayoutValidator:layout': {
-                return Layout;
-            }
-            case 'Pipe:from': {
-                return Block;
-            }
-            case 'Pipe:to': {
-                return Block;
-            }
-            default: {
-                throw new Error(`${referenceId} is not a valid reference id.`);
-            }
-        }
+  getTypeMetaData(type: string): TypeMetaData {
+    switch (type) {
+      case 'Layout': {
+        return {
+          name: 'Layout',
+          mandatory: [{ name: 'sections', type: 'array' }],
+        };
+      }
+      case 'Model': {
+        return {
+          name: 'Model',
+          mandatory: [
+            { name: 'blocks', type: 'array' },
+            { name: 'layouts', type: 'array' },
+            { name: 'pipes', type: 'array' },
+          ],
+        };
+      }
+      case 'RowSection': {
+        return {
+          name: 'RowSection',
+          mandatory: [{ name: 'header', type: 'boolean' }],
+        };
+      }
+      default: {
+        return {
+          name: type,
+          mandatory: [],
+        };
+      }
     }
-
-    getTypeMetaData(type: string): TypeMetaData {
-        switch (type) {
-            case 'Layout': {
-                return {
-                    name: 'Layout',
-                    mandatory: [
-                        { name: 'sections', type: 'array' }
-                    ]
-                };
-            }
-            case 'Model': {
-                return {
-                    name: 'Model',
-                    mandatory: [
-                        { name: 'blocks', type: 'array' },
-                        { name: 'layouts', type: 'array' },
-                        { name: 'pipes', type: 'array' }
-                    ]
-                };
-            }
-            case 'RowSection': {
-                return {
-                    name: 'RowSection',
-                    mandatory: [
-                        { name: 'header', type: 'boolean' }
-                    ]
-                };
-            }
-            default: {
-                return {
-                    name: type,
-                    mandatory: []
-                };
-            }
-        }
-    }
+  }
 }
 
 export const reflection = new JayveeAstReflection();

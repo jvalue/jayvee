@@ -6,7 +6,9 @@
 import { loadGrammarFromJson, Grammar } from 'langium';
 
 let loadedJayveeGrammar: Grammar | undefined;
-export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayveeGrammar = loadGrammarFromJson(`{
+export const JayveeGrammar = (): Grammar =>
+  loadedJayveeGrammar ??
+  (loadedJayveeGrammar = loadGrammarFromJson(`{
   "$type": "Grammar",
   "isDeclared": true,
   "name": "Jayvee",

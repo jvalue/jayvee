@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "nx": "nx",
+    "format": "nx format:write",
     "build": "nx run-many --target build",
     "lint": "nx run-many --target lint --max-warnings 0",
     "test": "nx run-many --target test",
@@ -56,4 +57,3 @@
     "typescript": "^4.7.4"
   }
 }
-

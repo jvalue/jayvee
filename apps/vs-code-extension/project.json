@@ -10,12 +10,12 @@
         "tsConfig": "apps/vs-code-extension/tsconfig.app.json",
         "outputPath": "dist/apps/vs-code-extension",
         "main": "apps/vs-code-extension/src/extension.ts",
-        "additionalEntryPoints": ["apps/vs-code-extension/src/language-server.ts"],
+        "additionalEntryPoints": [
+          "apps/vs-code-extension/src/language-server.ts"
+        ],
         "external": ["vscode"],
         "platform": "node",
-        "format": [
-          "cjs"
-        ]
+        "format": ["cjs"]
       }
     },
     "serve": {
