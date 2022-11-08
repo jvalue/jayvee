@@ -57,7 +57,7 @@ jobs:
         run: npx nx affected --target=lint --parallel=3
 
       - name: Test
-        run: npx nx affected --target=test --parallel=3 --ci --code-coverage
+        run: npx nx affected --target=test --parallel=3 --base=main --head=HEAD --ci
 
       - name: Build
         run: npx nx affected --target=build --parallel=3
