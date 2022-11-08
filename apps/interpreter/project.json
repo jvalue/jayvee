@@ -41,9 +41,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
-        "commands": [
-          "npm publish dist/apps/interpreter"
-        ]
+        "commands": ["npm publish dist/apps/interpreter"]
       }
     }
   },
