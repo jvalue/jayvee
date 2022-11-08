@@ -6,6 +6,7 @@
     "build": "nx run-many --target build",
     "lint": "nx run-many --target lint --max-warnings 0",
     "test": "nx run-many --target test",
+    "generate": "nx run language-server:generate",
     "example": "node dist/apps/interpreter/main.js run example/cars.jv"
   },
   "private": true,
@@ -26,7 +27,7 @@
   "devDependencies": {
     "@jvalue/eslint-config-jvalue": "^1.2.0",
     "@nrwl/cli": "15.0.8",
-    "@nrwl/esbuild": "^15.0.10",
+    "@nrwl/esbuild": "15.0.8",
     "@nrwl/eslint-plugin-nx": "15.0.8",
     "@nrwl/jest": "15.0.8",
     "@nrwl/js": "15.0.8",
@@ -55,3 +56,4 @@
     "typescript": "^4.7.4"
   }
 }
+
