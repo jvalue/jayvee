@@ -13,13 +13,7 @@
         "outputPath": "dist/apps/interpreter",
         "main": "apps/interpreter/src/index.ts",
         "tsConfig": "apps/interpreter/tsconfig.app.json",
-        "assets": [
-          {
-            "glob": "package.json",
-            "input": "apps/interpreter",
-            "output": "package.json"
-          }
-        ]
+        "generatePackageJson": true
       }
     },
     "lint": {
