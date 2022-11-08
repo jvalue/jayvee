@@ -1,0 +1,8 @@
+# Add files here to ignore them from prettier formatting
+
+/dist
+/coverage
+
+/libs/language-server/syntaxes/*.json
+/libs/language-server/syntaxes/*.ts
+/libs/language-server/src/lib/generated/*.ts

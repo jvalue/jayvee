@@ -1,44 +1,56 @@
 # Jayvee
 
-## Project files
+## Projects overview
 
- * `package.json` - the manifest file in which you declare your language support.
- * `language-configuration.json` - the language configuration used in the VS Code editor, defining the tokens that are used for comments and brackets.
- * `src/extension.ts` - the main code of the extension, which is responsible for launching a language server and client.
- * `src/language-server/jayvee.langium` - the grammar definition of your language.
- * `src/language-server/main.ts` - the entry point of the language server process.
- * `src/language-server/jayvee-module.ts` - the dependency injection module of your language implementation. Use this to register overridden and added services.
- * `src/language-server/jayvee-validator.ts` - an example validator. You should change it to reflect the semantics of your language.
- * `src/cli/index.ts` - the entry point of the command line interface (CLI) of your language.
- * `src/cli/interpreter.ts` - the interpreter used by the CLI to run DSL documents.
- * `src/cli/cli-util.ts` - utility code for the CLI.
+| Name                                                      | Description                                                   |
+| --------------------------------------------------------- | ------------------------------------------------------------- |
+| [`language-server`](./libs/language-server/README.md)     | Jayvee language definition and language server implementation |
+| [`vs-code-extension`](./apps/vs-code-extension/README.md) | Visual Studio Code extension for the language                 |
+| [`interpreter`](./apps/interpreter/README.md)             | Command line tool for interpreting `.jv` files                |
 
-## Get up and running straight away
+## Quick start
 
-### VS Code
+1. Run `npm ci` to install the dependencies.
+2. Run `npm run build` to compile all projects.
+3. In Visual Studio Code, press `F5` to open a new window with the Jayvee extension loaded.
+4. Create a new file with a `.jv` file name suffix or open an existing file in the directory `example`.
+5. Verify that syntax highlighting, validation, completion etc. are working as expected.
+6. Run `node dist/apps/interpreter/main.js` to see options for the CLI of the interpreter; `node dist/apps/interpreter/main.js run <file>` interprets a given `.jv` file.
 
- * Run `npm run langium:generate` to generate TypeScript code from the grammar definition.
- * Run `npm run build` to compile the TypeScript code.
- * Press `F5` to open a new window with your extension loaded.
- * Create a new file with a `.jv` file name suffix.
- * Verify that syntax highlighting, validation, completion etc. are working as expected.
- * Run `./bin/cli` to see options for the CLI; `./bin/cli run <file>` interprets a given DSL file.
+## Development
 
-### Web editor
+### Building all projects
 
-* Run `npm run langium:generate` to generate TypeScript code from the grammar definition.
-* Run `npm run build:web` to compile the TypeScript code.
-* Run `npm run serve` to start the server.
-* Open <http://localhost:3000> in your browser to access the editor.
+```bash
+npm run build
+```
 
-## Make changes
+### Linting all projects
 
- * Run `npm run watch` to have the TypeScript compiler run automatically after every change of the source files.
- * Run `npm run langium:watch` to have the Langium generator run automatically afer every change of the grammar declaration.
- * You can relaunch the extension from the debug toolbar after making changes to the files listed above.
- * You can also reload (`Ctrl+R` or `Cmd+R` on Mac) the VS Code window with your extension to load your changes.
+```bash
+npm run lint
+```
 
-## Install your VS Code extension
+### Formatting project files via Nx
 
-* To start using your extension with VS Code, copy it into the `<user home>/.vscode/extensions` folder and restart Code.
-* To share your extension with the world, read the [VS Code documentation](https://code.visualstudio.com/api/working-with-extensions/publishing-extension) about publishing an extension.
+```bash
+npm run format
+```
+
+### Testing all projects
+
+```bash
+npm run test
+```
+
+### Generating TypeScript code from the grammar definition
+
+```bash
+npm run generate
+```
+
+### Quickly running the interpreter with the cars example
+
+```bash
+npm run example
+```

@@ -1,0 +1,44 @@
+{
+  "name": "vs-code-extension",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/vs-code-extension/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/esbuild:esbuild",
+      "options": {
+        "tsConfig": "apps/vs-code-extension/tsconfig.app.json",
+        "outputPath": "dist/apps/vs-code-extension",
+        "main": "apps/vs-code-extension/src/extension.ts",
+        "additionalEntryPoints": [
+          "apps/vs-code-extension/src/language-server.ts"
+        ],
+        "external": ["vscode"],
+        "platform": "node",
+        "format": ["cjs"]
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/js:node",
+      "options": {
+        "buildTarget": "vs-code-extension:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/vs-code-extension/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/vs-code-extension/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

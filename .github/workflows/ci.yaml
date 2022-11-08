@@ -5,8 +5,6 @@ on:
     branches:
       - main
   pull_request:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
@@ -16,6 +14,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v3
         with:
@@ -24,25 +24,42 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Linter
-        run: npm run lint
-
       - name: Langium generate
         run: |
-          HASH_BEFORE=$(sha1sum src/language-server/generated/*.ts syntaxes/*.json syntaxes/*.ts)
-          
-          npm run langium:generate
-          
-          HASH_AFTER=$(sha1sum src/language-server/generated/*.ts syntaxes/*.json syntaxes/*.ts)
-          
+          HASH_BEFORE=$(sha1sum libs/language-server/src/lib/generated/*.ts libs/language-server/syntaxes/*.json libs/language-server/syntaxes/*.ts)
+
+          npm run generate
+
+          HASH_AFTER=$(sha1sum libs/language-server/src/lib/generated/*.ts libs/language-server/syntaxes/*.json libs/language-server/syntaxes/*.ts)
+
           if [[ $HASH_BEFORE != $HASH_AFTER ]]; then
             echo "The generated code is not up to date."
-            echo "Run 'npm run langium:generate' locally and commit the resulting generated code."
+            echo "Run 'npm run generate' locally and commit the resulting generated code."
             exit 1
           fi
 
-      - name: Build
-        run: npm run build
+      - uses: nrwl/nx-set-shas@v3
+
+      - name: Lint Nx specific workspace files
+        run: npx nx workspace-lint
+
+      - name: Check for unformatted files
+        # to prevent the entire step from failing when the formatting command fails:
+        shell: bash {0}
+        run: |
+          npx nx format:check
+
+          if [[ $? != 0 ]]; then
+            echo "Nx detected unformatted files."
+            echo "Run 'npm run format' locally and commit the changed files."
+            exit 1
+          fi
+
+      - name: Lint
+        run: npx nx affected --target=lint --parallel=3
 
       - name: Test
-        run: npm run test
+        run: npx nx affected --target=test --parallel=3 --base=remotes/origin/main --head=HEAD --ci
+
+      - name: Build
+        run: npx nx affected --target=build --parallel=3
