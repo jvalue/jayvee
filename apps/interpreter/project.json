@@ -37,7 +37,7 @@
       "options": {
         "commands": [
           // Prepend shebang to the binary file
-          "sed -e '1i#!/usr/bin/env node' -i '1i#!/usr/bin/env node' dist/apps/interpreter/main.js",
+          "sed -i '1i#!/usr/bin/env node' dist/apps/interpreter/main.js",
           "npm publish dist/apps/interpreter"
         ]
       }
