@@ -8,8 +8,8 @@
     "lint": "nx run-many --target lint --max-warnings 0",
     "test": "nx run-many --target test",
     "generate": "nx run language-server:generate",
-    "example": "node dist/apps/interpreter/main.js example/cars.jv",
-    "example:runtime-params": "node dist/apps/interpreter/main.js -e CsvUrl='https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv' -e Host=localhost -e Port=5432 -e Username=postgres -e Password=postgres -e Database=postgres example/cars-runtime-params.jv"
+    "example": "nx run interpreter:run example/cars.jv",
+    "example:runtime-params": "nx run interpreter:run -e CsvUrl='https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv' -e Host=localhost -e Port=5432 -e Username=postgres -e Password=postgres -e Database=postgres example/cars-runtime-params.jv"
   },
   "private": true,
   "dependencies": {

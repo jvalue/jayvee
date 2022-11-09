@@ -25,7 +25,12 @@ export class LayoutValidatorExecutor extends BlockExecutor<
 > {
   override execute(input: Sheet): Promise<R.Result<Table>> {
     const sections = this.block.layout.ref?.sections || [];
-    this.ensureValidSections(sections, input.data);
+    const validityResult = this.validateSections(sections, input.data);
+
+    if (R.isErr(validityResult)) {
+      return Promise.resolve(validityResult);
+    }
+
     return Promise.resolve(
       R.ok({
         columnNames: this.getHeader(input),
@@ -41,7 +46,6 @@ export class LayoutValidatorExecutor extends BlockExecutor<
     ) as RowSection | undefined;
 
     const columnNamesIndex = this.getHeaderIndex();
-
     if (columnNamesIndex === undefined) {
       return [];
     }
@@ -54,7 +58,6 @@ export class LayoutValidatorExecutor extends BlockExecutor<
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       columnNames = input.data[columnNamesIndex]!;
     }
-
     return columnNames;
   }
 
@@ -66,28 +69,91 @@ export class LayoutValidatorExecutor extends BlockExecutor<
     return headerRowSection ? headerRowSection.rowId - 1 : undefined;
   }
 
-  ensureValidSections(sections: Section[], data: string[][]): void {
+  validateSections(sections: Section[], data: string[][]): R.Result<void> {
+    const errors: string[] = [];
     sections.forEach((section) => {
       const type = getDataType(section.type);
-      const dataToValidate: Array<string | undefined> = isRowSection(section)
-        ? data[section.rowId] || []
-        : getColumn(
-            data,
-            getColumnIndexFromSelector(section.columnId),
-            undefined,
-          ).filter((_, index) => index !== this.getHeaderIndex());
-      dataToValidate.forEach((value, position) => {
-        if (!type.isValid(value)) {
-          throw new Error(
-            `Invalid value for ${type.languageType} (Value: ${
-              value !== undefined ? value : 'undefined'
-            } in ${
-              isRowSection(section) ? 'row' : 'column'
-            } at offset: ${position}).`,
-          );
-        }
-      });
+      if (isRowSection(section)) {
+        errors.push(...this.validateRowSection(section, data, type));
+      } else {
+        errors.push(...this.validateColumnSection(section, data, type));
+      }
     });
+    if (errors.length > 0) {
+      return R.err({
+        message: `Layout validation failed. Found the following issues:\n\n${errors.join(
+          '\n',
+        )}`,
+        hint: 'Please check your defined layout.',
+        cstNode: this.block.$cstNode?.parent,
+      });
+    }
+    return R.ok(undefined);
+  }
+
+  private validateColumnSection(
+    section: ColumnSection,
+    data: string[][],
+    type: AbstractDataType,
+  ) {
+    const errors: string[] = [];
+
+    const columnIdCharacter = section.columnId;
+    const dataToValidate = getColumn(
+      data,
+      getColumnIndexFromSelector(columnIdCharacter),
+      undefined,
+    ).filter((_, index) => index !== this.getHeaderIndex());
+
+    dataToValidate.forEach((value, rowId) => {
+      if (!type.isValid(value)) {
+        errors.push(
+          this.formatErrorMessage(
+            value,
+            `${rowId}`,
+            columnIdCharacter,
+            type.languageType,
+          ),
+        );
+      }
+    });
+    return errors;
+  }
+
+  private validateRowSection(
+    section: RowSection,
+    data: string[][],
+    type: AbstractDataType,
+  ): string[] {
+    const errors: string[] = [];
+
+    const rowId = section.rowId;
+    const dataToValidate = data[rowId] || [];
+
+    dataToValidate.forEach((value, colId) => {
+      if (!type.isValid(value)) {
+        errors.push(
+          this.formatErrorMessage(
+            value,
+            `${rowId}`,
+            this.formatColumnIdAsChar(colId),
+            type.languageType,
+          ),
+        );
+      }
+    });
+    return errors;
+  }
+
+  formatErrorMessage(
+    value: string | undefined,
+    rowId: string,
+    colId: string,
+    languageType: string,
+  ): string {
+    return `[row ${rowId}, column ${colId}] Value "${
+      value ?? ''
+    }" does not match type ${languageType}`;
   }
 
   getColumnTypes(
@@ -111,5 +177,10 @@ export class LayoutValidatorExecutor extends BlockExecutor<
     }
 
     return columnTypesArray;
+  }
+
+  formatColumnIdAsChar(columnId: number): string {
+    const startCharacter = 'A'.charCodeAt(0);
+    return String.fromCharCode(startCharacter + columnId);
   }
 }

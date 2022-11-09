@@ -23,6 +23,13 @@
         "lintFilePatterns": ["apps/interpreter/**/*.ts"]
       }
     },
+    "run": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "commands": ["node dist/apps/interpreter/main.js"]
+      }
+    },
     "test": {
       "executor": "@nrwl/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
