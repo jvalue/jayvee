@@ -78,9 +78,11 @@ export class LayoutValidatorExecutor extends BlockExecutor<
         const dataToValidate = data[rowId] || [];
         dataToValidate.forEach((value, position) => {
           if (!type.isValid(value)) {
-            errors.push(`[row ${rowId}, column ${this.getColumnCharacter(position)}] Value "${
-              value ?? 'undefined'
-            }" does not match type ${type.languageType}`)
+            errors.push(
+              `[row ${rowId}, column ${this.getColumnCharacter(
+                position,
+              )}] Value "${value}" does not match type ${type.languageType}`,
+            );
           }
         });
       } else {
@@ -92,19 +94,23 @@ export class LayoutValidatorExecutor extends BlockExecutor<
         ).filter((_, index) => index !== this.getHeaderIndex());
         dataToValidate.forEach((value, position) => {
           if (!type.isValid(value)) {
-            errors.push(`[row ${position}, column ${columnId}] Value "${
-              value ?? 'undefined'
-            }" does not match type ${type.languageType}`)
+            errors.push(
+              `[row ${position}, column ${columnId}] Value "${
+                value ?? 'undefined'
+              }" does not match type ${type.languageType}`,
+            );
           }
         });
       }
     });
     if (errors.length > 0) {
       return R.err({
-        message: `Layout validation failed. Found the following issues:\n\n${errors.join('\n')}`,
+        message: `Layout validation failed. Found the following issues:\n\n${errors.join(
+          '\n',
+        )}`,
         hint: 'Please check your defined layout.',
         cstNode: this.block.$cstNode?.parent,
-      })
+      });
     }
     return R.ok(undefined);
   }

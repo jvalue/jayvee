@@ -52,11 +52,13 @@ npm run generate
 ### Quickly running the interpreter with the cars example
 
 1. Start postgres database
+
 ```bash
 docker compose -f ./example/docker-compose.example.yml up
 ```
 
 2. Run example
+
 ```bash
 npm run example
 ```

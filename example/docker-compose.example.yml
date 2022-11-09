@@ -1,12 +1,11 @@
 version: '3.1'
 
 services:
-
   jayvee-postgres:
     image: postgres
     restart: always
     environment:
-      POSTGRES_PASSWORD: "12345"
-      POSTGRES_DB: "jvalue"
+      POSTGRES_PASSWORD: '12345'
+      POSTGRES_DB: 'jvalue'
     ports:
       - 5432:5432
