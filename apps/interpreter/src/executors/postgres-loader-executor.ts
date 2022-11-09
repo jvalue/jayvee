@@ -25,23 +25,24 @@ export class PostgresLoaderExecutor extends BlockExecutor<
 
     try {
       await client.connect();
-  
+
       await client.query(
         this.buildCreateTableStatement(this.block.$container.name, input),
       );
-  
+
       await client.query(
         this.buildInsertValuesStatement(this.block.$container.name, input),
       );
-  
-  
+
       return Promise.resolve(R.ok(undefined));
     } catch (err: unknown) {
-      return Promise.resolve(R.err({
-        message: 'Could not write to postgres database.',
-        hint: err instanceof Error ? err.message : JSON.stringify(err),
-        cstNode: this.block.$cstNode?.parent,
-      }))
+      return Promise.resolve(
+        R.err({
+          message: 'Could not write to postgres database.',
+          hint: err instanceof Error ? err.message : JSON.stringify(err),
+          cstNode: this.block.$cstNode?.parent,
+        }),
+      );
     } finally {
       await client.end();
     }
