@@ -79,9 +79,12 @@ export class LayoutValidatorExecutor extends BlockExecutor<
         dataToValidate.forEach((value, position) => {
           if (!type.isValid(value)) {
             errors.push(
-              `[row ${rowId}, column ${this.getColumnCharacter(
-                position,
-              )}] Value "${value}" does not match type ${type.languageType}`,
+              this.getErrorMessage(
+                value,
+                `${rowId}`,
+                this.getColumnCharacter(position),
+                type.languageType,
+              ),
             );
           }
         });
@@ -95,9 +98,12 @@ export class LayoutValidatorExecutor extends BlockExecutor<
         dataToValidate.forEach((value, position) => {
           if (!type.isValid(value)) {
             errors.push(
-              `[row ${position}, column ${columnId}] Value "${
-                value ?? 'undefined'
-              }" does not match type ${type.languageType}`,
+              this.getErrorMessage(
+                value,
+                `${position}`,
+                columnId,
+                type.languageType,
+              ),
             );
           }
         });
@@ -113,6 +119,17 @@ export class LayoutValidatorExecutor extends BlockExecutor<
       });
     }
     return R.ok(undefined);
+  }
+
+  getErrorMessage(
+    value: string | undefined,
+    rowId: string,
+    colId: string,
+    languageType: string,
+  ): string {
+    return `[row ${rowId}, column ${colId}] Value "${
+      value ?? ''
+    }" does not match type ${languageType}`;
   }
 
   getColumnTypes(
