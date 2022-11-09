@@ -1,10 +1,10 @@
 block CarsExtractor oftype CSVFileExtractor {
-	url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
+	url: requires CsvUrl;
 }
 
 layout CarsLayout {
 	header row 1: text;
-	
+
 	column A: text;
 	column B: decimal;
 	column C: integer;
@@ -24,11 +24,11 @@ block CarsValidator oftype LayoutValidator {
 }
 
 block CarsLoader oftype PostgresLoader {
-    host: "localhost";
-    port: 5432;
-	username: "postgres";
-	password: "postgres";
-	database: "postgres";
+    host: requires Host;
+    port: requires Port;
+	username: requires Username;
+	password: requires Password;
+	database: requires Database;
 }
 
 pipe {

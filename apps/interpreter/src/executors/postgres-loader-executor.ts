@@ -6,6 +6,10 @@ import {
 } from '@jayvee/language-server';
 import { Client } from 'pg';
 
+import {
+  getIntAttributeValue,
+  getStringAttributeValue,
+} from '../runtime-parameters';
 import { PostgresColumnTypeVisitor } from '../visitors/PostgresColumnTypeVisitor';
 import { PostgresValueRepresentationVisitor } from '../visitors/PostgresValueRepresentationVisitor';
 
@@ -19,8 +23,33 @@ export class PostgresLoaderExecutor extends BlockExecutor<
   PostgresLoaderMetaInformation
 > {
   override async execute(input: Table): Promise<R.Result<void>> {
+    const host = getStringAttributeValue(
+      this.block.host.value,
+      this.runtimeParameters,
+    );
+    const port = getIntAttributeValue(
+      this.block.port.value,
+      this.runtimeParameters,
+    );
+    const user = getStringAttributeValue(
+      this.block.username.value,
+      this.runtimeParameters,
+    );
+    const password = getStringAttributeValue(
+      this.block.password.value,
+      this.runtimeParameters,
+    );
+    const database = getStringAttributeValue(
+      this.block.database.value,
+      this.runtimeParameters,
+    );
+
     const client = new Client({
-      connectionString: 'postgresql://postgres:@localhost:5432/jvalue',
+      host,
+      port,
+      user,
+      password,
+      database,
     });
 
     await client.connect();

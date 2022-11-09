@@ -18,28 +18,37 @@ import * as R from './executors/execution-result';
 import { LayoutValidatorExecutor } from './executors/layout-validator-executor';
 import { PostgresLoaderExecutor } from './executors/postgres-loader-executor';
 
-export async function runAction(fileName: string): Promise<void> {
+export async function runAction(
+  fileName: string,
+  options: { env: Map<string, string> },
+): Promise<void> {
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   const model = await extractAstNode<Model>(fileName, services);
-  await interpretPipelineModel(model);
+  await interpretPipelineModel(model, options.env);
 }
 
-async function interpretPipelineModel(model: Model): Promise<void> {
+async function interpretPipelineModel(
+  model: Model,
+  runtimeParameters: Map<string, string>,
+): Promise<void> {
   const pipelineRuns: Array<Promise<void>> = [];
   for (const block of model.blocks) {
     const blockMetaInf = getMetaInformation(block.type);
     if (!blockMetaInf.hasInput()) {
-      const pipelineRun = runPipeline(block);
+      const pipelineRun = runPipeline(block, runtimeParameters);
       pipelineRuns.push(pipelineRun);
     }
   }
   await Promise.all(pipelineRuns);
 }
 
-async function runPipeline(startingBlock: Block): Promise<void> {
+async function runPipeline(
+  startingBlock: Block,
+  runtimeParameters: Map<string, string>,
+): Promise<void> {
   let currentBlock: Block | undefined = startingBlock;
   let blockMetaInf = getMetaInformation(currentBlock.type);
-  let blockExecutor = getExecutor(currentBlock.type);
+  let blockExecutor = getExecutor(currentBlock.type, runtimeParameters);
   let value: unknown = undefined;
   do {
     try {
@@ -57,19 +66,22 @@ async function runPipeline(startingBlock: Block): Promise<void> {
       return;
     }
     blockMetaInf = getMetaInformation(currentBlock.type);
-    blockExecutor = getExecutor(currentBlock.type);
+    blockExecutor = getExecutor(currentBlock.type, runtimeParameters);
   } while (blockMetaInf.hasInput());
 }
 
-export function getExecutor(blockType: BlockType): BlockExecutor<BlockType> {
+export function getExecutor(
+  blockType: BlockType,
+  runtimeParameters: Map<string, string>,
+): BlockExecutor<BlockType> {
   if (isCSVFileExtractor(blockType)) {
-    return new CSVFileExtractorExecutor(blockType);
+    return new CSVFileExtractorExecutor(blockType, runtimeParameters);
   }
   if (isLayoutValidator(blockType)) {
-    return new LayoutValidatorExecutor(blockType);
+    return new LayoutValidatorExecutor(blockType, runtimeParameters);
   }
   if (isPostgresLoader(blockType)) {
-    return new PostgresLoaderExecutor(blockType);
+    return new PostgresLoaderExecutor(blockType, runtimeParameters);
   }
   throw new Error('Unknown block type');
 }
