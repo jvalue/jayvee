@@ -15,7 +15,7 @@
 3. In Visual Studio Code, press `F5` to open a new window with the Jayvee extension loaded.
 4. Create a new file with a `.jv` file name suffix or open an existing file in the directory `example`.
 5. Verify that syntax highlighting, validation, completion etc. are working as expected.
-6. Run `node dist/apps/interpreter/main.js` to see options for the CLI of the interpreter; `node dist/apps/interpreter/main.js run <file>` interprets a given `.jv` file.
+6. Run `node dist/apps/interpreter/main.js` to see options for the CLI of the interpreter; `node dist/apps/interpreter/main.js <file>` interprets a given `.jv` file.
 
 ## Development
 
