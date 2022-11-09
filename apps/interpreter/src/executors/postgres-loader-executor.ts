@@ -20,7 +20,7 @@ export class PostgresLoaderExecutor extends BlockExecutor<
 > {
   override async execute(input: Table): Promise<R.Result<void>> {
     const client = new Client({
-      connectionString: 'postgresql://postgres:12345@localhost:5432/jvalue',
+      connectionString: 'postgresql://postgres:@localhost:5432/jvalue',
     });
 
     try {
