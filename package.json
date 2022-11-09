@@ -8,7 +8,7 @@
     "lint": "nx run-many --target lint --max-warnings 0",
     "test": "nx run-many --target test",
     "generate": "nx run language-server:generate",
-    "example": "node dist/apps/interpreter/main.js run example/cars.jv"
+    "example": "node dist/apps/interpreter/main.js example/cars.jv"
   },
   "private": true,
   "dependencies": {
