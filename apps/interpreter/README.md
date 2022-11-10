@@ -54,6 +54,12 @@ See [Usage](#usage) for how to use the interpreter.
 jv <file>
 ```
 
+With runtime parameters:
+
+```console
+jv -e <param>=<value> -e <param>=<value> ... <file>
+```
+
 ### Show help
 
 ```console
