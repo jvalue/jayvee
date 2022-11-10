@@ -8,7 +8,7 @@ import {
   Sheet,
 } from '@jayvee/language-server';
 
-import { getStringAttributeValue } from '../runtime-parameters';
+import { getStringAttributeValue } from '../attribute-util';
 
 import { BlockExecutor } from './block-executor';
 import * as R from './execution-result';
@@ -37,8 +37,14 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
   }
 
   private fetchRawData(): Promise<R.Result<string>> {
-    const urlAttribute = this.block.url;
-    const url = getStringAttributeValue(urlAttribute, this.runtimeParameters);
+    const urlResult = getStringAttributeValue(
+      this.block.url,
+      this.runtimeParameters,
+    );
+    if (R.isErr(urlResult)) {
+      return Promise.resolve(urlResult);
+    }
+    const url = R.okData(urlResult);
 
     return new Promise((resolve) => {
       http.get(url, (response) => {
