@@ -4,7 +4,7 @@ block CarsExtractor oftype CSVFileExtractor {
 
 layout CarsLayout {
 	header row 1: text;
-	
+
 	column A: text;
 	column B: decimal;
 	column C: integer;
@@ -24,6 +24,12 @@ block CarsValidator oftype LayoutValidator {
 }
 
 block CarsLoader oftype PostgresLoader {
+    host: requires Host;
+    port: 5432;
+	username: "postgres";
+	password: "postgres";
+	database: "postgres";
+	table: "Cars";
 }
 
 pipe {

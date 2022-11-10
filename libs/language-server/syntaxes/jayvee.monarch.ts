@@ -1,7 +1,7 @@
 // Monarch syntax highlighting for the jayvee language.
 export default {
     keywords: [
-        'block','boolean','column','CSVFileExtractor','decimal','from','header','integer','layout','LayoutValidator','oftype','pipe','PostgresLoader','row','text','to','url'
+        'block','boolean','column','CSVFileExtractor','database','decimal','from','header','host','integer','layout','LayoutValidator','oftype','password','pipe','port','PostgresLoader','requires','row','table','text','to','url','username'
     ],
     operators: [
         ';',':'

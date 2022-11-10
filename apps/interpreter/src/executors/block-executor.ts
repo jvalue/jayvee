@@ -9,7 +9,10 @@ export abstract class BlockExecutor<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   M extends BlockMetaInformation<B, InType, OutType> = BlockMetaInformation<B>,
 > {
-  constructor(readonly block: B) {}
+  constructor(
+    readonly block: B,
+    readonly runtimeParameters: Map<string, string>,
+  ) {}
 
   abstract execute(input: InType): Promise<R.Result<OutType>>;
 }

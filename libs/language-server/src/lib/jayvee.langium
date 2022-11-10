@@ -11,7 +11,7 @@ BlockType:
 
 CSVFileExtractor:
   'CSVFileExtractor' '{'
-    'url' ':' url=STRING ';'
+    'url' ':' url=StringAttributeValue ';'
   '}';
 
 LayoutValidator:
@@ -20,7 +20,47 @@ LayoutValidator:
   '}';
 
 PostgresLoader:
-  name='PostgresLoader' '{' '}';
+  name='PostgresLoader' '{'
+    host=HostAttribute &
+    port=PortAttribute &
+    username=UsernameAttribute &
+    password=PasswordAttribute &
+    database=DatabaseAttribute &
+    table=TableAttribute
+  '}';
+
+HostAttribute:
+  'host' ':' value=StringAttributeValue ';';
+
+PortAttribute:
+  'port' ':' value=IntAttributeValue ';';
+
+UsernameAttribute:
+  'username' ':' value=StringAttributeValue ';';
+
+PasswordAttribute:
+  'password' ':' value=StringAttributeValue ';';
+
+DatabaseAttribute:
+  'database' ':' value=StringAttributeValue ';';
+
+TableAttribute:
+  'table' ':' value=StringAttributeValue ';';
+
+StringAttributeValue:
+  StringValue | RuntimeParameter;
+
+StringValue:
+  value=STRING;
+
+IntAttributeValue:
+  IntValue | RuntimeParameter;
+
+IntValue:
+  value=INT;
+
+RuntimeParameter:
+  'requires' name=ID;
 
 Layout:
   'layout' name=ID '{'

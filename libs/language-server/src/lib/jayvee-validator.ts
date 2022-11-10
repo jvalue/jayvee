@@ -13,6 +13,7 @@ import {
   Pipe,
   RowSection,
   isRowSection,
+  isStringValue,
 } from './generated/ast';
 import type { JayveeServices } from './jayvee-module';
 import { getMetaInformation } from './meta-information/meta-inf-util';
@@ -197,15 +198,14 @@ export class JayveeValidator {
     accept: ValidationAcceptor,
   ): void {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const url: string = csvFileExtractor?.url;
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (url === undefined) {
+    const urlAttribute = csvFileExtractor?.url;
+    if (!isStringValue(urlAttribute)) {
       return;
     }
 
     const urlRegex =
       /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)$/;
-    if (!urlRegex.test(url)) {
+    if (!urlRegex.test(urlAttribute.value)) {
       accept('warning', 'The url has an invalid format', {
         node: csvFileExtractor,
         property: 'url',

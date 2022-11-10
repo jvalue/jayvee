@@ -6,6 +6,10 @@ import {
 } from '@jayvee/language-server';
 import { Client } from 'pg';
 
+import {
+  getIntAttributeValue,
+  getStringAttributeValue,
+} from '../attribute-util';
 import { PostgresColumnTypeVisitor } from '../visitors/PostgresColumnTypeVisitor';
 import { PostgresValueRepresentationVisitor } from '../visitors/PostgresValueRepresentationVisitor';
 
@@ -19,20 +23,27 @@ export class PostgresLoaderExecutor extends BlockExecutor<
   PostgresLoaderMetaInformation
 > {
   override async execute(input: Table): Promise<R.Result<void>> {
-    const client = new Client({
-      connectionString: 'postgresql://postgres:@localhost:5432/jvalue',
-    });
+    const clientResult = this.createPgClient();
+    if (R.isErr(clientResult)) {
+      return clientResult;
+    }
+    const client = R.okData(clientResult);
+
+    const tableResult = getStringAttributeValue(
+      this.block.table.value,
+      this.runtimeParameters,
+    );
+    if (R.isErr(tableResult)) {
+      return tableResult;
+    }
+    const table = R.okData(tableResult);
 
     try {
       await client.connect();
 
-      await client.query(
-        this.buildCreateTableStatement(this.block.$container.name, input),
-      );
+      await client.query(this.buildCreateTableStatement(table, input));
 
-      await client.query(
-        this.buildInsertValuesStatement(this.block.$container.name, input),
-      );
+      await client.query(this.buildInsertValuesStatement(table, input));
 
       return Promise.resolve(R.ok(undefined));
     } catch (err: unknown) {
@@ -82,5 +93,62 @@ export class PostgresLoaderExecutor extends BlockExecutor<
     return `INSERT INTO ${tableName} (${input.columnNames
       .map((x) => x || 'EMPTYNAME')
       .join(',')}) VALUES ${valuesStatement}`;
+  }
+
+  private createPgClient(): R.Result<Client> {
+    const hostResult = getStringAttributeValue(
+      this.block.host.value,
+      this.runtimeParameters,
+    );
+    if (R.isErr(hostResult)) {
+      return hostResult;
+    }
+    const host = R.okData(hostResult);
+
+    const portResult = getIntAttributeValue(
+      this.block.port.value,
+      this.runtimeParameters,
+    );
+    if (R.isErr(portResult)) {
+      return portResult;
+    }
+    const port = R.okData(portResult);
+
+    const userResult = getStringAttributeValue(
+      this.block.username.value,
+      this.runtimeParameters,
+    );
+    if (R.isErr(userResult)) {
+      return userResult;
+    }
+    const user = R.okData(userResult);
+
+    const passwordResult = getStringAttributeValue(
+      this.block.password.value,
+      this.runtimeParameters,
+    );
+    if (R.isErr(passwordResult)) {
+      return passwordResult;
+    }
+    const password = R.okData(passwordResult);
+
+    const databaseResult = getStringAttributeValue(
+      this.block.database.value,
+      this.runtimeParameters,
+    );
+    if (R.isErr(databaseResult)) {
+      return databaseResult;
+    }
+    const database = R.okData(databaseResult);
+
+    return R.ok(
+      new Client({
+        host,
+        port,
+        user,
+        password,
+        database,
+      }),
+    );
   }
 }
