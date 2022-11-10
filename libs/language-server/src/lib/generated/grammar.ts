@@ -321,16 +321,28 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
             }
           },
           {
+            "$type": "Assignment",
+            "feature": "database",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "DatabaseAttribute"
+              },
+              "arguments": []
+            }
+          },
+          {
             "$type": "Group",
             "elements": [
               {
                 "$type": "Assignment",
-                "feature": "database",
+                "feature": "table",
                 "operator": "=",
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$refText": "DatabaseAttribute"
+                    "$refText": "TableAttribute"
                   },
                   "arguments": []
                 }
@@ -515,6 +527,45 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
           {
             "$type": "Keyword",
             "value": "database"
+          },
+          {
+            "$type": "Keyword",
+            "value": ":"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "value",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "StringAttributeValue"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Keyword",
+            "value": ";"
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "TableAttribute",
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "table"
           },
           {
             "$type": "Keyword",

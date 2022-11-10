@@ -29,16 +29,21 @@ export class PostgresLoaderExecutor extends BlockExecutor<
     }
     const client = R.okData(clientResult);
 
+    const tableResult = getStringAttributeValue(
+      this.block.table.value,
+      this.runtimeParameters,
+    );
+    if (R.isErr(tableResult)) {
+      return tableResult;
+    }
+    const table = R.okData(tableResult);
+
     try {
       await client.connect();
 
-      await client.query(
-        this.buildCreateTableStatement(this.block.$container.name, input),
-      );
+      await client.query(this.buildCreateTableStatement(table, input));
 
-      await client.query(
-        this.buildInsertValuesStatement(this.block.$container.name, input),
-      );
+      await client.query(this.buildInsertValuesStatement(table, input));
 
       return Promise.resolve(R.ok(undefined));
     } catch (err: unknown) {

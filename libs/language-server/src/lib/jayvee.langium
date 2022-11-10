@@ -25,7 +25,8 @@ PostgresLoader:
     port=PortAttribute &
     username=UsernameAttribute &
     password=PasswordAttribute &
-    database=DatabaseAttribute
+    database=DatabaseAttribute &
+    table=TableAttribute
   '}';
 
 HostAttribute:
@@ -42,6 +43,9 @@ PasswordAttribute:
 
 DatabaseAttribute:
   'database' ':' value=StringAttributeValue ';';
+
+TableAttribute:
+  'table' ':' value=StringAttributeValue ';';
 
 StringAttributeValue:
   StringValue | RuntimeParameter;

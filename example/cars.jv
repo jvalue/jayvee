@@ -29,6 +29,7 @@ block CarsLoader oftype PostgresLoader {
 	username: "postgres";
 	password: "postgres";
 	database: "postgres";
+	table: "Cars";
 }
 
 pipe {
