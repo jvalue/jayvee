@@ -24,12 +24,12 @@ block CarsValidator oftype LayoutValidator {
 }
 
 block CarsLoader oftype PostgresLoader {
-    host: requires Host;
-    port: 5432;
-	username: "postgres";
-	password: "postgres";
-	database: "postgres";
-	table: "Cars";
+    host: requires HUB_DB_HOST;
+    port: requires HUB_DB_PORT;
+	username: requires HUB_DB_USERNAME;
+	password: requires HUB_DB_PASSWORD;
+	database: requires HUB_DB_DATABASE;
+	table: requires HUB_DB_TABLE;
 }
 
 pipe {
