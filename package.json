@@ -8,7 +8,7 @@
     "lint": "nx run-many --target lint --max-warnings 0",
     "test": "nx run-many --target test",
     "generate": "nx run language-server:generate",
-    "example": "nx run interpreter:run -e Host=localhost example/cars.jv"
+    "example": "nx run interpreter:run -e HUB_DB_HOST=localhost -e HUB_DB_PORT=5432 -e HUB_DB_USERNAME=postgres -e HUB_DB_PASSWORD=postgres -e HUB_DB_DATABASE=postgres -e HUB_DB_TABLE=Cars example/cars.jv"
   },
   "private": true,
   "dependencies": {
