@@ -110,18 +110,18 @@ export function forEachAstNode(
   node: AstNode,
   fn: (value: AstNode) => void,
 ): void {
-  return doForEachAstNode(node, fn, new Map());
+  return doForEachAstNode(node, fn, new Set());
 }
 
 function doForEachAstNode(
   node: AstNode,
   fn: (value: AstNode) => void,
-  visited: Map<AstNode, boolean>,
+  visited: Set<AstNode>,
 ): void {
-  if (visited.get(node) === true) {
+  if (visited.has(node) === true) {
     return;
   }
-  visited.set(node, true);
+  visited.add(node);
   fn(node);
 
   for (const value of Object.values(node)) {
