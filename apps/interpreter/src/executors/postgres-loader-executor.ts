@@ -29,14 +29,10 @@ export class PostgresLoaderExecutor extends BlockExecutor<
     }
     const client = R.okData(clientResult);
 
-    const tableResult = getStringAttributeValue(
+    const table = getStringAttributeValue(
       this.block.table.value,
       this.runtimeParameters,
     );
-    if (R.isErr(tableResult)) {
-      return tableResult;
-    }
-    const table = R.okData(tableResult);
 
     try {
       await client.connect();
@@ -96,50 +92,30 @@ export class PostgresLoaderExecutor extends BlockExecutor<
   }
 
   private createPgClient(): R.Result<Client> {
-    const hostResult = getStringAttributeValue(
+    const host = getStringAttributeValue(
       this.block.host.value,
       this.runtimeParameters,
     );
-    if (R.isErr(hostResult)) {
-      return hostResult;
-    }
-    const host = R.okData(hostResult);
 
-    const portResult = getIntAttributeValue(
+    const port = getIntAttributeValue(
       this.block.port.value,
       this.runtimeParameters,
     );
-    if (R.isErr(portResult)) {
-      return portResult;
-    }
-    const port = R.okData(portResult);
 
-    const userResult = getStringAttributeValue(
+    const user = getStringAttributeValue(
       this.block.username.value,
       this.runtimeParameters,
     );
-    if (R.isErr(userResult)) {
-      return userResult;
-    }
-    const user = R.okData(userResult);
 
-    const passwordResult = getStringAttributeValue(
+    const password = getStringAttributeValue(
       this.block.password.value,
       this.runtimeParameters,
     );
-    if (R.isErr(passwordResult)) {
-      return passwordResult;
-    }
-    const password = R.okData(passwordResult);
 
-    const databaseResult = getStringAttributeValue(
+    const database = getStringAttributeValue(
       this.block.database.value,
       this.runtimeParameters,
     );
-    if (R.isErr(databaseResult)) {
-      return databaseResult;
-    }
-    const database = R.okData(databaseResult);
 
     return R.ok(
       new Client({

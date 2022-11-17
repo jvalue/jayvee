@@ -17,6 +17,10 @@ import { CSVFileExtractorExecutor } from './executors/csv-file-extractor-executo
 import * as R from './executors/execution-result';
 import { LayoutValidatorExecutor } from './executors/layout-validator-executor';
 import { PostgresLoaderExecutor } from './executors/postgres-loader-executor';
+import {
+  extractRequiredRuntimeParameters,
+  extractRuntimeParameters,
+} from './runtime-parameter-util';
 
 export async function runAction(
   fileName: string,
@@ -24,12 +28,23 @@ export async function runAction(
 ): Promise<void> {
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   const model = await extractAstNode<Model>(fileName, services);
-  await interpretPipelineModel(model, options.env);
+
+  const requiredRuntimeParameters = extractRequiredRuntimeParameters(model);
+  const parameterReadResult = extractRuntimeParameters(
+    requiredRuntimeParameters,
+    options.env,
+  );
+  if (R.isErr(parameterReadResult)) {
+    printError(R.errDetails(parameterReadResult));
+    return;
+  }
+
+  await interpretPipelineModel(model, R.okData(parameterReadResult));
 }
 
 async function interpretPipelineModel(
   model: Model,
-  runtimeParameters: Map<string, string>,
+  runtimeParameters: Map<string, string | number | boolean>,
 ): Promise<void> {
   const pipelineRuns: Array<Promise<void>> = [];
   for (const block of model.blocks) {
@@ -44,7 +59,7 @@ async function interpretPipelineModel(
 
 async function runPipeline(
   startingBlock: Block,
-  runtimeParameters: Map<string, string>,
+  runtimeParameters: Map<string, string | number | boolean>,
 ): Promise<void> {
   let currentBlock: Block | undefined = startingBlock;
   let blockMetaInf = getMetaInformation(currentBlock.type);
@@ -72,7 +87,7 @@ async function runPipeline(
 
 export function getExecutor(
   blockType: BlockType,
-  runtimeParameters: Map<string, string>,
+  runtimeParameters: Map<string, string | number | boolean>,
 ): BlockExecutor<BlockType> {
   if (isCSVFileExtractor(blockType)) {
     return new CSVFileExtractorExecutor(blockType, runtimeParameters);
