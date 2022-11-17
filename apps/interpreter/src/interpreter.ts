@@ -9,6 +9,7 @@ import {
   isLayoutValidator,
   isPostgresLoader,
 } from '@jayvee/language-server';
+import * as E from 'fp-ts/lib/Either';
 import { NodeFileSystem } from 'langium/node';
 
 import { extractAstNode, printError } from './cli-util';
@@ -34,8 +35,8 @@ export async function runAction(
     requiredRuntimeParameters,
     options.env,
   );
-  if (R.isErr(parameterReadResult)) {
-    printError(R.errDetails(parameterReadResult));
+  if (E.isLeft(parameterReadResult)) {
+    parameterReadResult.left.forEach((x) => printError(x));
     return;
   }
 
