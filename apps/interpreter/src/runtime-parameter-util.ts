@@ -29,7 +29,7 @@ export function extractRequiredRuntimeParameters(
 }
 
 /**
- * Creates a map with all the runtime runtime parameter values.
+ * Creates a map with all the runtime parameter values.
  * @param requiredParameters A list of all required runtime parameters, e.g. by @see extractRequiredRuntimeParameters
  * @param env The environment variable map
  * @returns all runtime parameters stored as a map if all required ones are present, error details if not
