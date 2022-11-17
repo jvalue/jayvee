@@ -5,6 +5,7 @@ import {
   isRuntimeParameter,
   isStringAttribute,
 } from '@jayvee/language-server';
+import * as E from 'fp-ts/lib/Either';
 import { AstNode, isAstNode } from 'langium';
 
 import * as R from './executors/execution-result';
@@ -37,16 +38,18 @@ export function extractRequiredRuntimeParameters(
 export function extractRuntimeParameters(
   requiredParameters: RuntimeParameter[],
   env: Map<string, string>,
-): R.Result<Map<string, string | number | boolean>> {
+): E.Either<R.ExecutionErrorDetails[], Map<string, string | number | boolean>> {
   const parameters: Map<string, string | number | boolean> = new Map();
-  const errorMessages: string[] = [];
+  const errorMessages: R.ExecutionErrorDetails[] = [];
 
   for (const requiredParameter of requiredParameters) {
     const parameterValue = env.get(requiredParameter.name);
     if (parameterValue === undefined) {
-      errorMessages.push(
-        `Runtime parameter ${requiredParameter.name} is missing.`,
-      );
+      errorMessages.push({
+        message: `Runtime parameter ${requiredParameter.name} is missing.`,
+        hint: `Please provide values by adding "-e <parameterName>=<value>" to your command.`,
+        cstNode: requiredParameter.$container.$cstNode,
+      });
       continue;
     }
 
@@ -55,7 +58,7 @@ export function extractRuntimeParameters(
       requiredParameter,
     );
     if (R.isErr(parseResult)) {
-      errorMessages.push(R.errDetails(parseResult).message);
+      errorMessages.push(R.errDetails(parseResult));
       continue;
     }
 
@@ -63,13 +66,10 @@ export function extractRuntimeParameters(
   }
 
   if (errorMessages.length > 0) {
-    return R.err({
-      message: errorMessages.join('\n'),
-      hint: `Please provide values by adding "-e <parameterName>=<value>" to your command.`,
-    });
+    return E.left(errorMessages);
   }
 
-  return R.ok(parameters);
+  return E.right(parameters);
 }
 
 /**
@@ -91,7 +91,9 @@ function parseParameterAsMatchingType(
       return R.err({
         message: `Runtime parameter ${
           requiredParameter.name
-        } has value ${JSON.stringify(value)} but should be of type integer`,
+        } has value ${JSON.stringify(value)} but should be of type integer.`,
+        hint: 'Use an integer value instead.',
+        cstNode: requiredParameter.$container.$cstNode,
       });
     }
     return R.ok(Number.parseInt(value, 10));
