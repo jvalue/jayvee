@@ -11,7 +11,7 @@ export abstract class BlockExecutor<
 > {
   constructor(
     readonly block: B,
-    readonly runtimeParameters: Map<string, string>,
+    readonly runtimeParameters: Map<string, string | number | boolean>,
   ) {}
 
   abstract execute(input: InType): Promise<R.Result<OutType>>;
