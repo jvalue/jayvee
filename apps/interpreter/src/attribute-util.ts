@@ -14,7 +14,13 @@ export function getStringAttributeValue(
     return attribute.value;
   }
   if (isRuntimeParameter(attribute)) {
-    return runtimeParameters.get(attribute.name) as string; // We checked before execution that it exists!
+    const parameterValue = runtimeParameters.get(attribute.name);
+    if (typeof parameterValue !== 'string') {
+      throw Error(
+        `Runtime parameter ${attribute.name} is unexpectedly not of type string.`,
+      );
+    }
+    return parameterValue;
   }
   throw new Error('Unknown kind of attribute');
 }
@@ -27,7 +33,13 @@ export function getIntAttributeValue(
     return attribute.value;
   }
   if (isRuntimeParameter(attribute)) {
-    return runtimeParameters.get(attribute.name) as number; // We checked before execution that it exists!
+    const parameterValue = runtimeParameters.get(attribute.name);
+    if (typeof parameterValue !== 'number') {
+      throw Error(
+        `Runtime parameter ${attribute.name} is unexpectedly not of type number.`,
+      );
+    }
+    return parameterValue;
   }
   throw new Error('Unknown kind of attribute');
 }
