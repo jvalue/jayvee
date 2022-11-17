@@ -6,7 +6,7 @@ import {
   isStringAttribute,
 } from '@jayvee/language-server';
 import * as E from 'fp-ts/lib/Either';
-import { AstNode, isAstNode } from 'langium';
+import { AstNode, isAstNode, isReference } from 'langium';
 
 import * as R from './executors/execution-result';
 
@@ -127,10 +127,11 @@ function doForEachAstNode(
   fn(node);
 
   for (const value of Object.values(node)) {
-    if (typeof value === 'object' && isAstNode(value)) {
+    if (isReference(value) && value.ref !== undefined) {
+      doForEachAstNode(value.ref, fn, visited);
+    } else if (typeof value === 'object' && isAstNode(value)) {
       doForEachAstNode(value, fn, visited);
-    }
-    if (Array.isArray(value)) {
+    } else if (Array.isArray(value)) {
       for (const item of value) {
         if (isAstNode(item)) {
           doForEachAstNode(item, fn, visited);
