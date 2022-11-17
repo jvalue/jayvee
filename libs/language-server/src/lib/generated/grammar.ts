@@ -161,6 +161,40 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
             "value": "{"
           },
           {
+            "$type": "Assignment",
+            "feature": "url",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "UrlAttribute"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Keyword",
+            "value": "}"
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "UrlAttribute",
+      "returnType": {
+        "$refText": "StringAttribute"
+      },
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
             "$type": "Keyword",
             "value": "url"
           },
@@ -170,7 +204,7 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
           },
           {
             "$type": "Assignment",
-            "feature": "url",
+            "feature": "value",
             "operator": "=",
             "terminal": {
               "$type": "RuleCall",
@@ -183,10 +217,6 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
           {
             "$type": "Keyword",
             "value": ";"
-          },
-          {
-            "$type": "Keyword",
-            "value": "}"
           }
         ]
       },
@@ -365,6 +395,9 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
     {
       "$type": "ParserRule",
       "name": "HostAttribute",
+      "returnType": {
+        "$refText": "StringAttribute"
+      },
       "definition": {
         "$type": "Group",
         "elements": [
@@ -404,6 +437,9 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
     {
       "$type": "ParserRule",
       "name": "PortAttribute",
+      "returnType": {
+        "$refText": "IntAttribute"
+      },
       "definition": {
         "$type": "Group",
         "elements": [
@@ -443,6 +479,9 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
     {
       "$type": "ParserRule",
       "name": "UsernameAttribute",
+      "returnType": {
+        "$refText": "StringAttribute"
+      },
       "definition": {
         "$type": "Group",
         "elements": [
@@ -482,6 +521,9 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
     {
       "$type": "ParserRule",
       "name": "PasswordAttribute",
+      "returnType": {
+        "$refText": "StringAttribute"
+      },
       "definition": {
         "$type": "Group",
         "elements": [
@@ -521,6 +563,9 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
     {
       "$type": "ParserRule",
       "name": "DatabaseAttribute",
+      "returnType": {
+        "$refText": "StringAttribute"
+      },
       "definition": {
         "$type": "Group",
         "elements": [
@@ -560,6 +605,9 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
     {
       "$type": "ParserRule",
       "name": "TableAttribute",
+      "returnType": {
+        "$refText": "StringAttribute"
+      },
       "definition": {
         "$type": "Group",
         "elements": [
@@ -1084,10 +1132,55 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
       "fragment": false
     }
   ],
+  "interfaces": [
+    {
+      "$type": "Interface",
+      "attributes": [
+        {
+          "$type": "TypeAttribute",
+          "typeAlternatives": [
+            {
+              "$type": "AtomType",
+              "refType": {
+                "$refText": "StringAttributeValue"
+              },
+              "isArray": false,
+              "isRef": false
+            }
+          ],
+          "name": "value",
+          "isOptional": false
+        }
+      ],
+      "name": "StringAttribute",
+      "superTypes": []
+    },
+    {
+      "$type": "Interface",
+      "attributes": [
+        {
+          "$type": "TypeAttribute",
+          "typeAlternatives": [
+            {
+              "$type": "AtomType",
+              "refType": {
+                "$refText": "IntAttributeValue"
+              },
+              "isArray": false,
+              "isRef": false
+            }
+          ],
+          "name": "value",
+          "isOptional": false
+        }
+      ],
+      "name": "IntAttribute",
+      "superTypes": []
+    }
+  ],
   "definesHiddenTokens": false,
   "hiddenTokens": [],
   "imports": [],
-  "interfaces": [],
   "types": [],
   "usedGrammars": []
 }`));

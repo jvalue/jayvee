@@ -67,7 +67,7 @@ export function isColumnSection(item: unknown): item is ColumnSection {
 
 export interface CSVFileExtractor extends AstNode {
     readonly $container: Block;
-    url: StringAttributeValue
+    url: StringAttribute
 }
 
 export const CSVFileExtractor = 'CSVFileExtractor';
@@ -76,30 +76,19 @@ export function isCSVFileExtractor(item: unknown): item is CSVFileExtractor {
     return reflection.isInstance(item, CSVFileExtractor);
 }
 
-export interface DatabaseAttribute extends AstNode {
+export interface IntAttribute extends AstNode {
     readonly $container: PostgresLoader;
-    value: StringAttributeValue
+    value: IntAttributeValue
 }
 
-export const DatabaseAttribute = 'DatabaseAttribute';
+export const IntAttribute = 'IntAttribute';
 
-export function isDatabaseAttribute(item: unknown): item is DatabaseAttribute {
-    return reflection.isInstance(item, DatabaseAttribute);
-}
-
-export interface HostAttribute extends AstNode {
-    readonly $container: PostgresLoader;
-    value: StringAttributeValue
-}
-
-export const HostAttribute = 'HostAttribute';
-
-export function isHostAttribute(item: unknown): item is HostAttribute {
-    return reflection.isInstance(item, HostAttribute);
+export function isIntAttribute(item: unknown): item is IntAttribute {
+    return reflection.isInstance(item, IntAttribute);
 }
 
 export interface IntValue extends AstNode {
-    readonly $container: CSVFileExtractor | DatabaseAttribute | HostAttribute | PasswordAttribute | PortAttribute | TableAttribute | UsernameAttribute;
+    readonly $container: IntAttribute | StringAttribute;
     value: number
 }
 
@@ -144,17 +133,6 @@ export function isModel(item: unknown): item is Model {
     return reflection.isInstance(item, Model);
 }
 
-export interface PasswordAttribute extends AstNode {
-    readonly $container: PostgresLoader;
-    value: StringAttributeValue
-}
-
-export const PasswordAttribute = 'PasswordAttribute';
-
-export function isPasswordAttribute(item: unknown): item is PasswordAttribute {
-    return reflection.isInstance(item, PasswordAttribute);
-}
-
 export interface Pipe extends AstNode {
     readonly $container: Model;
     from: Reference<Block>
@@ -167,26 +145,15 @@ export function isPipe(item: unknown): item is Pipe {
     return reflection.isInstance(item, Pipe);
 }
 
-export interface PortAttribute extends AstNode {
-    readonly $container: PostgresLoader;
-    value: IntAttributeValue
-}
-
-export const PortAttribute = 'PortAttribute';
-
-export function isPortAttribute(item: unknown): item is PortAttribute {
-    return reflection.isInstance(item, PortAttribute);
-}
-
 export interface PostgresLoader extends AstNode {
     readonly $container: Block;
-    database: DatabaseAttribute
-    host: HostAttribute
+    database: StringAttribute
+    host: StringAttribute
     name: 'PostgresLoader'
-    password: PasswordAttribute
-    port: PortAttribute
-    table: TableAttribute
-    username: UsernameAttribute
+    password: StringAttribute
+    port: IntAttribute
+    table: StringAttribute
+    username: StringAttribute
 }
 
 export const PostgresLoader = 'PostgresLoader';
@@ -209,7 +176,7 @@ export function isRowSection(item: unknown): item is RowSection {
 }
 
 export interface RuntimeParameter extends AstNode {
-    readonly $container: CSVFileExtractor | DatabaseAttribute | HostAttribute | PasswordAttribute | PortAttribute | TableAttribute | UsernameAttribute;
+    readonly $container: IntAttribute | StringAttribute;
     name: string
 }
 
@@ -219,8 +186,19 @@ export function isRuntimeParameter(item: unknown): item is RuntimeParameter {
     return reflection.isInstance(item, RuntimeParameter);
 }
 
+export interface StringAttribute extends AstNode {
+    readonly $container: CSVFileExtractor | PostgresLoader;
+    value: StringAttributeValue
+}
+
+export const StringAttribute = 'StringAttribute';
+
+export function isStringAttribute(item: unknown): item is StringAttribute {
+    return reflection.isInstance(item, StringAttribute);
+}
+
 export interface StringValue extends AstNode {
-    readonly $container: CSVFileExtractor | DatabaseAttribute | HostAttribute | PasswordAttribute | PortAttribute | TableAttribute | UsernameAttribute;
+    readonly $container: IntAttribute | StringAttribute;
     value: string
 }
 
@@ -230,34 +208,12 @@ export function isStringValue(item: unknown): item is StringValue {
     return reflection.isInstance(item, StringValue);
 }
 
-export interface TableAttribute extends AstNode {
-    readonly $container: PostgresLoader;
-    value: StringAttributeValue
-}
-
-export const TableAttribute = 'TableAttribute';
-
-export function isTableAttribute(item: unknown): item is TableAttribute {
-    return reflection.isInstance(item, TableAttribute);
-}
-
-export interface UsernameAttribute extends AstNode {
-    readonly $container: PostgresLoader;
-    value: StringAttributeValue
-}
-
-export const UsernameAttribute = 'UsernameAttribute';
-
-export function isUsernameAttribute(item: unknown): item is UsernameAttribute {
-    return reflection.isInstance(item, UsernameAttribute);
-}
-
-export type JayveeAstType = 'Block' | 'BlockType' | 'CSVFileExtractor' | 'ColumnSection' | 'DatabaseAttribute' | 'HostAttribute' | 'IntAttributeValue' | 'IntValue' | 'Layout' | 'LayoutValidator' | 'Model' | 'PasswordAttribute' | 'Pipe' | 'PortAttribute' | 'PostgresLoader' | 'RowSection' | 'RuntimeParameter' | 'Section' | 'StringAttributeValue' | 'StringValue' | 'TableAttribute' | 'UsernameAttribute';
+export type JayveeAstType = 'Block' | 'BlockType' | 'CSVFileExtractor' | 'ColumnSection' | 'IntAttribute' | 'IntAttributeValue' | 'IntValue' | 'Layout' | 'LayoutValidator' | 'Model' | 'Pipe' | 'PostgresLoader' | 'RowSection' | 'RuntimeParameter' | 'Section' | 'StringAttribute' | 'StringAttributeValue' | 'StringValue';
 
 export class JayveeAstReflection implements AstReflection {
 
     getAllTypes(): string[] {
-        return ['Block', 'BlockType', 'CSVFileExtractor', 'ColumnSection', 'DatabaseAttribute', 'HostAttribute', 'IntAttributeValue', 'IntValue', 'Layout', 'LayoutValidator', 'Model', 'PasswordAttribute', 'Pipe', 'PortAttribute', 'PostgresLoader', 'RowSection', 'RuntimeParameter', 'Section', 'StringAttributeValue', 'StringValue', 'TableAttribute', 'UsernameAttribute'];
+        return ['Block', 'BlockType', 'CSVFileExtractor', 'ColumnSection', 'IntAttribute', 'IntAttributeValue', 'IntValue', 'Layout', 'LayoutValidator', 'Model', 'Pipe', 'PostgresLoader', 'RowSection', 'RuntimeParameter', 'Section', 'StringAttribute', 'StringAttributeValue', 'StringValue'];
     }
 
     isInstance(node: unknown, type: string): boolean {

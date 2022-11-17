@@ -1,9 +1,9 @@
 import {
   Model,
   RuntimeParameter,
-  isIntAttributeValue,
+  isIntAttribute,
   isRuntimeParameter,
-  isStringAttributeValue,
+  isStringAttribute,
 } from '@jayvee/language-server';
 import { AstNode, isAstNode } from 'langium';
 
@@ -65,12 +65,11 @@ function getParameterAsMatchingType(
   value: string,
   requiredParameter: RuntimeParameter,
 ): R.Result<string | number | boolean> {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-  const requiredType = (requiredParameter.$container as any).value; // TODO: change grammar to have a type guard here.
-  if (isStringAttributeValue(requiredType)) {
+  const requiredType = requiredParameter.$container;
+  if (isStringAttribute(requiredType)) {
     return R.ok(value);
   }
-  if (isIntAttributeValue(requiredType)) {
+  if (isIntAttribute(requiredType)) {
     if (!/^[0-9]+$/.test(value)) {
       return R.err({
         message: `Runtime parameter ${
