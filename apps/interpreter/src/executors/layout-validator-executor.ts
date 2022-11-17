@@ -12,9 +12,13 @@ import {
   isRowSection,
 } from '@jayvee/language-server';
 
-import { getColumn, getColumnIndexFromSelector } from '../data-util';
+import { getColumn } from '../data-util';
 
 import { BlockExecutor } from './block-executor';
+import {
+  columnCharactersAsIndex,
+  columnIndexAsCharacters,
+} from './column-id-util';
 import * as R from './execution-result';
 
 export class LayoutValidatorExecutor extends BlockExecutor<
@@ -101,7 +105,7 @@ export class LayoutValidatorExecutor extends BlockExecutor<
     const columnIdCharacter = section.columnId;
     const dataToValidate = getColumn(
       data,
-      getColumnIndexFromSelector(columnIdCharacter),
+      columnCharactersAsIndex(columnIdCharacter),
       undefined,
     ).filter((_, index) => index !== this.getHeaderIndex());
 
@@ -136,7 +140,7 @@ export class LayoutValidatorExecutor extends BlockExecutor<
           this.formatErrorMessage(
             value,
             `${rowId}`,
-            this.formatColumnIdAsChar(colId),
+            columnIndexAsCharacters(colId),
             type.languageType,
           ),
         );
@@ -165,7 +169,7 @@ export class LayoutValidatorExecutor extends BlockExecutor<
     (
       sections.filter((section) => isColumnSection(section)) as ColumnSection[]
     ).forEach((section: ColumnSection) => {
-      columnTypes[getColumnIndexFromSelector(section.columnId)] = getDataType(
+      columnTypes[columnCharactersAsIndex(section.columnId)] = getDataType(
         section.type,
       );
     });
@@ -177,10 +181,5 @@ export class LayoutValidatorExecutor extends BlockExecutor<
     }
 
     return columnTypesArray;
-  }
-
-  formatColumnIdAsChar(columnId: number): string {
-    const startCharacter = 'A'.charCodeAt(0);
-    return String.fromCharCode(startCharacter + columnId);
   }
 }

@@ -7,11 +7,3 @@ export function getColumn<T, D>(
     return x[index] ?? defaultValue;
   });
 }
-
-export function getColumnIndexFromSelector(selector: string): number {
-  if (!selector.match(/[A-Z,a-z]{1}/)) {
-    throw Error(`Invalid column selector: ${selector}`);
-  }
-  const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
-  return alphabet.indexOf(selector.toLowerCase());
-}
