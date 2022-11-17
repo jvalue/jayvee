@@ -11,8 +11,11 @@ BlockType:
 
 CSVFileExtractor:
   'CSVFileExtractor' '{'
-    'url' ':' url=StringAttributeValue ';'
+    url=UrlAttribute
   '}';
+
+UrlAttribute returns StringAttribute:
+  'url' ':' value=StringAttributeValue ';';
 
 LayoutValidator:
   'LayoutValidator' '{'
@@ -29,23 +32,31 @@ PostgresLoader:
     table=TableAttribute
   '}';
 
-HostAttribute:
+HostAttribute returns StringAttribute:
   'host' ':' value=StringAttributeValue ';';
 
-PortAttribute:
+PortAttribute returns IntAttribute:
   'port' ':' value=IntAttributeValue ';';
 
-UsernameAttribute:
+UsernameAttribute returns StringAttribute:
   'username' ':' value=StringAttributeValue ';';
 
-PasswordAttribute:
+PasswordAttribute returns StringAttribute:
   'password' ':' value=StringAttributeValue ';';
 
-DatabaseAttribute:
+DatabaseAttribute returns StringAttribute:
   'database' ':' value=StringAttributeValue ';';
 
-TableAttribute:
+TableAttribute returns StringAttribute:
   'table' ':' value=StringAttributeValue ';';
+
+interface StringAttribute {
+  value: StringAttributeValue
+}
+
+interface IntAttribute {
+  value: IntAttributeValue
+}
 
 StringAttributeValue:
   StringValue | RuntimeParameter;

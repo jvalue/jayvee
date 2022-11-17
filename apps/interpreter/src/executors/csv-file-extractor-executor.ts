@@ -37,7 +37,10 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
   }
 
   private fetchRawData(): Promise<R.Result<string>> {
-    const url = getStringAttributeValue(this.block.url, this.runtimeParameters);
+    const url = getStringAttributeValue(
+      this.block.url.value,
+      this.runtimeParameters,
+    );
 
     return new Promise((resolve) => {
       http.get(url, (response) => {
