@@ -12,20 +12,20 @@ interface IntAttribute {
 fragment StringAttributeFragment:
   ':' value=StringAttributeValue ';';
 
-StringAttributeValue: 
+StringAttributeValue:
   StringValue | RuntimeParameter;
 
-StringValue returns string:
-  STRING;
+StringValue:
+  value=STRING;
 
 fragment IntAttributeFragment:
   ':' value=IntAttributeValue ';';
 
-IntAttributeValue: 
+IntAttributeValue:
   IntValue | RuntimeParameter;
 
-IntValue returns number:
-  INT;
+IntValue:
+  value=INT;
 
 fragment LayoutAttributeFragment:
   ':' value=[Layout] ';';

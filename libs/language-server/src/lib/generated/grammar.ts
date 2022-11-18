@@ -376,13 +376,17 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
     {
       "$type": "ParserRule",
       "name": "StringValue",
-      "dataType": "string",
       "definition": {
-        "$type": "RuleCall",
-        "rule": {
-          "$refText": "STRING"
-        },
-        "arguments": []
+        "$type": "Assignment",
+        "feature": "value",
+        "operator": "=",
+        "terminal": {
+          "$type": "RuleCall",
+          "rule": {
+            "$refText": "STRING"
+          },
+          "arguments": []
+        }
       },
       "definesHiddenTokens": false,
       "entry": false,
@@ -458,13 +462,17 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
     {
       "$type": "ParserRule",
       "name": "IntValue",
-      "dataType": "number",
       "definition": {
-        "$type": "RuleCall",
-        "rule": {
-          "$refText": "INT"
-        },
-        "arguments": []
+        "$type": "Assignment",
+        "feature": "value",
+        "operator": "=",
+        "terminal": {
+          "$type": "RuleCall",
+          "rule": {
+            "$refText": "INT"
+          },
+          "arguments": []
+        }
       },
       "definesHiddenTokens": false,
       "entry": false,
