@@ -1,4 +1,19 @@
-import { Block, Pipe } from './generated/ast';
+import { Block, Pipe, Pipeline } from './generated/ast';
+import { getMetaInformation } from './meta-information';
+
+export function collectStartingBlocks(pipeline: Pipeline): Block[] {
+  const result: Block[] = [];
+  for (const block of pipeline.blocks) {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (block.type !== undefined) {
+      const blockMetaInf = getMetaInformation(block.type);
+      if (!blockMetaInf.hasInput()) {
+        result.push(block);
+      }
+    }
+  }
+  return result;
+}
 
 export function collectChildren(block: Block): Block[] {
   const outgoingPipes = collectOutgoingPipes(block);

@@ -2,8 +2,8 @@ import {
   Block,
   BlockType,
   Model,
-  Pipeline,
   collectChildren,
+  collectStartingBlocks,
   createJayveeServices,
   getMetaInformation,
   isCSVFileExtractor,
@@ -50,23 +50,17 @@ async function interpretPipelineModel(
 ): Promise<void> {
   const pipelineRuns: Array<Promise<void>> = [];
   for (const pipeline of model.pipelines) {
-    const startingBlock = findStartingBlock(pipeline);
-    const pipelineRun = runPipeline(startingBlock, runtimeParameters);
+    const startingBlocks = collectStartingBlocks(pipeline);
+    if (startingBlocks.length !== 1) {
+      throw new Error(
+        `Unable to find a single starting block for pipeline ${pipeline.name}`,
+      );
+    }
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const pipelineRun = runPipeline(startingBlocks[0]!, runtimeParameters);
     pipelineRuns.push(pipelineRun);
   }
   await Promise.all(pipelineRuns);
-}
-
-function findStartingBlock(pipeline: Pipeline): Block {
-  for (const block of pipeline.blocks) {
-    const blockMetaInf = getMetaInformation(block.type);
-    if (!blockMetaInf.hasInput()) {
-      return block;
-    }
-  }
-  throw new Error(
-    `Unable to find a starting block for pipeline ${pipeline.name}`,
-  );
 }
 
 async function runPipeline(
