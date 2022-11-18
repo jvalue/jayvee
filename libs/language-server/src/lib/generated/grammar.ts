@@ -21,12 +21,12 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
         "elements": [
           {
             "$type": "Assignment",
-            "feature": "blocks",
+            "feature": "pipelines",
             "operator": "+=",
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$refText": "Block"
+                "$refText": "Pipeline"
               },
               "arguments": []
             }
@@ -42,23 +42,92 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
               },
               "arguments": []
             }
-          },
-          {
-            "$type": "Assignment",
-            "feature": "pipes",
-            "operator": "+=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$refText": "Pipe"
-              },
-              "arguments": []
-            }
           }
         ],
         "cardinality": "*"
       },
       "definesHiddenTokens": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "Pipeline",
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "pipeline"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "name",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "ID"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Keyword",
+            "value": "{"
+          },
+          {
+            "$type": "Alternatives",
+            "elements": [
+              {
+                "$type": "Assignment",
+                "feature": "blocks",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "Block"
+                  },
+                  "arguments": []
+                }
+              },
+              {
+                "$type": "Assignment",
+                "feature": "layouts",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "Layout"
+                  },
+                  "arguments": []
+                }
+              },
+              {
+                "$type": "Assignment",
+                "feature": "pipes",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "Pipe"
+                  },
+                  "arguments": []
+                }
+              }
+            ],
+            "cardinality": "*"
+          },
+          {
+            "$type": "Keyword",
+            "value": "}"
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
       "fragment": false,
       "hiddenTokens": [],
       "parameters": [],

@@ -1,43 +1,45 @@
-block CarsExtractor oftype CSVFileExtractor {
-	url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
-}
+pipeline CarsPipeline {
+	block CarsExtractor oftype CSVFileExtractor {
+		url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
+	}
 
-layout CarsLayout {
-	header row 1: text;
+	layout CarsLayout {
+		header row 1: text;
 
-	column A: text;
-	column B: decimal;
-	column C: integer;
-	column D: decimal;
-	column E: integer;
-	column F: decimal;
-	column G: decimal;
-	column H: decimal;
-	column I: integer;
-	column J: integer;
-	column K: integer;
-	column L: integer;
-}
+		column A: text;
+		column B: decimal;
+		column C: integer;
+		column D: decimal;
+		column E: integer;
+		column F: decimal;
+		column G: decimal;
+		column H: decimal;
+		column I: integer;
+		column J: integer;
+		column K: integer;
+		column L: integer;
+	}
 
-block CarsValidator oftype LayoutValidator {
-	layout: CarsLayout;
-}
+	block CarsValidator oftype LayoutValidator {
+		layout: CarsLayout;
+	}
 
-block CarsLoader oftype PostgresLoader {
-    host: requires Host;
-    port: 5432;
-	username: "postgres";
-	password: "postgres";
-	database: "postgres";
-	table: "Cars";
-}
+	block CarsLoader oftype PostgresLoader {
+		host: requires Host;
+		port: 5432;
+		username: "postgres";
+		password: "postgres";
+		database: "postgres";
+		table: "Cars";
+	}
 
-pipe {
-	from: CarsExtractor;
-	to: CarsValidator;
-}
+	pipe {
+		from: CarsExtractor;
+		to: CarsValidator;
+	}
 
-pipe {
-	from: CarsValidator;
-	to: CarsLoader;
+	pipe {
+		from: CarsValidator;
+		to: CarsLoader;
+	}
 }
