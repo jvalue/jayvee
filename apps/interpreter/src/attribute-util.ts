@@ -1,45 +1,37 @@
 import {
   IntAttributeValue,
   StringAttributeValue,
-  isIntValue,
   isRuntimeParameter,
-  isStringValue,
 } from '@jayvee/language-server';
 
 export function getStringAttributeValue(
-  attribute: StringAttributeValue,
+  attributeValue: StringAttributeValue,
   runtimeParameters: Map<string, string | number | boolean>,
 ): string {
-  if (isStringValue(attribute)) {
-    return attribute.value;
-  }
-  if (isRuntimeParameter(attribute)) {
-    const parameterValue = runtimeParameters.get(attribute.name);
+  if (isRuntimeParameter(attributeValue)) {
+    const parameterValue = runtimeParameters.get(attributeValue.name);
     if (typeof parameterValue !== 'string') {
       throw Error(
-        `Runtime parameter ${attribute.name} is unexpectedly not of type string.`,
+        `Runtime parameter ${attributeValue.name} is unexpectedly not of type string.`,
       );
     }
     return parameterValue;
   }
-  throw new Error('Unknown kind of attribute');
+  return attributeValue;
 }
 
 export function getIntAttributeValue(
-  attribute: IntAttributeValue,
+  attributeValue: IntAttributeValue,
   runtimeParameters: Map<string, string | number | boolean>,
 ): number {
-  if (isIntValue(attribute)) {
-    return attribute.value;
-  }
-  if (isRuntimeParameter(attribute)) {
-    const parameterValue = runtimeParameters.get(attribute.name);
+  if (isRuntimeParameter(attributeValue)) {
+    const parameterValue = runtimeParameters.get(attributeValue.name);
     if (typeof parameterValue !== 'number') {
       throw Error(
-        `Runtime parameter ${attribute.name} is unexpectedly not of type number.`,
+        `Runtime parameter ${attributeValue.name} is unexpectedly not of type number.`,
       );
     }
     return parameterValue;
   }
-  throw new Error('Unknown kind of attribute');
+  return attributeValue;
 }

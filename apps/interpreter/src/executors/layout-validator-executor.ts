@@ -28,7 +28,7 @@ export class LayoutValidatorExecutor extends BlockExecutor<
   LayoutValidatorMetaInformation
 > {
   override execute(input: Sheet): Promise<R.Result<Table>> {
-    const sections = this.block.layout.ref?.sections || [];
+    const sections = this.block.layout.value.ref?.sections || [];
     const validityResult = this.validateSections(sections, input.data);
 
     if (R.isErr(validityResult)) {
@@ -45,7 +45,7 @@ export class LayoutValidatorExecutor extends BlockExecutor<
   }
 
   getHeader(input: Sheet): string[] {
-    const headerRowSection = this.block.layout.ref?.sections.find(
+    const headerRowSection = this.block.layout.value.ref?.sections.find(
       (x) => isRowSection(x) && x.header,
     ) as RowSection | undefined;
 
@@ -66,7 +66,7 @@ export class LayoutValidatorExecutor extends BlockExecutor<
   }
 
   getHeaderIndex(): number | undefined {
-    const headerRowSection = this.block.layout.ref?.sections.find(
+    const headerRowSection = this.block.layout.value.ref?.sections.find(
       (x) => isRowSection(x) && x.header,
     ) as RowSection | undefined;
 

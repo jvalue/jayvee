@@ -10,6 +10,7 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
   "$type": "Grammar",
   "isDeclared": true,
   "name": "Jayvee",
+  "imports": [],
   "rules": [
     {
       "$type": "ParserRule",
@@ -112,91 +113,21 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
     },
     {
       "$type": "ParserRule",
-      "name": "BlockType",
-      "definition": {
-        "$type": "Alternatives",
-        "elements": [
-          {
-            "$type": "RuleCall",
-            "rule": {
-              "$refText": "CSVFileExtractor"
-            },
-            "arguments": []
-          },
-          {
-            "$type": "RuleCall",
-            "rule": {
-              "$refText": "LayoutValidator"
-            },
-            "arguments": []
-          },
-          {
-            "$type": "RuleCall",
-            "rule": {
-              "$refText": "PostgresLoader"
-            },
-            "arguments": []
-          }
-        ]
-      },
-      "definesHiddenTokens": false,
-      "entry": false,
-      "fragment": false,
-      "hiddenTokens": [],
-      "parameters": [],
-      "wildcard": false
-    },
-    {
-      "$type": "ParserRule",
-      "name": "CSVFileExtractor",
+      "name": "Pipe",
       "definition": {
         "$type": "Group",
         "elements": [
           {
             "$type": "Keyword",
-            "value": "CSVFileExtractor"
+            "value": "pipe"
           },
           {
             "$type": "Keyword",
             "value": "{"
           },
           {
-            "$type": "Assignment",
-            "feature": "url",
-            "operator": "=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$refText": "UrlAttribute"
-              },
-              "arguments": []
-            }
-          },
-          {
             "$type": "Keyword",
-            "value": "}"
-          }
-        ]
-      },
-      "definesHiddenTokens": false,
-      "entry": false,
-      "fragment": false,
-      "hiddenTokens": [],
-      "parameters": [],
-      "wildcard": false
-    },
-    {
-      "$type": "ParserRule",
-      "name": "UrlAttribute",
-      "returnType": {
-        "$refText": "StringAttribute"
-      },
-      "definition": {
-        "$type": "Group",
-        "elements": [
-          {
-            "$type": "Keyword",
-            "value": "url"
+            "value": "from"
           },
           {
             "$type": "Keyword",
@@ -204,46 +135,23 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
           },
           {
             "$type": "Assignment",
-            "feature": "value",
+            "feature": "from",
             "operator": "=",
             "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$refText": "StringAttributeValue"
+              "$type": "CrossReference",
+              "type": {
+                "$refText": "Block"
               },
-              "arguments": []
+              "deprecatedSyntax": false
             }
           },
           {
             "$type": "Keyword",
             "value": ";"
-          }
-        ]
-      },
-      "definesHiddenTokens": false,
-      "entry": false,
-      "fragment": false,
-      "hiddenTokens": [],
-      "parameters": [],
-      "wildcard": false
-    },
-    {
-      "$type": "ParserRule",
-      "name": "LayoutValidator",
-      "definition": {
-        "$type": "Group",
-        "elements": [
-          {
-            "$type": "Keyword",
-            "value": "LayoutValidator"
           },
           {
             "$type": "Keyword",
-            "value": "{"
-          },
-          {
-            "$type": "Keyword",
-            "value": "layout"
+            "value": "to"
           },
           {
             "$type": "Keyword",
@@ -251,12 +159,12 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
           },
           {
             "$type": "Assignment",
-            "feature": "layout",
+            "feature": "to",
             "operator": "=",
             "terminal": {
               "$type": "CrossReference",
               "type": {
-                "$refText": "Layout"
+                "$refText": "Block"
               },
               "deprecatedSyntax": false
             }
@@ -279,132 +187,66 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
       "wildcard": false
     },
     {
-      "$type": "ParserRule",
-      "name": "PostgresLoader",
+      "$type": "TerminalRule",
+      "hidden": true,
+      "name": "WS",
       "definition": {
-        "$type": "UnorderedGroup",
-        "elements": [
-          {
-            "$type": "Group",
-            "elements": [
-              {
-                "$type": "Assignment",
-                "feature": "name",
-                "operator": "=",
-                "terminal": {
-                  "$type": "Keyword",
-                  "value": "PostgresLoader"
-                }
-              },
-              {
-                "$type": "Keyword",
-                "value": "{"
-              },
-              {
-                "$type": "Assignment",
-                "feature": "host",
-                "operator": "=",
-                "terminal": {
-                  "$type": "RuleCall",
-                  "rule": {
-                    "$refText": "HostAttribute"
-                  },
-                  "arguments": []
-                }
-              }
-            ]
-          },
-          {
-            "$type": "Assignment",
-            "feature": "port",
-            "operator": "=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$refText": "PortAttribute"
-              },
-              "arguments": []
-            }
-          },
-          {
-            "$type": "Assignment",
-            "feature": "username",
-            "operator": "=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$refText": "UsernameAttribute"
-              },
-              "arguments": []
-            }
-          },
-          {
-            "$type": "Assignment",
-            "feature": "password",
-            "operator": "=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$refText": "PasswordAttribute"
-              },
-              "arguments": []
-            }
-          },
-          {
-            "$type": "Assignment",
-            "feature": "database",
-            "operator": "=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$refText": "DatabaseAttribute"
-              },
-              "arguments": []
-            }
-          },
-          {
-            "$type": "Group",
-            "elements": [
-              {
-                "$type": "Assignment",
-                "feature": "table",
-                "operator": "=",
-                "terminal": {
-                  "$type": "RuleCall",
-                  "rule": {
-                    "$refText": "TableAttribute"
-                  },
-                  "arguments": []
-                }
-              },
-              {
-                "$type": "Keyword",
-                "value": "}"
-              }
-            ]
-          }
-        ]
+        "$type": "RegexToken",
+        "regex": "\\\\s+"
       },
-      "definesHiddenTokens": false,
-      "entry": false,
+      "fragment": false
+    },
+    {
+      "$type": "TerminalRule",
+      "name": "ID",
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "[_a-zA-Z][\\\\w_]*"
+      },
       "fragment": false,
-      "hiddenTokens": [],
-      "parameters": [],
-      "wildcard": false
+      "hidden": false
+    },
+    {
+      "$type": "TerminalRule",
+      "name": "INT",
+      "type": {
+        "$type": "ReturnType",
+        "name": "number"
+      },
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "[0-9]+"
+      },
+      "fragment": false,
+      "hidden": false
+    },
+    {
+      "$type": "TerminalRule",
+      "name": "STRING",
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "\\"[^\\"]*\\"|'[^']*'"
+      },
+      "fragment": false,
+      "hidden": false
+    },
+    {
+      "$type": "TerminalRule",
+      "hidden": true,
+      "name": "SL_COMMENT",
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "\\\\/\\\\/[^\\\\n\\\\r]*"
+      },
+      "fragment": false
     },
     {
       "$type": "ParserRule",
-      "name": "HostAttribute",
-      "returnType": {
-        "$refText": "StringAttribute"
-      },
+      "name": "StringAttributeFragment",
+      "fragment": true,
       "definition": {
         "$type": "Group",
         "elements": [
-          {
-            "$type": "Keyword",
-            "value": "host"
-          },
           {
             "$type": "Keyword",
             "value": ":"
@@ -429,217 +271,6 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
       },
       "definesHiddenTokens": false,
       "entry": false,
-      "fragment": false,
-      "hiddenTokens": [],
-      "parameters": [],
-      "wildcard": false
-    },
-    {
-      "$type": "ParserRule",
-      "name": "PortAttribute",
-      "returnType": {
-        "$refText": "IntAttribute"
-      },
-      "definition": {
-        "$type": "Group",
-        "elements": [
-          {
-            "$type": "Keyword",
-            "value": "port"
-          },
-          {
-            "$type": "Keyword",
-            "value": ":"
-          },
-          {
-            "$type": "Assignment",
-            "feature": "value",
-            "operator": "=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$refText": "IntAttributeValue"
-              },
-              "arguments": []
-            }
-          },
-          {
-            "$type": "Keyword",
-            "value": ";"
-          }
-        ]
-      },
-      "definesHiddenTokens": false,
-      "entry": false,
-      "fragment": false,
-      "hiddenTokens": [],
-      "parameters": [],
-      "wildcard": false
-    },
-    {
-      "$type": "ParserRule",
-      "name": "UsernameAttribute",
-      "returnType": {
-        "$refText": "StringAttribute"
-      },
-      "definition": {
-        "$type": "Group",
-        "elements": [
-          {
-            "$type": "Keyword",
-            "value": "username"
-          },
-          {
-            "$type": "Keyword",
-            "value": ":"
-          },
-          {
-            "$type": "Assignment",
-            "feature": "value",
-            "operator": "=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$refText": "StringAttributeValue"
-              },
-              "arguments": []
-            }
-          },
-          {
-            "$type": "Keyword",
-            "value": ";"
-          }
-        ]
-      },
-      "definesHiddenTokens": false,
-      "entry": false,
-      "fragment": false,
-      "hiddenTokens": [],
-      "parameters": [],
-      "wildcard": false
-    },
-    {
-      "$type": "ParserRule",
-      "name": "PasswordAttribute",
-      "returnType": {
-        "$refText": "StringAttribute"
-      },
-      "definition": {
-        "$type": "Group",
-        "elements": [
-          {
-            "$type": "Keyword",
-            "value": "password"
-          },
-          {
-            "$type": "Keyword",
-            "value": ":"
-          },
-          {
-            "$type": "Assignment",
-            "feature": "value",
-            "operator": "=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$refText": "StringAttributeValue"
-              },
-              "arguments": []
-            }
-          },
-          {
-            "$type": "Keyword",
-            "value": ";"
-          }
-        ]
-      },
-      "definesHiddenTokens": false,
-      "entry": false,
-      "fragment": false,
-      "hiddenTokens": [],
-      "parameters": [],
-      "wildcard": false
-    },
-    {
-      "$type": "ParserRule",
-      "name": "DatabaseAttribute",
-      "returnType": {
-        "$refText": "StringAttribute"
-      },
-      "definition": {
-        "$type": "Group",
-        "elements": [
-          {
-            "$type": "Keyword",
-            "value": "database"
-          },
-          {
-            "$type": "Keyword",
-            "value": ":"
-          },
-          {
-            "$type": "Assignment",
-            "feature": "value",
-            "operator": "=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$refText": "StringAttributeValue"
-              },
-              "arguments": []
-            }
-          },
-          {
-            "$type": "Keyword",
-            "value": ";"
-          }
-        ]
-      },
-      "definesHiddenTokens": false,
-      "entry": false,
-      "fragment": false,
-      "hiddenTokens": [],
-      "parameters": [],
-      "wildcard": false
-    },
-    {
-      "$type": "ParserRule",
-      "name": "TableAttribute",
-      "returnType": {
-        "$refText": "StringAttribute"
-      },
-      "definition": {
-        "$type": "Group",
-        "elements": [
-          {
-            "$type": "Keyword",
-            "value": "table"
-          },
-          {
-            "$type": "Keyword",
-            "value": ":"
-          },
-          {
-            "$type": "Assignment",
-            "feature": "value",
-            "operator": "=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$refText": "StringAttributeValue"
-              },
-              "arguments": []
-            }
-          },
-          {
-            "$type": "Keyword",
-            "value": ";"
-          }
-        ]
-      },
-      "definesHiddenTokens": false,
-      "entry": false,
-      "fragment": false,
       "hiddenTokens": [],
       "parameters": [],
       "wildcard": false
@@ -676,21 +307,52 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
     {
       "$type": "ParserRule",
       "name": "StringValue",
+      "dataType": "string",
       "definition": {
-        "$type": "Assignment",
-        "feature": "value",
-        "operator": "=",
-        "terminal": {
-          "$type": "RuleCall",
-          "rule": {
-            "$refText": "STRING"
-          },
-          "arguments": []
-        }
+        "$type": "RuleCall",
+        "rule": {
+          "$refText": "STRING"
+        },
+        "arguments": []
       },
       "definesHiddenTokens": false,
       "entry": false,
       "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "IntAttributeFragment",
+      "fragment": true,
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": ":"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "value",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "IntAttributeValue"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Keyword",
+            "value": ";"
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
       "hiddenTokens": [],
       "parameters": [],
       "wildcard": false
@@ -727,21 +389,52 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
     {
       "$type": "ParserRule",
       "name": "IntValue",
+      "dataType": "number",
       "definition": {
-        "$type": "Assignment",
-        "feature": "value",
-        "operator": "=",
-        "terminal": {
-          "$type": "RuleCall",
-          "rule": {
-            "$refText": "INT"
-          },
-          "arguments": []
-        }
+        "$type": "RuleCall",
+        "rule": {
+          "$refText": "INT"
+        },
+        "arguments": []
       },
       "definesHiddenTokens": false,
       "entry": false,
       "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "LayoutAttributeFragment",
+      "fragment": true,
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": ":"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "value",
+            "operator": "=",
+            "terminal": {
+              "$type": "CrossReference",
+              "type": {
+                "$refText": "Layout"
+              },
+              "deprecatedSyntax": false
+            }
+          },
+          {
+            "$type": "Keyword",
+            "value": ";"
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
       "hiddenTokens": [],
       "parameters": [],
       "wildcard": false
@@ -1004,65 +697,65 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
     },
     {
       "$type": "ParserRule",
-      "name": "Pipe",
+      "name": "BlockType",
+      "definition": {
+        "$type": "Alternatives",
+        "elements": [
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$refText": "CSVFileExtractor"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$refText": "LayoutValidator"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$refText": "PostgresLoader"
+            },
+            "arguments": []
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "CSVFileExtractor",
       "definition": {
         "$type": "Group",
         "elements": [
           {
             "$type": "Keyword",
-            "value": "pipe"
+            "value": "CSVFileExtractor"
           },
           {
             "$type": "Keyword",
             "value": "{"
           },
           {
-            "$type": "Keyword",
-            "value": "from"
-          },
-          {
-            "$type": "Keyword",
-            "value": ":"
-          },
-          {
             "$type": "Assignment",
-            "feature": "from",
+            "feature": "url",
             "operator": "=",
             "terminal": {
-              "$type": "CrossReference",
-              "type": {
-                "$refText": "Block"
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "UrlAttribute"
               },
-              "deprecatedSyntax": false
+              "arguments": []
             }
-          },
-          {
-            "$type": "Keyword",
-            "value": ";"
-          },
-          {
-            "$type": "Keyword",
-            "value": "to"
-          },
-          {
-            "$type": "Keyword",
-            "value": ":"
-          },
-          {
-            "$type": "Assignment",
-            "feature": "to",
-            "operator": "=",
-            "terminal": {
-              "$type": "CrossReference",
-              "type": {
-                "$refText": "Block"
-              },
-              "deprecatedSyntax": false
-            }
-          },
-          {
-            "$type": "Keyword",
-            "value": ";"
           },
           {
             "$type": "Keyword",
@@ -1078,60 +771,390 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
       "wildcard": false
     },
     {
-      "$type": "TerminalRule",
-      "hidden": true,
-      "name": "WS",
-      "definition": {
-        "$type": "RegexToken",
-        "regex": "\\\\s+"
+      "$type": "ParserRule",
+      "name": "UrlAttribute",
+      "returnType": {
+        "$refText": "StringAttribute"
       },
-      "fragment": false
-    },
-    {
-      "$type": "TerminalRule",
-      "name": "ID",
       "definition": {
-        "$type": "RegexToken",
-        "regex": "[_a-zA-Z][\\\\w_]*"
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "url"
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$refText": "StringAttributeFragment"
+            },
+            "arguments": []
+          }
+        ]
       },
+      "definesHiddenTokens": false,
+      "entry": false,
       "fragment": false,
-      "hidden": false
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
     },
     {
-      "$type": "TerminalRule",
-      "name": "INT",
-      "type": {
-        "$type": "ReturnType",
-        "name": "number"
-      },
+      "$type": "ParserRule",
+      "name": "LayoutValidator",
       "definition": {
-        "$type": "RegexToken",
-        "regex": "[0-9]+"
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "LayoutValidator"
+          },
+          {
+            "$type": "Keyword",
+            "value": "{"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "layout",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "LayoutAttribute"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Keyword",
+            "value": "}"
+          }
+        ]
       },
+      "definesHiddenTokens": false,
+      "entry": false,
       "fragment": false,
-      "hidden": false
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
     },
     {
-      "$type": "TerminalRule",
-      "name": "STRING",
+      "$type": "ParserRule",
+      "name": "LayoutAttribute",
       "definition": {
-        "$type": "RegexToken",
-        "regex": "\\"[^\\"]*\\"|'[^']*'"
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "layout"
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$refText": "LayoutAttributeFragment"
+            },
+            "arguments": []
+          }
+        ]
       },
+      "definesHiddenTokens": false,
+      "entry": false,
       "fragment": false,
-      "hidden": false
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
     },
     {
-      "$type": "TerminalRule",
-      "hidden": true,
-      "name": "SL_COMMENT",
+      "$type": "ParserRule",
+      "name": "PostgresLoader",
       "definition": {
-        "$type": "RegexToken",
-        "regex": "\\\\/\\\\/[^\\\\n\\\\r]*"
+        "$type": "UnorderedGroup",
+        "elements": [
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Assignment",
+                "feature": "name",
+                "operator": "=",
+                "terminal": {
+                  "$type": "Keyword",
+                  "value": "PostgresLoader"
+                }
+              },
+              {
+                "$type": "Keyword",
+                "value": "{"
+              },
+              {
+                "$type": "Assignment",
+                "feature": "host",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "HostAttribute"
+                  },
+                  "arguments": []
+                }
+              }
+            ]
+          },
+          {
+            "$type": "Assignment",
+            "feature": "port",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "PortAttribute"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Assignment",
+            "feature": "username",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "UsernameAttribute"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Assignment",
+            "feature": "password",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "PasswordAttribute"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Assignment",
+            "feature": "database",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "DatabaseAttribute"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Assignment",
+                "feature": "table",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "TableAttribute"
+                  },
+                  "arguments": []
+                }
+              },
+              {
+                "$type": "Keyword",
+                "value": "}"
+              }
+            ]
+          }
+        ]
       },
-      "fragment": false
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "HostAttribute",
+      "returnType": {
+        "$refText": "StringAttribute"
+      },
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "host"
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$refText": "StringAttributeFragment"
+            },
+            "arguments": []
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "PortAttribute",
+      "returnType": {
+        "$refText": "IntAttribute"
+      },
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "port"
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$refText": "IntAttributeFragment"
+            },
+            "arguments": []
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "UsernameAttribute",
+      "returnType": {
+        "$refText": "StringAttribute"
+      },
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "username"
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$refText": "StringAttributeFragment"
+            },
+            "arguments": []
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "PasswordAttribute",
+      "returnType": {
+        "$refText": "StringAttribute"
+      },
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "password"
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$refText": "StringAttributeFragment"
+            },
+            "arguments": []
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "DatabaseAttribute",
+      "returnType": {
+        "$refText": "StringAttribute"
+      },
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "database"
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$refText": "StringAttributeFragment"
+            },
+            "arguments": []
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "TableAttribute",
+      "returnType": {
+        "$refText": "StringAttribute"
+      },
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "table"
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$refText": "StringAttributeFragment"
+            },
+            "arguments": []
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
     }
   ],
+  "definesHiddenTokens": false,
+  "hiddenTokens": [],
   "interfaces": [
     {
       "$type": "Interface",
@@ -1178,9 +1201,6 @@ export const JayveeGrammar = (): Grammar => loadedJayveeGrammar ?? (loadedJayvee
       "superTypes": []
     }
   ],
-  "definesHiddenTokens": false,
-  "hiddenTokens": [],
-  "imports": [],
   "types": [],
   "usedGrammars": []
 }`));
