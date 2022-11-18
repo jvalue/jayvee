@@ -10,7 +10,7 @@
     },
     {
       "name": "keyword.control.jayvee",
-      "match": "\\b(block|boolean|column|CSVFileExtractor|database|decimal|from|header|host|integer|layout|LayoutValidator|oftype|password|pipe|port|PostgresLoader|requires|row|table|text|to|url|username)\\b"
+      "match": "\\b(block|boolean|column|CSVFileExtractor|database|decimal|from|header|host|integer|layout|LayoutValidator|oftype|password|pipe|pipeline|port|PostgresLoader|requires|row|table|text|to|url|username)\\b"
     },
     {
       "name": "string.quoted.double.jayvee",

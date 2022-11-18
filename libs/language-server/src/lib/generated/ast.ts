@@ -23,8 +23,6 @@ export function isIntAttributeValue(item: unknown): item is IntAttributeValue {
     return reflection.isInstance(item, IntAttributeValue);
 }
 
-export type IntValue = number;
-
 export type Section = ColumnSection | RowSection;
 
 export const Section = 'Section';
@@ -41,12 +39,10 @@ export function isStringAttributeValue(item: unknown): item is StringAttributeVa
     return reflection.isInstance(item, StringAttributeValue);
 }
 
-export type StringValue = string;
-
 export type Type = 'boolean' | 'decimal' | 'integer' | 'text';
 
 export interface Block extends AstNode {
-    readonly $container: Model;
+    readonly $container: Pipeline;
     name: string
     type: BlockType
 }
@@ -91,8 +87,19 @@ export function isIntAttribute(item: unknown): item is IntAttribute {
     return reflection.isInstance(item, IntAttribute);
 }
 
+export interface IntValue extends AstNode {
+    readonly $container: IntAttribute | StringAttribute;
+    value: number
+}
+
+export const IntValue = 'IntValue';
+
+export function isIntValue(item: unknown): item is IntValue {
+    return reflection.isInstance(item, IntValue);
+}
+
 export interface Layout extends AstNode {
-    readonly $container: Model;
+    readonly $container: Model | Pipeline;
     name: string
     sections: Array<Section>
 }
@@ -126,9 +133,8 @@ export function isLayoutValidator(item: unknown): item is LayoutValidator {
 }
 
 export interface Model extends AstNode {
-    blocks: Array<Block>
     layouts: Array<Layout>
-    pipes: Array<Pipe>
+    pipelines: Array<Pipeline>
 }
 
 export const Model = 'Model';
@@ -138,7 +144,7 @@ export function isModel(item: unknown): item is Model {
 }
 
 export interface Pipe extends AstNode {
-    readonly $container: Model;
+    readonly $container: Pipeline;
     from: Reference<Block>
     to: Reference<Block>
 }
@@ -147,6 +153,20 @@ export const Pipe = 'Pipe';
 
 export function isPipe(item: unknown): item is Pipe {
     return reflection.isInstance(item, Pipe);
+}
+
+export interface Pipeline extends AstNode {
+    readonly $container: Model;
+    blocks: Array<Block>
+    layouts: Array<Layout>
+    name: string
+    pipes: Array<Pipe>
+}
+
+export const Pipeline = 'Pipeline';
+
+export function isPipeline(item: unknown): item is Pipeline {
+    return reflection.isInstance(item, Pipeline);
 }
 
 export interface PostgresLoader extends AstNode {
@@ -201,12 +221,23 @@ export function isStringAttribute(item: unknown): item is StringAttribute {
     return reflection.isInstance(item, StringAttribute);
 }
 
-export type JayveeAstType = 'Block' | 'BlockType' | 'CSVFileExtractor' | 'ColumnSection' | 'IntAttribute' | 'IntAttributeValue' | 'Layout' | 'LayoutAttribute' | 'LayoutValidator' | 'Model' | 'Pipe' | 'PostgresLoader' | 'RowSection' | 'RuntimeParameter' | 'Section' | 'StringAttribute' | 'StringAttributeValue';
+export interface StringValue extends AstNode {
+    readonly $container: IntAttribute | StringAttribute;
+    value: string
+}
+
+export const StringValue = 'StringValue';
+
+export function isStringValue(item: unknown): item is StringValue {
+    return reflection.isInstance(item, StringValue);
+}
+
+export type JayveeAstType = 'Block' | 'BlockType' | 'CSVFileExtractor' | 'ColumnSection' | 'IntAttribute' | 'IntAttributeValue' | 'IntValue' | 'Layout' | 'LayoutAttribute' | 'LayoutValidator' | 'Model' | 'Pipe' | 'Pipeline' | 'PostgresLoader' | 'RowSection' | 'RuntimeParameter' | 'Section' | 'StringAttribute' | 'StringAttributeValue' | 'StringValue';
 
 export class JayveeAstReflection implements AstReflection {
 
     getAllTypes(): string[] {
-        return ['Block', 'BlockType', 'CSVFileExtractor', 'ColumnSection', 'IntAttribute', 'IntAttributeValue', 'Layout', 'LayoutAttribute', 'LayoutValidator', 'Model', 'Pipe', 'PostgresLoader', 'RowSection', 'RuntimeParameter', 'Section', 'StringAttribute', 'StringAttributeValue'];
+        return ['Block', 'BlockType', 'CSVFileExtractor', 'ColumnSection', 'IntAttribute', 'IntAttributeValue', 'IntValue', 'Layout', 'LayoutAttribute', 'LayoutValidator', 'Model', 'Pipe', 'Pipeline', 'PostgresLoader', 'RowSection', 'RuntimeParameter', 'Section', 'StringAttribute', 'StringAttributeValue', 'StringValue'];
     }
 
     isInstance(node: unknown, type: string): boolean {
@@ -227,8 +258,14 @@ export class JayveeAstReflection implements AstReflection {
             case PostgresLoader: {
                 return this.isSubtype(BlockType, supertype);
             }
+            case IntValue: {
+                return this.isSubtype(IntAttributeValue, supertype);
+            }
             case RuntimeParameter: {
                 return this.isSubtype(StringAttributeValue, supertype) || this.isSubtype(IntAttributeValue, supertype);
+            }
+            case StringValue: {
+                return this.isSubtype(StringAttributeValue, supertype);
             }
             default: {
                 return false;
@@ -267,6 +304,15 @@ export class JayveeAstReflection implements AstReflection {
             case 'Model': {
                 return {
                     name: 'Model',
+                    mandatory: [
+                        { name: 'layouts', type: 'array' },
+                        { name: 'pipelines', type: 'array' }
+                    ]
+                };
+            }
+            case 'Pipeline': {
+                return {
+                    name: 'Pipeline',
                     mandatory: [
                         { name: 'blocks', type: 'array' },
                         { name: 'layouts', type: 'array' },

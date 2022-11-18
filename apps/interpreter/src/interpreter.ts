@@ -3,6 +3,7 @@ import {
   BlockType,
   Model,
   collectChildren,
+  collectStartingBlocks,
   createJayveeServices,
   getMetaInformation,
   isCSVFileExtractor,
@@ -48,12 +49,16 @@ async function interpretPipelineModel(
   runtimeParameters: Map<string, string | number | boolean>,
 ): Promise<void> {
   const pipelineRuns: Array<Promise<void>> = [];
-  for (const block of model.blocks) {
-    const blockMetaInf = getMetaInformation(block.type);
-    if (!blockMetaInf.hasInput()) {
-      const pipelineRun = runPipeline(block, runtimeParameters);
-      pipelineRuns.push(pipelineRun);
+  for (const pipeline of model.pipelines) {
+    const startingBlocks = collectStartingBlocks(pipeline);
+    if (startingBlocks.length !== 1) {
+      throw new Error(
+        `Unable to find a single starting block for pipeline ${pipeline.name}`,
+      );
     }
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const pipelineRun = runPipeline(startingBlocks[0]!, runtimeParameters);
+    pipelineRuns.push(pipelineRun);
   }
   await Promise.all(pipelineRuns);
 }

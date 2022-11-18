@@ -11,13 +11,18 @@ import {
   JayveeAstType,
   Layout,
   Pipe,
+  Pipeline,
   RowSection,
   isRowSection,
   isRuntimeParameter,
 } from './generated/ast';
 import type { JayveeServices } from './jayvee-module';
-import { getMetaInformation } from './meta-information/meta-inf-util';
-import { collectIngoingPipes, collectOutgoingPipes } from './model-util';
+import { getMetaInformation } from './meta-information';
+import {
+  collectIngoingPipes,
+  collectOutgoingPipes,
+  collectStartingBlocks,
+} from './model-util';
 
 /**
  * Registry for validation checks.
@@ -27,6 +32,7 @@ export class JayveeValidationRegistry extends ValidationRegistry {
     super(services);
     const validator = services.validation.JayveeValidator;
     const checks: ValidationChecks<JayveeAstType> = {
+      Pipeline: validator.checkStartingBlocks,
       ColumnSection: validator.checkColumnIdFormat,
       RowSection: validator.checkRowIdFormat,
       Layout: validator.checkSingleHeader,
@@ -42,6 +48,29 @@ export class JayveeValidationRegistry extends ValidationRegistry {
  * Implementation of custom validations.
  */
 export class JayveeValidator {
+  checkStartingBlocks(
+    this: void,
+    pipeline: Pipeline,
+    accept: ValidationAcceptor,
+  ): void {
+    const startingBlocks = collectStartingBlocks(pipeline);
+    if (startingBlocks.length === 0) {
+      accept('error', `An extractor block is required for this pipeline`, {
+        node: pipeline,
+      });
+    } else if (startingBlocks.length !== 1) {
+      for (const startingBlock of startingBlocks) {
+        accept(
+          'error',
+          `Currently, at most a single extractor block is supported for a pipeline`,
+          {
+            node: startingBlock,
+          },
+        );
+      }
+    }
+  }
+
   checkColumnIdFormat(
     this: void,
     columnSection: ColumnSection,
@@ -107,6 +136,11 @@ export class JayveeValidator {
       return;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (fromBlock.type === undefined || toBlock.type === undefined) {
+      return;
+    }
+
     const fromBlockMetaInf = getMetaInformation(fromBlock.type);
     const toBlockMetaInf = getMetaInformation(toBlock.type);
 
@@ -142,6 +176,11 @@ export class JayveeValidator {
     whatToCheck: 'input' | 'output',
     accept: ValidationAcceptor,
   ): void {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (block.type === undefined) {
+      return;
+    }
+
     const blockMetaInf = getMetaInformation(block.type);
 
     let pipes: Pipe[];
@@ -198,8 +237,15 @@ export class JayveeValidator {
     accept: ValidationAcceptor,
   ): void {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const url = csvFileExtractor?.url.value;
-    if (isRuntimeParameter(url)) {
+    const urlAttributeValue = csvFileExtractor?.url.value;
+
+    if (isRuntimeParameter(urlAttributeValue)) {
+      return;
+    }
+
+    const url = urlAttributeValue.value;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (url === undefined) {
       return;
     }
 

@@ -17,7 +17,7 @@ export function getStringAttributeValue(
     }
     return parameterValue;
   }
-  return attributeValue;
+  return attributeValue.value;
 }
 
 export function getIntAttributeValue(
@@ -33,5 +33,5 @@ export function getIntAttributeValue(
     }
     return parameterValue;
   }
-  return attributeValue;
+  return attributeValue.value;
 }
