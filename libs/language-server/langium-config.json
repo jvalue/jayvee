@@ -3,7 +3,7 @@
   "languages": [
     {
       "id": "jayvee",
-      "grammar": "src/lib/grammar/main.langium",
+      "grammar": "src/grammar/main.langium",
       "fileExtensions": [".jv"],
       "textMate": {
         "out": "syntaxes/jayvee.tmLanguage.json"
