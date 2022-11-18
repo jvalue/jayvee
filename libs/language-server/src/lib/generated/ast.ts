@@ -23,6 +23,8 @@ export function isIntAttributeValue(item: unknown): item is IntAttributeValue {
     return reflection.isInstance(item, IntAttributeValue);
 }
 
+export type IntValue = number;
+
 export type Section = ColumnSection | RowSection;
 
 export const Section = 'Section';
@@ -38,6 +40,8 @@ export const StringAttributeValue = 'StringAttributeValue';
 export function isStringAttributeValue(item: unknown): item is StringAttributeValue {
     return reflection.isInstance(item, StringAttributeValue);
 }
+
+export type StringValue = string;
 
 export type Type = 'boolean' | 'decimal' | 'integer' | 'text';
 
@@ -87,17 +91,6 @@ export function isIntAttribute(item: unknown): item is IntAttribute {
     return reflection.isInstance(item, IntAttribute);
 }
 
-export interface IntValue extends AstNode {
-    readonly $container: IntAttribute | StringAttribute;
-    value: number
-}
-
-export const IntValue = 'IntValue';
-
-export function isIntValue(item: unknown): item is IntValue {
-    return reflection.isInstance(item, IntValue);
-}
-
 export interface Layout extends AstNode {
     readonly $container: Model;
     name: string
@@ -110,9 +103,20 @@ export function isLayout(item: unknown): item is Layout {
     return reflection.isInstance(item, Layout);
 }
 
+export interface LayoutAttribute extends AstNode {
+    readonly $container: LayoutValidator;
+    value: Reference<Layout>
+}
+
+export const LayoutAttribute = 'LayoutAttribute';
+
+export function isLayoutAttribute(item: unknown): item is LayoutAttribute {
+    return reflection.isInstance(item, LayoutAttribute);
+}
+
 export interface LayoutValidator extends AstNode {
     readonly $container: Block;
-    layout: Reference<Layout>
+    layout: LayoutAttribute
 }
 
 export const LayoutValidator = 'LayoutValidator';
@@ -197,23 +201,12 @@ export function isStringAttribute(item: unknown): item is StringAttribute {
     return reflection.isInstance(item, StringAttribute);
 }
 
-export interface StringValue extends AstNode {
-    readonly $container: IntAttribute | StringAttribute;
-    value: string
-}
-
-export const StringValue = 'StringValue';
-
-export function isStringValue(item: unknown): item is StringValue {
-    return reflection.isInstance(item, StringValue);
-}
-
-export type JayveeAstType = 'Block' | 'BlockType' | 'CSVFileExtractor' | 'ColumnSection' | 'IntAttribute' | 'IntAttributeValue' | 'IntValue' | 'Layout' | 'LayoutValidator' | 'Model' | 'Pipe' | 'PostgresLoader' | 'RowSection' | 'RuntimeParameter' | 'Section' | 'StringAttribute' | 'StringAttributeValue' | 'StringValue';
+export type JayveeAstType = 'Block' | 'BlockType' | 'CSVFileExtractor' | 'ColumnSection' | 'IntAttribute' | 'IntAttributeValue' | 'Layout' | 'LayoutAttribute' | 'LayoutValidator' | 'Model' | 'Pipe' | 'PostgresLoader' | 'RowSection' | 'RuntimeParameter' | 'Section' | 'StringAttribute' | 'StringAttributeValue';
 
 export class JayveeAstReflection implements AstReflection {
 
     getAllTypes(): string[] {
-        return ['Block', 'BlockType', 'CSVFileExtractor', 'ColumnSection', 'IntAttribute', 'IntAttributeValue', 'IntValue', 'Layout', 'LayoutValidator', 'Model', 'Pipe', 'PostgresLoader', 'RowSection', 'RuntimeParameter', 'Section', 'StringAttribute', 'StringAttributeValue', 'StringValue'];
+        return ['Block', 'BlockType', 'CSVFileExtractor', 'ColumnSection', 'IntAttribute', 'IntAttributeValue', 'Layout', 'LayoutAttribute', 'LayoutValidator', 'Model', 'Pipe', 'PostgresLoader', 'RowSection', 'RuntimeParameter', 'Section', 'StringAttribute', 'StringAttributeValue'];
     }
 
     isInstance(node: unknown, type: string): boolean {
@@ -234,14 +227,8 @@ export class JayveeAstReflection implements AstReflection {
             case PostgresLoader: {
                 return this.isSubtype(BlockType, supertype);
             }
-            case IntValue: {
-                return this.isSubtype(IntAttributeValue, supertype);
-            }
             case RuntimeParameter: {
                 return this.isSubtype(StringAttributeValue, supertype) || this.isSubtype(IntAttributeValue, supertype);
-            }
-            case StringValue: {
-                return this.isSubtype(StringAttributeValue, supertype);
             }
             default: {
                 return false;
@@ -252,7 +239,7 @@ export class JayveeAstReflection implements AstReflection {
     getReferenceType(refInfo: ReferenceInfo): string {
         const referenceId = `${refInfo.container.$type}:${refInfo.property}`;
         switch (referenceId) {
-            case 'LayoutValidator:layout': {
+            case 'LayoutAttribute:value': {
                 return Layout;
             }
             case 'Pipe:from': {
