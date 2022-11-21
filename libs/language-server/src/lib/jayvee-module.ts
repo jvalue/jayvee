@@ -13,14 +13,24 @@ import {
   JayveeGeneratedModule,
   JayveeGeneratedSharedModule,
 } from './generated/module';
-import { JayveeValidationRegistry, JayveeValidator } from './jayvee-validator';
+// eslint-disable-next-line import/no-cycle
+import {
+  BlockValidator,
+  JayveeValidationRegistry,
+  LayoutValidator,
+  PipeValidator,
+  PipelineValidator,
+} from './validation';
 
 /**
  * Declaration of custom services - add your own service classes here.
  */
 export interface JayveeAddedServices {
   validation: {
-    JayveeValidator: JayveeValidator;
+    PipelineValidator: PipelineValidator;
+    LayoutValidator: LayoutValidator;
+    PipeValidator: PipeValidator;
+    BlockValidator: BlockValidator;
   };
 }
 
@@ -41,7 +51,10 @@ export const JayveeModule: Module<
 > = {
   validation: {
     ValidationRegistry: (services) => new JayveeValidationRegistry(services),
-    JayveeValidator: () => new JayveeValidator(),
+    PipelineValidator: () => new PipelineValidator(),
+    LayoutValidator: () => new LayoutValidator(),
+    PipeValidator: () => new PipeValidator(),
+    BlockValidator: () => new BlockValidator(),
   },
 };
 
