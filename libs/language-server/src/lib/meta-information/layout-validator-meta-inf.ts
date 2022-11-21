@@ -1,5 +1,5 @@
 import { LayoutValidator } from '../generated/ast';
-import { Sheet, Table, sheetType, tableType } from '../types';
+import { SHEET_TYPE, Sheet, TABLE_TYPE, Table } from '../types';
 
 import { BlockMetaInformation } from './block-meta-inf';
 
@@ -9,6 +9,6 @@ export class LayoutValidatorMetaInformation extends BlockMetaInformation<
   Table
 > {
   constructor(block: LayoutValidator) {
-    super(block, sheetType, tableType);
+    super(block, SHEET_TYPE, TABLE_TYPE);
   }
 }

@@ -1,5 +1,5 @@
 import { BlockType } from '../generated/ast';
-import { IOType, undefinedType } from '../types';
+import { IOType, UNDEFINED_TYPE } from '../types';
 
 export abstract class BlockMetaInformation<
   B extends BlockType,
@@ -19,10 +19,10 @@ export abstract class BlockMetaInformation<
   }
 
   hasInput(): boolean {
-    return this.inputDataType !== undefinedType;
+    return this.inputDataType !== UNDEFINED_TYPE;
   }
 
   hasOutput(): boolean {
-    return this.outputDataType !== undefinedType;
+    return this.outputDataType !== UNDEFINED_TYPE;
   }
 }

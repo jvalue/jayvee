@@ -1,5 +1,5 @@
 import { PostgresLoader } from '../generated/ast';
-import { Table, tableType, undefinedType } from '../types';
+import { TABLE_TYPE, Table, UNDEFINED_TYPE } from '../types';
 
 import { BlockMetaInformation } from './block-meta-inf';
 
@@ -9,6 +9,6 @@ export class PostgresLoaderMetaInformation extends BlockMetaInformation<
   void
 > {
   constructor(block: PostgresLoader) {
-    super(block, tableType, undefinedType);
+    super(block, TABLE_TYPE, UNDEFINED_TYPE);
   }
 }

@@ -3,7 +3,7 @@ import { AbstractDataType } from './data-types';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export class IOType<T = unknown> {}
 
-export const undefinedType = new IOType<undefined>();
+export const UNDEFINED_TYPE = new IOType<undefined>();
 
 export interface Sheet {
   data: string[][];
@@ -11,11 +11,11 @@ export interface Sheet {
   height: number;
 }
 
-export const sheetType = new IOType<Sheet>();
+export const SHEET_TYPE = new IOType<Sheet>();
 
 export interface Table {
   columnNames: string[];
   columnTypes: Array<AbstractDataType | undefined>;
   data: string[][];
 }
-export const tableType = new IOType<Table>();
+export const TABLE_TYPE = new IOType<Table>();
