@@ -1,5 +1,5 @@
-import { DataType, undefinedType } from '../data-types/data-types';
 import { BlockType } from '../generated/ast';
+import { IOType, undefinedType } from '../types';
 
 export abstract class BlockMetaInformation<
   B extends BlockType,
@@ -8,8 +8,8 @@ export abstract class BlockMetaInformation<
 > {
   protected constructor(
     readonly block: B,
-    readonly inputDataType: DataType<InType>,
-    readonly outputDataType: DataType<OutType>,
+    readonly inputDataType: IOType<InType>,
+    readonly outputDataType: IOType<OutType>,
   ) {}
 
   canBeConnectedTo<T extends BlockType>(

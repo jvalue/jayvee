@@ -1,18 +1,18 @@
 /* eslint-disable import/no-cycle */
 import { AbstractDataType } from './AbstractDataType';
-import { DataTypeVisitor } from './visitors/DataTypeVisitor';
+import { DataTypeVisitor } from './visitors';
 
-export class IntegerDataType extends AbstractDataType {
+export class DecimalDataType extends AbstractDataType {
   override isValid(value: unknown): boolean {
     if (typeof value === 'string') {
-      return !!value.match(/[+-]?[0-9]+/);
+      return !!value.match(/[+-]?([0-9]*[.])?[0-9]+/);
     }
 
-    return Number.isInteger(value);
+    return !Number.isNaN(value);
   }
 
   override acceptVisitor<R>(visitor: DataTypeVisitor<R>): R {
-    return visitor.visitInteger(this);
+    return visitor.visitDecimal(this);
   }
 
   override getStandardRepresentation(value: unknown): number {
@@ -20,7 +20,7 @@ export class IntegerDataType extends AbstractDataType {
       return value;
     }
     if (typeof value === 'string') {
-      return Number.parseInt(value, 10);
+      return Number.parseFloat(value);
     }
 
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions

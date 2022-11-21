@@ -1,5 +1,5 @@
-import { Sheet, Table, sheetType, tableType } from '../data-types/data-types';
 import { LayoutValidator } from '../generated/ast';
+import { Sheet, Table, sheetType, tableType } from '../types';
 
 import { BlockMetaInformation } from './block-meta-inf';
 

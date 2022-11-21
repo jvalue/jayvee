@@ -1,5 +1,5 @@
-import { Sheet, sheetType, undefinedType } from '../data-types/data-types';
 import { CSVFileExtractor } from '../generated/ast';
+import { Sheet, sheetType, undefinedType } from '../types';
 
 import { BlockMetaInformation } from './block-meta-inf';
 
