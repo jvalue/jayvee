@@ -1,7 +1,7 @@
 import { ValidationAcceptor, ValidationChecks } from 'langium';
 
-// eslint-disable-next-line import/no-cycle
-import { JayveeAstType, Pipeline, collectStartingBlocks } from '..';
+import { JayveeAstType, Pipeline } from '../ast/generated/ast';
+import { collectStartingBlocks } from '../ast/model-util';
 
 import { JayveeValidator } from './jayvee-validator';
 

@@ -1,16 +1,16 @@
 import { ValidationAcceptor, ValidationChecks } from 'langium';
+import { assertUnreachable } from 'langium/lib/utils/errors';
 
-// eslint-disable-next-line import/no-cycle
 import {
   Block,
   CSVFileExtractor,
   JayveeAstType,
   Pipe,
-  collectIngoingPipes,
-  collectOutgoingPipes,
-  getMetaInformation,
   isRuntimeParameter,
-} from '..';
+  isStringAttributeValue,
+} from '../ast/generated/ast';
+import { collectIngoingPipes, collectOutgoingPipes } from '../ast/model-util';
+import { getMetaInformation } from '../meta-information/meta-inf-util';
 
 import { JayveeValidator } from './jayvee-validator';
 
@@ -109,21 +109,24 @@ export class BlockValidator implements JayveeValidator {
     if (isRuntimeParameter(urlAttributeValue)) {
       return;
     }
+    if (isStringAttributeValue(urlAttributeValue)) {
+      const url = urlAttributeValue.value;
 
-    const url = urlAttributeValue.value;
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (url === undefined) {
+        return;
+      }
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (url === undefined) {
+      const urlRegex =
+        /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)$/;
+      if (!urlRegex.test(url)) {
+        accept('warning', 'The url has an invalid format', {
+          node: csvFileExtractor,
+          property: 'url',
+        });
+      }
       return;
     }
-
-    const urlRegex =
-      /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)$/;
-    if (!urlRegex.test(url)) {
-      accept('warning', 'The url has an invalid format', {
-        node: csvFileExtractor,
-        property: 'url',
-      });
-    }
+    assertUnreachable(urlAttributeValue);
   }
 }
