@@ -1,5 +1,5 @@
-import { Sheet, sheetType, undefinedType } from '../data-types/data-types';
 import { CSVFileExtractor } from '../generated/ast';
+import { SHEET_TYPE, Sheet, UNDEFINED_TYPE } from '../types';
 
 import { BlockMetaInformation } from './block-meta-inf';
 
@@ -9,6 +9,6 @@ export class CSVFileExtractorMetaInformation extends BlockMetaInformation<
   Sheet
 > {
   constructor(block: CSVFileExtractor) {
-    super(block, undefinedType, sheetType);
+    super(block, UNDEFINED_TYPE, SHEET_TYPE);
   }
 }

@@ -1,6 +1,6 @@
 /* eslint-disable import/no-cycle */
 import { AbstractDataType } from './AbstractDataType';
-import { DataTypeVisitor } from './visitors/DataTypeVisitor';
+import { DataTypeVisitor } from './visitors';
 
 export class BooleanDataType extends AbstractDataType {
   private readonly BOOLEAN_STRING_REPRESENTATIONS = [

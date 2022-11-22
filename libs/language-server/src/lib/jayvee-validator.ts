@@ -57,6 +57,7 @@ export class JayveeValidator {
     if (startingBlocks.length === 0) {
       accept('error', `An extractor block is required for this pipeline`, {
         node: pipeline,
+        property: 'name',
       });
     } else if (startingBlocks.length !== 1) {
       for (const startingBlock of startingBlocks) {
@@ -65,6 +66,7 @@ export class JayveeValidator {
           `Currently, at most a single extractor block is supported for a pipeline`,
           {
             node: startingBlock,
+            property: 'name',
           },
         );
       }
@@ -226,6 +228,7 @@ export class JayveeValidator {
         `A pipe should be connected to the ${whatToCheck} of this block`,
         {
           node: block,
+          property: 'name',
         },
       );
     }
