@@ -1,5 +1,5 @@
-import { LayoutValidator } from '../generated/ast';
-import { SHEET_TYPE, Sheet, TABLE_TYPE, Table } from '../types';
+import { LayoutValidator } from '../ast/generated/ast';
+import { SHEET_TYPE, Sheet, TABLE_TYPE, Table } from '../types/io-types';
 
 import { BlockMetaInformation } from './block-meta-inf';
 

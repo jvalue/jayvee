@@ -1,6 +1,7 @@
-/* eslint-disable import/no-cycle */
+// eslint-disable-next-line import/no-cycle
 import { AbstractDataType } from './AbstractDataType';
-import { DataTypeVisitor } from './visitors';
+// eslint-disable-next-line import/no-cycle
+import { DataTypeVisitor } from './visitors/DataTypeVisitor';
 
 export class DecimalDataType extends AbstractDataType {
   override isValid(value: unknown): boolean {

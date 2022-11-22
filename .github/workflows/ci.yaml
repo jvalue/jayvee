@@ -25,18 +25,7 @@ jobs:
         run: npm ci
 
       - name: Langium generate
-        run: |
-          HASH_BEFORE=$(sha1sum libs/language-server/src/lib/generated/*.ts libs/language-server/syntaxes/*.json libs/language-server/syntaxes/*.ts)
-
-          npm run generate
-
-          HASH_AFTER=$(sha1sum libs/language-server/src/lib/generated/*.ts libs/language-server/syntaxes/*.json libs/language-server/syntaxes/*.ts)
-
-          if [[ $HASH_BEFORE != $HASH_AFTER ]]; then
-            echo "The generated code is not up to date."
-            echo "Run 'npm run generate' locally and commit the resulting generated code."
-            exit 1
-          fi
+        run: npm run generate
 
       - uses: nrwl/nx-set-shas@v3
 

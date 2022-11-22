@@ -96,7 +96,5 @@ function parseParameterAsMatchingType(
     }
     return R.ok(Number.parseInt(value, 10));
   }
-  throw Error(
-    `No support for type of runtime parameter ${requiredParameter.name}`,
-  );
+  assertUnreachable(requiredType);
 }

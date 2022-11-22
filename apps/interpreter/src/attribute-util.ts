@@ -1,8 +1,11 @@
 import {
   IntAttributeValue,
   StringAttributeValue,
+  isIntValue,
   isRuntimeParameter,
+  isStringValue,
 } from '@jayvee/language-server';
+import { assertUnreachable } from 'langium/lib/utils/errors';
 
 export function getStringAttributeValue(
   attributeValue: StringAttributeValue,
@@ -17,7 +20,10 @@ export function getStringAttributeValue(
     }
     return parameterValue;
   }
-  return attributeValue.value;
+  if (isStringValue(attributeValue)) {
+    return attributeValue.value;
+  }
+  assertUnreachable(attributeValue);
 }
 
 export function getIntAttributeValue(
@@ -33,5 +39,8 @@ export function getIntAttributeValue(
     }
     return parameterValue;
   }
-  return attributeValue.value;
+  if (isIntValue(attributeValue)) {
+    return attributeValue.value;
+  }
+  assertUnreachable(attributeValue);
 }

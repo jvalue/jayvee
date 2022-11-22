@@ -11,6 +11,7 @@ import {
   isPostgresLoader,
 } from '@jayvee/language-server';
 import * as E from 'fp-ts/lib/Either';
+import { assertUnreachable } from 'langium/lib/utils/errors';
 import { NodeFileSystem } from 'langium/node';
 
 import { extractAstNode, printError } from './cli-util';
@@ -104,5 +105,5 @@ export function getExecutor(
   if (isPostgresLoader(blockType)) {
     return new PostgresLoaderExecutor(blockType, runtimeParameters);
   }
-  throw new Error('Unknown block type');
+  assertUnreachable(blockType);
 }

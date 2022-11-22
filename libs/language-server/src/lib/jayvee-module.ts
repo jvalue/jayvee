@@ -12,16 +12,12 @@ import {
 import {
   JayveeGeneratedModule,
   JayveeGeneratedSharedModule,
-} from './generated/module';
-import { JayveeValidationRegistry } from './validation';
-// eslint-disable-next-line import/no-cycle
+} from './ast/generated/module';
 import { BlockValidator } from './validation/block-validator';
-// eslint-disable-next-line import/no-cycle
 import { LayoutValidator } from './validation/layout-validator';
-// eslint-disable-next-line import/no-cycle
 import { PipeValidator } from './validation/pipe-validator';
-// eslint-disable-next-line import/no-cycle
 import { PipelineValidator } from './validation/pipeline-validator';
+import { JayveeValidationRegistry } from './validation/validation-registry';
 
 /**
  * Declaration of custom services - add your own service classes here.

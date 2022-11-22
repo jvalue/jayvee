@@ -11,11 +11,12 @@
 ## Quick start
 
 1. Run `npm ci` to install the dependencies.
-2. Run `npm run build` to compile all projects.
-3. In Visual Studio Code, press `F5` to open a new window with the Jayvee extension loaded.
-4. Create a new file with a `.jv` file name suffix or open an existing file in the directory `example`.
-5. Verify that syntax highlighting, validation, completion etc. are working as expected.
-6. Run `node dist/apps/interpreter/main.js` to see options for the CLI of the interpreter; `node dist/apps/interpreter/main.js <file>` interprets a given `.jv` file.
+2. Run `npm run generate` to generate TypeScript code from the Jayvee grammar definition.
+3. Run `npm run build` to compile all projects.
+4. In Visual Studio Code, press `F5` to open a new window with the Jayvee extension loaded.
+5. Create a new file with a `.jv` file name suffix or open an existing file in the directory `example`.
+6. Verify that syntax highlighting, validation, completion etc. are working as expected.
+7. Run `node dist/apps/interpreter/main.js` to see options for the CLI of the interpreter; `node dist/apps/interpreter/main.js <file>` interprets a given `.jv` file.
 
 ## Development
 

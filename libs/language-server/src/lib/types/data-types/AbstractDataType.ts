@@ -1,7 +1,9 @@
-import { Type } from '../../generated/ast';
+import { Type } from '../../ast/generated/ast';
 
 // eslint-disable-next-line import/no-cycle
-import { DataTypeVisitor, VisitableDataType } from './visitors';
+import { DataTypeVisitor } from './visitors/DataTypeVisitor';
+// eslint-disable-next-line import/no-cycle
+import { VisitableDataType } from './visitors/VisitableDataType';
 
 export abstract class AbstractDataType implements VisitableDataType {
   constructor(readonly languageType: Type) {}

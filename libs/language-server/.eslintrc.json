@@ -1,6 +1,6 @@
 {
   "extends": ["../../.eslintrc.json"],
-  "ignorePatterns": ["!**/*", "src/lib/generated", "syntaxes"],
+  "ignorePatterns": ["!**/*", "src/lib/ast/generated", "syntaxes"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],

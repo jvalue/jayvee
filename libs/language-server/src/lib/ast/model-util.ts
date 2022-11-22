@@ -1,5 +1,6 @@
+import { getMetaInformation } from '../meta-information/meta-inf-util';
+
 import { Block, Pipe, Pipeline } from './generated/ast';
-import { getMetaInformation } from './meta-information';
 
 export function collectStartingBlocks(pipeline: Pipeline): Block[] {
   const result: Block[] = [];
