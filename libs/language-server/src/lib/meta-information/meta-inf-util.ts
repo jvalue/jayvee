@@ -1,3 +1,5 @@
+import { assertUnreachable } from 'langium/lib/utils/errors';
+
 import {
   BlockType,
   isCSVFileExtractor,
@@ -22,5 +24,5 @@ export function getMetaInformation(
   if (isPostgresLoader(blockType)) {
     return new PostgresLoaderMetaInformation(blockType);
   }
-  throw new Error('Unknown block type');
+  assertUnreachable(blockType);
 }

@@ -7,6 +7,7 @@ import {
 } from '@jayvee/language-server';
 import * as E from 'fp-ts/lib/Either';
 import { AstNode, isAstNode, isReference } from 'langium';
+import { assertUnreachable } from 'langium/lib/utils/errors';
 
 import * as R from './executors/execution-result';
 
@@ -98,9 +99,7 @@ function parseParameterAsMatchingType(
     }
     return R.ok(Number.parseInt(value, 10));
   }
-  throw Error(
-    `No support for type of runtime parameter ${requiredParameter.name}`,
-  );
+  assertUnreachable(requiredType);
 }
 
 /**
@@ -120,7 +119,7 @@ function doForEachAstNode(
   fn: (value: AstNode) => void,
   visited: Set<AstNode>,
 ): void {
-  if (visited.has(node) === true) {
+  if (visited.has(node)) {
     return;
   }
   visited.add(node);
