@@ -10,7 +10,7 @@
         "commands": [
           "mkdir -p libs/language-server/syntaxes",
           "langium generate -f libs/language-server/langium-config.json"
-          ]
+        ]
       }
     },
     "build": {
