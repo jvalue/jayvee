@@ -1,11 +1,8 @@
-export * from './generated/ast';
-export * from './generated/grammar';
-export * from './generated/module';
+export * from './ast';
 
 export * from './meta-information';
 export * from './types';
+export * from './validation';
 
 // eslint-disable-next-line import/no-cycle
 export * from './jayvee-module';
-export * from './validation';
-export * from './model-util';

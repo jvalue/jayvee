@@ -1,4 +1,4 @@
-import { PostgresLoader } from '../generated/ast';
+import { PostgresLoader } from '../ast/generated/ast';
 import { TABLE_TYPE, Table, UNDEFINED_TYPE } from '../types';
 
 import { BlockMetaInformation } from './block-meta-inf';

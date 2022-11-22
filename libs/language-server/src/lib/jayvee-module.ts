@@ -12,7 +12,7 @@ import {
 import {
   JayveeGeneratedModule,
   JayveeGeneratedSharedModule,
-} from './generated/module';
+} from './ast/generated/module';
 import { JayveeValidationRegistry } from './validation';
 // eslint-disable-next-line import/no-cycle
 import { BlockValidator } from './validation/block-validator';

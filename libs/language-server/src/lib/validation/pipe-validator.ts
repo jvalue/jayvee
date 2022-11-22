@@ -2,7 +2,7 @@ import { ValidationAcceptor, ValidationChecks } from 'langium';
 
 // eslint-disable-next-line import/no-cycle
 import { Pipe } from '..';
-import { JayveeAstType } from '../generated/ast';
+import { JayveeAstType } from '../ast/generated/ast';
 import { getMetaInformation } from '../meta-information';
 
 import { JayveeValidator } from './jayvee-validator';

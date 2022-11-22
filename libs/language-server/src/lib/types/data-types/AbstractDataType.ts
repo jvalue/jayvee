@@ -1,4 +1,4 @@
-import { Type } from '../../generated/ast';
+import { Type } from '../../ast/generated/ast';
 
 // eslint-disable-next-line import/no-cycle
 import { DataTypeVisitor, VisitableDataType } from './visitors';

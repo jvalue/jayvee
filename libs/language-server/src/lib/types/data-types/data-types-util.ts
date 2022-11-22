@@ -1,4 +1,4 @@
-import { Type } from '../../generated/ast';
+import { Type } from '../../ast/generated/ast';
 
 import { AbstractDataType } from './AbstractDataType';
 import { BooleanDataType } from './BooleanDataType';

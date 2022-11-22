@@ -5,4 +5,4 @@
 
 /libs/language-server/syntaxes/*.json
 /libs/language-server/syntaxes/*.ts
-/libs/language-server/src/lib/generated/*.ts
+/libs/language-server/src/lib/ast/generated/*.ts
