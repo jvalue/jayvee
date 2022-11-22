@@ -6,7 +6,7 @@ import {
   isStringAttribute,
 } from '@jayvee/language-server';
 import * as E from 'fp-ts/lib/Either';
-import { AstNode, isAstNode, isReference } from 'langium';
+import { streamAst } from 'langium';
 
 import * as R from './executors/execution-result';
 
@@ -19,11 +19,9 @@ export function extractRequiredRuntimeParameters(
   model: Model,
 ): RuntimeParameter[] {
   const runtimeParameters: RuntimeParameter[] = [];
-  forEachAstNode(model, (node) => {
-    for (const value of Object.values(node)) {
-      if (isRuntimeParameter(value)) {
-        runtimeParameters.push(value);
-      }
+  streamAst(model).forEach((node) => {
+    if (isRuntimeParameter(node)) {
+      runtimeParameters.push(node);
     }
   });
   return runtimeParameters;
@@ -101,42 +99,4 @@ function parseParameterAsMatchingType(
   throw Error(
     `No support for type of runtime parameter ${requiredParameter.name}`,
   );
-}
-
-/**
- * Executes function on every ast node.
- * @param node The ast node where to start.
- * @param fn The function to execute on every ast node.
- */
-export function forEachAstNode(
-  node: AstNode,
-  fn: (value: AstNode) => void,
-): void {
-  return doForEachAstNode(node, fn, new Set());
-}
-
-function doForEachAstNode(
-  node: AstNode,
-  fn: (value: AstNode) => void,
-  visited: Set<AstNode>,
-): void {
-  if (visited.has(node) === true) {
-    return;
-  }
-  visited.add(node);
-  fn(node);
-
-  for (const value of Object.values(node)) {
-    if (isReference(value) && value.ref !== undefined) {
-      doForEachAstNode(value.ref, fn, visited);
-    } else if (typeof value === 'object' && isAstNode(value)) {
-      doForEachAstNode(value, fn, visited);
-    } else if (Array.isArray(value)) {
-      for (const item of value) {
-        if (isAstNode(item)) {
-          doForEachAstNode(item, fn, visited);
-        }
-      }
-    }
-  }
 }
