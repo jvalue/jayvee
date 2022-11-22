@@ -8,7 +8,6 @@ import {
 import type { BlockMetaInformation } from './block-meta-inf';
 import { CSVFileExtractorMetaInformation } from './csv-file-extractor-meta-inf';
 import { LayoutValidatorMetaInformation } from './layout-validator-meta-inf';
-// eslint-disable-next-line import/no-cycle
 import { PostgresLoaderMetaInformation } from './postgres-loader-meta-inf';
 
 export function getMetaInformation(

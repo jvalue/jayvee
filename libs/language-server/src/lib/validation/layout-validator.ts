@@ -1,8 +1,12 @@
 import { ValidationAcceptor, ValidationChecks } from 'langium';
 
-// eslint-disable-next-line import/no-cycle
-import { ColumnSection, Layout, RowSection, isRowSection } from '..';
-import { JayveeAstType } from '../ast/generated/ast';
+import {
+  ColumnSection,
+  JayveeAstType,
+  Layout,
+  RowSection,
+  isRowSection,
+} from '../ast/generated/ast';
 
 import { JayveeValidator } from './jayvee-validator';
 

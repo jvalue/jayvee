@@ -1,16 +1,14 @@
 import { ValidationAcceptor, ValidationChecks } from 'langium';
 
-// eslint-disable-next-line import/no-cycle
 import {
   Block,
   CSVFileExtractor,
   JayveeAstType,
   Pipe,
-  collectIngoingPipes,
-  collectOutgoingPipes,
-  getMetaInformation,
   isRuntimeParameter,
-} from '..';
+} from '../ast/generated/ast';
+import { collectIngoingPipes, collectOutgoingPipes } from '../ast/model-util';
+import { getMetaInformation } from '../meta-information/meta-inf-util';
 
 import { JayveeValidator } from './jayvee-validator';
 

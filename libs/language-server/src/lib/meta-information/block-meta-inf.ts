@@ -1,5 +1,5 @@
 import { BlockType } from '../ast/generated/ast';
-import { IOType, UNDEFINED_TYPE } from '../types';
+import { IOType, UNDEFINED_TYPE } from '../types/io-types';
 
 export abstract class BlockMetaInformation<
   B extends BlockType,
