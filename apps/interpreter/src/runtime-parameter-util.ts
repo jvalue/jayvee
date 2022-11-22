@@ -7,6 +7,7 @@ import {
 } from '@jayvee/language-server';
 import * as E from 'fp-ts/lib/Either';
 import { streamAst } from 'langium';
+import { assertUnreachable } from 'langium/lib/utils/errors';
 
 import * as R from './executors/execution-result';
 
