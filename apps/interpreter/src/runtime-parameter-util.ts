@@ -61,7 +61,7 @@ export function extractRuntimeParameters(
       continue;
     }
 
-    parameters.set(requiredParameter.name, parameterValue);
+    parameters.set(requiredParameter.name, parseResult.right);
   }
 
   if (errorMessages.length > 0) {
