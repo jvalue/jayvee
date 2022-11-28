@@ -20,9 +20,18 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
   CSVFileExtractorMetaInformation
 > {
   override async execute(): Promise<R.Result<Sheet>> {
+    const url = getStringAttributeValue(
+      this.block.url.value,
+      this.runtimeParameters,
+    );
+    const delimiter = getStringAttributeValue(
+      this.block.delimiter.value,
+      this.runtimeParameters,
+    );
+
     try {
-      const raw = await R.dataOrThrowAsync(this.fetchRawData());
-      const csv = await R.dataOrThrowAsync(this.parseAsCsv(raw));
+      const raw = await R.dataOrThrowAsync(this.fetchRawData(url));
+      const csv = await R.dataOrThrowAsync(this.parseAsCsv(raw, delimiter));
       return R.ok({
         data: csv,
         width: this.getSheetWidth(csv),
@@ -36,12 +45,7 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
     }
   }
 
-  private fetchRawData(): Promise<R.Result<string>> {
-    const url = getStringAttributeValue(
-      this.block.url.value,
-      this.runtimeParameters,
-    );
-
+  private fetchRawData(url: string): Promise<R.Result<string>> {
     return new Promise((resolve) => {
       http.get(url, (response) => {
         let rawData = '';
@@ -80,10 +84,13 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
     });
   }
 
-  private parseAsCsv(rawData: string): Promise<R.Result<string[][]>> {
+  private parseAsCsv(
+    rawData: string,
+    delimiter: string,
+  ): Promise<R.Result<string[][]>> {
     return new Promise((resolve) => {
       const csvData: string[][] = [];
-      const parseOptions: ParserOptionsArgs = {};
+      const parseOptions: ParserOptionsArgs = { delimiter };
       parseStringAsCsv(rawData, parseOptions)
         .on('data', (data: string[]) => {
           csvData.push(data);
