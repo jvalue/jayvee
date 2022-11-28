@@ -25,6 +25,11 @@ import {
   extractRuntimeParameters,
 } from './runtime-parameter-util';
 
+enum ExitCode {
+  SUCCESS = 0,
+  FAILURE = 1,
+}
+
 export async function runAction(
   fileName: string,
   options: { env: Map<string, string> },
@@ -39,17 +44,21 @@ export async function runAction(
   );
   if (E.isLeft(parameterReadResult)) {
     parameterReadResult.left.forEach((x) => printError(x));
-    return;
+    process.exit(ExitCode.FAILURE);
   }
 
-  await interpretPipelineModel(model, R.okData(parameterReadResult));
+  const interpretationExitCode = await interpretPipelineModel(
+    model,
+    R.okData(parameterReadResult),
+  );
+  process.exit(interpretationExitCode);
 }
 
 async function interpretPipelineModel(
   model: Model,
   runtimeParameters: Map<string, string | number | boolean>,
-): Promise<void> {
-  const pipelineRuns: Array<Promise<void>> = [];
+): Promise<ExitCode> {
+  const pipelineRuns: Array<Promise<ExitCode>> = [];
   for (const pipeline of model.pipelines) {
     const startingBlocks = collectStartingBlocks(pipeline);
     if (startingBlocks.length !== 1) {
@@ -61,13 +70,19 @@ async function interpretPipelineModel(
     const pipelineRun = runPipeline(startingBlocks[0]!, runtimeParameters);
     pipelineRuns.push(pipelineRun);
   }
-  await Promise.all(pipelineRuns);
+
+  const exitCodes = await Promise.all(pipelineRuns);
+
+  if (exitCodes.includes(ExitCode.FAILURE)) {
+    return ExitCode.FAILURE;
+  }
+  return ExitCode.SUCCESS;
 }
 
 async function runPipeline(
   startingBlock: Block,
   runtimeParameters: Map<string, string | number | boolean>,
-): Promise<void> {
+): Promise<ExitCode> {
   let currentBlock: Block | undefined = startingBlock;
   let blockMetaInf = getMetaInformation(currentBlock.type);
   let blockExecutor = getExecutor(currentBlock.type, runtimeParameters);
@@ -78,18 +93,20 @@ async function runPipeline(
     } catch (errObj) {
       if (R.isExecutionErrorDetails(errObj)) {
         printError(errObj);
-        return;
+        return ExitCode.FAILURE;
       }
       throw errObj;
     }
 
     currentBlock = collectChildren(currentBlock)[0];
     if (currentBlock === undefined) {
-      return;
+      return ExitCode.SUCCESS;
     }
     blockMetaInf = getMetaInformation(currentBlock.type);
     blockExecutor = getExecutor(currentBlock.type, runtimeParameters);
   } while (blockMetaInf.hasInput());
+
+  return ExitCode.SUCCESS;
 }
 
 export function getExecutor(
