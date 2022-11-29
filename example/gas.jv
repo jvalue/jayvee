@@ -19,12 +19,12 @@ pipeline GasReservePipeline {
 	}
 
 	block GasReserveLoader oftype PostgresLoader {
-		host: requires HUB_DB_HOST;
-		port: requires HUB_DB_PORT;
-		username: requires HUB_DB_USERNAME;
-		password: requires HUB_DB_PASSWORD;
-		database: requires HUB_DB_DATABASE;
-		table: requires HUB_DB_TABLE;
+		host: requires DB_HOST;
+		port: requires DB_PORT;
+		username: requires DB_USERNAME;
+		password: requires DB_PASSWORD;
+		database: requires DB_DATABASE;
+		table: requires DB_TABLE;
 	}
 
 	pipe {
