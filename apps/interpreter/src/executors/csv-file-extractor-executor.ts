@@ -19,15 +19,15 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
   Sheet,
   CSVFileExtractorMetaInformation
 > {
+  private readonly DEFAULT_DELIMITER = ',';
+
   override async execute(): Promise<R.Result<Sheet>> {
     const url = getStringAttributeValue(
       this.block.url.value,
       this.runtimeParameters,
     );
-    const delimiter = getStringAttributeValue(
-      this.block.delimiter.value,
-      this.runtimeParameters,
-    );
+
+    const delimiter = this.getDelimiter();
 
     try {
       const raw = await R.dataOrThrowAsync(this.fetchRawData(url));
@@ -43,6 +43,16 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
       }
       throw errorObj;
     }
+  }
+
+  private getDelimiter(): string {
+    if (this.block.delimiter === undefined) {
+      return this.DEFAULT_DELIMITER;
+    }
+    return getStringAttributeValue(
+      this.block.delimiter.value,
+      this.runtimeParameters,
+    );
   }
 
   private fetchRawData(url: string): Promise<R.Result<string>> {

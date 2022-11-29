@@ -3,7 +3,7 @@ import '../attributes'
 CSVFileExtractor:
   name='CSVFileExtractor' '{'
     url=UrlAttribute
-    delimiter=DelimiterAttribute
+    delimiter=DelimiterAttribute?
   '}';
 
 UrlAttribute returns StringAttribute:
