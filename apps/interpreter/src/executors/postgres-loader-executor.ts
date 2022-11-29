@@ -59,14 +59,15 @@ export class PostgresLoaderExecutor extends BlockExecutor<
     const columnTypeVisitor = new PostgresColumnTypeVisitor();
 
     const columnPostgresStatements = input.columnNames
-      .map((x) => x || 'EMPTYNAME')
+      .map((columnName) => columnName || 'EMPTYNAME')
+      .map((columnName) => `"${columnName}"`)
       .map((name, index) => {
         return `${name} ${(
           input.columnTypes[index] as AbstractDataType
         ).acceptVisitor(columnTypeVisitor)}`;
       });
 
-    return `CREATE TABLE IF NOT EXISTS ${tableName} (${columnPostgresStatements.join(
+    return `CREATE TABLE IF NOT EXISTS "${tableName}" (${columnPostgresStatements.join(
       ',',
     )});`;
   }
@@ -86,8 +87,9 @@ export class PostgresLoaderExecutor extends BlockExecutor<
       })
       .join(',');
 
-    return `INSERT INTO ${tableName} (${input.columnNames
-      .map((x) => x || 'EMPTYNAME')
+    return `INSERT INTO "${tableName}" (${input.columnNames
+      .map((columnName) => columnName || 'EMPTYNAME')
+      .map((columnName) => `"${columnName}"`)
       .join(',')}) VALUES ${valuesStatement}`;
   }
 
