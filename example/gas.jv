@@ -1,0 +1,39 @@
+pipeline GasReservePipeline {
+	block GasReserveExtractor oftype CSVFileExtractor {
+		url: "https://www.bundesnetzagentur.de/_tools/SVG/js2/_functions/csv_export.html?view=renderCSV&id=1089590";
+	    delimiter: ";";
+	}
+
+	layout GasReserveLayout {
+		header row 1: text;
+		column A: text;
+		column B: decimal;
+		column C: decimal;
+		column D: decimal;
+		column E: decimal;
+		column F: decimal;
+	}
+
+	block GasReserveValidator oftype LayoutValidator {
+		layout: GasReserveLayout;
+	}
+
+	block GasReserveLoader oftype PostgresLoader {
+		host: requires DB_HOST;
+		port: requires DB_PORT;
+		username: requires DB_USERNAME;
+		password: requires DB_PASSWORD;
+		database: requires DB_DATABASE;
+		table: requires DB_TABLE;
+	}
+
+	pipe {
+		from: GasReserveExtractor;
+		to: GasReserveValidator;
+	}
+
+	pipe {
+		from: GasReserveValidator;
+		to: GasReserveLoader;
+	}
+}

@@ -25,7 +25,7 @@ pipeline CarsPipeline {
 	}
 
 	block CarsLoader oftype PostgresLoader {
-		host: requires Host;
+		host: requires HOST;
 		port: 5432;
 		username: "postgres";
 		password: "postgres";

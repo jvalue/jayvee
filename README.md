@@ -61,5 +61,5 @@ docker compose -f ./example/docker-compose.example.yml up
 2. Run example
 
 ```bash
-npm run example
+npm run example:cars
 ```
