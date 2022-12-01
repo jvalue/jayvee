@@ -3,16 +3,14 @@ import {
   ColumnSection,
   LayoutValidator,
   LayoutValidatorMetaInformation,
-  RowSection,
-  Section,
   Sheet,
   Table,
   getDataType,
   isColumnSection,
-  isRowSection,
+  isHeaderRowSection,
 } from '@jayvee/language-server';
 
-import { getColumn } from '../data-util';
+import { printError } from '../cli-util';
 
 import { BlockExecutor } from './block-executor';
 import {
@@ -29,124 +27,109 @@ export class LayoutValidatorExecutor extends BlockExecutor<
 > {
   override execute(input: Sheet): Promise<R.Result<Table>> {
     const sections = this.block.layout.value.ref?.sections || [];
-    const validityResult = this.validateSections(sections, input.data);
 
-    if (R.isErr(validityResult)) {
-      return Promise.resolve(validityResult);
-    }
+    const headerRowSection = sections.find(isHeaderRowSection);
 
-    return Promise.resolve(
-      R.ok({
-        columnNames: this.getHeader(input),
-        columnTypes: this.getColumnTypes(sections, input.width),
-        data: input.data.filter((_, index) => index !== this.getHeaderIndex()),
-      }),
-    );
-  }
-
-  getHeader(input: Sheet): string[] {
-    const headerRowSection = this.block.layout.value.ref?.sections.find(
-      (x) => isRowSection(x) && x.header,
-    ) as RowSection | undefined;
-
-    const columnNamesIndex = this.getHeaderIndex();
-    if (columnNamesIndex === undefined) {
-      return [];
-    }
+    const columnSections = sections.filter(isColumnSection);
+    const columnTypes = this.getColumnTypes(columnSections);
 
     let columnNames: string[] = [];
-    if (
-      headerRowSection !== undefined &&
-      input.data[columnNamesIndex] !== undefined
-    ) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      columnNames = input.data[columnNamesIndex]!;
-    }
-    return columnNames;
-  }
-
-  getHeaderIndex(): number | undefined {
-    const headerRowSection = this.block.layout.value.ref?.sections.find(
-      (x) => isRowSection(x) && x.header,
-    ) as RowSection | undefined;
-
-    return headerRowSection ? headerRowSection.rowId - 1 : undefined;
-  }
-
-  validateSections(sections: Section[], data: string[][]): R.Result<void> {
+    const data: string[][] = [];
     const errors: string[] = [];
-    sections.forEach((section) => {
-      const type = getDataType(section.type);
-      if (isRowSection(section)) {
-        errors.push(...this.validateRowSection(section, data, type));
+
+    input.data.forEach((row, index) => {
+      const rowErrors: string[] = [];
+
+      const isHeader = index + 1 === headerRowSection?.rowId;
+      if (isHeader) {
+        columnNames = row;
+        const headerRowType = getDataType(headerRowSection.type);
+        rowErrors.push(...this.validateHeaderRow(row, index, headerRowType));
       } else {
-        errors.push(...this.validateColumnSection(section, data, type));
+        rowErrors.push(...this.validateRow(row, index, columnTypes));
       }
+      if (!isHeader && rowErrors.length === 0) {
+        data.push(row);
+      }
+      errors.push(...rowErrors);
     });
-    if (errors.length > 0) {
-      return R.err({
-        message: `Layout validation failed. Found the following issues:\n\n${errors.join(
+
+    if (errors.length !== 0) {
+      printError({
+        message: `${
+          input.data.length - data.length - 1
+        } rows were dropped due to failed layout validation. Found the following issues:\n\n${errors.join(
           '\n',
         )}`,
         hint: 'Please check your defined layout.',
         cstNode: this.block.$cstNode?.parent,
       });
     }
-    return R.ok(undefined);
+
+    return Promise.resolve(
+      R.ok({
+        columnNames,
+        columnTypes,
+        data,
+      }),
+    );
   }
 
-  private validateColumnSection(
-    section: ColumnSection,
-    data: string[][],
-    type: AbstractDataType,
-  ) {
-    const errors: string[] = [];
-
-    const columnIdCharacter = section.columnId;
-    const dataToValidate = getColumn(
-      data,
-      columnCharactersAsIndex(columnIdCharacter),
-      undefined,
-    ).filter((_, index) => index !== this.getHeaderIndex());
-
-    dataToValidate.forEach((value, rowId) => {
-      if (!type.isValid(value)) {
-        errors.push(
-          this.formatErrorMessage(
-            value,
-            `${rowId}`,
-            columnIdCharacter,
-            type.languageType,
-          ),
-        );
-      }
-    });
-    return errors;
-  }
-
-  private validateRowSection(
-    section: RowSection,
-    data: string[][],
+  private validateHeaderRow(
+    row: string[],
+    rowIndex: number,
     type: AbstractDataType,
   ): string[] {
     const errors: string[] = [];
-
-    const rowId = section.rowId;
-    const dataToValidate = data[rowId] || [];
-
-    dataToValidate.forEach((value, colId) => {
+    row.forEach((value, columnIndex) => {
       if (!type.isValid(value)) {
         errors.push(
           this.formatErrorMessage(
             value,
-            `${rowId}`,
-            columnIndexAsCharacters(colId),
+            `${rowIndex + 1}`,
+            columnIndexAsCharacters(columnIndex),
             type.languageType,
           ),
         );
       }
     });
     return errors;
+  }
+
+  private validateRow(
+    row: string[],
+    rowIndex: number,
+    columnTypes: Array<AbstractDataType | undefined>,
+  ): string[] {
+    const errors: string[] = [];
+    row.forEach((value, columnIndex) => {
+      const type = columnTypes[columnIndex];
+      if (type !== undefined && !type.isValid(value)) {
+        errors.push(
+          this.formatErrorMessage(
+            value,
+            `${rowIndex + 1}`,
+            columnIndexAsCharacters(columnIndex),
+            type.languageType,
+          ),
+        );
+      }
+    });
+    return errors;
+  }
+
+  private getColumnTypes(
+    columnSections: ColumnSection[],
+  ): Array<AbstractDataType | undefined> {
+    const result: Array<AbstractDataType | undefined> = [];
+
+    columnSections.forEach((section) => {
+      const type = getDataType(section.type);
+      const columnIndex = columnCharactersAsIndex(section.columnId);
+      result[columnIndex] = type;
+    });
+
+    return result;
   }
 
   formatErrorMessage(
@@ -158,28 +141,5 @@ export class LayoutValidatorExecutor extends BlockExecutor<
     return `[row ${rowId}, column ${colId}] Value "${
       value ?? ''
     }" does not match type ${languageType}`;
-  }
-
-  getColumnTypes(
-    sections: Section[],
-    width: number,
-  ): Array<AbstractDataType | undefined> {
-    const columnTypes: { [index: number]: AbstractDataType | undefined } = {};
-
-    (
-      sections.filter((section) => isColumnSection(section)) as ColumnSection[]
-    ).forEach((section: ColumnSection) => {
-      columnTypes[columnCharactersAsIndex(section.columnId)] = getDataType(
-        section.type,
-      );
-    });
-
-    const columnTypesArray: Array<AbstractDataType | undefined> = [];
-
-    for (let i = 0; i < width; i++) {
-      columnTypesArray.push(columnTypes[i]);
-    }
-
-    return columnTypesArray;
   }
 }

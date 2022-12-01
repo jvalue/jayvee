@@ -2,10 +2,10 @@ import { ValidationAcceptor, ValidationChecks } from 'langium';
 
 import {
   ColumnSection,
+  HeaderRowSection,
   JayveeAstType,
   Layout,
-  RowSection,
-  isRowSection,
+  isHeaderRowSection,
 } from '../ast/generated/ast';
 
 import { JayveeValidator } from './jayvee-validator';
@@ -14,7 +14,7 @@ export class LayoutValidator implements JayveeValidator {
   get checks(): ValidationChecks<JayveeAstType> {
     return {
       ColumnSection: this.checkColumnIdFormat,
-      RowSection: this.checkRowIdFormat,
+      HeaderRowSection: this.checkRowIdFormat,
       Layout: this.checkSingleHeader,
     };
   }
@@ -24,15 +24,11 @@ export class LayoutValidator implements JayveeValidator {
     layout: Layout,
     accept: ValidationAcceptor,
   ): void {
-    const headerRowSections: RowSection[] = [];
-    for (const section of layout.sections) {
-      if (isRowSection(section) && section.header) {
-        headerRowSections.push(section);
-      }
-    }
+    const headerRowSections: HeaderRowSection[] =
+      layout.sections.filter(isHeaderRowSection);
     if (headerRowSections.length > 1) {
       for (const headerRowSection of headerRowSections) {
-        accept('error', `At most a single row can be marked as header`, {
+        accept('error', `At most a single header row can be defined`, {
           node: headerRowSection,
           keyword: 'header',
         });
@@ -56,7 +52,7 @@ export class LayoutValidator implements JayveeValidator {
 
   checkRowIdFormat(
     this: void,
-    rowSection: RowSection,
+    rowSection: HeaderRowSection,
     accept: ValidationAcceptor,
   ): void {
     if (rowSection.rowId <= 0) {
