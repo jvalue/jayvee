@@ -59,7 +59,7 @@ export class PostgresLoaderExecutor extends BlockExecutor<
     const columnTypeVisitor = new PostgresColumnTypeVisitor();
 
     const columnPostgresStatements = input.columnNames
-      .map((columnName) => columnName || 'EMPTYNAME')
+      .map((columnName) => columnName)
       .map((columnName) => `"${columnName}"`)
       .map((name, index) => {
         return `${name} ${(
@@ -88,7 +88,7 @@ export class PostgresLoaderExecutor extends BlockExecutor<
       .join(',');
 
     return `INSERT INTO "${tableName}" (${input.columnNames
-      .map((columnName) => columnName || 'EMPTYNAME')
+      .map((columnName) => columnName)
       .map((columnName) => `"${columnName}"`)
       .join(',')}) VALUES ${valuesStatement}`;
   }
