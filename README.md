@@ -50,7 +50,13 @@ npm run test
 npm run generate
 ```
 
-### Quickly running the interpreter with the cars example
+### Examples
+#### Load data about cars into a local SQLite db
+```bash
+npm run example:cars
+```
+
+#### Load data about german gas reserves into a postgres database
 
 1. Start postgres database
 
@@ -61,5 +67,5 @@ docker compose -f ./example/docker-compose.example.yml up
 2. Run example
 
 ```bash
-npm run example:cars
+npm run example:gas
 ```
