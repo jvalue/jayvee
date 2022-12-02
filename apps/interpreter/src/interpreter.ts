@@ -9,6 +9,7 @@ import {
   isCSVFileExtractor,
   isLayoutValidator,
   isPostgresLoader,
+  isSQLiteLoader,
 } from '@jayvee/language-server';
 import * as E from 'fp-ts/lib/Either';
 import { assertUnreachable } from 'langium/lib/utils/errors';
@@ -20,6 +21,7 @@ import { CSVFileExtractorExecutor } from './executors/csv-file-extractor-executo
 import * as R from './executors/execution-result';
 import { LayoutValidatorExecutor } from './executors/layout-validator-executor';
 import { PostgresLoaderExecutor } from './executors/postgres-loader-executor';
+import { SQLiteLoaderExecutor } from './executors/sqlite-loader-executor';
 import {
   extractRequiredRuntimeParameters,
   extractRuntimeParameters,
@@ -121,6 +123,9 @@ export function getExecutor(
   }
   if (isPostgresLoader(blockType)) {
     return new PostgresLoaderExecutor(blockType, runtimeParameters);
+  }
+  if (isSQLiteLoader(blockType)) {
+    return new SQLiteLoaderExecutor(blockType, runtimeParameters);
   }
   assertUnreachable(blockType);
 }

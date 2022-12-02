@@ -24,13 +24,8 @@ pipeline CarsPipeline {
 		layout: CarsLayout;
 	}
 
-	block CarsLoader oftype PostgresLoader {
-		host: requires HOST;
-		port: 5432;
-		username: "postgres";
-		password: "postgres";
-		database: "postgres";
-		table: "Cars";
+	block CarsLoader oftype SQLiteLoader {
+		file: "./cars.db";
 	}
 
 	pipe {
