@@ -2,6 +2,7 @@ import '../attributes'
 
 SQLiteLoader:
   name='SQLiteLoader' '{'
+    table=TableAttribute
     file=FileAttribute
   '}';
 

@@ -24,6 +24,3 @@ PasswordAttribute returns StringAttribute:
 
 DatabaseAttribute returns StringAttribute:
   'database' StringAttributeFragment;
-
-TableAttribute returns StringAttribute:
-  'table' StringAttributeFragment;

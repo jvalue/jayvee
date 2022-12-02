@@ -25,7 +25,10 @@ export class SQLiteLoaderExecutor extends BlockExecutor<
       this.runtimeParameters,
     );
 
-    const table = 'TODO';
+    const table = getStringAttributeValue(
+      this.block.table.value,
+      this.runtimeParameters,
+    );
 
     let db: sqlite3.Database | undefined;
 
@@ -64,7 +67,7 @@ export class SQLiteLoaderExecutor extends BlockExecutor<
     const columnTypeVisitor = new SQLiteColumnTypeVisitor();
 
     const columnStatements = input.columnNames
-      .map((columnName) => columnName || 'EMPTYNAME')
+      .map((columnName) => columnName)
       .map((columnName) => `"${columnName}"`)
       .map((name, index) => {
         return `${name} ${(
@@ -93,7 +96,7 @@ export class SQLiteLoaderExecutor extends BlockExecutor<
       .join(',');
 
     return `INSERT INTO "${tableName}" (${input.columnNames
-      .map((columnName) => columnName || 'EMPTYNAME')
+      .map((columnName) => columnName)
       .map((columnName) => `"${columnName}"`)
       .join(',')}) VALUES ${valuesStatement}`;
   }
