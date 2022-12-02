@@ -51,7 +51,9 @@ npm run generate
 ```
 
 ### Examples
+
 #### Load data about cars into a local SQLite db
+
 ```bash
 npm run example:cars
 ```
