@@ -15,6 +15,18 @@
       "outFiles": ["${workspaceFolder}/dist/apps/vs-code-extension/**/*.cjs"]
     },
     {
+      "name": "Run Cars Example",
+      "command": "npm run example:cars",
+      "request": "launch",
+      "type": "node-terminal"
+    },
+    {
+      "name": "Run Gas Reserve Example",
+      "command": "npm run example:gas",
+      "request": "launch",
+      "type": "node-terminal"
+    },
+    {
       "name": "Attach to Language Server",
       "type": "node",
       "port": 6009,
