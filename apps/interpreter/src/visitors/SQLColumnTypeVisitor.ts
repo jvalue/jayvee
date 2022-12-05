@@ -1,6 +1,6 @@
 import { DataTypeVisitor } from '@jayvee/language-server';
 
-export class PostgresColumnTypeVisitor extends DataTypeVisitor<string> {
+export class SQLColumnTypeVisitor extends DataTypeVisitor<string> {
   override visitBoolean(): string {
     return 'boolean';
   }

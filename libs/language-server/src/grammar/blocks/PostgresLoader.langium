@@ -1,4 +1,5 @@
 import '../attributes'
+import 'shared-attributes'
 
 PostgresLoader:
   name='PostgresLoader' '{'
@@ -24,6 +25,3 @@ PasswordAttribute returns StringAttribute:
 
 DatabaseAttribute returns StringAttribute:
   'database' StringAttributeFragment;
-
-TableAttribute returns StringAttribute:
-  'table' StringAttributeFragment;

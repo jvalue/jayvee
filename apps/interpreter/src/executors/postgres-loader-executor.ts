@@ -1,5 +1,4 @@
 import {
-  AbstractDataType,
   PostgresLoader,
   PostgresLoaderMetaInformation,
   Table,
@@ -10,11 +9,13 @@ import {
   getIntAttributeValue,
   getStringAttributeValue,
 } from '../attribute-util';
-import { PostgresColumnTypeVisitor } from '../visitors/PostgresColumnTypeVisitor';
-import { PostgresValueRepresentationVisitor } from '../visitors/PostgresValueRepresentationVisitor';
 
 import { BlockExecutor } from './block-executor';
 import * as R from './execution-result';
+import {
+  buildCreateTableStatement,
+  buildInsertValuesStatement,
+} from './sql-util';
 
 export class PostgresLoaderExecutor extends BlockExecutor<
   PostgresLoader,
@@ -37,9 +38,9 @@ export class PostgresLoaderExecutor extends BlockExecutor<
     try {
       await client.connect();
 
-      await client.query(this.buildCreateTableStatement(table, input));
+      await client.query(buildCreateTableStatement(table, input));
 
-      await client.query(this.buildInsertValuesStatement(table, input));
+      await client.query(buildInsertValuesStatement(table, input));
 
       return Promise.resolve(R.ok(undefined));
     } catch (err: unknown) {
@@ -53,44 +54,6 @@ export class PostgresLoaderExecutor extends BlockExecutor<
     } finally {
       await client.end();
     }
-  }
-
-  private buildCreateTableStatement(tableName: string, input: Table): string {
-    const columnTypeVisitor = new PostgresColumnTypeVisitor();
-
-    const columnPostgresStatements = input.columnNames
-      .map((columnName) => columnName || 'EMPTYNAME')
-      .map((columnName) => `"${columnName}"`)
-      .map((name, index) => {
-        return `${name} ${(
-          input.columnTypes[index] as AbstractDataType
-        ).acceptVisitor(columnTypeVisitor)}`;
-      });
-
-    return `CREATE TABLE IF NOT EXISTS "${tableName}" (${columnPostgresStatements.join(
-      ',',
-    )});`;
-  }
-
-  private buildInsertValuesStatement(tableName: string, input: Table): string {
-    const valueRepresenationVisitor = new PostgresValueRepresentationVisitor();
-
-    const valueRepresentationFormatters = input.columnTypes.map((type) => {
-      return type?.acceptVisitor(valueRepresenationVisitor);
-    });
-
-    const valuesStatement = input.data
-      .map((row) => {
-        return `(${row
-          .map((value, index) => valueRepresentationFormatters[index]?.(value))
-          .join(',')})`;
-      })
-      .join(',');
-
-    return `INSERT INTO "${tableName}" (${input.columnNames
-      .map((columnName) => columnName || 'EMPTYNAME')
-      .map((columnName) => `"${columnName}"`)
-      .join(',')}) VALUES ${valuesStatement}`;
   }
 
   private createPgClient(): R.Result<Client> {

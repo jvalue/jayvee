@@ -6,7 +6,7 @@ import {
   TextDataType,
 } from '@jayvee/language-server';
 
-export class PostgresValueRepresentationVisitor extends DataTypeVisitor<
+export class SQLValueRepresentationVisitor extends DataTypeVisitor<
   (value: unknown) => string
 > {
   visitBoolean(dataType: BooleanDataType): (value: unknown) => string {

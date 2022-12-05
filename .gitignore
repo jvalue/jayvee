@@ -5,6 +5,10 @@ dist
 tmp
 /out-tsc
 
+# files generated from jayvee runs
+*.db
+*.sql
+
 # dependencies
 node_modules
 
