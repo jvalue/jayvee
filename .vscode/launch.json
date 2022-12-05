@@ -6,12 +6,6 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "command": "npm run example",
-      "name": "Run Example",
-      "request": "launch",
-      "type": "node-terminal"
-    },
-    {
       "name": "Run Extension",
       "type": "extensionHost",
       "request": "launch",
@@ -19,6 +13,18 @@
         "--extensionDevelopmentPath=${workspaceFolder}/apps/vs-code-extension"
       ],
       "outFiles": ["${workspaceFolder}/dist/apps/vs-code-extension/**/*.cjs"]
+    },
+    {
+      "name": "Run Cars Example",
+      "command": "npm run example:cars",
+      "request": "launch",
+      "type": "node-terminal"
+    },
+    {
+      "name": "Run Gas Reserve Example",
+      "command": "npm run example:gas",
+      "request": "launch",
+      "type": "node-terminal"
     },
     {
       "name": "Attach to Language Server",
