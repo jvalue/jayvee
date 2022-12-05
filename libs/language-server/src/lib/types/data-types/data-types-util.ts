@@ -1,3 +1,5 @@
+import { assertUnreachable } from 'langium/lib/utils/errors';
+
 import { Type } from '../../ast/generated/ast';
 
 import { AbstractDataType } from './AbstractDataType';
@@ -17,7 +19,6 @@ export function getDataType(name: Type): AbstractDataType {
     case 'boolean':
       return new BooleanDataType(name);
     default:
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      throw new Error(`Could not find implementation for data type: ${name}`);
+      assertUnreachable(name);
   }
 }
