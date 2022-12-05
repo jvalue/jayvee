@@ -32,6 +32,3 @@ fragment LayoutAttributeFragment:
 
 RuntimeParameter:
   'requires' name=ID;
-
-TableAttribute returns StringAttribute:
-  'table' StringAttributeFragment;

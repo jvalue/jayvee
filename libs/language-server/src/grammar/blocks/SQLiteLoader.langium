@@ -1,4 +1,5 @@
 import '../attributes'
+import 'shared-attributes'
 
 SQLiteLoader:
   name='SQLiteLoader' '{'

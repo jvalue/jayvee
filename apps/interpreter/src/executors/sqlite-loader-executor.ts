@@ -1,5 +1,4 @@
 import {
-  AbstractDataType,
   SQLiteLoader,
   SQLiteLoaderMetaInformation,
   Table,
@@ -7,11 +6,13 @@ import {
 import * as sqlite3 from 'sqlite3';
 
 import { getStringAttributeValue } from '../attribute-util';
-import { SQLiteColumnTypeVisitor } from '../visitors/SQLiteColumnTypeVisitor';
-import { SQLiteValueRepresentationVisitor } from '../visitors/SQLiteValueRepresentationVisitor';
 
 import { BlockExecutor } from './block-executor';
 import * as R from './execution-result';
+import {
+  buildCreateTableStatement,
+  buildInsertValuesStatement,
+} from './sql-util';
 
 export class SQLiteLoaderExecutor extends BlockExecutor<
   SQLiteLoader,
@@ -35,8 +36,8 @@ export class SQLiteLoaderExecutor extends BlockExecutor<
     try {
       db = new sqlite3.Database(file);
 
-      await this.runQuery(db, this.buildCreateTableStatement(table, input));
-      await this.runQuery(db, this.buildInsertValuesStatement(table, input));
+      await this.runQuery(db, buildCreateTableStatement(table, input));
+      await this.runQuery(db, buildInsertValuesStatement(table, input));
 
       return Promise.resolve(R.ok(undefined));
     } catch (err: unknown) {
@@ -48,7 +49,7 @@ export class SQLiteLoaderExecutor extends BlockExecutor<
         }),
       );
     } finally {
-      db && db.close();
+      db?.close();
     }
   }
 
@@ -61,43 +62,5 @@ export class SQLiteLoaderExecutor extends BlockExecutor<
         error ? reject(error) : resolve(result),
       );
     });
-  }
-
-  private buildCreateTableStatement(tableName: string, input: Table): string {
-    const columnTypeVisitor = new SQLiteColumnTypeVisitor();
-
-    const columnStatements = input.columnNames
-      .map((columnName) => columnName)
-      .map((columnName) => `"${columnName}"`)
-      .map((name, index) => {
-        return `${name} ${(
-          input.columnTypes[index] as AbstractDataType
-        ).acceptVisitor(columnTypeVisitor)}`;
-      });
-
-    return `CREATE TABLE IF NOT EXISTS "${tableName}" (${columnStatements.join(
-      ',',
-    )});`;
-  }
-
-  private buildInsertValuesStatement(tableName: string, input: Table): string {
-    const valueRepresenationVisitor = new SQLiteValueRepresentationVisitor();
-
-    const valueRepresentationFormatters = input.columnTypes.map((type) => {
-      return type?.acceptVisitor(valueRepresenationVisitor);
-    });
-
-    const valuesStatement = input.data
-      .map((row) => {
-        return `(${row
-          .map((value, index) => valueRepresentationFormatters[index]?.(value))
-          .join(',')})`;
-      })
-      .join(',');
-
-    return `INSERT INTO "${tableName}" (${input.columnNames
-      .map((columnName) => columnName)
-      .map((columnName) => `"${columnName}"`)
-      .join(',')}) VALUES ${valuesStatement}`;
   }
 }
