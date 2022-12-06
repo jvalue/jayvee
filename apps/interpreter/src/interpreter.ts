@@ -95,8 +95,7 @@ async function runPipeline(
         executionOrder.find((blockData) => parent === blockData.block),
       );
 
-      const value =
-        parentData[0] !== undefined ? parentData[0].value : undefined;
+      const value = parentData[0]?.value;
 
       try {
         blockData.value = await R.dataOrThrowAsync(

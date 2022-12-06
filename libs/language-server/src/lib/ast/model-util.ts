@@ -84,29 +84,29 @@ export function collectIngoingPipes(block: Block): Pipe[] {
  * Kahn, A. B. (1962). Topological sorting of large networks. Communications of the ACM, 5(11), 558–562.
  */
 export function getBlocksInTopologicalSorting(pipeline: Pipeline): Block[] {
-  const sortedBlocks = [];
-  const currentBlocks = [...collectStartingBlocks(pipeline)];
+  const sortedNodes = [];
+  const currentNodes = [...collectStartingBlocks(pipeline)];
   let unvisitedEdges = [...pipeline.pipes];
 
-  while (currentBlocks.length > 0) {
-    const node: Block = currentBlocks.pop() as Block;
-    sortedBlocks.push(node);
+  while (currentNodes.length > 0) {
+    const node: Block = currentNodes.pop() as Block;
+    sortedNodes.push(node);
 
-    for (const child of collectChildren(node)) {
+    for (const childNode of collectChildren(node)) {
       // Mark edges between parent and child as visited
-      collectIngoingPipes(child)
+      collectIngoingPipes(childNode)
         .filter((e) => e.from.ref === node)
         .forEach((e) => {
           unvisitedEdges = unvisitedEdges.filter((edge) => edge !== e);
         });
 
       // If all edges to the child have been visited
-      const notRemovedPipes = collectIngoingPipes(child).filter((e) =>
+      const notRemovedEdges = collectIngoingPipes(childNode).filter((e) =>
         unvisitedEdges.includes(e),
       );
-      if (notRemovedPipes.length === 0) {
+      if (notRemovedEdges.length === 0) {
         // Insert it into currentBlocks
-        currentBlocks.push(child);
+        currentNodes.push(childNode);
       }
     }
   }
@@ -116,5 +116,5 @@ export function getBlocksInTopologicalSorting(pipeline: Pipeline): Block[] {
     throw new Error(`Pipeline ${pipeline.name} has at least one cycle`);
   }
 
-  return sortedBlocks;
+  return sortedNodes;
 }
