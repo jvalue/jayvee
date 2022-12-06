@@ -67,3 +67,54 @@ export function collectIngoingPipes(block: Block): Pipe[] {
 
   return ingoingPipes;
 }
+
+/**
+ * Returns blocks in a pipeline in topological order, based on
+ * Kahn's algorithm.
+ *
+ * Considers a pipeline as a directed, acyclical graph where
+ * blocks are nodes and pipes are edges. A list in topological
+ * order has the property that parent nodes are always listed
+ * before their children.
+ *
+ * "[...] a list in topological order is such that no element
+ * appears in it until after all elements appearing on all paths
+ * leading to the particular element have been listed."
+ *
+ * Kahn, A. B. (1962). Topological sorting of large networks. Communications of the ACM, 5(11), 558–562.
+ */
+export function getBlocksInTopologicalSorting(pipeline: Pipeline): Block[] {
+  const sortedBlocks = [];
+  const currentBlocks = [...collectStartingBlocks(pipeline)];
+  let unvisitedEdges = [...pipeline.pipes];
+
+  while (currentBlocks.length > 0) {
+    const node: Block = currentBlocks.pop() as Block;
+    sortedBlocks.push(node);
+
+    for (const child of collectChildren(node)) {
+      // Mark edges between parent and child as visited
+      collectIngoingPipes(child)
+        .filter((e) => e.from.ref === node)
+        .forEach((e) => {
+          unvisitedEdges = unvisitedEdges.filter((edge) => edge !== e);
+        });
+
+      // If all edges to the child have been visited
+      const notRemovedPipes = collectIngoingPipes(child).filter((e) =>
+        unvisitedEdges.includes(e),
+      );
+      if (notRemovedPipes.length === 0) {
+        // Insert it into currentBlocks
+        currentBlocks.push(child);
+      }
+    }
+  }
+
+  // If the graph still contains unvisited edges it is not a DAG
+  if (unvisitedEdges.length > 0) {
+    throw new Error(`Pipeline ${pipeline.name} has at least one cycle`);
+  }
+
+  return sortedBlocks;
+}
