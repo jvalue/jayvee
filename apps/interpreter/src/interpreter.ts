@@ -2,10 +2,12 @@ import {
   Block,
   BlockType,
   Model,
+  Pipeline,
   collectChildren,
+  collectParents,
   collectStartingBlocks,
   createJayveeServices,
-  getMetaInformation,
+  getBlocksInTopologicalSorting,
   isCSVFileExtractor,
   isLayoutValidator,
   isPostgresLoader,
@@ -60,19 +62,10 @@ async function interpretPipelineModel(
   model: Model,
   runtimeParameters: Map<string, string | number | boolean>,
 ): Promise<ExitCode> {
-  const pipelineRuns: Array<Promise<ExitCode>> = [];
-  for (const pipeline of model.pipelines) {
-    const startingBlocks = collectStartingBlocks(pipeline);
-    if (startingBlocks.length !== 1) {
-      throw new Error(
-        `Unable to find a single starting block for pipeline ${pipeline.name}`,
-      );
-    }
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const pipelineRun = runPipeline(startingBlocks[0]!, runtimeParameters);
-    pipelineRuns.push(pipelineRun);
-  }
-
+  console.info('Interpreting pipeline model');
+  const pipelineRuns: Array<Promise<ExitCode>> = model.pipelines.map(
+    (pipeline) => runPipeline(pipeline, runtimeParameters),
+  );
   const exitCodes = await Promise.all(pipelineRuns);
 
   if (exitCodes.includes(ExitCode.FAILURE)) {
@@ -82,33 +75,82 @@ async function interpretPipelineModel(
 }
 
 async function runPipeline(
-  startingBlock: Block,
+  pipeline: Pipeline,
   runtimeParameters: Map<string, string | number | boolean>,
 ): Promise<ExitCode> {
-  let currentBlock: Block | undefined = startingBlock;
-  let blockMetaInf = getMetaInformation(currentBlock.type);
-  let blockExecutor = getExecutor(currentBlock.type, runtimeParameters);
-  let value: unknown = undefined;
-  do {
-    try {
-      value = await R.dataOrThrowAsync(blockExecutor.execute(value));
-    } catch (errObj) {
-      if (R.isExecutionErrorDetails(errObj)) {
-        printError(errObj);
-        return ExitCode.FAILURE;
-      }
-      throw errObj;
-    }
+  printPipeline(pipeline, runtimeParameters);
 
-    currentBlock = collectChildren(currentBlock)[0];
-    if (currentBlock === undefined) {
-      return ExitCode.SUCCESS;
+  try {
+    const executionOrder: Array<{ block: Block; value: unknown }> =
+      getBlocksInTopologicalSorting(pipeline).map((block) => {
+        return { block: block, value: undefined };
+      });
+
+    for (const blockData of executionOrder) {
+      const blockExecutor = getExecutor(
+        blockData.block.type,
+        runtimeParameters,
+      );
+      const parentData = collectParents(blockData.block).map((parent) =>
+        executionOrder.find((blockData) => parent === blockData.block),
+      );
+
+      const value = parentData[0]?.value;
+
+      try {
+        blockData.value = await R.dataOrThrowAsync(
+          blockExecutor.execute(value),
+        );
+      } catch (errObj) {
+        if (R.isExecutionErrorDetails(errObj)) {
+          printError(errObj);
+          return ExitCode.FAILURE;
+        }
+        throw errObj;
+      }
     }
-    blockMetaInf = getMetaInformation(currentBlock.type);
-    blockExecutor = getExecutor(currentBlock.type, runtimeParameters);
-  } while (blockMetaInf.hasInput());
+  } catch (errObj) {
+    // If a pipeline contains cycles, an exception will be thrown.
+    console.error(errObj);
+    return ExitCode.FAILURE;
+  }
 
   return ExitCode.SUCCESS;
+}
+
+export function printPipeline(
+  pipeline: Pipeline,
+  runtimeParameters: Map<string, string | number | boolean>,
+  printCallback: (output: string) => void = console.info,
+) {
+  const toString = (block: Block, depth = 0): string => {
+    const blockString = `${'\t'.repeat(depth)} -> ${block.name} (${
+      block.type.$type
+    })`;
+    const childString = collectChildren(block)
+      .map((child) => toString(child, depth + 1))
+      .join('\n');
+    return blockString + '\n' + childString;
+  };
+
+  printCallback(`Pipeline ${pipeline.name}:`);
+  printCallback(`\tRuntime Parameters (${runtimeParameters.size}):`);
+  for (const key of runtimeParameters.keys()) {
+    console.log(
+      `\t ${key}: ${
+        runtimeParameters.has(key)
+          ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            runtimeParameters.get(key)!.toString()
+          : 'undefined'
+      }`,
+    );
+  }
+  printCallback(
+    `\tBlocks (${pipeline.blocks.length} blocks with ${pipeline.pipes.length} pipes):`,
+  );
+  for (const block of collectStartingBlocks(pipeline)) {
+    printCallback(toString(block, 1));
+  }
 }
 
 export function getExecutor(

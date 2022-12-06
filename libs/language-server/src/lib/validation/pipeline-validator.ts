@@ -23,17 +23,6 @@ export class PipelineValidator implements JayveeValidator {
         node: pipeline,
         property: 'name',
       });
-    } else if (startingBlocks.length !== 1) {
-      for (const startingBlock of startingBlocks) {
-        accept(
-          'error',
-          `Currently, at most a single extractor block is supported for a pipeline`,
-          {
-            node: startingBlock,
-            property: 'name',
-          },
-        );
-      }
     }
   }
 }

@@ -76,14 +76,14 @@ export class BlockValidator implements JayveeValidator {
           },
         );
       }
-    } else if (pipes.length > 1) {
+    } else if (pipes.length > 1 && whatToCheck === 'input') {
       for (const pipe of pipes) {
         accept(
           'error',
           `At most one pipe can be connected to the ${whatToCheck} of a ${block.type.$type}`,
           {
             node: pipe,
-            property: whatToCheck === 'input' ? 'to' : 'from',
+            property: 'to',
           },
         );
       }
