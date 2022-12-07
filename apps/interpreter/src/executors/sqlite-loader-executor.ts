@@ -11,6 +11,7 @@ import { BlockExecutor } from './block-executor';
 import * as R from './execution-result';
 import {
   buildCreateTableStatement,
+  buildDropTableStatement,
   buildInsertValuesStatement,
 } from './sql-util';
 
@@ -36,6 +37,7 @@ export class SQLiteLoaderExecutor extends BlockExecutor<
     try {
       db = new sqlite3.Database(file);
 
+      await this.runQuery(db, buildDropTableStatement(table));
       await this.runQuery(db, buildCreateTableStatement(table, input));
       await this.runQuery(db, buildInsertValuesStatement(table, input));
 
