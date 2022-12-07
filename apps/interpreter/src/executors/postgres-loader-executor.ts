@@ -14,6 +14,7 @@ import { BlockExecutor } from './block-executor';
 import * as R from './execution-result';
 import {
   buildCreateTableStatement,
+  buildDropTableStatement,
   buildInsertValuesStatement,
 } from './sql-util';
 
@@ -38,8 +39,8 @@ export class PostgresLoaderExecutor extends BlockExecutor<
     try {
       await client.connect();
 
+      await client.query(buildDropTableStatement(table));
       await client.query(buildCreateTableStatement(table, input));
-
       await client.query(buildInsertValuesStatement(table, input));
 
       return Promise.resolve(R.ok(undefined));
