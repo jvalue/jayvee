@@ -1,14 +1,20 @@
-import { CSVFileExtractor } from '../ast/generated/ast';
-import { SHEET_TYPE, Sheet, UNDEFINED_TYPE } from '../types/io-types';
+import { SHEET_TYPE, UNDEFINED_TYPE } from '../types/io-types';
 
-import { BlockMetaInformation } from './block-meta-inf';
+import { AttributeType, BlockMetaInformation } from './block-meta-inf';
+import { registerBlockMetaInformation } from './meta-inf-util';
 
-export class CSVFileExtractorMetaInformation extends BlockMetaInformation<
-  CSVFileExtractor,
-  void,
-  Sheet
-> {
-  constructor(block: CSVFileExtractor) {
-    super(block, UNDEFINED_TYPE, SHEET_TYPE);
+export class CSVFileExtractorMetaInformation extends BlockMetaInformation {
+  constructor() {
+    super('CSVFileExtractor', UNDEFINED_TYPE, SHEET_TYPE, {
+      url: {
+        type: AttributeType.STRING,
+      },
+      delimiter: {
+        type: AttributeType.STRING,
+        defaultValue: ',',
+      },
+    });
   }
 }
+
+registerBlockMetaInformation(new CSVFileExtractorMetaInformation());

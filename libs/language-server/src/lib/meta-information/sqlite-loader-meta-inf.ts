@@ -1,14 +1,19 @@
-import { SQLiteLoader } from '../ast/generated/ast';
-import { TABLE_TYPE, Table, UNDEFINED_TYPE } from '../types/io-types';
+import { TABLE_TYPE, UNDEFINED_TYPE } from '../types/io-types';
 
-import { BlockMetaInformation } from './block-meta-inf';
+import { AttributeType, BlockMetaInformation } from './block-meta-inf';
+import { registerBlockMetaInformation } from './meta-inf-util';
 
-export class SQLiteLoaderMetaInformation extends BlockMetaInformation<
-  SQLiteLoader,
-  Table,
-  void
-> {
-  constructor(block: SQLiteLoader) {
-    super(block, TABLE_TYPE, UNDEFINED_TYPE);
+export class SQLiteLoaderMetaInformation extends BlockMetaInformation {
+  constructor() {
+    super('SQLiteLoader', TABLE_TYPE, UNDEFINED_TYPE, {
+      table: {
+        type: AttributeType.STRING,
+      },
+      file: {
+        type: AttributeType.STRING,
+      },
+    });
   }
 }
+
+registerBlockMetaInformation(new SQLiteLoaderMetaInformation());

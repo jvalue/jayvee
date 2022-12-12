@@ -3,8 +3,7 @@ grammar Jayvee
 import 'terminals'
 import 'attributes'
 import 'layout'
-
-import './blocks/block-types';
+import 'block-types'
 
 entry Model:
   (pipelines+=Pipeline | layouts+=Layout)*;
@@ -15,7 +14,7 @@ Pipeline:
   '}';
 
 Block:
-  'block' name=ID 'oftype' type=BlockType;
+  'block' name=ID 'oftype' type=BlockType AttributesFragment;
 
 Pipe:
   'pipe' '{'
