@@ -1,14 +1,16 @@
-import { LayoutValidator } from '../ast/generated/ast';
-import { SHEET_TYPE, Sheet, TABLE_TYPE, Table } from '../types/io-types';
+import { SHEET_TYPE, TABLE_TYPE } from '../types/io-types';
 
-import { BlockMetaInformation } from './block-meta-inf';
+import { AttributeType, BlockMetaInformation } from './block-meta-inf';
+import { registerBlockMetaInformation } from './meta-inf-util';
 
-export class LayoutValidatorMetaInformation extends BlockMetaInformation<
-  LayoutValidator,
-  Sheet,
-  Table
-> {
-  constructor(block: LayoutValidator) {
-    super(block, SHEET_TYPE, TABLE_TYPE);
+export class LayoutValidatorMetaInformation extends BlockMetaInformation {
+  constructor() {
+    super('LayoutValidator', SHEET_TYPE, TABLE_TYPE, {
+      layout: {
+        type: AttributeType.LAYOUT,
+      },
+    });
   }
 }
+
+registerBlockMetaInformation(new LayoutValidatorMetaInformation());

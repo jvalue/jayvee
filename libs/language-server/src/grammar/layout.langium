@@ -10,10 +10,13 @@ Section:
 
 ColumnSection:
   // Uses ID as terminal for columnId because an additional terminal would conflict with ID
-  'column' columnId=ID ':' type=Type ';';
+  'column' columnId=ID TypeFragment;
 
 HeaderRowSection:
-  'header' 'row' rowId=INT ':' type=Type ';';
+  'header' 'row' rowId=INT TypeFragment;
+
+fragment TypeFragment:
+  ':' type=Type ';';
 
 Type returns string:
   'text' | 'decimal' | 'integer' | 'boolean';
