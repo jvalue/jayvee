@@ -1,34 +1,23 @@
 import 'terminals';
 import 'layout';
 
-interface StringAttribute {
-  value: StringAttributeValue
-}
+fragment AttributesFragment:
+  '{' (attributes+=Attribute)* '}';
 
-interface IntAttribute {
-  value: IntAttributeValue
-}
+Attribute:
+  name=(ID | 'layout') ':' value=(AttributeValue | RuntimeParameter) ';';
 
-fragment StringAttributeFragment:
-  ':' value=StringAttributeValue ';';
-
-StringAttributeValue:
-  StringValue | RuntimeParameter;
+AttributeValue:
+  StringValue | IntValue | LayoutReferenceValue;
 
 StringValue:
   value=STRING;
 
-fragment IntAttributeFragment:
-  ':' value=IntAttributeValue ';';
-
-IntAttributeValue:
-  IntValue | RuntimeParameter;
-
 IntValue:
   value=INT;
 
-fragment LayoutAttributeFragment:
-  ':' value=[Layout] ';';
+LayoutReferenceValue:
+  value=[Layout];
 
 RuntimeParameter:
   'requires' name=ID;

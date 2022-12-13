@@ -38,7 +38,7 @@ export class PipeValidator implements JayveeValidator {
     if (!fromBlockMetaInf.canBeConnectedTo(toBlockMetaInf)) {
       accept(
         'error',
-        `The output of block ${fromBlock.type.$type} is incompatible with the input of block ${toBlock.type.$type}`,
+        `The output of block ${fromBlock.type} is incompatible with the input of block ${toBlock.type}`,
         {
           node: pipe,
         },

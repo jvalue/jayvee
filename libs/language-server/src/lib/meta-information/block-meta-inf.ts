@@ -1,28 +1,34 @@
 import { BlockType } from '../ast/generated/ast';
 import { IOType, UNDEFINED_TYPE } from '../types/io-types';
 
-export abstract class BlockMetaInformation<
-  B extends BlockType,
-  InType = unknown,
-  OutType = unknown,
-> {
+export enum AttributeType {
+  STRING = 'string',
+  INT = 'integer',
+  LAYOUT = 'layout',
+}
+
+export interface AttributeSpecification {
+  type: AttributeType;
+  defaultValue?: unknown;
+}
+
+export abstract class BlockMetaInformation {
   protected constructor(
-    readonly block: B,
-    readonly inputDataType: IOType<InType>,
-    readonly outputDataType: IOType<OutType>,
+    readonly blockType: BlockType,
+    readonly inputType: IOType,
+    readonly outputType: IOType,
+    readonly attributes: Record<string, AttributeSpecification>,
   ) {}
 
-  canBeConnectedTo<T extends BlockType>(
-    blockAfter: BlockMetaInformation<T>,
-  ): boolean {
-    return this.outputDataType === blockAfter.inputDataType;
+  canBeConnectedTo(blockAfter: BlockMetaInformation): boolean {
+    return this.outputType === blockAfter.inputType;
   }
 
   hasInput(): boolean {
-    return this.inputDataType !== UNDEFINED_TYPE;
+    return this.inputType !== UNDEFINED_TYPE;
   }
 
   hasOutput(): boolean {
-    return this.outputDataType !== UNDEFINED_TYPE;
+    return this.outputType !== UNDEFINED_TYPE;
   }
 }
