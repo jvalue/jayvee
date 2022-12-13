@@ -1,9 +1,9 @@
 import {
+  AttributeType,
   Model,
   RuntimeParameter,
-  isIntAttribute,
+  getMetaInformation,
   isRuntimeParameter,
-  isStringAttribute,
 } from '@jayvee/language-server';
 import * as E from 'fp-ts/lib/Either';
 import { streamAst } from 'langium';
@@ -81,21 +81,36 @@ function parseParameterAsMatchingType(
   value: string,
   requiredParameter: RuntimeParameter,
 ): R.Result<string | number | boolean> {
-  const requiredType = requiredParameter.$container;
-  if (isStringAttribute(requiredType)) {
-    return R.ok(value);
+  const block = requiredParameter.$container.$container;
+  const metaInf = getMetaInformation(block.type);
+  const attributeName = requiredParameter.$container.name;
+
+  const attributeEntry = Object.entries(metaInf.attributes).find(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    ([name, _]) => name === attributeName,
+  );
+  if (attributeEntry === undefined) {
+    throw new Error('TODO');
   }
-  if (isIntAttribute(requiredType)) {
-    if (!/^[0-9]+$/.test(value)) {
-      return R.err({
-        message: `Runtime parameter ${
-          requiredParameter.name
-        } has value ${JSON.stringify(value)} but should be of type integer.`,
-        hint: 'Use an integer value instead.',
-        cstNode: requiredParameter.$container.$cstNode,
-      });
-    }
-    return R.ok(Number.parseInt(value, 10));
+  const requiredType = attributeEntry[1].type;
+
+  switch (requiredType) {
+    case AttributeType.STRING:
+      return R.ok(value);
+    case AttributeType.INT:
+      if (!/^[0-9]+$/.test(value)) {
+        return R.err({
+          message: `Runtime parameter ${
+            requiredParameter.name
+          } has value ${JSON.stringify(value)} but should be of type integer.`,
+          hint: 'Use an integer value instead.',
+          cstNode: requiredParameter.$container.$cstNode,
+        });
+      }
+      return R.ok(Number.parseInt(value, 10));
+    case AttributeType.LAYOUT:
+      throw new Error('TODO');
+    default:
+      assertUnreachable(requiredType);
   }
-  assertUnreachable(requiredType);
 }
