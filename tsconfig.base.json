@@ -22,7 +22,8 @@
     "strictNullChecks": true,
     "baseUrl": ".",
     "paths": {
-      "@jayvee/language-server": ["libs/language-server/src/index.ts"]
+      "@jayvee/language-server": ["libs/language-server/src/index.ts"],
+      "@jayvee/monaco-editor": ["libs/monaco-editor/src/index.ts"]
     }
   }
 }
