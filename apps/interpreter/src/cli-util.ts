@@ -18,7 +18,7 @@ export async function extractDocument(
         `Please choose a file with one of these extensions: ${extensions.toString()}.`,
       ),
     );
-    process.exit(1);
+    process.exit(2);
   }
 
   if (!fs.existsSync(fileName)) {
