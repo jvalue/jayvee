@@ -1,6 +1,5 @@
 import {
   Block,
-  BlockType,
   Model,
   Pipeline,
   collectChildren,
@@ -8,22 +7,13 @@ import {
   collectStartingBlocks,
   createJayveeServices,
   getBlocksInTopologicalSorting,
-  isCSVFileExtractor,
-  isLayoutValidator,
-  isPostgresLoader,
-  isSQLiteLoader,
 } from '@jayvee/language-server';
 import * as E from 'fp-ts/lib/Either';
-import { assertUnreachable } from 'langium/lib/utils/errors';
 import { NodeFileSystem } from 'langium/node';
 
 import { extractAstNode, printError } from './cli-util';
-import { BlockExecutor } from './executors/block-executor';
-import { CSVFileExtractorExecutor } from './executors/csv-file-extractor-executor';
+import { getBlockExecutor } from './executors/block-executor-util';
 import * as R from './executors/execution-result';
-import { LayoutValidatorExecutor } from './executors/layout-validator-executor';
-import { PostgresLoaderExecutor } from './executors/postgres-loader-executor';
-import { SQLiteLoaderExecutor } from './executors/sqlite-loader-executor';
 import {
   extractRequiredRuntimeParameters,
   extractRuntimeParameters,
@@ -87,8 +77,8 @@ async function runPipeline(
       });
 
     for (const blockData of executionOrder) {
-      const blockExecutor = getExecutor(
-        blockData.block.type,
+      const blockExecutor = getBlockExecutor(
+        blockData.block,
         runtimeParameters,
       );
       const parentData = collectParents(blockData.block).map((parent) =>
@@ -125,7 +115,7 @@ export function printPipeline(
 ) {
   const toString = (block: Block, depth = 0): string => {
     const blockString = `${'\t'.repeat(depth)} -> ${block.name} (${
-      block.type.$type
+      block.type
     })`;
     const childString = collectChildren(block)
       .map((child) => toString(child, depth + 1))
@@ -151,23 +141,4 @@ export function printPipeline(
   for (const block of collectStartingBlocks(pipeline)) {
     printCallback(toString(block, 1));
   }
-}
-
-export function getExecutor(
-  blockType: BlockType,
-  runtimeParameters: Map<string, string | number | boolean>,
-): BlockExecutor<BlockType> {
-  if (isCSVFileExtractor(blockType)) {
-    return new CSVFileExtractorExecutor(blockType, runtimeParameters);
-  }
-  if (isLayoutValidator(blockType)) {
-    return new LayoutValidatorExecutor(blockType, runtimeParameters);
-  }
-  if (isPostgresLoader(blockType)) {
-    return new PostgresLoaderExecutor(blockType, runtimeParameters);
-  }
-  if (isSQLiteLoader(blockType)) {
-    return new SQLiteLoaderExecutor(blockType, runtimeParameters);
-  }
-  assertUnreachable(blockType);
 }

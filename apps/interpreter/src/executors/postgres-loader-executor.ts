@@ -1,14 +1,5 @@
-import {
-  PostgresLoader,
-  PostgresLoaderMetaInformation,
-  Table,
-} from '@jayvee/language-server';
+import { Table } from '@jayvee/language-server';
 import { Client } from 'pg';
-
-import {
-  getIntAttributeValue,
-  getStringAttributeValue,
-} from '../attribute-util';
 
 import { BlockExecutor } from './block-executor';
 import * as R from './execution-result';
@@ -18,23 +9,26 @@ import {
   buildInsertValuesStatement,
 } from './sql-util';
 
-export class PostgresLoaderExecutor extends BlockExecutor<
-  PostgresLoader,
-  Table,
-  void,
-  PostgresLoaderMetaInformation
-> {
-  override async execute(input: Table): Promise<R.Result<void>> {
-    const clientResult = this.createPgClient();
-    if (R.isErr(clientResult)) {
-      return clientResult;
-    }
-    const client = R.okData(clientResult);
+export class PostgresLoaderExecutor extends BlockExecutor<Table, void> {
+  constructor() {
+    super('PostgresLoader');
+  }
 
-    const table = getStringAttributeValue(
-      this.block.table.value,
-      this.runtimeParameters,
-    );
+  override async execute(input: Table): Promise<R.Result<void>> {
+    const host = this.getStringAttributeValue('host');
+    const port = this.getIntAttributeValue('port');
+    const user = this.getStringAttributeValue('username');
+    const password = this.getStringAttributeValue('password');
+    const database = this.getStringAttributeValue('database');
+    const table = this.getStringAttributeValue('table');
+
+    const client = new Client({
+      host,
+      port,
+      user,
+      password,
+      database,
+    });
 
     try {
       await client.connect();
@@ -55,42 +49,5 @@ export class PostgresLoaderExecutor extends BlockExecutor<
     } finally {
       await client.end();
     }
-  }
-
-  private createPgClient(): R.Result<Client> {
-    const host = getStringAttributeValue(
-      this.block.host.value,
-      this.runtimeParameters,
-    );
-
-    const port = getIntAttributeValue(
-      this.block.port.value,
-      this.runtimeParameters,
-    );
-
-    const user = getStringAttributeValue(
-      this.block.username.value,
-      this.runtimeParameters,
-    );
-
-    const password = getStringAttributeValue(
-      this.block.password.value,
-      this.runtimeParameters,
-    );
-
-    const database = getStringAttributeValue(
-      this.block.database.value,
-      this.runtimeParameters,
-    );
-
-    return R.ok(
-      new Client({
-        host,
-        port,
-        user,
-        password,
-        database,
-      }),
-    );
   }
 }

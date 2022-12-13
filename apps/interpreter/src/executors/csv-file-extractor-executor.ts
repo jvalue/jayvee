@@ -2,32 +2,19 @@ import * as http from 'https';
 
 import { parseString as parseStringAsCsv } from '@fast-csv/parse';
 import { ParserOptionsArgs } from '@fast-csv/parse/build/src/ParserOptions';
-import {
-  CSVFileExtractor,
-  CSVFileExtractorMetaInformation,
-  Sheet,
-} from '@jayvee/language-server';
-
-import { getStringAttributeValue } from '../attribute-util';
+import { Sheet } from '@jayvee/language-server';
 
 import { BlockExecutor } from './block-executor';
 import * as R from './execution-result';
 
-export class CSVFileExtractorExecutor extends BlockExecutor<
-  CSVFileExtractor,
-  void,
-  Sheet,
-  CSVFileExtractorMetaInformation
-> {
-  private readonly DEFAULT_DELIMITER = ',';
+export class CSVFileExtractorExecutor extends BlockExecutor<void, Sheet> {
+  constructor() {
+    super('CSVFileExtractor');
+  }
 
   override async execute(): Promise<R.Result<Sheet>> {
-    const url = getStringAttributeValue(
-      this.block.url.value,
-      this.runtimeParameters,
-    );
-
-    const delimiter = this.getDelimiter();
+    const url = this.getStringAttributeValue('url');
+    const delimiter = this.getStringAttributeValue('delimiter');
 
     try {
       const raw = await R.dataOrThrowAsync(this.fetchRawData(url));
@@ -43,16 +30,6 @@ export class CSVFileExtractorExecutor extends BlockExecutor<
       }
       throw errorObj;
     }
-  }
-
-  private getDelimiter(): string {
-    if (this.block.delimiter === undefined) {
-      return this.DEFAULT_DELIMITER;
-    }
-    return getStringAttributeValue(
-      this.block.delimiter.value,
-      this.runtimeParameters,
-    );
   }
 
   private fetchRawData(url: string): Promise<R.Result<string>> {
