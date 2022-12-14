@@ -5,6 +5,13 @@
   "projectType": "application",
   "targets": {
     "build": {
+      "dependsOn": ["build-base"],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": []
+      }
+    },
+    "build-base": {
       "executor": "@nrwl/esbuild:esbuild",
       "options": {
         "tsConfig": "apps/vs-code-extension/tsconfig.app.json",

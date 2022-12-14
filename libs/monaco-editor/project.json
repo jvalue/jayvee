@@ -12,6 +12,13 @@
       }
     },
     "build": {
+      "dependsOn": ["build-base"],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": []
+      }
+    },
+    "build-base": {
       "executor": "@nrwl/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
