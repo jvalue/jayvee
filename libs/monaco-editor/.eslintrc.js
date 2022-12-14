@@ -16,7 +16,10 @@ module.exports = {
     },
     {
       files: ['*.ts', '*.tsx'],
-      rules: {},
+      rules: {
+        'import/no-unresolved': 'off',
+        'react/jsx-no-useless-fragment': 'off',
+      },
     },
     {
       files: ['*.js', '*.jsx'],
