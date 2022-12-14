@@ -42,7 +42,7 @@ You might have to adjust the paths to the files.
 
 Now, run `npm install`.
 
-> Tip: Whenever you create a new version of the packages using `npm pack`, you have to install them again. This sometimes results in errors regarding the package integrity, because the two packages will contain new content, leading to a new hash. A fairly easy way to deal with this is to uninstall the two packages (i.e. to remove them from the dependencies and to call `npm install`), and then to re-install them. If you need to do this frequently, you could also symlink the packages directly, but this might require you to install the peer dependencies manually.
+> Tip: Whenever you create a new version of the packages using `npm pack`, you have to install them again. This sometimes results in errors regarding the package integrity, because the two packages will contain new content, leading to a new hash. A fairly easy way to deal with this is to uninstall the two packages (i.e. to remove them from the dependencies and to call `npm install`), and then to re-install them. If you need to do this frequently, you could also symlink the packages directly, but this might require you to install the peer dependencies manually. Another important point: CreateReactApp seems to cache the build output a bit too aggressively in some cases. After installing a new version of the package, you might need to delete `node_modules/.cache/`.
 
 ### Usage
 
