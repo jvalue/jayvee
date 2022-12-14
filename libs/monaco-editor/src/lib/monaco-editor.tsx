@@ -40,6 +40,23 @@ interface Props {
 
   editorText: string;
   onDidChangeEditorText: (newText: string) => void;
+
+  /**
+   * Settings that will be passed to the constructor of the Monaco editor.
+   * These settings can be used to control the appearance of the editor.
+   *
+   * For instance, you can set the color theme of the editor using the following configuration:
+   *
+   * ``` ts
+   * {
+   *  theme: 'vs-dark'
+   * }
+   * ```
+   *
+   * A good starting point for experimenting with the editor options is the Monaco Playground, see
+   * https://microsoft.github.io/monaco-editor/playground.html
+   */
+  editorConfig?: monaco.editor.IStandaloneEditorConstructionOptions;
 }
 
 export const MonacoEditor: React.FC<Props> = (props) => {
@@ -97,19 +114,23 @@ export const MonacoWrapper: React.FC<Props> = (props) => {
       return;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const editor = monaco.editor.create(containerRef.current!, {
-      model: state.model,
-      theme: 'vs-light',
+    const defaultEditorConfig: monaco.editor.IStandaloneEditorConstructionOptions =
+      {
+        model: state.model,
+        theme: 'vs-light',
 
-      // Make sure that the editor is automatically resized when the container is resized.
-      automaticLayout: true,
-    });
+        // Make sure that the editor is automatically resized when the container is resized.
+        automaticLayout: true,
+      };
+    const editorConfig = { ...defaultEditorConfig, ...props.editorConfig };
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const editor = monaco.editor.create(containerRef.current!, editorConfig);
 
     return () => {
       editor.dispose();
     };
-  }, [state.model]);
+  }, [props.editorConfig, state.model]);
 
   const containerRef = React.useRef<HTMLDivElement>(null);
 
