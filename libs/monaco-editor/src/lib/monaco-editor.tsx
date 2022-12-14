@@ -101,6 +101,9 @@ export const MonacoWrapper: React.FC<Props> = (props) => {
     const editor = monaco.editor.create(containerRef.current!, {
       model: state.model,
       theme: 'vs-light',
+
+      // Make sure that the editor is automatically resized when the container is resized.
+      automaticLayout: true,
     });
 
     return () => {
