@@ -19,6 +19,7 @@
       }
     },
     "build-base": {
+      "dependsOn": ["^build"],
       "executor": "@nrwl/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {

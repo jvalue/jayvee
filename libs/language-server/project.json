@@ -20,6 +20,7 @@
       }
     },
     "build-base": {
+      "dependsOn": ["^build"],
       "executor": "@nrwl/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {

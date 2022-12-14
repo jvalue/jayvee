@@ -14,10 +14,6 @@
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
     },
-    "build-base": {
-      "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
-    },
     "test": {
       "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
     },
