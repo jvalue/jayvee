@@ -15,7 +15,7 @@
       "dependsOn": ["build-base"],
       "executor": "nx:run-commands",
       "options": {
-        "commands": []
+        "commands": ["node libs/monaco-editor/transform-build-output.js"]
       }
     },
     "build-base": {
