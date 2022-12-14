@@ -7,7 +7,7 @@
     "build": "nx run-many --target build",
     "lint": "nx run-many --target lint --max-warnings 0",
     "test": "nx run-many --target test",
-    "generate": "nx run language-server:generate",
+    "generate": "nx run @jayvee/language-server:generate",
     "example:cars": "nx run interpreter:run example/cars.jv",
     "example:gas": "nx run interpreter:run -e DB_HOST=localhost -e DB_PORT=5432 -e DB_USERNAME=postgres -e DB_PASSWORD=postgres -e DB_DATABASE=postgres -e DB_TABLE=GasReserve example/gas.jv"
   },
