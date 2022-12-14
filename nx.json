@@ -15,7 +15,7 @@
       "inputs": ["production", "^production"]
     },
     "build-base": {
-      "dependsOn": ["^build-base"],
+      "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
     },
     "test": {
