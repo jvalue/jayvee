@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'vs-code-extension',
   preset: '../../jest.preset.js',

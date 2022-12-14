@@ -1,5 +1,5 @@
 {
-  "name": "language-server",
+  "name": "@jayvee/language-server",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/language-server/src",
   "projectType": "library",
@@ -13,6 +13,14 @@
       }
     },
     "build": {
+      "dependsOn": ["build-base"],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["node libs/language-server/transform-build-output.js"]
+      }
+    },
+    "build-base": {
+      "dependsOn": ["^build"],
       "executor": "@nrwl/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
