@@ -85,14 +85,13 @@ function parseParameterAsMatchingType(
   const metaInf = getMetaInformation(block.type);
   const attributeName = requiredParameter.$container.name;
 
-  const attributeEntry = Object.entries(metaInf.attributes).find(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    ([name, _]) => name === attributeName,
-  );
-  if (attributeEntry === undefined) {
-    throw new Error('TODO');
+  const attributeSpec = metaInf.getAttributeSpecification(attributeName);
+  if (attributeSpec === undefined) {
+    throw new Error(
+      `Attribute with name "${attributeName}" is not allowed in a block of type ${block.type}`,
+    );
   }
-  const requiredType = attributeEntry[1].type;
+  const requiredType = attributeSpec.type;
 
   switch (requiredType) {
     case AttributeType.STRING:

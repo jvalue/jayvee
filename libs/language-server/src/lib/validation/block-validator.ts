@@ -38,9 +38,8 @@ export class BlockValidator implements JayveeValidator {
     accept: ValidationAcceptor,
   ): void {
     const blockMetaInf = getMetaInformation(block.type);
-    const validAttributeNames = Object.keys(blockMetaInf.attributes);
     for (const attribute of block.attributes) {
-      if (!validAttributeNames.includes(attribute.name)) {
+      if (!blockMetaInf.hasAttributeSpecification(attribute.name)) {
         accept('error', `Invalid attribute name "${attribute.name}".`, {
           node: attribute,
           property: 'name',
@@ -82,7 +81,9 @@ export class BlockValidator implements JayveeValidator {
     const blockMetaInf = getMetaInformation(block.type);
 
     for (const attribute of block.attributes) {
-      const attributeSpec = blockMetaInf.attributes[attribute.name];
+      const attributeSpec = blockMetaInf.getAttributeSpecification(
+        attribute.name,
+      );
       if (attributeSpec !== undefined) {
         const attributeType = attributeSpec.type;
         const attributeValue = attribute.value;
@@ -145,15 +146,12 @@ export class BlockValidator implements JayveeValidator {
     accept: ValidationAcceptor,
   ): void {
     const blockMetaInf = getMetaInformation(block.type);
+    const expectedAttributeNames = blockMetaInf.getRequiredAttributeNames();
 
-    const expectedAttributeNames = Object.entries(blockMetaInf.attributes)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .filter(([_, attributeSpec]) => attributeSpec.defaultValue === undefined)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .map(([name, _]) => name);
     const actualAttributeNames = block.attributes.map(
       (attribute) => attribute.name,
     );
+
     const absentAttributeNames = expectedAttributeNames.filter(
       (expectedName) => !actualAttributeNames.includes(expectedName),
     );
