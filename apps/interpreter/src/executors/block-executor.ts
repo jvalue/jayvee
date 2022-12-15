@@ -3,11 +3,10 @@ import {
   BlockType,
   Layout,
   getMetaInformation,
-  isIntValue,
-  isLayoutReferenceValue,
+  isLayout,
   isRuntimeParameter,
-  isStringValue,
 } from '@jayvee/language-server';
+import { isReference } from 'langium';
 
 import * as R from './execution-result';
 
@@ -52,72 +51,37 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
 
   abstract execute(input: InputType): Promise<R.Result<OutputType>>;
 
-  protected getLayoutAttributeValue(attributeName: string): Layout {
-    const attribute = this.block.attributes.find(
-      (attribute) => attribute.name === attributeName,
-    );
-    if (attribute === undefined) {
-      throw new Error(
-        `The block "${this.block.name}" of type ${this.block.type} is missing a required attribute called "${attributeName}"`,
-      );
-    }
-    const attributeValue = attribute.value;
-
-    if (isLayoutReferenceValue(attributeValue)) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      return attributeValue.value.ref!;
-    }
-    throw new Error(
-      `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type layout`,
-    );
-  }
-
   protected getStringAttributeValue(attributeName: string): string {
-    const attribute = this.block.attributes.find(
-      (attribute) => attribute.name === attributeName,
-    );
-    if (attribute === undefined) {
-      const metaInf = getMetaInformation(this.blockType);
-      const attributeSpec = metaInf.getAttributeSpecification(attributeName);
-      if (attributeSpec === undefined) {
-        throw new Error(
-          `Attribute with name "${attributeName}" is not allowed in a block of type ${this.blockType}`,
-        );
-      }
-      const defaultValue = attributeSpec.defaultValue;
-      if (defaultValue !== undefined) {
-        if (typeof defaultValue !== 'string') {
-          throw new Error(
-            `The default value for attribute "${attributeName}" of block type "${this.block.type}" is unexpectedly not of type string`,
-          );
-        }
-        return defaultValue;
-      }
-
+    const attributeValue = this.getAttributeValue(attributeName);
+    if (typeof attributeValue !== 'string') {
       throw new Error(
-        `The block "${this.block.name}" of type ${this.block.type} is missing a required attribute called "${attributeName}"`,
+        `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type string`,
       );
     }
-    const attributeValue = attribute.value;
-
-    if (isRuntimeParameter(attributeValue)) {
-      const parameterValue = this.runtimeParameters.get(attributeValue.name);
-      if (typeof parameterValue !== 'string') {
-        throw Error(
-          `Runtime parameter ${attributeValue.name} is unexpectedly not of type string.`,
-        );
-      }
-      return parameterValue;
-    }
-    if (isStringValue(attributeValue)) {
-      return attributeValue.value;
-    }
-    throw new Error(
-      `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type string`,
-    );
+    return attributeValue;
   }
 
   protected getIntAttributeValue(attributeName: string): number {
+    const attributeValue = this.getAttributeValue(attributeName);
+    if (typeof attributeValue !== 'number') {
+      throw new Error(
+        `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type string`,
+      );
+    }
+    return attributeValue;
+  }
+
+  protected getLayoutAttributeValue(attributeName: string): Layout {
+    const attributeValue = this.getAttributeValue(attributeName);
+    if (!isLayout(attributeValue)) {
+      throw new Error(
+        `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type layout`,
+      );
+    }
+    return attributeValue;
+  }
+
+  private getAttributeValue(attributeName: string): unknown {
     const attribute = this.block.attributes.find(
       (attribute) => attribute.name === attributeName,
     );
@@ -130,35 +94,23 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
         );
       }
       const defaultValue = attributeSpec.defaultValue;
-      if (defaultValue !== undefined) {
-        if (typeof defaultValue !== 'number') {
-          throw new Error(
-            `The default value for attribute "${attributeName}" of block type "${this.block.type}" is unexpectedly not of type number`,
-          );
-        }
-        return defaultValue;
+      if (defaultValue === undefined) {
+        throw new Error(
+          `The block "${this.block.name}" of type ${this.block.type} is missing a required attribute called "${attributeName}"`,
+        );
       }
-
-      throw new Error(
-        `The block "${this.block.name}" of type ${this.block.type} is missing a required attribute called "${attributeName}"`,
-      );
+      return defaultValue;
     }
     const attributeValue = attribute.value;
 
     if (isRuntimeParameter(attributeValue)) {
-      const parameterValue = this.runtimeParameters.get(attributeValue.name);
-      if (typeof parameterValue !== 'number') {
-        throw Error(
-          `Runtime parameter ${attributeValue.name} is unexpectedly not of type number.`,
-        );
-      }
-      return parameterValue;
+      return this.runtimeParameters.get(attributeValue.name);
     }
-    if (isIntValue(attributeValue)) {
-      return attributeValue.value;
+    const value = attributeValue.value;
+    if (isReference(value)) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      return value.ref!;
     }
-    throw new Error(
-      `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type number`,
-    );
+    return value;
   }
 }
