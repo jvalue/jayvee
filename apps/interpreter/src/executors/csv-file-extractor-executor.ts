@@ -5,7 +5,7 @@ import { ParserOptionsArgs } from '@fast-csv/parse/build/src/ParserOptions';
 import { Sheet } from '@jayvee/language-server';
 
 import { BlockExecutor } from './block-executor';
-import * as R from './execution-result';
+import * as R from './utils/execution-result';
 
 export class CSVFileExtractorExecutor extends BlockExecutor<void, Sheet> {
   constructor() {

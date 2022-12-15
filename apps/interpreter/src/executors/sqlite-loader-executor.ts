@@ -2,12 +2,12 @@ import { Table } from '@jayvee/language-server';
 import * as sqlite3 from 'sqlite3';
 
 import { BlockExecutor } from './block-executor';
-import * as R from './execution-result';
+import * as R from './utils/execution-result';
 import {
   buildCreateTableStatement,
   buildDropTableStatement,
   buildInsertValuesStatement,
-} from './sql-util';
+} from './utils/sql-util';
 
 export class SQLiteLoaderExecutor extends BlockExecutor<Table, void> {
   constructor() {

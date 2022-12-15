@@ -5,7 +5,7 @@ import * as chalk from 'chalk';
 import { AstNode, CstNode, LangiumDocument, LangiumServices } from 'langium';
 import { URI } from 'vscode-uri';
 
-import { ExecutionErrorDetails } from './executors/execution-result';
+import { ExecutionErrorDetails } from './executors/utils/execution-result';
 
 export async function extractDocument(
   fileName: string,
