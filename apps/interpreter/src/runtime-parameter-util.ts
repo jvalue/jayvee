@@ -97,7 +97,7 @@ function parseParameterAsMatchingType(
     case AttributeType.STRING:
       return R.ok(value);
     case AttributeType.INT:
-      if (!/^[0-9]+$/.test(value)) {
+      if (!/^[1-9][0-9]*$/.test(value)) {
         return R.err({
           message: `Runtime parameter ${
             requiredParameter.name
