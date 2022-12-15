@@ -1,3 +1,5 @@
+import { strict as assert } from 'assert';
+
 import {
   Block,
   BlockType,
@@ -17,20 +19,20 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
   protected constructor(readonly blockType: BlockType) {}
 
   get block(): Block {
-    if (this._block === undefined) {
-      throw new Error(
-        `No block was set for the executor of block type ${this.blockType}`,
-      );
-    }
+    assert(
+      this._block !== undefined,
+      `No block was set for the executor of block type ${this.blockType}`,
+    );
+
     return this._block;
   }
 
   set block(block: Block) {
-    if (block.type !== this.blockType) {
-      throw new Error(
-        `The provided block does not match the desired type: expected ${this.blockType}, actual ${block.type}`,
-      );
-    }
+    assert(
+      block.type === this.blockType,
+      `The provided block does not match the desired type: expected ${this.blockType}, actual ${block.type}`,
+    );
+
     this._block = block;
   }
 
@@ -41,11 +43,11 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
   }
 
   get runtimeParameters(): Map<string, string | number | boolean> {
-    if (this._runtimeParameters === undefined) {
-      throw new Error(
-        `No runtime parameters were set for the executor of block type ${this.blockType}`,
-      );
-    }
+    assert(
+      this._runtimeParameters !== undefined,
+      `No runtime parameters were set for the executor of block type ${this.blockType}`,
+    );
+
     return this._runtimeParameters;
   }
 
@@ -53,31 +55,31 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
 
   protected getStringAttributeValue(attributeName: string): string {
     const attributeValue = this.getAttributeValue(attributeName);
-    if (typeof attributeValue !== 'string') {
-      throw new Error(
-        `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type string`,
-      );
-    }
+    assert(
+      typeof attributeValue === 'string',
+      `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type string`,
+    );
+
     return attributeValue;
   }
 
   protected getIntAttributeValue(attributeName: string): number {
     const attributeValue = this.getAttributeValue(attributeName);
-    if (typeof attributeValue !== 'number') {
-      throw new Error(
-        `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type string`,
-      );
-    }
+    assert(
+      typeof attributeValue === 'number',
+      `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type string`,
+    );
+
     return attributeValue;
   }
 
   protected getLayoutAttributeValue(attributeName: string): Layout {
     const attributeValue = this.getAttributeValue(attributeName);
-    if (!isLayout(attributeValue)) {
-      throw new Error(
-        `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type layout`,
-      );
-    }
+    assert(
+      isLayout(attributeValue),
+      `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type layout`,
+    );
+
     return attributeValue;
   }
 
@@ -88,17 +90,17 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
     if (attribute === undefined) {
       const metaInf = getMetaInformation(this.blockType);
       const attributeSpec = metaInf.getAttributeSpecification(attributeName);
-      if (attributeSpec === undefined) {
-        throw new Error(
-          `Attribute with name "${attributeName}" is not allowed in a block of type ${this.blockType}`,
-        );
-      }
+      assert(
+        attributeSpec !== undefined,
+        `Attribute with name "${attributeName}" is not allowed in a block of type ${this.blockType}`,
+      );
+
       const defaultValue = attributeSpec.defaultValue;
-      if (defaultValue === undefined) {
-        throw new Error(
-          `The block "${this.block.name}" of type ${this.block.type} is missing a required attribute called "${attributeName}"`,
-        );
-      }
+      assert(
+        defaultValue !== undefined,
+        `The block "${this.block.name}" of type ${this.block.type} is missing a required attribute called "${attributeName}"`,
+      );
+
       return defaultValue;
     }
     const attributeValue = attribute.value;
