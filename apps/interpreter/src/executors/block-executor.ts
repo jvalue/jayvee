@@ -78,16 +78,13 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
     );
     if (attribute === undefined) {
       const metaInf = getMetaInformation(this.blockType);
-      const attributeEntry = Object.entries(metaInf.attributes).find(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        ([name, _]) => name === attributeName,
-      );
-      if (attributeEntry === undefined) {
+      const attributeSpec = metaInf.getAttributeSpecification(attributeName);
+      if (attributeSpec === undefined) {
         throw new Error(
           `Attribute with name "${attributeName}" is not allowed in a block of type ${this.blockType}`,
         );
       }
-      const defaultValue = attributeEntry[1].defaultValue;
+      const defaultValue = attributeSpec.defaultValue;
       if (defaultValue !== undefined) {
         // TODO make it safer
         return defaultValue as string;
@@ -122,16 +119,13 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
     );
     if (attribute === undefined) {
       const metaInf = getMetaInformation(this.blockType);
-      const attributeEntry = Object.entries(metaInf.attributes).find(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        ([name, _]) => name === attributeName,
-      );
-      if (attributeEntry === undefined) {
+      const attributeSpec = metaInf.getAttributeSpecification(attributeName);
+      if (attributeSpec === undefined) {
         throw new Error(
           `Attribute with name "${attributeName}" is not allowed in a block of type ${this.blockType}`,
         );
       }
-      const defaultValue = attributeEntry[1].defaultValue;
+      const defaultValue = attributeSpec.defaultValue;
       if (defaultValue !== undefined) {
         // TODO make it safer
         return defaultValue as number;
