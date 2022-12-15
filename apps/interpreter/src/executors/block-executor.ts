@@ -15,7 +15,7 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
   private _block?: Block;
   private _runtimeParameters?: Map<string, string | number | boolean>;
 
-  constructor(readonly blockType: BlockType) {}
+  protected constructor(readonly blockType: BlockType) {}
 
   get block(): Block {
     if (this._block === undefined) {
@@ -86,8 +86,12 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
       }
       const defaultValue = attributeSpec.defaultValue;
       if (defaultValue !== undefined) {
-        // TODO make it safer
-        return defaultValue as string;
+        if (typeof defaultValue !== 'string') {
+          throw new Error(
+            `The default value for attribute "${attributeName}" of block type "${this.block.type}" is unexpectedly not of type string`,
+          );
+        }
+        return defaultValue;
       }
 
       throw new Error(
@@ -127,8 +131,12 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
       }
       const defaultValue = attributeSpec.defaultValue;
       if (defaultValue !== undefined) {
-        // TODO make it safer
-        return defaultValue as number;
+        if (typeof defaultValue !== 'number') {
+          throw new Error(
+            `The default value for attribute "${attributeName}" of block type "${this.block.type}" is unexpectedly not of type number`,
+          );
+        }
+        return defaultValue;
       }
 
       throw new Error(
