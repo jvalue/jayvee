@@ -12,8 +12,9 @@ import * as E from 'fp-ts/lib/Either';
 import { NodeFileSystem } from 'langium/node';
 
 import { extractAstNode, printError } from './cli-util';
-import { getBlockExecutor } from './executors/block-executor-util';
-import * as R from './executors/execution-result';
+import { registerBlockExecutors } from './executors/setup';
+import { createBlockExecutor } from './executors/utils/block-executor-registry';
+import * as R from './executors/utils/execution-result';
 import {
   extractRequiredRuntimeParameters,
   extractRuntimeParameters,
@@ -30,6 +31,8 @@ export async function runAction(
 ): Promise<void> {
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   const model = await extractAstNode<Model>(fileName, services);
+
+  registerBlockExecutors();
 
   const requiredRuntimeParameters = extractRequiredRuntimeParameters(model);
   const parameterReadResult = extractRuntimeParameters(
@@ -77,7 +80,7 @@ async function runPipeline(
       });
 
     for (const blockData of executionOrder) {
-      const blockExecutor = getBlockExecutor(
+      const blockExecutor = createBlockExecutor(
         blockData.block,
         runtimeParameters,
       );
