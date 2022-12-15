@@ -1,8 +1,6 @@
 import {
   AbstractDataType,
   ColumnSection,
-  LayoutValidator,
-  LayoutValidatorMetaInformation,
   Sheet,
   Table,
   getDataType,
@@ -16,17 +14,17 @@ import { BlockExecutor } from './block-executor';
 import {
   columnCharactersAsIndex,
   columnIndexAsCharacters,
-} from './column-id-util';
-import * as R from './execution-result';
+} from './utils/column-id-util';
+import * as R from './utils/execution-result';
 
-export class LayoutValidatorExecutor extends BlockExecutor<
-  LayoutValidator,
-  Sheet,
-  Table,
-  LayoutValidatorMetaInformation
-> {
+export class LayoutValidatorExecutor extends BlockExecutor<Sheet, Table> {
+  constructor() {
+    super('LayoutValidator');
+  }
+
   override execute(input: Sheet): Promise<R.Result<Table>> {
-    const sections = this.block.layout.value.ref?.sections || [];
+    const layout = this.getLayoutAttributeValue('layout');
+    const sections = layout.sections;
 
     const headerRowSection = sections.find(isHeaderRowSection);
 

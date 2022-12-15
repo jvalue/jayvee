@@ -1,7 +1,7 @@
 import { AbstractDataType, Table } from '@jayvee/language-server';
 
-import { SQLColumnTypeVisitor } from '../visitors/SQLColumnTypeVisitor';
-import { SQLValueRepresentationVisitor } from '../visitors/SQLValueRepresentationVisitor';
+import { SQLColumnTypeVisitor } from '../../visitors/SQLColumnTypeVisitor';
+import { SQLValueRepresentationVisitor } from '../../visitors/SQLValueRepresentationVisitor';
 
 export function buildDropTableStatement(tableName: string): string {
   return `DROP TABLE IF EXISTS "${tableName}";`;

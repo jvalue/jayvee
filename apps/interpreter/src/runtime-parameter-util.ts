@@ -1,15 +1,15 @@
 import {
+  AttributeType,
   Model,
   RuntimeParameter,
-  isIntAttribute,
+  getMetaInformation,
   isRuntimeParameter,
-  isStringAttribute,
 } from '@jayvee/language-server';
 import * as E from 'fp-ts/lib/Either';
 import { streamAst } from 'langium';
 import { assertUnreachable } from 'langium/lib/utils/errors';
 
-import * as R from './executors/execution-result';
+import * as R from './executors/utils/execution-result';
 
 /**
  * Extracts all required runtime parameter ast nodes.
@@ -81,21 +81,37 @@ function parseParameterAsMatchingType(
   value: string,
   requiredParameter: RuntimeParameter,
 ): R.Result<string | number | boolean> {
-  const requiredType = requiredParameter.$container;
-  if (isStringAttribute(requiredType)) {
-    return R.ok(value);
+  const block = requiredParameter.$container.$container;
+  const metaInf = getMetaInformation(block.type);
+  const attributeName = requiredParameter.$container.name;
+
+  const attributeSpec = metaInf.getAttributeSpecification(attributeName);
+  if (attributeSpec === undefined) {
+    throw new Error(
+      `Attribute with name "${attributeName}" is not allowed in a block of type ${block.type}`,
+    );
   }
-  if (isIntAttribute(requiredType)) {
-    if (!/^[0-9]+$/.test(value)) {
-      return R.err({
-        message: `Runtime parameter ${
-          requiredParameter.name
-        } has value ${JSON.stringify(value)} but should be of type integer.`,
-        hint: 'Use an integer value instead.',
-        cstNode: requiredParameter.$container.$cstNode,
-      });
-    }
-    return R.ok(Number.parseInt(value, 10));
+  const requiredType = attributeSpec.type;
+
+  switch (requiredType) {
+    case AttributeType.STRING:
+      return R.ok(value);
+    case AttributeType.INT:
+      if (!/^[1-9][0-9]*$/.test(value)) {
+        return R.err({
+          message: `Runtime parameter ${
+            requiredParameter.name
+          } has value ${JSON.stringify(value)} but should be of type integer.`,
+          hint: 'Use an integer value instead.',
+          cstNode: requiredParameter.$container.$cstNode,
+        });
+      }
+      return R.ok(Number.parseInt(value, 10));
+    case AttributeType.LAYOUT:
+      throw new Error(
+        'Runtime parameters are not allowed for attributes of type layout',
+      );
+    default:
+      assertUnreachable(requiredType);
   }
-  assertUnreachable(requiredType);
 }

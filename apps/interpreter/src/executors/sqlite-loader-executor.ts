@@ -1,36 +1,22 @@
-import {
-  SQLiteLoader,
-  SQLiteLoaderMetaInformation,
-  Table,
-} from '@jayvee/language-server';
+import { Table } from '@jayvee/language-server';
 import * as sqlite3 from 'sqlite3';
 
-import { getStringAttributeValue } from '../attribute-util';
-
 import { BlockExecutor } from './block-executor';
-import * as R from './execution-result';
+import * as R from './utils/execution-result';
 import {
   buildCreateTableStatement,
   buildDropTableStatement,
   buildInsertValuesStatement,
-} from './sql-util';
+} from './utils/sql-util';
 
-export class SQLiteLoaderExecutor extends BlockExecutor<
-  SQLiteLoader,
-  Table,
-  void,
-  SQLiteLoaderMetaInformation
-> {
+export class SQLiteLoaderExecutor extends BlockExecutor<Table, void> {
+  constructor() {
+    super('SQLiteLoader');
+  }
+
   override async execute(input: Table): Promise<R.Result<void>> {
-    const file = getStringAttributeValue(
-      this.block.file.value,
-      this.runtimeParameters,
-    );
-
-    const table = getStringAttributeValue(
-      this.block.table.value,
-      this.runtimeParameters,
-    );
+    const file = this.getStringAttributeValue('file');
+    const table = this.getStringAttributeValue('table');
 
     let db: sqlite3.Database | undefined;
 
