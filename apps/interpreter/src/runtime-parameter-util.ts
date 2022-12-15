@@ -108,7 +108,9 @@ function parseParameterAsMatchingType(
       }
       return R.ok(Number.parseInt(value, 10));
     case AttributeType.LAYOUT:
-      throw new Error('TODO');
+      throw new Error(
+        'Runtime parameters are not allowed for attributes of type layout',
+      );
     default:
       assertUnreachable(requiredType);
   }
