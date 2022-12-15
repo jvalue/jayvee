@@ -1,3 +1,5 @@
+import { strict as assert } from 'assert';
+
 import {
   AttributeType,
   Model,
@@ -86,11 +88,11 @@ function parseParameterAsMatchingType(
   const attributeName = requiredParameter.$container.name;
 
   const attributeSpec = metaInf.getAttributeSpecification(attributeName);
-  if (attributeSpec === undefined) {
-    throw new Error(
-      `Attribute with name "${attributeName}" is not allowed in a block of type ${block.type}`,
-    );
-  }
+  assert(
+    attributeSpec !== undefined,
+    `Attribute with name "${attributeName}" is not allowed in a block of type ${block.type}`,
+  );
+
   const requiredType = attributeSpec.type;
 
   switch (requiredType) {
@@ -107,11 +109,13 @@ function parseParameterAsMatchingType(
         });
       }
       return R.ok(Number.parseInt(value, 10));
-    case AttributeType.LAYOUT:
-      throw new Error(
+    default:
+      assert(
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        requiredType !== AttributeType.LAYOUT,
         'Runtime parameters are not allowed for attributes of type layout',
       );
-    default:
+
       assertUnreachable(requiredType);
   }
 }
