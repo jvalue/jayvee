@@ -1,6 +1,4 @@
 {
-  "name": "@jayvee/monaco-editor",
-  "main": "./index.js",
   "bugs": {
     "url": "https://github.com/jvalue/jayvee/issues"
   },

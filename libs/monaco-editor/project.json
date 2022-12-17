@@ -46,6 +46,13 @@
         "jestConfig": "libs/monaco-editor/jest.config.ts",
         "passWithNoTests": true
       }
+    },
+    "publish": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "commands": ["npm publish dist/libs/monaco-editor"]
+      }
     }
   }
 }
