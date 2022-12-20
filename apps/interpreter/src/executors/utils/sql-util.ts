@@ -26,7 +26,7 @@ export function buildInsertValuesStatement(
     .join(',');
 
   return `INSERT INTO "${tableName}" (${input.columnNames
-    .map((columnName) => `"${columnName}"`)
+    .map((columnName) => `"${columnName || 'EMPTY'}"`)
     .join(',')}) VALUES ${valuesStatement}`;
 }
 
@@ -37,7 +37,7 @@ export function buildCreateTableStatement(
   const columnTypeVisitor = new SQLColumnTypeVisitor();
 
   const columnPostgresStatements = input.columnNames
-    .map((columnName) => `"${columnName}"`)
+    .map((columnName) => `"${columnName || 'EMPTY'}"`)
     .map((name, index) => {
       return `${name} ${(
         input.columnTypes[index] as AbstractDataType

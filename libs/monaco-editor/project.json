@@ -1,0 +1,51 @@
+{
+  "name": "@jayvee/monaco-editor",
+  "sourceRoot": "libs/monaco-editor/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/monaco-editor/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "build": {
+      "dependsOn": ["build-base"],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["node libs/monaco-editor/transform-build-output.js"]
+      }
+    },
+    "build-base": {
+      "dependsOn": ["^build"],
+      "executor": "@nrwl/rollup:rollup",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/monaco-editor",
+        "tsConfig": "libs/monaco-editor/tsconfig.lib.json",
+        "project": "libs/monaco-editor/package.json",
+        "entryFile": "libs/monaco-editor/src/index.ts",
+        "external": ["react/jsx-runtime"],
+        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+        "compiler": "babel",
+        "assets": [
+          {
+            "glob": "libs/monaco-editor/README.md",
+            "input": ".",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/monaco-editor/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

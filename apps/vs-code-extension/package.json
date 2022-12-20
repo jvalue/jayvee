@@ -27,7 +27,7 @@
       {
         "language": "jayvee",
         "scopeName": "source.jayvee",
-        "path": "../../libs/language-server/syntaxes/jayvee.tmLanguage.json"
+        "path": "../../libs/language-server/src/syntaxes/jayvee.tmLanguage.json"
       }
     ]
   },

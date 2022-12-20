@@ -1,3 +1,7 @@
 {
-  "recommendations": ["nrwl.angular-console", "langium.langium-vscode"]
+  "recommendations": [
+    "nrwl.angular-console",
+    "langium.langium-vscode",
+    "firsttris.vscode-jest-runner"
+  ]
 }

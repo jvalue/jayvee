@@ -1,0 +1,4 @@
+{
+  "name": "@jayvee/monaco-editor",
+  "main": "./index.js"
+}

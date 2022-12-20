@@ -7,7 +7,8 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "ES6",
-    "module": "CommonJS",
+    "module": "ESNext",
+    "moduleResolution": "node",
     "lib": ["ES2017"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
@@ -22,7 +23,8 @@
     "strictNullChecks": true,
     "baseUrl": ".",
     "paths": {
-      "@jayvee/language-server": ["libs/language-server/src/index.ts"]
+      "@jayvee/language-server": ["libs/language-server/src/index.ts"],
+      "@jayvee/monaco-editor": ["libs/monaco-editor/src/index.ts"]
     }
   }
 }
