@@ -1,6 +1,12 @@
 import * as R from '@jayvee/execution';
-import { createBlockExecutor } from '@jayvee/execution';
-import { StdExtension } from '@jayvee/extensions/std';
+import {
+  createBlockExecutor,
+  useExtension as useExecutionExtension,
+} from '@jayvee/execution';
+import {
+  StdExecutionExtension,
+  StdLangExtension,
+} from '@jayvee/extensions/std';
 import {
   Block,
   Model,
@@ -10,7 +16,7 @@ import {
   collectStartingBlocks,
   createJayveeServices,
   getBlocksInTopologicalSorting,
-  useExtension,
+  useExtension as useLangExtension,
 } from '@jayvee/language-server';
 import * as E from 'fp-ts/lib/Either';
 import { NodeFileSystem } from 'langium/node';
@@ -31,7 +37,8 @@ export async function runAction(
   fileName: string,
   options: { env: Map<string, string> },
 ): Promise<void> {
-  useExtension(new StdExtension());
+  useExecutionExtension(new StdExecutionExtension());
+  useLangExtension(new StdLangExtension());
 
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   const model = await extractAstNode<Model>(fileName, services);
