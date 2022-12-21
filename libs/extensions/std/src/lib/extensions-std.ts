@@ -1,5 +1,8 @@
 import { BlockExecutor } from '@jayvee/execution';
-import { CSVFileExtractorMetaInformation } from '@jayvee/extensions/csv';
+import {
+  CSVFileExtractorExecutor,
+  CSVFileExtractorMetaInformation,
+} from '@jayvee/extensions/csv';
 import {
   PostgresLoaderExecutor,
   PostgresLoaderMetaInformation,
@@ -22,5 +25,9 @@ export function getStandardBlockMetaInformationExtensions(): BlockMetaInformatio
 }
 
 export function getStandardBlockExecutors(): BlockExecutorType[] {
-  return [PostgresLoaderExecutor, SQLiteLoaderExecutor];
+  return [
+    PostgresLoaderExecutor,
+    SQLiteLoaderExecutor,
+    CSVFileExtractorExecutor,
+  ];
 }
