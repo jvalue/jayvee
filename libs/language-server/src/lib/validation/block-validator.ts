@@ -28,6 +28,7 @@ export class BlockValidator implements JayveeValidator {
         this.checkAttributeCompleteness,
         this.checkIngoingPipes,
         this.checkOutgoingPipes,
+        this.checkBlockType,
       ],
     };
   }
@@ -38,6 +39,9 @@ export class BlockValidator implements JayveeValidator {
     accept: ValidationAcceptor,
   ): void {
     const blockMetaInf = getMetaInformation(block.type);
+    if (blockMetaInf === undefined) {
+      return;
+    }
     for (const attribute of block.attributes) {
       if (!blockMetaInf.hasAttributeSpecification(attribute.name)) {
         accept('error', `Invalid attribute name "${attribute.name}".`, {
@@ -79,6 +83,9 @@ export class BlockValidator implements JayveeValidator {
     accept: ValidationAcceptor,
   ): void {
     const blockMetaInf = getMetaInformation(block.type);
+    if (blockMetaInf === undefined) {
+      return;
+    }
 
     for (const attribute of block.attributes) {
       const attributeSpec = blockMetaInf.getAttributeSpecification(
@@ -146,6 +153,10 @@ export class BlockValidator implements JayveeValidator {
     accept: ValidationAcceptor,
   ): void {
     const blockMetaInf = getMetaInformation(block.type);
+    if (blockMetaInf === undefined) {
+      return;
+    }
+
     const expectedAttributeNames = blockMetaInf.getRequiredAttributeNames();
 
     const actualAttributeNames = block.attributes.map(
@@ -197,6 +208,9 @@ export class BlockValidator implements JayveeValidator {
     }
 
     const blockMetaInf = getMetaInformation(block.type);
+    if (blockMetaInf === undefined) {
+      return;
+    }
 
     let pipes: Pipe[];
     switch (whatToCheck) {
@@ -244,6 +258,16 @@ export class BlockValidator implements JayveeValidator {
           property: 'name',
         },
       );
+    }
+  }
+
+  checkBlockType(this: void, block: Block, accept: ValidationAcceptor): void {
+    const metaInf = getMetaInformation(block.type);
+    if (metaInf === undefined) {
+      accept('error', `Unknown block type '${block.type}'`, {
+        node: block,
+        property: 'type',
+      });
     }
   }
 }

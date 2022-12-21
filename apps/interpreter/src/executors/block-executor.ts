@@ -2,9 +2,8 @@ import { strict as assert } from 'assert';
 
 import {
   Block,
-  BlockType,
   Layout,
-  getMetaInformation,
+  getOrFailMetaInformation,
   isLayout,
   isRuntimeParameter,
 } from '@jayvee/language-server';
@@ -16,7 +15,7 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
   private _block?: Block;
   private _runtimeParameters?: Map<string, string | number | boolean>;
 
-  protected constructor(readonly blockType: BlockType) {}
+  protected constructor(readonly blockType: string) {}
 
   get block(): Block {
     assert(
@@ -88,7 +87,8 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
       (attribute) => attribute.name === attributeName,
     );
     if (attribute === undefined) {
-      const metaInf = getMetaInformation(this.blockType);
+      const metaInf = getOrFailMetaInformation(this.blockType);
+
       const attributeSpec = metaInf.getAttributeSpecification(attributeName);
       assert(
         attributeSpec !== undefined,

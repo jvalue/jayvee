@@ -8,6 +8,9 @@ export function collectStartingBlocks(pipeline: Pipeline): Block[] {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (block.type !== undefined) {
       const blockMetaInf = getMetaInformation(block.type);
+      if (blockMetaInf === undefined) {
+        continue;
+      }
       if (!blockMetaInf.hasInput()) {
         result.push(block);
       }

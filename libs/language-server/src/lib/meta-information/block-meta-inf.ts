@@ -1,4 +1,3 @@
-import { BlockType } from '../ast/generated/ast';
 import { IOType, UNDEFINED_TYPE } from '../types/io-types';
 
 export enum AttributeType {
@@ -14,7 +13,7 @@ export interface AttributeSpecification {
 
 export abstract class BlockMetaInformation {
   protected constructor(
-    readonly blockType: BlockType,
+    readonly blockType: string,
     private readonly inputType: IOType,
     private readonly outputType: IOType,
     private readonly attributes: Record<string, AttributeSpecification>,

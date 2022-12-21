@@ -34,6 +34,9 @@ export class PipeValidator implements JayveeValidator {
 
     const fromBlockMetaInf = getMetaInformation(fromBlock.type);
     const toBlockMetaInf = getMetaInformation(toBlock.type);
+    if (fromBlockMetaInf === undefined || toBlockMetaInf === undefined) {
+      return;
+    }
 
     if (!fromBlockMetaInf.canBeConnectedTo(toBlockMetaInf)) {
       accept(

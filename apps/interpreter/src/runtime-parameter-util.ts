@@ -4,7 +4,7 @@ import {
   AttributeType,
   Model,
   RuntimeParameter,
-  getMetaInformation,
+  getOrFailMetaInformation,
   isRuntimeParameter,
 } from '@jayvee/language-server';
 import * as E from 'fp-ts/lib/Either';
@@ -84,7 +84,7 @@ function parseParameterAsMatchingType(
   requiredParameter: RuntimeParameter,
 ): R.Result<string | number | boolean> {
   const block = requiredParameter.$container.$container;
-  const metaInf = getMetaInformation(block.type);
+  const metaInf = getOrFailMetaInformation(block.type);
   const attributeName = requiredParameter.$container.name;
 
   const attributeSpec = metaInf.getAttributeSpecification(attributeName);
