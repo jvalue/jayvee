@@ -1,4 +1,4 @@
-import { BlockExecutor } from '@jayvee/execution';
+import { BlockExecutor, ExecutionErrorDetails } from '@jayvee/execution';
 import * as R from '@jayvee/execution';
 import {
   AbstractDataType,
@@ -9,13 +9,36 @@ import {
   isColumnSection,
   isHeaderRowSection,
 } from '@jayvee/language-server';
-
-import { printError } from '../cli-util';
+import chalk = require('chalk');
+import { CstNode } from 'langium';
 
 import {
   columnCharactersAsIndex,
   columnIndexAsCharacters,
 } from './utils/column-id-util';
+
+// TODO: remove duplication from interpreter
+function printError(errDetails: ExecutionErrorDetails): void {
+  console.error(chalk.red(errDetails.message));
+  console.error(chalk.red(errDetails.hint));
+  console.error();
+  if (errDetails.cstNode !== undefined) {
+    console.error(chalk.blue(getCstTextWithLineNumbers(errDetails.cstNode)));
+  }
+}
+
+// TODO: remove duplication from interpreter
+function getCstTextWithLineNumbers(cstNode: CstNode): string {
+  const text = cstNode.text;
+  const lines = text.split('\n');
+  const startLineNumber = cstNode.range.start.line + 1;
+
+  let textWithLineNumbers = '';
+  for (let i = 0; i < lines.length; ++i) {
+    textWithLineNumbers += `${startLineNumber + i}\t| \t${lines[i] ?? ''}\n`;
+  }
+  return textWithLineNumbers;
+}
 
 export class LayoutValidatorExecutor extends BlockExecutor<Sheet, Table> {
   constructor() {

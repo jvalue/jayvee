@@ -25,6 +25,7 @@
     "paths": {
       "@jayvee/execution": ["libs/execution/src/index.ts"],
       "@jayvee/extensions/csv": ["libs/extensions/csv/src/index.ts"],
+      "@jayvee/extensions/layout": ["libs/extensions/layout/src/index.ts"],
       "@jayvee/extensions/rdbms": ["libs/extensions/rdbms/src/index.ts"],
       "@jayvee/extensions/std": ["libs/extensions/std/src/index.ts"],
       "@jayvee/language-server": ["libs/language-server/src/index.ts"],

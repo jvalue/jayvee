@@ -1,7 +1,10 @@
-import { SHEET_TYPE, TABLE_TYPE } from '../types/io-types';
-
-import { AttributeType, BlockMetaInformation } from './block-meta-inf';
-import { registerBlockMetaInformation } from './meta-inf-util';
+import {
+  AttributeType,
+  BlockMetaInformation,
+  SHEET_TYPE,
+  TABLE_TYPE,
+  registerBlockMetaInformation,
+} from '@jayvee/language-server';
 
 export class LayoutValidatorMetaInformation extends BlockMetaInformation {
   constructor() {
