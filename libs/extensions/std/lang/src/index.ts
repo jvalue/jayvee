@@ -1,1 +1,1 @@
-export * from './lang-extension';
+export * from './extension';

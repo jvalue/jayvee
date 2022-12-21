@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
-  displayName: 'extensions-csv',
-  preset: '../../../jest.preset.js',
+  displayName: 'extensions-tabular-lang',
+  preset: '../../../../jest.preset.js',
   globals: {
     'ts-jest': {
       tsconfig: '<rootDir>/tsconfig.spec.json',
@@ -11,5 +11,5 @@ export default {
     '^.+\\.[tj]s$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../../coverage/libs/extensions/csv',
+  coverageDirectory: '../../../../coverage/libs/extensions/tabular/lang',
 };

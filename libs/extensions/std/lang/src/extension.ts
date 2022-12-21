@@ -1,6 +1,5 @@
-import { CsvLangExtension } from '@jayvee/extensions/csv';
-import { LayoutLangExtension } from '@jayvee/extensions/layout';
 import { RdbmsLangExtension } from '@jayvee/extensions/rdbms/lang';
+import { TabularLangExtension } from '@jayvee/extensions/tabular/lang';
 import {
   BlockMetaInformation,
   JayveeLangExtension,
@@ -8,9 +7,8 @@ import {
 
 export class StdLangExtension implements JayveeLangExtension {
   private readonly wrappedExtensions: JayveeLangExtension[] = [
-    new CsvLangExtension(),
+    new TabularLangExtension(),
     new RdbmsLangExtension(),
-    new LayoutLangExtension(),
   ];
 
   getBlockMetaInf(): BlockMetaInformation[] {

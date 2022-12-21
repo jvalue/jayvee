@@ -3,15 +3,13 @@ import {
   BlockExecutorType,
   JayveeInterpreterExtension,
 } from '@jayvee/execution';
-import { CsvExecutionExtension } from '@jayvee/extensions/csv';
-import { LayoutExecutionExtension } from '@jayvee/extensions/layout';
 import { RdbmsExecutionExtension } from '@jayvee/extensions/rdbms/exec';
+import { TabularExecExtension } from '@jayvee/extensions/tabular/exec';
 
 export class StdExecutionExtension implements JayveeInterpreterExtension {
   private readonly wrappedExtensions: JayveeInterpreterExtension[] = [
-    new CsvExecutionExtension(),
+    new TabularExecExtension(),
     new RdbmsExecutionExtension(),
-    new LayoutExecutionExtension(),
   ];
 
   getBlockExecutors(): Array<
