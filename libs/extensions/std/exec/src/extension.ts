@@ -1,15 +1,15 @@
 import {
   BlockExecutor,
   BlockExecutorType,
-  JayveeInterpreterExtension,
+  JayveeExecExtension,
 } from '@jayvee/execution';
-import { RdbmsExecutionExtension } from '@jayvee/extensions/rdbms/exec';
+import { RdbmsExecExtension } from '@jayvee/extensions/rdbms/exec';
 import { TabularExecExtension } from '@jayvee/extensions/tabular/exec';
 
-export class StdExecutionExtension implements JayveeInterpreterExtension {
-  private readonly wrappedExtensions: JayveeInterpreterExtension[] = [
+export class StdExecExtension implements JayveeExecExtension {
+  private readonly wrappedExtensions: JayveeExecExtension[] = [
     new TabularExecExtension(),
-    new RdbmsExecutionExtension(),
+    new RdbmsExecExtension(),
   ];
 
   getBlockExecutors(): Array<

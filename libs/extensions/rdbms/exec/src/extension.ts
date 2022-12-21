@@ -1,12 +1,12 @@
 import {
   BlockExecutor,
   BlockExecutorType,
-  JayveeInterpreterExtension,
+  JayveeExecExtension,
 } from '@jayvee/execution';
 
 import { PostgresLoaderExecutor, SQLiteLoaderExecutor } from './lib';
 
-export class RdbmsExecutionExtension implements JayveeInterpreterExtension {
+export class RdbmsExecExtension implements JayveeExecExtension {
   getBlockExecutors(): Array<
     BlockExecutorType<BlockExecutor<unknown, unknown>>
   > {

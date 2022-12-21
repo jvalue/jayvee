@@ -3,7 +3,7 @@ import {
   createBlockExecutor,
   useExtension as useExecutionExtension,
 } from '@jayvee/execution';
-import { StdExecutionExtension } from '@jayvee/extensions/std/exec';
+import { StdExecExtension } from '@jayvee/extensions/std/exec';
 import { StdLangExtension } from '@jayvee/extensions/std/lang';
 import {
   Block,
@@ -34,7 +34,7 @@ export async function runAction(
   fileName: string,
   options: { env: Map<string, string> },
 ): Promise<void> {
-  useExecutionExtension(new StdExecutionExtension());
+  useExecutionExtension(new StdExecExtension());
   useLangExtension(new StdLangExtension());
 
   const services = createJayveeServices(NodeFileSystem).Jayvee;

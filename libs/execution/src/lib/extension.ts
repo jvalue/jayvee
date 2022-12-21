@@ -1,10 +1,10 @@
 import { registerBlockExecutor } from './block-executor-registry';
 import { BlockExecutorType } from './block-executor-type';
 
-export interface JayveeInterpreterExtension {
+export interface JayveeExecExtension {
   getBlockExecutors(): BlockExecutorType[];
 }
 
-export function useExtension(extension: JayveeInterpreterExtension) {
+export function useExtension(extension: JayveeExecExtension) {
   extension.getBlockExecutors().forEach(registerBlockExecutor);
 }
