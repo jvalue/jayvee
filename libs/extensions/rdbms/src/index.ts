@@ -1,1 +1,1 @@
-export * from './lib/extensions-rdbms';
+export * from './lib';

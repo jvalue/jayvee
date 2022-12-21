@@ -2,10 +2,9 @@ import * as http from 'https';
 
 import { parseString as parseStringAsCsv } from '@fast-csv/parse';
 import { ParserOptionsArgs } from '@fast-csv/parse/build/src/ParserOptions';
+import { BlockExecutor } from '@jayvee/execution';
+import * as R from '@jayvee/execution';
 import { Sheet } from '@jayvee/language-server';
-
-import { BlockExecutor } from './block-executor';
-import * as R from './utils/execution-result';
 
 export class CSVFileExtractorExecutor extends BlockExecutor<void, Sheet> {
   constructor() {

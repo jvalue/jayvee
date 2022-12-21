@@ -9,7 +9,7 @@ import {
 } from '@jayvee/language-server';
 import { isReference } from 'langium';
 
-import * as R from './utils/execution-result';
+import * as R from './execution-result';
 
 export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
   private _block?: Block;

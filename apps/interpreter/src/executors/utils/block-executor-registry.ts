@@ -1,13 +1,8 @@
 import { strict as assert } from 'assert';
 
+import { BlockExecutor } from '@jayvee/execution';
+import { BlockExecutorType } from '@jayvee/extensions/std';
 import { Block } from '@jayvee/language-server';
-
-import { BlockExecutor } from '../block-executor';
-
-export interface BlockExecutorType<T extends BlockExecutor = BlockExecutor>
-  extends Function {
-  new (): T;
-}
 
 const registeredBlockExecutors = new Map<string, BlockExecutorType>();
 

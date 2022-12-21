@@ -1,13 +1,13 @@
+import * as R from '@jayvee/execution';
+import { BlockExecutor } from '@jayvee/execution';
 import { Table } from '@jayvee/language-server';
 import { Client } from 'pg';
 
-import { BlockExecutor } from './block-executor';
-import * as R from './utils/execution-result';
 import {
   buildCreateTableStatement,
   buildDropTableStatement,
   buildInsertValuesStatement,
-} from './utils/sql-util';
+} from './sql-util';
 
 export class PostgresLoaderExecutor extends BlockExecutor<Table, void> {
   constructor() {

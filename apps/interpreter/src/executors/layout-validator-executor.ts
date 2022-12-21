@@ -1,3 +1,5 @@
+import { BlockExecutor } from '@jayvee/execution';
+import * as R from '@jayvee/execution';
 import {
   AbstractDataType,
   ColumnSection,
@@ -10,12 +12,10 @@ import {
 
 import { printError } from '../cli-util';
 
-import { BlockExecutor } from './block-executor';
 import {
   columnCharactersAsIndex,
   columnIndexAsCharacters,
 } from './utils/column-id-util';
-import * as R from './utils/execution-result';
 
 export class LayoutValidatorExecutor extends BlockExecutor<Sheet, Table> {
   constructor() {

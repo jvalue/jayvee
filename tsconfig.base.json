@@ -23,6 +23,7 @@
     "strictNullChecks": true,
     "baseUrl": ".",
     "paths": {
+      "@jayvee/execution": ["libs/execution/src/index.ts"],
       "@jayvee/extensions/csv": ["libs/extensions/csv/src/index.ts"],
       "@jayvee/extensions/rdbms": ["libs/extensions/rdbms/src/index.ts"],
       "@jayvee/extensions/std": ["libs/extensions/std/src/index.ts"],
