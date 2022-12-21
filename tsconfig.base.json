@@ -23,6 +23,9 @@
     "strictNullChecks": true,
     "baseUrl": ".",
     "paths": {
+      "@jayvee/extensions/csv": ["libs/extensions/csv/src/index.ts"],
+      "@jayvee/extensions/rdbms": ["libs/extensions/rdbms/src/index.ts"],
+      "@jayvee/extensions/std": ["libs/extensions/std/src/index.ts"],
       "@jayvee/language-server": ["libs/language-server/src/index.ts"],
       "@jayvee/monaco-editor": ["libs/monaco-editor/src/index.ts"]
     }

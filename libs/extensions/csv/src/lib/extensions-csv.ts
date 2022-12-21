@@ -1,7 +1,9 @@
-import { SHEET_TYPE, UNDEFINED_TYPE } from '../types/io-types';
-
-import { AttributeType, BlockMetaInformation } from './block-meta-inf';
-import { registerBlockMetaInformation } from './meta-inf-util';
+import {
+  AttributeType,
+  BlockMetaInformation,
+  SHEET_TYPE,
+  UNDEFINED_TYPE,
+} from '@jayvee/language-server';
 
 export class CSVFileExtractorMetaInformation extends BlockMetaInformation {
   constructor() {
@@ -16,5 +18,3 @@ export class CSVFileExtractorMetaInformation extends BlockMetaInformation {
     });
   }
 }
-
-registerBlockMetaInformation(new CSVFileExtractorMetaInformation());

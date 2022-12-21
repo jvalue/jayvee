@@ -1,3 +1,4 @@
+import { getStandardBlockMetaInformationExtensions } from '@jayvee/extensions/std';
 import {
   Block,
   Model,
@@ -7,6 +8,7 @@ import {
   collectStartingBlocks,
   createJayveeServices,
   getBlocksInTopologicalSorting,
+  registerBlockMetaInformation,
 } from '@jayvee/language-server';
 import * as E from 'fp-ts/lib/Either';
 import { NodeFileSystem } from 'langium/node';
@@ -29,6 +31,10 @@ export async function runAction(
   fileName: string,
   options: { env: Map<string, string> },
 ): Promise<void> {
+  getStandardBlockMetaInformationExtensions().forEach(
+    registerBlockMetaInformation,
+  );
+
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   const model = await extractAstNode<Model>(fileName, services);
 
