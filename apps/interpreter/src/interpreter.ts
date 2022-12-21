@@ -3,10 +3,8 @@ import {
   createBlockExecutor,
   useExtension as useExecutionExtension,
 } from '@jayvee/execution';
-import {
-  StdExecutionExtension,
-  StdLangExtension,
-} from '@jayvee/extensions/std';
+import { StdExecutionExtension } from '@jayvee/extensions/std/exec';
+import { StdLangExtension } from '@jayvee/extensions/std/lang';
 import {
   Block,
   Model,
@@ -22,7 +20,6 @@ import * as E from 'fp-ts/lib/Either';
 import { NodeFileSystem } from 'langium/node';
 
 import { extractAstNode, printError } from './cli-util';
-import { registerBlockExecutors } from './executors/setup';
 import {
   extractRequiredRuntimeParameters,
   extractRuntimeParameters,
@@ -42,8 +39,6 @@ export async function runAction(
 
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   const model = await extractAstNode<Model>(fileName, services);
-
-  registerBlockExecutors();
 
   const requiredRuntimeParameters = extractRequiredRuntimeParameters(model);
   const parameterReadResult = extractRuntimeParameters(

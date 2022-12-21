@@ -9,7 +9,7 @@ import {
   isColumnSection,
   isHeaderRowSection,
 } from '@jayvee/language-server';
-import chalk = require('chalk');
+import * as chalk from 'chalk';
 import { CstNode } from 'langium';
 
 import {
