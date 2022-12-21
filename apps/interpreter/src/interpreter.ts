@@ -1,4 +1,5 @@
 import * as R from '@jayvee/execution';
+import { createBlockExecutor } from '@jayvee/execution';
 import { StdExtension } from '@jayvee/extensions/std';
 import {
   Block,
@@ -16,7 +17,6 @@ import { NodeFileSystem } from 'langium/node';
 
 import { extractAstNode, printError } from './cli-util';
 import { registerBlockExecutors } from './executors/setup';
-import { createBlockExecutor } from './executors/utils/block-executor-registry';
 import {
   extractRequiredRuntimeParameters,
   extractRuntimeParameters,

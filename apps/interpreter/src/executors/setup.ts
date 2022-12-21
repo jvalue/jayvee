@@ -1,10 +1,10 @@
-import { getStandardBlockExecutors } from '@jayvee/extensions/std';
+import { registerBlockExecutor, useExtension } from '@jayvee/execution';
+import { StdExtension } from '@jayvee/extensions/std';
 
 import { LayoutValidatorExecutor } from './layout-validator-executor';
-import { registerBlockExecutor } from './utils/block-executor-registry';
 
 export function registerBlockExecutors(): void {
-  registerBlockExecutor(LayoutValidatorExecutor);
+  useExtension(new StdExtension());
 
-  getStandardBlockExecutors().forEach(registerBlockExecutor);
+  registerBlockExecutor(LayoutValidatorExecutor); // TODO: move to extension
 }
