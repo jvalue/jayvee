@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'extensions-rdbms',
   preset: '../../../jest.preset.js',

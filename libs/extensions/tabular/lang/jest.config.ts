@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'extensions-tabular-lang',
   preset: '../../../../jest.preset.js',

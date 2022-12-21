@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'extensions-std-lang',
   preset: '../../../../jest.preset.js',
