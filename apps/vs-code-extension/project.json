@@ -15,7 +15,10 @@
         ],
         "external": ["vscode"],
         "platform": "node",
-        "format": ["cjs"]
+        "format": ["cjs"],
+        "esbuildOptions": {
+          "sourcemap": "linked"
+        }
       }
     },
     "serve": {
