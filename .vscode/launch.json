@@ -59,6 +59,7 @@
       "request": "attach",
       "skipFiles": ["<node_internals>/**"],
       "sourceMaps": true,
+      "continueOnAttach": true,
       "outFiles": [
         "${workspaceFolder}/dist/apps/vs-code-extension/language-server.cjs",
         "${workspaceFolder}/node_modules/langium"
