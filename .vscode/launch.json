@@ -11,7 +11,7 @@
         "Run Extension with DEBUG_BREAK",
         "Attach to Language Server"
       ],
-      "preLaunchTask": "npm: build",
+      "preLaunchTask": "Build VS Code Extension",
       "stopAll": true,
       "presentation": {
         "order": 1
@@ -59,6 +59,8 @@
       "request": "attach",
       "skipFiles": ["<node_internals>/**"],
       "sourceMaps": true,
+      "restart": true,
+      "timeout": 60000,
       "continueOnAttach": true,
       "outFiles": [
         "${workspaceFolder}/dist/apps/vs-code-extension/language-server.cjs",
