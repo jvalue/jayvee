@@ -11,6 +11,7 @@
         "Run Extension with DEBUG_BREAK",
         "Attach to Language Server"
       ],
+      "preLaunchTask": "npm: build",
       "stopAll": true,
       "presentation": {
         "order": 1
@@ -61,10 +62,7 @@
       "outFiles": [
         "${workspaceFolder}/dist/apps/vs-code-extension/language-server.cjs",
         "${workspaceFolder}/node_modules/langium"
-      ],
-      "presentation": {
-        "hidden": true
-      }
+      ]
     },
     {
       "name": "Run Cars Example",
