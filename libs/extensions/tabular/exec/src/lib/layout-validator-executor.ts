@@ -21,7 +21,7 @@ export class LayoutValidatorExecutor extends BlockExecutor<Sheet, Table> {
   }
 
   override execute(input: Sheet): Promise<R.Result<Table>> {
-    const layout = this.getLayoutAttributeValue('layout');
+    const layout = this.getLayoutAttributeValue('validationLayout');
     const sections = layout.sections;
 
     const headerRowSection = sections.find(isHeaderRowSection);

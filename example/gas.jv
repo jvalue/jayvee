@@ -15,7 +15,7 @@ pipeline GasReservePipeline {
 	}
 
 	block GasReserveValidator oftype LayoutValidator {
-		layout: GasReserveLayout;
+		validationLayout: GasReserveLayout;
 	}
 
 	block GasReserveLoader oftype PostgresLoader {
