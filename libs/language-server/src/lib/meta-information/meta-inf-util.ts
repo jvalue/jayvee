@@ -14,6 +14,10 @@ export function getMetaInformation(
   return registeredBlockMetaInformation.get(blockType);
 }
 
+export function getRegisteredBlockTypes(): string[] {
+  return [...registeredBlockMetaInformation.keys()];
+}
+
 export function getOrFailMetaInformation(
   blockType: string,
 ): BlockMetaInformation {

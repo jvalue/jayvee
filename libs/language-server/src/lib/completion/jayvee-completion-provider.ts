@@ -5,11 +5,14 @@ import {
   MaybePromise,
   NextFeature,
 } from 'langium';
-import { AbstractRule, isRuleCall } from 'langium/lib/grammar/generated/ast';
+import { isRuleCall } from 'langium/lib/grammar/generated/ast';
 import { CompletionItemKind } from 'vscode-languageserver-types';
 
 import { Attribute, Block, isAttribute, isBlock } from '../ast/generated/ast';
-import { getMetaInformation } from '../meta-information';
+import {
+  getMetaInformation,
+  getRegisteredBlockTypes,
+} from '../meta-information';
 
 export class JayveeCompletionProvider extends DefaultCompletionProvider {
   override completionFor(
@@ -18,35 +21,39 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
     if (isRuleCall(next.feature) && next.feature.rule.ref !== undefined) {
-      if (
-        next.type === Attribute &&
-        (isAttribute(astNode) || isBlock(astNode))
-      ) {
-        return this.completionForAttribute(
-          next.feature.rule.ref,
-          astNode,
-          acceptor,
-        );
+      if (isBlock(astNode)) {
+        if (next.type === Attribute) {
+          return this.completionForAttributeName(astNode, acceptor);
+        }
+        if (next.property === 'type') {
+          return this.completionForBlockType(acceptor);
+        }
+      }
+      if (isAttribute(astNode)) {
+        if (next.property === 'name') {
+          return this.completionForAttributeName(astNode, acceptor);
+        }
       }
     }
     return super.completionFor(astNode, next, acceptor);
   }
 
-  private completionForAttribute(
-    rule: AbstractRule,
-    astNode: Block | Attribute,
+  private completionForBlockType(
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
-    if (rule.name === 'ID') {
-      const block = isBlock(astNode) ? astNode : astNode.$container;
-      this.completionForAttributeName(block, acceptor);
-    }
+    getRegisteredBlockTypes().forEach((blockType) => {
+      acceptor(blockType, {
+        kind: CompletionItemKind.Class,
+        detail: `Block Type`,
+      });
+    });
   }
 
   private completionForAttributeName(
-    block: Block,
+    astNode: Block | Attribute,
     acceptor: CompletionAcceptor,
   ) {
+    const block = isBlock(astNode) ? astNode : astNode.$container;
     const blockMetaInf = getMetaInformation(block.type);
     if (blockMetaInf === undefined) {
       return;
@@ -59,7 +66,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     missingRequiredAttributeNames.forEach((attributeName) =>
       acceptor(attributeName, {
         kind: CompletionItemKind.Field,
-        detail: `Attribute of ${block.type}`,
+        detail: `${block.type} Attribute`,
         sortText: '1',
       }),
     );
@@ -71,7 +78,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     missingOptionalAttributeNames.forEach((attributeName) =>
       acceptor(attributeName, {
         kind: CompletionItemKind.Field,
-        detail: `Optional Attribute of ${block.type}`,
+        detail: `Optional ${block.type} Attribute`,
         sortText: '2',
       }),
     );
