@@ -107,6 +107,7 @@ async function runPipeline(
         }
         throw errObj;
       }
+      blockExecutor.getReportedErrors().forEach(printError);
     }
   } catch (errObj) {
     // If a pipeline contains cycles, an exception will be thrown.

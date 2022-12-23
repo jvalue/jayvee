@@ -10,10 +10,12 @@ import {
 import { isReference } from 'langium';
 
 import * as R from './execution-result';
+import { ExecutionErrorDetails } from './execution-result';
 
 export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
   private _block?: Block;
   private _runtimeParameters?: Map<string, string | number | boolean>;
+  private errors: ExecutionErrorDetails[] = [];
 
   protected constructor(readonly blockType: string) {}
 
@@ -114,5 +116,13 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
       return value.ref!;
     }
     return value;
+  }
+
+  protected reportError(errDetails: ExecutionErrorDetails) {
+    this.errors.push(errDetails);
+  }
+
+  public getReportedErrors(): ExecutionErrorDetails[] {
+    return this.errors;
   }
 }

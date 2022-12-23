@@ -1,4 +1,4 @@
-import { BlockExecutor, ExecutionErrorDetails } from '@jayvee/execution';
+import { BlockExecutor } from '@jayvee/execution';
 import * as R from '@jayvee/execution';
 import {
   AbstractDataType,
@@ -9,36 +9,11 @@ import {
   isColumnSection,
   isHeaderRowSection,
 } from '@jayvee/language-server';
-import * as chalk from 'chalk';
-import { CstNode } from 'langium';
 
 import {
   columnCharactersAsIndex,
   columnIndexAsCharacters,
 } from './utils/column-id-util';
-
-// TODO: remove duplication from interpreter
-function printError(errDetails: ExecutionErrorDetails): void {
-  console.error(chalk.red(errDetails.message));
-  console.error(chalk.red(errDetails.hint));
-  console.error();
-  if (errDetails.cstNode !== undefined) {
-    console.error(chalk.blue(getCstTextWithLineNumbers(errDetails.cstNode)));
-  }
-}
-
-// TODO: remove duplication from interpreter
-function getCstTextWithLineNumbers(cstNode: CstNode): string {
-  const text = cstNode.text;
-  const lines = text.split('\n');
-  const startLineNumber = cstNode.range.start.line + 1;
-
-  let textWithLineNumbers = '';
-  for (let i = 0; i < lines.length; ++i) {
-    textWithLineNumbers += `${startLineNumber + i}\t| \t${lines[i] ?? ''}\n`;
-  }
-  return textWithLineNumbers;
-}
 
 export class LayoutValidatorExecutor extends BlockExecutor<Sheet, Table> {
   constructor() {
@@ -76,14 +51,14 @@ export class LayoutValidatorExecutor extends BlockExecutor<Sheet, Table> {
     });
 
     if (errors.length !== 0) {
-      printError({
+      this.reportError({
         message: `${
           input.data.length - data.length - 1
         } rows were dropped due to failed layout validation. Found the following issues:\n\n${errors.join(
           '\n',
         )}`,
         hint: 'Please check your defined layout.',
-        cstNode: this.block.$cstNode?.parent,
+        cstNode: layout.$cstNode,
       });
     }
 
