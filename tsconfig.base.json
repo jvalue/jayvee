@@ -23,6 +23,21 @@
     "strictNullChecks": true,
     "baseUrl": ".",
     "paths": {
+      "@jayvee/execution": ["libs/execution/src/index.ts"],
+      "@jayvee/extensions/rdbms/exec": [
+        "libs/extensions/rdbms/exec/src/index.ts"
+      ],
+      "@jayvee/extensions/rdbms/lang": [
+        "libs/extensions/rdbms/lang/src/index.ts"
+      ],
+      "@jayvee/extensions/std/exec": ["libs/extensions/std/exec/src/index.ts"],
+      "@jayvee/extensions/std/lang": ["libs/extensions/std/lang/src/index.ts"],
+      "@jayvee/extensions/tabular/exec": [
+        "libs/extensions/tabular/exec/src/index.ts"
+      ],
+      "@jayvee/extensions/tabular/lang": [
+        "libs/extensions/tabular/lang/src/index.ts"
+      ],
       "@jayvee/language-server": ["libs/language-server/src/index.ts"],
       "@jayvee/monaco-editor": ["libs/monaco-editor/src/index.ts"]
     }

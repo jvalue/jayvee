@@ -1,11 +1,10 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
+import { ExecutionErrorDetails } from '@jayvee/execution';
 import * as chalk from 'chalk';
 import { AstNode, CstNode, LangiumDocument, LangiumServices } from 'langium';
 import { URI } from 'vscode-uri';
-
-import { ExecutionErrorDetails } from './executors/utils/execution-result';
 
 export async function extractDocument(
   fileName: string,

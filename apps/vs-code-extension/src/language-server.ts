@@ -1,10 +1,13 @@
-import { createJayveeServices } from '@jayvee/language-server';
+import { StdLangExtension } from '@jayvee/extensions/std/lang';
+import { createJayveeServices, useExtension } from '@jayvee/language-server';
 import { startLanguageServer } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { ProposedFeatures, createConnection } from 'vscode-languageserver/node';
 
 // Create a connection to the client
 const connection = createConnection(ProposedFeatures.all);
+
+useExtension(new StdLangExtension());
 
 // Inject the shared services and language-specific services
 const { shared } = createJayveeServices({

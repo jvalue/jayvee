@@ -5,3 +5,4 @@ export * from './types';
 export * from './validation';
 
 export * from './jayvee-module';
+export * from './extension';

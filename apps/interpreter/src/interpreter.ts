@@ -1,3 +1,10 @@
+import * as R from '@jayvee/execution';
+import {
+  createBlockExecutor,
+  useExtension as useExecutionExtension,
+} from '@jayvee/execution';
+import { StdExecExtension } from '@jayvee/extensions/std/exec';
+import { StdLangExtension } from '@jayvee/extensions/std/lang';
 import {
   Block,
   Model,
@@ -7,14 +14,12 @@ import {
   collectStartingBlocks,
   createJayveeServices,
   getBlocksInTopologicalSorting,
+  useExtension as useLangExtension,
 } from '@jayvee/language-server';
 import * as E from 'fp-ts/lib/Either';
 import { NodeFileSystem } from 'langium/node';
 
 import { extractAstNode, printError } from './cli-util';
-import { registerBlockExecutors } from './executors/setup';
-import { createBlockExecutor } from './executors/utils/block-executor-registry';
-import * as R from './executors/utils/execution-result';
 import {
   extractRequiredRuntimeParameters,
   extractRuntimeParameters,
@@ -29,10 +34,11 @@ export async function runAction(
   fileName: string,
   options: { env: Map<string, string> },
 ): Promise<void> {
+  useLangExtension(new StdLangExtension());
+  useExecutionExtension(new StdExecExtension());
+
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   const model = await extractAstNode<Model>(fileName, services);
-
-  registerBlockExecutors();
 
   const requiredRuntimeParameters = extractRequiredRuntimeParameters(model);
   const parameterReadResult = extractRuntimeParameters(
@@ -101,6 +107,7 @@ async function runPipeline(
         }
         throw errObj;
       }
+      blockExecutor.getReportedErrors().forEach(printError);
     }
   } catch (errObj) {
     // If a pipeline contains cycles, an exception will be thrown.

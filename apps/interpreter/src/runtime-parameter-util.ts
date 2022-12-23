@@ -1,17 +1,16 @@
 import { strict as assert } from 'assert';
 
+import * as R from '@jayvee/execution';
 import {
   AttributeType,
   Model,
   RuntimeParameter,
-  getMetaInformation,
+  getOrFailMetaInformation,
   isRuntimeParameter,
 } from '@jayvee/language-server';
 import * as E from 'fp-ts/lib/Either';
 import { streamAst } from 'langium';
 import { assertUnreachable } from 'langium/lib/utils/errors';
-
-import * as R from './executors/utils/execution-result';
 
 /**
  * Extracts all required runtime parameter ast nodes.
@@ -84,7 +83,7 @@ function parseParameterAsMatchingType(
   requiredParameter: RuntimeParameter,
 ): R.Result<string | number | boolean> {
   const block = requiredParameter.$container.$container;
-  const metaInf = getMetaInformation(block.type);
+  const metaInf = getOrFailMetaInformation(block.type);
   const attributeName = requiredParameter.$container.name;
 
   const attributeSpec = metaInf.getAttributeSpecification(attributeName);
