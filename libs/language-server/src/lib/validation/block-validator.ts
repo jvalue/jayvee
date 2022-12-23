@@ -157,20 +157,18 @@ export class BlockValidator implements JayveeValidator {
       return;
     }
 
-    const expectedAttributeNames = blockMetaInf.getRequiredAttributeNames();
-
-    const actualAttributeNames = block.attributes.map(
+    const presentAttributeNames = block.attributes.map(
       (attribute) => attribute.name,
     );
-
-    const absentAttributeNames = expectedAttributeNames.filter(
-      (expectedName) => !actualAttributeNames.includes(expectedName),
+    const missingRequiredAttributeNames = blockMetaInf.getAttributeNames(
+      'required',
+      presentAttributeNames,
     );
 
-    if (absentAttributeNames.length > 0) {
+    if (missingRequiredAttributeNames.length > 0) {
       accept(
         'error',
-        `The following required attributes are missing: ${absentAttributeNames
+        `The following required attributes are missing: ${missingRequiredAttributeNames
           .map((name) => `"${name}"`)
           .join(', ')}`,
         {

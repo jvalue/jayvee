@@ -27,15 +27,24 @@ export abstract class BlockMetaInformation {
     return this.getAttributeSpecification(name) !== undefined;
   }
 
-  getRequiredAttributeNames(): string[] {
-    const requiredAttributeNames = Object.entries(this.attributes)
-      .filter(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        ([_, attributeSpec]) => attributeSpec.defaultValue === undefined,
-      )
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .map(([name, _]) => name);
-    return requiredAttributeNames;
+  getAttributeNames(
+    kind: 'optional' | 'required' | undefined = undefined,
+    excludeNames: string[] = [],
+  ): string[] {
+    const resultingAttributeNames: string[] = [];
+    for (const [name, spec] of Object.entries(this.attributes)) {
+      if (kind === 'optional' && spec.defaultValue === undefined) {
+        continue;
+      }
+      if (kind === 'required' && spec.defaultValue !== undefined) {
+        continue;
+      }
+      if (excludeNames.includes(name)) {
+        continue;
+      }
+      resultingAttributeNames.push(name);
+    }
+    return resultingAttributeNames;
   }
 
   canBeConnectedTo(blockAfter: BlockMetaInformation): boolean {
