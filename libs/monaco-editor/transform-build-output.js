@@ -39,5 +39,8 @@ delete parsedPackageJsonContent.peerDependencies.vscode;
 // Get the "version" field from the root package.json file and set it as the version of our package.
 parsedPackageJsonContent.version = getProjectVersion();
 
+// Change the name because nx requires the prefix @jayvee and the GitHub registry requires the prefix @jvalue when publishing
+parsedPackageJsonContent.name = parsedPackageJsonContent.name.replace('@jayvee/', '@jvalue/');
+
 const prettyPrintedContent = JSON.stringify(parsedPackageJsonContent, null, 2);
 fs.writeFileSync(monacoEditorPackageJsonPath, prettyPrintedContent);

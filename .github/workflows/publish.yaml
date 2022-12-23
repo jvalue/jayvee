@@ -6,7 +6,7 @@ on:
 
 # https://docs.github.com/en/actions/guides/publishing-nodejs-packages
 jobs:
-  publish-interpreter:
+  publish:
     runs-on: ubuntu-latest
     permissions:
       contents: read

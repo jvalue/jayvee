@@ -1,4 +1,5 @@
 {
+  "name": "@jvalue/language-server",
   "bugs": {
     "url": "https://github.com/jvalue/jayvee/issues"
   },
