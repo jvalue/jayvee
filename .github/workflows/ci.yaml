@@ -32,18 +32,6 @@ jobs:
       - name: Lint Nx specific workspace files
         run: npx nx workspace-lint
 
-      - name: Check for unformatted files
-        # to prevent the entire step from failing when the formatting command fails:
-        shell: bash {0}
-        run: |
-          npx nx format:check
-
-          if [[ $? != 0 ]]; then
-            echo "Nx detected unformatted files."
-            echo "Run 'npm run format' locally and commit the changed files."
-            exit 1
-          fi
-
       - name: Lint
         run: npx nx affected --target=lint --parallel=3
 
