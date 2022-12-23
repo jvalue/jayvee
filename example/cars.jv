@@ -21,7 +21,7 @@ pipeline CarsPipeline {
 	}
 
 	block CarsValidator oftype LayoutValidator {
-		layout: CarsLayout;
+		validationLayout: CarsLayout;
 	}
 
 	block CarsLoader oftype SQLiteLoader {

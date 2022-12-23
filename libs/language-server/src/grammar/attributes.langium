@@ -5,7 +5,7 @@ fragment AttributesFragment:
   '{' (attributes+=Attribute)* '}';
 
 Attribute:
-  name=(ID | 'layout') ':' value=(AttributeValue | RuntimeParameter) ';';
+  name=ID ':' value=(AttributeValue | RuntimeParameter) ';';
 
 AttributeValue:
   StringValue | IntValue | LayoutReferenceValue;

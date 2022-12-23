@@ -9,7 +9,7 @@ import {
 export class LayoutValidatorMetaInformation extends BlockMetaInformation {
   constructor() {
     super('LayoutValidator', SHEET_TYPE, TABLE_TYPE, {
-      layout: {
+      validationLayout: {
         type: AttributeType.LAYOUT,
       },
     });
