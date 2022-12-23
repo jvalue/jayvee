@@ -34,8 +34,8 @@ export async function runAction(
   fileName: string,
   options: { env: Map<string, string> },
 ): Promise<void> {
-  useExecutionExtension(new StdExecExtension());
   useLangExtension(new StdLangExtension());
+  useExecutionExtension(new StdExecExtension());
 
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   const model = await extractAstNode<Model>(fileName, services);
