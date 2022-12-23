@@ -1,4 +1,4 @@
-name: Publish Interpreter
+name: Publish Packages
 
 on:
   release:
@@ -22,5 +22,13 @@ jobs:
       - run: npm run generate
       - name: Publish interpreter
         run: npx nx run interpreter:publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish language server
+        run: npx nx run @jayvee/language-server:publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish monaco editor
+        run: npx nx run @jayvee/monaco-editor:publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
