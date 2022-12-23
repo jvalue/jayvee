@@ -1,26 +1,31 @@
 import {
-  AstNode,
   CompletionAcceptor,
+  CompletionContext,
   DefaultCompletionProvider,
   MaybePromise,
   NextFeature,
 } from 'langium';
 import { isRuleCall } from 'langium/lib/grammar/generated/ast';
-import { CompletionItemKind } from 'vscode-languageserver-types';
+import { CompletionItemKind } from 'vscode-languageserver';
 
 import { Attribute, Block, isAttribute, isBlock } from '../ast/generated/ast';
 import {
   getMetaInformation,
   getRegisteredBlockTypes,
-} from '../meta-information';
+} from '../meta-information/meta-inf-util';
 
 export class JayveeCompletionProvider extends DefaultCompletionProvider {
   override completionFor(
-    astNode: AstNode | undefined,
+    context: CompletionContext,
     next: NextFeature,
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
-    if (isRuleCall(next.feature) && next.feature.rule.ref !== undefined) {
+    const astNode = context.node;
+    if (
+      astNode !== undefined &&
+      isRuleCall(next.feature) &&
+      next.feature.rule.ref !== undefined
+    ) {
       if (isBlock(astNode)) {
         if (next.type === Attribute) {
           return this.completionForAttributeName(astNode, acceptor);
@@ -35,14 +40,15 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
         }
       }
     }
-    return super.completionFor(astNode, next, acceptor);
+    return super.completionFor(context, next, acceptor);
   }
 
   private completionForBlockType(
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
     getRegisteredBlockTypes().forEach((blockType) => {
-      acceptor(blockType, {
+      acceptor({
+        label: blockType,
         kind: CompletionItemKind.Class,
         detail: `Block Type`,
       });
@@ -64,7 +70,8 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       presentAttributeNames,
     );
     missingRequiredAttributeNames.forEach((attributeName) =>
-      acceptor(attributeName, {
+      acceptor({
+        label: attributeName,
         kind: CompletionItemKind.Field,
         detail: `${block.type} Attribute`,
         sortText: '1',
@@ -76,7 +83,8 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       presentAttributeNames,
     );
     missingOptionalAttributeNames.forEach((attributeName) =>
-      acceptor(attributeName, {
+      acceptor({
+        label: attributeName,
         kind: CompletionItemKind.Field,
         detail: `Optional ${block.type} Attribute`,
         sortText: '2',
