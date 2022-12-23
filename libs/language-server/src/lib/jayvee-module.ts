@@ -13,6 +13,7 @@ import {
   JayveeGeneratedModule,
   JayveeGeneratedSharedModule,
 } from './ast/generated/module';
+import { JayveeCompletionProvider } from './completion/jayvee-completion-provider';
 import { BlockValidator } from './validation/block-validator';
 import { LayoutValidator } from './validation/layout-validator';
 import { PipeValidator } from './validation/pipe-validator';
@@ -52,6 +53,10 @@ export const JayveeModule: Module<
     LayoutValidator: () => new LayoutValidator(),
     PipeValidator: () => new PipeValidator(),
     BlockValidator: () => new BlockValidator(),
+  },
+  lsp: {
+    CompletionProvider: (services: LangiumServices) =>
+      new JayveeCompletionProvider(services),
   },
 };
 
