@@ -4,53 +4,19 @@
 // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
 {
   "version": "0.2.0",
-  "compounds": [
-    {
-      "name": "Debug Extension",
-      "configurations": [
-        "Run Extension with DEBUG_BREAK",
-        "Attach to Language Server"
-      ],
-      "preLaunchTask": "Build VS Code Extension",
-      "stopAll": true,
-      "presentation": {
-        "order": 1
-      }
-    }
-  ],
   "configurations": [
     {
       "name": "Run Extension",
       "type": "extensionHost",
       "request": "launch",
+      "preLaunchTask": "Build VS Code Extension",
       "args": [
         "--extensionDevelopmentPath=${workspaceFolder}/apps/vs-code-extension"
       ],
       "sourceMaps": true,
       "outFiles": [
         "${workspaceFolder}/dist/apps/vs-code-extension/extension.cjs"
-      ],
-      "presentation": {
-        "order": 0
-      }
-    },
-    {
-      "name": "Run Extension with DEBUG_BREAK",
-      "type": "extensionHost",
-      "request": "launch",
-      "args": [
-        "--extensionDevelopmentPath=${workspaceFolder}/apps/vs-code-extension"
-      ],
-      "sourceMaps": true,
-      "outFiles": [
-        "${workspaceFolder}/dist/apps/vs-code-extension/extension.cjs"
-      ],
-      "env": {
-        "DEBUG_BREAK": "true"
-      },
-      "presentation": {
-        "hidden": true
-      }
+      ]
     },
     {
       "name": "Attach to Language Server",
