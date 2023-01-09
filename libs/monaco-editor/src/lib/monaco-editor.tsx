@@ -38,6 +38,16 @@ const LANGUAGE_NAME = 'jayvee';
 interface Props {
   startJayveeWorker: () => Worker;
 
+  /**
+   * The text that shall (initially) be displayed in the editor.
+   *
+   * Whenever this Prop changes, the internal Model is re-created.
+   * This is a pretty expensive operation.
+   * Thus, you should only change this Prop when absolutely necessary.
+   * Most importantly: Since the editor holds its own state, you should **not** sync `editorText` with your State.
+   * Or, in other words: Do not update this Prop whenever {@link onDidChangeEditorText} is called.
+   * In most applications, it is sufficient to set this Prop once (when the component gets created) and then to just leave it unchanged.
+   */
   editorText: string;
   onDidChangeEditorText: (newText: string) => void;
 
