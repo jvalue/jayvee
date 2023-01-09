@@ -35,7 +35,7 @@ import { StandaloneServices } from 'vscode/services';
 
 const LANGUAGE_NAME = 'jayvee';
 
-interface Props {
+export interface MonacoEditorProps {
   startJayveeWorker: () => Worker;
 
   /**
@@ -71,7 +71,7 @@ interface Props {
   editorConfig?: monaco.editor.IStandaloneEditorConstructionOptions;
 }
 
-export const MonacoEditor: React.FC<Props> = (props) => {
+export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
   return (
     <MonacoContext {...props}>
       <MonacoWrapper {...props} />
@@ -79,7 +79,7 @@ export const MonacoEditor: React.FC<Props> = (props) => {
   );
 };
 
-export const MonacoWrapper: React.FC<Props> = (props) => {
+const MonacoWrapper: React.FC<MonacoEditorProps> = (props) => {
   const [state, setState] = React.useState<{
     model: monaco.editor.ITextModel | undefined;
   }>({
@@ -149,10 +149,10 @@ export const MonacoWrapper: React.FC<Props> = (props) => {
   return <div ref={containerRef} style={{ height: '100%' }}></div>;
 };
 
-interface MonacoContextProps extends Props {
+interface MonacoContextProps extends MonacoEditorProps {
   children: React.ReactNode;
 }
-export const MonacoContext: React.FC<MonacoContextProps> = (props) => {
+const MonacoContext: React.FC<MonacoContextProps> = (props) => {
   React.useLayoutEffect(() => {
     const destroy = setUpMonaco(props.startJayveeWorker);
 
