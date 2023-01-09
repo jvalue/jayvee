@@ -65,6 +65,8 @@ interface Props {
    *
    * A good starting point for experimenting with the editor options is the Monaco Playground, see
    * https://microsoft.github.io/monaco-editor/playground.html
+   *
+   * **You should memoize this Prop, because whenever it changes, the editor model gets re-created.**
    */
   editorConfig?: monaco.editor.IStandaloneEditorConstructionOptions;
 }
@@ -110,7 +112,7 @@ export const MonacoWrapper: React.FC<Props> = (props) => {
       return;
     }
 
-    // When the model changes, call the callback function defined in Props.
+    // When the model content (i.e. the text in the editor) changes, call the callback function defined in Props.
     state.model.onDidChangeContent(() => {
       if (!state.model) {
         return;
