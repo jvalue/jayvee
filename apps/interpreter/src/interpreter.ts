@@ -1,6 +1,7 @@
 import * as R from '@jayvee/execution';
 import {
   createBlockExecutor,
+  isDiagnostic,
   useExtension as useExecutionExtension,
 } from '@jayvee/execution';
 import { StdExecExtension } from '@jayvee/extensions/std/exec';
@@ -19,7 +20,7 @@ import {
 import * as E from 'fp-ts/lib/Either';
 import { NodeFileSystem } from 'langium/node';
 
-import { extractAstNode, printError } from './cli-util';
+import { extractAstNode, logDiagnostic } from './cli-util';
 import {
   extractRequiredRuntimeParameters,
   extractRuntimeParameters,
@@ -46,7 +47,7 @@ export async function runAction(
     options.env,
   );
   if (E.isLeft(parameterReadResult)) {
-    parameterReadResult.left.forEach((x) => printError(x));
+    parameterReadResult.left.forEach(logDiagnostic);
     process.exit(ExitCode.FAILURE);
   }
 
@@ -101,13 +102,16 @@ async function runPipeline(
           blockExecutor.execute(value),
         );
       } catch (errObj) {
-        if (R.isExecutionErrorDetails(errObj)) {
-          printError(errObj);
+        if (!isDiagnostic(errObj)) {
+          console.error(errObj);
           return ExitCode.FAILURE;
         }
-        throw errObj;
+        logDiagnostic(errObj);
+        if (errObj.severity === 'error') {
+          return ExitCode.FAILURE;
+        }
       }
-      blockExecutor.getReportedErrors().forEach(printError);
+      blockExecutor.getReportedDiagnostics().forEach(logDiagnostic);
     }
   } catch (errObj) {
     // If a pipeline contains cycles, an exception will be thrown.

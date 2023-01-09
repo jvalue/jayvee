@@ -1,6 +1,7 @@
 import { strict as assert } from 'assert';
 
 import * as R from '@jayvee/execution';
+import { Diagnostic } from '@jayvee/execution';
 import {
   AttributeType,
   Model,
@@ -38,17 +39,17 @@ export function extractRequiredRuntimeParameters(
 export function extractRuntimeParameters(
   requiredParameters: RuntimeParameter[],
   env: Map<string, string>,
-): E.Either<R.ExecutionErrorDetails[], Map<string, string | number | boolean>> {
+): E.Either<Diagnostic[], Map<string, string | number | boolean>> {
   const parameters: Map<string, string | number | boolean> = new Map();
-  const errorMessages: R.ExecutionErrorDetails[] = [];
+  const diagnostics: Diagnostic[] = [];
 
   for (const requiredParameter of requiredParameters) {
     const parameterValue = env.get(requiredParameter.name);
     if (parameterValue === undefined) {
-      errorMessages.push({
-        message: `Runtime parameter ${requiredParameter.name} is missing.`,
-        hint: `Please provide values by adding "-e <parameterName>=<value>" to your command.`,
-        cstNode: requiredParameter.$container.$cstNode,
+      diagnostics.push({
+        severity: 'error',
+        message: `Runtime parameter ${requiredParameter.name} is missing. Please provide a value by adding "-e ${requiredParameter.name}=<value>" to your command.`,
+        info: { node: requiredParameter },
       });
       continue;
     }
@@ -58,15 +59,15 @@ export function extractRuntimeParameters(
       requiredParameter,
     );
     if (R.isErr(parseResult)) {
-      errorMessages.push(R.errDetails(parseResult));
+      diagnostics.push(R.errDetails(parseResult));
       continue;
     }
 
     parameters.set(requiredParameter.name, parseResult.right);
   }
 
-  if (errorMessages.length > 0) {
-    return E.left(errorMessages);
+  if (diagnostics.length > 0) {
+    return E.left(diagnostics);
   }
 
   return E.right(parameters);
@@ -100,11 +101,11 @@ function parseParameterAsMatchingType(
     case AttributeType.INT:
       if (!/^[1-9][0-9]*$/.test(value)) {
         return R.err({
+          severity: 'error',
           message: `Runtime parameter ${
             requiredParameter.name
           } has value ${JSON.stringify(value)} but should be of type integer.`,
-          hint: 'Use an integer value instead.',
-          cstNode: requiredParameter.$container.$cstNode,
+          info: { node: requiredParameter },
         });
       }
       return R.ok(Number.parseInt(value, 10));

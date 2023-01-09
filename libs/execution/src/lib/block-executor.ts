@@ -9,13 +9,13 @@ import {
 } from '@jayvee/language-server';
 import { isReference } from 'langium';
 
+import { Diagnostic } from './diagnostic';
 import * as R from './execution-result';
-import { ExecutionErrorDetails } from './execution-result';
 
 export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
   private _block?: Block;
   private _runtimeParameters?: Map<string, string | number | boolean>;
-  private errors: ExecutionErrorDetails[] = [];
+  private diagnostics: Diagnostic[] = [];
 
   protected constructor(readonly blockType: string) {}
 
@@ -118,11 +118,11 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
     return value;
   }
 
-  protected reportError(errDetails: ExecutionErrorDetails) {
-    this.errors.push(errDetails);
+  protected reportDiagnostic(diagnostic: Diagnostic) {
+    this.diagnostics.push(diagnostic);
   }
 
-  public getReportedErrors(): ExecutionErrorDetails[] {
-    return this.errors;
+  public getReportedDiagnostics(): Diagnostic[] {
+    return this.diagnostics;
   }
 }

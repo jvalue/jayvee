@@ -2,8 +2,8 @@ import * as http from 'https';
 
 import { parseString as parseStringAsCsv } from '@fast-csv/parse';
 import { ParserOptionsArgs } from '@fast-csv/parse/build/src/ParserOptions';
-import { BlockExecutor } from '@jayvee/execution';
 import * as R from '@jayvee/execution';
+import { BlockExecutor, isDiagnostic } from '@jayvee/execution';
 import { Sheet } from '@jayvee/language-server';
 
 export class CSVFileExtractorExecutor extends BlockExecutor<void, Sheet> {
@@ -24,7 +24,7 @@ export class CSVFileExtractorExecutor extends BlockExecutor<void, Sheet> {
         height: csv.length,
       });
     } catch (errorObj) {
-      if (R.isExecutionErrorDetails(errorObj)) {
+      if (isDiagnostic(errorObj)) {
         return R.err(errorObj);
       }
       throw errorObj;
@@ -40,11 +40,11 @@ export class CSVFileExtractorExecutor extends BlockExecutor<void, Sheet> {
         if (responseCode === undefined || responseCode >= 400) {
           resolve(
             R.err({
-              message: `Error when executing block "${
-                this.block.$type
-              }". HTTP fetch failed with code ${responseCode ?? 'undefined'}.`,
-              hint: `Please check your connection and the attribute "url".`,
-              cstNode: this.block.$cstNode?.parent,
+              severity: 'error',
+              message: `HTTP fetch failed with code ${
+                responseCode ?? 'undefined'
+              }. Please check your connection and the attribute "url".`,
+              info: { node: this.block },
             }),
           );
         }
@@ -60,9 +60,9 @@ export class CSVFileExtractorExecutor extends BlockExecutor<void, Sheet> {
         response.on('error', (errorObj) => {
           resolve(
             R.err({
-              message: `Error when executing block "${this.block.$type}".`,
-              hint: errorObj.message,
-              cstNode: this.block.$cstNode?.parent,
+              severity: 'error',
+              message: errorObj.message,
+              info: { node: this.block },
             }),
           );
         });
@@ -84,9 +84,9 @@ export class CSVFileExtractorExecutor extends BlockExecutor<void, Sheet> {
         .on('error', (error) => {
           resolve(
             R.err({
-              message: `Error when executing block "${this.block.$type}". CSV parse failed on row.`,
-              hint: error.message,
-              cstNode: this.block.$cstNode?.parent,
+              severity: 'error',
+              message: `CSV parse failed on row: ${error.message}`,
+              info: { node: this.block },
             }),
           );
         })
