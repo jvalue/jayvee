@@ -3,7 +3,7 @@ const path = require('path');
 
 const projectRootPath = process.cwd();
 
-const { getProjectVersion } = require(path.join(
+const { fixPeerDepsVersions, getProjectVersion } = require(path.join(
   projectRootPath,
   'scripts',
   'build-helpers.js',
@@ -22,6 +22,8 @@ const rawPackageJsonContent = fs
   .toString();
 const parsedPackageJsonContent = JSON.parse(rawPackageJsonContent);
 
+fixPeerDepsVersions(parsedPackageJsonContent);
+
 /*
   In our editor, we perform imports from a package called "vscode".
   This is however not the true name of the package.
@@ -36,11 +38,17 @@ const parsedPackageJsonContent = JSON.parse(rawPackageJsonContent);
 */
 delete parsedPackageJsonContent.peerDependencies.vscode;
 
+// By default, this value is set to the exact React version we are using. This makes it hard to use the package in environments where a different React version is present.
+parsedPackageJsonContent.peerDependencies.react = '>= 17';
+
 // Get the "version" field from the root package.json file and set it as the version of our package.
 parsedPackageJsonContent.version = getProjectVersion();
 
 // Change the name because nx requires the prefix @jayvee and the GitHub registry requires the prefix @jvalue when publishing
-parsedPackageJsonContent.name = parsedPackageJsonContent.name.replace('@jayvee/', '@jvalue/');
+parsedPackageJsonContent.name = parsedPackageJsonContent.name.replace(
+  '@jayvee/',
+  '@jvalue/',
+);
 
 const prettyPrintedContent = JSON.stringify(parsedPackageJsonContent, null, 2);
 fs.writeFileSync(monacoEditorPackageJsonPath, prettyPrintedContent);

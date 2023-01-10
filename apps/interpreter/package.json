@@ -1,6 +1,6 @@
 {
   "name": "@jvalue/interpreter",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Interpreter for .jv files",
   "main": "main.js",
   "bin": {

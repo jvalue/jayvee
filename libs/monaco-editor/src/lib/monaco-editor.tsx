@@ -35,9 +35,19 @@ import { StandaloneServices } from 'vscode/services';
 
 const LANGUAGE_NAME = 'jayvee';
 
-interface Props {
+export interface MonacoEditorProps {
   startJayveeWorker: () => Worker;
 
+  /**
+   * The text that shall (initially) be displayed in the editor.
+   *
+   * Whenever this Prop changes, the internal Model is re-created.
+   * This is a pretty expensive operation.
+   * Thus, you should only change this Prop when absolutely necessary.
+   * Most importantly: Since the editor holds its own state, you should **not** sync `editorText` with your State.
+   * Or, in other words: Do not update this Prop whenever {@link onDidChangeEditorText} is called.
+   * In most applications, it is sufficient to set this Prop once (when the component gets created) and then to just leave it unchanged.
+   */
   editorText: string;
   onDidChangeEditorText: (newText: string) => void;
 
@@ -55,11 +65,13 @@ interface Props {
    *
    * A good starting point for experimenting with the editor options is the Monaco Playground, see
    * https://microsoft.github.io/monaco-editor/playground.html
+   *
+   * **You should memoize this Prop, because whenever it changes, the editor model gets re-created.**
    */
   editorConfig?: monaco.editor.IStandaloneEditorConstructionOptions;
 }
 
-export const MonacoEditor: React.FC<Props> = (props) => {
+export const MonacoEditor: React.FC<MonacoEditorProps> = (props) => {
   return (
     <MonacoContext {...props}>
       <MonacoWrapper {...props} />
@@ -67,7 +79,7 @@ export const MonacoEditor: React.FC<Props> = (props) => {
   );
 };
 
-export const MonacoWrapper: React.FC<Props> = (props) => {
+const MonacoWrapper: React.FC<MonacoEditorProps> = (props) => {
   const [state, setState] = React.useState<{
     model: monaco.editor.ITextModel | undefined;
   }>({
@@ -100,7 +112,7 @@ export const MonacoWrapper: React.FC<Props> = (props) => {
       return;
     }
 
-    // When the model changes, call the callback function defined in Props.
+    // When the model content (i.e. the text in the editor) changes, call the callback function defined in Props.
     state.model.onDidChangeContent(() => {
       if (!state.model) {
         return;
@@ -137,10 +149,10 @@ export const MonacoWrapper: React.FC<Props> = (props) => {
   return <div ref={containerRef} style={{ height: '100%' }}></div>;
 };
 
-interface MonacoContextProps extends Props {
+interface MonacoContextProps extends MonacoEditorProps {
   children: React.ReactNode;
 }
-export const MonacoContext: React.FC<MonacoContextProps> = (props) => {
+const MonacoContext: React.FC<MonacoContextProps> = (props) => {
   React.useLayoutEffect(() => {
     const destroy = setUpMonaco(props.startJayveeWorker);
 
