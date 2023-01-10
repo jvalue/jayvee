@@ -8,9 +8,12 @@ export interface Diagnostic<N extends AstNode = AstNode> {
   info: DiagnosticInfo<N>;
 }
 
-export function isDiagnostic(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  obj: any,
-): obj is Diagnostic {
-  return 'severity' in obj && 'message' in obj && 'info' in obj;
+export function isDiagnostic(obj: unknown): obj is Diagnostic {
+  return (
+    typeof obj === 'object' &&
+    obj != null &&
+    'severity' in obj &&
+    'message' in obj &&
+    'info' in obj
+  );
 }
