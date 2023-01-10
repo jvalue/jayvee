@@ -33,12 +33,13 @@ Now, switch to the React project where you want to test the editor. Open `packag
 
 ```
   "dependencies": {
-    "@jayvee/language-server": "file:../../../jayvee/dist/libs/language-server/jayvee-language-server-0.0.0.tgz",
-    "@jayvee/monaco-editor": "file:../../../jayvee/dist/libs/monaco-editor/jayvee-monaco-editor-0.0.0.tgz"
+    "@jayvee/language-server": "file:../../../jayvee/dist/libs/language-server/jvalue-language-server-0.0.0.tgz",
+    "@jvalue/language-server": "file:../../../jayvee/dist/libs/language-server/jvalue-language-server-0.0.0.tgz",
+    "@jvalue/monaco-editor": "file:../../../jayvee/dist/libs/monaco-editor/jvalue-monaco-editor-0.0.0.tgz"
   },
 ```
 
-You might have to adjust the paths to the files.
+You might have to adjust the paths to the files (and especially the version at the end). Please note that we are both importing "@jayvee/language-server" and "@jvalue/language-server". This is done because on our registry, the package scope gets changed from "@jayvee" to "@jvalue", and the monaco-editor package has a peer dependency that renames from @jayvee/language-server to @jvalue/language-server.
 
 Now, run `npm install`.
 
@@ -53,7 +54,7 @@ To use the component, we need to perform a few additional steps.
 First, we need to create the file that will power the WebWorker running the Jayvee Language Server. For this, create a file called `server-worker.ts`. Add the following content to this file:
 
 ```ts
-import { createJayveeServices } from '@jayvee/language-server';
+import { createJayveeServices } from '@jvalue/language-server';
 import { EmptyFileSystem, startLanguageServer } from 'langium';
 import {
   BrowserMessageReader,
@@ -91,7 +92,7 @@ Got an error saying "Cannot find name 'DedicatedWorkerGlobalScope'"? Then open y
 Now, create a new file `my-editor.tsx` where the actual editor will be contained. This file should be created next to `server-worker.ts`. Add the following file content:
 
 ```tsx
-import { MonacoEditor } from '@jayvee/monaco-editor';
+import { MonacoEditor } from '@jvalue/monaco-editor';
 import React from 'react';
 
 const exampleCode = 'Add example code here';

@@ -3,7 +3,7 @@ const path = require('path');
 
 const projectRootPath = process.cwd();
 
-const { getProjectVersion } = require(path.join(
+const { fixPeerDepsVersions, getProjectVersion } = require(path.join(
   projectRootPath,
   'scripts',
   'build-helpers.js',
@@ -24,6 +24,8 @@ let parsedPackageJsonContent = JSON.parse(rawPackageJsonContent);
 
 // Get the "version" field from the root package.json file and set it as the version of our package.
 parsedPackageJsonContent.version = getProjectVersion();
+
+fixPeerDepsVersions(parsedPackageJsonContent);
 
 /*
   Unfortunately, it seems like it is not possible to define a "base" package.json for the executor we are using. 
