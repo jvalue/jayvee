@@ -119,7 +119,9 @@ export function logLspDiagnostic(
   const lineNumberLength = Math.floor(Math.log10(endLineNumber)) + 1;
 
   printFn(
-    `In ${document.uri.path}:${startLineNumber}:${diagnosticRange.start.character}`,
+    `In ${document.uri.path}:${startLineNumber}:${
+      diagnosticRange.start.character + 1
+    }`,
   );
   lines.forEach((line, i) => {
     const paddedLineNumber = String(startLineNumber + i).padStart(
