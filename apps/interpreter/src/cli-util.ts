@@ -18,6 +18,7 @@ import {
   Diagnostic as LspDiagnostic,
   Range,
 } from 'vscode-languageserver';
+import { uinteger } from 'vscode-languageserver-types';
 import { URI } from 'vscode-uri';
 
 export async function extractDocument(
@@ -87,6 +88,8 @@ export function logDiagnostic(diagnostic: Diagnostic) {
   logLspDiagnostic(lspDiagnostic, document);
 }
 
+const TAB_TO_SPACES = 4;
+
 export function logLspDiagnostic(
   diagnostic: LspDiagnostic,
   document: LangiumDocument,
@@ -95,13 +98,14 @@ export function logLspDiagnostic(
     diagnostic.severity !== undefined,
     'The diagnostic severity is assumed to always be present',
   );
-  const printFn = inferPrintFunction(diagnostic.severity);
-  const colorFn = inferChalkColor(diagnostic.severity);
+  const severity = diagnostic.severity;
+
+  const printFn = inferPrintFunction(severity);
+  const colorFn = inferChalkColor(severity);
+
   printFn(
     chalk.bold(
-      `${colorFn(inferSeverityName(diagnostic.severity))}: ${
-        diagnostic.message
-      }`,
+      `${colorFn(inferSeverityName(severity))}: ${diagnostic.message}`,
     ),
   );
 
@@ -110,14 +114,16 @@ export function logLspDiagnostic(
   const endLineNumber = diagnosticRange.end.line + 1;
 
   const fullRange: Range = {
-    ...diagnosticRange,
     start: {
-      ...diagnosticRange.start,
+      line: diagnosticRange.start.line,
       character: 0,
     },
+    end: {
+      line: diagnosticRange.end.line,
+      character: uinteger.MAX_VALUE,
+    },
   };
-
-  const text = document.textDocument.getText(fullRange);
+  const text = document.textDocument.getText(fullRange).trimEnd();
   const lines = text.split('\n');
 
   const lineNumberLength = Math.floor(Math.log10(endLineNumber)) + 1;
@@ -128,13 +134,59 @@ export function logLspDiagnostic(
     }`,
   );
   lines.forEach((line, i) => {
-    const paddedLineNumber = String(startLineNumber + i).padStart(
-      lineNumberLength,
-      ' ',
+    const lineNumber = startLineNumber + i;
+    const paddedLineNumber = String(lineNumber).padStart(lineNumberLength, ' ');
+    printFn(
+      `${chalk.grey(`${paddedLineNumber} |`)} ${line.replace(
+        /\t/g,
+        ' '.repeat(TAB_TO_SPACES),
+      )}`,
     );
-    printFn(`${chalk.grey(`${paddedLineNumber} |`)} ${line}`);
+
+    let underlineFrom = 0;
+    let underlineTo = line.length;
+    if (lineNumber === startLineNumber) {
+      underlineFrom = diagnosticRange.start.character;
+    }
+    if (lineNumber === endLineNumber) {
+      underlineTo = diagnosticRange.end.character;
+    }
+
+    const underlineIndent = repeatCharAccordingToString(
+      ' ',
+      line.substring(0, underlineFrom),
+      TAB_TO_SPACES,
+    );
+    const underline = repeatCharAccordingToString(
+      '^',
+      line.substring(underlineFrom, underlineTo),
+      TAB_TO_SPACES,
+    );
+
+    printFn(
+      `${chalk.grey(
+        `${' '.repeat(lineNumberLength)} |`,
+      )} ${underlineIndent}${colorFn(underline)}`,
+    );
   });
   printFn('');
+}
+
+/**
+ * Repeats {@link charToRepeat} as many times as {@link accordingTo} is long.
+ * For each occurrence of \t in {@link accordingTo},
+ * {@link charToRepeat} is repeated {@link tabRepeats} times instead of once.
+ */
+function repeatCharAccordingToString(
+  charToRepeat: string,
+  accordingTo: string,
+  tabRepeats: number,
+): string {
+  return Array.from(accordingTo).reduce((prev, cur) => {
+    const repeatedChar =
+      cur === '\t' ? charToRepeat.repeat(tabRepeats) : charToRepeat;
+    return `${prev}${repeatedChar}`;
+  }, '');
 }
 
 function inferPrintFunction(
