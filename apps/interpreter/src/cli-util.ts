@@ -1,9 +1,23 @@
+import { strict as assert } from 'assert';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { ExecutionErrorDetails } from '@jayvee/execution';
+import { Diagnostic } from '@jayvee/execution';
 import * as chalk from 'chalk';
-import { AstNode, CstNode, LangiumDocument, LangiumServices } from 'langium';
+import {
+  AstNode,
+  LangiumDocument,
+  LangiumServices,
+  getDiagnosticRange,
+  getDocument,
+  toDiagnosticSeverity,
+} from 'langium';
+import { assertUnreachable } from 'langium/lib/utils/errors';
+import {
+  DiagnosticSeverity,
+  Diagnostic as LspDiagnostic,
+  Range,
+} from 'vscode-languageserver';
 import { URI } from 'vscode-uri';
 
 export async function extractDocument(
@@ -37,15 +51,8 @@ export async function extractDocument(
     (e) => e.severity === 1,
   );
   if (validationErrors.length > 0) {
-    console.error(chalk.red('There are validation errors:'));
     for (const validationError of validationErrors) {
-      console.error(
-        chalk.red(
-          `line ${validationError.range.start.line + 1}: ${
-            validationError.message
-          } [${document.textDocument.getText(validationError.range)}]`,
-        ),
-      );
+      logLspDiagnostic(validationError, document);
     }
     process.exit(1);
   }
@@ -60,23 +67,120 @@ export async function extractAstNode<T extends AstNode>(
   return (await extractDocument(fileName, services)).parseResult.value as T;
 }
 
-export function getCstTextWithLineNumbers(cstNode: CstNode): string {
-  const text = cstNode.text;
-  const lines = text.split('\n');
-  const startLineNumber = cstNode.range.start.line + 1;
+export function logDiagnostic(diagnostic: Diagnostic) {
+  const document = getDocument(diagnostic.info.node);
 
-  let textWithLineNumbers = '';
-  for (let i = 0; i < lines.length; ++i) {
-    textWithLineNumbers += `${startLineNumber + i}\t| \t${lines[i] ?? ''}\n`;
-  }
-  return textWithLineNumbers;
+  /**
+   * @see {@link DefaultDocumentValidator.toDiagnostic}
+   */
+  const lspDiagnostic = {
+    message: diagnostic.message,
+    range: getDiagnosticRange(diagnostic.info),
+    severity: toDiagnosticSeverity(diagnostic.severity),
+    code: diagnostic.info.code,
+    codeDescription: diagnostic.info.codeDescription,
+    tags: diagnostic.info.tags,
+    relatedInformation: diagnostic.info.relatedInformation,
+    data: diagnostic.info.data,
+    source: document.textDocument.languageId,
+  } as LspDiagnostic;
+  logLspDiagnostic(lspDiagnostic, document);
 }
 
-export function printError(errDetails: ExecutionErrorDetails): void {
-  console.error(chalk.red(errDetails.message));
-  console.error(chalk.red(errDetails.hint));
-  console.error();
-  if (errDetails.cstNode !== undefined) {
-    console.error(chalk.blue(getCstTextWithLineNumbers(errDetails.cstNode)));
+export function logLspDiagnostic(
+  diagnostic: LspDiagnostic,
+  document: LangiumDocument,
+): void {
+  assert(
+    diagnostic.severity !== undefined,
+    'The diagnostic severity is assumed to always be present',
+  );
+  const printFn = inferPrintFunction(diagnostic.severity);
+  const colorFn = inferChalkColor(diagnostic.severity);
+  printFn(
+    chalk.bold(
+      `${colorFn(inferSeverityName(diagnostic.severity))}: ${
+        diagnostic.message
+      }`,
+    ),
+  );
+
+  const diagnosticRange = diagnostic.range;
+  const startLineNumber = diagnosticRange.start.line + 1;
+  const endLineNumber = diagnosticRange.end.line + 1;
+
+  const fullRange: Range = {
+    ...diagnosticRange,
+    start: {
+      ...diagnosticRange.start,
+      character: 0,
+    },
+  };
+
+  const text = document.textDocument.getText(fullRange);
+  const lines = text.split('\n');
+
+  const lineNumberLength = Math.floor(Math.log10(endLineNumber)) + 1;
+
+  printFn(
+    `In ${document.uri.path}:${startLineNumber}:${
+      diagnosticRange.start.character + 1
+    }`,
+  );
+  lines.forEach((line, i) => {
+    const paddedLineNumber = String(startLineNumber + i).padStart(
+      lineNumberLength,
+      ' ',
+    );
+    printFn(`${chalk.grey(`${paddedLineNumber} |`)} ${line}`);
+  });
+  printFn('');
+}
+
+function inferPrintFunction(
+  severity: DiagnosticSeverity,
+): (message: string) => void {
+  switch (severity) {
+    case DiagnosticSeverity.Error:
+      return console.error;
+    case DiagnosticSeverity.Warning:
+      return console.warn;
+    case DiagnosticSeverity.Information:
+    case DiagnosticSeverity.Hint:
+      return console.info;
+    default:
+      assertUnreachable(severity);
+  }
+}
+
+function inferChalkColor(
+  severity: DiagnosticSeverity,
+): (message: string) => string {
+  switch (severity) {
+    case DiagnosticSeverity.Error:
+      return chalk.red;
+    case DiagnosticSeverity.Warning:
+      return chalk.yellow;
+    case DiagnosticSeverity.Information:
+      return chalk.gray;
+    case DiagnosticSeverity.Hint:
+      return chalk.blue;
+    default:
+      assertUnreachable(severity);
+  }
+}
+
+function inferSeverityName(severity: DiagnosticSeverity): string {
+  switch (severity) {
+    case DiagnosticSeverity.Error:
+      return 'error';
+    case DiagnosticSeverity.Warning:
+      return 'warning';
+    case DiagnosticSeverity.Information:
+      return 'information';
+    case DiagnosticSeverity.Hint:
+      return 'hint';
+    default:
+      assertUnreachable(severity);
   }
 }

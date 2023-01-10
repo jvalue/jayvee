@@ -1,23 +1,6 @@
 import * as E from 'fp-ts/lib/Either';
-import { CstNode } from 'langium';
 
-/**
- * Data structure collecting all information relevant to an execution error.
- */
-export interface ExecutionErrorDetails {
-  message: string;
-  hint?: string;
-  cstNode?: CstNode | undefined;
-}
-/**
- * Type guard for @see ExecutionErrorDetails
- */
-export function isExecutionErrorDetails(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  obj: any,
-): obj is ExecutionErrorDetails {
-  return 'message' in obj;
-}
+import { Diagnostic } from './diagnostic';
 
 /**
  * Convendience interfaces and methods wrapping @see Either of fp-ts library.
@@ -25,8 +8,8 @@ export function isExecutionErrorDetails(
  * Right is a generic T
  */
 
-export type Result<T> = E.Either<ExecutionErrorDetails, T>;
-export type Err = E.Left<ExecutionErrorDetails>;
+export type Result<T> = E.Either<Diagnostic, T>;
+export type Err = E.Left<Diagnostic>;
 export type Ok<T> = E.Right<T>;
 
 /**
@@ -38,11 +21,11 @@ export function ok<T>(data: T): Result<T> {
   return E.right(data);
 }
 /**
- * Creates an @Err object from an @ExecutionErrorDetails object.
- * @param details the @ExecutionErrorDetails object
+ * Creates an @Err object from a @Diagnostic object.
+ * @param details the @Diagnostic object
  * @returns the created @Err object
  */
-export function err<T>(details: ExecutionErrorDetails): Result<T> {
+export function err<T>(details: Diagnostic): Result<T> {
   return E.left(details);
 }
 
@@ -66,14 +49,14 @@ export function okData<T>(ok: Ok<T>): T {
   return ok.right;
 }
 /**
- * Convenience method to get the @ExecutionErrorDetails data of an @see Err object.
+ * Convenience method to get the @Diagnostic data of an @see Err object.
  */
-export function errDetails(err: Err): ExecutionErrorDetails {
+export function errDetails(err: Err): Diagnostic {
   return err.left;
 }
 /**
  * Convenience method to get wrapped data if it is an @see Ok object.
- * Otherwise, throws the @ExecutionErrorDetails object.
+ * Otherwise, throws the @Diagnostic object.
  */
 export function dataOrThrow<T>(r: Result<T>): T {
   if (isErr(r)) {
@@ -83,7 +66,7 @@ export function dataOrThrow<T>(r: Result<T>): T {
 }
 /**
  * Convenience method to get wrapped data if resolves to an @see Ok object.
- * Otherwise, throws the @ExecutionErrorDetails object.
+ * Otherwise, throws the @Diagnostic object.
  */
 export async function dataOrThrowAsync<T>(r: Promise<Result<T>>): Promise<T> {
   return dataOrThrow(await r);
