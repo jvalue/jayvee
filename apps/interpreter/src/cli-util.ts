@@ -69,6 +69,10 @@ export async function extractAstNode<T extends AstNode>(
 
 export function logDiagnostic(diagnostic: Diagnostic) {
   const document = getDocument(diagnostic.info.node);
+
+  /**
+   * @see {@link DefaultDocumentValidator.toDiagnostic}
+   */
   const lspDiagnostic = {
     message: diagnostic.message,
     range: getDiagnosticRange(diagnostic.info),
