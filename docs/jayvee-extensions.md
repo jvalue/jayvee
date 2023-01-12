@@ -195,7 +195,7 @@ export class MyLangExtension implements JayveeLangExtension {
 ```
 
 #### 3. Implement `BlockExecutor`
-
+warn
 The following example implements an executor for the previously defined block type `MyExtractor`.
 
 The `execute` method defines the behavior when a block is executed. Its signature matches the input and output types defined in `MyExtractorMetaInformation`.
@@ -229,7 +229,7 @@ export class MyExtractorExecutor extends BlockExecutor<void, Sheet> {
 }
 ```
 
-> **warn**
+> **Warning**
 > The generic types of `BlockExecutor<I,O>` need to match the input and output types of the corresponding `BlockMetaInformation`.
 >
 > - Use `undefined` or `void` for `UNDEFINED_TYPE`
