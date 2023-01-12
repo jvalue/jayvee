@@ -2,11 +2,16 @@
 
 ## Projects overview
 
-| Name                                                      | Description                                                   |
-| --------------------------------------------------------- | ------------------------------------------------------------- |
-| [`language-server`](./libs/language-server/README.md)     | Jayvee language definition and language server implementation |
-| [`vs-code-extension`](./apps/vs-code-extension/README.md) | Visual Studio Code extension for the language                 |
-| [`interpreter`](./apps/interpreter/README.md)             | Command line tool for interpreting `.jv` files                |
+| Name                                              | Description                                                    |
+|---------------------------------------------------|----------------------------------------------------------------|
+| [`language-server`](./libs/language-server)       | Jayvee language definition and language server implementation  |
+| [`interpreter`](./apps/interpreter)               | Command line tool for interpreting Jayvee files                |
+| [`vs-code-extension`](./apps/vs-code-extension)   | Visual Studio Code extension for editing Jayvee files          |
+| [`monaco-editor`](./libs/monaco-editor)           | React component for editing Jayvee files                       |
+| [`execution`](./libs/execution)                   | Shared code for language extensions and the interpreter        |
+| [`extensions/std`](./libs/extensions/std)         | Standard language extension consisting of the extensions below |
+| [`extensions/rdbms`](./libs/extensions/rdbms)     | Language extension for relational databases                    |
+| [`extensions/tabular`](./libs/extensions/tabular) | Language extension for tabular data                            |
 
 ## Quick start
 
