@@ -1,21 +1,23 @@
 import { strict as assert } from 'assert';
 
 import {
+  Attribute,
   Block,
   Layout,
   getOrFailMetaInformation,
   isLayout,
   isRuntimeParameter,
 } from '@jayvee/language-server';
-import { isReference } from 'langium';
+import * as chalk from 'chalk';
+import * as O from 'fp-ts/Option';
+import { AstNode, DiagnosticInfo, isReference } from 'langium';
 
-import { Diagnostic } from './diagnostic';
-import * as R from './execution-result';
+import { Logger, Severity } from './logger';
 
 export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
   private _block?: Block;
   private _runtimeParameters?: Map<string, string | number | boolean>;
-  private diagnostics: Diagnostic[] = [];
+  private _logger?: Logger;
 
   protected constructor(readonly blockType: string) {}
 
@@ -52,7 +54,20 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
     return this._runtimeParameters;
   }
 
-  abstract execute(input: InputType): Promise<R.Result<OutputType>>;
+  set logger(logger: Logger) {
+    this._logger = logger;
+  }
+
+  get logger(): Logger {
+    assert(
+      this._logger !== undefined,
+      `No logger was set for the executor of block type ${this.blockType}`,
+    );
+
+    return this._logger;
+  }
+
+  abstract execute(input: InputType): Promise<O.Option<OutputType>>;
 
   protected getStringAttributeValue(attributeName: string): string {
     const attributeValue = this.getAttributeValue(attributeName);
@@ -85,9 +100,7 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
   }
 
   private getAttributeValue(attributeName: string): unknown {
-    const attribute = this.block.attributes.find(
-      (attribute) => attribute.name === attributeName,
-    );
+    const attribute = this.getAttribute(attributeName);
     if (attribute === undefined) {
       const metaInf = getOrFailMetaInformation(this.blockType);
 
@@ -118,11 +131,58 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
     return value;
   }
 
-  protected reportDiagnostic(diagnostic: Diagnostic) {
-    this.diagnostics.push(diagnostic);
+  protected getAttribute(attributeName: string): Attribute | undefined {
+    return this.block.attributes.find(
+      (attribute) => attribute.name === attributeName,
+    );
   }
 
-  public getReportedDiagnostics(): Diagnostic[] {
-    return this.diagnostics;
+  protected getOrFailAttribute(attributeName: string): Attribute {
+    const attribute = this.getAttribute(attributeName);
+    assert(
+      attribute !== undefined,
+      `Attribute with name ${attributeName} was expected to be present in block ${this.block.name} of type ${this.block.type}`,
+    );
+    return attribute;
+  }
+
+  protected logErr<N extends AstNode>(
+    message: string,
+    diagnostic?: DiagnosticInfo<N>,
+  ) {
+    this.log('error', message, diagnostic);
+  }
+
+  protected logWarn<N extends AstNode>(
+    message: string,
+    diagnostic?: DiagnosticInfo<N>,
+  ) {
+    this.log('warning', message, diagnostic);
+  }
+
+  protected logInfo<N extends AstNode>(
+    message: string,
+    diagnostic?: DiagnosticInfo<N>,
+  ) {
+    this.log('info', message, diagnostic);
+  }
+
+  protected logHint<N extends AstNode>(
+    message: string,
+    diagnostic?: DiagnosticInfo<N>,
+  ) {
+    this.log('hint', message, diagnostic);
+  }
+
+  private log<N extends AstNode>(
+    severity: Severity,
+    message: string,
+    diagnostic?: DiagnosticInfo<N>,
+  ) {
+    this.logger.log(
+      severity,
+      `${chalk.gray(`[${this.block.name}]`)} ${message}`,
+      diagnostic,
+    );
   }
 }

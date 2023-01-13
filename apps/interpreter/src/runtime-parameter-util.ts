@@ -1,7 +1,6 @@
 import { strict as assert } from 'assert';
 
-import * as R from '@jayvee/execution';
-import { Diagnostic } from '@jayvee/execution';
+import { Logger } from '@jayvee/execution';
 import {
   AttributeType,
   Model,
@@ -9,7 +8,7 @@ import {
   getOrFailMetaInformation,
   isRuntimeParameter,
 } from '@jayvee/language-server';
-import * as E from 'fp-ts/lib/Either';
+import * as O from 'fp-ts/Option';
 import { streamAst } from 'langium';
 import { assertUnreachable } from 'langium/lib/utils/errors';
 
@@ -34,55 +33,60 @@ export function extractRequiredRuntimeParameters(
  * Creates a map with all the runtime parameter values.
  * @param requiredParameters A list of all required runtime parameters, e.g. by @see extractRequiredRuntimeParameters
  * @param env The environment variable map
- * @returns all runtime parameters stored as a map if all required ones are present, error details if not
+ * @param logger the logger that shall be used for logging
+ * @returns all runtime parameters stored as a map if all required ones are present
  */
 export function extractRuntimeParameters(
   requiredParameters: RuntimeParameter[],
   env: Map<string, string>,
-): E.Either<Diagnostic[], Map<string, string | number | boolean>> {
+  logger: Logger,
+): O.Option<Map<string, string | number | boolean>> {
+  let errorCount = 0;
   const parameters: Map<string, string | number | boolean> = new Map();
-  const diagnostics: Diagnostic[] = [];
 
   for (const requiredParameter of requiredParameters) {
     const parameterValue = env.get(requiredParameter.name);
     if (parameterValue === undefined) {
-      diagnostics.push({
-        severity: 'error',
-        message: `Runtime parameter ${requiredParameter.name} is missing. Please provide a value by adding "-e ${requiredParameter.name}=<value>" to your command.`,
-        info: { node: requiredParameter },
-      });
+      logger.log(
+        'error',
+        `Runtime parameter ${requiredParameter.name} is missing. Please provide a value by adding "-e ${requiredParameter.name}=<value>" to your command.`,
+        { node: requiredParameter },
+      );
+      ++errorCount;
       continue;
     }
 
     const parseResult = parseParameterAsMatchingType(
       parameterValue,
       requiredParameter,
+      logger,
     );
-    if (R.isErr(parseResult)) {
-      diagnostics.push(R.errDetails(parseResult));
+    if (O.isNone(parseResult)) {
       continue;
     }
 
-    parameters.set(requiredParameter.name, parseResult.right);
+    parameters.set(requiredParameter.name, parseResult.value);
   }
 
-  if (diagnostics.length > 0) {
-    return E.left(diagnostics);
+  if (errorCount > 0) {
+    return O.none;
   }
 
-  return E.right(parameters);
+  return O.some(parameters);
 }
 
 /**
  * Parses a runtime parameter value to the required type.
  * @param value The string value to be parsed.
  * @param requiredParameter The ast node representing the parameter. Used to extract the desired parameter type.
+ * @param logger the logger that shall be used for logging
  * @returns the parsed parameter value if parseable, error details if not.
  */
 function parseParameterAsMatchingType(
   value: string,
   requiredParameter: RuntimeParameter,
-): R.Result<string | number | boolean> {
+  logger: Logger,
+): O.Option<string | number | boolean> {
   const block = requiredParameter.$container.$container;
   const metaInf = getOrFailMetaInformation(block.type);
   const attributeName = requiredParameter.$container.name;
@@ -97,18 +101,19 @@ function parseParameterAsMatchingType(
 
   switch (requiredType) {
     case AttributeType.STRING:
-      return R.ok(value);
+      return O.some(value);
     case AttributeType.INT:
       if (!/^[1-9][0-9]*$/.test(value)) {
-        return R.err({
-          severity: 'error',
-          message: `Runtime parameter ${
+        logger.log(
+          'error',
+          `Runtime parameter ${
             requiredParameter.name
           } has value ${JSON.stringify(value)} but should be of type integer.`,
-          info: { node: requiredParameter },
-        });
+          { node: requiredParameter },
+        );
+        return O.none;
       }
-      return R.ok(Number.parseInt(value, 10));
+      return O.some(Number.parseInt(value, 10));
     default:
       assert(
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

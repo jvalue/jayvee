@@ -4,6 +4,7 @@ import { Block } from '@jayvee/language-server';
 
 import { BlockExecutor } from './block-executor';
 import { BlockExecutorType } from './block-executor-type';
+import { Logger } from './logger';
 
 const registeredBlockExecutors = new Map<string, BlockExecutorType>();
 
@@ -20,6 +21,7 @@ export function registerBlockExecutor(blockExecutor: BlockExecutorType) {
 export function createBlockExecutor(
   block: Block,
   runtimeParameters: Map<string, string | number | boolean>,
+  logger: Logger,
 ): BlockExecutor {
   const blockExecutor = registeredBlockExecutors.get(block.type);
   assert(
@@ -30,6 +32,7 @@ export function createBlockExecutor(
   const blockExecutorInstance = new blockExecutor();
   blockExecutorInstance.block = block;
   blockExecutorInstance.runtimeParameters = runtimeParameters;
+  blockExecutorInstance.logger = logger;
 
   return blockExecutorInstance;
 }

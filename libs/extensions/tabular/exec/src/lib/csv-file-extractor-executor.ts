@@ -2,51 +2,42 @@ import * as http from 'https';
 
 import { parseString as parseStringAsCsv } from '@fast-csv/parse';
 import { ParserOptionsArgs } from '@fast-csv/parse/build/src/ParserOptions';
-import * as R from '@jayvee/execution';
-import { BlockExecutor, isDiagnostic } from '@jayvee/execution';
+import { BlockExecutor } from '@jayvee/execution';
 import { Sheet } from '@jayvee/language-server';
+import * as O from 'fp-ts/Option';
 
 export class CSVFileExtractorExecutor extends BlockExecutor<void, Sheet> {
   constructor() {
     super('CSVFileExtractor');
   }
 
-  override async execute(): Promise<R.Result<Sheet>> {
+  override async execute(): Promise<O.Option<Sheet>> {
     const url = this.getStringAttributeValue('url');
     const delimiter = this.getStringAttributeValue('delimiter');
 
-    try {
-      const raw = await R.dataOrThrowAsync(this.fetchRawData(url));
-      const csv = await R.dataOrThrowAsync(this.parseAsCsv(raw, delimiter));
-      return R.ok({
-        data: csv,
-        width: this.getSheetWidth(csv),
-        height: csv.length,
-      });
-    } catch (errorObj) {
-      if (isDiagnostic(errorObj)) {
-        return R.err(errorObj);
-      }
-      throw errorObj;
+    const rawData = await this.fetchRawData(url);
+    if (O.isNone(rawData)) {
+      return O.none;
     }
+
+    return await this.parseAsCsv(rawData.value, delimiter);
   }
 
-  private fetchRawData(url: string): Promise<R.Result<string>> {
+  private fetchRawData(url: string): Promise<O.Option<string>> {
+    this.logInfo(`Fetching raw data from ${url}`);
     return new Promise((resolve) => {
       http.get(url, (response) => {
         let rawData = '';
         const responseCode = response.statusCode;
 
         if (responseCode === undefined || responseCode >= 400) {
-          resolve(
-            R.err({
-              severity: 'error',
-              message: `HTTP fetch failed with code ${
-                responseCode ?? 'undefined'
-              }. Please check your connection and the attribute "url".`,
-              info: { node: this.block },
-            }),
+          this.logErr(
+            `HTTP fetch failed with code ${
+              responseCode ?? 'undefined'
+            }. Please check your connection.`,
+            { node: this.getOrFailAttribute('url') },
           );
+          resolve(O.none);
         }
 
         response.on('data', (dataChunk) => {
@@ -54,17 +45,13 @@ export class CSVFileExtractorExecutor extends BlockExecutor<void, Sheet> {
         });
 
         response.on('end', () => {
-          resolve(R.ok(rawData));
+          this.logInfo(`Successfully fetched raw data`);
+          resolve(O.some(rawData));
         });
 
         response.on('error', (errorObj) => {
-          resolve(
-            R.err({
-              severity: 'error',
-              message: errorObj.message,
-              info: { node: this.block },
-            }),
-          );
+          this.logErr(errorObj.message, { node: this.block, property: 'name' });
+          resolve(O.none);
         });
       });
     });
@@ -73,7 +60,8 @@ export class CSVFileExtractorExecutor extends BlockExecutor<void, Sheet> {
   private parseAsCsv(
     rawData: string,
     delimiter: string,
-  ): Promise<R.Result<string[][]>> {
+  ): Promise<O.Option<Sheet>> {
+    this.logInfo(`Parsing raw data as CSV using delimiter "${delimiter}"`);
     return new Promise((resolve) => {
       const csvData: string[][] = [];
       const parseOptions: ParserOptionsArgs = { delimiter };
@@ -82,16 +70,19 @@ export class CSVFileExtractorExecutor extends BlockExecutor<void, Sheet> {
           csvData.push(data);
         })
         .on('error', (error) => {
-          resolve(
-            R.err({
-              severity: 'error',
-              message: `CSV parse failed on row: ${error.message}`,
-              info: { node: this.block },
-            }),
-          );
+          this.logErr(`CSV parse failed: ${error.message}`, {
+            node: this.block,
+          });
+          resolve(O.none);
         })
         .on('end', () => {
-          resolve(R.ok(csvData));
+          const result = {
+            data: csvData,
+            width: this.getSheetWidth(csvData),
+            height: csvData.length,
+          };
+          this.logInfo(`Successfully parsed data as CSV`);
+          resolve(O.some(result));
         });
     });
   }
