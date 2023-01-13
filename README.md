@@ -8,10 +8,10 @@
 | [`interpreter`](./apps/interpreter)               | Command line tool for interpreting Jayvee files                |
 | [`vs-code-extension`](./apps/vs-code-extension)   | Visual Studio Code extension for editing Jayvee files          |
 | [`monaco-editor`](./libs/monaco-editor)           | React component for editing Jayvee files                       |
-| [`execution`](./libs/execution)                   | Shared code for language extensions and the interpreter        |
-| [`extensions/std`](./libs/extensions/std)         | Standard language extension consisting of the extensions below |
-| [`extensions/rdbms`](./libs/extensions/rdbms)     | Language extension for relational databases                    |
-| [`extensions/tabular`](./libs/extensions/tabular) | Language extension for tabular data                            |
+| [`execution`](./libs/execution)                   | Shared code for Jayvee extensions and the interpreter          |
+| [`extensions/std`](./libs/extensions/std)         | Standard Jayvee extension consisting of the extensions below   |
+| [`extensions/rdbms`](./libs/extensions/rdbms)     | Jayvee extension for relational databases                      |
+| [`extensions/tabular`](./libs/extensions/tabular) | Jayvee extension for tabular data                              |
 
 ## Quick start
 
