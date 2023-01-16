@@ -1,4 +1,5 @@
 import { BlockExecutor } from '@jayvee/execution';
+import * as R from '@jayvee/execution';
 import {
   AbstractDataType,
   ColumnSection,
@@ -8,7 +9,6 @@ import {
   isColumnSection,
   isHeaderRowSection,
 } from '@jayvee/language-server';
-import * as O from 'fp-ts/Option';
 
 import {
   columnCharactersAsIndex,
@@ -20,7 +20,7 @@ export class LayoutValidatorExecutor extends BlockExecutor<Sheet, Table> {
     super('LayoutValidator');
   }
 
-  override execute(input: Sheet): Promise<O.Option<Table>> {
+  override execute(input: Sheet): Promise<R.Result<Table>> {
     const layout = this.getLayoutAttributeValue('validationLayout');
     const sections = layout.sections;
 
@@ -51,7 +51,7 @@ export class LayoutValidatorExecutor extends BlockExecutor<Sheet, Table> {
     });
 
     if (errors.length !== 0) {
-      this.logWarn(
+      this.logger.logWarn(
         `${
           input.data.length - data.length - 1
         } rows were dropped due to failed layout validation. Found the following issues:\n${errors.join(
@@ -62,7 +62,7 @@ export class LayoutValidatorExecutor extends BlockExecutor<Sheet, Table> {
     }
 
     return Promise.resolve(
-      O.some({
+      R.ok({
         columnNames,
         columnTypes,
         data,

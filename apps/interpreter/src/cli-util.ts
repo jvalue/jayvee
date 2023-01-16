@@ -22,12 +22,12 @@ export async function extractDocument(
       extensions.length === 1 ? 'this extension' : 'one of these extensions'
     }: ${extensions.map((extension) => `"${extension}"`).join(',')}`;
 
-    logger.log('error', errorMessage);
+    logger.logErr(errorMessage);
     process.exit(ExitCode.FAILURE);
   }
 
   if (!fs.existsSync(fileName)) {
-    logger.log('error', `File ${fileName} does not exist.`);
+    logger.logErr(`File ${fileName} does not exist.`);
     process.exit(ExitCode.FAILURE);
   }
 

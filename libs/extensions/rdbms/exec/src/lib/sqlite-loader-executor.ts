@@ -1,6 +1,6 @@
 import { BlockExecutor } from '@jayvee/execution';
+import * as R from '@jayvee/execution';
 import { Table } from '@jayvee/language-server';
-import * as O from 'fp-ts/Option';
 import * as sqlite3 from 'sqlite3';
 
 import {
@@ -14,7 +14,7 @@ export class SQLiteLoaderExecutor extends BlockExecutor<Table, void> {
     super('SQLiteLoader');
   }
 
-  override async execute(input: Table): Promise<O.Option<void>> {
+  override async execute(input: Table): Promise<R.Result<void>> {
     const file = this.getStringAttributeValue('file');
     const table = this.getStringAttributeValue('table');
 
@@ -27,15 +27,16 @@ export class SQLiteLoaderExecutor extends BlockExecutor<Table, void> {
       await this.runQuery(db, buildCreateTableStatement(table, input));
       await this.runQuery(db, buildInsertValuesStatement(table, input));
 
-      return Promise.resolve(O.some(undefined));
+      return Promise.resolve(R.ok(undefined));
     } catch (err: unknown) {
-      this.logErr(
-        `Could not write to sqlite database: ${
-          err instanceof Error ? err.message : JSON.stringify(err)
-        }`,
-        { node: this.block },
+      return Promise.resolve(
+        R.err({
+          message: `Could not write to sqlite database: ${
+            err instanceof Error ? err.message : JSON.stringify(err)
+          }`,
+          diagnostic: { node: this.block },
+        }),
       );
-      return Promise.resolve(O.none);
     } finally {
       db?.close();
     }

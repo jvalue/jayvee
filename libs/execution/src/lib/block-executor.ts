@@ -8,11 +8,10 @@ import {
   isLayout,
   isRuntimeParameter,
 } from '@jayvee/language-server';
-import * as chalk from 'chalk';
-import * as O from 'fp-ts/Option';
-import { AstNode, DiagnosticInfo, isReference } from 'langium';
+import { isReference } from 'langium';
 
-import { Logger, Severity } from './logger';
+import * as R from './execution-result';
+import { Logger } from './logger';
 
 export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
   private _block?: Block;
@@ -67,7 +66,7 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
     return this._logger;
   }
 
-  abstract execute(input: InputType): Promise<O.Option<OutputType>>;
+  abstract execute(input: InputType): Promise<R.Result<OutputType>>;
 
   protected getStringAttributeValue(attributeName: string): string {
     const attributeValue = this.getAttributeValue(attributeName);
@@ -144,45 +143,5 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
       `Attribute with name ${attributeName} was expected to be present in block ${this.block.name} of type ${this.block.type}`,
     );
     return attribute;
-  }
-
-  protected logErr<N extends AstNode>(
-    message: string,
-    diagnostic?: DiagnosticInfo<N>,
-  ) {
-    this.log('error', message, diagnostic);
-  }
-
-  protected logWarn<N extends AstNode>(
-    message: string,
-    diagnostic?: DiagnosticInfo<N>,
-  ) {
-    this.log('warning', message, diagnostic);
-  }
-
-  protected logInfo<N extends AstNode>(
-    message: string,
-    diagnostic?: DiagnosticInfo<N>,
-  ) {
-    this.log('info', message, diagnostic);
-  }
-
-  protected logHint<N extends AstNode>(
-    message: string,
-    diagnostic?: DiagnosticInfo<N>,
-  ) {
-    this.log('hint', message, diagnostic);
-  }
-
-  private log<N extends AstNode>(
-    severity: Severity,
-    message: string,
-    diagnostic?: DiagnosticInfo<N>,
-  ) {
-    this.logger.log(
-      severity,
-      `${chalk.gray(`[${this.block.name}]`)} ${message}`,
-      diagnostic,
-    );
   }
 }

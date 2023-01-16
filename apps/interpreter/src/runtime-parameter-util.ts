@@ -1,6 +1,7 @@
 import { strict as assert } from 'assert';
 
 import { Logger } from '@jayvee/execution';
+import * as R from '@jayvee/execution';
 import {
   AttributeType,
   Model,
@@ -8,7 +9,6 @@ import {
   getOrFailMetaInformation,
   isRuntimeParameter,
 } from '@jayvee/language-server';
-import * as O from 'fp-ts/Option';
 import { streamAst } from 'langium';
 import { assertUnreachable } from 'langium/lib/utils/errors';
 
@@ -40,15 +40,14 @@ export function extractRuntimeParameters(
   requiredParameters: RuntimeParameter[],
   env: Map<string, string>,
   logger: Logger,
-): O.Option<Map<string, string | number | boolean>> {
+): Map<string, string | number | boolean> | undefined {
   let errorCount = 0;
   const parameters: Map<string, string | number | boolean> = new Map();
 
   for (const requiredParameter of requiredParameters) {
     const parameterValue = env.get(requiredParameter.name);
     if (parameterValue === undefined) {
-      logger.log(
-        'error',
+      logger.logErr(
         `Runtime parameter ${requiredParameter.name} is missing. Please provide a value by adding "-e ${requiredParameter.name}=<value>" to your command.`,
         { node: requiredParameter },
       );
@@ -59,34 +58,32 @@ export function extractRuntimeParameters(
     const parseResult = parseParameterAsMatchingType(
       parameterValue,
       requiredParameter,
-      logger,
     );
-    if (O.isNone(parseResult)) {
+    if (R.isErr(parseResult)) {
+      logger.logErr(parseResult.left.message, parseResult.left.diagnostic);
       continue;
     }
 
-    parameters.set(requiredParameter.name, parseResult.value);
+    parameters.set(requiredParameter.name, parseResult.right);
   }
 
   if (errorCount > 0) {
-    return O.none;
+    return undefined;
   }
 
-  return O.some(parameters);
+  return parameters;
 }
 
 /**
  * Parses a runtime parameter value to the required type.
  * @param value The string value to be parsed.
  * @param requiredParameter The ast node representing the parameter. Used to extract the desired parameter type.
- * @param logger the logger that shall be used for logging
  * @returns the parsed parameter value if parseable, error details if not.
  */
 function parseParameterAsMatchingType(
   value: string,
   requiredParameter: RuntimeParameter,
-  logger: Logger,
-): O.Option<string | number | boolean> {
+): R.Result<string | number | boolean> {
   const block = requiredParameter.$container.$container;
   const metaInf = getOrFailMetaInformation(block.type);
   const attributeName = requiredParameter.$container.name;
@@ -101,19 +98,17 @@ function parseParameterAsMatchingType(
 
   switch (requiredType) {
     case AttributeType.STRING:
-      return O.some(value);
+      return R.ok(value);
     case AttributeType.INT:
       if (!/^[1-9][0-9]*$/.test(value)) {
-        logger.log(
-          'error',
-          `Runtime parameter ${
+        return R.err({
+          message: `Runtime parameter ${
             requiredParameter.name
           } has value ${JSON.stringify(value)} but should be of type integer.`,
-          { node: requiredParameter },
-        );
-        return O.none;
+          diagnostic: { node: requiredParameter },
+        });
       }
-      return O.some(Number.parseInt(value, 10));
+      return R.ok(Number.parseInt(value, 10));
     default:
       assert(
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

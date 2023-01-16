@@ -23,12 +23,40 @@ export class DefaultLogger implements Logger {
 
   constructor(private readonly debug: boolean) {}
 
+  logErr<N extends AstNode>(
+    message: string,
+    diagnostic?: DiagnosticInfo<N>,
+  ): void {
+    this.log(Severity.ERROR, message, diagnostic);
+  }
+
+  logHint<N extends AstNode>(
+    message: string,
+    diagnostic?: DiagnosticInfo<N>,
+  ): void {
+    this.log(Severity.HINT, message, diagnostic);
+  }
+
+  logInfo<N extends AstNode>(
+    message: string,
+    diagnostic?: DiagnosticInfo<N>,
+  ): void {
+    this.log(Severity.INFO, message, diagnostic);
+  }
+
+  logWarn<N extends AstNode>(
+    message: string,
+    diagnostic?: DiagnosticInfo<N>,
+  ): void {
+    this.log(Severity.WARNING, message, diagnostic);
+  }
+
   public log<N extends AstNode>(
     severity: Severity,
     message: string,
     diagnostic?: DiagnosticInfo<N>,
   ) {
-    if (severity === 'info' && !this.debug) {
+    if (severity === Severity.INFO && !this.debug) {
       return;
     }
 

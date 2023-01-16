@@ -3,6 +3,7 @@ import {
   createBlockExecutor,
   useExtension as useExecutionExtension,
 } from '@jayvee/execution';
+import * as R from '@jayvee/execution';
 import { StdExecExtension } from '@jayvee/extensions/std/exec';
 import { StdLangExtension } from '@jayvee/extensions/std/lang';
 import {
@@ -16,7 +17,6 @@ import {
   getBlocksInTopologicalSorting,
   useExtension as useLangExtension,
 } from '@jayvee/language-server';
-import * as O from 'fp-ts/Option';
 import { NodeFileSystem } from 'langium/node';
 
 import { ExitCode, extractAstNode } from './cli-util';
@@ -44,13 +44,13 @@ export async function runAction(
     options.env,
     logger,
   );
-  if (O.isNone(parameterReadResult)) {
+  if (parameterReadResult === undefined) {
     process.exit(ExitCode.FAILURE);
   }
 
   const interpretationExitCode = await interpretPipelineModel(
     model,
-    parameterReadResult.value,
+    parameterReadResult,
     logger,
   );
   process.exit(interpretationExitCode);
@@ -97,12 +97,11 @@ async function runPipeline(
 
     const inputValue = parentData[0]?.value;
 
-    let result: O.Option<unknown>;
+    let result: R.Result<unknown>;
     try {
       result = await blockExecutor.execute(inputValue);
     } catch (unexpectedError) {
-      logger.log(
-        'error',
+      logger.logErr(
         `An unknown error occurred during the execution of block ${
           blockData.block.name
         }: ${
@@ -115,15 +114,12 @@ async function runPipeline(
       return ExitCode.FAILURE;
     }
 
-    if (O.isNone(result)) {
-      logger.log(
-        'error',
-        `The execution of block ${blockData.block.name} was not successful. Aborting execution.`,
-      );
+    if (R.isErr(result)) {
+      logger.logErr(result.left.message, result.left.diagnostic);
       return ExitCode.FAILURE;
     }
 
-    blockData.value = result.value;
+    blockData.value = result.right;
   }
 
   return ExitCode.SUCCESS;
