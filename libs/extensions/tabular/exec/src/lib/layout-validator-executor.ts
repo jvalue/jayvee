@@ -1,3 +1,5 @@
+import { strict as assert } from 'assert';
+
 import { BlockExecutor } from '@jayvee/execution';
 import * as R from '@jayvee/execution';
 import {
@@ -25,6 +27,10 @@ export class LayoutValidatorExecutor extends BlockExecutor<Sheet, Table> {
     const sections = layout.sections;
 
     const headerRowSection = sections.find(isHeaderRowSection);
+    assert(
+      headerRowSection !== undefined,
+      'A header row section is assumed to be present in the layout',
+    );
 
     const columnSections = sections.filter(isColumnSection);
     const columnTypes = this.getColumnTypes(columnSections);
@@ -33,10 +39,11 @@ export class LayoutValidatorExecutor extends BlockExecutor<Sheet, Table> {
     const data: string[][] = [];
     const errors: string[] = [];
 
+    this.logger.logInfo(`Validating the given sheet`);
     input.data.forEach((row, index) => {
       const rowErrors: string[] = [];
 
-      const isHeader = index + 1 === headerRowSection?.rowId;
+      const isHeader = index + 1 === headerRowSection.rowId;
       if (isHeader) {
         columnNames = row;
         const headerRowType = getDataType(headerRowSection.type);
@@ -61,6 +68,9 @@ export class LayoutValidatorExecutor extends BlockExecutor<Sheet, Table> {
       );
     }
 
+    this.logger.logInfo(
+      `Layout validation completed (${data.length} rows, ${columnTypes.length} columns)`,
+    );
     return Promise.resolve(
       R.ok({
         columnNames,

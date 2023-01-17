@@ -21,12 +21,19 @@ export class SQLiteLoaderExecutor extends BlockExecutor<Table, void> {
     let db: sqlite3.Database | undefined;
 
     try {
+      this.logger.logInfo(`Opening database file ${file}`);
       db = new sqlite3.Database(file);
 
+      this.logger.logInfo(`Dropping previous table "${table}" if it exists`);
       await this.runQuery(db, buildDropTableStatement(table));
+      this.logger.logInfo(`Creating table "${table}"`);
       await this.runQuery(db, buildCreateTableStatement(table, input));
+      this.logger.logInfo(
+        `Inserting ${input.data.length} row(s) into table "${table}"`,
+      );
       await this.runQuery(db, buildInsertValuesStatement(table, input));
 
+      this.logger.logInfo(`The data was successfully loaded into the database`);
       return Promise.resolve(R.ok(undefined));
     } catch (err: unknown) {
       return Promise.resolve(
