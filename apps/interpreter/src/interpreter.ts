@@ -1,9 +1,9 @@
-import * as R from '@jayvee/execution';
 import {
+  Logger,
   createBlockExecutor,
-  isDiagnostic,
   useExtension as useExecutionExtension,
 } from '@jayvee/execution';
+import * as R from '@jayvee/execution';
 import { StdExecExtension } from '@jayvee/extensions/std/exec';
 import { StdLangExtension } from '@jayvee/extensions/std/lang';
 import {
@@ -17,43 +17,41 @@ import {
   getBlocksInTopologicalSorting,
   useExtension as useLangExtension,
 } from '@jayvee/language-server';
-import * as E from 'fp-ts/lib/Either';
 import { NodeFileSystem } from 'langium/node';
 
-import { extractAstNode, logDiagnostic } from './cli-util';
+import { ExitCode, extractAstNode } from './cli-util';
+import { DefaultLogger } from './default-logger';
 import {
   extractRequiredRuntimeParameters,
   extractRuntimeParameters,
 } from './runtime-parameter-util';
 
-enum ExitCode {
-  SUCCESS = 0,
-  FAILURE = 1,
-}
-
 export async function runAction(
   fileName: string,
-  options: { env: Map<string, string> },
+  options: { env: Map<string, string>; debug: boolean },
 ): Promise<void> {
+  const logger = new DefaultLogger(options.debug);
+
   useLangExtension(new StdLangExtension());
   useExecutionExtension(new StdExecExtension());
 
   const services = createJayveeServices(NodeFileSystem).Jayvee;
-  const model = await extractAstNode<Model>(fileName, services);
+  const model = await extractAstNode<Model>(fileName, services, logger);
 
   const requiredRuntimeParameters = extractRequiredRuntimeParameters(model);
   const parameterReadResult = extractRuntimeParameters(
     requiredRuntimeParameters,
     options.env,
+    logger,
   );
-  if (E.isLeft(parameterReadResult)) {
-    parameterReadResult.left.forEach(logDiagnostic);
+  if (parameterReadResult === undefined) {
     process.exit(ExitCode.FAILURE);
   }
 
   const interpretationExitCode = await interpretPipelineModel(
     model,
-    R.okData(parameterReadResult),
+    parameterReadResult,
+    logger,
   );
   process.exit(interpretationExitCode);
 }
@@ -61,10 +59,11 @@ export async function runAction(
 async function interpretPipelineModel(
   model: Model,
   runtimeParameters: Map<string, string | number | boolean>,
+  logger: Logger,
 ): Promise<ExitCode> {
   console.info('Interpreting pipeline model');
   const pipelineRuns: Array<Promise<ExitCode>> = model.pipelines.map(
-    (pipeline) => runPipeline(pipeline, runtimeParameters),
+    (pipeline) => runPipeline(pipeline, runtimeParameters, logger),
   );
   const exitCodes = await Promise.all(pipelineRuns);
 
@@ -77,46 +76,50 @@ async function interpretPipelineModel(
 async function runPipeline(
   pipeline: Pipeline,
   runtimeParameters: Map<string, string | number | boolean>,
+  logger: Logger,
 ): Promise<ExitCode> {
   printPipeline(pipeline, runtimeParameters);
 
-  try {
-    const executionOrder: Array<{ block: Block; value: unknown }> =
-      getBlocksInTopologicalSorting(pipeline).map((block) => {
-        return { block: block, value: undefined };
-      });
+  const executionOrder: Array<{ block: Block; value: unknown }> =
+    getBlocksInTopologicalSorting(pipeline).map((block) => {
+      return { block: block, value: undefined };
+    });
 
-    for (const blockData of executionOrder) {
-      const blockExecutor = createBlockExecutor(
-        blockData.block,
-        runtimeParameters,
+  for (const blockData of executionOrder) {
+    const blockExecutor = createBlockExecutor(
+      blockData.block,
+      runtimeParameters,
+      logger,
+    );
+    const parentData = collectParents(blockData.block).map((parent) =>
+      executionOrder.find((blockData) => parent === blockData.block),
+    );
+
+    const inputValue = parentData[0]?.value;
+
+    let result: R.Result<unknown>;
+    try {
+      result = await blockExecutor.execute(inputValue);
+    } catch (unexpectedError) {
+      logger.logErr(
+        `An unknown error occurred during the execution of block ${
+          blockData.block.name
+        }: ${
+          unexpectedError instanceof Error
+            ? unexpectedError.message
+            : JSON.stringify(unexpectedError)
+        }`,
+        { node: blockData.block, property: 'name' },
       );
-      const parentData = collectParents(blockData.block).map((parent) =>
-        executionOrder.find((blockData) => parent === blockData.block),
-      );
-
-      const value = parentData[0]?.value;
-
-      try {
-        blockData.value = await R.dataOrThrowAsync(
-          blockExecutor.execute(value),
-        );
-      } catch (errObj) {
-        if (!isDiagnostic(errObj)) {
-          console.error(errObj);
-          return ExitCode.FAILURE;
-        }
-        logDiagnostic(errObj);
-        if (errObj.severity === 'error') {
-          return ExitCode.FAILURE;
-        }
-      }
-      blockExecutor.getReportedDiagnostics().forEach(logDiagnostic);
+      return ExitCode.FAILURE;
     }
-  } catch (errObj) {
-    // If a pipeline contains cycles, an exception will be thrown.
-    console.error(errObj);
-    return ExitCode.FAILURE;
+
+    if (R.isErr(result)) {
+      logger.logErr(result.left.message, result.left.diagnostic);
+      return ExitCode.FAILURE;
+    }
+
+    blockData.value = result.right;
   }
 
   return ExitCode.SUCCESS;

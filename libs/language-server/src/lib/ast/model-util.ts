@@ -1,3 +1,5 @@
+import { strict as assert } from 'assert';
+
 import { getMetaInformation } from '../meta-information/meta-inf-util';
 
 import { Block, Pipe, Pipeline } from './generated/ast';
@@ -115,9 +117,10 @@ export function getBlocksInTopologicalSorting(pipeline: Pipeline): Block[] {
   }
 
   // If the graph still contains unvisited edges it is not a DAG
-  if (unvisitedEdges.length > 0) {
-    throw new Error(`Pipeline ${pipeline.name} has at least one cycle`);
-  }
+  assert(
+    unvisitedEdges.length === 0,
+    `The pipeline ${pipeline.name} is expected to have no cycles`,
+  );
 
   return sortedNodes;
 }

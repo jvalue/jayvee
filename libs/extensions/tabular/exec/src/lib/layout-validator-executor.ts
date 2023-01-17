@@ -1,5 +1,5 @@
-import * as R from '@jayvee/execution';
 import { BlockExecutor } from '@jayvee/execution';
+import * as R from '@jayvee/execution';
 import {
   AbstractDataType,
   ColumnSection,
@@ -51,15 +51,14 @@ export class LayoutValidatorExecutor extends BlockExecutor<Sheet, Table> {
     });
 
     if (errors.length !== 0) {
-      this.reportDiagnostic({
-        severity: 'warning',
-        message: `${
+      this.logger.logWarn(
+        `${
           input.data.length - data.length - 1
         } rows were dropped due to failed layout validation. Found the following issues:\n${errors.join(
           '\n',
         )}`,
-        info: { node: layout },
-      });
+        { node: layout, property: 'name' },
+      );
     }
 
     return Promise.resolve(

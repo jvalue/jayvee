@@ -28,10 +28,11 @@ program
   .argument('<file>', `path to the .jv source file`)
   .option(
     '-e, --env <parameter>=<value>',
-    'runtime parameter',
+    'provide a runtime parameters',
     collectRuntimeParameters,
     new Map<string, string>(),
   )
+  .option('-d, --debug', 'enable debug logging', false)
   .description('Run a Jayvee file')
   .action(runAction);
 

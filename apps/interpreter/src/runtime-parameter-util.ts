@@ -1,7 +1,7 @@
 import { strict as assert } from 'assert';
 
+import { Logger } from '@jayvee/execution';
 import * as R from '@jayvee/execution';
-import { Diagnostic } from '@jayvee/execution';
 import {
   AttributeType,
   Model,
@@ -9,7 +9,6 @@ import {
   getOrFailMetaInformation,
   isRuntimeParameter,
 } from '@jayvee/language-server';
-import * as E from 'fp-ts/lib/Either';
 import { streamAst } from 'langium';
 import { assertUnreachable } from 'langium/lib/utils/errors';
 
@@ -34,23 +33,25 @@ export function extractRequiredRuntimeParameters(
  * Creates a map with all the runtime parameter values.
  * @param requiredParameters A list of all required runtime parameters, e.g. by @see extractRequiredRuntimeParameters
  * @param env The environment variable map
- * @returns all runtime parameters stored as a map if all required ones are present, error details if not
+ * @param logger the logger that shall be used for logging
+ * @returns all runtime parameters stored as a map if all required ones are present
  */
 export function extractRuntimeParameters(
   requiredParameters: RuntimeParameter[],
   env: Map<string, string>,
-): E.Either<Diagnostic[], Map<string, string | number | boolean>> {
+  logger: Logger,
+): Map<string, string | number | boolean> | undefined {
+  let errorCount = 0;
   const parameters: Map<string, string | number | boolean> = new Map();
-  const diagnostics: Diagnostic[] = [];
 
   for (const requiredParameter of requiredParameters) {
     const parameterValue = env.get(requiredParameter.name);
     if (parameterValue === undefined) {
-      diagnostics.push({
-        severity: 'error',
-        message: `Runtime parameter ${requiredParameter.name} is missing. Please provide a value by adding "-e ${requiredParameter.name}=<value>" to your command.`,
-        info: { node: requiredParameter },
-      });
+      logger.logErr(
+        `Runtime parameter ${requiredParameter.name} is missing. Please provide a value by adding "-e ${requiredParameter.name}=<value>" to your command.`,
+        { node: requiredParameter },
+      );
+      ++errorCount;
       continue;
     }
 
@@ -59,18 +60,18 @@ export function extractRuntimeParameters(
       requiredParameter,
     );
     if (R.isErr(parseResult)) {
-      diagnostics.push(R.errDetails(parseResult));
+      logger.logErr(parseResult.left.message, parseResult.left.diagnostic);
       continue;
     }
 
     parameters.set(requiredParameter.name, parseResult.right);
   }
 
-  if (diagnostics.length > 0) {
-    return E.left(diagnostics);
+  if (errorCount > 0) {
+    return undefined;
   }
 
-  return E.right(parameters);
+  return parameters;
 }
 
 /**
@@ -101,11 +102,10 @@ function parseParameterAsMatchingType(
     case AttributeType.INT:
       if (!/^[1-9][0-9]*$/.test(value)) {
         return R.err({
-          severity: 'error',
           message: `Runtime parameter ${
             requiredParameter.name
           } has value ${JSON.stringify(value)} but should be of type integer.`,
-          info: { node: requiredParameter },
+          diagnostic: { node: requiredParameter },
         });
       }
       return R.ok(Number.parseInt(value, 10));

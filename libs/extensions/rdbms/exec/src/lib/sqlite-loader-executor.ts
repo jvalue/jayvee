@@ -1,5 +1,5 @@
-import * as R from '@jayvee/execution';
 import { BlockExecutor } from '@jayvee/execution';
+import * as R from '@jayvee/execution';
 import { Table } from '@jayvee/language-server';
 import * as sqlite3 from 'sqlite3';
 
@@ -31,11 +31,10 @@ export class SQLiteLoaderExecutor extends BlockExecutor<Table, void> {
     } catch (err: unknown) {
       return Promise.resolve(
         R.err({
-          severity: 'error',
           message: `Could not write to sqlite database: ${
             err instanceof Error ? err.message : JSON.stringify(err)
           }`,
-          info: { node: this.block },
+          diagnostic: { node: this.block },
         }),
       );
     } finally {
