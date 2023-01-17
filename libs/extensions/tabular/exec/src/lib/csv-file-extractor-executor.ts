@@ -82,6 +82,7 @@ export class CSVFileExtractorExecutor extends BlockExecutor<void, Sheet> {
               message: `CSV parse failed: ${error.message}`,
               diagnostic: {
                 node: this.block,
+                property: 'name',
               },
             }),
           );
