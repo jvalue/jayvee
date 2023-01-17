@@ -33,6 +33,11 @@ export class LayoutValidator implements JayveeValidator {
           keyword: 'header',
         });
       }
+    } else if (headerRowSections.length === 0) {
+      accept('error', `A header row needs to be defined`, {
+        node: layout,
+        property: 'name',
+      });
     }
   }
 
