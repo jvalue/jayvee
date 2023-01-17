@@ -2,7 +2,6 @@ import { ValidationAcceptor, ValidationChecks } from 'langium';
 import { assertUnreachable } from 'langium/lib/utils/errors';
 
 import {
-  Attribute,
   AttributeValue,
   Block,
   JayveeAstType,
@@ -17,13 +16,14 @@ import { AttributeType } from '../meta-information/block-meta-inf';
 import { getMetaInformation } from '../meta-information/meta-inf-util';
 
 import { JayveeValidator } from './jayvee-validator';
+import { getNodesWithNonUniqueNames } from './validation-util';
 
 export class BlockValidator implements JayveeValidator {
   get checks(): ValidationChecks<JayveeAstType> {
     return {
       Block: [
         this.checkAttributeNames,
-        this.checkAttributeUniqueness,
+        this.checkUniqueAttributeNames,
         this.checkAttributeTyping,
         this.checkAttributeCompleteness,
         this.checkIngoingPipes,
@@ -52,29 +52,21 @@ export class BlockValidator implements JayveeValidator {
     }
   }
 
-  checkAttributeUniqueness(
+  checkUniqueAttributeNames(
     this: void,
     block: Block,
     accept: ValidationAcceptor,
   ): void {
-    const attributesByName = new Map<string, Attribute[]>();
-    for (const attribute of block.attributes) {
-      if (!attributesByName.has(attribute.name)) {
-        attributesByName.set(attribute.name, []);
-      }
-      attributesByName.get(attribute.name)?.push(attribute);
-    }
-
-    for (const [name, attributes] of attributesByName.entries()) {
-      if (attributes.length > 1) {
-        for (const attribute of attributes) {
-          accept('error', `The attribute name "${name}" needs to be unique.`, {
-            node: attribute,
-            property: 'name',
-          });
-        }
-      }
-    }
+    getNodesWithNonUniqueNames(block.attributes).forEach((attribute) => {
+      accept(
+        'error',
+        `The attribute name "${attribute.name}" needs to be unique.`,
+        {
+          node: attribute,
+          property: 'name',
+        },
+      );
+    });
   }
 
   checkAttributeTyping(

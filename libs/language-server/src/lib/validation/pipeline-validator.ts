@@ -1,14 +1,19 @@
 import { ValidationAcceptor, ValidationChecks } from 'langium';
 
-import { JayveeAstType, Pipeline } from '../ast/generated/ast';
+import { JayveeAstType, Layout, Pipeline } from '../ast/generated/ast';
 import { collectStartingBlocks } from '../ast/model-util';
 
 import { JayveeValidator } from './jayvee-validator';
+import { getNodesWithNonUniqueNames } from './validation-util';
 
 export class PipelineValidator implements JayveeValidator {
   get checks(): ValidationChecks<JayveeAstType> {
     return {
-      Pipeline: this.checkStartingBlocks,
+      Pipeline: [
+        this.checkStartingBlocks,
+        this.checkUniqueBlockNames,
+        this.checkUniqueLayoutNames,
+      ],
     };
   }
 
@@ -24,5 +29,31 @@ export class PipelineValidator implements JayveeValidator {
         property: 'name',
       });
     }
+  }
+
+  checkUniqueBlockNames(
+    this: void,
+    pipeline: Pipeline,
+    accept: ValidationAcceptor,
+  ): void {
+    getNodesWithNonUniqueNames(pipeline.blocks).forEach((block) => {
+      accept('error', `The block name "${block.name}" needs to be unique.`, {
+        node: block,
+        property: 'name',
+      });
+    });
+  }
+
+  checkUniqueLayoutNames(
+    this: void,
+    pipeline: Pipeline,
+    accept: ValidationAcceptor,
+  ): void {
+    getNodesWithNonUniqueNames<Layout>(pipeline.layouts).forEach((layout) => {
+      accept('error', `The layout name "${layout.name}" needs to be unique.`, {
+        node: layout,
+        property: 'name',
+      });
+    });
   }
 }
