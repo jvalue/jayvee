@@ -86,6 +86,11 @@ export class BlockValidator implements JayveeValidator {
         const attributeType = attributeSpec.type;
         const attributeValue = attribute.value;
 
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        if (attribute.value === undefined) {
+          return;
+        }
+
         if (isRuntimeParameter(attributeValue)) {
           if (!BlockValidator.runtimeParameterAllowedForType(attributeType)) {
             accept(
