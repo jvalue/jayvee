@@ -3,7 +3,10 @@ import { ValidationAcceptor, ValidationChecks } from 'langium';
 import { JayveeAstType, Model } from '../ast/generated/ast';
 
 import { JayveeValidator } from './jayvee-validator';
-import { getNodesWithNonUniqueNames } from './validation-util';
+import {
+  generateNonUniqueNameErrorMessage,
+  getNodesWithNonUniqueNames,
+} from './validation-util';
 
 export class ModelValidator implements JayveeValidator {
   get checks(): ValidationChecks<JayveeAstType> {
@@ -18,14 +21,10 @@ export class ModelValidator implements JayveeValidator {
     accept: ValidationAcceptor,
   ): void {
     getNodesWithNonUniqueNames(model.pipelines).forEach((pipeline) => {
-      accept(
-        'error',
-        `The pipeline name "${pipeline.name}" needs to be unique.`,
-        {
-          node: pipeline,
-          property: 'name',
-        },
-      );
+      accept('error', generateNonUniqueNameErrorMessage(pipeline), {
+        node: pipeline,
+        property: 'name',
+      });
     });
   }
 
@@ -35,7 +34,7 @@ export class ModelValidator implements JayveeValidator {
     accept: ValidationAcceptor,
   ): void {
     getNodesWithNonUniqueNames(model.layouts).forEach((layout) => {
-      accept('error', `The layout name "${layout.name}" needs to be unique.`, {
+      accept('error', generateNonUniqueNameErrorMessage(layout), {
         node: layout,
         property: 'name',
       });

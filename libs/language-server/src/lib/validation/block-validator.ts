@@ -16,7 +16,10 @@ import { AttributeType } from '../meta-information/block-meta-inf';
 import { getMetaInformation } from '../meta-information/meta-inf-util';
 
 import { JayveeValidator } from './jayvee-validator';
-import { getNodesWithNonUniqueNames } from './validation-util';
+import {
+  generateNonUniqueNameErrorMessage,
+  getNodesWithNonUniqueNames,
+} from './validation-util';
 
 export class BlockValidator implements JayveeValidator {
   get checks(): ValidationChecks<JayveeAstType> {
@@ -58,14 +61,10 @@ export class BlockValidator implements JayveeValidator {
     accept: ValidationAcceptor,
   ): void {
     getNodesWithNonUniqueNames(block.attributes).forEach((attribute) => {
-      accept(
-        'error',
-        `The attribute name "${attribute.name}" needs to be unique.`,
-        {
-          node: attribute,
-          property: 'name',
-        },
-      );
+      accept('error', generateNonUniqueNameErrorMessage(attribute), {
+        node: attribute,
+        property: 'name',
+      });
     });
   }
 

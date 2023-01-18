@@ -2,6 +2,12 @@ import { AstNode } from 'langium';
 
 export type NamedAstNode = AstNode & { name: string };
 
+export function generateNonUniqueNameErrorMessage(node: NamedAstNode) {
+  return `The ${node.$type.toLowerCase()} name "${
+    node.name
+  }" needs to be unique.`;
+}
+
 export function getNodesWithNonUniqueNames<N extends NamedAstNode>(
   nodes: N[],
 ): N[] {

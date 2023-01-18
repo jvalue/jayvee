@@ -4,7 +4,10 @@ import { JayveeAstType, Layout, Pipeline } from '../ast/generated/ast';
 import { collectStartingBlocks } from '../ast/model-util';
 
 import { JayveeValidator } from './jayvee-validator';
-import { getNodesWithNonUniqueNames } from './validation-util';
+import {
+  generateNonUniqueNameErrorMessage,
+  getNodesWithNonUniqueNames,
+} from './validation-util';
 
 export class PipelineValidator implements JayveeValidator {
   get checks(): ValidationChecks<JayveeAstType> {
@@ -37,7 +40,7 @@ export class PipelineValidator implements JayveeValidator {
     accept: ValidationAcceptor,
   ): void {
     getNodesWithNonUniqueNames(pipeline.blocks).forEach((block) => {
-      accept('error', `The block name "${block.name}" needs to be unique.`, {
+      accept('error', generateNonUniqueNameErrorMessage(block), {
         node: block,
         property: 'name',
       });
@@ -50,7 +53,7 @@ export class PipelineValidator implements JayveeValidator {
     accept: ValidationAcceptor,
   ): void {
     getNodesWithNonUniqueNames<Layout>(pipeline.layouts).forEach((layout) => {
-      accept('error', `The layout name "${layout.name}" needs to be unique.`, {
+      accept('error', generateNonUniqueNameErrorMessage(layout), {
         node: layout,
         property: 'name',
       });
