@@ -8,6 +8,10 @@ import type { JayveeServices } from '../jayvee-module';
 export class JayveeValidationRegistry extends ValidationRegistry {
   constructor(services: JayveeServices) {
     super(services);
+
+    const modelValidator = services.validation.ModelValidator;
+    this.register(modelValidator.checks, modelValidator);
+
     const pipelineValidator = services.validation.PipelineValidator;
     this.register(pipelineValidator.checks, pipelineValidator);
 

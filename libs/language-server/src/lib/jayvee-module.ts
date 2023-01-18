@@ -16,6 +16,7 @@ import {
 import { JayveeCompletionProvider } from './completion/jayvee-completion-provider';
 import { BlockValidator } from './validation/block-validator';
 import { LayoutValidator } from './validation/layout-validator';
+import { ModelValidator } from './validation/model-validator';
 import { PipeValidator } from './validation/pipe-validator';
 import { PipelineValidator } from './validation/pipeline-validator';
 import { JayveeValidationRegistry } from './validation/validation-registry';
@@ -25,6 +26,7 @@ import { JayveeValidationRegistry } from './validation/validation-registry';
  */
 export interface JayveeAddedServices {
   validation: {
+    ModelValidator: ModelValidator;
     PipelineValidator: PipelineValidator;
     LayoutValidator: LayoutValidator;
     PipeValidator: PipeValidator;
@@ -49,6 +51,7 @@ export const JayveeModule: Module<
 > = {
   validation: {
     ValidationRegistry: (services) => new JayveeValidationRegistry(services),
+    ModelValidator: () => new ModelValidator(),
     PipelineValidator: () => new PipelineValidator(),
     LayoutValidator: () => new LayoutValidator(),
     PipeValidator: () => new PipeValidator(),
