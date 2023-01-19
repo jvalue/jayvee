@@ -17,12 +17,14 @@ export class PipeValidator implements JayveeValidator {
     pipe: Pipe,
     accept: ValidationAcceptor,
   ): void {
-    const fromBlock = pipe.from.ref;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const fromBlock = pipe.from?.ref;
     if (fromBlock === undefined) {
       return;
     }
 
-    const toBlock = pipe.to.ref;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const toBlock = pipe.to?.ref;
     if (toBlock === undefined) {
       return;
     }
@@ -39,13 +41,15 @@ export class PipeValidator implements JayveeValidator {
     }
 
     if (!fromBlockMetaInf.canBeConnectedTo(toBlockMetaInf)) {
-      accept(
-        'error',
-        `The output of block ${fromBlock.type} is incompatible with the input of block ${toBlock.type}`,
-        {
-          node: pipe,
-        },
-      );
+      const errorMessage = `The output of block ${fromBlock.type} is incompatible with the input of block ${toBlock.type}`;
+      accept('error', errorMessage, {
+        node: pipe,
+        property: 'from',
+      });
+      accept('error', errorMessage, {
+        node: pipe,
+        property: 'to',
+      });
     }
   }
 }
