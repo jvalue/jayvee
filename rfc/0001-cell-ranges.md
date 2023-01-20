@@ -42,7 +42,7 @@ The following sections show examples featuring the syntax for different selectio
 
 ```jayvee
 // selecting the entire row 1
-1:1 called Header;
+range 1:1 called Header;
 ```
 
 sugars to
@@ -56,7 +56,7 @@ row 1 called Header;
 
 ```jayvee
 // selecting the entire column A
-A:A called FirstColumn;
+range A:A called FirstColumn;
 ```
 
 sugars to
@@ -70,7 +70,7 @@ column A called FirstColumn;
 
 ```jayvee
 // selecting the cell B2
-B2:B2 called MyCell;
+range B2:B2 called MyCell;
 ```
 
 sugars to
@@ -84,27 +84,27 @@ cell B2 called MyCell;
 
 ```jayvee
 // selecting the cells from A2 to B4
-A2:B4 called MyRange;
+range A2:B4 called MyRange;
 ```
 
 #### Selecting multiple adjacent columns / rows
 
 ```jayvee
 // selecting the two columns B and C
-B:C called TwoColumns;
+range B:C called TwoColumns;
 
 // selecting the three rows 4, 5 and 6
-4:6 called ThreeRows;
+range 4:6 called ThreeRows;
 ```
 
 #### Selecting partial columns / rows
 
 ```jayvee
 // Selecting column B from row 2 onwards
-B2:B called PartialColumn;
+range B2:B called PartialColumn;
 
 // Selecting row 3 from column C onwards
-C3:3 called PartialColumn;
+range C3:3 called PartialColumn;
 ```
 
 ### Handling overlaps of cell ranges
@@ -136,7 +136,7 @@ See the following example:
 ```jayvee
 layout MyLayout {
   column A called MyRange;
-  B2:B called MyPartialRange;
+  range B2:B called MyPartialRange;
   cell C1 called MyCell;
 }
 
