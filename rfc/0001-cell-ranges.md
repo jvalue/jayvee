@@ -10,6 +10,23 @@ This is done by specifying a `layout` where cell ranges are specified and given 
 
 Some sheet-like open data is badly structured. For example, see this [example from mobilithek.info](https://mobilithek.info/offers/-655945265921899037) which does not follow the usual CSV pattern (topmost row as header, followed by the actual data).
 
+Excerpt of that example, featuring the top and bottom lines as well as the first line containing actual data:
+
+```
+GENESIS-Tabelle: 46251-0021
+Personenkraftwagen: Kreise, Stichtag, Kraftstoffarten,;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Emissionsgruppen;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Statistik des Kraftfahrzeug- und Anhängerbestandes;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Personenkraftwagen (Anzahl);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;Benzin;Benzin;Benzin;Benzin;Benzin;Benzin;Benzin;Benzin;Benzin;Benzin;Diesel;Diesel;Diesel;Diesel;Diesel;Diesel;Diesel;Diesel;Diesel;Diesel;Gas;Gas;Gas;Gas;Gas;Gas;Gas;Gas;Gas;Gas;Elektro;Elektro;Elektro;Elektro;Elektro;Elektro;Elektro;Elektro;Elektro;Elektro;Hybrid (ohne Plug-in);Hybrid (ohne Plug-in);Hybrid (ohne Plug-in);Hybrid (ohne Plug-in);Hybrid (ohne Plug-in);Hybrid (ohne Plug-in);Hybrid (ohne Plug-in);Hybrid (ohne Plug-in);Hybrid (ohne Plug-in);Hybrid (ohne Plug-in);Plug-in-Hybrid;Plug-in-Hybrid;Plug-in-Hybrid;Plug-in-Hybrid;Plug-in-Hybrid;Plug-in-Hybrid;Plug-in-Hybrid;Plug-in-Hybrid;Plug-in-Hybrid;Plug-in-Hybrid;Sonstige Kraftstoffarten;Sonstige Kraftstoffarten;Sonstige Kraftstoffarten;Sonstige Kraftstoffarten;Sonstige Kraftstoffarten;Sonstige Kraftstoffarten;Sonstige Kraftstoffarten;Sonstige Kraftstoffarten;Sonstige Kraftstoffarten;Sonstige Kraftstoffarten;Insgesamt;Insgesamt;Insgesamt;Insgesamt;Insgesamt;Insgesamt;Insgesamt;Insgesamt;Insgesamt;Insgesamt
+;;;Euro 1;Euro 2;Euro 3;Euro 4;Euro 5;Euro 6 (ohne 6d und 6d-temp);Euro 6d-temp;Euro 6d;Sonstige;Insgesamt;Euro 1;Euro 2;Euro 3;Euro 4;Euro 5;Euro 6 (ohne 6d und 6d-temp);Euro 6d-temp;Euro 6d;Sonstige;Insgesamt;Euro 1;Euro 2;Euro 3;Euro 4;Euro 5;Euro 6 (ohne 6d und 6d-temp);Euro 6d-temp;Euro 6d;Sonstige;Insgesamt;Euro 1;Euro 2;Euro 3;Euro 4;Euro 5;Euro 6 (ohne 6d und 6d-temp);Euro 6d-temp;Euro 6d;Sonstige;Insgesamt;Euro 1;Euro 2;Euro 3;Euro 4;Euro 5;Euro 6 (ohne 6d und 6d-temp);Euro 6d-temp;Euro 6d;Sonstige;Insgesamt;Euro 1;Euro 2;Euro 3;Euro 4;Euro 5;Euro 6 (ohne 6d und 6d-temp);Euro 6d-temp;Euro 6d;Sonstige;Insgesamt;Euro 1;Euro 2;Euro 3;Euro 4;Euro 5;Euro 6 (ohne 6d und 6d-temp);Euro 6d-temp;Euro 6d;Sonstige;Insgesamt;Euro 1;Euro 2;Euro 3;Euro 4;Euro 5;Euro 6 (ohne 6d und 6d-temp);Euro 6d-temp;Euro 6d;Sonstige;Insgesamt
+01.01.2022;01001;Flensburg, kreisfreie Stadt;259;1190;1208;7640;5700;6173;3098;1001;540;26809;86;583;1280;2308;4858;4305;1961;631;218;16230;1;36;37;115;31;20;11;8;3;262;-;-;-;-;-;-;-;-;741;741;-;-;-;17;64;128;300;394;-;903;-;-;-;-;8;41;120;357;-;526;-;-;-;8;6;-;-;-;3;17;346;1809;2525;10088;10667;10667;5490;2391;1505;45488
+__________
+Quelle: Kraftfahrt-Bundesamt, Flensburg
+© Statistisches Bundesamt (Destatis), 2023
+Stand: 03.01.2023 / 22:01:12
+```
+
 In order to bring such data into a database-conform format, we need to be able to flexibly restructure data and to omit sections we consider uninteresting.
 
 # Explanation
