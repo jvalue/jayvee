@@ -1,6 +1,6 @@
 import { strict as assert } from 'assert';
 
-import { Logger, Severity } from '@jayvee/execution';
+import { DiagnosticSeverity, Logger } from '@jayvee/execution';
 import * as chalk from 'chalk';
 import {
   AstNode,
@@ -12,63 +12,44 @@ import {
 } from 'langium';
 import { assertUnreachable } from 'langium/lib/utils/errors';
 import {
-  DiagnosticSeverity,
   Diagnostic as LspDiagnostic,
+  DiagnosticSeverity as LspDiagnosticSeverity,
   Range,
 } from 'vscode-languageserver';
 import { uinteger } from 'vscode-languageserver-types';
 
-export class DefaultLogger implements Logger {
+export class DefaultLogger extends Logger {
   private readonly TAB_TO_SPACES = 4;
 
-  constructor(private readonly debug: boolean) {}
-
-  logErr<N extends AstNode>(
-    message: string,
-    diagnostic?: DiagnosticInfo<N>,
-  ): void {
-    this.log(Severity.ERROR, message, diagnostic);
-  }
-
-  logHint<N extends AstNode>(
-    message: string,
-    diagnostic?: DiagnosticInfo<N>,
-  ): void {
-    this.log(Severity.HINT, message, diagnostic);
-  }
-
-  logInfo<N extends AstNode>(
-    message: string,
-    diagnostic?: DiagnosticInfo<N>,
-  ): void {
-    this.log(Severity.INFO, message, diagnostic);
-  }
-
-  logWarn<N extends AstNode>(
-    message: string,
-    diagnostic?: DiagnosticInfo<N>,
-  ): void {
-    this.log(Severity.WARNING, message, diagnostic);
-  }
-
-  public log<N extends AstNode>(
-    severity: Severity,
-    message: string,
-    diagnostic?: DiagnosticInfo<N>,
+  constructor(
+    private readonly enableDebugLogging: boolean,
+    private readonly loggingContext?: string,
   ) {
-    if (severity === Severity.INFO && !this.debug) {
-      return;
-    }
+    super();
+  }
 
+  override logDebug(message: string): void {
+    if (this.enableDebugLogging) {
+      console.log(`${chalk.bold(this.getContext())}${message}`);
+    }
+  }
+
+  override logErr(message: string): void {
+    console.error(`${chalk.bold(this.getContext())}${chalk.red(message)}`);
+  }
+
+  private getContext(): string {
+    return this.loggingContext !== undefined
+      ? chalk.grey(`[${this.loggingContext}] `)
+      : '';
+  }
+
+  protected override logDiagnostic<N extends AstNode>(
+    severity: DiagnosticSeverity,
+    message: string,
+    diagnostic: DiagnosticInfo<N>,
+  ) {
     const diagnosticSeverity = toDiagnosticSeverity(severity);
-
-    if (diagnostic === undefined) {
-      const printFn = this.inferPrintFunction(diagnosticSeverity);
-      const colorFn = this.inferChalkColor(diagnosticSeverity);
-      this.logMessage(diagnosticSeverity, message, printFn, colorFn);
-      return;
-    }
-
     const document = getDocument(diagnostic.node);
 
     /**
@@ -85,6 +66,7 @@ export class DefaultLogger implements Logger {
       data: diagnostic.data,
       source: document.textDocument.languageId,
     } as LspDiagnostic;
+
     this.logLspDiagnostic(lspDiagnostic, document);
   }
 
@@ -99,31 +81,35 @@ export class DefaultLogger implements Logger {
     const printFn = this.inferPrintFunction(diagnostic.severity);
     const colorFn = this.inferChalkColor(diagnostic.severity);
 
-    this.logMessage(diagnostic.severity, diagnostic.message, printFn, colorFn);
+    const severityName = this.inferSeverityName(diagnostic.severity);
+    this.logDiagnosticMessage(
+      severityName,
+      diagnostic.message,
+      printFn,
+      colorFn,
+    );
     this.logDiagnosticInfo(diagnostic.range, document, printFn, colorFn);
     printFn('');
   }
 
-  private logMessage(
-    severity: DiagnosticSeverity,
+  private logDiagnosticMessage(
+    severityName: string,
     message: string,
     printFn: (message: string) => void,
     colorFn: (message: string) => string,
   ) {
-    printFn(
-      chalk.bold(`${colorFn(this.inferSeverityName(severity))}: ${message}`),
-    );
+    printFn(`${chalk.bold(colorFn(severityName))}: ${message}`);
   }
 
-  private inferSeverityName(severity: DiagnosticSeverity): string {
+  private inferSeverityName(severity: LspDiagnosticSeverity): string {
     switch (severity) {
-      case DiagnosticSeverity.Error:
+      case LspDiagnosticSeverity.Error:
         return 'error';
-      case DiagnosticSeverity.Warning:
+      case LspDiagnosticSeverity.Warning:
         return 'warning';
-      case DiagnosticSeverity.Information:
+      case LspDiagnosticSeverity.Information:
         return 'info';
-      case DiagnosticSeverity.Hint:
+      case LspDiagnosticSeverity.Hint:
         return 'hint';
       default:
         assertUnreachable(severity);
@@ -218,15 +204,15 @@ export class DefaultLogger implements Logger {
   }
 
   private inferPrintFunction(
-    severity: DiagnosticSeverity,
+    severity: LspDiagnosticSeverity,
   ): (message: string) => void {
     switch (severity) {
-      case DiagnosticSeverity.Error:
+      case LspDiagnosticSeverity.Error:
         return console.error;
-      case DiagnosticSeverity.Warning:
+      case LspDiagnosticSeverity.Warning:
         return console.warn;
-      case DiagnosticSeverity.Information:
-      case DiagnosticSeverity.Hint:
+      case LspDiagnosticSeverity.Information:
+      case LspDiagnosticSeverity.Hint:
         return console.info;
       default:
         assertUnreachable(severity);
@@ -234,16 +220,16 @@ export class DefaultLogger implements Logger {
   }
 
   private inferChalkColor(
-    severity: DiagnosticSeverity,
+    severity: LspDiagnosticSeverity,
   ): (message: string) => string {
     switch (severity) {
-      case DiagnosticSeverity.Error:
+      case LspDiagnosticSeverity.Error:
         return chalk.red;
-      case DiagnosticSeverity.Warning:
+      case LspDiagnosticSeverity.Warning:
         return chalk.yellow;
-      case DiagnosticSeverity.Information:
+      case LspDiagnosticSeverity.Information:
         return chalk.green;
-      case DiagnosticSeverity.Hint:
+      case LspDiagnosticSeverity.Hint:
         return chalk.blue;
       default:
         assertUnreachable(severity);

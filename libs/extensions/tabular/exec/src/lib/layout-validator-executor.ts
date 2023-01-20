@@ -39,7 +39,7 @@ export class LayoutValidatorExecutor extends BlockExecutor<Sheet, Table> {
     const data: string[][] = [];
     const errors: string[] = [];
 
-    this.logger.logInfo(`Validating the given sheet`);
+    this.logger.logDebug(`Validating the given sheet`);
     input.data.forEach((row, index) => {
       const rowErrors: string[] = [];
 
@@ -58,7 +58,7 @@ export class LayoutValidatorExecutor extends BlockExecutor<Sheet, Table> {
     });
 
     if (errors.length !== 0) {
-      this.logger.logWarn(
+      this.logger.logWarnDiagnostic(
         `${
           input.data.length - data.length - 1
         } rows were dropped due to failed layout validation. Found the following issues:\n${errors.join(
@@ -68,7 +68,7 @@ export class LayoutValidatorExecutor extends BlockExecutor<Sheet, Table> {
       );
     }
 
-    this.logger.logInfo(
+    this.logger.logDebug(
       `Layout validation completed (${data.length} rows, ${columnTypes.length} columns)`,
     );
     return Promise.resolve(

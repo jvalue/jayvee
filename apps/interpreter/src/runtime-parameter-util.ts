@@ -47,7 +47,7 @@ export function extractRuntimeParameters(
   for (const requiredParameter of requiredParameters) {
     const parameterValue = env.get(requiredParameter.name);
     if (parameterValue === undefined) {
-      logger.logErr(
+      logger.logErrDiagnostic(
         `Runtime parameter ${requiredParameter.name} is missing. Please provide a value by adding "-e ${requiredParameter.name}=<value>" to your command.`,
         { node: requiredParameter },
       );
@@ -60,7 +60,10 @@ export function extractRuntimeParameters(
       requiredParameter,
     );
     if (R.isErr(parseResult)) {
-      logger.logErr(parseResult.left.message, parseResult.left.diagnostic);
+      logger.logErrDiagnostic(
+        parseResult.left.message,
+        parseResult.left.diagnostic,
+      );
       continue;
     }
 

@@ -1,36 +1,47 @@
 import { AstNode, DiagnosticInfo } from 'langium';
 
-export enum Severity {
+export enum DiagnosticSeverity {
   ERROR = 'error',
   WARNING = 'warning',
   INFO = 'info',
   HINT = 'hint',
 }
 
-export interface Logger {
-  log<N extends AstNode>(
-    severity: Severity,
+export abstract class Logger {
+  abstract logDebug(message: string): void;
+  abstract logErr(message: string): void;
+
+  protected abstract logDiagnostic<N extends AstNode>(
+    severity: DiagnosticSeverity,
     message: string,
-    diagnostic?: DiagnosticInfo<N>,
+    diagnostic: DiagnosticInfo<N>,
   ): void;
 
-  logErr<N extends AstNode>(
+  logErrDiagnostic<N extends AstNode>(
     message: string,
-    diagnostic?: DiagnosticInfo<N>,
-  ): void;
+    diagnostic: DiagnosticInfo<N>,
+  ): void {
+    this.logDiagnostic(DiagnosticSeverity.ERROR, message, diagnostic);
+  }
 
-  logWarn<N extends AstNode>(
+  logWarnDiagnostic<N extends AstNode>(
     message: string,
-    diagnostic?: DiagnosticInfo<N>,
-  ): void;
+    diagnostic: DiagnosticInfo<N>,
+  ): void {
+    this.logDiagnostic(DiagnosticSeverity.WARNING, message, diagnostic);
+  }
 
-  logInfo<N extends AstNode>(
+  logInfoDiagnostic<N extends AstNode>(
     message: string,
-    diagnostic?: DiagnosticInfo<N>,
-  ): void;
+    diagnostic: DiagnosticInfo<N>,
+  ): void {
+    this.logDiagnostic(DiagnosticSeverity.INFO, message, diagnostic);
+  }
 
-  logHint<N extends AstNode>(
+  logHintDiagnostic<N extends AstNode>(
     message: string,
-    diagnostic?: DiagnosticInfo<N>,
-  ): void;
+    diagnostic: DiagnosticInfo<N>,
+  ): void {
+    this.logDiagnostic(DiagnosticSeverity.HINT, message, diagnostic);
+  }
 }

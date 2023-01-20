@@ -52,6 +52,7 @@ export async function runAction(
     model,
     parameterReadResult,
     logger,
+    options.debug,
   );
   process.exit(interpretationExitCode);
 }
@@ -60,10 +61,21 @@ async function interpretPipelineModel(
   model: Model,
   runtimeParameters: Map<string, string | number | boolean>,
   logger: Logger,
+  enableDebugLogging: boolean,
 ): Promise<ExitCode> {
-  console.info('Interpreting pipeline model');
   const pipelineRuns: Array<Promise<ExitCode>> = model.pipelines.map(
-    (pipeline) => runPipeline(pipeline, runtimeParameters, logger),
+    (pipeline) => {
+      const pipelineLogger = new DefaultLogger(
+        enableDebugLogging,
+        pipeline.name,
+      );
+      return runPipeline(
+        pipeline,
+        runtimeParameters,
+        pipelineLogger,
+        enableDebugLogging,
+      );
+    },
   );
   const exitCodes = await Promise.all(pipelineRuns);
 
@@ -76,7 +88,8 @@ async function interpretPipelineModel(
 async function runPipeline(
   pipeline: Pipeline,
   runtimeParameters: Map<string, string | number | boolean>,
-  logger: Logger,
+  pipelineLogger: Logger,
+  enableDebugLogging: boolean,
 ): Promise<ExitCode> {
   printPipeline(pipeline, runtimeParameters);
 
@@ -86,10 +99,14 @@ async function runPipeline(
     });
 
   for (const blockData of executionOrder) {
+    const blockLogger = new DefaultLogger(
+      enableDebugLogging,
+      blockData.block.name,
+    );
     const blockExecutor = createBlockExecutor(
       blockData.block,
       runtimeParameters,
-      logger,
+      blockLogger,
     );
     const parentData = collectParents(blockData.block).map((parent) =>
       executionOrder.find((blockData) => parent === blockData.block),
@@ -101,7 +118,7 @@ async function runPipeline(
     try {
       result = await blockExecutor.execute(inputValue);
     } catch (unexpectedError) {
-      logger.logErr(
+      pipelineLogger.logErrDiagnostic(
         `An unknown error occurred during the execution of block ${
           blockData.block.name
         }: ${
@@ -115,7 +132,10 @@ async function runPipeline(
     }
 
     if (R.isErr(result)) {
-      logger.logErr(result.left.message, result.left.diagnostic);
+      pipelineLogger.logErrDiagnostic(
+        result.left.message,
+        result.left.diagnostic,
+      );
       return ExitCode.FAILURE;
     }
 
