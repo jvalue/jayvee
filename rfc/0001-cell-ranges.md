@@ -49,7 +49,7 @@ In the example above, a layout called `MyLayout` is instantiated. In its body, e
 
 ### Cell ranges in layouts
 
-A cell range consists of a cell selector and a name for the range. The syntax of the selector follows the pattern `from:to` where from and to refer to a particular cell. A particular cell is selected via its column and its row in the sheet. The name of a range can later be used for referring to the cells in that cell range.
+A cell range consists of a cell selector and a name for the range. The syntax of the selector follows the pattern `from:to` where `from` and `to` refer to a particular cell. A particular cell is selected via its column and its row in the sheet. The `*` character can be used to denote the last column or row. The name of a range can later be used for referring to the cells in that cell range.
 
 There are also syntactic sugar versions for common selections (i.e. selecting an entire row / column or a particular cell).
 
@@ -59,7 +59,7 @@ The following sections show examples featuring the syntax for different selectio
 
 ```jayvee
 // selecting the entire row 1
-range 1:1 called Header;
+range A1:*1 called Header;
 ```
 
 sugars to
@@ -73,7 +73,7 @@ row 1 called Header;
 
 ```jayvee
 // selecting the entire column A
-range A:A called FirstColumn;
+range A1:A* called FirstColumn;
 ```
 
 sugars to
@@ -104,24 +104,31 @@ cell B2 called MyCell;
 range A2:B4 called MyRange;
 ```
 
+#### Selecting an entire table
+
+```jayvee
+// selecting the entire table
+range A1:** called MyTable;
+```
+
 #### Selecting multiple adjacent columns / rows
 
 ```jayvee
 // selecting the two columns B and C
-range B:C called TwoColumns;
+range B*:C* called TwoColumns;
 
 // selecting the three rows 4, 5 and 6
-range 4:6 called ThreeRows;
+range *4:*6 called ThreeRows;
 ```
 
 #### Selecting partial columns / rows
 
 ```jayvee
 // Selecting column B from row 2 onwards
-range B2:B called PartialColumn;
+range B2:B* called PartialColumn;
 
 // Selecting row 3 from column C onwards
-range C3:3 called PartialColumn;
+range C3:*3 called PartialColumn;
 ```
 
 ### Handling overlaps of cell ranges
@@ -153,7 +160,7 @@ See the following example:
 ```jayvee
 layout MyLayout {
   column A called MyRange;
-  range B2:B called MyPartialRange;
+  range B2:B* called MyPartialRange;
   cell C1 called MyCell;
 }
 
@@ -186,4 +193,3 @@ Note that the number of cells in `MyRange` is equal to the combined number of ce
 - Specify the columns outside the `TableBuilder` block using its own language concept, similar to `layout` for cell ranges; then `TableBuilder` demands a reference to it
 - Forbid 2-dimensional ranges (for now)
 - Ability to linearize 2-dimensional ranges column- or row-wise
-- Usage of `*` (or a different symbol) to indicate "selections until the end", e.g. `B2:B*` instead of `B2:B`
