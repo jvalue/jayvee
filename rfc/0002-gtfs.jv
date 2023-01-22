@@ -84,7 +84,7 @@ pipeline GtfsPipeline {
 		validationLayouts: gtfsLayouts;
 	}
 
-	block GtfsLoader oftype SQLiteLoaders {
+	block GtfsLoader oftype SQLiteTablesLoader {
 		tables: gtfsLayouts;
 		file: "./gtfs.db";
 	}
