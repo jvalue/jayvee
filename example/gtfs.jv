@@ -1,0 +1,111 @@
+pipeline GtfsPipeline {
+
+	block MyHttpExtractor oftype HttpExtractor {
+		url: "https://www.data.gouv.fr/fr/datasets/r/c4d9326f-9f41-4dfb-9746-31bc97a31fc6";
+	}
+
+    block MyZipInterpreter oftype ZipInterpreter{
+    
+    }
+
+    block MyGtfsInterpreter oftype GtfsInterpreter{
+
+    }
+
+	layout agencyLayout {
+		header row 1: text;
+		column agency_id!: text; //Conditional optional columns marked with ! (but could be any other literal as well... i took that one because ? stands for optional)
+		column agency_name: text;
+		column agency_url: text;
+		column agency_timezone: text;
+		column agency_lang?: text; //Optional column marked with ?
+		column agency_phone?: text; //Optional column marked with ?
+		column agency_fare_url?: text; //Optional column marked with ?
+		column agency_email?: text; //Optional column marked with ?
+	}
+
+	layout stopsLayout {
+		header row 1: text;
+		column stop_id: text;
+		column stop_name: text;
+		column stop_lat: text;
+		column stop_lon: text;
+		column stop_name: text;
+	}
+
+	layout routesLayout {
+		header row 1: text;
+		column route_type: text;
+		column agency_id: text;
+		column route_type: text;
+	}
+
+	layout tripsLayout {
+		header row 1: text;
+		column route_id: text;
+		column service_id: text;
+		column trip_id: text;
+	}
+
+	layout stop_timesLayout {
+		header row 1: text;
+		column trip_id: text;
+		column stop_id: text;
+		column stop_sequence: text;
+		column arrival_time: text
+		column departure_time: text
+	}
+
+	layout calendar_datesLayout {
+		header row 1: text;
+		column service_id: text;
+		column date: text;
+		column exception_type: text;
+	}
+
+	layout feed_infoLayout {
+		header row 1: text;
+		column feed_publisher_name: text;
+		column feed_publisher_url: text;
+		column feed_lang: text;
+	}
+
+	layouts gtfsLayouts {
+		"agency": agencyLayout;
+		"stops": stopsLayout;
+		"routes": routesLayout;
+		"trips": tripsLayout;
+		"stop_times": stop_timesLayout;
+		"calendar_dates": calendar_datesLayout;
+		"feed_info": feed_infoLayout;
+	}
+
+	block GtfsValidator oftype LayoutsValidator { 
+		validationLayouts: gtfsLayouts;
+	}
+
+	block GtfsLoader oftype SQLiteLoaders {
+		tables: gtfsLayouts;
+		file: "./gtfs.db";
+	}
+
+	pipe {
+		from: MyHttpExtractor;
+		to: MyZipInterpreter;
+	}
+
+	pipe {
+		from: MyZipInterpreter;
+		to: MyGtfsInterpreter;
+	}
+
+	pipe {
+		from: MyGtfsInterpreter;
+		to: GtfsValidator;
+	}
+
+	pipe {
+		from: GtfsValidator;
+		to: GtfsLoader;
+	}
+}
