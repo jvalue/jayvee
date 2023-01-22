@@ -23,7 +23,7 @@ Each of the following subchapters explains the idea behind.
 ## 1) HttpExtractor
 Input: void, Output: Binary
 
-A HttpExtractors gets an Url, send an HTTP-GET-REQUEST to that URL and outputs the response as an binary type (eg. ArrayBuffer). This block can be used for getting any binary data of an HTTP-Endpoint.
+A HttpExtractors gets an Url, sends an HTTP-GET-REQUEST to that URL and outputs the response as an binary type (eg. ArrayBuffer). This block can be used for getting any binary data of an HTTP-Endpoint.
 ```
 block MyHttpExtractor oftype HttpExtractor {
     url: "https://www.data.gouv.fr/fr/datasets/r/c4d9326f-9f41-4dfb-9746-31bc97a31fc6";
@@ -33,7 +33,7 @@ block MyHttpExtractor oftype HttpExtractor {
 ## 2) ZipInterpreter
 Input: Binary, Output: Zip
 
-A ZipInterpreter gets an Binary type, and interpretes the ArrayBuffer as an zip-file. As it is not clear, what the zip-file contains, the unpacking of that zip-files takes places in the following GTFS-Interpreter, as GTFS specifies, that the zip-file must contain certain csv-files. Later on, the zip-unpacking could be refactored to an generic zip-unpacker.
+A ZipInterpreter gets a Binary type, and interpretes the ArrayBuffer as an zip-file. As it is not clear, what the zip-file contains, the unpacking of that zip-files takes places in the following GTFS-Interpreter, as GTFS specifies, that the zip-file must contain certain csv-files. Later on, the zip-unpacking could be refactored to an generic zip-unpacker.
 ```
 block MyZipInterpreter oftype ZipInterpreter{
     tbd
@@ -53,19 +53,20 @@ block MyGtfsInterpreter oftype GtfsInterpreter{
 ## 4) LayoutsValidator
 Input: Collection of Sheets, Output: Collection of Tables
 
-A LayoutsValidator (Attention: here we talk about multiple Layouts) gets as input an collection of sheets and validates every sheet using a single, dedicated LayoutValidator (for a single layout). As an parameter the LayoutsValidator gets an mapping of filenames to layouts in order to be able to process multiple files/layouts within one block. Every sheet in the collection has its corresponding layout, wrapped in the layouts-block. After the validation of every sheet was sucessfull, the LayoutsValidator outputs a collection of validated tables.
+A LayoutsValidator (Attention: here we talk about multiple Layouts) gets as input an collection of sheets and validates every sheet using a single, dedicated LayoutValidator (for a single layout). As an parameter the LayoutsValidator gets a mapping of filenames to layouts in order to be able to process multiple files/layouts within one block. Every sheet in the collection has its corresponding layout, wrapped in the layouts-block. After the validation of every sheet is sucessfull, the LayoutsValidator outputs a collection of validated tables.
 
 ```
 block GtfsValidator oftype LayoutsValidator { 
-		validationLayouts: gtfsLayouts;
+	validationLayouts: gtfsLayouts;
 }
 ```
 
 ### 4.1) Layout
-As GTFS defines a whole datamodel consisting of multiple dimensions, we can provide (in some future) the user with a predefined set of layouts. Some columns in GTFS-csv-files are optional and conditional optional, what can be reflected in the grammar using ? and ! as an flag. From a generic perspective, these flags can be considered in every Validator, depending on the implementation, since optional columns could be in every csv-file not just in gtfs-csv-files. A vision is, that the GTFS-pipeline later on processes a list of GTFS-Endpoints. Because every endpoint has at least the required-columns, we need to have the optional-mechanism in our layout.
-In a GTFS-Validator, some conditional (aka logical) checks could possibly be applied during the validation (not just a static header/datatype validaton, but later on an logical gtfs-validation as well). 
+As GTFS defines a whole datamodel consisting of multiple dimensions, we can provide (in some future) the user with a predefined set of layouts. Some columns in GTFS-csv-files are optional and conditional optional, what can be reflected in the grammar using `?` and `!` as an flag. From a generic perspective, these flags can be considered in every Validator, depending on the implementation, since optional columns could be in all kinds of csv-files not just in gtfs-csv-files. A vision is, that the GTFS-pipeline later on processes a list of GTFS-Endpoints. Because every endpoint has at least the required-columns, we need to have the optional-mechanism in our layout.
 
-In the specifiation, the order of the columns are not defined, so we need to access the columns by their names, not their index as every GTFS-endpoint could possibly have a different order!! 
+In a GTFS-Validator, some conditional (aka logical) checks could possibly be applied during the validation (not just a static header/datatype validaton)
+
+In the specifiation, the order of the columns is not defined, so we need to access the columns by their names, not their index as every GTFS-endpoint could possibly have a different order!! 
 
 ```
 layout agencyLayout {
@@ -84,7 +85,7 @@ layout agencyLayout {
 Potentially, we need in future an optional-mechanism for whole layouts (not just columns) as well, since also some gtfs-dimensions are optional/conditional required. This is not part of this RFC right now, as my [.jv-file](0002-gtfs.jv) just consists of required dimensions. Could be extended later...
 
 ### 4.2) Layouts
-As we want to process a zip-file containing multiple csv-files, we also need a mechanism to map csv-files to layouts. In my [.jv-file](0002-gtfs.jv), every layout gets defined as usual (header, column, datatypes --> please have look at chapter 4.1). Multiple layouts get then wrapped in a new grammar-feature, which maps csv-filenames to layouts. This layouts-artefact gets referenced by SQLiteTablesLoader and LayoutsValidator, too.
+As we want to process a zip-file containing multiple csv-files, we also need a mechanism to map csv-files to layouts. In my [.jv-file](0002-gtfs.jv), every layout gets defined as usual (header, column, datatypes --> please have look at chapter 4.1). Multiple layouts get then wrapped in a new grammar-feature, which maps csv-filenames to layouts. This layouts-artefact gets referenced by `SQLiteTablesLoader` and `LayoutsValidator`, too.
 ```
 layouts gtfsLayouts {
     "agency": agencyLayout;
@@ -96,7 +97,7 @@ layouts gtfsLayouts {
     "feed_info": feed_infoLayout;
 }
 ```
-This mapping is later also used in the SQLiteTablesLoader, to define the output-table-names. The syntax for `layouts` is inspired by the MyTableBuilder-syntax from issue RFC for cell ranges #109
+This mapping is later also used in the `SQLiteTablesLoader`, to define the output-table-names. The syntax for `layouts` is inspired by the MyTableBuilder-syntax from issue RFC for cell ranges #109
 
 ## 5) SQLiteTablesLoader
 Input: Collection of Tables, Output: void
