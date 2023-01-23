@@ -3,7 +3,7 @@ import { AstNode, DiagnosticInfo } from 'langium';
 
 interface ExecutionErrorDetails<N extends AstNode = AstNode> {
   message: string;
-  diagnostic?: DiagnosticInfo<N>;
+  diagnostic: DiagnosticInfo<N>;
 }
 
 /**
