@@ -1,4 +1,13 @@
-import { AstNode, DiagnosticInfo } from 'langium';
+import { strict as assert } from 'assert';
+
+import {
+  AstNode,
+  DiagnosticInfo,
+  LangiumDocument,
+  getDiagnosticRange,
+  getDocument,
+} from 'langium';
+import * as ls from 'vscode-languageserver';
 
 export enum DiagnosticSeverity {
   ERROR = 'error',
@@ -11,37 +20,83 @@ export abstract class Logger {
   abstract logDebug(message: string): void;
   abstract logErr(message: string): void;
 
-  protected abstract logDiagnostic<N extends AstNode>(
+  protected abstract logDiagnostic(
+    severity: DiagnosticSeverity,
+    message: string,
+    range: ls.Range,
+    document: LangiumDocument,
+  ): void;
+
+  protected logLangiumDiagnostic<N extends AstNode>(
     severity: DiagnosticSeverity,
     message: string,
     diagnostic: DiagnosticInfo<N>,
-  ): void;
+  ) {
+    this.logDiagnostic(
+      severity,
+      message,
+      getDiagnosticRange(diagnostic),
+      getDocument(diagnostic.node),
+    );
+  }
 
   logErrDiagnostic<N extends AstNode>(
     message: string,
     diagnostic: DiagnosticInfo<N>,
   ): void {
-    this.logDiagnostic(DiagnosticSeverity.ERROR, message, diagnostic);
+    this.logLangiumDiagnostic(DiagnosticSeverity.ERROR, message, diagnostic);
   }
 
   logWarnDiagnostic<N extends AstNode>(
     message: string,
     diagnostic: DiagnosticInfo<N>,
   ): void {
-    this.logDiagnostic(DiagnosticSeverity.WARNING, message, diagnostic);
+    this.logLangiumDiagnostic(DiagnosticSeverity.WARNING, message, diagnostic);
   }
 
   logInfoDiagnostic<N extends AstNode>(
     message: string,
     diagnostic: DiagnosticInfo<N>,
   ): void {
-    this.logDiagnostic(DiagnosticSeverity.INFO, message, diagnostic);
+    this.logLangiumDiagnostic(DiagnosticSeverity.INFO, message, diagnostic);
   }
 
   logHintDiagnostic<N extends AstNode>(
     message: string,
     diagnostic: DiagnosticInfo<N>,
   ): void {
-    this.logDiagnostic(DiagnosticSeverity.HINT, message, diagnostic);
+    this.logLangiumDiagnostic(DiagnosticSeverity.HINT, message, diagnostic);
+  }
+
+  logLanguageServerDiagnostic(
+    lsDiagnostic: ls.Diagnostic,
+    document: LangiumDocument,
+  ) {
+    assert(
+      lsDiagnostic.severity !== undefined,
+      'The diagnostic severity is assumed to be present',
+    );
+
+    this.logDiagnostic(
+      this.toDiagnosticSeverity(lsDiagnostic.severity),
+      lsDiagnostic.message,
+      lsDiagnostic.range,
+      document,
+    );
+  }
+
+  private toDiagnosticSeverity(
+    severity: ls.DiagnosticSeverity,
+  ): DiagnosticSeverity {
+    switch (severity) {
+      case ls.DiagnosticSeverity.Error:
+        return DiagnosticSeverity.ERROR;
+      case ls.DiagnosticSeverity.Warning:
+        return DiagnosticSeverity.WARNING;
+      case ls.DiagnosticSeverity.Information:
+        return DiagnosticSeverity.INFO;
+      case ls.DiagnosticSeverity.Hint:
+        return DiagnosticSeverity.HINT;
+    }
   }
 }

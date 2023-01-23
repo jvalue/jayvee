@@ -1,21 +1,8 @@
-import { strict as assert } from 'assert';
-
 import { DiagnosticSeverity, Logger } from '@jayvee/execution';
 import * as chalk from 'chalk';
-import {
-  AstNode,
-  DiagnosticInfo,
-  LangiumDocument,
-  getDiagnosticRange,
-  getDocument,
-  toDiagnosticSeverity,
-} from 'langium';
+import { LangiumDocument } from 'langium';
 import { assertUnreachable } from 'langium/lib/utils/errors';
-import {
-  Diagnostic as LspDiagnostic,
-  DiagnosticSeverity as LspDiagnosticSeverity,
-  Range,
-} from 'vscode-languageserver';
+import { Range } from 'vscode-languageserver';
 import { uinteger } from 'vscode-languageserver-types';
 
 export class DefaultLogger extends Logger {
@@ -44,51 +31,17 @@ export class DefaultLogger extends Logger {
       : '';
   }
 
-  protected override logDiagnostic<N extends AstNode>(
+  protected override logDiagnostic(
     severity: DiagnosticSeverity,
     message: string,
-    diagnostic: DiagnosticInfo<N>,
-  ) {
-    const diagnosticSeverity = toDiagnosticSeverity(severity);
-    const document = getDocument(diagnostic.node);
-
-    /**
-     * @see {@link DefaultDocumentValidator.toDiagnostic}
-     */
-    const lspDiagnostic = {
-      message,
-      range: getDiagnosticRange(diagnostic),
-      severity: diagnosticSeverity,
-      code: diagnostic.code,
-      codeDescription: diagnostic.codeDescription,
-      tags: diagnostic.tags,
-      relatedInformation: diagnostic.relatedInformation,
-      data: diagnostic.data,
-      source: document.textDocument.languageId,
-    } as LspDiagnostic;
-
-    this.logLspDiagnostic(lspDiagnostic, document);
-  }
-
-  public logLspDiagnostic(
-    diagnostic: LspDiagnostic,
+    range: Range,
     document: LangiumDocument,
-  ): void {
-    assert(
-      diagnostic.severity !== undefined,
-      'The diagnostic severity is assumed to always be present',
-    );
-    const printFn = this.inferPrintFunction(diagnostic.severity);
-    const colorFn = this.inferChalkColor(diagnostic.severity);
+  ) {
+    const printFn = this.inferPrintFunction(severity);
+    const colorFn = this.inferChalkColor(severity);
 
-    const severityName = this.inferSeverityName(diagnostic.severity);
-    this.logDiagnosticMessage(
-      severityName,
-      diagnostic.message,
-      printFn,
-      colorFn,
-    );
-    this.logDiagnosticInfo(diagnostic.range, document, printFn, colorFn);
+    this.logDiagnosticMessage(severity, message, printFn, colorFn);
+    this.logDiagnosticInfo(range, document, printFn, colorFn);
     printFn('');
   }
 
@@ -101,37 +54,22 @@ export class DefaultLogger extends Logger {
     printFn(`${chalk.bold(colorFn(severityName))}: ${message}`);
   }
 
-  private inferSeverityName(severity: LspDiagnosticSeverity): string {
-    switch (severity) {
-      case LspDiagnosticSeverity.Error:
-        return 'error';
-      case LspDiagnosticSeverity.Warning:
-        return 'warning';
-      case LspDiagnosticSeverity.Information:
-        return 'info';
-      case LspDiagnosticSeverity.Hint:
-        return 'hint';
-      default:
-        assertUnreachable(severity);
-    }
-  }
-
   private logDiagnosticInfo(
-    diagnosticRange: Range,
+    range: Range,
     document: LangiumDocument,
     printFn: (message: string) => void,
     colorFn: (message: string) => string,
   ): void {
-    const startLineNumber = diagnosticRange.start.line + 1;
-    const endLineNumber = diagnosticRange.end.line + 1;
+    const startLineNumber = range.start.line + 1;
+    const endLineNumber = range.end.line + 1;
 
     const fullRange: Range = {
       start: {
-        line: diagnosticRange.start.line,
+        line: range.start.line,
         character: 0,
       },
       end: {
-        line: diagnosticRange.end.line,
+        line: range.end.line,
         character: uinteger.MAX_VALUE,
       },
     };
@@ -141,9 +79,7 @@ export class DefaultLogger extends Logger {
     const lineNumberLength = Math.floor(Math.log10(endLineNumber)) + 1;
 
     printFn(
-      `In ${document.uri.path}:${startLineNumber}:${
-        diagnosticRange.start.character + 1
-      }`,
+      `In ${document.uri.path}:${startLineNumber}:${range.start.character + 1}`,
     );
     lines.forEach((line, i) => {
       const lineNumber = startLineNumber + i;
@@ -161,10 +97,10 @@ export class DefaultLogger extends Logger {
       let underlineFrom = 0;
       let underlineTo = line.length;
       if (lineNumber === startLineNumber) {
-        underlineFrom = diagnosticRange.start.character;
+        underlineFrom = range.start.character;
       }
       if (lineNumber === endLineNumber) {
-        underlineTo = diagnosticRange.end.character;
+        underlineTo = range.end.character;
       }
 
       const underlineIndent = this.repeatCharAccordingToString(
@@ -204,15 +140,15 @@ export class DefaultLogger extends Logger {
   }
 
   private inferPrintFunction(
-    severity: LspDiagnosticSeverity,
+    severity: DiagnosticSeverity,
   ): (message: string) => void {
     switch (severity) {
-      case LspDiagnosticSeverity.Error:
+      case DiagnosticSeverity.ERROR:
         return console.error;
-      case LspDiagnosticSeverity.Warning:
+      case DiagnosticSeverity.WARNING:
         return console.warn;
-      case LspDiagnosticSeverity.Information:
-      case LspDiagnosticSeverity.Hint:
+      case DiagnosticSeverity.INFO:
+      case DiagnosticSeverity.HINT:
         return console.info;
       default:
         assertUnreachable(severity);
@@ -220,16 +156,16 @@ export class DefaultLogger extends Logger {
   }
 
   private inferChalkColor(
-    severity: LspDiagnosticSeverity,
+    severity: DiagnosticSeverity,
   ): (message: string) => string {
     switch (severity) {
-      case LspDiagnosticSeverity.Error:
+      case DiagnosticSeverity.ERROR:
         return chalk.red;
-      case LspDiagnosticSeverity.Warning:
+      case DiagnosticSeverity.WARNING:
         return chalk.yellow;
-      case LspDiagnosticSeverity.Information:
+      case DiagnosticSeverity.INFO:
         return chalk.green;
-      case LspDiagnosticSeverity.Hint:
+      case DiagnosticSeverity.HINT:
         return chalk.blue;
       default:
         assertUnreachable(severity);
