@@ -8,14 +8,16 @@ export function collectStartingBlocks(pipeline: Pipeline): Block[] {
   const result: Block[] = [];
   for (const block of pipeline.blocks) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (block.type !== undefined) {
-      const blockMetaInf = getMetaInformation(block.type);
-      if (blockMetaInf === undefined) {
-        continue;
-      }
-      if (!blockMetaInf.hasInput()) {
-        result.push(block);
-      }
+    if (block.type === undefined) {
+      continue;
+    }
+    const blockMetaInf = getMetaInformation(block.type);
+    if (blockMetaInf === undefined) {
+      continue;
+    }
+
+    if (!blockMetaInf.hasInput()) {
+      result.push(block);
     }
   }
   return result;
@@ -24,11 +26,14 @@ export function collectStartingBlocks(pipeline: Pipeline): Block[] {
 export function collectChildren(block: Block): Block[] {
   const outgoingPipes = collectOutgoingPipes(block);
 
-  const children = outgoingPipes
+  const children = outgoingPipes.reduce<Block[]>((previousResult, pipe) => {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    .filter((pipe) => pipe.to?.ref !== undefined)
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    .map((pipe) => pipe.to.ref!);
+    const blockTo = pipe.to?.ref;
+    if (blockTo === undefined) {
+      return previousResult;
+    }
+    return [...previousResult, blockTo];
+  }, []);
 
   return children;
 }
@@ -36,11 +41,14 @@ export function collectChildren(block: Block): Block[] {
 export function collectParents(block: Block): Block[] {
   const ingoingPipes = collectIngoingPipes(block);
 
-  const parents = ingoingPipes
+  const parents = ingoingPipes.reduce<Block[]>((previousResult, pipe) => {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    .filter((pipe) => pipe.from?.ref !== undefined)
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    .map((pipe) => pipe.from.ref!);
+    const blockFrom = pipe.from?.ref;
+    if (blockFrom === undefined) {
+      return previousResult;
+    }
+    return [...previousResult, blockFrom];
+  }, []);
 
   return parents;
 }

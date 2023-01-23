@@ -82,35 +82,36 @@ export class BlockValidator implements JayveeValidator {
       const attributeSpec = blockMetaInf.getAttributeSpecification(
         attribute.name,
       );
-      if (attributeSpec !== undefined) {
-        const attributeType = attributeSpec.type;
-        const attributeValue = attribute.value;
+      if (attributeSpec === undefined) {
+        continue;
+      }
+      const attributeType = attributeSpec.type;
 
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        if (attribute.value === undefined) {
-          return;
-        }
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (attribute.value === undefined) {
+        continue;
+      }
+      const attributeValue = attribute.value;
 
-        if (isRuntimeParameter(attributeValue)) {
-          if (!BlockValidator.runtimeParameterAllowedForType(attributeType)) {
-            accept(
-              'error',
-              `Runtime parameters are not allowed for attributes of type ${attributeType}`,
-              {
-                node: attribute,
-                property: 'name',
-              },
-            );
-          }
-        } else {
-          const valueType =
-            BlockValidator.convertAttributeValueToType(attributeValue);
-          if (valueType !== attributeType) {
-            accept('error', `The value needs to be of type ${attributeType}`, {
+      if (isRuntimeParameter(attributeValue)) {
+        if (!BlockValidator.runtimeParameterAllowedForType(attributeType)) {
+          accept(
+            'error',
+            `Runtime parameters are not allowed for attributes of type ${attributeType}`,
+            {
               node: attribute,
-              property: 'value',
-            });
-          }
+              property: 'name',
+            },
+          );
+        }
+      } else {
+        const valueType =
+          BlockValidator.convertAttributeValueToType(attributeValue);
+        if (valueType !== attributeType) {
+          accept('error', `The value needs to be of type ${attributeType}`, {
+            node: attribute,
+            property: 'value',
+          });
         }
       }
     }

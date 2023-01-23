@@ -18,30 +18,22 @@ export class PipeValidator implements JayveeValidator {
     accept: ValidationAcceptor,
   ): void {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const fromBlock = pipe.from?.ref;
-    if (fromBlock === undefined) {
-      return;
-    }
-
+    const fromBlockType = pipe.from?.ref?.type;
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const toBlock = pipe.to?.ref;
-    if (toBlock === undefined) {
+    const toBlockType = pipe.to?.ref?.type;
+
+    if (fromBlockType === undefined || toBlockType === undefined) {
       return;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (fromBlock.type === undefined || toBlock.type === undefined) {
-      return;
-    }
-
-    const fromBlockMetaInf = getMetaInformation(fromBlock.type);
-    const toBlockMetaInf = getMetaInformation(toBlock.type);
+    const fromBlockMetaInf = getMetaInformation(fromBlockType);
+    const toBlockMetaInf = getMetaInformation(toBlockType);
     if (fromBlockMetaInf === undefined || toBlockMetaInf === undefined) {
       return;
     }
 
     if (!fromBlockMetaInf.canBeConnectedTo(toBlockMetaInf)) {
-      const errorMessage = `The output of block ${fromBlock.type} is incompatible with the input of block ${toBlock.type}`;
+      const errorMessage = `The output of block ${fromBlockType} is incompatible with the input of block ${toBlockType}`;
       accept('error', errorMessage, {
         node: pipe,
         property: 'from',
