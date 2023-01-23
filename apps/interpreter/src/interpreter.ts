@@ -1,5 +1,4 @@
 import {
-  Logger,
   createBlockExecutor,
   useExtension as useExecutionExtension,
 } from '@jayvee/execution';
@@ -20,7 +19,7 @@ import {
 import { NodeFileSystem } from 'langium/node';
 
 import { ExitCode, extractAstNode } from './cli-util';
-import { DefaultLogger } from './default-logger';
+import { LoggerFactory } from './logging/logger-factory';
 import {
   extractRequiredRuntimeParameters,
   extractRuntimeParameters,
@@ -30,19 +29,23 @@ export async function runAction(
   fileName: string,
   options: { env: Map<string, string>; debug: boolean },
 ): Promise<void> {
-  const logger = new DefaultLogger(options.debug);
+  const loggerFactory = new LoggerFactory(options.debug);
 
   useLangExtension(new StdLangExtension());
   useExecutionExtension(new StdExecExtension());
 
   const services = createJayveeServices(NodeFileSystem).Jayvee;
-  const model = await extractAstNode<Model>(fileName, services, logger);
+  const model = await extractAstNode<Model>(
+    fileName,
+    services,
+    loggerFactory.createLogger(),
+  );
 
   const requiredRuntimeParameters = extractRequiredRuntimeParameters(model);
   const parameterReadResult = extractRuntimeParameters(
     requiredRuntimeParameters,
     options.env,
-    logger,
+    loggerFactory.createLogger(),
   );
   if (parameterReadResult === undefined) {
     process.exit(ExitCode.FAILURE);
@@ -51,7 +54,7 @@ export async function runAction(
   const interpretationExitCode = await interpretPipelineModel(
     model,
     parameterReadResult,
-    logger,
+    loggerFactory,
   );
   process.exit(interpretationExitCode);
 }
@@ -59,11 +62,12 @@ export async function runAction(
 async function interpretPipelineModel(
   model: Model,
   runtimeParameters: Map<string, string | number | boolean>,
-  logger: Logger,
+  loggerFactory: LoggerFactory,
 ): Promise<ExitCode> {
-  console.info('Interpreting pipeline model');
   const pipelineRuns: Array<Promise<ExitCode>> = model.pipelines.map(
-    (pipeline) => runPipeline(pipeline, runtimeParameters, logger),
+    (pipeline) => {
+      return runPipeline(pipeline, runtimeParameters, loggerFactory);
+    },
   );
   const exitCodes = await Promise.all(pipelineRuns);
 
@@ -76,8 +80,10 @@ async function interpretPipelineModel(
 async function runPipeline(
   pipeline: Pipeline,
   runtimeParameters: Map<string, string | number | boolean>,
-  logger: Logger,
+  loggerFactory: LoggerFactory,
 ): Promise<ExitCode> {
+  const pipelineLogger = loggerFactory.createLogger(pipeline.name);
+
   printPipeline(pipeline, runtimeParameters);
 
   const executionOrder: Array<{ block: Block; value: unknown }> =
@@ -86,10 +92,11 @@ async function runPipeline(
     });
 
   for (const blockData of executionOrder) {
+    const blockLogger = loggerFactory.createLogger(blockData.block.name);
     const blockExecutor = createBlockExecutor(
       blockData.block,
       runtimeParameters,
-      logger,
+      blockLogger,
     );
     const parentData = collectParents(blockData.block).map((parent) =>
       executionOrder.find((blockData) => parent === blockData.block),
@@ -101,7 +108,7 @@ async function runPipeline(
     try {
       result = await blockExecutor.execute(inputValue);
     } catch (unexpectedError) {
-      logger.logErr(
+      pipelineLogger.logErrDiagnostic(
         `An unknown error occurred during the execution of block ${
           blockData.block.name
         }: ${
@@ -115,7 +122,10 @@ async function runPipeline(
     }
 
     if (R.isErr(result)) {
-      logger.logErr(result.left.message, result.left.diagnostic);
+      pipelineLogger.logErrDiagnostic(
+        result.left.message,
+        result.left.diagnostic,
+      );
       return ExitCode.FAILURE;
     }
 

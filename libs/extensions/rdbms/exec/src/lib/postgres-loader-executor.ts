@@ -31,19 +31,21 @@ export class PostgresLoaderExecutor extends BlockExecutor<Table, void> {
     });
 
     try {
-      this.logger.logInfo(`Connecting to database`);
+      this.logger.logDebug(`Connecting to database`);
       await client.connect();
 
-      this.logger.logInfo(`Dropping previous table "${table}" if it exists`);
+      this.logger.logDebug(`Dropping previous table "${table}" if it exists`);
       await client.query(buildDropTableStatement(table));
-      this.logger.logInfo(`Creating table "${table}"`);
+      this.logger.logDebug(`Creating table "${table}"`);
       await client.query(buildCreateTableStatement(table, input));
-      this.logger.logInfo(
+      this.logger.logDebug(
         `Inserting ${input.data.length} row(s) into table "${table}"`,
       );
       await client.query(buildInsertValuesStatement(table, input));
 
-      this.logger.logInfo(`The data was successfully loaded into the database`);
+      this.logger.logDebug(
+        `The data was successfully loaded into the database`,
+      );
       return Promise.resolve(R.ok(undefined));
     } catch (err: unknown) {
       return Promise.resolve(
