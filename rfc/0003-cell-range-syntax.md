@@ -102,6 +102,7 @@ range C3:*3
 - Unable to select multiple non-adjacent cells / rows / columns
 - Unable to select cells using regular patterns (e.g. selecting every second row)
 - Unable to combine multiple cell ranges to form a new cell range
+- Unable to conveniently select cells close to the last row / column (e.g. selecting the second last row)
 
 # Alternatives
 
