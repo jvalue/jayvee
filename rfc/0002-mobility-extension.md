@@ -8,12 +8,12 @@ This RFC enables a pipeline extracting, validating and loading GTFS-data (part o
 
 # Motivation
 GTFS has gained widespread popularity over the past decade as an open-source industry standard for describing and publishing fixed- and dynamic route transit operations. It is a data standard that defines how public transit agencies can provide schedule information to developers. It is used by agencies around the world to publish their transit data in a common format, allowing developers to create applications that can access and use this data. GTFS data includes information about stops, routes, and schedules for buses, trains, and other forms of public transportation. GTFS-data is provided by an endpoint, which publishes a zip-file, consisting of a collection of comma-separated-values in plain text files. A example of a gtfs-zip-file could result in this datamodel (this visualization just includes required dimensions).
-![Visualization of a Gtfs data model](./0002-visualization-gtfs-pipeline-filepicker.png)
+![Visualization of a Gtfs data model](./0002-visualization-gtfs-datamodel.png)
 
 # Explanation
 The following picture is a visualization of the corresponding [mobility.jv](0002-mobility.jv)-file. A GTFS-pipeline follows the overall pipeline pattern, consisting of an Extractor, some Interpreters, some Validators and finally a Loader to a sink (in our case all gtfs-csv-files are loaded into a SQLite database, each csv-file into its corresponding table). The individual GTFS files are picked out using their filename and further processed independently in parallel using block types that already exist (or at least in a similar form). In the image, there are three such parallel processing steps as an example. In practice, there would be one for each GTFS file in the ZIP archive. In case a file are not present, the further processing of that file is aborted and hence no table is created from that file. At the end, each successfully created table is loaded into the same SQLiteSink.
 
-![Concept of a Gtfs Pipeline](./0002-visualization-gtfs-pipeline.png)
+![Concept of a Gtfs Pipeline](./0002-visualization-gtfs-pipeline-filepicker.png)
 
 The red block types need to be created from scratch whereas the blue block types are either already present or only require minor changes (this classification is also reflected in the following chapter titles). 
 
