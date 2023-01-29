@@ -8,9 +8,10 @@ pipeline GtfsPipeline {
     
     }
 
-    block MyGtfsInterpreter oftype GtfsInterpreter{
+	block MyFilePicker oftype FilePicker{
+		
+	}
 
-    }
 
 	layout agencyLayout {
 		header row 1: text;
