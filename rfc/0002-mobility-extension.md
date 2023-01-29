@@ -1,7 +1,7 @@
 * Feature Name: mobility-extension
 * Status: `DISCUSSION`
 
-Disclaimer: This RFC is part of my master-thesis "Archiving open transport data using the JValue tooling ecosystem" supervised by @rhazn. This RFC is qualified via multiple iterative revisions.
+Disclaimer: This RFC is part of my master-thesis "Archiving open transport data using the JValue tooling ecosystem" supervised by @rhazn.
 
 # Summary
 This RFC enables a pipeline extracting, validating and loading GTFS-data (part of domain mobility-data) by providing an GTFS-endpoint under consideration of the [GTFS-specification](https://developers.google.com/transit/gtfs/reference). For that reason some changes and extensions of Jayvee have to be made. The overall goal of this RFC is processing GTFS-data with a minimum of changes/extensions in Jayvee. 
@@ -11,7 +11,7 @@ GTFS has gained widespread popularity over the past decade as an open-source ind
 ![Visualization of a Gtfs data model](./0002-visualization-gtfs-datamodel.png)
 
 # Explanation
-The following picture is a visualization of the corresponding [gtfs.jv](0002-gtfs.jv)-file. A GTFS-pipeline follows the overall pipeline pattern, consisting of an Extractor, an Interpreters, some Validators and finally a Loader to a sink (in our case all gtfs-csv-files are loaded into a SQLite database, each csv-file into its corresponding table). The individual GTFS files are picked out using their filename and further processed independently in parallel using block types that already exist (or at least in a similar form). In the image, there are three such parallel processing steps as an example. In practice, there would be one for each GTFS file in the ZIP archive. In case a file are not present, the further processing of that file is aborted and hence no table is created from that file. At the end, each successfully created table is loaded into the same SQLiteSink.
+The following picture is a visualization of the corresponding [mobility.jv](0002-mobility.jv)-file. A GTFS-pipeline follows the overall pipeline pattern, consisting of an Extractor, some Interpreters, some Validators and finally a Loader to a sink (in our case all gtfs-csv-files are loaded into a SQLite database, each csv-file into its corresponding table). The individual GTFS files are picked out using their filename and further processed independently in parallel using block types that already exist (or at least in a similar form). In the image, there are three such parallel processing steps as an example. In practice, there would be one for each GTFS file in the ZIP archive. In case a file are not present, the further processing of that file is aborted and hence no table is created from that file. At the end, each successfully created table is loaded into the same SQLiteSink.
 
 ![Concept of a Gtfs Pipeline](./0002-visualization-gtfs-pipeline.png)
 
@@ -41,14 +41,18 @@ export interface File {
 }
 ```
 ### io-datatype FileSystem
-A FileSystem could look like this and should be added to `io-datatypes.ts`. Provides generic methods for navigating in the file system using paths and for accessing files. Not sure, how to provide methods in an interface in `io-datatype.ts`?
+A FileSystem could look like this and should be added to `io-datatypes.ts`. Provides generic methods for navigating in the file system using paths and for accessing files. 
 ```
 export interface FileSystem {
   tbd
 }
 ```
+
+Not sure, how to *implement* methods in an interface in `io-datatype.ts` or is this realized in the Block `FilePicker` @felix-oq?
+
+
 ### io-datatype Table
-The io-datatype `Table` should be adapted, to store its name to be able to handle multiple tables as input
+The io-datatype `Table` should be adapted, to store its name to be able to handle multiple tables as input later in an DB-Loader.
 ```
 export interface Table {
   tableName: string;
@@ -79,7 +83,7 @@ Input: File, Output: FileSystem
 
 A ArchiveInterpreter gets a File, and initializes an FileSystem ontop of the file (open filestream etc.). Provides generic methods for navigating in the file system using paths and for accessing files. As it is not clear, what the file contains. It should be implemented in the std-extension.
 ```
-block MyArchiveInterpreter oftype ArchiveInterpreter{
+block ZipArchiveInterpreter oftype ArchiveInterpreter{
     tbd
 }
 ```
@@ -90,23 +94,22 @@ Input: FileSystem, Output: File
 A FilePicker gets an FileSystem, navigates to the file, and initializes an file via the path.
 ```
 block MyFilePicker oftype FilePicker{
-    path: string // Absolute path to file (from the root folder) /agency.txt
+    path: string // Absolute path to file (from the root folder) eg. /agency.txt
 }
 ```
 
-### 4) SQLiteSink
-This Block needs to be adapted, to handle multiple Inputs. As the parallel processing of the differnt Files does not depend on each other, we potentially could use for every file an own SQLiteSink or we change the SQLiteSink to handle multiple tables as input by providing the table name via the io-datatype `Table` itself. TODO: Check logic for that.
+### 4) CSVInterpreter
+Input: File, Output: Sheet
+
+In the package `tabular` a `CSVFileExtractor` is already implemented, which loads a CSV from an URL and outputs a Sheet. How to implement the CSVInterpreter here (Can i introduce a new Blocktype or should I rewrite the existing `CSVFileExtractor`? If we go with the second proposition, how should i handle multiple incoming io-type as the existing Extractor has void as input, and the new Interpreter wants a file? I would suggest, to rewrite the existing example  pipelines (gas and cars), to use the new `HTTPExtractor` as well, then we just need one `CSVFileInterpreter` and now longer an `CSVFileExtractor`.
 
 
-## 4) LayoutsValidator
-Input: Collection of Sheets, Output: Collection of Tables
 
-A LayoutsValidator (Attention: here we talk about multiple Layouts) gets as input an collection of sheets and validates every sheet using a single, dedicated LayoutValidator (for a single layout). As an parameter the LayoutsValidator gets a mapping of filenames to layouts in order to be able to process multiple files/layouts within one block. Every sheet in the collection has its corresponding layout, wrapped in the layouts-block. After the validation of every sheet is sucessfull, the LayoutsValidator outputs a collection of validated tables.
+### 6) SQLiteSink
+Input: Table, Output: void
 
-```
-block GtfsValidator oftype LayoutsValidator { 
-	validationLayouts: gtfsLayouts;
-}
-```
+This Block needs to be adapted, to handle multiple Inputs. As the parallel processing of the differnt files does not depend on each other, we potentially could use for every file an own SQLiteSink or we change the SQLiteSink to handle multiple tables as input by providing the table name via the io-datatype `Table` itself. 
+
+TODO: Check, where to implement processing of multiple inputs
 
 

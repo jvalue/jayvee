@@ -4,14 +4,65 @@ pipeline GtfsPipeline {
 		url: "https://www.data.gouv.fr/fr/datasets/r/c4d9326f-9f41-4dfb-9746-31bc97a31fc6";
 	}
 
-    block MyZipInterpreter oftype ZipInterpreter{
+    block ZipArchiveInterpreter oftype ArchiveInterpreter{
     
     }
 
-	block MyFilePicker oftype FilePicker{
-		
+	block AgencyFilePicker oftype FilePicker{
+		path: "/agency.txt";
 	}
 
+	block StopsFilePicker oftype FilePicker{
+		path: "/stops.txt";
+	}
+
+	block RoutesFilePicker oftype FilePicker{
+		path: "/routes.txt";
+	}
+
+	block TripsFilePicker oftype FilePicker{
+		path:" /trips.txt";
+	}
+
+	block StopTimesFilePicker oftype FilePicker{
+		path: "/stop_times.txt";
+	}
+
+	block CalendarDatesFilePicker oftype FilePicker{
+		path: "/calendar_dates.txt";
+	}
+
+	block FeedInfoFilePicker oftype FilePicker{
+		path: "/feed_info.txt";
+	}
+
+	block AgencyCSVInterpreter oftype CSVInterpreter{
+	
+	}
+
+	block  StopsCSVInterpreter oftype CSVInterpreter{
+	
+	}
+
+	block RoutesCSVInterpreter oftype CSVInterpreter{
+	
+	}
+
+	block TripsCSVInterpreter oftype CSVInterpreter{
+	
+	}
+
+	block StopTimesCSVInterpreter oftype CSVInterpreter{
+	
+	}
+
+	block CalendarDatesCSVInterpreter oftype CSVInterpreter{
+	
+	}
+
+	block FeedInfoCSVInterpreter oftype CSVInterpreter{
+	
+	}
 
 	layout agencyLayout {
 		header row 1: text;
@@ -71,42 +122,206 @@ pipeline GtfsPipeline {
 		column feed_lang: text;
 	}
 
-	layouts gtfsLayouts {
-		"agency": agencyLayout;
-		"stops": stopsLayout;
-		"routes": routesLayout;
-		"trips": tripsLayout;
-		"stop_times": stop_timesLayout;
-		"calendar_dates": calendar_datesLayout;
-		"feed_info": feed_infoLayout;
+
+
+
+	block AgencyValidator oftype LayoutValidator {
+		validationLayout: agencyLayout;
 	}
 
-	block GtfsValidator oftype LayoutsValidator { 
-		validationLayouts: gtfsLayouts;
+	block StopsValidator oftype LayoutValidator {
+		validationLayout: stopsLayout;
 	}
+
+	block RoutesValidator oftype LayoutValidator {
+		validationLayout: routesLayout;
+	}
+
+	block TripsValidator oftype LayoutValidator {
+		validationLayout: tripsLayout;
+	}
+
+	block StopTimesValidator oftype LayoutValidator {
+		validationLayout: stop_timesLayout;
+	}
+
+	block CalendarDatesValidator oftype LayoutValidator {
+		validationLayout: calendar_datesLayout;
+	}
+
+	block FeedInfoValidator oftype LayoutValidator {
+		validationLayout: feed_infoLayout;
+	}
+
+
+
 
 	block GtfsLoader oftype SQLiteTablesLoader {
-		tables: gtfsLayouts;
 		file: "./gtfs.db";
 	}
 
+
+
+	
+
 	pipe {
 		from: MyHttpExtractor;
-		to: MyZipInterpreter;
+		to: ZipArchiveInterpreter;
+	}
+
+
+
+
+
+	pipe {
+		from: ZipArchiveInterpreter;
+		to: AgencyFilePicker;
 	}
 
 	pipe {
-		from: MyZipInterpreter;
-		to: MyGtfsInterpreter;
+		from: ZipArchiveInterpreter;
+		to: StopsFilePicker;
 	}
 
 	pipe {
-		from: MyGtfsInterpreter;
-		to: GtfsValidator;
+		from: ZipArchiveInterpreter;
+		to: RoutesFilePicker;
 	}
 
 	pipe {
-		from: GtfsValidator;
+		from: ZipArchiveInterpreter;
+		to: TripsFilePicker;
+	}
+
+	pipe {
+		from: ZipArchiveInterpreter;
+		to: StopTimesFilePicker;
+	}
+
+	pipe {
+		from: ZipArchiveInterpreter;
+		to: CalendarDatesFilePicker;
+	}
+
+	pipe {
+		from: ZipArchiveInterpreter;
+		to: FeedInfoFilePicker;
+	}
+
+
+
+
+
+	pipe {
+		from: AgencyFilePicker;
+		to: AgencyCSVInterpreter;
+	}
+
+	pipe {
+		from: StopsFilePicker;
+		to: StopsCSVInterpreter;
+	}
+
+	pipe {
+		from: RoutesFilePicker;
+		to: RoutesCSVInterpreter;
+	}
+
+	pipe {
+		from: TripsFilePicker;
+		to: TripsCSVInterpreter;
+	}
+
+	pipe {
+		from: StopTimesFilePicker;
+		to: StopTimesCSVInterpreter;
+	}
+
+	pipe {
+		from: CalendarDatesFilePicker;
+		to: CalendarDatesCSVInterpreter;
+	}
+
+	pipe {
+		from: FeedInfoFilePicker;
+		to: FeedInfoCSVInterpreter;
+	}
+
+
+
+
+
+	pipe {
+		from: AgencyCSVInterpreter;
+		to: AgencyValidator;
+	}
+	
+	pipe {
+		from: StopsCSVInterpreter;
+		to: StopsValidator;
+	}
+
+	pipe {
+		from: RoutesCSVInterpreter;
+		to: RoutesValidator;
+	}
+
+	pipe {
+		from: TripsCSVInterpreter;
+		to: TripsValidator;
+	}
+
+	pipe {
+		from: StopTimesCSVInterpreter;
+		to: StopTimesValidator;
+	}
+
+	pipe {
+		from: CalendarDatesCSVInterpreter;
+		to: CalendarDatesValidator;
+	}
+
+	pipe {
+		from: FeedInfoCSVInterpreter;
+		to: FeedInfoValidator;
+	}
+
+
+
+
+	pipe {
+		from: AgencyValidator;
 		to: GtfsLoader;
 	}
+	
+	pipe {
+		from: StopsValidator;
+		to: GtfsLoader;
+	}
+
+	pipe {
+		from: RoutesValidator;
+		to: GtfsLoader;
+	}
+
+	pipe {
+		from: TripsValidator;
+		to: GtfsLoader;
+	}
+
+	pipe {
+		from: StopTimesValidator;
+		to: GtfsLoader;
+	}
+
+	pipe {
+		from: CalendarDatesValidator;
+		to: GtfsLoader;
+	}
+
+	pipe {
+		from: FeedInfoValidator;
+		to: GtfsLoader;
+	}
+
 }
