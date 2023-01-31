@@ -21,12 +21,13 @@ Jayvee needs to be extented by following parts to be able to process GTFS-data:
 * New `io-datatypes` called `File` and `FileSystem`
 * New blocktypes `HTTPExtractor`, `ArchiveInterpreter` and `FilePicker`
 * The  `io-datatype` `Table` needs to store its name to be able to handle multiple tables as input
-* An abort-mechanism must be implemented, when a block gets empty/null/undefined input (in our case FilePicker)
+* An abort-mechanism must be implemented, for that we need a new io-type `None` to abort, if a precessor outputs `None`
 * Blocks must be able to process multiple parallel inputs (in our case SQLiteSink), resulting in multiple executions of the same block.
 
 Each of the following subchapters explains the idea behind.
 
 ## New io-datatypes
+
 ### io-datatype File *(Requires implementation from scratch)*
 A File datatype could look like this and should be added to `io-datatypes.ts`.
 ```
@@ -35,21 +36,26 @@ export interface File {
   
   extension: string //The file extension
   
-  filetype: string //The MIME type of the file taken from the Content-Type header (for HTTP requests only) Otherwise inferred from the file extension, Could default to text/plain or application/octet-stream for unknown or missing file extensions
+  filetype: string //The MIME type of the file taken from the Content-Type header (for HTTP requests only) Otherwise inferred from the file extension, default application/octet-stream for unknown or missing file extensions
   
   content: string | ArrayBuffer //The content of the file as a string Or maybe a byte array instead
 }
 ```
 ### io-datatype FileSystem *(Requires implementation from scratch)*
-A FileSystem could look like this and should be added to `io-datatypes.ts`. Provides generic methods for navigating in the file system using paths and for accessing files. 
+A FileSystem could look like this and should be added to `io-datatypes.ts`. Provides generic methods for navigating in the file system using paths and for accessing files. In order to implement the interface, we create a class which provides the attributes / methods demanded by the interface.
 ```
 export interface FileSystem {
   tbd
 }
 ```
 
-Not sure, how to *implement* methods in an interface in `io-datatype.ts` or is this realized in the Block `FilePicker` @felix-oq?
-
+### io-datatype None *(Requires implementation from scratch)*
+A None type could look like this and should be added to `io-datatypes.ts`. If an predeccesor outputs that io-datatype, an Block can abort the execution
+```
+export interface None {
+  tbd
+}
+```
 
 ### io-datatype Table *(Requires minor change)*
 The io-datatype `Table` should be adapted, to store its name to be able to handle multiple tables as input later in an DB-Loader.
@@ -62,9 +68,11 @@ export interface Table {
 }
 ```
 
-### datatype Undefined *(Requires implementation from scratch)*
+### datatype Undefined *(No changes required, should be enabled via [#85](https://github.com/jvalue/jayvee/issues/85))*
 For an implementation of an optional-mechanism for eg. columns, we need a new datatype ´undefined´(Attention: Not talking about io-datatype, i mean datatype). Optional column's datatype would then be `text or undefined`. So we also need a grammar feature for an OR-represenation in Jayvee
 
+### Change of folderstructure
+Since we are introducing multiple new io-datatypes and some implemenations of them, we move the file `io-datatype.ts` to a new folder, holding all types and implemenations.
 
 ## New Block Types
 ### 1) HttpExtractor *(Requires implementation from scratch)*
@@ -74,24 +82,23 @@ A HttpExtractors gets an Url, sends an HTTP-GET-REQUEST to that URL and outputs 
 ```
 block MyHttpExtractor oftype HttpExtractor {
     url: "https://www.data.gouv.fr/fr/datasets/r/c4d9326f-9f41-4dfb-9746-31bc97a31fc6";
-    content-type: string //the expected content-type of the http-call
 }
 ```
 
 ### 2) ArchiveInterpreter *(Requires implementation from scratch)*
 Input: File, Output: FileSystem
 
-A ArchiveInterpreter gets a File, and initializes an FileSystem ontop of the file (open filestream etc.). Provides generic methods for navigating in the file system using paths and for accessing files. As it is not clear, what the file contains. It should be implemented in the std-extension.
+A ArchiveInterpreter gets a File, and initializes an FileSystem ontop of the file (open filestream etc.). Provides generic methods for navigating in the file system using paths and for accessing files. As it is not clear, what the file contains. It should be implemented in the std-extension. The ArchiveInterpreter needs to be able to instantiate a FileSystem instance in order to output it as a result.
 ```
 block ZipArchiveInterpreter oftype ArchiveInterpreter{
-    tbd
+    archive_type: string //now only accepting the string "zip"
 }
 ```
 
 ### 3) FilePicker *(Requires implementation from scratch)*
 Input: FileSystem, Output: File
 
-A FilePicker gets an FileSystem, navigates to the file, and initializes an file via the path.
+A FilePicker gets an FileSystem, navigates to the file, and initializes an file via the path. The FilePicker needs to work with methods provided by a FileSystem instance in order to read the file according to the provided path.
 ```
 block MyFilePicker oftype FilePicker{
     path: string // Absolute path to file (from the root folder) eg. /agency.txt
@@ -101,10 +108,15 @@ block MyFilePicker oftype FilePicker{
 ### 4) CSVInterpreter *(Requires minor change)*
 Input: File, Output: Sheet
 
-In the package `tabular` a `CSVFileExtractor` is already implemented, which loads a CSV from an URL and outputs a Sheet. How to implement the CSVInterpreter here (Can i introduce a new Blocktype or should I rewrite the existing `CSVFileExtractor`? If we go with the second proposition, how should i handle multiple incoming io-type as the existing Extractor has void as input, and the new Interpreter wants a file? I would suggest, to rewrite the existing example  pipelines (gas and cars), to use the new `HTTPExtractor` as well, then we just need one `CSVFileInterpreter` and now longer an `CSVFileExtractor`.
+In the package `tabular` a `CSVFileExtractor` is already implemented, which loads a CSV from an URL and outputs a Sheet. We need to rewrite the existing example  pipelines (gas and cars), to use the new `HTTPExtractor` as well, then we just need one `CSVFileInterpreter` and now longer an `CSVFileExtractor`.
 
 ### 5) LayoutValidator and Layouts *(Requires minor change)*
-Some columns in GTFS-csv-files are optional and conditional optional. For an implementation of an optional mechanism, we present the optional columns with their datatype, e.g. saying their datatype is text or undefined. For that, we'd need an undefined datatype in Jayvee and a way to combine these types using an or-expression (see chapter datatypes). For a first draft, we consider conditionally required columns as required.
+The following description is out of scope for this RFC, will be considered in future but is important for understanding the gtfs-specification:
+*  Some columns in GTFS-csv-files are optional and conditional optional
+*  For an implementation of an optional mechanism, we need to present the optional columns with their datatype, e.g. saying their datatype is text or undefined.
+*  So, we'd need an undefined datatype in Jayvee and a way to combine these types using an or-expression (see chapter datatypes). 
+  
+For a first draft, we only consider required columns and reuse the existing language features for that.
 
 ```
 layout agencyLayout {
@@ -113,10 +125,6 @@ layout agencyLayout {
 		column agency_name: text;
 		column agency_url: text;
 		column agency_timezone: text;
-		column agency_lang: text or undefined; //Optional column marked with or
-		column agency_phone: text or undefined; //Optional column marked with or
-		column agency_fare_url: text or undefined; //Optional column marked with or
-		column agency_email: text or undefined; //Optional column marked with or
 	}
 ```
 
@@ -128,10 +136,11 @@ In a GTFS-Validator, some conditional (aka logical) checks could possibly be app
 
 ### 6) SQLiteSink *(Requires minor change)*
 Input: Table, Output: void
-This Block needs to be adapted, to handle multiple Inputs. As the parallel processing of the differnt files does not depend on each other, we potentially could use for every file an own SQLiteSink? We change the SQLiteSink receive the table name via the io-datatype `Table` itself. 
+This Block needs to be adapted, to handle multiple Inputs. As the parallel processing of the differnt files does not depend on each other, for an inital demonstration if the PoC we use each own SQLiteSinks without the effort of modifying the execution logic (here we have to change the SQLite sink, to not recreate the DB each call). We also change the SQLiteSink to receive the table name via the io-datatype `Table` itself. 
 ```
 block GtfsLoader oftype SQLiteTablesLoader {
 		file: "./gtfs.db";
+    recreateDatabase: boolean //If true, every call, a new database gets created
 	}
 ```
 
