@@ -1,10 +1,10 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
+import { Logger } from '@jayvee/execution';
 import { AstNode, LangiumDocument, LangiumServices } from 'langium';
+import { DiagnosticSeverity } from 'vscode-languageserver-protocol';
 import { URI } from 'vscode-uri';
-
-import { DefaultLogger } from './default-logger';
 
 export enum ExitCode {
   SUCCESS = 0,
@@ -14,7 +14,7 @@ export enum ExitCode {
 export async function extractDocument(
   fileName: string,
   services: LangiumServices,
-  logger: DefaultLogger,
+  logger: Logger,
 ): Promise<LangiumDocument> {
   const extensions = services.LanguageMetaData.fileExtensions;
   if (!extensions.includes(path.extname(fileName))) {
@@ -39,14 +39,23 @@ export async function extractDocument(
     validationChecks: 'all',
   });
 
-  const validationErrors = (document.diagnostics ?? []).filter(
-    (e) => e.severity === 1,
+  const diagnostics = document.diagnostics ?? [];
+
+  const errDiagnostics = diagnostics.filter(
+    (diagnostic) => diagnostic.severity === DiagnosticSeverity.Error,
   );
-  if (validationErrors.length > 0) {
-    for (const validationError of validationErrors) {
-      logger.logLspDiagnostic(validationError, document);
+  if (errDiagnostics.length > 0) {
+    for (const errDiagnostic of errDiagnostics) {
+      logger.logLanguageServerDiagnostic(errDiagnostic, document);
     }
     process.exit(ExitCode.FAILURE);
+  }
+
+  const nonErrDiagnostics = diagnostics.filter(
+    (diagnostic) => diagnostic.severity !== DiagnosticSeverity.Error,
+  );
+  for (const nonErrDiagnostic of nonErrDiagnostics) {
+    logger.logLanguageServerDiagnostic(nonErrDiagnostic, document);
   }
 
   return document;
@@ -55,7 +64,7 @@ export async function extractDocument(
 export async function extractAstNode<T extends AstNode>(
   fileName: string,
   services: LangiumServices,
-  logger: DefaultLogger,
+  logger: Logger,
 ): Promise<T> {
   return (await extractDocument(fileName, services, logger)).parseResult
     .value as T;

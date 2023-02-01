@@ -24,7 +24,7 @@ export class CSVFileExtractorExecutor extends BlockExecutor<void, Sheet> {
   }
 
   private fetchRawData(url: string): Promise<R.Result<string>> {
-    this.logger.logInfo(`Fetching raw data from ${url}`);
+    this.logger.logDebug(`Fetching raw data from ${url}`);
     return new Promise((resolve) => {
       http.get(url, (response) => {
         let rawData = '';
@@ -46,7 +46,7 @@ export class CSVFileExtractorExecutor extends BlockExecutor<void, Sheet> {
         });
 
         response.on('end', () => {
-          this.logger.logInfo(`Successfully fetched raw data`);
+          this.logger.logDebug(`Successfully fetched raw data`);
           resolve(R.ok(rawData));
         });
 
@@ -66,7 +66,7 @@ export class CSVFileExtractorExecutor extends BlockExecutor<void, Sheet> {
     rawData: string,
     delimiter: string,
   ): Promise<R.Result<Sheet>> {
-    this.logger.logInfo(
+    this.logger.logDebug(
       `Parsing raw data as CSV using delimiter "${delimiter}"`,
     );
     return new Promise((resolve) => {
@@ -82,6 +82,7 @@ export class CSVFileExtractorExecutor extends BlockExecutor<void, Sheet> {
               message: `CSV parse failed: ${error.message}`,
               diagnostic: {
                 node: this.block,
+                property: 'name',
               },
             }),
           );
@@ -92,7 +93,7 @@ export class CSVFileExtractorExecutor extends BlockExecutor<void, Sheet> {
             width: this.getSheetWidth(csvData),
             height: csvData.length,
           };
-          this.logger.logInfo(`Successfully parsed data as CSV`);
+          this.logger.logDebug(`Successfully parsed data as CSV`);
           resolve(R.ok(result));
         });
     });

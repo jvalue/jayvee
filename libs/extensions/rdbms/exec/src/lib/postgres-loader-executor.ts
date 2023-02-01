@@ -31,12 +31,21 @@ export class PostgresLoaderExecutor extends BlockExecutor<Table, void> {
     });
 
     try {
+      this.logger.logDebug(`Connecting to database`);
       await client.connect();
 
+      this.logger.logDebug(`Dropping previous table "${table}" if it exists`);
       await client.query(buildDropTableStatement(table));
+      this.logger.logDebug(`Creating table "${table}"`);
       await client.query(buildCreateTableStatement(table, input));
+      this.logger.logDebug(
+        `Inserting ${input.data.length} row(s) into table "${table}"`,
+      );
       await client.query(buildInsertValuesStatement(table, input));
 
+      this.logger.logDebug(
+        `The data was successfully loaded into the database`,
+      );
       return Promise.resolve(R.ok(undefined));
     } catch (err: unknown) {
       return Promise.resolve(
@@ -44,7 +53,7 @@ export class PostgresLoaderExecutor extends BlockExecutor<Table, void> {
           message: `Could not write to postgres database: ${
             err instanceof Error ? err.message : JSON.stringify(err)
           }`,
-          diagnostic: { node: this.block },
+          diagnostic: { node: this.block, property: 'name' },
         }),
       );
     } finally {
