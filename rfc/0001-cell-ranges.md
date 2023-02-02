@@ -139,21 +139,6 @@ block MyCellRangeSelector oftype CellRangeSelector {
 
 ![image](https://user-images.githubusercontent.com/51856713/216016857-023c9d04-7d9c-4f25-8252-3a0c81fc58a5.png)
 
-### `CellRangeSwapper`
-
-This block type is used to swap cells in a sheet.
-The attribute `swap` holds two cell ranges with equal dimensions that shall be swapped.
-
-#### Example
-
-```jayvee
-block MyCellRangeSwapper oftype CellRangeSwapper {
-  swap: [range A1:B1, range B2:C2];
-}
-```
-
-![image](https://user-images.githubusercontent.com/51856713/216016916-2a95162d-ae0e-4a15-9bf4-8c11b8db9746.png)
-
 ### `CellWriter`
 
 Used for overriding the textual content of a particular cell.
@@ -205,5 +190,5 @@ The resulting sheet has the [column structure without a header row](plain-column
 
 # Alternatives
 
-- Introduce additional / different sheet transformation blocks
+- Introduce different sheet transformation blocks
 - Don't transform sheets, use previously proposed layout concept instead: https://github.com/jvalue/jayvee/pull/114
