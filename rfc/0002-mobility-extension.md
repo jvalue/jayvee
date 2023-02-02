@@ -37,7 +37,7 @@ export interface File {
   
   filetype: string //The MIME type of the file taken from the Content-Type header (for HTTP requests only) Otherwise inferred from the file extension, default application/octet-stream for unknown or missing file extensions
   
-  content: string | ArrayBuffer //The content of the file as a string Or maybe a byte array instead
+  content: ArrayBuffer //The content of the file as a ArrayBuffer
 }
 ```
 ### io-datatype FileSystem *(Requires implementation from scratch)*
@@ -138,9 +138,5 @@ block GtfsLoader oftype SQLiteTablesLoader {
 		file: "./gtfs.db";
 	}
 ```
-
-
-Not sure, how to *implement* multiple input/output of blocks (for SQLiteSink and ArchiveInterpreter)?
-
 
 
