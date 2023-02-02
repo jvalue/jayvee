@@ -3,15 +3,20 @@
 
 # Summary
 
-Enable reshaping messy 2-dimensional data into a tabular format.
+Enable reshaping messy 2-dimensional data into a processable structure.
 
-This is done by optionally specifying a `layout` where cell ranges are specified and given a name.
-Then, a `TableBuilder` block is able to rearrange such cell ranges to form columns of the table,
-as well as assigning a type to each column.
+This is done by transforming sheets using different blocks.
+[Cell ranges](./0003-cell-range-syntax.md) are used to configure such transformations.
+In order to interpret the sheet as a table,
+the aim is to form columns and optionally a header row
+(similar to the usual structure of CSV files).
+
+Note that the actual conversion from a sheet to a table is part of an upcoming RFC.
+This RFC focuses on the transformation of sheets to a desired structure.
 
 # Motivation
 
-Some 2-dimensional open data is badly structured. 
+Some 2-dimensional open data is badly structured.
 For example, see this [CSV file from mobilithek.info](https://mobilithek.info/offers/-655945265921899037)
 which does not follow the usual CSV pattern (topmost row as header, followed by the actual data)
 but instead has metadata on the top and bottom of the file as well as two header rows
@@ -34,187 +39,171 @@ Quelle: Kraftfahrt-Bundesamt, Flensburg
 Stand: 03.01.2023 / 22:01:12
 ```
 
-In order to bring such data into a database-conform format,
-we need to be able to flexibly restructure data and to omit sections we consider uninteresting.
+In order to bring such data into a better structure,
+we need to be able to flexibly reshape such data and to omit parts we consider uninteresting.
 
 # Explanation
 
-## Layout
+## Desired structures
 
-A layout is used to select cell ranges by absolute cell positions in 2-dimensional data and give those ranges a name.
-The syntax for cell ranges was already agreed upon, see #112.
+For a conversion of sheets into database-conform tables,
+sheets shall be transformed into one of the following two structures before interpreting them as a table:
 
-### Defining a layout
+### Plain columns
 
-A layout can either be defied outside a pipeline or within a pipeline using the `layout` keyword.
-For the mobilithek example above it could look like this:
+<img src="https://user-images.githubusercontent.com/51856713/215997813-a193e5b2-3f13-4a0a-9fda-2db00b08be93.png" width="500px">
+
+Each column in the sheet represents a column in the database table,
+and each row represents a record in the database table.
+Note that the columns have no names so far.
+
+### Columns with topmost header row
+
+<img src="https://user-images.githubusercontent.com/51856713/215997925-b7396cd1-6716-42d9-85b4-dae9c9053d9e.png" width="500px">
+
+The topmost row contains the names of the columns (e.g. `A1` contains the name for the first column).
+After excluding the topmost row, each column in the sheet represents a column in the database table,
+and each row represents a record in the database table.
+
+## Sheet transformation blocks
+
+The following sections present block types that are used to flexibly restructure sheets.
+The goal is to enable transforming sheets into a desired structure
+(see the corresponding [section above](#desired-structures)).
+
+Each of the following block types takes a `Sheet` as input and produces a `Sheet` as output.
+
+### `ColumnDeleter` / `RowDeleter`
+
+Can be used to delete entire columns or rows of a sheet.
+The attribute `delete` specifies the columns / rows that shall be deleted.
+Only cell ranges that select entire columns / rows are allowed.
+
+#### Example
+
+##### Delete the single column B
 
 ```jayvee
-layout PersonenkraftwagenLayout {
-  range A1:*5 called MetadataTop;
-  row 6 called UpperHeader;
-  row 7 called LowerHeader;
-  range A484:** called MetadataBottom;
-
-  column A called Stichtag;
-  // column B contains irrelevant data
-  column C called Kreis;
-  column D called BenzinEuro1;
-  column E called BenzinEuro2;
-  // ...
-  column L called BenzinSonstige;
-  // column M contains redundant data
-  column N called DieselEuro1;
-  // ...
-  column BT called SonstigeKraftstoffartenSonstige;
-  // remaining columns contain redundant data
+block MyColumnDeleter oftype ColumnDeleter {
+  delete: [column B];
 }
 ```
 
-Here, a layout called `PersonenkraftwagenLayout` is instantiated.
-In its body, enclosed by `{` and `}`, named cell ranges are defined.
-The general syntax for named cell ranges is the following: `<cell-range> called <name>;`.
+![image](https://user-images.githubusercontent.com/51856713/216016548-5172d609-e31f-416a-969d-3469d1b3fbae.png)
 
-### Handling overlaps of cell ranges
-
-In general, cell ranges in a layout are evaluated from top to bottom. 
-If a particular cell is selected by a cell range, 
-but is already part of a previous cell range, that cell is not included in the current range.
-As a consequence, in each layout, a particular cell can only be part of at most a single cell range.
-
-In the example layout above, this principle is used to exclude metadata and headers from the column ranges,
-so they only contain the actual data.
-
-## TableBuilder
-
-A `TableBuilder` block is used to convert 2-dimensional data into a database-conform structure (i.e. a table).
-Therefore, it defines separate columns by giving them a name, 
-specifying their contents using cell ranges and assigning a type to each of them. 
-The data that shall be contained in a particular column is defined 
-by referring to one or more 1-dimensional cell ranges or individual cells of a layout or by inline cell ranges.
-In case multiple cell ranges are specified, their cells are concatenated to form the column 
-(see [this section](#concatenation-of-cell-ranges) for details).
-
-The block validates that the cell ranges fit to the dimensions of the input data
-and that each table column contains an equal number of cells.
-Additionally, the type of a column is checked for each value in that column.
-
-See the following `TableBuilder` for the mobilithek example:
+##### Delete the columns A and C
 
 ```jayvee
-block PersonenkraftwagenTableBuilder oftype TableBuilder {
-  layout: PersonenkraftwagenLayout;
-  columns: {
-    "stichtag": Stichtag oftype text;
-    "kreis": Kreis oftype text;
-    "benzin-eur-1": BenzinEuro1 oftype integer;
-    // ...
-  }
+block MyColumnDeleter oftype ColumnDeleter {
+  delete: [column A, column C];
 }
 ```
 
-The example constructs a table with the columns `stichtag` of type `text`,
-`kreis` of type `text` and `benzin-eur-1` of type `integer`.
-The `layout` attribute references the previously defined layout
-`PersonenkraftwagenLayout` which used for specifying the contents of the columns.
-is filled with the data from column `A` of the input data, `kreis`
-is filled with data from column `C` and `benzin-eur-1` is filled with data from column `D`.
-Column `B` will not be part of the resulting table.
+![image](https://user-images.githubusercontent.com/51856713/216016612-226a07a2-aa7e-4b95-982b-fcf36cb25c00.png)
 
-### Defining a table without a separate layout
-
-In some simple scenarios, defining a layout may be overkill.
-Thus, a user can use inline cell ranges instead of referring to an existing layout.
-
-For example:
+##### Delete the single row 2
 
 ```jayvee
-block PersonenkraftwagenTableBuilder oftype TableBuilder {
-  columns: {
-    "stichtag": range A8:A483 oftype text;
-    "kreis": range C8:C483 oftype text;
-    "benzin-eur-1": range D8:D483 oftype integer;
-    // ...
-  }
+block MyRowDeleter oftype RowDeleter {
+  delete: [row 2];
 }
 ```
 
-In such a case, overlapping cell ranges are detected and reported as a warning to the user.
+![image](https://user-images.githubusercontent.com/51856713/216016668-5806e7c4-5eb0-4aac-93aa-b6c820ef10fc.png)
 
-### Concatenation of cell ranges
-
-It is possible to define a table column consisting of multiple cell ranges.
-This can be done by concatenating them in the `TableBuilder` block using `,`.
-Note that only 1-dimensional cell ranges and individual cells can be concatenated.
-
-For example:
+##### Delete the rows 1 and 3
 
 ```jayvee
-layout MyLayout {
-  range B2:B* called MyPartialRange;
-  cell C1 called MyCell;
-}
-
-block MyTableBuilder oftype TableBuilder {
-  sheetLayout: MyLayout;
-  columns: {
-    "my-column": MyPartialRange, MyCell oftype text;
-  }
+block MyRowDeleter oftype RowDeleter {
+  delete: [row 1, row 3];
 }
 ```
 
-In the example, the specified table column `my-column` consists of the cells in column `B`,
-excluding the topmost cell, and lastly cell `C1`.
+![image](https://user-images.githubusercontent.com/51856713/216016728-134057d6-f934-4918-a4b9-71f1bbed91cb.png)
 
-### Inferring column names from a header
+### `CellRangeSelector`
 
-A common use case is the processing of CSV files that contain a single header row.
-Thus, it is desirable to use header values as column names of the table.
+Enables extracting a sub-sheet from a given sheet.
+The desired sub-sheet is selected via the attribute `select` using an arbitrary cell range.
 
-In order to do that,
-a user can specify a `header` attribute where a cell range needs to be provided which selects the header.
-Then, in the `columns` attribute, the column names can be omitted because they are inferred from the provided header.
+Note that this can be considered a convenience block type
+because the same transformation can be achieved by multiple instances of `ColumnDeleter` / `RowDeleter`.
 
-Example:
+#### Example
 
 ```jayvee
-layout CsvLayout {
-  row 1 called Header;
-  column A called ColumnA;
-  column B called ColumnB;
-  // maybe more columns...
-}
-
-block MyTableBuilder oftype TableBuilder {
-  layout: CsvLayout;
-  header: Header;
-  columns: {
-    ColumnA oftype text;
-    ColumnB oftype integer;
-    // ...
-  }
+block MyCellRangeSelector oftype CellRangeSelector {
+  select: range B1:C2;
 }
 ```
 
-In such a case, Jayvee tries to find the header value that corresponds to a given table column using an algorithm.
-In case, no corresponding header value could be derived for a table column or if the result is ambiguous,
-the user gets an error and instead needs to specify the column names explicitly.
-This may happen if the header or columns consist of concatenated cell ranges
-or if the header cells are not orthogonal to the cells that form the table column.
+![image](https://user-images.githubusercontent.com/51856713/216016857-023c9d04-7d9c-4f25-8252-3a0c81fc58a5.png)
+
+### `CellRangeSwapper`
+
+This block type is used to swap cells in a sheet.
+The attribute `swap` holds two cell ranges with equal dimensions that shall be swapped.
+
+#### Example
+
+```jayvee
+block MyCellRangeSwapper oftype CellRangeSwapper {
+  swap: [range A1:B1, range B2:C2];
+}
+```
+
+![image](https://user-images.githubusercontent.com/51856713/216016916-2a95162d-ae0e-4a15-9bf4-8c11b8db9746.png)
+
+### `CellWriter`
+
+Used for overriding the textual content of a particular cell.
+The attribute `at` specifies the affected cell and `write` specifies the new content for the cell.
+
+#### Example
+
+Writing `some text` into cell `A2`:
+
+```jayvee
+block MyCellWriter oftype CellWriter {
+  at: cell A2;
+  write: "some text";
+}
+```
+
+## Exemplary restructuring of the [mobilithek example](#motivation) from above
+
+```jayvee
+block DataSelector oftype CellRangeSelector {
+  select: range A8:*483;
+}
+
+pipe {
+  from: DataSelector;
+  to: IdColumnDeleter;
+}
+
+block IdColumnDeleter oftype ColumnDeleter {
+  delete: [column B];
+}
+```
+
+Note that there is currently no way to merge the two header rows into one.
+Thus, in the example code above, the header rows are entirely deleted.
+The resulting sheet has the [column structure without a header row](plain-columns).
+
+# Future possibilities
+
+- A graphical sheet editor where each action in the editor generates an according transformation block
 
 # Drawbacks
 
-- An algorithm for deriving column names from a header could be non-transparent for users
-- 2-dimensional cell ranges are currently useless
+- Sheets may require multiple subsequent transformations, possibly making the pipeline hard to understand
+  - Esp. many cell writes require as many subsequent `CellWriter` blocks
+- Altering indexes of rows / columns may be confusing for users
+  - E.g. when deleting column `A`, the previous column `B` becomes the new column `A`
+  - Could be diminished by having a graphical preview of the transformed sheet
 
 # Alternatives
 
-- Optionally allow overlapping ranges in layouts or use them by default
-- Ability to mark cells as ignored
-- Assign types to named cell ranges in layouts
-- Abolish layouts and only allow in-line cell ranges
-- Abolish in-line cell ranges and only allow layouts
-- Attach layouts to sheets in `CSVFileExtractor` instead of referring to layouts in `TableBuilder`
-- Specify table columns outside the `TableBuilder` block using its own language concept, similar to `layout` for cell ranges; then `TableBuilder` also needs a reference to it
-- Forbid 2-dimensional cell ranges (for now)
-- Ability to linearize 2-dimensional cell ranges (column- or row-wise) to make use of them
+- Introduce additional / different sheet transformation blocks
+- Don't transform sheets, use previously proposed layout concept instead: https://github.com/jvalue/jayvee/pull/114
