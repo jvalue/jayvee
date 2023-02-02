@@ -44,7 +44,7 @@ export interface File {
 A FileSystem could look like this and should be added to `io-datatypes.ts`. Provides generic methods for navigating in the file system using paths and for accessing files. In order to implement the interface, we create a class which provides the attributes / methods demanded by the interface.
 ```
 export interface FileSystem {
-  tbd
+    //Methods as needed
 }
 ```
 
@@ -52,7 +52,7 @@ export interface FileSystem {
 A None type could look like this and should be added to `io-datatypes.ts`. If a block output emits a None value, downstream blocks are not executed for that value.
 ```
 export interface None {
-  tbd
+    //Methods as needed
 }
 ```
 
