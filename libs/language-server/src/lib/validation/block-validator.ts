@@ -6,6 +6,8 @@ import {
   Block,
   JayveeAstType,
   Pipe,
+  isCellRangeCollection,
+  isCellRangeValue,
   isIntValue,
   isLayoutReferenceValue,
   isRuntimeParameter,
@@ -32,6 +34,7 @@ export class BlockValidator implements JayveeValidator {
         this.checkIngoingPipes,
         this.checkOutgoingPipes,
         this.checkBlockType,
+        this.checkBlockTypeSpecificValidation,
       ],
     };
   }
@@ -120,6 +123,8 @@ export class BlockValidator implements JayveeValidator {
   private static runtimeParameterAllowedForType(type: AttributeType): boolean {
     switch (type) {
       case AttributeType.LAYOUT:
+      case AttributeType.CELL_RANGE:
+      case AttributeType.CELL_RANGE_COLLECTION:
         return false;
       case AttributeType.STRING:
       case AttributeType.INT:
@@ -137,6 +142,12 @@ export class BlockValidator implements JayveeValidator {
     }
     if (isIntValue(value)) {
       return AttributeType.INT;
+    }
+    if (isCellRangeValue(value)) {
+      return AttributeType.CELL_RANGE;
+    }
+    if (isCellRangeCollection(value)) {
+      return AttributeType.CELL_RANGE_COLLECTION;
     }
     if (isLayoutReferenceValue(value)) {
       return AttributeType.LAYOUT;
@@ -264,5 +275,17 @@ export class BlockValidator implements JayveeValidator {
         property: 'type',
       });
     }
+  }
+
+  checkBlockTypeSpecificValidation(
+    this: void,
+    block: Block,
+    accept: ValidationAcceptor,
+  ): void {
+    const metaInf = getMetaInformation(block.type);
+    if (metaInf === undefined) {
+      return;
+    }
+    metaInf.validate(block, accept);
   }
 }

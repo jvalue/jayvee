@@ -114,6 +114,14 @@ function parseParameterAsMatchingType(
       return R.ok(Number.parseInt(value, 10));
     default:
       assert(
+        requiredType !== AttributeType.CELL_RANGE,
+        'Runtime parameters are not allowed for attributes of type cell-range',
+      );
+      assert(
+        requiredType !== AttributeType.CELL_RANGE_COLLECTION,
+        'Runtime parameters are not allowed for attributes of type cell-range-array',
+      );
+      assert(
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         requiredType !== AttributeType.LAYOUT,
         'Runtime parameters are not allowed for attributes of type layout',
