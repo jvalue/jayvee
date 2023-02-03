@@ -1,5 +1,5 @@
 - Feature Name: `cell-ranges`
-- Status: `DISCUSSION`
+- Status: `ACCEPTED`
 
 # Summary
 
