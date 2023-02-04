@@ -1,5 +1,5 @@
 * Feature Name: mobility-extension
-* Status: `DISCUSSION`
+* Status: `ACCEPTED`
 
 Disclaimer: This RFC is part of my master-thesis "Archiving open transport data using the JValue tooling ecosystem" supervised by @rhazn.
 
@@ -22,7 +22,6 @@ Jayvee needs to be extented by following parts to be able to process GTFS-data:
 * New blocktypes `HTTPExtractor`, `ArchiveInterpreter` and `FilePicker`
 * The  `io-datatype` `Table` needs to store its name to be able to handle multiple tables as input
 * An abort-mechanism must be implemented, for that we need a new io-type `None` to abort, if a precessor outputs `None`
-* Blocks must be able to process multiple parallel inputs (in our case SQLiteSink), resulting in multiple executions of the same block.
 
 Each of the following subchapters explains the idea behind.
 
@@ -38,27 +37,27 @@ export interface File {
   
   filetype: string //The MIME type of the file taken from the Content-Type header (for HTTP requests only) Otherwise inferred from the file extension, default application/octet-stream for unknown or missing file extensions
   
-  content: string | ArrayBuffer //The content of the file as a string Or maybe a byte array instead
+  content: ArrayBuffer //The content of the file as a ArrayBuffer
 }
 ```
 ### io-datatype FileSystem *(Requires implementation from scratch)*
 A FileSystem could look like this and should be added to `io-datatypes.ts`. Provides generic methods for navigating in the file system using paths and for accessing files. In order to implement the interface, we create a class which provides the attributes / methods demanded by the interface.
 ```
 export interface FileSystem {
-  tbd
+    //Methods as needed
 }
 ```
 
 ### io-datatype None *(Requires implementation from scratch)*
-A None type could look like this and should be added to `io-datatypes.ts`. If an predeccesor outputs that io-datatype, an Block can abort the execution
+A None type could look like this and should be added to `io-datatypes.ts`. If a block output emits a None value, downstream blocks are not executed for that value.
 ```
 export interface None {
-  tbd
+    //Methods as needed
 }
 ```
 
 ### io-datatype Table *(Requires minor change)*
-The io-datatype `Table` should be adapted, to store its name to be able to handle multiple tables as input later in an DB-Loader.
+The io-datatype `Table` should be adapted, to store its name to be able to handle multiple tables as input later in an DB-Loader.  This leads also to a minor change in the LayoutValidator and the example to process the additional attribute `tableName`. 
 ```
 export interface Table {
   tableName: string;
@@ -67,9 +66,6 @@ export interface Table {
   data: string[][];
 }
 ```
-
-### datatype Undefined *(No changes required, should be enabled via [#85](https://github.com/jvalue/jayvee/issues/85))*
-For an implementation of an optional-mechanism for eg. columns, we need a new datatype ´undefined´(Attention: Not talking about io-datatype, i mean datatype). Optional column's datatype would then be `text or undefined`. So we also need a grammar feature for an OR-represenation in Jayvee
 
 ### Change of folderstructure
 Since we are introducing multiple new io-datatypes and some implemenations of them, we move the file `io-datatype.ts` to a new folder, holding all types and implemenations.
@@ -91,7 +87,7 @@ Input: File, Output: FileSystem
 A ArchiveInterpreter gets a File, and initializes an FileSystem ontop of the file (open filestream etc.). Provides generic methods for navigating in the file system using paths and for accessing files. As it is not clear, what the file contains. It should be implemented in the std-extension. The ArchiveInterpreter needs to be able to instantiate a FileSystem instance in order to output it as a result.
 ```
 block ZipArchiveInterpreter oftype ArchiveInterpreter{
-    archive_type: string //now only accepting the string "zip"
+    archiveType: string //now only accepting the string "zip"
 }
 ```
 
@@ -140,12 +136,7 @@ This Block needs to be adapted, to handle multiple Inputs. As the parallel proce
 ```
 block GtfsLoader oftype SQLiteTablesLoader {
 		file: "./gtfs.db";
-    recreateDatabase: boolean //If true, every call, a new database gets created
 	}
 ```
-
-
-Not sure, how to *implement* multiple input/output of blocks (for SQLiteSink and ArchiveInterpreter)?
-
 
 
