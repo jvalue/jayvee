@@ -29,15 +29,16 @@ export interface File {
   /** The file extension, including the leading dot. */
   extension: FileExtension;
   /** The MIME type of the file taken from the Content-Type header (for HTTP requests only) Otherwise inferred from the file extension, default application/octet-stream for unknown or missing file extensions*/
-  type: FileType;
+  type: MimeType;
   /** The content of the file as an ArrayBuffer. */
   content: ArrayBuffer;
 }
 enum FileExtension {
   Zip = '.zip',
 }
-enum FileType {
+enum MimeType {
   ApplicationOctetStream = 'application/octet-stream',
-  HtmlText = 'text/html',
+  ApplicationZip = 'application/zip',
+  TextHtml = 'text/html',
 }
 export const FILE_TYPE = new IOType<File>();
