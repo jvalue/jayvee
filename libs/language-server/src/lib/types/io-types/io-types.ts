@@ -20,11 +20,26 @@ export interface Table {
 }
 export const TABLE_TYPE = new IOType<Table>();
 
+/**
+ * Represents a file with its name, extension, file type, and content.
+ */
 export interface File {
+  /** The name of the file, without the extension. */
   name: string;
-  extension: string;
-  filetype: string;
+  /** The file extension, including the leading dot. */
+  extension: FileExtension;
+  /** The MIME type of the file taken from the Content-Type header (for HTTP requests only) Otherwise inferred from the file extension, default application/octet-stream for unknown or missing file extensions*/
+  type: MimeType;
+  /** The content of the file as an ArrayBuffer. */
   content: ArrayBuffer;
+}
+enum FileExtension {
+  Zip = '.zip',
+}
+enum MimeType {
+  ApplicationOctetStream = 'application/octet-stream',
+  ApplicationZip = 'application/zip',
+  TextHtml = 'text/html',
 }
 export const FILE_TYPE = new IOType<File>();
 
