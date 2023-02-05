@@ -27,3 +27,8 @@ export interface File {
   content: ArrayBuffer;
 }
 export const FILE_TYPE = new IOType<File>();
+
+export interface FileSystem {
+  readFile(path: string): File;
+}
+export const FILE_SYSTEM_TYPE = new IOType<FileSystem>();
