@@ -1,3 +1,4 @@
+import { string } from 'fp-ts';
 import { AbstractDataType } from '../data-types/AbstractDataType';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -26,24 +27,33 @@ export const TABLE_TYPE = new IOType<Table>();
 export interface File {
   /** The name of the file, without the extension. */
   name: string;
-  /** The file extension, including the leading dot. */
+  /** The file extension in lower case, empty string for unknown or missing file extensions*/
   extension: FileExtension;
-  /** The MIME type of the file taken from the Content-Type header (for HTTP requests only) Otherwise inferred from the file extension, default application/octet-stream for unknown or missing file extensions*/
-  type: MimeType;
+  /** The MIME type of the file taken from the Content-Type header (for HTTP requests only), Otherwise inferred from the file extension, default application/octet-stream for unknown or missing file extensions*/
+  mimeType: MimeType;
   /** The content of the file as an ArrayBuffer. */
   content: ArrayBuffer;
 }
-enum FileExtension {
-  Zip = '.zip',
+
+export enum FileExtension {
+  '.zip',
+  '.txt',
 }
-enum MimeType {
-  ApplicationOctetStream = 'application/octet-stream',
-  ApplicationZip = 'application/zip',
-  TextHtml = 'text/html',
+
+export enum MimeType {
+  'application/zip',
+  'application/octet-stream',
 }
+
 export const FILE_TYPE = new IOType<File>();
 
 export interface FileSystem {
-  readFile(path: string): File;
+  makeDirectory(filePath: string): string | undefined;
+  readFile(filePath: string): File | None;
+  writeFile(filePath: string, file: File): undefined;
 }
 export const FILE_SYSTEM_TYPE = new IOType<FileSystem>();
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface None {}
+export const NONE_TYPE = new IOType<None>();

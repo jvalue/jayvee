@@ -13,6 +13,7 @@
   },
   "private": true,
   "dependencies": {
+    "@types/mime": "^3.0.1",
     "assert": "^2.0.0",
     "chalk": "^4.1.2",
     "chevrotain": "^9.1.0",
@@ -21,6 +22,7 @@
     "fast-csv": "^4.3.6",
     "fp-ts": "^2.13.1",
     "langium": "^1.0.1",
+    "mime-types": "^2.1.35",
     "monaco-editor": "^0.34.1",
     "monaco-languageclient": "^4.0.3",
     "pg": "^8.8.0",
@@ -50,6 +52,7 @@
     "@nrwl/workspace": "15.3.0",
     "@testing-library/react": "13.4.0",
     "@types/jest": "28.1.1",
+    "@types/mime-types": "^2.1.1",
     "@types/node": "18.7.1",
     "@types/pg": "^8.6.5",
     "@types/react": "18.0.25",
