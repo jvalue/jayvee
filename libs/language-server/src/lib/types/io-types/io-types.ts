@@ -19,3 +19,11 @@ export interface Table {
   data: string[][];
 }
 export const TABLE_TYPE = new IOType<Table>();
+
+export interface File {
+  name: string;
+  extension: string;
+  filetype: string;
+  content: ArrayBuffer;
+}
+export const FILE_TYPE = new IOType<File>();
