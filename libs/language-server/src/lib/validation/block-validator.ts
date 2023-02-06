@@ -1,20 +1,15 @@
 import { ValidationAcceptor, ValidationChecks } from 'langium';
-import { assertUnreachable } from 'langium/lib/utils/errors';
 
 import {
-  AttributeValue,
   Block,
   JayveeAstType,
   Pipe,
-  isCellRangeCollection,
-  isCellRangeValue,
-  isIntValue,
-  isLayoutReferenceValue,
+  collectIngoingPipes,
+  collectOutgoingPipes,
+  convertAttributeValueToType,
   isRuntimeParameter,
-  isStringValue,
-} from '../ast/generated/ast';
-import { collectIngoingPipes, collectOutgoingPipes } from '../ast/model-util';
-import { AttributeType } from '../meta-information/block-meta-inf';
+  runtimeParameterAllowedForType,
+} from '../ast';
 import { getMetaInformation } from '../meta-information/meta-inf-util';
 
 import { JayveeValidator } from './jayvee-validator';
@@ -97,7 +92,7 @@ export class BlockValidator implements JayveeValidator {
       const attributeValue = attribute.value;
 
       if (isRuntimeParameter(attributeValue)) {
-        if (!BlockValidator.runtimeParameterAllowedForType(attributeType)) {
+        if (!runtimeParameterAllowedForType(attributeType)) {
           accept(
             'error',
             `Runtime parameters are not allowed for attributes of type ${attributeType}`,
@@ -108,8 +103,7 @@ export class BlockValidator implements JayveeValidator {
           );
         }
       } else {
-        const valueType =
-          BlockValidator.convertAttributeValueToType(attributeValue);
+        const valueType = convertAttributeValueToType(attributeValue);
         if (valueType !== attributeType) {
           accept('error', `The value needs to be of type ${attributeType}`, {
             node: attribute,
@@ -118,41 +112,6 @@ export class BlockValidator implements JayveeValidator {
         }
       }
     }
-  }
-
-  private static runtimeParameterAllowedForType(type: AttributeType): boolean {
-    switch (type) {
-      case AttributeType.LAYOUT:
-      case AttributeType.CELL_RANGE:
-      case AttributeType.CELL_RANGE_COLLECTION:
-        return false;
-      case AttributeType.STRING:
-      case AttributeType.INT:
-        return true;
-      default:
-        assertUnreachable(type);
-    }
-  }
-
-  private static convertAttributeValueToType(
-    value: AttributeValue,
-  ): AttributeType {
-    if (isStringValue(value)) {
-      return AttributeType.STRING;
-    }
-    if (isIntValue(value)) {
-      return AttributeType.INT;
-    }
-    if (isCellRangeValue(value)) {
-      return AttributeType.CELL_RANGE;
-    }
-    if (isCellRangeCollection(value)) {
-      return AttributeType.CELL_RANGE_COLLECTION;
-    }
-    if (isLayoutReferenceValue(value)) {
-      return AttributeType.LAYOUT;
-    }
-    assertUnreachable(value);
   }
 
   checkAttributeCompleteness(

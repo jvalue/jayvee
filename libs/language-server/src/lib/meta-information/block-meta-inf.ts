@@ -2,16 +2,8 @@ import { strict as assert } from 'assert';
 
 import { ValidationAcceptor } from 'langium';
 
-import { Attribute, Block } from '../ast';
+import { Attribute, AttributeType, Block } from '../ast';
 import { IOType, UNDEFINED_TYPE } from '../types/io-types';
-
-export enum AttributeType {
-  STRING = 'string',
-  INT = 'integer',
-  LAYOUT = 'layout',
-  CELL_RANGE = 'cell range',
-  CELL_RANGE_COLLECTION = 'cell range collection',
-}
 
 export interface AttributeSpecification {
   type: AttributeType;

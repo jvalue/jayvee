@@ -1,16 +1,16 @@
 import { strict as assert } from 'assert';
 
-import { Logger } from '@jayvee/execution';
 import * as R from '@jayvee/execution';
+import { Logger } from '@jayvee/execution';
 import {
   AttributeType,
   Model,
   RuntimeParameter,
   getOrFailMetaInformation,
   isRuntimeParameter,
+  runtimeParameterAllowedForType,
 } from '@jayvee/language-server';
 import { streamAst } from 'langium';
-import { assertUnreachable } from 'langium/lib/utils/errors';
 
 /**
  * Extracts all required runtime parameter ast nodes.
@@ -99,6 +99,11 @@ function parseParameterAsMatchingType(
 
   const requiredType = attributeSpec.type;
 
+  assert(
+    runtimeParameterAllowedForType(requiredType),
+    `Runtime parameters of type ${requiredType} are not allowed`,
+  );
+
   switch (requiredType) {
     case AttributeType.STRING:
       return R.ok(value);
@@ -113,20 +118,8 @@ function parseParameterAsMatchingType(
       }
       return R.ok(Number.parseInt(value, 10));
     default:
-      assert(
-        requiredType !== AttributeType.CELL_RANGE,
-        'Runtime parameters are not allowed for attributes of type cell-range',
+      throw new Error(
+        `Unable to parse runtime parameters of type ${requiredType}, please provide an implementation.`,
       );
-      assert(
-        requiredType !== AttributeType.CELL_RANGE_COLLECTION,
-        'Runtime parameters are not allowed for attributes of type cell-range-array',
-      );
-      assert(
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        requiredType !== AttributeType.LAYOUT,
-        'Runtime parameters are not allowed for attributes of type layout',
-      );
-
-      assertUnreachable(requiredType);
   }
 }

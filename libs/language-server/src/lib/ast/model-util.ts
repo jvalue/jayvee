@@ -1,8 +1,20 @@
 import { strict as assert } from 'assert';
 
+import { assertUnreachable } from 'langium/lib/utils/errors';
+
 import { getMetaInformation } from '../meta-information/meta-inf-util';
 
-import { Block, Pipe, Pipeline } from './generated/ast';
+import {
+  AttributeValue,
+  Block,
+  Pipe,
+  Pipeline,
+  isCellRangeCollection,
+  isCellRangeValue,
+  isIntValue,
+  isLayoutReferenceValue,
+  isStringValue,
+} from './generated/ast';
 
 export function collectStartingBlocks(pipeline: Pipeline): Block[] {
   const result: Block[] = [];
@@ -131,4 +143,47 @@ export function getBlocksInTopologicalSorting(pipeline: Pipeline): Block[] {
   );
 
   return sortedNodes;
+}
+
+export enum AttributeType {
+  STRING = 'string',
+  INT = 'integer',
+  LAYOUT = 'layout',
+  CELL_RANGE = 'cell range',
+  CELL_RANGE_COLLECTION = 'cell range collection',
+}
+
+export function runtimeParameterAllowedForType(type: AttributeType): boolean {
+  switch (type) {
+    case AttributeType.LAYOUT:
+    case AttributeType.CELL_RANGE:
+    case AttributeType.CELL_RANGE_COLLECTION:
+      return false;
+    case AttributeType.STRING:
+    case AttributeType.INT:
+      return true;
+    default:
+      assertUnreachable(type);
+  }
+}
+
+export function convertAttributeValueToType(
+  value: AttributeValue,
+): AttributeType {
+  if (isStringValue(value)) {
+    return AttributeType.STRING;
+  }
+  if (isIntValue(value)) {
+    return AttributeType.INT;
+  }
+  if (isCellRangeValue(value)) {
+    return AttributeType.CELL_RANGE;
+  }
+  if (isCellRangeCollection(value)) {
+    return AttributeType.CELL_RANGE_COLLECTION;
+  }
+  if (isLayoutReferenceValue(value)) {
+    return AttributeType.LAYOUT;
+  }
+  assertUnreachable(value);
 }
