@@ -154,12 +154,10 @@ pipeline GtfsPipeline {
 
 	block AgencyLoader oftype SQLiteTablesLoader {
 		file: "./gtfs.db";
-		recreateDatabase: false;
 	}
 
 	block StopsLoader oftype SQLiteTablesLoader {
 		file: "./gtfs.db";
-		recreateDatabase: false;
 	}
 
 
@@ -171,24 +169,20 @@ pipeline GtfsPipeline {
 
 	lock TripsLoader oftype SQLiteTablesLoader {
 		file: "./gtfs.db";
-		recreateDatabase: false;
 	}
 
 
 	block StopTimesLoader oftype SQLiteTablesLoader {
 		file: "./gtfs.db";
-		recreateDatabase: false;
 	}
 
 	block CalendarDatesLoader oftype SQLiteTablesLoader {
 		file: "./gtfs.db";
-		recreateDatabase: false;
 	}
 
 
 	block FeedInfoLoader oftype SQLiteTablesLoader {
 		file: "./gtfs.db";
-		recreateDatabase: false;
 	}
 
 
