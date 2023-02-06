@@ -55,8 +55,19 @@ export function extractRuntimeParameters(
       continue;
     }
 
+    const block = requiredParameter.$container.$container;
+    const metaInf = getOrFailMetaInformation(block.type);
+    const attributeName = requiredParameter.$container.name;
+
+    const attributeSpec = metaInf.getAttributeSpecification(attributeName);
+    assert(
+      attributeSpec !== undefined,
+      `Attribute with name "${attributeName}" is not allowed in a block of type ${block.type}`,
+    );
+
     const parseResult = parseParameterAsMatchingType(
       parameterValue,
+      attributeSpec.type,
       requiredParameter,
     );
     if (R.isErr(parseResult)) {
@@ -80,46 +91,34 @@ export function extractRuntimeParameters(
 /**
  * Parses a runtime parameter value to the required type.
  * @param value The string value to be parsed.
- * @param requiredParameter The ast node representing the parameter. Used to extract the desired parameter type.
+ * @param type The type according to which the value is parsed.
+ * @param astNode The ast node representing the parameter. Used for the diagnostics in case of errors.
  * @returns the parsed parameter value if parseable, error details if not.
  */
-function parseParameterAsMatchingType(
+export function parseParameterAsMatchingType(
   value: string,
-  requiredParameter: RuntimeParameter,
+  type: AttributeType,
+  astNode: RuntimeParameter,
 ): R.Result<string | number | boolean> {
-  const block = requiredParameter.$container.$container;
-  const metaInf = getOrFailMetaInformation(block.type);
-  const attributeName = requiredParameter.$container.name;
-
-  const attributeSpec = metaInf.getAttributeSpecification(attributeName);
   assert(
-    attributeSpec !== undefined,
-    `Attribute with name "${attributeName}" is not allowed in a block of type ${block.type}`,
+    runtimeParameterAllowedForType(type),
+    `Runtime parameters of type ${type} are not allowed`,
   );
 
-  const requiredType = attributeSpec.type;
-
-  assert(
-    runtimeParameterAllowedForType(requiredType),
-    `Runtime parameters of type ${requiredType} are not allowed`,
-  );
-
-  switch (requiredType) {
+  switch (type) {
     case AttributeType.STRING:
       return R.ok(value);
     case AttributeType.INT:
       if (!/^[1-9][0-9]*$/.test(value)) {
         return R.err({
-          message: `Runtime parameter ${
-            requiredParameter.name
-          } has value ${JSON.stringify(value)} but should be of type integer.`,
-          diagnostic: { node: requiredParameter },
+          message: `Runtime parameter ${astNode.name} has value "${value}" which is not of type integer.`,
+          diagnostic: { node: astNode },
         });
       }
       return R.ok(Number.parseInt(value, 10));
     default:
       throw new Error(
-        `Unable to parse runtime parameters of type ${requiredType}, please provide an implementation.`,
+        `Unable to parse runtime parameters of type ${type}, please provide an implementation.`,
       );
   }
 }
