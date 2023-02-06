@@ -23,6 +23,8 @@
 6. Verify that syntax highlighting, validation, completion etc. are working as expected.
 7. Run `node dist/apps/interpreter/main.js` to see options for the CLI of the interpreter; `node dist/apps/interpreter/main.js <file>` interprets a given `.jv` file.
 
+In case you run into problems, make sure to use the current LTS version of Node.js and npm.
+
 ## Development
 
 ### Building all projects
