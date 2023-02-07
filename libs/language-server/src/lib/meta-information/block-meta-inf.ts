@@ -1,14 +1,14 @@
-import { IOType, UNDEFINED_TYPE } from '../types/io-types/io-types';
+import { strict as assert } from 'assert';
 
-export enum AttributeType {
-  STRING = 'string',
-  INT = 'integer',
-  LAYOUT = 'layout',
-}
+import { ValidationAcceptor } from 'langium';
+
+import { Attribute, AttributeType, Block } from '../ast';
+import { IOType, UNDEFINED_TYPE } from '../types/io-types/io-types';
 
 export interface AttributeSpecification {
   type: AttributeType;
   defaultValue?: unknown;
+  validation?: (attribute: Attribute, accept: ValidationAcceptor) => void;
 }
 
 export abstract class BlockMetaInformation {
@@ -18,6 +18,24 @@ export abstract class BlockMetaInformation {
     private readonly outputType: IOType,
     private readonly attributes: Record<string, AttributeSpecification>,
   ) {}
+
+  validate(block: Block, accept: ValidationAcceptor): void {
+    assert(
+      block.type === this.blockType,
+      `The block to be validated is expected to be of type ${this.blockType} but is of type ${block.type}`,
+    );
+
+    for (const attribute of block.attributes) {
+      const attributeSpecification = this.getAttributeSpecification(
+        attribute.name,
+      );
+      const attributeValidationFn = attributeSpecification?.validation;
+      if (attributeValidationFn === undefined) {
+        continue;
+      }
+      attributeValidationFn(attribute, accept);
+    }
+  }
 
   getAttributeSpecification(name: string): AttributeSpecification | undefined {
     return this.attributes[name];

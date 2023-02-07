@@ -7,15 +7,12 @@ import {
   ColumnSection,
   Sheet,
   Table,
+  columnCharactersAsIndex,
+  columnIndexAsCharacters,
   getDataType,
   isColumnSection,
   isHeaderRowSection,
 } from '@jayvee/language-server';
-
-import {
-  columnCharactersAsIndex,
-  columnIndexAsCharacters,
-} from './utils/column-id-util';
 
 export class LayoutValidatorExecutor extends BlockExecutor<Sheet, Table> {
   constructor() {

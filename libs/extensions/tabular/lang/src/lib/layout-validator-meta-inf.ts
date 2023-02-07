@@ -3,7 +3,6 @@ import {
   BlockMetaInformation,
   SHEET_TYPE,
   TABLE_TYPE,
-  registerBlockMetaInformation,
 } from '@jayvee/language-server';
 
 export class LayoutValidatorMetaInformation extends BlockMetaInformation {
@@ -15,5 +14,3 @@ export class LayoutValidatorMetaInformation extends BlockMetaInformation {
     });
   }
 }
-
-registerBlockMetaInformation(new LayoutValidatorMetaInformation());

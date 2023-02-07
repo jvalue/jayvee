@@ -23,5 +23,12 @@ export class JayveeValidationRegistry extends ValidationRegistry {
 
     const blockValidator = services.validation.BlockValidator;
     this.register(blockValidator.checks, blockValidator);
+
+    const cellRangeSelectionValidator =
+      services.validation.CellRangeSelectionValidator;
+    this.register(
+      cellRangeSelectionValidator.checks,
+      cellRangeSelectionValidator,
+    );
   }
 }
