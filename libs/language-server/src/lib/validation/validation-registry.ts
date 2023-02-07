@@ -30,5 +30,9 @@ export class JayveeValidationRegistry extends ValidationRegistry {
       cellRangeSelectionValidator.checks,
       cellRangeSelectionValidator,
     );
+
+    const columnSelectionValidator =
+      services.validation.ColumnSelectionValidator;
+    this.register(columnSelectionValidator.checks, columnSelectionValidator);
   }
 }

@@ -16,6 +16,7 @@ import {
 import { JayveeCompletionProvider } from './completion/jayvee-completion-provider';
 import { BlockValidator } from './validation/block-validator';
 import { CellRangeSelectionValidator } from './validation/cell-range-selection-validator';
+import { ColumnSelectionValidator } from './validation/column-selection-validator';
 import { LayoutValidator } from './validation/layout-validator';
 import { ModelValidator } from './validation/model-validator';
 import { PipeValidator } from './validation/pipe-validator';
@@ -33,6 +34,7 @@ export interface JayveeAddedServices {
     PipeValidator: PipeValidator;
     BlockValidator: BlockValidator;
     CellRangeSelectionValidator: CellRangeSelectionValidator;
+    ColumnSelectionValidator: ColumnSelectionValidator;
   };
 }
 
@@ -59,6 +61,7 @@ export const JayveeModule: Module<
     PipeValidator: () => new PipeValidator(),
     BlockValidator: () => new BlockValidator(),
     CellRangeSelectionValidator: () => new CellRangeSelectionValidator(),
+    ColumnSelectionValidator: () => new ColumnSelectionValidator(),
   },
   lsp: {
     CompletionProvider: (services: LangiumServices) =>
