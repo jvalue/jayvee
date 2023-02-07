@@ -46,6 +46,15 @@ export function affectsSingleCell(indices: CellRangeIndices): boolean {
   );
 }
 
+export function convertToIndicesOrFail(cellRange: CellRange): CellRangeIndices {
+  const result = convertToIndices(cellRange);
+  assert(
+    result !== undefined,
+    `The cell range is expected to be convertible to cell indices`,
+  );
+  return result;
+}
+
 export function convertToIndices(
   cellRange: CellRange,
 ): CellRangeIndices | undefined {

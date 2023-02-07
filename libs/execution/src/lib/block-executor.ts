@@ -3,8 +3,11 @@ import { strict as assert } from 'assert';
 import {
   Attribute,
   Block,
+  CellRangeIndices,
   Layout,
+  convertToIndicesOrFail,
   getOrFailMetaInformation,
+  isCellRange,
   isLayout,
   isRuntimeParameter,
 } from '@jayvee/language-server';
@@ -96,6 +99,29 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
     );
 
     return attributeValue;
+  }
+
+  protected getCellRangeAttributeValue(
+    attributeName: string,
+  ): CellRangeIndices {
+    const attributeValue = this.getAttributeValue(attributeName);
+    assert(
+      isCellRange(attributeValue),
+      `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type cell range`,
+    );
+
+    return convertToIndicesOrFail(attributeValue);
+  }
+
+  protected getCellRangeCollectionAttributeValue(
+    attributeName: string,
+  ): CellRangeIndices[] {
+    const attributeValue = this.getAttributeValue(attributeName);
+    assert(
+      Array.isArray(attributeValue) && attributeValue.every(isCellRange),
+      `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type cell range collection`,
+    );
+    return attributeValue.map(convertToIndicesOrFail);
   }
 
   private getAttributeValue(attributeName: string): unknown {
