@@ -13,7 +13,7 @@ export interface FileSystem {
    * @param {string} filePath - The file path.
    * @returns {File | None} - The file or None if the file does not exist.
    */
-  getFile(filePath: string): File | None;
+  getFile(filePath: string): File | FileSystem | None;
 
   /**
    * Saves a file to the file system.
