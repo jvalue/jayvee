@@ -36,7 +36,7 @@ export class InMemoryFileSystem implements FileSystem {
     if (processedParts.length > 0) {
       let currentFileSystemIndex = this.fileSystemIndex;
 
-      //get the name of the requested file
+      // Get the name of the requested file
       const fileName = processedParts[processedParts.length - 1] as string;
 
       // If we have a directory, we traverse it, if not (processedParts == 1) skip the travesal
