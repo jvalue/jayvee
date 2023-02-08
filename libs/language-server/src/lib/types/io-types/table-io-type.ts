@@ -1,6 +1,6 @@
 import { AbstractDataType } from '../data-types/AbstractDataType';
 
-import { IOType } from './IOType';
+import { IOType } from './io-type';
 
 export interface Table {
   columnNames: string[];

@@ -1,4 +1,4 @@
-import { IOType } from './IOType';
+import { IOType } from './io-type';
 
 /**
  * Represents a file with its name, extension, file type, and content.
@@ -37,8 +37,8 @@ export interface File {
  * @enum {string}
  */
 export enum FileExtension {
-  '.zip',
-  '.txt',
+  ZIP = 'zip',
+  TXT = 'txt',
 }
 
 /**
@@ -47,13 +47,10 @@ export enum FileExtension {
  * @enum {string}
  */
 export enum MimeType {
-  'application/zip',
-  'application/octet-stream',
+  APPLICATION_ZIP = 'application/zip',
+  APPLICATION_OCTET_STREAM = 'application/octet-stream',
+  TEXT_CSV = 'text/csv',
+  TEXT_PLAIN = 'text/plain',
 }
 
-/**
- * A mapping of file extension to MIME type. New Mime-types for Files need to be registered here
- *
- * @constant {object}
- */
 export const FILE_TYPE = new IOType<File>();

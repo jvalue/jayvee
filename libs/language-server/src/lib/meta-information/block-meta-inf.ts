@@ -1,4 +1,4 @@
-import { IOType, UNDEFINED_TYPE } from '../types/io-types/IOType';
+import { IOType, UNDEFINED_TYPE } from '../types/io-types/io-type';
 
 export enum AttributeType {
   STRING = 'string',

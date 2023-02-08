@@ -1,4 +1,4 @@
-import { IOType } from './IOType';
+import { IOType } from './io-type';
 
 export interface Sheet {
   data: string[][];

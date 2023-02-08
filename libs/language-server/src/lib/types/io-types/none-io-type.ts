@@ -1,4 +1,4 @@
-import { IOType } from './IOType';
+import { IOType } from './io-type';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface None {}
