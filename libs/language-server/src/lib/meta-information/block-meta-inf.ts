@@ -1,11 +1,9 @@
-import { IOType, UNDEFINED_TYPE } from '../types/io-types/io-type';
 import { strict as assert } from 'assert';
-
 
 import { ValidationAcceptor } from 'langium';
 
 import { Attribute, AttributeType, Block } from '../ast';
-import { IOType, UNDEFINED_TYPE } from '../types/io-types/io-types';
+import { IOType, UNDEFINED_TYPE } from '../types/io-types/io-type';
 
 export interface AttributeSpecification {
   type: AttributeType;
