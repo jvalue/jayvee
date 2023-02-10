@@ -2,9 +2,9 @@ import {
   AttributeType,
   BlockMetaInformation,
   SHEET_TYPE,
-  affectsSingleCell,
-  convertToIndices,
+  SemanticCellRange,
   isCellRangeValue,
+  isSemanticCell,
 } from '@jayvee/language-server';
 
 export class CellWriterMetaInformation extends BlockMetaInformation {
@@ -20,14 +20,11 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
           if (!isCellRangeValue(attributeValue)) {
             return;
           }
-          const indices = convertToIndices(attributeValue.value);
-          if (indices === undefined) {
-            return;
-          }
 
-          if (!affectsSingleCell(indices)) {
+          const semanticCelLRange = new SemanticCellRange(attributeValue.value);
+          if (!isSemanticCell(semanticCelLRange)) {
             accept('error', 'A single cell needs to be selected', {
-              node: attributeValue,
+              node: semanticCelLRange.astNode,
             });
           }
         },

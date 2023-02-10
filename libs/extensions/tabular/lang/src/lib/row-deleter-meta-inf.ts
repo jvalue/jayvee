@@ -2,9 +2,9 @@ import {
   AttributeType,
   BlockMetaInformation,
   SHEET_TYPE,
-  affectsEntireRow,
-  convertToIndices,
+  SemanticCellRange,
   isCellRangeCollection,
+  isSemanticRow,
 } from '@jayvee/language-server';
 
 export class RowDeleterMetaInformation extends BlockMetaInformation {
@@ -19,14 +19,10 @@ export class RowDeleterMetaInformation extends BlockMetaInformation {
           }
 
           for (const cellRange of attributeValue.value) {
-            const indices = convertToIndices(cellRange);
-            if (indices === undefined) {
-              continue;
-            }
-
-            if (!affectsEntireRow(indices)) {
+            const semanticCellRange = new SemanticCellRange(cellRange);
+            if (!isSemanticRow(semanticCellRange)) {
               accept('error', 'An entire row needs to be selected', {
-                node: cellRange,
+                node: semanticCellRange.astNode,
               });
             }
           }

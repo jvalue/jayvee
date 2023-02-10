@@ -8,6 +8,9 @@ fragment AttributesFragment:
 Attribute:
   name=ID ':' value=(AttributeValue | RuntimeParameter) ';';
 
+RuntimeParameter:
+  'requires' name=ID;
+
 AttributeValue:
   StringValue | IntValue | CellRangeValue | CellRangeCollection | LayoutReferenceValue;
 
@@ -25,6 +28,3 @@ CellRangeValue:
 
 LayoutReferenceValue:
   value=[Layout];
-
-RuntimeParameter:
-  'requires' name=ID;

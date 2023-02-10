@@ -1,53 +1,84 @@
+import { strict as assert } from 'assert';
+
 import { BlockExecutor } from '@jayvee/execution';
 import * as R from '@jayvee/execution';
-import { Sheet, columnIndexAsCharacters } from '@jayvee/language-server';
+import {
+  SemanticColumn,
+  Sheet,
+  columnIndexToString,
+  getColumnIndex,
+  isSemanticColumn,
+} from '@jayvee/language-server';
 
 import {
-  cellRangeIndicesFitSheet,
-  replaceLastIndex,
-} from './cell-range-indices-util';
+  clone,
+  deleteColumn,
+  isInBounds,
+  resolveRelativeIndexes,
+} from './sheet-util';
 
 export class ColumnDeleterExecutor extends BlockExecutor<Sheet, Sheet> {
   constructor() {
     super('ColumnDeleter');
   }
 
-  override execute(input: Sheet): Promise<R.Result<Sheet>> {
-    const deleteCollection =
-      this.getCellRangeCollectionAttributeValue('delete');
+  override execute(inputSheet: Sheet): Promise<R.Result<Sheet>> {
+    const relativeColumns = this.getCellRangeCollectionAttributeValue('delete');
+    assert(relativeColumns.every(isSemanticColumn));
 
-    for (const cellRangeIndices of deleteCollection) {
-      if (!cellRangeIndicesFitSheet(cellRangeIndices, input)) {
+    let absoluteColumns = relativeColumns.map((column) =>
+      resolveRelativeIndexes(inputSheet, column),
+    );
+
+    for (const column of absoluteColumns) {
+      if (!isInBounds(inputSheet, column)) {
+        const columnIndex = getColumnIndex(column);
         return Promise.resolve(
           R.err({
-            message: `The specified column ${columnIndexAsCharacters(
-              cellRangeIndices.from.column,
+            message: `The specified column ${columnIndexToString(
+              columnIndex,
             )} does not exist in the sheet`,
-            diagnostic: { node: this.getOrFailAttribute('delete').value },
+            diagnostic: { node: column.astNode },
           }),
         );
       }
     }
 
-    const columnsToDelete = deleteCollection
-      .map((indices) => replaceLastIndex(indices, input))
-      .map((indices) => indices.from.column);
-    const uniqueColumnsToDelete = [...new Set(columnsToDelete)].sort();
+    // Sort columns ascending by column index, required for removing duplicates in the next step
+    absoluteColumns.sort(
+      (columnA, columnB) => getColumnIndex(columnA) - getColumnIndex(columnB),
+    );
+
+    // Remove duplicate columns, so the deletion is only called once per individual column
+    absoluteColumns = absoluteColumns.reduce<SemanticColumn[]>(
+      (previous, column, index) => {
+        const previousColumn = previous[index - 1];
+        if (previousColumn !== undefined) {
+          if (getColumnIndex(previousColumn) === getColumnIndex(column)) {
+            // The current column is a duplicate because it has the same index as the previous column
+            return previous;
+          }
+        }
+        return [...previous, column];
+      },
+      [],
+    );
 
     this.logger.logDebug(
-      `Deleting column(s) ${uniqueColumnsToDelete
-        .map(columnIndexAsCharacters)
+      `Deleting column(s) ${absoluteColumns
+        .map(getColumnIndex)
+        .map(columnIndexToString)
         .join(', ')}`,
     );
 
-    const resultingSheet = { ...input };
+    // Reverse the column order, so the indexes are stable during deletion
+    absoluteColumns.reverse();
 
-    resultingSheet.data.forEach((row) => {
-      uniqueColumnsToDelete.reverse().forEach((columnIndex) => {
-        row.splice(columnIndex, 1);
-      });
+    const resultingSheet = clone(inputSheet);
+    absoluteColumns.forEach((column) => {
+      deleteColumn(resultingSheet, column);
     });
-    resultingSheet.width -= uniqueColumnsToDelete.length;
+
     return Promise.resolve(R.ok(resultingSheet));
   }
 }
