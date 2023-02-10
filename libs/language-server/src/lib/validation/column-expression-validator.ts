@@ -1,33 +1,33 @@
 import { ValidationAcceptor, ValidationChecks } from 'langium';
 
-import { ColumnSelection, JayveeAstType } from '../ast/generated/ast';
+import { ColumnExpression, JayveeAstType } from '../ast/generated/ast';
 
 import { JayveeValidator } from './jayvee-validator';
 
-export class ColumnSelectionValidator implements JayveeValidator {
+export class ColumnExpressionValidator implements JayveeValidator {
   get checks(): ValidationChecks<JayveeAstType> {
     return {
-      ColumnSelection: [this.checkColumnIdSyntax],
+      ColumnExpression: [this.checkColumnIdSyntax],
     };
   }
 
   checkColumnIdSyntax(
     this: void,
-    columnSelection: ColumnSelection,
+    columnExpression: ColumnExpression,
     accept: ValidationAcceptor,
   ): void {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (columnSelection.columnId === undefined) {
+    if (columnExpression.columnId === undefined) {
       return;
     }
 
     const columnIdRegex = /^([A-Z]+|\*)$/;
-    if (!columnIdRegex.test(columnSelection.columnId)) {
+    if (!columnIdRegex.test(columnExpression.columnId)) {
       accept(
         'error',
         'Columns need to be denoted via capital letters or the * character',
         {
-          node: columnSelection,
+          node: columnExpression,
           property: 'columnId',
         },
       );
