@@ -1,36 +1,40 @@
 import { ValidationAcceptor, ValidationChecks } from 'langium';
 
-import { convertToIndices } from '../ast/cell-range-util';
-import { CellRangeSelection, JayveeAstType } from '../ast/generated/ast';
+import { JayveeAstType, RangeExpression } from '../ast/generated/ast';
+import { SemanticCellRange } from '../ast/wrappers/semantic-cell-range';
 
 import { JayveeValidator } from './jayvee-validator';
 
 export class CellRangeSelectionValidator implements JayveeValidator {
   get checks(): ValidationChecks<JayveeAstType> {
     return {
-      CellRangeSelection: [this.checkRangeLimits],
+      RangeExpression: [this.checkRangeLimits],
     };
   }
 
   checkRangeLimits(
     this: void,
-    cellRangeSelection: CellRangeSelection,
+    rangeExpression: RangeExpression,
     accept: ValidationAcceptor,
   ): void {
-    const indices = convertToIndices(cellRangeSelection);
-    if (indices === undefined) {
+    if (
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      rangeExpression.cellFrom === undefined ||
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      rangeExpression.cellTo === undefined
+    ) {
       return;
     }
-
+    const semanticCellRange = new SemanticCellRange(rangeExpression);
     if (
-      indices.from.column > indices.to.column ||
-      indices.from.row > indices.to.row
+      semanticCellRange.from.columnIndex > semanticCellRange.to.columnIndex ||
+      semanticCellRange.from.rowIndex > semanticCellRange.to.rowIndex
     ) {
       accept(
         'error',
         `Cell ranges need to be spanned from top-left to bottom-right`,
         {
-          node: cellRangeSelection,
+          node: semanticCellRange.astNode,
         },
       );
     }

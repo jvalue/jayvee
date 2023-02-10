@@ -4,7 +4,9 @@ import {
   Attribute,
   Block,
   Layout,
+  SemanticCellRange,
   getOrFailMetaInformation,
+  isCellRange,
   isLayout,
   isRuntimeParameter,
 } from '@jayvee/language-server';
@@ -96,6 +98,29 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
     );
 
     return attributeValue;
+  }
+
+  protected getCellRangeAttributeValue(
+    attributeName: string,
+  ): SemanticCellRange {
+    const attributeValue = this.getAttributeValue(attributeName);
+    assert(
+      isCellRange(attributeValue),
+      `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type cell range`,
+    );
+
+    return new SemanticCellRange(attributeValue);
+  }
+
+  protected getCellRangeCollectionAttributeValue(
+    attributeName: string,
+  ): SemanticCellRange[] {
+    const attributeValue = this.getAttributeValue(attributeName);
+    assert(
+      Array.isArray(attributeValue) && attributeValue.every(isCellRange),
+      `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type cell range collection`,
+    );
+    return attributeValue.map((cellRange) => new SemanticCellRange(cellRange));
   }
 
   private getAttributeValue(attributeName: string): unknown {

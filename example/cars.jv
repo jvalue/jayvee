@@ -2,6 +2,21 @@ pipeline CarsPipeline {
 	block CarsExtractor oftype CSVFileExtractor {
 		url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
 	}
+	
+	pipe {
+		from: CarsExtractor;
+		to: CarColumnNameWriter;
+	}
+
+	block CarColumnNameWriter oftype CellWriter {
+		at: cell A1;
+		write: "name";
+	}
+
+    pipe {
+        from: CarColumnNameWriter;
+        to: CarsValidator;
+    }
 
 	layout CarsLayout {
 		header row 1: text;
@@ -24,18 +39,13 @@ pipeline CarsPipeline {
 		validationLayout: CarsLayout;
 	}
 
-	block CarsLoader oftype SQLiteLoader {
-		table: "Cars";
-		file: "./cars.db";
-	}
-
-	pipe {
-		from: CarsExtractor;
-		to: CarsValidator;
-	}
-
 	pipe {
 		from: CarsValidator;
 		to: CarsLoader;
+	}
+
+	block CarsLoader oftype SQLiteLoader {
+		table: "Cars";
+		file: "./cars.db";
 	}
 }

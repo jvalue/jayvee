@@ -1,16 +1,16 @@
 import 'terminals'
 
 CellRange:
-  CellRangeSelection | ColumnSelection | RowSelection | CellSelection;
+  RangeExpression | ColumnExpression | RowExpression | CellExpression;
 
-CellRangeSelection:
+RangeExpression:
   'range' cellFrom=CELL_ID ':' cellTo=CELL_ID;
 
-ColumnSelection:
+ColumnExpression:
   'column' columnId=(ID | '*');
 
-RowSelection:
+RowExpression:
   'row' rowId=(INT | '*');
 
-CellSelection:
+CellExpression:
   'cell' cellId=CELL_ID;
