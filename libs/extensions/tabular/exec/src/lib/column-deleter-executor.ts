@@ -44,25 +44,11 @@ export class ColumnDeleterExecutor extends BlockExecutor<Sheet, Sheet> {
       }
     }
 
-    // Sort columns ascending by column index, required for removing duplicates in the next step
-    absoluteColumns.sort(
-      (columnA, columnB) => getColumnIndex(columnA) - getColumnIndex(columnB),
-    );
+    // Required for removing duplicates in the next step
+    this.sortByColumnIndex(absoluteColumns);
 
-    // Remove duplicate columns, so the deletion is only called once per individual column
-    absoluteColumns = absoluteColumns.reduce<SemanticColumn[]>(
-      (previous, column, index) => {
-        const previousColumn = previous[index - 1];
-        if (previousColumn !== undefined) {
-          if (getColumnIndex(previousColumn) === getColumnIndex(column)) {
-            // The current column is a duplicate because it has the same index as the previous column
-            return previous;
-          }
-        }
-        return [...previous, column];
-      },
-      [],
-    );
+    // That way, the upcoming deletion is only called once per individual column
+    absoluteColumns = this.removeDuplicateColumns(absoluteColumns);
 
     this.logger.logDebug(
       `Deleting column(s) ${absoluteColumns
@@ -71,7 +57,7 @@ export class ColumnDeleterExecutor extends BlockExecutor<Sheet, Sheet> {
         .join(', ')}`,
     );
 
-    // Reverse the column order, so the indexes are stable during deletion
+    // By reversing the order, the column indexes stay stable during deletion
     absoluteColumns.reverse();
 
     const resultingSheet = clone(inputSheet);
@@ -80,5 +66,24 @@ export class ColumnDeleterExecutor extends BlockExecutor<Sheet, Sheet> {
     });
 
     return Promise.resolve(R.ok(resultingSheet));
+  }
+
+  private sortByColumnIndex(columns: SemanticColumn[]): void {
+    columns.sort(
+      (columnA, columnB) => getColumnIndex(columnA) - getColumnIndex(columnB),
+    );
+  }
+
+  private removeDuplicateColumns(columns: SemanticColumn[]): SemanticColumn[] {
+    return columns.reduce<SemanticColumn[]>((previous, column, index) => {
+      const previousColumn = previous[index - 1];
+      if (previousColumn !== undefined) {
+        if (getColumnIndex(previousColumn) === getColumnIndex(column)) {
+          // The current column is a duplicate because it has the same index as the previous column
+          return previous;
+        }
+      }
+      return [...previous, column];
+    }, []);
   }
 }

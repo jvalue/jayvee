@@ -44,25 +44,11 @@ export class RowDeleterExecutor extends BlockExecutor<Sheet, Sheet> {
       }
     }
 
-    // Sort rows ascending by row index, required for removing duplicates in the next step
-    absoluteRows.sort(
-      (firstRow, secondRow) => getRowIndex(firstRow) - getRowIndex(secondRow),
-    );
+    // Required for removing duplicates in the next step
+    this.sortByRowIndex(absoluteRows);
 
-    // Remove duplicate rows, so the deletion is only called once per individual row
-    absoluteRows = absoluteRows.reduce<SemanticRow[]>(
-      (previous, row, index) => {
-        const previousRow = previous[index - 1];
-        if (previousRow !== undefined) {
-          if (getRowIndex(previousRow) === getRowIndex(row)) {
-            // The current row is a duplicate because it has the same index as the previous row
-            return previous;
-          }
-        }
-        return [...previous, row];
-      },
-      [],
-    );
+    // That way, the upcoming deletion is only called once per individual row
+    absoluteRows = this.removeDuplicateRows(absoluteRows);
 
     this.logger.logDebug(
       `Deleting row(s) ${absoluteRows
@@ -71,7 +57,7 @@ export class RowDeleterExecutor extends BlockExecutor<Sheet, Sheet> {
         .join(', ')}`,
     );
 
-    // Reverse the row order, so the indexes are stable during deletion
+    // By reversing the order, the row indexes stay stable during deletion
     absoluteRows.reverse();
 
     const resultingSheet = clone(inputSheet);
@@ -80,5 +66,24 @@ export class RowDeleterExecutor extends BlockExecutor<Sheet, Sheet> {
     });
 
     return Promise.resolve(R.ok(resultingSheet));
+  }
+
+  private sortByRowIndex(rows: SemanticRow[]): void {
+    rows.sort(
+      (firstRow, secondRow) => getRowIndex(firstRow) - getRowIndex(secondRow),
+    );
+  }
+
+  private removeDuplicateRows(rows: SemanticRow[]): SemanticRow[] {
+    return rows.reduce<SemanticRow[]>((previous, row, index) => {
+      const previousRow = previous[index - 1];
+      if (previousRow !== undefined) {
+        if (getRowIndex(previousRow) === getRowIndex(row)) {
+          // The current row is a duplicate because it has the same index as the previous row
+          return previous;
+        }
+      }
+      return [...previous, row];
+    }, []);
   }
 }
