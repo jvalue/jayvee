@@ -14,7 +14,7 @@ import {
 } from '@jayvee/language-server';
 
 export function clone(sheet: Sheet): Sheet {
-  return Object.assign({}, sheet);
+  return structuredClone(sheet);
 }
 
 export function deleteRow(sheet: Sheet, row: SemanticRow): void {
