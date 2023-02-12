@@ -1,4 +1,5 @@
 import { IOType } from './io-type';
+import { None } from './none-io-type';
 
 /**
  * Represents a file with its name, extension, file type, and content.
@@ -53,4 +54,4 @@ export enum MimeType {
   TEXT_PLAIN = 'text/plain',
 }
 
-export const FILE_TYPE = new IOType<File>();
+export const FILE_TYPE = new IOType<File | None>();
