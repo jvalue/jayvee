@@ -39,6 +39,7 @@ export interface File {
 export enum FileExtension {
   ZIP = 'zip',
   TXT = 'txt',
+  NONE = '',
 }
 
 /**

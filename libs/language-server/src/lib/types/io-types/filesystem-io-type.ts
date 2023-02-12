@@ -11,7 +11,7 @@ export interface FileSystem {
    * Retrieves a file from the file system.
    * @function getFile
    * @param {string} filePath - The file path.
-   * @returns {File | None} - The file or None if the file does not exist.
+   * @returns {File | FileSystem | None} - The file or None if the file does not exist.
    */
   getFile(filePath: string): File | FileSystem | None;
 
