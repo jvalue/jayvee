@@ -1,21 +1,17 @@
-import {
-  AttributeType,
-  BlockMetaInformation,
-  SHEET_TYPE,
-  UNDEFINED_TYPE,
-} from '@jayvee/language-server';
+import { AttributeType, BlockMetaInformation } from '@jayvee/language-server';
+import { FILE_SYSTEM_TYPE, FILE_TYPE } from '../../../../language-server/src';
 
-export class MyExtractorMetaInformation extends BlockMetaInformation {
+export class ArchiveInterpreterMetaInformation extends BlockMetaInformation {
   constructor() {
     super(
       // How the block type should be called:
-      'MyExtractor',
+      'ArchiveInterpreter',
 
       // Input type:
-      UNDEFINED_TYPE,
+      FILE_TYPE,
 
       // Output type:
-      SHEET_TYPE,
+      FILE_SYSTEM_TYPE,
 
       // Attribute definitions:
       {
@@ -26,7 +22,7 @@ export class MyExtractorMetaInformation extends BlockMetaInformation {
           type: AttributeType.INT,
           defaultValue: 10,
         },
-      }
+      },
     );
   }
 }

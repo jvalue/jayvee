@@ -2,10 +2,10 @@ import * as R from '@jayvee/execution';
 import { BlockExecutor } from '@jayvee/execution';
 import { Sheet } from '@jayvee/language-server';
 
-export class MyExtractorExecutor extends BlockExecutor<void, Sheet> {
+export class ArchiveInterpreterExecutor extends BlockExecutor<void, Sheet> {
   constructor() {
     // Needs to match the name in meta information:
-    super('MyExtractor');
+    super('ArchiveInterpreter');
   }
 
   override async execute(): Promise<R.Result<Sheet>> {
