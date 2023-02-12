@@ -1,25 +1,14 @@
 import * as R from '@jayvee/execution';
 import { BlockExecutor } from '@jayvee/execution';
-import {
-  File,
-  FileExtension,
-  FileSystem,
-  MimeType,
-} from '@jayvee/language-server';
+import { File, FileSystem, None } from '@jayvee/language-server';
 
-export class FilePickerExecutor extends BlockExecutor<FileSystem, File> {
+export class FilePickerExecutor extends BlockExecutor<FileSystem, File | None> {
   constructor() {
     super('FilePicker');
   }
 
-  override async execute(): Promise<R.Result<File>> {
-    // Accessing attribute values by their name:
-    const url = this.getStringAttributeValue('url');
-
-    if (R.isErr(file)) {
-      return file;
-    }
-
-    return R.ok(file.right);
+  override execute(fileSystem: FileSystem): Promise<R.Result<File | None>> {
+    const file = fileSystem.getFile(this.getStringAttributeValue('path'));
+    return Promise.resolve(R.ok(file));
   }
 }
