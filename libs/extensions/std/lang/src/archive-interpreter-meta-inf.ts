@@ -1,5 +1,9 @@
-import { AttributeType, BlockMetaInformation } from '@jayvee/language-server';
-import { FILE_SYSTEM_TYPE, FILE_TYPE } from '../../../../language-server/src';
+import {
+  AttributeType,
+  BlockMetaInformation,
+  FILE_SYSTEM_TYPE,
+  FILE_TYPE,
+} from '@jayvee/language-server';
 
 export class ArchiveInterpreterMetaInformation extends BlockMetaInformation {
   constructor() {
@@ -15,12 +19,8 @@ export class ArchiveInterpreterMetaInformation extends BlockMetaInformation {
 
       // Attribute definitions:
       {
-        url: {
+        archiveType: {
           type: AttributeType.STRING,
-        },
-        limit: {
-          type: AttributeType.INT,
-          defaultValue: 10,
         },
       },
     );
