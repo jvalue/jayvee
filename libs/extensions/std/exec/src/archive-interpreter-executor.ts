@@ -10,7 +10,7 @@ import {
   MimeType,
 } from '@jayvee/language-server';
 import JSZip = require('jszip');
-import * as mime from 'mime-types';
+import mime = require('mime-types');
 
 export class ArchiveInterpreterExecutor extends BlockExecutor<
   File,
@@ -57,7 +57,6 @@ export class ArchiveInterpreterExecutor extends BlockExecutor<
                   const fileName = path.basename(archivedObject.name, extName);
 
                   // Infer Mimetype from file-extension, if not inferrable, then default to application/octet-stream
-
                   let inferredMimeType = mime.lookup(extName) as MimeType;
                   if (!Object.values(MimeType).includes(inferredMimeType)) {
                     inferredMimeType = MimeType.APPLICATION_OCTET_STREAM;
