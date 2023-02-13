@@ -1,14 +1,15 @@
 {
-  "name": "@jayvee/monaco-editor",
+  "name": "@jvalue/monaco-editor",
+  "version": "0.0.6",
   "main": "./index.js",
   "bugs": {
     "url": "https://github.com/jvalue/jayvee/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jvalue/jayvee/issues"
+    "url": "https://github.com/jvalue/jayvee.git"
   },
-  "homepage": "https://github.com/jvalue/jayvee#readme",
+  "homepage": "https://github.com/jvalue/jayvee",
   "publishConfig": {
     "access": "restricted",
     "registry": "https://npm.pkg.github.com"

@@ -13,14 +13,7 @@
       }
     },
     "build": {
-      "dependsOn": ["build-base"],
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": ["node libs/language-server/transform-build-output.js"]
-      }
-    },
-    "build-base": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["generate"],
       "executor": "@nrwl/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
