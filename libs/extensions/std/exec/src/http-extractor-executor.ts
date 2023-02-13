@@ -1,8 +1,14 @@
 import * as https from 'https';
+import * as path from 'path';
 
 import * as R from '@jayvee/execution';
 import { BlockExecutor } from '@jayvee/execution';
 import { File, FileExtension, MimeType } from '@jayvee/language-server';
+
+import {
+  inferFileExtensionFromString,
+  inferMimeTypeFromString,
+} from './file-util';
 
 export class HttpExtractorExecutor extends BlockExecutor<void, File> {
   constructor() {
@@ -55,25 +61,25 @@ export class HttpExtractorExecutor extends BlockExecutor<void, File> {
           response.headers;
 
           // Infer Mimetype from HTTP-Header, if not inferrable, then default to application/octet-stream
-          let inferredMimeType = response.headers['content-type'] as MimeType;
-          if (!Object.values(MimeType).includes(inferredMimeType)) {
-            inferredMimeType = MimeType.APPLICATION_OCTET_STREAM;
-          }
+          const mimeType =
+            inferMimeTypeFromString(response.headers['content-type']) ||
+            MimeType.APPLICATION_OCTET_STREAM;
 
-          // Infer FileExtension from user input, if not inferrable, then default to None
-          let inferredFileExtension = this.getStringAttributeValue(
-            'fileExtension',
-          ) as FileExtension;
-          if (!Object.values(MimeType).includes(inferredMimeType)) {
-            inferredFileExtension = FileExtension.NONE;
-          }
+          // Infer FileName and FileExtension from url, if not inferrable, then default to None
+          // Get last element of URL assuming this is a filename
+          const fileName = new URL(this.getStringAttributeValue('url')).pathname
+            .split('/')
+            .pop();
+          const extName = path.extname(fileName === undefined ? '' : fileName);
+          const fileExtension =
+            inferFileExtensionFromString(extName) || FileExtension.NONE;
 
           // Create file and return file
           const file: File = {
             name: this.getStringAttributeValue('fileName'),
-            extension: inferredFileExtension,
+            extension: fileExtension,
             content: rawData.buffer as ArrayBuffer,
-            mimeType: inferredMimeType,
+            mimeType: mimeType,
           };
           resolve(R.ok(file));
         });

@@ -22,12 +22,6 @@ export class HttpExtractorMetaInformation extends BlockMetaInformation {
         url: {
           type: AttributeType.STRING,
         },
-        fileName: {
-          type: AttributeType.STRING,
-        },
-        fileExtension: {
-          type: AttributeType.STRING,
-        },
       },
     );
   }
