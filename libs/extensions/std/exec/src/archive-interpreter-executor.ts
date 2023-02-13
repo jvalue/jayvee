@@ -53,7 +53,7 @@ export class ArchiveInterpreterExecutor extends BlockExecutor<
       ) as Array<[string, JSZip.JSZipObject]>) {
         if (!archivedObject.dir) {
           const content = await archivedObject.async('arraybuffer');
-          //Ext incl. leading dot
+          // Ext incl. leading dot
           const extName = path.extname(archivedObject.name);
           // Filename without ext and dot
           const fileName = path.basename(archivedObject.name, extName);
