@@ -1,6 +1,6 @@
 {
   "name": "@jvalue/language-server-web-worker",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "main": "main.js",
   "bugs": {
     "url": "https://github.com/jvalue/jayvee/issues"
