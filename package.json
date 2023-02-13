@@ -12,6 +12,7 @@
   },
   "private": true,
   "dependencies": {
+    "@types/mime-types": "^2.1.1",
     "assert": "^2.0.0",
     "chalk": "^4.1.2",
     "chevrotain": "^9.1.0",
@@ -19,7 +20,9 @@
     "core-js": "^3.6.5",
     "fast-csv": "^4.3.6",
     "fp-ts": "^2.13.1",
+    "jszip": "^3.10.1",
     "langium": "^1.0.1",
+    "mime-types": "^2.1.35",
     "monaco-editor": "^0.34.1",
     "monaco-languageclient": "^4.0.3",
     "pg": "^8.8.0",

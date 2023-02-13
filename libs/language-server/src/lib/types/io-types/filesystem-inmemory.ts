@@ -29,7 +29,7 @@ export class InMemoryFileSystem implements FileSystem {
     return processedParts;
   }
 
-  getFile(filePath: string): File | FileSystem | None {
+  getFile(filePath: string): File | None {
     const processedParts = this.processPath(filePath);
 
     // If we have a minimum valid path

@@ -12,7 +12,7 @@ export interface File {
   name: string;
 
   /**
-   * The file extension in lower case, empty string for unknown or missing file extensions.
+   * The file extension in lower case, NONE / empty string for unknown or missing file extensions.
    * @property {FileExtension} extension
    */
   extension: FileExtension;
@@ -39,6 +39,7 @@ export interface File {
 export enum FileExtension {
   ZIP = 'zip',
   TXT = 'txt',
+  NONE = '',
 }
 
 /**
