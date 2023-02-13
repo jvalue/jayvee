@@ -19,7 +19,6 @@ jobs:
           always-auth: true
           registry-url: 'https://npm.pkg.github.com'
       - run: npm ci
-      - run: npm run generate
       - name: Publish interpreter
         run: npx nx run interpreter:publish
         env:

@@ -24,9 +24,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Langium generate
-        run: npm run generate
-
       - uses: nrwl/nx-set-shas@v3
 
       - name: Lint Nx specific workspace files
