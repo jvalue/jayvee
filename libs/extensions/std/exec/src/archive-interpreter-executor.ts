@@ -9,8 +9,12 @@ import {
   InMemoryFileSystem,
   MimeType,
 } from '@jayvee/language-server';
-import JSZip = require('jszip');
-import mime = require('mime-types');
+import * as JSZip from 'jszip';
+
+import {
+  inferFileExtensionFromMimeType,
+  inferMimeTypeFromFileExtension,
+} from './file-util';
 
 export class ArchiveInterpreterExecutor extends BlockExecutor<
   File,
@@ -32,8 +36,7 @@ export class ArchiveInterpreterExecutor extends BlockExecutor<
     }
     return R.err({
       message: `Archive is not a zip-archive`,
-      // TODO: What should i return here?
-      diagnostic: { node: this.block },
+      diagnostic: { node: this.block, property: 'name' },
     });
   }
 
@@ -57,25 +60,20 @@ export class ArchiveInterpreterExecutor extends BlockExecutor<
                   const fileName = path.basename(archivedObject.name, extName);
 
                   // Infer Mimetype from file-extension, if not inferrable, then default to application/octet-stream
-                  let inferredMimeType = mime.lookup(extName) as MimeType;
-                  if (!Object.values(MimeType).includes(inferredMimeType)) {
-                    inferredMimeType = MimeType.APPLICATION_OCTET_STREAM;
-                  }
+                  const mimeType =
+                    inferMimeTypeFromFileExtension(extName) ||
+                    MimeType.APPLICATION_OCTET_STREAM;
 
                   // Infer FileExtension from extension in filename, if not inferrable, then default to None
-                  let inferredFileExtension = extName.replace(
-                    '.',
-                    '',
-                  ) as FileExtension;
-                  if (!Object.values(MimeType).includes(inferredMimeType)) {
-                    inferredFileExtension = FileExtension.NONE;
-                  }
+                  const fileExtension =
+                    inferFileExtensionFromMimeType(extName) ||
+                    FileExtension.NONE;
 
                   const file: File = {
                     name: fileName,
-                    extension: inferredFileExtension,
+                    extension: fileExtension,
                     content: content,
-                    mimeType: inferredMimeType,
+                    mimeType: mimeType,
                   };
 
                   // Put files creates dir in root, if dir does not exist
@@ -85,8 +83,7 @@ export class ArchiveInterpreterExecutor extends BlockExecutor<
                   resolve(
                     R.err({
                       message: `Unexpected Error ${error.message} occured during processing of objects inside the archive`,
-                      // TODO: What should i return here?
-                      diagnostic: { node: this.block },
+                      diagnostic: { node: this.block, property: 'name' },
                     }),
                   );
                 });
@@ -97,8 +94,7 @@ export class ArchiveInterpreterExecutor extends BlockExecutor<
           resolve(
             R.err({
               message: `Unexpected Error ${error.message} occured during load of archivefile`,
-              // TODO: What should i return here?
-              diagnostic: { node: this.block },
+              diagnostic: { node: this.block, property: 'name' },
             }),
           );
         });
