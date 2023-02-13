@@ -24,10 +24,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Langium generate
-        run: npm run generate
-
       - uses: nrwl/nx-set-shas@v3
+
+      - name: Build
+        run: npx nx affected --target=build --parallel=3
 
       - name: Lint Nx specific workspace files
         run: npx nx workspace-lint
@@ -37,6 +37,3 @@ jobs:
 
       - name: Test
         run: npx nx affected --target=test --parallel=3 --base=remotes/origin/main --head=HEAD --ci
-
-      - name: Build
-        run: npx nx affected --target=build --parallel=3

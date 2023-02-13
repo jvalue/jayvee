@@ -3,7 +3,6 @@
   https://github.com/TypeFox/monaco-languageclient/blob/c5511b19e95e237c3f95a0fc0588769263f3ba40/packages/examples/browser-lsp/src/client.ts
 */
 
-import { JayveeMonarchConfig } from '@jayvee/language-server';
 import 'monaco-editor/esm/vs/editor/editor.all.js';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
 import 'monaco-editor/esm/vs/editor/standalone/browser/accessibilityHelp/accessibilityHelp.js';
@@ -32,6 +31,8 @@ import {
 } from 'vscode-languageserver-protocol/browser.js';
 import getMessageServiceOverride from 'vscode/service-override/messages';
 import { StandaloneServices } from 'vscode/services';
+
+import JayveeMonarchConfig from './jayvee.monarch';
 
 const LANGUAGE_NAME = 'jayvee';
 

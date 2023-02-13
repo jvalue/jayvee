@@ -20,14 +20,14 @@
         "extensions": [
           ".jv"
         ],
-        "configuration": "../../libs/language-server/language-configuration.json"
+        "configuration": "language-configuration.json"
       }
     ],
     "grammars": [
       {
         "language": "jayvee",
         "scopeName": "source.jayvee",
-        "path": "../../libs/language-server/src/syntaxes/jayvee.tmLanguage.json"
+        "path": "jayvee.tmLanguage.json"
       }
     ]
   },
