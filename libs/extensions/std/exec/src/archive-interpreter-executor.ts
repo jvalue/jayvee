@@ -12,8 +12,8 @@ import {
 import * as JSZip from 'jszip';
 
 import {
-  inferFileExtensionFromMimeType,
-  inferMimeTypeFromFileExtension,
+  inferFileExtensionFromString,
+  inferMimeTypeFromString,
 } from './file-util';
 
 export class ArchiveInterpreterExecutor extends BlockExecutor<
@@ -58,10 +58,10 @@ export class ArchiveInterpreterExecutor extends BlockExecutor<
           // Filename without ext and dot
           const fileName = path.basename(archivedObject.name, extName);
           const mimeType =
-            inferMimeTypeFromFileExtension(extName) ||
+            inferMimeTypeFromString(extName) ||
             MimeType.APPLICATION_OCTET_STREAM;
           const fileExtension =
-            inferFileExtensionFromMimeType(extName) || FileExtension.NONE;
+            inferFileExtensionFromString(extName) || FileExtension.NONE;
           const file: File = {
             name: fileName,
             extension: fileExtension,

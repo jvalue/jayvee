@@ -1,6 +1,6 @@
 import { File } from './file-io-type';
 import { FileSystem } from './filesystem-io-type';
-import { NONE_TYPE, None } from './none-io-type';
+import { NONE, NONE_TYPE, None } from './none-io-type';
 
 export class InMemoryFileSystem implements FileSystem {
   private static PATH_SEPARATOR = '/';
@@ -47,7 +47,7 @@ export class InMemoryFileSystem implements FileSystem {
 
         // If we dont find current path-part, stop methodcall
         if (!childFileSystem) {
-          return NONE_TYPE;
+          return NONE;
         }
         currentFileSystemIndex = childFileSystem.fileSystemIndex;
       }
@@ -56,7 +56,7 @@ export class InMemoryFileSystem implements FileSystem {
       const file = currentFileSystemIndex.get(fileName);
       return file ? file : NONE_TYPE;
     }
-    return NONE_TYPE;
+    return NONE;
   }
 
   putFile(filePath: string, file: File): FileSystem {

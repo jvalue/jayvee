@@ -2,7 +2,7 @@ import { TextEncoder } from 'util';
 
 import { File, FileExtension, MimeType } from './file-io-type';
 import { InMemoryFileSystem } from './filesystem-inmemory';
-import { NONE_TYPE } from './none-io-type';
+import { NONE, NONE_TYPE } from './none-io-type';
 
 describe('InMemoryFileSystem', () => {
   let fileSystem: InMemoryFileSystem;
@@ -36,7 +36,7 @@ describe('InMemoryFileSystem', () => {
     };
 
     fileSystem.putFile('folder1/file1.txt', file);
-    expect(fileSystem.getFile('folder2/file1.txt')).toBe(NONE_TYPE);
+    expect(fileSystem.getFile('folder2/file1.txt')).toBe(NONE);
   });
 
   it('should handle relative paths correctly', () => {
