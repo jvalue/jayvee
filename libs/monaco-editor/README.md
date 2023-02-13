@@ -10,71 +10,61 @@ This library contains a React component that will spawn an instance of the Monac
 
 We expect the component to be used in a (default) Create-React-App project. This project should ideally be created outside of the directory where the Jayvee repository is stored.
 
-### Building
+### Build the language server Web Worker
 
-In the Jayvee project, run
+The [`language-server-web-worker`](../../apps/language-server-web-worker) project provides a ready-to-use language server to be run in a Web 
+Worker.
+It is required by the monaco editor in order to provide features like autocompletion and code diagnostics.
+Build the project using
 
+```bash
+npx nx build language-server-web-worker
 ```
-npx nx build @jayvee/monaco-editor
+
+This creates a file `main.js` in the folder `<jayvee project root>/dist/apps/language-server-web-worker` which is
+required in a later step.
+
+### Building and packing the monaco editor
+
+To build and pack the monaco editor, navigate to the project root folder and run
+
+```bash
+npx nx pack @jayvee/monaco-editor
 ```
 
-This will build both the monaco editor and the language server. You can find the output in `<jayvee project root>/dist/libs/`.
+Now, in the directory `<jayvee project
+root>/dist/libs/monaco-editor`, you will find a file named `monaco-editor-<version>.tgz`
+with `<version>` being the version of the monaco editor package.
 
-We want to be able to use the two packages in another project. To make the packages behave as if they were directly pulled from a registry, we first want to pack them. To do this, run `npm pack` in the following two directories:
+We want to be able to use the package in another project. To make the package behave as if it was directly pulled 
+from a registry, we first want to pack it. To do this, run `npm pack` in the directory `<jayvee project 
+root>/dist/libs/monaco-editor`.
 
-- `<jayvee project root>/dist/libs/language-server`
-- `<jayvee project root>/dist/libs/monaco-editor`
+Now, you will find a file named `jvalue-monaco-editor-<version>.tgz` in that directory, 
+with `<version>` being the version of the monaco editor package.
 
-Now, you will find a file named `jayvee-language-server-<version>.tgz` in `<jayvee project root>/dist/libs/language-server`, with `<version>` being the version of the package. A similar file can be found at the monaco editor package.
+### Installation of the monaco editor
 
-### Install
-
-Now, switch to the React project where you want to test the editor. Open `package.json` and add the following to the dependencies:
+We want to be able to use the package in the React project as if it was directly pulled
+from a registry. To achieve that, switch to the React project where you want to test the editor. Open `package.json` 
+and add the following dependency:
 
 ```
   "dependencies": {
-    "@jayvee/language-server": "file:../../../jayvee/dist/libs/language-server/jvalue-language-server-0.0.0.tgz",
-    "@jvalue/language-server": "file:../../../jayvee/dist/libs/language-server/jvalue-language-server-0.0.0.tgz",
     "@jvalue/monaco-editor": "file:../../../jayvee/dist/libs/monaco-editor/jvalue-monaco-editor-0.0.0.tgz"
   },
 ```
 
-You might have to adjust the paths to the files (and especially the version at the end). Please note that we are both importing "@jayvee/language-server" and "@jvalue/language-server". This is done because on our registry, the package scope gets changed from "@jayvee" to "@jvalue", and the monaco-editor package has a peer dependency that renames from @jayvee/language-server to @jvalue/language-server.
+You might have to adjust the paths to the files (and especially the version at the end).
 
 Now, run `npm install`.
 
 > Tip: Whenever you create a new version of the packages using `npm pack`, you have to install them again. This sometimes results in errors regarding the package integrity, because the two packages will contain new content, leading to a new hash. A fairly easy way to deal with this is to uninstall the two packages (i.e. to remove them from the dependencies and to call `npm install`), and then to re-install them. If you need to do this frequently, you could also symlink the packages directly, but this might require you to install the peer dependencies manually. Another important point: CreateReactApp seems to cache the build output a bit too aggressively in some cases. After installing a new version of the package, you might need to delete `node_modules/.cache/`.
 
-### Usage
+### Enable Web Workers
 
-To use the component, we need to perform a few additional steps.
-
-#### Create the WebWorker
-
-First, we need to create the file that will power the WebWorker running the Jayvee Language Server. For this, create a file called `server-worker.ts`. Add the following content to this file:
-
-```ts
-import { createJayveeServices } from '@jvalue/language-server';
-import { EmptyFileSystem, startLanguageServer } from 'langium';
-import {
-  BrowserMessageReader,
-  BrowserMessageWriter,
-  createConnection,
-} from 'vscode-languageserver/browser.js';
-
-declare const self: DedicatedWorkerGlobalScope;
-
-const messageReader = new BrowserMessageReader(self);
-const messageWriter = new BrowserMessageWriter(self);
-
-const connection = createConnection(messageReader, messageWriter);
-
-const { shared } = createJayveeServices({ connection, ...EmptyFileSystem });
-
-startLanguageServer(shared);
-```
-
-Got an error saying "Cannot find name 'DedicatedWorkerGlobalScope'"? Then open your `tsconfig.json` and add "WebWorker" to the lib array:
+Furthermore, we need to enable Web Workers in the React project. Open `tsconfig.json` and add "WebWorker" to the 
+lib array:
 
 ```diff
 
@@ -87,9 +77,9 @@ Got an error saying "Cannot find name 'DedicatedWorkerGlobalScope'"? Then open y
 
 ```
 
-#### Create the actual editor
+### Create the actual editor
 
-Now, create a new file `my-editor.tsx` where the actual editor will be contained. This file should be created next to `server-worker.ts`. Add the following file content:
+Now, create a new file `my-editor.tsx` where the actual editor will be contained. Add the following file content:
 
 ```tsx
 import { MonacoEditor } from '@jvalue/monaco-editor';
@@ -98,7 +88,9 @@ import React from 'react';
 const exampleCode = 'Add example code here';
 
 function startJayveeWorker(): Worker {
-  const worker = new Worker(new URL('./server-worker.ts', import.meta.url), {
+  // TODO adjust the path to the language server:
+  const worker = new Worker(new URL('<jayvee project root>/dist/apps/language-server-web-worker/main.js', import.meta.
+      url), {
     type: 'module',
   });
 
@@ -117,7 +109,8 @@ export const EditorExample: React.FC = () => {
 };
 ```
 
-> Of course, you can name the Worker file differently and place it in a different folder. In this case, make sure to adjust the path used in `startJayveeWorker()`.
+> Make sure to adjust the path of the URL so it refers to the `main.js` file of the built language server 
+> created earlier.
 
 That's it! You can now use the editor in your React project.
 
@@ -129,7 +122,9 @@ When compiling your React project, you might get a large number of Webpack warni
 
 ### Webpack URLs
 
-When using `new URL('something')`, Webpack seems to use static analysis to bundle the referenced item. So this is not just runtime code - it is used during compilation. It was mentioned somewhere in the long discussion here: https://github.com/webpack/webpack/discussions/13655#discussioncomment-937300
+When using `new URL('something')`, Webpack uses static analysis to bundle the referenced item. So this is not just 
+runtime code - it is used during compilation. It was mentioned somewhere in the long discussion here:
+https://github.com/webpack/webpack/discussions/13655#discussioncomment-937300. Also refer to the corresponding [webpack documentation](https://webpack.js.org/guides/web-workers/).
 
 ### Resources
 

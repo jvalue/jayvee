@@ -45,7 +45,7 @@
         "commands": [
           // Prepend shebang to the binary file
           "sed -i '1i#!/usr/bin/env node' dist/apps/interpreter/main.js",
-          "npm publish dist/apps/interpreter"
+          "node tools/scripts/publish.mjs interpreter"
         ]
       }
     }

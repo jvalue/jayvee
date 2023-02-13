@@ -12,14 +12,6 @@
       }
     },
     "build": {
-      "dependsOn": ["build-base"],
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": ["node libs/monaco-editor/transform-build-output.js"]
-      }
-    },
-    "build-base": {
-      "dependsOn": ["^build"],
       "executor": "@nrwl/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
@@ -47,12 +39,32 @@
         "passWithNoTests": true
       }
     },
-    "publish": {
+    "pre-publish": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
-        "commands": ["npm publish dist/libs/monaco-editor"]
+        "commands": [
+          "node tools/scripts/monaco-editor/fix-peer-dependencies.mjs @jayvee/monaco-editor"
+        ]
       }
+    },
+    "publish": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["pre-publish"],
+      "options": {
+        "commands": [
+          "node tools/scripts/publish.mjs @jayvee/monaco-editor"
+        ]
+      }
+    },
+    "pack": {
+        "executor": "nx:run-commands",
+        "dependsOn": ["pre-publish"],
+        "options": {
+          "commands": [
+            "node tools/scripts/pack.mjs @jayvee/monaco-editor"
+          ]
+        }
     }
   }
 }

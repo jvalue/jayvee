@@ -4,7 +4,7 @@ module.exports = {
     '@jvalue/eslint-config-jvalue/react',
     '../../.eslintrc.json',
   ],
-  ignorePatterns: ['!**/*', '/*.*'],
+  ignorePatterns: ['!**/*', '/*.*', 'src/lib/*.monarch.ts'],
   parserOptions: {
     project: ['./tsconfig.lib.json'],
     tsconfigRootDir: __dirname,
