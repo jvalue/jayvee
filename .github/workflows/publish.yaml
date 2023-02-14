@@ -19,13 +19,12 @@ jobs:
           always-auth: true
           registry-url: 'https://npm.pkg.github.com'
       - run: npm ci
-      - run: npm run generate
       - name: Publish interpreter
         run: npx nx run interpreter:publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Publish language server
-        run: npx nx run @jayvee/language-server:publish
+      - name: Publish language server web worker
+        run: npx nx run language-server-web-worker:publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish monaco editor

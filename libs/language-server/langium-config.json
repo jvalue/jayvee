@@ -6,10 +6,10 @@
       "grammar": "src/grammar/main.langium",
       "fileExtensions": [".jv"],
       "textMate": {
-        "out": "src/syntaxes/jayvee.tmLanguage.json"
+        "out": "../../apps/vs-code-extension/jayvee.tmLanguage.json"
       },
       "monarch": {
-        "out": "src/syntaxes/jayvee.monarch.ts"
+        "out": "../../libs/monaco-editor/src/lib/jayvee.monarch.ts"
       }
     }
   ],
