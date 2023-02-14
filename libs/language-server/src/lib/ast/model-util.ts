@@ -152,7 +152,7 @@ export enum AttributeType {
   LAYOUT = 'layout',
   CELL_RANGE = 'cell range',
   CELL_RANGE_COLLECTION = 'cell range collection',
-  DATA_TYPE_ASSIGNMENT_COLLECTION = 'value type assignment collection',
+  DATA_TYPE_ASSIGNMENT_COLLECTION = 'data type assignment collection',
 }
 
 export function runtimeParameterAllowedForType(type: AttributeType): boolean {
