@@ -21,6 +21,6 @@ export class TextDataType extends AbstractDataType {
     }
 
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    throw new Error(`Invalid value: ${value} for type ${this.languageType}`);
+    throw new Error(`Invalid value: ${value} for type ${this.dataType}`);
   }
 }
