@@ -1,5 +1,5 @@
 - Feature Name: `table-interpretation`
-- Status: `DISCUSSION`
+- Status: `ACCEPTED`
 
 # Summary
 
