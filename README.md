@@ -29,7 +29,7 @@ In case you run into problems, make sure to use the current LTS version of Node.
 
 ## Language Design Process
 
-We use RFCs to discuss changes to language before implementing them. Please all closed (accepted / rejected) RFCs [here](https://github.com/jvalue/jayvee/pulls?q=is%3Apr+is%3Aclosed+RFC+), and all RFCs under discussion [here](https://github.com/jvalue/jayvee/pulls?q=is%3Apr+is%3Aopen+RFC).
+We use RFCs to discuss changes to the language before implementing them. You can have a look at all closed (accepted / rejected) RFCs [here](https://github.com/jvalue/jayvee/pulls?q=is%3Apr+is%3Aclosed+RFC+), and all RFCs under discussion [here](https://github.com/jvalue/jayvee/pulls?q=is%3Apr+is%3Aopen+RFC).
 
 If you want to contribute a RFC please follow these steps:
 1. Make a copy of the [template](./rfc/0000-rfc-template.md) and place it into the `rfc` folder.
