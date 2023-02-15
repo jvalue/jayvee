@@ -12,13 +12,25 @@ export class LayoutValidatorMetaInformation extends BlockMetaInformation {
         type: AttributeType.LAYOUT,
         docs: {
           description: `Reference to the layout that is used for validation.`,
-          example: docExample,
+          examples: [
+            {
+              code: docExample,
+              description:
+                'Use the name of the defined `layout` to reference it.',
+            },
+          ],
         },
       },
     });
     this.docs.description =
       'Valdiates a `Sheet` by a given `layout` to build a `Table`. Rows that do not satisfy the layout are removed.';
-    this.docs.example = docExample;
+    this.docs.examples = [
+      {
+        code: docExample,
+        description:
+          'The `CarsValidator` block applies the `CarsLayout` to incoming sheet data. The outgoing table will only have rows conforming to the `CarsLayout`.',
+      },
+    ];
   }
 }
 

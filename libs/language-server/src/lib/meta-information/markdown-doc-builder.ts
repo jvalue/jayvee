@@ -1,3 +1,5 @@
+import type { ExampleDoc } from './block-meta-inf';
+
 export class MarkdownDocBuilder {
   private markdownTextLines: string[] = [];
 
@@ -37,11 +39,16 @@ export class MarkdownDocBuilder {
     return this.newSection('Validation', text);
   }
 
-  example(text?: string): MarkdownDocBuilder {
-    if (text === undefined) {
+  examples(examples?: ExampleDoc[]): MarkdownDocBuilder {
+    if (examples === undefined) {
       return this;
     }
-    return this.newSection('Example', '```\n' + text + '\n```');
+    for (const [index, example] of examples.entries()) {
+      const exampleText =
+        '```\n' + example.code + '\n```\n' + example.description;
+      this.newSection(`Example ${index + 1}`, exampleText);
+    }
+    return this;
   }
 
   newSection(heading: string, content: string): MarkdownDocBuilder {
