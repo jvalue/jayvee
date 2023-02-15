@@ -11,10 +11,10 @@ Two different forms of syntactic sugar to express pipes are suggested.
 First, to support an overview of the whole pipeline, a shortened form of the current approach (`Block1 -> Block2`).
 Second, to support describing pipes as part of a block:
 ```jayvee
-  block Block1 {
-    inputs: [Block2];
-    outputs: [Block3];
-  }
+block Block1 {
+  inputs: [Block2];
+  outputs: [Block3];
+}
 ```
 
 
@@ -29,46 +29,46 @@ To illustrate the syntactic sugar changes, the current cars data pipeline model 
 ## Running example: Current Cars Pipeline
 ```jayvee
 pipeline CarsPipeline {
-	block CarsExtractor oftype CSVFileExtractor {
-		url: "https://gist.githubusercontent.com/noamross/e5e10b/raw/b9/cars.csv";
-	}
-	
-	pipe {
-		from: CarsExtractor;
-		to: CarColumnNameWriter;
-	}
+  block CarsExtractor oftype CSVFileExtractor {
+    url: "https://gist.githubusercontent.com/noamross/e5e10b/raw/b9/cars.csv";
+  }
 
-	block CarColumnNameWriter oftype CellWriter {
-		at: cell A1;
-		write: "name";
-	}
+  pipe {
+    from: CarsExtractor;
+    to: CarColumnNameWriter;
+  }
+
+  block CarColumnNameWriter oftype CellWriter {
+    at: cell A1;
+    write: "name";
+  }
 
   pipe {
       from: CarColumnNameWriter;
       to: CarsValidator;
   }
 
-	layout CarsLayout {
-		header row 1: text;
+  layout CarsLayout {
+    header row 1: text;
 
-		column A: text;
-		column B: decimal;
-		column C: integer;
-	}
+    column A: text;
+    column B: decimal;
+    column C: integer;
+  }
 
-	block CarsValidator oftype LayoutValidator {
-		validationLayout: CarsLayout;
-	}
+  block CarsValidator oftype LayoutValidator {
+    validationLayout: CarsLayout;
+  }
 
-	pipe {
-		from: CarsValidator;
-		to: CarsLoader;
-	}
+  pipe {
+    from: CarsValidator;
+    to: CarsLoader;
+  }
 
-	block CarsLoader oftype SQLiteLoader {
-		table: "Cars";
-		file: "./cars.db";
-	}
+  block CarsLoader oftype SQLiteLoader {
+    table: "Cars";
+    file: "./cars.db";
+  }
 }
 ```
 
@@ -78,69 +78,69 @@ The arrow syntax shortens the definition of a pipe and allows multiple pipes to 
 In the most basic form, any definition of a pipe is just replaced with an arrow `->` between the `from` and `to` attributes:
 
 ```jayvee
-  pipe {
-		from: CarsExtractor;
-		to: CarColumnNameWriter;
-	}
+pipe {
+  from: CarsExtractor;
+  to: CarColumnNameWriter;
+}
 ```
 
 is equivalent to
 
 ```jayvee
-  CarsExtractor -> CarColumnNameWriter;
+CarsExtractor -> CarColumnNameWriter;
 ```
 
 Additionally, pipelines defined with the arrow syntax can be chained. Consider any `->` as a pipeline definition, parse the left side of the arrow expression to be the `from` attribute and the right side the `to` attribute.
 
 ```jayvee
-  pipe {
-		from: CarsExtractor;
-		to: CarColumnNameWriter;
-	}
+pipe {
+  from: CarsExtractor;
+  to: CarColumnNameWriter;
+}
 
-  pipe {
-      from: CarColumnNameWriter;
-      to: CarsValidator;
-  }
+pipe {
+    from: CarColumnNameWriter;
+    to: CarsValidator;
+}
 ```
 
 is equivalent to
 
 ```jayvee
-  CarsExtractor
-    -> CarColumnNameWriter
-    -> CarsValidator;
+CarsExtractor
+  -> CarColumnNameWriter
+  -> CarsValidator;
 ```
 
 This syntax shortens the running example to the following, making it much more easy to read how the resulting pipeline will look.
 
 ```jayvee
 pipeline CarsPipeline {
-	block CarsExtractor oftype CSVFileExtractor {
-		url: "https://gist.githubusercontent.com/noamross/e5e10b/raw/b9/cars.csv";
-	}
-	
-	block CarColumnNameWriter oftype CellWriter {
-		at: cell A1;
-		write: "name";
-	}
+  block CarsExtractor oftype CSVFileExtractor {
+    url: "https://gist.githubusercontent.com/noamross/e5e10b/raw/b9/cars.csv";
+  }
+  
+  block CarColumnNameWriter oftype CellWriter {
+    at: cell A1;
+    write: "name";
+  }
 
-	layout CarsLayout {
-		header row 1: text;
+  layout CarsLayout {
+    header row 1: text;
 
-		column A: text;
-		column B: decimal;
-		column C: integer;
-	}
+    column A: text;
+    column B: decimal;
+    column C: integer;
+  }
 
-	block CarsValidator oftype LayoutValidator {
-		validationLayout: CarsLayout;
-	}
+  block CarsValidator oftype LayoutValidator {
+    validationLayout: CarsLayout;
+  }
 
-	block CarsLoader oftype SQLiteLoader {
-		table: "Cars";
-		file: "./cars.db";
-	}
+  block CarsLoader oftype SQLiteLoader {
+    table: "Cars";
+    file: "./cars.db";
+  }
 
   CarsExtractor
     -> CarColumnNameWriter
@@ -158,34 +158,34 @@ This suggestion reuses the existing grammer for block attributes and collections
 
 ```jayvee
 pipeline CarsPipeline {
-	block CarsExtractor oftype CSVFileExtractor {
-		url: "https://gist.githubusercontent.com/noamross/e5e10b/raw/b9/cars.csv";
-	}
-	
-	block CarColumnNameWriter oftype CellWriter {
+  block CarsExtractor oftype CSVFileExtractor {
+    url: "https://gist.githubusercontent.com/noamross/e5e10b/raw/b9/cars.csv";
+  }
+  
+  block CarColumnNameWriter oftype CellWriter {
     inputs: [CarsExtractor];
-		at: cell A1;
-		write: "name";
-	}
+    at: cell A1;
+    write: "name";
+  }
 
-	layout CarsLayout {
-		header row 1: text;
+  layout CarsLayout {
+    header row 1: text;
 
-		column A: text;
-		column B: decimal;
-		column C: integer;
-	}
+    column A: text;
+    column B: decimal;
+    column C: integer;
+  }
 
-	block CarsValidator oftype LayoutValidator {
+  block CarsValidator oftype LayoutValidator {
     inputs: [CarColumnNameWriter];
-		validationLayout: CarsLayout;
-	}
+    validationLayout: CarsLayout;
+  }
 
-	block CarsLoader oftype SQLiteLoader {
+  block CarsLoader oftype SQLiteLoader {
     inputs: [CarsValidator];
-		table: "Cars";
-		file: "./cars.db";
-	}
+    table: "Cars";
+    file: "./cars.db";
+  }
 }
 ```
 
