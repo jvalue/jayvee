@@ -1,4 +1,4 @@
-import { AbstractDataType, Table } from '@jayvee/language-server';
+import { Table } from '@jayvee/language-server';
 
 import { SQLColumnTypeVisitor } from './visitors/SQLColumnTypeVisitor';
 import { SQLValueRepresentationVisitor } from './visitors/SQLValueRepresentationVisitor';
@@ -9,15 +9,15 @@ export function buildDropTableStatement(tableName: string): string {
 
 export function buildInsertValuesStatement(
   tableName: string,
-  input: Table,
+  table: Table,
 ): string {
-  const valueRepresenationVisitor = new SQLValueRepresentationVisitor();
+  const valueRepresentationVisitor = new SQLValueRepresentationVisitor();
 
-  const valueRepresentationFormatters = input.columnTypes.map((type) => {
-    return type?.acceptVisitor(valueRepresenationVisitor);
-  });
+  const valueRepresentationFormatters = table.columnMetas.map((columnMeta) =>
+    columnMeta.columnType.acceptVisitor(valueRepresentationVisitor),
+  );
 
-  const valuesStatement = input.data
+  const valuesStatement = table.data
     .map((row) => {
       return `(${row
         .map((value, index) => valueRepresentationFormatters[index]?.(value))
@@ -25,26 +25,24 @@ export function buildInsertValuesStatement(
     })
     .join(',');
 
-  return `INSERT INTO "${tableName}" (${input.columnNames
-    .map((columnName) => `"${columnName || 'EMPTY'}"`)
+  return `INSERT INTO "${tableName}" (${table.columnMetas
+    .map((columnMeta) => `"${columnMeta.columnName}"`)
     .join(',')}) VALUES ${valuesStatement}`;
 }
 
 export function buildCreateTableStatement(
   tableName: string,
-  input: Table,
+  table: Table,
 ): string {
   const columnTypeVisitor = new SQLColumnTypeVisitor();
 
-  const columnPostgresStatements = input.columnNames
-    .map((columnName) => `"${columnName || 'EMPTY'}"`)
-    .map((name, index) => {
-      return `${name} ${(
-        input.columnTypes[index] as AbstractDataType
-      ).acceptVisitor(columnTypeVisitor)}`;
-    });
+  const columnStatements = table.columnMetas.map((columnMeta) => {
+    return `"${columnMeta.columnName}" ${columnMeta.columnType.acceptVisitor(
+      columnTypeVisitor,
+    )}`;
+  });
 
-  return `CREATE TABLE IF NOT EXISTS "${tableName}" (${columnPostgresStatements.join(
+  return `CREATE TABLE IF NOT EXISTS "${tableName}" (${columnStatements.join(
     ',',
   )});`;
 }

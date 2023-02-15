@@ -17,7 +17,6 @@ import { JayveeCompletionProvider } from './completion/jayvee-completion-provide
 import { BlockValidator } from './validation/block-validator';
 import { CellRangeSelectionValidator } from './validation/cell-range-selection-validator';
 import { ColumnExpressionValidator } from './validation/column-expression-validator';
-import { LayoutValidator } from './validation/layout-validator';
 import { ModelValidator } from './validation/model-validator';
 import { PipeValidator } from './validation/pipe-validator';
 import { PipelineValidator } from './validation/pipeline-validator';
@@ -30,7 +29,6 @@ export interface JayveeAddedServices {
   validation: {
     ModelValidator: ModelValidator;
     PipelineValidator: PipelineValidator;
-    LayoutValidator: LayoutValidator;
     PipeValidator: PipeValidator;
     BlockValidator: BlockValidator;
     CellRangeSelectionValidator: CellRangeSelectionValidator;
@@ -57,7 +55,6 @@ export const JayveeModule: Module<
     ValidationRegistry: (services) => new JayveeValidationRegistry(services),
     ModelValidator: () => new ModelValidator(),
     PipelineValidator: () => new PipelineValidator(),
-    LayoutValidator: () => new LayoutValidator(),
     PipeValidator: () => new PipeValidator(),
     BlockValidator: () => new BlockValidator(),
     CellRangeSelectionValidator: () => new CellRangeSelectionValidator(),

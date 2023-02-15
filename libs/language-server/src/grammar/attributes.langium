@@ -1,5 +1,4 @@
 import 'terminals';
-import 'layout';
 import 'data-type';
 import 'cell-range';
 
@@ -7,13 +6,13 @@ fragment AttributesFragment:
   '{' (attributes+=Attribute)* '}';
 
 Attribute:
-  name=(ID | 'header') ':' value=(AttributeValue | RuntimeParameter) ';';
+  name=ID ':' value=(AttributeValue | RuntimeParameter) ';';
 
 RuntimeParameter:
   'requires' name=ID;
 
 AttributeValue:
-  StringValue | IntValue | BooleanValue | CellRangeValue | DataTypeAssignmentCollection | CellRangeCollection | LayoutReferenceValue;
+  StringValue | IntValue | BooleanValue | CellRangeValue | DataTypeAssignmentCollection | CellRangeCollection;
 
 StringValue:
   value=STRING;
@@ -32,6 +31,3 @@ CellRangeCollection:
 
 CellRangeValue:
   value=CellRange;
-
-LayoutReferenceValue:
-  value=[Layout];

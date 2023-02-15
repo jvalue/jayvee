@@ -14,7 +14,6 @@ import {
   isCellRangeValue,
   isDataTypeAssignmentCollection,
   isIntValue,
-  isLayoutReferenceValue,
   isStringValue,
 } from './generated/ast';
 
@@ -193,9 +192,6 @@ export function convertAttributeValueToType(
   }
   if (isDataTypeAssignmentCollection(value)) {
     return AttributeType.DATA_TYPE_ASSIGNMENT_COLLECTION;
-  }
-  if (isLayoutReferenceValue(value)) {
-    return AttributeType.LAYOUT;
   }
   assertUnreachable(value);
 }

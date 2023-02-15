@@ -4,12 +4,10 @@ import {
   Attribute,
   Block,
   DataTypeAssignment,
-  Layout,
   SemanticCellRange,
   getOrFailMetaInformation,
   isCellRange,
   isDataTypeAssignment,
-  isLayout,
   isRuntimeParameter,
 } from '@jayvee/language-server';
 import { isReference } from 'langium';
@@ -97,16 +95,6 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
     assert(
       typeof attributeValue === 'boolean',
       `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type boolean`,
-    );
-
-    return attributeValue;
-  }
-
-  protected getLayoutAttributeValue(attributeName: string): Layout {
-    const attributeValue = this.getAttributeValue(attributeName);
-    assert(
-      isLayout(attributeValue),
-      `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type layout`,
     );
 
     return attributeValue;
