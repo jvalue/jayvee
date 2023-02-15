@@ -5,7 +5,7 @@ import { Attribute, Block, isAttribute, isBlock } from '../ast';
 import { getMetaInformation } from '../meta-information';
 
 export class JayveeHoverProvider extends AstNodeHoverProvider {
-  protected getAstNodeHoverContent(
+  override getAstNodeHoverContent(
     astNode: AstNode,
   ): MaybePromise<Hover | undefined> {
     let doc = undefined;
@@ -17,7 +17,7 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
     }
 
     if (doc === undefined) {
-      return Promise.resolve(undefined);
+      return undefined;
     }
     const hover: Hover = {
       contents: {
@@ -25,23 +25,17 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
         value: doc,
       },
     };
-    return Promise.resolve(hover);
+    return hover;
   }
 
   private getBlockMarkdownDoc(block: Block): string | undefined {
     const blockMetaInf = getMetaInformation(block.type);
-    if (blockMetaInf === undefined) {
-      return undefined;
-    }
-    return blockMetaInf.getMarkdownDoc();
+    return blockMetaInf?.getMarkdownDoc();
   }
 
   private getAttributeMarkdownDoc(attribute: Attribute): string | undefined {
     const block = attribute.$container;
     const blockMetaInf = getMetaInformation(block.type);
-    if (blockMetaInf === undefined) {
-      return undefined;
-    }
-    return blockMetaInf.getAttributeMarkdownDoc(attribute.name);
+    return blockMetaInf?.getAttributeMarkdownDoc(attribute.name);
   }
 }
