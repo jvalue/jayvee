@@ -3,7 +3,7 @@
 |             |                         |
 | ----------- | ----------------------- |
 | Feature Tag | `pipes-syntactic-sugar` |
-| Status      | `DRAFT`                 |
+| Status      | `DISCUSSION`            |
 | Responsible | @rhazn                  |
 
 # Summary
