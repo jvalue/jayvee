@@ -14,15 +14,20 @@ export interface AttributeSpecification {
   docs?: AttributeDocs;
 }
 
-interface AttributeDocs {
+export interface ExampleDoc {
+  code: string;
+  description: string;
+}
+
+export interface AttributeDocs {
   description?: string;
-  example?: string;
+  examples?: ExampleDoc[];
   validation?: string;
 }
 
 interface BlockDocs {
   description?: string;
-  example?: string;
+  examples?: ExampleDoc[];
 }
 
 export abstract class BlockMetaInformation {
@@ -103,7 +108,7 @@ export abstract class BlockMetaInformation {
           spec.docs?.description,
         ]),
       )
-      .example(this.docs.example)
+      .examples(this.docs.examples)
       .build();
   }
 
@@ -117,7 +122,7 @@ export abstract class BlockMetaInformation {
       .attributeTitle(attributeName)
       .description(attribute.docs.description)
       .validation(attribute.docs.validation)
-      .example(attribute.docs.example)
+      .examples(attribute.docs.examples)
       .build();
   }
 }
