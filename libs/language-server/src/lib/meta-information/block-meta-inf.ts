@@ -7,8 +7,11 @@ import { IOType, UNDEFINED_TYPE } from '../types/io-types/io-type';
 
 export interface AttributeSpecification {
   type: AttributeType;
+  attributeDescription?: string;
   defaultValue?: unknown;
   validation?: (attribute: Attribute, accept: ValidationAcceptor) => void;
+  validationDescription?: string;
+  exampleUsageDescription?: string;
 }
 
 export abstract class BlockMetaInformation {
@@ -75,5 +78,42 @@ export abstract class BlockMetaInformation {
 
   hasOutput(): boolean {
     return this.outputType !== UNDEFINED_TYPE;
+  }
+
+  getMarkdownForAttributeDocumentation(
+    attributeName: string,
+  ): string | undefined {
+    const attribute = this.attributes[attributeName];
+    if (attribute === undefined) {
+      return undefined;
+    }
+
+    const defaultValueText =
+      attribute.defaultValue === undefined
+        ? ''
+        : `
+Defaults to value \`${JSON.stringify(attribute.defaultValue)}\``;
+
+    const validationText =
+      attribute.validationDescription === undefined
+        ? ''
+        : `
+## Validation
+${attribute.validationDescription}`;
+
+    const exampleText =
+      attribute.exampleUsageDescription === undefined
+        ? ''
+        : `
+## Example
+\`\`\`
+${attribute.exampleUsageDescription}
+\`\`\``;
+
+    return `# Attribute \`${attributeName}\`
+${attribute.attributeDescription ?? ''}
+${defaultValueText}
+${validationText}
+${exampleText}`;
   }
 }
