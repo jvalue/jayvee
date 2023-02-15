@@ -95,7 +95,7 @@ export abstract class BlockMetaInformation {
 
   getMarkdownDoc(): string {
     return new MarkdownDocBuilder()
-      .blockTitle(this.blockType)
+      .blockTypeTitle(this.blockType)
       .description(this.docs.description)
       .attributes(
         Object.entries(this.attributes).map(([key, spec]) => [
