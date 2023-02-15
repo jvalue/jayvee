@@ -11,17 +11,18 @@ export interface AttributeSpecification {
   type: AttributeType;
   defaultValue?: unknown;
   validation?: (attribute: Attribute, accept: ValidationAcceptor) => void;
-  docs?: {
-    description?: string;
-    validation?: string;
-    example?: string;
-  };
+  docs?: AttributeDocs;
+}
+
+interface AttributeDocs {
+  description?: string;
+  example?: string;
+  validation?: string;
 }
 
 interface BlockDocs {
   description?: string;
   example?: string;
-  validation?: string;
 }
 
 export abstract class BlockMetaInformation {
@@ -102,7 +103,6 @@ export abstract class BlockMetaInformation {
           spec.docs?.description,
         ]),
       )
-      .validation(this.docs.validation)
       .example(this.docs.example)
       .build();
   }
