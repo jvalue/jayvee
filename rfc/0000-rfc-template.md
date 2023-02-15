@@ -7,7 +7,7 @@
 | Responsible | `github-tag` | <!-- TODO: assign yourself as main driver of this RFC -->
 <!-- 
   Status Overview:
-  - DRAFT: The RFC is not ready for a review and currently under change.
+  - DRAFT: The RFC is not ready for a review and currently under change. Feel free to already ask for feedback on the structure and contents at this stage.
   - DISCUSSION: A merge request was opened to discuss the RFC.
   - ACCEPTED: The merge request was accepted. Create issues to prepare implementation of the RFC.
   - REJECTED: The merge request was rejected. If another revision emerges, switch to status DRAFT.
@@ -38,3 +38,7 @@
 ## Alternatives
 
 <!-- TODO: Point out alternatives to the design or parts of the design. -->
+
+## Possible Future Changes/Enhancements
+
+<!-- TODO: Point out what changes or enhancements you see in the future to the proposed concepts. -->
