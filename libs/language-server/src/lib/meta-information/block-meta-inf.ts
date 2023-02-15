@@ -14,7 +14,15 @@ export interface AttributeSpecification {
   exampleUsageDescription?: string;
 }
 
+interface BlockDocs {
+  description?: string;
+  example?: string;
+  validation?: string;
+}
+
 export abstract class BlockMetaInformation {
+  docs: BlockDocs = {};
+
   protected constructor(
     readonly blockType: string,
     private readonly inputType: IOType,
@@ -80,9 +88,29 @@ export abstract class BlockMetaInformation {
     return this.outputType !== UNDEFINED_TYPE;
   }
 
-  getMarkdownForAttributeDocumentation(
-    attributeName: string,
-  ): string | undefined {
+  getMarkdownDoc(): string {
+    let attributesText = '## Attributes\n';
+    Object.keys(this.attributes).forEach((v) => (attributesText += `- ${v}`));
+
+    const validationText =
+      this.docs.validation === undefined
+        ? ''
+        : `## Validation \n${this.docs.validation}`;
+
+    const exampleText =
+      this.docs.example === undefined
+        ? ''
+        : '## Example\n```\n' + `${this.docs.example}` + '\n```';
+
+    return `# Block \`${this.blockType}\`
+${this.docs.description ?? ''}
+${attributesText}
+${validationText}
+${exampleText}
+`;
+  }
+
+  getAttributeMarkdownDoc(attributeName: string): string | undefined {
     const attribute = this.attributes[attributeName];
     if (attribute === undefined) {
       return undefined;
