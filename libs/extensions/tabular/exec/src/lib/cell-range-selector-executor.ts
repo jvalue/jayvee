@@ -14,7 +14,8 @@ export class CellRangeSelectorExecutor extends BlockExecutor<Sheet, Sheet> {
     super('CellRangeSelector');
   }
 
-  override execute(inputSheet: Sheet): R.Result<Sheet> {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  override async execute(inputSheet: Sheet): Promise<R.Result<Sheet>> {
     const relativeRange = this.getCellRangeAttributeValue('select');
 
     const absoluteRange = resolveRelativeIndexes(inputSheet, relativeRange);

@@ -22,7 +22,8 @@ export class RowDeleterExecutor extends BlockExecutor<Sheet, Sheet> {
     super('RowDeleter');
   }
 
-  override execute(inputSheet: Sheet): R.Result<Sheet> {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  override async execute(inputSheet: Sheet): Promise<R.Result<Sheet>> {
     const relativeRows = this.getCellRangeCollectionAttributeValue('delete');
     assert(relativeRows.every(isSemanticRow));
 

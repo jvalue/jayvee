@@ -24,7 +24,8 @@ export class TableInterpreterExecutor extends BlockExecutor<Sheet, Table> {
     super('TableInterpreter');
   }
 
-  override execute(inputSheet: Sheet): R.Result<Table> {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  override async execute(inputSheet: Sheet): Promise<R.Result<Table>> {
     const header = this.getBooleanAttributeValue('header');
     const columnDefinitions =
       this.getDataTypeAssignmentCollectionAttributeValue('columns');

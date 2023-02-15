@@ -16,7 +16,8 @@ export class CellWriterExecutor extends BlockExecutor<Sheet, Sheet> {
     super('CellWriter');
   }
 
-  override execute(inputSheet: Sheet): R.Result<Sheet> {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  override async execute(inputSheet: Sheet): Promise<R.Result<Sheet>> {
     const relativeCell = this.getCellRangeAttributeValue('at');
     const content = this.getStringAttributeValue('write');
 
