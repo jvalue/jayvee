@@ -90,7 +90,7 @@ export class LayoutValidatorExecutor extends BlockExecutor<Sheet, Table> {
             value,
             `${rowIndex + 1}`,
             columnIndexAsCharacters(columnIndex),
-            type.languageType,
+            type.dataType,
           ),
         );
       }
@@ -112,7 +112,7 @@ export class LayoutValidatorExecutor extends BlockExecutor<Sheet, Table> {
             value,
             `${rowIndex + 1}`,
             columnIndexAsCharacters(columnIndex),
-            type.languageType,
+            type.dataType,
           ),
         );
       }

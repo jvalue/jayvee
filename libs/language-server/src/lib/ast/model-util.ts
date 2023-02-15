@@ -11,6 +11,7 @@ import {
   Pipeline,
   isCellRangeCollection,
   isCellRangeValue,
+  isDataTypeAssignmentCollection,
   isIntValue,
   isLayoutReferenceValue,
   isStringValue,
@@ -151,6 +152,7 @@ export enum AttributeType {
   LAYOUT = 'layout',
   CELL_RANGE = 'cell range',
   CELL_RANGE_COLLECTION = 'cell range collection',
+  DATA_TYPE_ASSIGNMENT_COLLECTION = 'data type assignment collection',
 }
 
 export function runtimeParameterAllowedForType(type: AttributeType): boolean {
@@ -158,6 +160,7 @@ export function runtimeParameterAllowedForType(type: AttributeType): boolean {
     case AttributeType.LAYOUT:
     case AttributeType.CELL_RANGE:
     case AttributeType.CELL_RANGE_COLLECTION:
+    case AttributeType.DATA_TYPE_ASSIGNMENT_COLLECTION:
       return false;
     case AttributeType.STRING:
     case AttributeType.INT:
@@ -181,6 +184,9 @@ export function convertAttributeValueToType(
   }
   if (isCellRangeCollection(value)) {
     return AttributeType.CELL_RANGE_COLLECTION;
+  }
+  if (isDataTypeAssignmentCollection(value)) {
+    return AttributeType.DATA_TYPE_ASSIGNMENT_COLLECTION;
   }
   if (isLayoutReferenceValue(value)) {
     return AttributeType.LAYOUT;

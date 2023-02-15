@@ -1,3 +1,4 @@
+import 'data-type'
 import 'terminals'
 
 Layout:
@@ -16,7 +17,4 @@ HeaderRowSection:
   'header' 'row' rowId=INT TypeFragment;
 
 fragment TypeFragment:
-  ':' type=Type ';';
-
-Type returns string:
-  'text' | 'decimal' | 'integer' | 'boolean';
+  ':' type=DataType ';';
