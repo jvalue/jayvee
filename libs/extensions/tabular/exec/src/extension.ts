@@ -10,6 +10,7 @@ import { ColumnDeleterExecutor } from './lib/column-deleter-executor';
 import { CSVFileExtractorExecutor } from './lib/csv-file-extractor-executor';
 import { LayoutValidatorExecutor } from './lib/layout-validator-executor';
 import { RowDeleterExecutor } from './lib/row-deleter-executor';
+import { TableInterpreterExecutor } from './lib/table-interpreter-executor';
 
 export class TabularExecExtension implements JayveeExecExtension {
   getBlockExecutors(): Array<
@@ -22,6 +23,7 @@ export class TabularExecExtension implements JayveeExecExtension {
       ColumnDeleterExecutor,
       RowDeleterExecutor,
       CellRangeSelectorExecutor,
+      TableInterpreterExecutor,
     ];
   }
 }
