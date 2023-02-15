@@ -5,13 +5,17 @@ import { ValidationAcceptor } from 'langium';
 import { Attribute, AttributeType, Block } from '../ast';
 import { IOType, UNDEFINED_TYPE } from '../types/io-types/io-type';
 
+import { MarkdownDocBuilder } from './markdown-doc-builder';
+
 export interface AttributeSpecification {
   type: AttributeType;
-  attributeDescription?: string;
   defaultValue?: unknown;
   validation?: (attribute: Attribute, accept: ValidationAcceptor) => void;
-  validationDescription?: string;
-  exampleUsageDescription?: string;
+  docs?: {
+    description?: string;
+    validation?: string;
+    example?: string;
+  };
 }
 
 interface BlockDocs {
@@ -89,59 +93,31 @@ export abstract class BlockMetaInformation {
   }
 
   getMarkdownDoc(): string {
-    let attributesText = '## Attributes\n';
-    Object.keys(this.attributes).forEach((v) => (attributesText += `- ${v}`));
-
-    const validationText =
-      this.docs.validation === undefined
-        ? ''
-        : `## Validation \n${this.docs.validation}`;
-
-    const exampleText =
-      this.docs.example === undefined
-        ? ''
-        : '## Example\n```\n' + `${this.docs.example}` + '\n```';
-
-    return `# Block \`${this.blockType}\`
-${this.docs.description ?? ''}
-${attributesText}
-${validationText}
-${exampleText}
-`;
+    return new MarkdownDocBuilder()
+      .blockTitle(this.blockType)
+      .description(this.docs.description)
+      .attributes(
+        Object.entries(this.attributes).map(([key, spec]) => [
+          key,
+          spec.docs?.description,
+        ]),
+      )
+      .validation(this.docs.validation)
+      .example(this.docs.example)
+      .build();
   }
 
   getAttributeMarkdownDoc(attributeName: string): string | undefined {
     const attribute = this.attributes[attributeName];
-    if (attribute === undefined) {
+    if (attribute === undefined || attribute.docs === undefined) {
       return undefined;
     }
 
-    const defaultValueText =
-      attribute.defaultValue === undefined
-        ? ''
-        : `
-Defaults to value \`${JSON.stringify(attribute.defaultValue)}\``;
-
-    const validationText =
-      attribute.validationDescription === undefined
-        ? ''
-        : `
-## Validation
-${attribute.validationDescription}`;
-
-    const exampleText =
-      attribute.exampleUsageDescription === undefined
-        ? ''
-        : `
-## Example
-\`\`\`
-${attribute.exampleUsageDescription}
-\`\`\``;
-
-    return `# Attribute \`${attributeName}\`
-${attribute.attributeDescription ?? ''}
-${defaultValueText}
-${validationText}
-${exampleText}`;
+    return new MarkdownDocBuilder()
+      .attributeTitle(attributeName)
+      .description(attribute.docs.description)
+      .validation(attribute.docs.validation)
+      .example(attribute.docs.example)
+      .build();
   }
 }
