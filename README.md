@@ -34,7 +34,7 @@ We use RFCs to discuss changes to the language before implementing them. You can
 If you want to contribute an RFC please follow these steps:
 1. Make a copy of the [template](./rfc/0000-rfc-template.md) and place it into the `rfc` folder.
 2. Create a draft for the RFC on a new branch. Follow the `TODOs` in template to do so.
-3. Open a pull request with appendix `RFC <number>` in the title.
+3. Open a pull request with prefix `RFC <number>` in the title.
 4. Address the reviews. Consider opening a new PR if major things need to be addressed and the discussion log becomes too confusing.
 5. Once accepted, create an issue with the necessary steps to implement the RFC.
 
