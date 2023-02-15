@@ -88,6 +88,9 @@ export function extractRuntimeParameters(
   return parameters;
 }
 
+const TRUE = 'true';
+const FALSE = 'false';
+
 /**
  * Parses a runtime parameter value to the required type.
  * @param value The string value to be parsed.
@@ -116,6 +119,17 @@ export function parseParameterAsMatchingType(
         });
       }
       return R.ok(Number.parseInt(value, 10));
+    case AttributeType.BOOLEAN:
+      if (value === TRUE) {
+        return R.ok(true);
+      }
+      if (value === FALSE) {
+        return R.ok(false);
+      }
+      return R.err({
+        message: `Runtime parameter ${astNode.name} has value "${value}" which is not of type boolean. Expected "${TRUE}" or "${FALSE}".`,
+        diagnostic: { node: astNode },
+      });
     default:
       throw new Error(
         `Unable to parse runtime parameters of type ${type}, please provide an implementation.`,

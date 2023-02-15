@@ -9,6 +9,7 @@ import { ColumnDeleterMetaInformation } from './lib/column-deleter-meta-inf';
 import { CSVFileExtractorMetaInformation } from './lib/csv-file-extractor-meta-information';
 import { LayoutValidatorMetaInformation } from './lib/layout-validator-meta-inf';
 import { RowDeleterMetaInformation } from './lib/row-deleter-meta-inf';
+import { TableInterpreterMetaInformation } from './lib/table-interpreter-meta-inf';
 
 export class TabularLangExtension implements JayveeLangExtension {
   getBlockMetaInf(): BlockMetaInformation[] {
@@ -19,6 +20,7 @@ export class TabularLangExtension implements JayveeLangExtension {
       new RowDeleterMetaInformation(),
       new CellRangeSelectorMetaInformation(),
       new CellWriterMetaInformation(),
+      new TableInterpreterMetaInformation(),
     ];
   }
 }

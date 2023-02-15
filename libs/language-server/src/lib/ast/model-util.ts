@@ -9,6 +9,7 @@ import {
   Block,
   Pipe,
   Pipeline,
+  isBooleanValue,
   isCellRangeCollection,
   isCellRangeValue,
   isDataTypeAssignmentCollection,
@@ -149,6 +150,7 @@ export function getBlocksInTopologicalSorting(pipeline: Pipeline): Block[] {
 export enum AttributeType {
   STRING = 'string',
   INT = 'integer',
+  BOOLEAN = 'boolean',
   LAYOUT = 'layout',
   CELL_RANGE = 'cell range',
   CELL_RANGE_COLLECTION = 'cell range collection',
@@ -164,6 +166,7 @@ export function runtimeParameterAllowedForType(type: AttributeType): boolean {
       return false;
     case AttributeType.STRING:
     case AttributeType.INT:
+    case AttributeType.BOOLEAN:
       return true;
     default:
       assertUnreachable(type);
@@ -178,6 +181,9 @@ export function convertAttributeValueToType(
   }
   if (isIntValue(value)) {
     return AttributeType.INT;
+  }
+  if (isBooleanValue(value)) {
+    return AttributeType.BOOLEAN;
   }
   if (isCellRangeValue(value)) {
     return AttributeType.CELL_RANGE;

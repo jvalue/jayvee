@@ -7,19 +7,22 @@ fragment AttributesFragment:
   '{' (attributes+=Attribute)* '}';
 
 Attribute:
-  name=ID ':' value=(AttributeValue | RuntimeParameter) ';';
+  name=(ID | 'header') ':' value=(AttributeValue | RuntimeParameter) ';';
 
 RuntimeParameter:
   'requires' name=ID;
 
 AttributeValue:
-  StringValue | IntValue | CellRangeValue | DataTypeAssignmentCollection | CellRangeCollection | LayoutReferenceValue;
+  StringValue | IntValue | BooleanValue | CellRangeValue | DataTypeAssignmentCollection | CellRangeCollection | LayoutReferenceValue;
 
 StringValue:
   value=STRING;
 
 IntValue:
   value=INT;
+
+BooleanValue:
+  value=(TRUE | FALSE);
 
 DataTypeAssignmentCollection:
   '[' (value+=DataTypeAssignment (',' value+=DataTypeAssignment)*)? ']';
