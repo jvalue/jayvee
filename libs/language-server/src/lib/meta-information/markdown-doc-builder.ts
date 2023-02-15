@@ -6,8 +6,8 @@ export class MarkdownDocBuilder {
     return this;
   }
 
-  blockTitle(blockName: string): MarkdownDocBuilder {
-    return this.title(`Block \`${blockName}\``);
+  blockTypeTitle(blockType: string): MarkdownDocBuilder {
+    return this.title(`BlockType \`${blockType}\``);
   }
 
   attributeTitle(attributeName: string): MarkdownDocBuilder {
