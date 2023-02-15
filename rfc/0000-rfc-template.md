@@ -8,9 +8,9 @@
 <!-- 
   Status Overview:
   - DRAFT: The RFC is not ready for a review and currently under change. Feel free to already ask for feedback on the structure and contents at this stage.
-  - DISCUSSION: A merge request was opened to discuss the RFC.
-  - ACCEPTED: The merge request was accepted. Create issues to prepare implementation of the RFC.
-  - REJECTED: The merge request was rejected. If another revision emerges, switch to status DRAFT.
+  - DISCUSSION: The RFC is open for discussion. Usually, we open a PR to trigger discussions.
+  - ACCEPTED: The RFC was accepted. Create issues to prepare implementation of the RFC.
+  - REJECTED: The RFC was rejected. If another revision emerges, switch to status DRAFT.
 -->
 
 ## Summary
@@ -21,7 +21,7 @@
 
 <!-- TODO: Describe the challenge the RFC addresses. -->
 
-<!-- TODO: Introduce an exemplary data set that benefits from this RFC (used later in explanation). -->
+<!-- TODO: (optional) Introduce an exemplary data set that benefits from this RFC (used later in explanation). -->
 
 ## Explanation
 
@@ -33,12 +33,12 @@
 
 ## Drawbacks
 
-<!-- TODO: Discuss the drawbacks of the propsed design. -->
+<!-- TODO: (optional) Discuss the drawbacks of the proposed design. -->
 
 ## Alternatives
 
-<!-- TODO: Point out alternatives to the design or parts of the design. -->
+<!-- TODO: (optional) Point out alternatives to the design or parts of the design. -->
 
 ## Possible Future Changes/Enhancements
 
-<!-- TODO: Point out what changes or enhancements you see in the future to the proposed concepts. -->
+<!-- TODO: (optional) Point out what changes or enhancements you see in the future to the proposed concepts. -->
