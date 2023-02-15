@@ -22,7 +22,7 @@ export class RowDeleterExecutor extends BlockExecutor<Sheet, Sheet> {
     super('RowDeleter');
   }
 
-  override execute(inputSheet: Sheet): Promise<R.Result<Sheet>> {
+  override execute(inputSheet: Sheet): R.Result<Sheet> {
     const relativeRows = this.getCellRangeCollectionAttributeValue('delete');
     assert(relativeRows.every(isSemanticRow));
 
@@ -33,14 +33,12 @@ export class RowDeleterExecutor extends BlockExecutor<Sheet, Sheet> {
     for (const row of absoluteRows) {
       if (!isInBounds(inputSheet, row)) {
         const rowIndex = getRowIndex(row);
-        return Promise.resolve(
-          R.err({
-            message: `The specified row ${rowIndexToString(
-              rowIndex,
-            )} does not exist in the sheet`,
-            diagnostic: { node: row.astNode },
-          }),
-        );
+        return R.err({
+          message: `The specified row ${rowIndexToString(
+            rowIndex,
+          )} does not exist in the sheet`,
+          diagnostic: { node: row.astNode },
+        });
       }
     }
 
@@ -65,7 +63,7 @@ export class RowDeleterExecutor extends BlockExecutor<Sheet, Sheet> {
       deleteRow(resultingSheet, row);
     });
 
-    return Promise.resolve(R.ok(resultingSheet));
+    return R.ok(resultingSheet);
   }
 
   private sortByRowIndex(rows: SemanticRow[]): void {

@@ -12,7 +12,7 @@ import {
   isLayout,
   isRuntimeParameter,
 } from '@jayvee/language-server';
-import { isReference } from 'langium';
+import { MaybePromise, isReference } from 'langium';
 
 import * as R from './execution-result';
 import { Logger } from './logger';
@@ -70,7 +70,7 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
     return this._logger;
   }
 
-  abstract execute(input: InputType): Promise<R.Result<OutputType>>;
+  abstract execute(input: InputType): MaybePromise<R.Result<OutputType>>;
 
   protected getStringAttributeValue(attributeName: string): string {
     const attributeValue = this.getAttributeValue(attributeName);

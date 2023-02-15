@@ -24,7 +24,7 @@ export class TableInterpreterExecutor extends BlockExecutor<Sheet, Table> {
     super('TableInterpreter');
   }
 
-  override async execute(inputSheet: Sheet): Promise<R.Result<Table>> {
+  override execute(inputSheet: Sheet): R.Result<Table> {
     const header = this.getBooleanAttributeValue('header');
     const columnDefinitions =
       this.getDataTypeAssignmentCollectionAttributeValue('columns');
@@ -33,14 +33,12 @@ export class TableInterpreterExecutor extends BlockExecutor<Sheet, Table> {
 
     if (header) {
       if (inputSheet.height < 1) {
-        return Promise.resolve(
-          R.err({
-            message: 'The input sheet is empty and thus has no header',
-            diagnostic: {
-              node: this.getOrFailAttribute('header'),
-            },
-          }),
-        );
+        return R.err({
+          message: 'The input sheet is empty and thus has no header',
+          diagnostic: {
+            node: this.getOrFailAttribute('header'),
+          },
+        });
       }
 
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -52,14 +50,12 @@ export class TableInterpreterExecutor extends BlockExecutor<Sheet, Table> {
       );
     } else {
       if (inputSheet.width < columnDefinitions.length) {
-        return Promise.resolve(
-          R.err({
-            message: `There are ${columnDefinitions.length} column definitions but the input sheet only has ${inputSheet.width} columns`,
-            diagnostic: {
-              node: this.getOrFailAttribute('columns'),
-            },
-          }),
-        );
+        return R.err({
+          message: `There are ${columnDefinitions.length} column definitions but the input sheet only has ${inputSheet.width} columns`,
+          diagnostic: {
+            node: this.getOrFailAttribute('columns'),
+          },
+        });
       }
 
       columnEntries =
@@ -95,7 +91,7 @@ export class TableInterpreterExecutor extends BlockExecutor<Sheet, Table> {
       data: tableData,
     };
 
-    return Promise.resolve(R.ok(resultingTable));
+    return R.ok(resultingTable);
   }
 
   private constructAndValidateTableData(

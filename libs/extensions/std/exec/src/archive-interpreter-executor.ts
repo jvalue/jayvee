@@ -71,16 +71,14 @@ export class ArchiveInterpreterExecutor extends BlockExecutor<
           root.putFile(relPath, file);
         }
       }
-      return Promise.resolve(R.ok(root));
+      return R.ok(root);
     } catch (error: unknown) {
-      return Promise.resolve(
-        R.err({
-          message: `Unexpected Error ${
-            err instanceof Error ? err.message : JSON.stringify(err)
-          } occured during processing`,
-          diagnostic: { node: this.block, property: 'name' },
-        }),
-      );
+      return R.err({
+        message: `Unexpected Error ${
+          error instanceof Error ? error.message : JSON.stringify(err)
+        } occured during processing`,
+        diagnostic: { node: this.block, property: 'name' },
+      });
     }
   }
 }

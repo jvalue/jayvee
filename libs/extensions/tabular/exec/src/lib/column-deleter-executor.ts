@@ -22,7 +22,7 @@ export class ColumnDeleterExecutor extends BlockExecutor<Sheet, Sheet> {
     super('ColumnDeleter');
   }
 
-  override execute(inputSheet: Sheet): Promise<R.Result<Sheet>> {
+  override execute(inputSheet: Sheet): R.Result<Sheet> {
     const relativeColumns = this.getCellRangeCollectionAttributeValue('delete');
     assert(relativeColumns.every(isSemanticColumn));
 
@@ -33,14 +33,12 @@ export class ColumnDeleterExecutor extends BlockExecutor<Sheet, Sheet> {
     for (const column of absoluteColumns) {
       if (!isInBounds(inputSheet, column)) {
         const columnIndex = getColumnIndex(column);
-        return Promise.resolve(
-          R.err({
-            message: `The specified column ${columnIndexToString(
-              columnIndex,
-            )} does not exist in the sheet`,
-            diagnostic: { node: column.astNode },
-          }),
-        );
+        return R.err({
+          message: `The specified column ${columnIndexToString(
+            columnIndex,
+          )} does not exist in the sheet`,
+          diagnostic: { node: column.astNode },
+        });
       }
     }
 
@@ -65,7 +63,7 @@ export class ColumnDeleterExecutor extends BlockExecutor<Sheet, Sheet> {
       deleteColumn(resultingSheet, column);
     });
 
-    return Promise.resolve(R.ok(resultingSheet));
+    return R.ok(resultingSheet);
   }
 
   private sortByColumnIndex(columns: SemanticColumn[]): void {

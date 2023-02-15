@@ -16,7 +16,7 @@ export class CellWriterExecutor extends BlockExecutor<Sheet, Sheet> {
     super('CellWriter');
   }
 
-  override execute(inputSheet: Sheet): Promise<R.Result<Sheet>> {
+  override execute(inputSheet: Sheet): R.Result<Sheet> {
     const relativeCell = this.getCellRangeAttributeValue('at');
     const content = this.getStringAttributeValue('write');
 
@@ -24,12 +24,10 @@ export class CellWriterExecutor extends BlockExecutor<Sheet, Sheet> {
 
     const absoluteCell = resolveRelativeIndexes(inputSheet, relativeCell);
     if (!isInBounds(inputSheet, absoluteCell)) {
-      return Promise.resolve(
-        R.err({
-          message: 'The specified cell does not exist in the sheet',
-          diagnostic: { node: absoluteCell.astNode },
-        }),
-      );
+      return R.err({
+        message: 'The specified cell does not exist in the sheet',
+        diagnostic: { node: absoluteCell.astNode },
+      });
     }
 
     this.logger.logDebug(
@@ -39,6 +37,6 @@ export class CellWriterExecutor extends BlockExecutor<Sheet, Sheet> {
     const resultingSheet = clone(inputSheet);
     writeCell(resultingSheet, absoluteCell, content);
 
-    return Promise.resolve(R.ok(resultingSheet));
+    return R.ok(resultingSheet);
   }
 }

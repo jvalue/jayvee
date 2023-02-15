@@ -14,18 +14,16 @@ export class CellRangeSelectorExecutor extends BlockExecutor<Sheet, Sheet> {
     super('CellRangeSelector');
   }
 
-  override execute(inputSheet: Sheet): Promise<R.Result<Sheet>> {
+  override execute(inputSheet: Sheet): R.Result<Sheet> {
     const relativeRange = this.getCellRangeAttributeValue('select');
 
     const absoluteRange = resolveRelativeIndexes(inputSheet, relativeRange);
 
     if (!isInBounds(inputSheet, absoluteRange)) {
-      return Promise.resolve(
-        R.err({
-          message: 'The specified cell range does not fit the sheet',
-          diagnostic: { node: absoluteRange.astNode },
-        }),
-      );
+      return R.err({
+        message: 'The specified cell range does not fit the sheet',
+        diagnostic: { node: absoluteRange.astNode },
+      });
     }
 
     this.logger.logDebug(`Selecting cell range ${absoluteRange.toString()}`);
@@ -33,6 +31,6 @@ export class CellRangeSelectorExecutor extends BlockExecutor<Sheet, Sheet> {
     const resultingSheet = clone(inputSheet);
     selectRange(resultingSheet, absoluteRange);
 
-    return Promise.resolve(R.ok(resultingSheet));
+    return R.ok(resultingSheet);
   }
 }
