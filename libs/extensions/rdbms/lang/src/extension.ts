@@ -1,5 +1,5 @@
 import {
-  BlockMetaInformation,
+  BlockMetaInformationType,
   JayveeLangExtension,
 } from '@jayvee/language-server';
 
@@ -9,10 +9,7 @@ import {
 } from './lib';
 
 export class RdbmsLangExtension implements JayveeLangExtension {
-  getBlockMetaInf(): BlockMetaInformation[] {
-    return [
-      new PostgresLoaderMetaInformation(),
-      new SQLiteLoaderMetaInformation(),
-    ];
+  getBlockMetaInf(): BlockMetaInformationType[] {
+    return [PostgresLoaderMetaInformation, SQLiteLoaderMetaInformation];
   }
 }

@@ -37,12 +37,12 @@ In `libs/extensions/<extension-name>/lang/src/extension.ts`:
 
 ```typescript
 import {
-  BlockMetaInformation,
+  BlockMetaInformationType,
   JayveeLangExtension,
 } from '@jayvee/language-server';
 
 export class MyLangExtension implements JayveeLangExtension {
-  getBlockMetaInf(): BlockMetaInformation[] {
+  getBlockMetaInf(): BlockMetaInformationType[] {
     return [];
   }
 }
@@ -52,15 +52,12 @@ In `libs/extensions/<extension-name>/exec/src/extension.ts`:
 
 ```typescript
 import {
-  BlockExecutor,
   BlockExecutorType,
   JayveeExecExtension,
 } from '@jayvee/execution';
 
 export class MyExecExtension implements JayveeExecExtension {
-  getBlockExecutors(): Array<
-    BlockExecutorType<BlockExecutor<unknown, unknown>>
-  > {
+  getBlockExecutors(): BlockExecutorType[] {
     return [];
   }
 }
@@ -183,11 +180,11 @@ In `libs/extensions/<extension-name>/lang/src/extension.ts`:
 import { MyExtractorMetaInformation } from './lib/my-extractor-meta-inf';
 
 export class MyLangExtension implements JayveeLangExtension {
-  getBlockMetaInf(): BlockMetaInformation[] {
+  getBlockMetaInf(): BlockMetaInformationType[] {
     return [
       // ...
       // Register your meta information here:
-      new MyExtractorMetaInformation(),
+      MyExtractorMetaInformation,
       // ...
     ];
   }
@@ -247,9 +244,7 @@ In `libs/extensions/<extension-name>/exec/src/extension.ts`:
 import { MyExtractorExecutor } from './lib/my-extractor-executor';
 
 export class MyExecExtension implements JayveeExecExtension {
-  getBlockExecutors(): Array<
-    BlockExecutorType<BlockExecutor<unknown, unknown>>
-  > {
+  getBlockExecutors(): BlockExecutorType[] {
     return [
       // ...
       // Register your block executor here:
