@@ -3,10 +3,12 @@ import { strict as assert } from 'assert';
 import {
   Attribute,
   Block,
+  DataTypeAssignment,
   Layout,
   SemanticCellRange,
   getOrFailMetaInformation,
   isCellRange,
+  isDataTypeAssignment,
   isLayout,
   isRuntimeParameter,
 } from '@jayvee/language-server';
@@ -90,6 +92,16 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
     return attributeValue;
   }
 
+  protected getBooleanAttributeValue(attributeName: string): boolean {
+    const attributeValue = this.getAttributeValue(attributeName);
+    assert(
+      typeof attributeValue === 'boolean',
+      `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type boolean`,
+    );
+
+    return attributeValue;
+  }
+
   protected getLayoutAttributeValue(attributeName: string): Layout {
     const attributeValue = this.getAttributeValue(attributeName);
     assert(
@@ -121,6 +133,19 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
       `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type cell range collection`,
     );
     return attributeValue.map((cellRange) => new SemanticCellRange(cellRange));
+  }
+
+  protected getDataTypeAssignmentCollectionAttributeValue(
+    attributeName: string,
+  ): DataTypeAssignment[] {
+    const attributeValue = this.getAttributeValue(attributeName);
+    assert(
+      Array.isArray(attributeValue) &&
+        attributeValue.every(isDataTypeAssignment),
+      `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type data type assignment collection`,
+    );
+
+    return attributeValue;
   }
 
   private getAttributeValue(attributeName: string): unknown {

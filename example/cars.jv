@@ -5,42 +5,39 @@ pipeline CarsPipeline {
 	
 	pipe {
 		from: CarsExtractor;
-		to: CarColumnNameWriter;
+		to: NameHeaderWriter;
 	}
 
-	block CarColumnNameWriter oftype CellWriter {
+	block NameHeaderWriter oftype CellWriter {
 		at: cell A1;
 		write: "name";
 	}
 
     pipe {
-        from: CarColumnNameWriter;
-        to: CarsValidator;
+        from: NameHeaderWriter;
+        to: CarsTableInterpreter;
     }
 
-	layout CarsLayout {
-		header row 1: text;
-
-		column A: text;
-		column B: decimal;
-		column C: integer;
-		column D: decimal;
-		column E: integer;
-		column F: decimal;
-		column G: decimal;
-		column H: decimal;
-		column I: integer;
-		column J: integer;
-		column K: integer;
-		column L: integer;
-	}
-
-	block CarsValidator oftype LayoutValidator {
-		validationLayout: CarsLayout;
+	block CarsTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns: [
+			"name" typed text,
+			"mpg" typed decimal,
+			"cyl" typed integer,
+			"disp" typed decimal,
+			"hp" typed integer,
+			"drat" typed decimal,
+			"wt" typed decimal,
+			"qsec" typed decimal,
+			"vs" typed integer,
+			"am" typed integer,
+			"gear" typed integer,
+			"carb" typed integer
+		];
 	}
 
 	pipe {
-		from: CarsValidator;
+		from: CarsTableInterpreter;
 		to: CarsLoader;
 	}
 
