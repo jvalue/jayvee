@@ -20,8 +20,12 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
           if (!isCellRangeValue(attributeValue)) {
             return;
           }
+          const cellRange = attributeValue.value;
 
-          const semanticCelLRange = new SemanticCellRange(attributeValue.value);
+          if (!SemanticCellRange.canBeWrapped(cellRange)) {
+            return;
+          }
+          const semanticCelLRange = new SemanticCellRange(cellRange);
           if (!isSemanticCell(semanticCelLRange)) {
             accept('error', 'A single cell needs to be selected', {
               node: semanticCelLRange.astNode,

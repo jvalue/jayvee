@@ -119,6 +119,21 @@ export class SemanticCellRange<N extends CellRange = CellRange>
     }
   }
 
+  static canBeWrapped(cellRange: CellRange): boolean {
+    if (isCellExpression(cellRange)) {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      return cellRange.cellId !== undefined;
+    } else if (isColumnExpression(cellRange)) {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      return cellRange.columnId !== undefined;
+    } else if (isRowExpression(cellRange)) {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      return cellRange.rowId !== undefined;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    return cellRange.cellFrom !== undefined && cellRange.cellTo !== undefined;
+  }
+
   isInBounds(bounds: CellIndexBounds): boolean {
     return this.from.isInBounds(bounds) && this.to.isInBounds(bounds);
   }
@@ -148,12 +163,15 @@ export type SemanticColumn = SemanticCellRange<
 export function isSemanticColumn(
   cellRange: SemanticCellRange,
 ): cellRange is SemanticColumn {
-  if (cellRange.from.columnIndex === cellRange.to.columnIndex) {
-    assert(
-      isColumnExpression(cellRange.astNode) ||
-        isRangeExpression(cellRange.astNode),
-    );
+  if (isColumnExpression(cellRange.astNode)) {
     return true;
+  }
+  if (isRangeExpression(cellRange.astNode)) {
+    return (
+      cellRange.from.columnIndex === cellRange.to.columnIndex &&
+      cellRange.from.rowIndex === 0 &&
+      cellRange.to.rowIndex === LAST_INDEX
+    );
   }
   return false;
 }
@@ -168,12 +186,15 @@ export type SemanticRow = SemanticCellRange<RowExpression | RangeExpression>;
 export function isSemanticRow(
   cellRange: SemanticCellRange,
 ): cellRange is SemanticRow {
-  if (cellRange.from.rowIndex === cellRange.to.rowIndex) {
-    assert(
-      isRowExpression(cellRange.astNode) ||
-        isRangeExpression(cellRange.astNode),
-    );
+  if (isRowExpression(cellRange.astNode)) {
     return true;
+  }
+  if (isRangeExpression(cellRange.astNode)) {
+    return (
+      cellRange.from.rowIndex === cellRange.to.rowIndex &&
+      cellRange.from.columnIndex === 0 &&
+      cellRange.to.columnIndex === LAST_INDEX
+    );
   }
   return false;
 }
@@ -188,15 +209,14 @@ export type SemanticCell = SemanticCellRange<CellExpression | RangeExpression>;
 export function isSemanticCell(
   cellRange: SemanticCellRange,
 ): cellRange is SemanticCell {
-  if (
-    cellRange.from.rowIndex === cellRange.to.rowIndex &&
-    cellRange.from.rowIndex === cellRange.to.rowIndex
-  ) {
-    assert(
-      isCellExpression(cellRange.astNode) ||
-        isRangeExpression(cellRange.astNode),
-    );
+  if (isCellExpression(cellRange.astNode)) {
     return true;
+  }
+  if (isRangeExpression(cellRange.astNode)) {
+    return (
+      cellRange.from.columnIndex === cellRange.to.columnIndex &&
+      cellRange.from.rowIndex === cellRange.to.rowIndex
+    );
   }
   return false;
 }

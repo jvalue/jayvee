@@ -19,6 +19,9 @@ export class ColumnDeleterMetaInformation extends BlockMetaInformation {
           }
 
           for (const cellRange of attributeValue.value) {
+            if (!SemanticCellRange.canBeWrapped(cellRange)) {
+              continue;
+            }
             const semanticCellRange = new SemanticCellRange(cellRange);
             if (!isSemanticColumn(semanticCellRange)) {
               accept('error', 'An entire column needs to be selected', {
