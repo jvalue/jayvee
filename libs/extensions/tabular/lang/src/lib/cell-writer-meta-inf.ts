@@ -13,11 +13,11 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
       write: {
         type: AttributeType.STRING,
         docs: {
-          description: 'Speficy the value to write.',
+          description: 'The value to write.',
           examples: [
             {
               code: 'write: "Name"',
-              description: 'Write value "Name" into the cell',
+              description: 'Write the value "Name" into the cell',
             },
           ],
         },
@@ -42,23 +42,23 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
           }
         },
         docs: {
-          description: 'Speficy the cell position to write into.',
+          description: 'The cell to write into.',
           examples: [{ code: 'at: A1', description: 'Write into cell A1' }],
           validation: 'You need to specify exactly one cell.',
         },
       },
     });
-    this.docs.description = 'Writes a `String` value into a `Sheet`.';
+    this.docs.description = 'Writes a textual value into a cell of a `Sheet`.';
     this.docs.examples = [
       {
         code: blockExample,
-        description: 'Write the string value "Name" into cell `A1`.',
+        description: 'Write the value "Name" into cell `A1`.',
       },
     ];
   }
 }
 
-const blockExample = `block CarColumnNameWriter oftype CellWriter {
+const blockExample = `block NameHeaderWriter oftype CellWriter {
   at: cell A1;
   write: "Name";
 }`;

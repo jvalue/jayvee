@@ -45,29 +45,29 @@ export class RowDeleterMetaInformation extends BlockMetaInformation {
           }
         },
         docs: {
-          description: 'Speficy the row to delete.',
+          description: 'The rows to delete.',
           examples: [
             {
-              code: 'delete: row 2',
+              code: 'delete: [row 2]',
               description: 'Delete row 2.',
             },
           ],
-          validation: 'You need to specify exactly one row.',
+          validation: 'You need to specify at least one row.',
         },
       },
     });
 
     this.docs.description =
-      'Deletes a row from a `Sheet`. Row indices are recalculated.';
+      'Deletes one or more rows from a `Sheet`. Row IDs of subsequent rows will be shifted accordingly, so there will be no gaps.';
     this.docs.examples = [
       {
         code: blockExample,
-        description: 'Drops row 2 (the second one).',
+        description: 'Deletes row 2 (i.e. the second row).',
       },
     ];
   }
 }
 
 const blockExample = `block SecondRowDeleter oftype ColumnDeleter {
-  delete: row 2;
+  delete: [row 2];
 }`;
