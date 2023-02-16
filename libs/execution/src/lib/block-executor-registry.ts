@@ -23,10 +23,11 @@ export function createBlockExecutor(
   runtimeParameters: Map<string, string | number | boolean>,
   logger: Logger,
 ): BlockExecutor {
-  const blockExecutor = registeredBlockExecutors.get(block.type);
+  const blockType = block.type.name;
+  const blockExecutor = registeredBlockExecutors.get(blockType);
   assert(
     blockExecutor !== undefined,
-    `No executor was registered for block type ${block.type}`,
+    `No executor was registered for block type ${blockType}`,
   );
 
   const blockExecutorInstance = new blockExecutor();

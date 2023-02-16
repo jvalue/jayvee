@@ -1,5 +1,7 @@
 import { strict as assert } from 'assert';
 
+import { BlockType } from '../ast/generated/ast';
+
 import type { BlockMetaInformation } from './block-meta-inf';
 
 const registeredBlockMetaInformation = new Map<string, BlockMetaInformation>();
@@ -9,9 +11,9 @@ export function registerBlockMetaInformation(metaInf: BlockMetaInformation) {
 }
 
 export function getMetaInformation(
-  blockType: string,
+  blockType: BlockType,
 ): BlockMetaInformation | undefined {
-  return registeredBlockMetaInformation.get(blockType);
+  return registeredBlockMetaInformation.get(blockType.name);
 }
 
 export function getRegisteredBlockTypes(): string[] {
@@ -19,12 +21,20 @@ export function getRegisteredBlockTypes(): string[] {
 }
 
 export function getOrFailMetaInformation(
-  blockType: string,
+  blockType: BlockType | string,
 ): BlockMetaInformation {
-  const result = getMetaInformation(blockType);
+  const blockTypeString = getBlockTypeString(blockType);
+  const result = registeredBlockMetaInformation.get(blockTypeString);
   assert(
     result !== undefined,
-    `Meta information for block type ${blockType} was expected to be present`,
+    `Meta information for block type ${blockTypeString} was expected to be present`,
   );
   return result;
+}
+
+function getBlockTypeString(blockType: BlockType | string) {
+  if (typeof blockType === 'string') {
+    return blockType;
+  }
+  return blockType.name;
 }
