@@ -1,5 +1,5 @@
 import {
-  BlockMetaInformationType,
+  BlockMetaInformationClass,
   JayveeLangExtension,
 } from '@jayvee/language-server';
 
@@ -12,7 +12,7 @@ import { RowDeleterMetaInformation } from './lib/row-deleter-meta-inf';
 import { TableInterpreterMetaInformation } from './lib/table-interpreter-meta-inf';
 
 export class TabularLangExtension implements JayveeLangExtension {
-  getBlockMetaInf(): BlockMetaInformationType[] {
+  getBlockMetaInf(): BlockMetaInformationClass[] {
     return [
       CSVFileExtractorMetaInformation,
       LayoutValidatorMetaInformation,

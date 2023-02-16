@@ -37,12 +37,12 @@ In `libs/extensions/<extension-name>/lang/src/extension.ts`:
 
 ```typescript
 import {
-  BlockMetaInformationType,
+  BlockMetaInformationClass,
   JayveeLangExtension,
 } from '@jayvee/language-server';
 
 export class MyLangExtension implements JayveeLangExtension {
-  getBlockMetaInf(): BlockMetaInformationType[] {
+  getBlockMetaInf(): BlockMetaInformationClass[] {
     return [];
   }
 }
@@ -52,12 +52,12 @@ In `libs/extensions/<extension-name>/exec/src/extension.ts`:
 
 ```typescript
 import {
-  BlockExecutorType,
+  BlockExecutorClass,
   JayveeExecExtension,
 } from '@jayvee/execution';
 
 export class MyExecExtension implements JayveeExecExtension {
-  getBlockExecutors(): BlockExecutorType[] {
+  getBlockExecutors(): BlockExecutorClass[] {
     return [];
   }
 }
@@ -180,7 +180,7 @@ In `libs/extensions/<extension-name>/lang/src/extension.ts`:
 import { MyExtractorMetaInformation } from './lib/my-extractor-meta-inf';
 
 export class MyLangExtension implements JayveeLangExtension {
-  getBlockMetaInf(): BlockMetaInformationType[] {
+  getBlockMetaInf(): BlockMetaInformationClass[] {
     return [
       // ...
       // Register your meta information here:
@@ -230,7 +230,7 @@ export class MyExtractorExecutor extends BlockExecutor<void, Sheet> {
 > The generic types of `BlockExecutor<I,O>` need to match the input and output types of the corresponding `BlockMetaInformation`.
 >
 > - Use `undefined` or `void` for `UNDEFINED_TYPE`
-> - For other types, see [`libs/language-server/src/lib/types/io-types.ts`](../libs/language-server/src/lib/types/io-types.ts)
+> - For other types, see [`libs/language-server/src/lib/types/io-types`](../libs/language-server/src/lib/types/io-types)
 >
 > Be careful, as there is currently no mechanism to detect such potential mismatches.
 
@@ -244,7 +244,7 @@ In `libs/extensions/<extension-name>/exec/src/extension.ts`:
 import { MyExtractorExecutor } from './lib/my-extractor-executor';
 
 export class MyExecExtension implements JayveeExecExtension {
-  getBlockExecutors(): BlockExecutorType[] {
+  getBlockExecutors(): BlockExecutorClass[] {
     return [
       // ...
       // Register your block executor here:

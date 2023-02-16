@@ -3,20 +3,20 @@ import {
   registerBlockMetaInformation,
 } from './meta-information';
 
-export interface BlockMetaInformationType<
+export interface BlockMetaInformationClass<
   T extends BlockMetaInformation = BlockMetaInformation,
 > extends Function {
   new (): T;
 }
 
 export interface JayveeLangExtension {
-  getBlockMetaInf(): BlockMetaInformationType[];
+  getBlockMetaInf(): BlockMetaInformationClass[];
 }
 
 export function useExtension(extension: JayveeLangExtension) {
   extension
     .getBlockMetaInf()
-    .forEach((BlockMetaInfType) =>
-      registerBlockMetaInformation(new BlockMetaInfType()),
+    .forEach((blockMetaInformation) =>
+      registerBlockMetaInformation(new blockMetaInformation()),
     );
 }
