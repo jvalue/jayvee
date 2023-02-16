@@ -37,12 +37,12 @@ In `libs/extensions/<extension-name>/lang/src/extension.ts`:
 
 ```typescript
 import {
-  BlockMetaInformation,
+  BlockMetaInformationClass,
   JayveeLangExtension,
 } from '@jayvee/language-server';
 
 export class MyLangExtension implements JayveeLangExtension {
-  getBlockMetaInf(): BlockMetaInformation[] {
+  getBlockMetaInf(): BlockMetaInformationClass[] {
     return [];
   }
 }
@@ -52,15 +52,12 @@ In `libs/extensions/<extension-name>/exec/src/extension.ts`:
 
 ```typescript
 import {
-  BlockExecutor,
-  BlockExecutorType,
+  BlockExecutorClass,
   JayveeExecExtension,
 } from '@jayvee/execution';
 
 export class MyExecExtension implements JayveeExecExtension {
-  getBlockExecutors(): Array<
-    BlockExecutorType<BlockExecutor<unknown, unknown>>
-  > {
+  getBlockExecutors(): BlockExecutorClass[] {
     return [];
   }
 }
@@ -183,11 +180,11 @@ In `libs/extensions/<extension-name>/lang/src/extension.ts`:
 import { MyExtractorMetaInformation } from './lib/my-extractor-meta-inf';
 
 export class MyLangExtension implements JayveeLangExtension {
-  getBlockMetaInf(): BlockMetaInformation[] {
+  getBlockMetaInf(): BlockMetaInformationClass[] {
     return [
       // ...
       // Register your meta information here:
-      new MyExtractorMetaInformation(),
+      MyExtractorMetaInformation,
       // ...
     ];
   }
@@ -233,7 +230,7 @@ export class MyExtractorExecutor extends BlockExecutor<void, Sheet> {
 > The generic types of `BlockExecutor<I,O>` need to match the input and output types of the corresponding `BlockMetaInformation`.
 >
 > - Use `undefined` or `void` for `UNDEFINED_TYPE`
-> - For other types, see [`libs/language-server/src/lib/types/io-types.ts`](../libs/language-server/src/lib/types/io-types.ts)
+> - For other types, see [`libs/language-server/src/lib/types/io-types`](../libs/language-server/src/lib/types/io-types)
 >
 > Be careful, as there is currently no mechanism to detect such potential mismatches.
 
@@ -247,9 +244,7 @@ In `libs/extensions/<extension-name>/exec/src/extension.ts`:
 import { MyExtractorExecutor } from './lib/my-extractor-executor';
 
 export class MyExecExtension implements JayveeExecExtension {
-  getBlockExecutors(): Array<
-    BlockExecutorType<BlockExecutor<unknown, unknown>>
-  > {
+  getBlockExecutors(): BlockExecutorClass[] {
     return [
       // ...
       // Register your block executor here:

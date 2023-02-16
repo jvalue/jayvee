@@ -1,5 +1,5 @@
 import {
-  BlockMetaInformation,
+  BlockMetaInformationClass,
   JayveeLangExtension,
 } from '@jayvee/language-server';
 
@@ -12,15 +12,15 @@ import { RowDeleterMetaInformation } from './lib/row-deleter-meta-inf';
 import { TableInterpreterMetaInformation } from './lib/table-interpreter-meta-inf';
 
 export class TabularLangExtension implements JayveeLangExtension {
-  getBlockMetaInf(): BlockMetaInformation[] {
+  getBlockMetaInf(): BlockMetaInformationClass[] {
     return [
-      new CSVFileExtractorMetaInformation(),
-      new LayoutValidatorMetaInformation(),
-      new ColumnDeleterMetaInformation(),
-      new RowDeleterMetaInformation(),
-      new CellRangeSelectorMetaInformation(),
-      new CellWriterMetaInformation(),
-      new TableInterpreterMetaInformation(),
+      CSVFileExtractorMetaInformation,
+      LayoutValidatorMetaInformation,
+      ColumnDeleterMetaInformation,
+      RowDeleterMetaInformation,
+      CellRangeSelectorMetaInformation,
+      CellWriterMetaInformation,
+      TableInterpreterMetaInformation,
     ];
   }
 }
