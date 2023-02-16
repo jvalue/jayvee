@@ -32,18 +32,17 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       isRuleCall(next.feature) &&
       next.feature.rule.ref !== undefined
     ) {
-      if (isBlock(astNode)) {
-        if (next.type === Attribute) {
-          return this.completionForAttributeName(astNode, acceptor);
-        }
-        if (next.type === BlockType) {
-          return this.completionForBlockType(acceptor);
-        }
+      const isBlockTypeCompletion = isBlock(astNode) && next.type === BlockType;
+      if (isBlockTypeCompletion) {
+        return this.completionForBlockType(acceptor);
       }
-      if (isAttribute(astNode)) {
-        if (next.type === Attribute) {
-          return this.completionForAttributeName(astNode, acceptor);
-        }
+
+      const isFirstAttributeCompletion =
+        isBlock(astNode) && next.type === Attribute;
+      const isOtherAttributeCompletion =
+        isAttribute(astNode) && next.type === Attribute;
+      if (isFirstAttributeCompletion || isOtherAttributeCompletion) {
+        return this.completionForAttributeName(astNode, acceptor);
       }
     }
     return super.completionFor(context, next, acceptor);
