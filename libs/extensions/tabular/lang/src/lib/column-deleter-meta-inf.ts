@@ -45,28 +45,28 @@ export class ColumnDeleterMetaInformation extends BlockMetaInformation {
           }
         },
         docs: {
-          description: 'Speficy the column to delete.',
+          description: 'The columns to delete.',
           examples: [
             {
-              code: 'delete: column B',
+              code: 'delete: [column B]',
               description: 'Delete column B.',
             },
           ],
-          validation: 'You need to specify exactly one column.',
+          validation: 'You need to specify at least one column.',
         },
       },
     });
     this.docs.description =
-      'Deletes a column from a `Sheet`. Column indices are recalculated.';
+      'Deletes columns from a `Sheet`. Column IDs of subsequent columns will be shifted accordingly, so there will be no gaps.';
     this.docs.examples = [
       {
         code: blockExample,
-        description: 'Drops column B (the second one).',
+        description: 'Deletes column B (i.e. the second column).',
       },
     ];
   }
 }
 
-const blockExample = `block MpgColDeleter oftype ColumnDeleter {
-  delete: column B;
+const blockExample = `block MpgColumnDeleter oftype ColumnDeleter {
+  delete: [column B];
 }`;

@@ -11,13 +11,13 @@ export class SQLiteLoaderMetaInformation extends BlockMetaInformation {
       table: {
         type: AttributeType.STRING,
         docs: {
-          description: 'The table to write into.',
+          description: 'The name of the table to write into.',
         },
       },
       file: {
         type: AttributeType.STRING,
         docs: {
-          description: 'The path to the SQLite file that is created.',
+          description: 'The path to the SQLite file that will be created. Usual file extensions are `.sqlite` and `.db`.',
         },
       },
     });
@@ -26,7 +26,7 @@ export class SQLiteLoaderMetaInformation extends BlockMetaInformation {
       {
         code: blockExampleUsage,
         description:
-          'A local SQLite file at the given path is created and filled with the cars table data.',
+          'A local SQLite file is created at the given path and filled with table data about cars.',
       },
     ];
   }

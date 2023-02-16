@@ -11,18 +11,18 @@ export class CSVFileExtractorMetaInformation extends BlockMetaInformation {
       url: {
         type: AttributeType.STRING,
         docs: {
-          description: 'The URL to the resource in the web to extract.',
+          description: 'The URL to the CSV file in the web to extract.',
         },
       },
       delimiter: {
         type: AttributeType.STRING,
         defaultValue: ',',
         docs: {
-          description: 'The column delimiter in the CSV file.',
+          description: 'The delimiter for values in the CSV file.',
           examples: [
             {
               code: 'delimiter: ","',
-              description: 'Commas are used as column separators.',
+              description: 'Commas are used to separate values in the CSV file.',
             },
           ],
         },
@@ -35,7 +35,7 @@ export class CSVFileExtractorMetaInformation extends BlockMetaInformation {
       {
         code: blockExample,
         description:
-          'Fetches file from given URL and interprets it as a `Sheet`.',
+          'Fetches a CSV file about cars from given URL and interprets it as a `Sheet`.',
       },
     ];
   }

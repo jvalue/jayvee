@@ -41,7 +41,7 @@ export class PostgresLoaderMetaInformation extends BlockMetaInformation {
       table: {
         type: AttributeType.STRING,
         docs: {
-          description: 'The table to write into.',
+          description: 'The name of the table to write into.',
         },
       },
     });
@@ -50,7 +50,7 @@ export class PostgresLoaderMetaInformation extends BlockMetaInformation {
       {
         code: blockExampleUsage,
         description:
-          'A local Postgres instance is filled with the cars table data.',
+          'A local Postgres instance is filled with table data about cars.',
       },
     ];
   }

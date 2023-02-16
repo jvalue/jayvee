@@ -15,7 +15,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
         type: AttributeType.BOOLEAN,
         docs: {
           description:
-            'Flag, if the first row should be interpreted as header row.',
+            'Whether the first row should be interpreted as header row.',
           examples: [
             {
               code: 'columns: [ "name" typed text ]',
@@ -63,7 +63,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
         },
         docs: {
           description:
-            'Collection of data type assignments. Uses the column name (by the header) to provide each column with a data type.',
+            'Collection of data type assignments. Uses column names (potentially matched with the header) to assign a data type to each column.',
           examples: [
             {
               code: 'header: true',
@@ -71,7 +71,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
             },
           ],
           validation:
-            'Needs to satisfy the format of a data type assigment collection. Each column needs to have an unique name.',
+            'Needs to be a collection of data type assignments. Each column needs to have a unique name.',
         },
       },
     });
@@ -80,7 +80,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
       {
         code: blockExample,
         description:
-          'Interprets the `Sheet` with a given header and the types of the columns.',
+          'Interprets a `Sheet` about cars with a topmost header row and interprets it as a `Table` by assigning a data type to each column. Matches the column names from the header row with the column names of the data type assignments.',
       },
     ];
   }

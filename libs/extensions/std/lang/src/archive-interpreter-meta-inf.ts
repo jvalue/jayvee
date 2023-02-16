@@ -22,11 +22,11 @@ export class ArchiveInterpreterMetaInformation extends BlockMetaInformation {
         archiveType: {
           type: AttributeType.STRING,
           docs: {
-            description: 'The archive type to be extracted, e.g., "zip".',
+            description: 'The archive type to be interpreted, e.g., `"zip"`.',
           },
         },
       },
     );
-    this.docs.description = 'Interprets a `File` as a `FileSystem`.';
+    this.docs.description = 'Interprets an archive file of type `File` as a `FileSystem`.';
   }
 }
