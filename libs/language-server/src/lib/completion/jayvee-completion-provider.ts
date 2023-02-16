@@ -8,7 +8,13 @@ import {
 import { isRuleCall } from 'langium/lib/grammar/generated/ast';
 import { CompletionItemKind } from 'vscode-languageserver';
 
-import { Attribute, Block, isAttribute, isBlock } from '../ast/generated/ast';
+import {
+  Attribute,
+  Block,
+  BlockType,
+  isAttribute,
+  isBlock,
+} from '../ast/generated/ast';
 import {
   getMetaInformation,
   getRegisteredBlockTypes,
@@ -30,7 +36,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
         if (next.type === Attribute) {
           return this.completionForAttributeName(astNode, acceptor);
         }
-        if (next.property === 'type') {
+        if (next.type === BlockType) {
           return this.completionForBlockType(acceptor);
         }
       }
