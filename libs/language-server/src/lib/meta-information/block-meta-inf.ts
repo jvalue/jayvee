@@ -42,8 +42,8 @@ export abstract class BlockMetaInformation {
 
   validate(block: Block, accept: ValidationAcceptor): void {
     assert(
-      block.type === this.blockType,
-      `The block to be validated is expected to be of type ${this.blockType} but is of type ${block.type}`,
+      block.type.name === this.blockType,
+      `The block to be validated is expected to be of type ${this.blockType} but is of type ${block.type.name}`,
     );
 
     for (const attribute of block.attributes) {

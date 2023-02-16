@@ -33,8 +33,8 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
 
   set block(block: Block) {
     assert(
-      block.type === this.blockType,
-      `The provided block does not match the desired type: expected ${this.blockType}, actual ${block.type}`,
+      block.type.name === this.blockType,
+      `The provided block does not match the desired type: expected ${this.blockType}, actual ${block.type.name}`,
     );
 
     this._block = block;
@@ -137,7 +137,7 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
       const defaultValue = attributeSpec.defaultValue;
       assert(
         defaultValue !== undefined,
-        `The block "${this.block.name}" of type ${this.block.type} is missing a required attribute called "${attributeName}"`,
+        `The block "${this.block.name}" of type ${this.block.type.name} is missing a required attribute called "${attributeName}"`,
       );
 
       return defaultValue;
@@ -165,7 +165,7 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
     const attribute = this.getAttribute(attributeName);
     assert(
       attribute !== undefined,
-      `Attribute with name ${attributeName} was expected to be present in block ${this.block.name} of type ${this.block.type}`,
+      `Attribute with name ${attributeName} was expected to be present in block ${this.block.name} of type ${this.block.type.name}`,
     );
     return attribute;
   }

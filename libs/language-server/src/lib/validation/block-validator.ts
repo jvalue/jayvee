@@ -196,7 +196,7 @@ export class BlockValidator implements JayveeValidator {
       for (const pipe of pipes) {
         accept(
           'error',
-          `Blocks of type ${block.type} do not have an ${whatToCheck}`,
+          `Blocks of type ${block.type.name} do not have an ${whatToCheck}`,
           {
             node: pipe,
             property: whatToCheck === 'input' ? 'to' : 'from',
@@ -207,7 +207,7 @@ export class BlockValidator implements JayveeValidator {
       for (const pipe of pipes) {
         accept(
           'error',
-          `At most one pipe can be connected to the ${whatToCheck} of a ${block.type}`,
+          `At most one pipe can be connected to the ${whatToCheck} of a ${block.type.name}`,
           {
             node: pipe,
             property: 'to',
@@ -229,7 +229,7 @@ export class BlockValidator implements JayveeValidator {
   checkBlockType(this: void, block: Block, accept: ValidationAcceptor): void {
     const metaInf = getMetaInformation(block.type);
     if (metaInf === undefined) {
-      accept('error', `Unknown block type '${block.type}'`, {
+      accept('error', `Unknown block type '${block.type.name}'`, {
         node: block,
         property: 'type',
       });

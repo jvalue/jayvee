@@ -73,7 +73,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       acceptor({
         label: attributeName,
         kind: CompletionItemKind.Field,
-        detail: `${block.type} Attribute`,
+        detail: `${block.type.name} Attribute`,
         sortText: '1',
       }),
     );
@@ -86,7 +86,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       acceptor({
         label: attributeName,
         kind: CompletionItemKind.Field,
-        detail: `Optional ${block.type} Attribute`,
+        detail: `Optional ${block.type.name} Attribute`,
         sortText: '2',
       }),
     );
