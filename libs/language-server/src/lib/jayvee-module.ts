@@ -14,6 +14,7 @@ import {
   JayveeGeneratedSharedModule,
 } from './ast/generated/module';
 import { JayveeCompletionProvider } from './completion/jayvee-completion-provider';
+import { JayveeHoverProvider } from './hover/jayvee-hover-provider';
 import { BlockValidator } from './validation/block-validator';
 import { CellRangeSelectionValidator } from './validation/cell-range-selection-validator';
 import { ColumnExpressionValidator } from './validation/column-expression-validator';
@@ -63,6 +64,8 @@ export const JayveeModule: Module<
   lsp: {
     CompletionProvider: (services: LangiumServices) =>
       new JayveeCompletionProvider(services),
+    HoverProvider: (services: LangiumServices) =>
+      new JayveeHoverProvider(services),
   },
 };
 

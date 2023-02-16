@@ -12,7 +12,10 @@ Pipeline:
   '}';
 
 Block:
-  'block' name=ID 'oftype' type=ID AttributesFragment;
+  'block' name=ID 'oftype' type=BlockType AttributesFragment;
+
+BlockType:
+  name=ID;
 
 Pipe:
   'pipe' '{'

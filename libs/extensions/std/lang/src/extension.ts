@@ -1,7 +1,7 @@
 import { RdbmsLangExtension } from '@jayvee/extensions/rdbms/lang';
 import { TabularLangExtension } from '@jayvee/extensions/tabular/lang';
 import {
-  BlockMetaInformation,
+  BlockMetaInformationClass,
   JayveeLangExtension,
 } from '@jayvee/language-server';
 
@@ -11,7 +11,7 @@ export class StdLangExtension implements JayveeLangExtension {
     new RdbmsLangExtension(),
   ];
 
-  getBlockMetaInf(): BlockMetaInformation[] {
+  getBlockMetaInf(): BlockMetaInformationClass[] {
     return this.wrappedExtensions.map((x) => x.getBlockMetaInf()).flat();
   }
 }

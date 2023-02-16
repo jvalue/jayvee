@@ -62,7 +62,7 @@ export function extractRuntimeParameters(
     const attributeSpec = metaInf.getAttributeSpecification(attributeName);
     assert(
       attributeSpec !== undefined,
-      `Attribute with name "${attributeName}" is not allowed in a block of type ${block.type}`,
+      `Attribute with name "${attributeName}" is not allowed in a block of type ${block.type.name}`,
     );
 
     const parseResult = parseParameterAsMatchingType(
