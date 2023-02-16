@@ -41,7 +41,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
         }
       }
       if (isAttribute(astNode)) {
-        if (next.property === 'name') {
+        if (next.type === Attribute) {
           return this.completionForAttributeName(astNode, acceptor);
         }
       }
