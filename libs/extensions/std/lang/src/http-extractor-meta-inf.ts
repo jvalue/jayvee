@@ -21,8 +21,22 @@ export class HttpExtractorMetaInformation extends BlockMetaInformation {
       {
         url: {
           type: AttributeType.STRING,
+          docs: {
+            description: 'The URL to the resource in the web to extract.',
+          },
         },
       },
     );
+    this.docs.description = 'Extracts a `File` from the web.';
+    this.docs.examples = [
+      {
+        code: blockExampleUsage,
+        description: 'Fetches a file from the given URL.',
+      },
+    ];
   }
 }
+
+const blockExampleUsage = `block CarsFile oftype HttpExtractor {
+  url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
+}`;
