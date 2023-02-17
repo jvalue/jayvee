@@ -24,9 +24,6 @@ const config = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
         },
-        blog: {
-          showReadingTime: true,
-        },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
         },
@@ -50,7 +47,6 @@ const config = {
             position: 'left',
             label: 'User Docs',
           },
-          { to: '/blog', label: 'Blog', position: 'left' },
           {
             href: 'https://github.com/jvalue/jayvee',
             label: 'GitHub',
@@ -79,10 +75,6 @@ const config = {
           {
             title: 'More',
             items: [
-              {
-                label: 'Blog',
-                to: '/blog',
-              },
               {
                 label: 'GitHub',
                 href: 'https://github.com/jvalue/jayvee',
