@@ -2,6 +2,63 @@
 
 This library contains a React component that will spawn an instance of the Monaco Editor. This instance can only be used to edit Jayvee language files.
 
+## How to use the component
+
+Install both the monaco editor and the language server via `npm`:
+
+```bash
+npm install @jvalue/monaco-editor @jvalue/language-server-web-worker
+```
+
+Enable Web Workers in your React project as the language server will run in its own Web Worker.
+Open `tsconfig.json` and add "WebWorker" to the lib array:
+
+```diff
+{
+  "compilerOptions": {
+-    "lib": ["dom", "dom.iterable", "esnext"],
++    "lib": ["dom", "dom.iterable", "esnext", "WebWorker"],
+  }
+}
+```
+
+The following sample code spawns an instance of the monaco editor and runs the corresponding 
+language server in a separate Web Worker:
+
+```tsx
+import { MonacoEditor } from '@jvalue/monaco-editor';
+import React from 'react';
+
+function startJayveeWorker(): Worker {
+  const worker = new Worker(
+    // TODO adjust the path / URL to the language server:
+    new URL('<path-to-language-server-web-worker>/main.js', import.meta.url), {
+      type: 'module',
+  });
+  return worker;
+}
+export const EditorExample: React.FC = () => {
+  return (
+    <div style={{ height: '500px' }}>
+      <MonacoEditor
+        startJayveeWorker={startJayveeWorker}
+        editorText={'Add example code here'}
+        onDidChangeEditorText={(newText): void => console.log(newText)}
+      />
+    </div>
+  );
+};
+```
+
+In case you bundle your React app with webpack, you are able to use a hard-coded relative path to the `main.js` file
+included in `@jvalue/language-server-web-worker`.
+Such a path looks like `../../node_modules/@jvalue/language-server-web-worker/main.js` but probably needs 
+slight adjustments, so it navigates to the desired file location.
+
+Alternatively, you can host the `main.js` file of `@jvalue/language-server-web-worker` and make it available under a 
+certain URL.
+Then, you can use that URL for instantiating the Web Worker instead of the previously mentioned file path.
+
 ## Development set-up
 
 > The following guide explains how to install this component without relying on a npm registry or the like. This is particularly useful to manually test the component locally before publishing it.
