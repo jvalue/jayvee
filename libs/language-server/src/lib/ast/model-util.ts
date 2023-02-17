@@ -21,10 +21,6 @@ import {
 export function collectStartingBlocks(pipeline: Pipeline): Block[] {
   const result: Block[] = [];
   for (const block of pipeline.blocks) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (block.type === undefined) {
-      continue;
-    }
     const blockMetaInf = getMetaInformation(block.type);
     if (blockMetaInf === undefined) {
       continue;
@@ -68,10 +64,10 @@ export function collectParents(block: Block): Block[] {
 }
 
 export function collectOutgoingPipes(block: Block): Pipe[] {
-  const model = block.$container;
+  const pipeline = block.$container;
   const outgoingPipes: Pipe[] = [];
 
-  for (const pipe of model.pipes) {
+  for (const pipe of pipeline.pipes) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (pipe.from?.ref === block) {
       outgoingPipes.push(pipe);
@@ -82,10 +78,10 @@ export function collectOutgoingPipes(block: Block): Pipe[] {
 }
 
 export function collectIngoingPipes(block: Block): Pipe[] {
-  const model = block.$container;
+  const pipeline = block.$container;
   const ingoingPipes: Pipe[] = [];
 
-  for (const pipe of model.pipes) {
+  for (const pipe of pipeline.pipes) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (pipe.to?.ref === block) {
       ingoingPipes.push(pipe);
