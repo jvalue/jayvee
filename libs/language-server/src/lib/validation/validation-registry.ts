@@ -15,9 +15,6 @@ export class JayveeValidationRegistry extends ValidationRegistry {
     const pipelineValidator = services.validation.PipelineValidator;
     this.register(pipelineValidator.checks, pipelineValidator);
 
-    const layoutValidator = services.validation.LayoutValidator;
-    this.register(layoutValidator.checks, layoutValidator);
-
     const pipeValidator = services.validation.PipeValidator;
     this.register(pipeValidator.checks, pipeValidator);
 

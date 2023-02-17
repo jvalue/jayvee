@@ -32,6 +32,9 @@ export class ColumnDeleterMetaInformation extends BlockMetaInformation {
           );
 
           for (const collectionValue of validItems) {
+            if (!SemanticCellRange.canBeWrapped(collectionValue.value)) {
+              continue;
+            }
             const semanticCellRange = new SemanticCellRange(
               collectionValue.value,
             );

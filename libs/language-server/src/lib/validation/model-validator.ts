@@ -11,7 +11,7 @@ import {
 export class ModelValidator implements JayveeValidator {
   get checks(): ValidationChecks<JayveeAstType> {
     return {
-      Model: [this.checkUniquePipelineNames, this.checkUniqueLayoutNames],
+      Model: [this.checkUniquePipelineNames],
     };
   }
 
@@ -23,19 +23,6 @@ export class ModelValidator implements JayveeValidator {
     getNodesWithNonUniqueNames(model.pipelines).forEach((pipeline) => {
       accept('error', generateNonUniqueNameErrorMessage(pipeline), {
         node: pipeline,
-        property: 'name',
-      });
-    });
-  }
-
-  checkUniqueLayoutNames(
-    this: void,
-    model: Model,
-    accept: ValidationAcceptor,
-  ): void {
-    getNodesWithNonUniqueNames(model.layouts).forEach((layout) => {
-      accept('error', generateNonUniqueNameErrorMessage(layout), {
-        node: layout,
         property: 'name',
       });
     });

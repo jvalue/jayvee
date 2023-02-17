@@ -80,15 +80,11 @@ export class TableInterpreterExecutor extends BlockExecutor<Sheet, Table> {
       `Validation completed, the resulting table has ${tableData.length} row(s) and ${columnEntries.length} column(s)`,
     );
 
-    const tableColumnNames = columnEntries.map(
-      (columnEntry) => columnEntry.columnName,
-    );
-    const tableColumnTypes = columnEntries.map(
-      (columnEntry) => columnEntry.dataType,
-    );
     const resultingTable: Table = {
-      columnNames: tableColumnNames,
-      columnTypes: tableColumnTypes,
+      columnInformation: columnEntries.map((columnEntry) => ({
+        name: columnEntry.columnName,
+        type: columnEntry.dataType,
+      })),
       data: tableData,
     };
 
