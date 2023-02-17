@@ -11,9 +11,13 @@ export function registerBlockMetaInformation(metaInf: BlockMetaInformation) {
 }
 
 export function getMetaInformation(
-  blockType: BlockType,
+  blockType: BlockType | undefined,
 ): BlockMetaInformation | undefined {
-  return registeredBlockMetaInformation.get(blockType.name);
+  const blockTypeString = blockType?.name;
+  if (blockTypeString === undefined) {
+    return undefined;
+  }
+  return registeredBlockMetaInformation.get(blockTypeString);
 }
 
 export function getRegisteredBlockTypes(): string[] {
@@ -24,6 +28,10 @@ export function getOrFailMetaInformation(
   blockType: BlockType | string,
 ): BlockMetaInformation {
   const blockTypeString = getBlockTypeString(blockType);
+  assert(
+    blockTypeString !== undefined,
+    'The block type string is expected to be defined',
+  );
   const result = registeredBlockMetaInformation.get(blockTypeString);
   assert(
     result !== undefined,
@@ -32,7 +40,7 @@ export function getOrFailMetaInformation(
   return result;
 }
 
-function getBlockTypeString(blockType: BlockType | string) {
+function getBlockTypeString(blockType: BlockType | string): string | undefined {
   if (typeof blockType === 'string') {
     return blockType;
   }
