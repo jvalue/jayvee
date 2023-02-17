@@ -34,6 +34,3 @@ CellRangeValue:
 
 DataTypeAssignmentValue:
   value=DataTypeAssignment;
-
-LayoutReferenceValue:
-  value=[Layout];
