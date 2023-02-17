@@ -6,6 +6,7 @@ import {
   isCellRangeValue,
   isCollection,
   isSemanticColumn,
+  validateTypedCollection,
 } from '@jayvee/language-server';
 
 export class ColumnDeleterMetaInformation extends BlockMetaInformation {
@@ -19,18 +20,18 @@ export class ColumnDeleterMetaInformation extends BlockMetaInformation {
             return;
           }
 
-          for (const collectionValue of attributeValue.values) {
-            if (!isCellRangeValue(collectionValue)) {
-              accept(
-                'error',
-                'Only cell ranges are allowed in this collection',
-                {
-                  node: collectionValue,
-                },
-              );
-              continue;
-            }
+          const { validItems, invalidItems } = validateTypedCollection(
+            attributeValue,
+            isCellRangeValue,
+          );
 
+          invalidItems.forEach((invalidValue) =>
+            accept('error', 'Only cell ranges are allowed in this collection', {
+              node: invalidValue,
+            }),
+          );
+
+          for (const collectionValue of validItems) {
             const semanticCellRange = new SemanticCellRange(
               collectionValue.value,
             );

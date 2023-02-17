@@ -4,3 +4,4 @@ export * from './generated/module';
 
 export * from './wrappers';
 export * from './model-util';
+export * from './collection-util';
