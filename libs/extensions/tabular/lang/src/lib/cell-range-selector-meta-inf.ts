@@ -14,7 +14,8 @@ export class CellRangeSelectorMetaInformation extends BlockMetaInformation {
           examples: [
             {
               code: 'select: A1:E*',
-              description: 'Select cells from `A1` to the last cell of column `E`.',
+              description:
+                'Select cells from `A1` to the last cell of column `E`.',
             },
           ],
         },
