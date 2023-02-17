@@ -4,7 +4,8 @@ import {
   SHEET_TYPE,
   TABLE_TYPE,
   getNodesWithNonUniqueNames,
-  isDataTypeAssignmentCollection,
+  isCollection,
+  isDataTypeAssignmentValue,
 } from '@jayvee/language-server';
 
 export class TableInterpreterMetaInformation extends BlockMetaInformation {
@@ -14,14 +15,29 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
         type: AttributeType.BOOLEAN,
       },
       columns: {
-        type: AttributeType.DATA_TYPE_ASSIGNMENT_COLLECTION,
+        type: AttributeType.COLLECTION,
         validation: (attribute, accept) => {
           const attributeValue = attribute.value;
-          if (!isDataTypeAssignmentCollection(attributeValue)) {
+          if (!isCollection(attributeValue)) {
             return;
           }
 
-          getNodesWithNonUniqueNames(attributeValue.value).forEach(
+          attributeValue.values
+            .filter((value) => !isDataTypeAssignmentValue(value))
+            .forEach((forbiddenValue) => {
+              accept(
+                'error',
+                'Only data type assignments are allowed in this collection',
+                {
+                  node: forbiddenValue,
+                },
+              );
+            });
+
+          const dataTypeAssignments = attributeValue.values
+            .filter(isDataTypeAssignmentValue)
+            .map((assignment) => assignment.value);
+          getNodesWithNonUniqueNames(dataTypeAssignments).forEach(
             (dataTypeAssignment) => {
               accept(
                 'error',

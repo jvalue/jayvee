@@ -3,7 +3,8 @@ import {
   BlockMetaInformation,
   SHEET_TYPE,
   SemanticCellRange,
-  isCellRangeCollection,
+  isCellRangeValue,
+  isCollection,
   isSemanticColumn,
 } from '@jayvee/language-server';
 
@@ -11,18 +12,31 @@ export class ColumnDeleterMetaInformation extends BlockMetaInformation {
   constructor() {
     super('ColumnDeleter', SHEET_TYPE, SHEET_TYPE, {
       delete: {
-        type: AttributeType.CELL_RANGE_COLLECTION,
+        type: AttributeType.COLLECTION,
         validation: (attribute, accept) => {
           const attributeValue = attribute.value;
-          if (!isCellRangeCollection(attributeValue)) {
+          if (!isCollection(attributeValue)) {
             return;
           }
 
-          for (const cellRange of attributeValue.value) {
-            if (!SemanticCellRange.canBeWrapped(cellRange)) {
+          for (const collectionValue of attributeValue.values) {
+            if (!isCellRangeValue(collectionValue)) {
+              accept(
+                'error',
+                'Only cell ranges are allowed in this collection',
+                {
+                  node: collectionValue,
+                },
+              );
               continue;
             }
-            const semanticCellRange = new SemanticCellRange(cellRange);
+
+            if (!SemanticCellRange.canBeWrapped(collectionValue.value)) {
+              continue;
+            }
+            const semanticCellRange = new SemanticCellRange(
+              collectionValue.value,
+            );
             if (!isSemanticColumn(semanticCellRange)) {
               accept('error', 'An entire column needs to be selected', {
                 node: semanticCellRange.astNode,
