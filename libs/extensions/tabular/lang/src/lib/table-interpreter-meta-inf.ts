@@ -18,9 +18,13 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
             'Whether the first row should be interpreted as header row.',
           examples: [
             {
-              code: 'columns: [ "name" typed text ]',
+              code: 'header: true',
+              description: 'The first row is interpreted as table header.',
+            },
+            {
+              code: 'header: false',
               description:
-                'There is one column with the header "name". All values in this colum are typed as text.',
+                'The first row is NOT interpreted as table header. The column names are taken form the provided names in the `columns` attribute.',
             },
           ],
         },
@@ -63,11 +67,12 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
         },
         docs: {
           description:
-            'Collection of data type assignments. Uses column names (potentially matched with the header) to assign a data type to each column.',
+            'Collection of data type assignments. Uses column names (potentially matched with the header or by sequence depending on the `header` attribute) to assign a data type to each column.',
           examples: [
             {
-              code: 'header: true',
-              description: 'The first row is interpreted as table header.',
+              code: 'columns: [ "name" typed text ]',
+              description:
+                'There is one column with the header "name". All values in this colum are typed as text.',
             },
           ],
           validation:
@@ -75,31 +80,37 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
         },
       },
     });
-    this.docs.description = 'Interprets a `Sheet` as a `Table`.';
+    this.docs.description =
+      'Interprets a `Sheet` as a `Table`. If a `header` is present in the sheet the header names are taken for indexing the column, otherwise they are indexed sequentially.';
     this.docs.examples = [
       {
-        code: blockExample,
+        code: blockExampleWithHeader,
         description:
           'Interprets a `Sheet` about cars with a topmost header row and interprets it as a `Table` by assigning a data type to each column. Matches the column names from the header row with the column names of the data type assignments.',
+      },
+      {
+        code: blockExampleWithoutHeader,
+        description:
+          'Interprets a `Sheet` about cars without a topmost header row and interprets it as a `Table` by sequentially assigning a data type to each column. Note that the order of columns matters, as the first entry maps to the first column A, the second to B and so on.',
       },
     ];
   }
 }
 
-const blockExample = `block CarsTableInterpreter oftype TableInterpreter {
+const blockExampleWithHeader = `block CarsTableInterpreter oftype TableInterpreter {
   header: true;
   columns: [
     "name" typed text,
     "mpg" typed decimal,
     "cyl" typed integer,
-    "disp" typed decimal,
-    "hp" typed integer,
-    "drat" typed decimal,
-    "wt" typed decimal,
-    "qsec" typed decimal,
-    "vs" typed integer,
-    "am" typed integer,
-    "gear" typed integer,
-    "carb" typed integer
+  ];
+}`;
+
+const blockExampleWithoutHeader = `block CarsTableInterpreter oftype TableInterpreter {
+  header: false;
+  columns: [
+    "name" typed text,
+    "mpg" typed decimal,
+    "cyl" typed integer,
   ];
 }`;
