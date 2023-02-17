@@ -1,17 +1,20 @@
-endi:
-  name: Endilie Yacop Sucipto
-  title: Maintainer of Docusaurus
-  url: https://github.com/endiliey
-  image_url: https://github.com/endiliey.png
+quast:
+  name: Felix Quast
+  title: Jayvee Maintainer
+  url: https://github.com/felix-oq
+  image_url: https://github.com/felix-oq.png
 
-yangshun:
-  name: Yangshun Tay
-  title: Front End Engineer @ Facebook
-  url: https://github.com/yangshun
-  image_url: https://github.com/yangshun.png
+heltweg:
+  name: Philip Heltweg
+  title: Jayvee Maintainer
+  url: https://github.com/rhazn
+  image_url: https://github.com/rhazn.png
 
-slorber:
-  name: Sébastien Lorber
-  title: Docusaurus maintainer
-  url: https://sebastienlorber.com
-  image_url: https://github.com/slorber.png
+schwarz:
+  name: Georg Schwarz
+  title: Jayvee Maintainer
+  url: https://github.com/georg-schwarz
+  image_url: https://github.com/georg-schwarz.png
+
+core:
+  name: Jayvee Core Team
