@@ -5,7 +5,6 @@ import {
   MaybePromise,
   NextFeature,
 } from 'langium';
-import { isRuleCall } from 'langium/lib/grammar/generated/ast';
 import { CompletionItemKind } from 'vscode-languageserver';
 
 import {
@@ -14,6 +13,7 @@ import {
   BlockType,
   isAttribute,
   isBlock,
+  isBlockType,
 } from '../ast/generated/ast';
 import {
   getMetaInformation,
@@ -27,12 +27,9 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
     const astNode = context.node;
-    if (
-      astNode !== undefined &&
-      isRuleCall(next.feature) &&
-      next.feature.rule.ref !== undefined
-    ) {
-      const isBlockTypeCompletion = isBlock(astNode) && next.type === BlockType;
+    if (astNode !== undefined) {
+      const isBlockTypeCompletion =
+        (isBlock(astNode) || isBlockType(astNode)) && next.type === BlockType;
       if (isBlockTypeCompletion) {
         return this.completionForBlockType(acceptor);
       }
