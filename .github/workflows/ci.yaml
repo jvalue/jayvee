@@ -26,6 +26,9 @@ jobs:
 
       - uses: nrwl/nx-set-shas@v3
 
+      - name: Langium generate
+        run: npm run generate
+
       - name: Build
         run: npx nx affected --target=build --parallel=3
 
