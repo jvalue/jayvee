@@ -27,6 +27,7 @@ export class ArchiveInterpreterMetaInformation extends BlockMetaInformation {
         },
       },
     );
-    this.docs.description = 'Interprets an archive file of type `File` as a `FileSystem`.';
+    this.docs.description =
+      'Interprets an archive file of type `File` as a `FileSystem`.';
   }
 }

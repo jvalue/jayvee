@@ -37,7 +37,7 @@ export class HttpExtractorMetaInformation extends BlockMetaInformation {
     this.docs.examples = [
       {
         code: blockExampleUsage,
-        description: 'Fetches a CSV file from the given URL.',
+        description: 'Fetches a file from the given URL.',
       },
     ];
   }

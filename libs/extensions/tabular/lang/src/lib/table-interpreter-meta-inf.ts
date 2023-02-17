@@ -19,7 +19,8 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
           examples: [
             {
               code: 'header: true',
-              description: 'The first row is interpreted as table header.',
+              description:
+                'The first row is interpreted as table header. The values in the header row will become the column names of the table.',
             },
             {
               code: 'header: false',
@@ -81,17 +82,17 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
       },
     });
     this.docs.description =
-      'Interprets a `Sheet` as a `Table`. In case a header row is present in the sheet, its names can be matched with the provided column names. Otherwise, the provided column names are assigned sequentially.';
+      'Interprets a `Sheet` as a `Table`. In case a header row is present in the sheet, its names can be matched with the provided column names. Otherwise, the provided column names are assigned in order.';
     this.docs.examples = [
       {
         code: blockExampleWithHeader,
         description:
-          'Interprets a `Sheet` about cars with a topmost header row and interprets it as a `Table` by assigning a data type to each column. Matches the column names from the header row with the column names of the provided data type assignments.',
+          'Interprets a `Sheet` about cars with a topmost header row and interprets it as a `Table` by assigning a data type to each column. The column names are matched to the header, so the order of the column data type assignments does not matter.',
       },
       {
         code: blockExampleWithoutHeader,
         description:
-          'Interprets a `Sheet` about cars without a topmost header row and interprets it as a `Table` by sequentially assigning a name and a data type to each column of the sheet. Note that the order of columns matters here, as the first entry maps to the first column `A`, the second to `B` and so on.',
+          'Interprets a `Sheet` about cars without a topmost header row and interprets it as a `Table` by sequentially assigning a name and a data type to each column of the sheet. Note that the order of columns matters here. The first column (column `A`) will be named "name", the second column (column `B`) will be named "mpg" etc.',
       },
     ];
   }

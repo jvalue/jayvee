@@ -17,7 +17,8 @@ export class SQLiteLoaderMetaInformation extends BlockMetaInformation {
       file: {
         type: AttributeType.STRING,
         docs: {
-          description: 'The path to the SQLite file that will be created. Usual file extensions are `.sqlite` and `.db`.',
+          description:
+            'The path to the SQLite file that will be created. Usual file extensions are `.sqlite` and `.db`.',
         },
       },
     });
