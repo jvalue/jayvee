@@ -12,6 +12,12 @@ export class CSVFileExtractorMetaInformation extends BlockMetaInformation {
         type: AttributeType.STRING,
         docs: {
           description: 'The URL to the CSV file in the web to extract.',
+          examples: [
+            {
+              code: 'url: "tinyurl.com/4ub9spwz"',
+              description: 'Specifies the URL to fetch the data from.',
+            },
+          ],
         },
       },
       delimiter: {
@@ -22,7 +28,8 @@ export class CSVFileExtractorMetaInformation extends BlockMetaInformation {
           examples: [
             {
               code: 'delimiter: ","',
-              description: 'Commas are used to separate values in the CSV file.',
+              description:
+                'Commas are used to separate values in the CSV file.',
             },
           ],
         },
@@ -41,6 +48,6 @@ export class CSVFileExtractorMetaInformation extends BlockMetaInformation {
   }
 }
 
-const blockExample = `block CarsExtractor oftype CSVFileExtractor {
-  url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
+const blockExample = `block CarsExtractor oftype CSVFileExtractor {  
+  url: "tinyurl.com/4ub9spwz";
 }`;

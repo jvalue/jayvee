@@ -23,6 +23,12 @@ export class HttpExtractorMetaInformation extends BlockMetaInformation {
           type: AttributeType.STRING,
           docs: {
             description: 'The URL to the file in the web to extract.',
+            examples: [
+              {
+                code: 'url: "tinyurl.com/4ub9spwz"',
+                description: 'Specifies the URL to fetch the data from.',
+              },
+            ],
           },
         },
       },
@@ -38,5 +44,5 @@ export class HttpExtractorMetaInformation extends BlockMetaInformation {
 }
 
 const blockExampleUsage = `block CarsFileExtractor oftype HttpExtractor {
-  url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
+  url: "tinyurl.com/4ub9spwz";
 }`;
