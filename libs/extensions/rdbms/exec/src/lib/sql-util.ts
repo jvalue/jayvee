@@ -13,8 +13,9 @@ export function buildInsertValuesStatement(
 ): string {
   const valueRepresentationVisitor = new SQLValueRepresentationVisitor();
 
-  const valueRepresentationFormatters = table.columnMetas.map((columnMeta) =>
-    columnMeta.columnType.acceptVisitor(valueRepresentationVisitor),
+  const valueRepresentationFormatters = table.columnInformation.map(
+    (columnInformation) =>
+      columnInformation.type.acceptVisitor(valueRepresentationVisitor),
   );
 
   const valuesStatement = table.data
@@ -25,8 +26,8 @@ export function buildInsertValuesStatement(
     })
     .join(',');
 
-  return `INSERT INTO "${tableName}" (${table.columnMetas
-    .map((columnMeta) => `"${columnMeta.columnName}"`)
+  return `INSERT INTO "${tableName}" (${table.columnInformation
+    .map((columnInformation) => `"${columnInformation.name}"`)
     .join(',')}) VALUES ${valuesStatement}`;
 }
 
@@ -36,8 +37,8 @@ export function buildCreateTableStatement(
 ): string {
   const columnTypeVisitor = new SQLColumnTypeVisitor();
 
-  const columnStatements = table.columnMetas.map((columnMeta) => {
-    return `"${columnMeta.columnName}" ${columnMeta.columnType.acceptVisitor(
+  const columnStatements = table.columnInformation.map((columnInformation) => {
+    return `"${columnInformation.name}" ${columnInformation.type.acceptVisitor(
       columnTypeVisitor,
     )}`;
   });

@@ -81,9 +81,9 @@ export class TableInterpreterExecutor extends BlockExecutor<Sheet, Table> {
     );
 
     const resultingTable: Table = {
-      columnMetas: columnEntries.map((columnEntry) => ({
-        columnName: columnEntry.columnName,
-        columnType: columnEntry.dataType,
+      columnInformation: columnEntries.map((columnEntry) => ({
+        name: columnEntry.columnName,
+        type: columnEntry.dataType,
       })),
       data: tableData,
     };
