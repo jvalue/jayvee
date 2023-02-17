@@ -10,9 +10,9 @@ import {
   Pipe,
   Pipeline,
   isBooleanValue,
-  isCellRangeCollection,
   isCellRangeValue,
-  isDataTypeAssignmentCollection,
+  isCollection,
+  isDataTypeAssignmentValue,
   isIntValue,
   isLayoutReferenceValue,
   isStringValue,
@@ -153,16 +153,16 @@ export enum AttributeType {
   BOOLEAN = 'boolean',
   LAYOUT = 'layout',
   CELL_RANGE = 'cell range',
-  CELL_RANGE_COLLECTION = 'cell range collection',
-  DATA_TYPE_ASSIGNMENT_COLLECTION = 'data type assignment collection',
+  COLLECTION = 'collection',
+  DATA_TYPE_ASSIGNMENT = 'data type assignment',
 }
 
 export function runtimeParameterAllowedForType(type: AttributeType): boolean {
   switch (type) {
     case AttributeType.LAYOUT:
     case AttributeType.CELL_RANGE:
-    case AttributeType.CELL_RANGE_COLLECTION:
-    case AttributeType.DATA_TYPE_ASSIGNMENT_COLLECTION:
+    case AttributeType.DATA_TYPE_ASSIGNMENT:
+    case AttributeType.COLLECTION:
       return false;
     case AttributeType.STRING:
     case AttributeType.INT:
@@ -188,11 +188,11 @@ export function convertAttributeValueToType(
   if (isCellRangeValue(value)) {
     return AttributeType.CELL_RANGE;
   }
-  if (isCellRangeCollection(value)) {
-    return AttributeType.CELL_RANGE_COLLECTION;
+  if (isDataTypeAssignmentValue(value)) {
+    return AttributeType.DATA_TYPE_ASSIGNMENT;
   }
-  if (isDataTypeAssignmentCollection(value)) {
-    return AttributeType.DATA_TYPE_ASSIGNMENT_COLLECTION;
+  if (isCollection(value)) {
+    return AttributeType.COLLECTION;
   }
   if (isLayoutReferenceValue(value)) {
     return AttributeType.LAYOUT;

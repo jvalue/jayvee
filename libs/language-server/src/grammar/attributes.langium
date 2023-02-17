@@ -13,7 +13,13 @@ RuntimeParameter:
   'requires' name=ID;
 
 AttributeValue:
-  StringValue | IntValue | BooleanValue | CellRangeValue | DataTypeAssignmentCollection | CellRangeCollection | LayoutReferenceValue;
+  AtomicValue | Collection;
+
+AtomicValue:
+  StringValue | IntValue | BooleanValue | CellRangeValue | DataTypeAssignmentValue | LayoutReferenceValue;
+
+Collection:
+  '[' (values+=(AtomicValue) (',' values+=(AtomicValue))*)? ']';
 
 StringValue:
   value=STRING;
@@ -24,14 +30,11 @@ IntValue:
 BooleanValue:
   value=(TRUE | FALSE);
 
-DataTypeAssignmentCollection:
-  '[' (value+=DataTypeAssignment (',' value+=DataTypeAssignment)*)? ']';
-
-CellRangeCollection:
-  '[' (value+=CellRange (',' value+=CellRange)*)? ']';
-
 CellRangeValue:
   value=CellRange;
+
+DataTypeAssignmentValue:
+  value=DataTypeAssignment;
 
 LayoutReferenceValue:
   value=[Layout];

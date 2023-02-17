@@ -8,7 +8,9 @@ import {
   SemanticCellRange,
   getOrFailMetaInformation,
   isCellRange,
-  isDataTypeAssignment,
+  isCellRangeValue,
+  isCollection,
+  isDataTypeAssignmentValue,
   isLayout,
   isRuntimeParameter,
 } from '@jayvee/language-server';
@@ -129,10 +131,16 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
   ): SemanticCellRange[] {
     const attributeValue = this.getAttributeValue(attributeName);
     assert(
-      Array.isArray(attributeValue) && attributeValue.every(isCellRange),
-      `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type cell range collection`,
+      Array.isArray(attributeValue),
+      `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type collection`,
     );
-    return attributeValue.map((cellRange) => new SemanticCellRange(cellRange));
+    assert(
+      attributeValue.every(isCellRangeValue),
+      `Some values of attribute "${attributeName}" in block "${this.block.name}" are unexpectedly not of type cell range`,
+    );
+    return attributeValue.map(
+      (cellRange) => new SemanticCellRange(cellRange.value),
+    );
   }
 
   protected getDataTypeAssignmentCollectionAttributeValue(
@@ -140,12 +148,15 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
   ): DataTypeAssignment[] {
     const attributeValue = this.getAttributeValue(attributeName);
     assert(
-      Array.isArray(attributeValue) &&
-        attributeValue.every(isDataTypeAssignment),
-      `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type data type assignment collection`,
+      Array.isArray(attributeValue),
+      `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type collection`,
+    );
+    assert(
+      attributeValue.every(isDataTypeAssignmentValue),
+      `Some values of attribute "${attributeName}" in block "${this.block.name}" are unexpectedly not of type data type assignment`,
     );
 
-    return attributeValue;
+    return attributeValue.map((assignment) => assignment.value);
   }
 
   private getAttributeValue(attributeName: string): unknown {
@@ -171,6 +182,9 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
 
     if (isRuntimeParameter(attributeValue)) {
       return this.runtimeParameters.get(attributeValue.name);
+    }
+    if (isCollection(attributeValue)) {
+      return attributeValue.values;
     }
     const value = attributeValue.value;
     if (isReference(value)) {
