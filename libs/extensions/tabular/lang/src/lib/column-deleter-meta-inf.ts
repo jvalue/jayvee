@@ -51,6 +51,10 @@ export class ColumnDeleterMetaInformation extends BlockMetaInformation {
               code: 'delete: [column B]',
               description: 'Delete column B.',
             },
+            {
+              code: 'delete: [column B, column C]',
+              description: 'Delete column B and column C.',
+            },
           ],
           validation: 'You need to specify at least one column.',
         },

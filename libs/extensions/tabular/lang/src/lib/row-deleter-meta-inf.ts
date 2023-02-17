@@ -51,6 +51,10 @@ export class RowDeleterMetaInformation extends BlockMetaInformation {
               code: 'delete: [row 2]',
               description: 'Delete row 2.',
             },
+            {
+              code: 'delete: [row 2, row 3]',
+              description: 'Delete row 2 and row 3.',
+            },
           ],
           validation: 'You need to specify at least one row.',
         },
