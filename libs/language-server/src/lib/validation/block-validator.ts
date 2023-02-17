@@ -167,11 +167,6 @@ export class BlockValidator implements JayveeValidator {
     whatToCheck: 'input' | 'output',
     accept: ValidationAcceptor,
   ): void {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (block.type === undefined) {
-      return;
-    }
-
     const blockMetaInf = getMetaInformation(block.type);
     if (blockMetaInf === undefined) {
       return;
@@ -196,7 +191,7 @@ export class BlockValidator implements JayveeValidator {
       for (const pipe of pipes) {
         accept(
           'error',
-          `Blocks of type ${block.type.name} do not have an ${whatToCheck}`,
+          `Blocks of type ${blockMetaInf.blockType} do not have an ${whatToCheck}`,
           {
             node: pipe,
             property: whatToCheck === 'input' ? 'to' : 'from',
@@ -207,7 +202,7 @@ export class BlockValidator implements JayveeValidator {
       for (const pipe of pipes) {
         accept(
           'error',
-          `At most one pipe can be connected to the ${whatToCheck} of a ${block.type.name}`,
+          `At most one pipe can be connected to the ${whatToCheck} of a ${blockMetaInf.blockType}`,
           {
             node: pipe,
             property: 'to',
@@ -227,9 +222,14 @@ export class BlockValidator implements JayveeValidator {
   }
 
   checkBlockType(this: void, block: Block, accept: ValidationAcceptor): void {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (block.type === undefined) {
+      return;
+    }
     const metaInf = getMetaInformation(block.type);
     if (metaInf === undefined) {
-      accept('error', `Unknown block type '${block.type.name}'`, {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      accept('error', `Unknown block type '${block?.type?.name ?? ''}'`, {
         node: block,
         property: 'type',
       });

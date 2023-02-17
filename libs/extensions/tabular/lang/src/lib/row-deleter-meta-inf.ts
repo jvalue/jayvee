@@ -19,6 +19,9 @@ export class RowDeleterMetaInformation extends BlockMetaInformation {
           }
 
           for (const cellRange of attributeValue.value) {
+            if (!SemanticCellRange.canBeWrapped(cellRange)) {
+              continue;
+            }
             const semanticCellRange = new SemanticCellRange(cellRange);
             if (!isSemanticRow(semanticCellRange)) {
               accept('error', 'An entire row needs to be selected', {

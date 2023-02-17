@@ -22,10 +22,6 @@ export class PipeValidator implements JayveeValidator {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const toBlockType = pipe.to?.ref?.type;
 
-    if (fromBlockType === undefined || toBlockType === undefined) {
-      return;
-    }
-
     const fromBlockMetaInf = getMetaInformation(fromBlockType);
     const toBlockMetaInf = getMetaInformation(toBlockType);
     if (fromBlockMetaInf === undefined || toBlockMetaInf === undefined) {
@@ -33,7 +29,7 @@ export class PipeValidator implements JayveeValidator {
     }
 
     if (!fromBlockMetaInf.canBeConnectedTo(toBlockMetaInf)) {
-      const errorMessage = `The output of block ${fromBlockType.name} is incompatible with the input of block ${toBlockType.name}`;
+      const errorMessage = `The output of block ${fromBlockMetaInf.blockType} is incompatible with the input of block ${toBlockMetaInf.blockType}`;
       accept('error', errorMessage, {
         node: pipe,
         property: 'from',
