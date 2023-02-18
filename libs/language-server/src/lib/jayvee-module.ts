@@ -14,10 +14,10 @@ import {
   JayveeGeneratedSharedModule,
 } from './ast/generated/module';
 import { JayveeCompletionProvider } from './completion/jayvee-completion-provider';
+import { JayveeHoverProvider } from './hover/jayvee-hover-provider';
 import { BlockValidator } from './validation/block-validator';
 import { CellRangeSelectionValidator } from './validation/cell-range-selection-validator';
 import { ColumnExpressionValidator } from './validation/column-expression-validator';
-import { LayoutValidator } from './validation/layout-validator';
 import { ModelValidator } from './validation/model-validator';
 import { PipeValidator } from './validation/pipe-validator';
 import { PipelineValidator } from './validation/pipeline-validator';
@@ -30,7 +30,6 @@ export interface JayveeAddedServices {
   validation: {
     ModelValidator: ModelValidator;
     PipelineValidator: PipelineValidator;
-    LayoutValidator: LayoutValidator;
     PipeValidator: PipeValidator;
     BlockValidator: BlockValidator;
     CellRangeSelectionValidator: CellRangeSelectionValidator;
@@ -57,7 +56,6 @@ export const JayveeModule: Module<
     ValidationRegistry: (services) => new JayveeValidationRegistry(services),
     ModelValidator: () => new ModelValidator(),
     PipelineValidator: () => new PipelineValidator(),
-    LayoutValidator: () => new LayoutValidator(),
     PipeValidator: () => new PipeValidator(),
     BlockValidator: () => new BlockValidator(),
     CellRangeSelectionValidator: () => new CellRangeSelectionValidator(),
@@ -66,6 +64,8 @@ export const JayveeModule: Module<
   lsp: {
     CompletionProvider: (services: LangiumServices) =>
       new JayveeCompletionProvider(services),
+    HoverProvider: (services: LangiumServices) =>
+      new JayveeHoverProvider(services),
   },
 };
 

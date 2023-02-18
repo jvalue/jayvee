@@ -46,16 +46,14 @@ export class PostgresLoaderExecutor extends BlockExecutor<Table, void> {
       this.logger.logDebug(
         `The data was successfully loaded into the database`,
       );
-      return Promise.resolve(R.ok(undefined));
+      return R.ok(undefined);
     } catch (err: unknown) {
-      return Promise.resolve(
-        R.err({
-          message: `Could not write to postgres database: ${
-            err instanceof Error ? err.message : JSON.stringify(err)
-          }`,
-          diagnostic: { node: this.block, property: 'name' },
-        }),
-      );
+      return R.err({
+        message: `Could not write to postgres database: ${
+          err instanceof Error ? err.message : JSON.stringify(err)
+        }`,
+        diagnostic: { node: this.block, property: 'name' },
+      });
     } finally {
       await client.end();
     }

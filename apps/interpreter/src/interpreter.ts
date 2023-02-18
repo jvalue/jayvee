@@ -142,7 +142,7 @@ export function printPipeline(
 ) {
   const toString = (block: Block, depth = 0): string => {
     const blockString = `${'\t'.repeat(depth)} -> ${block.name} (${
-      block.type
+      block.type.name
     })`;
     const childString = collectChildren(block)
       .map((child) => toString(child, depth + 1))

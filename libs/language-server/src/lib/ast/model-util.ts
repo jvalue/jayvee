@@ -9,20 +9,17 @@ import {
   Block,
   Pipe,
   Pipeline,
-  isCellRangeCollection,
+  isBooleanValue,
   isCellRangeValue,
+  isCollection,
+  isDataTypeAssignmentValue,
   isIntValue,
-  isLayoutReferenceValue,
   isStringValue,
 } from './generated/ast';
 
 export function collectStartingBlocks(pipeline: Pipeline): Block[] {
   const result: Block[] = [];
   for (const block of pipeline.blocks) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (block.type === undefined) {
-      continue;
-    }
     const blockMetaInf = getMetaInformation(block.type);
     if (blockMetaInf === undefined) {
       continue;
@@ -66,10 +63,10 @@ export function collectParents(block: Block): Block[] {
 }
 
 export function collectOutgoingPipes(block: Block): Pipe[] {
-  const model = block.$container;
+  const pipeline = block.$container;
   const outgoingPipes: Pipe[] = [];
 
-  for (const pipe of model.pipes) {
+  for (const pipe of pipeline.pipes) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (pipe.from?.ref === block) {
       outgoingPipes.push(pipe);
@@ -80,10 +77,10 @@ export function collectOutgoingPipes(block: Block): Pipe[] {
 }
 
 export function collectIngoingPipes(block: Block): Pipe[] {
-  const model = block.$container;
+  const pipeline = block.$container;
   const ingoingPipes: Pipe[] = [];
 
-  for (const pipe of model.pipes) {
+  for (const pipe of pipeline.pipes) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (pipe.to?.ref === block) {
       ingoingPipes.push(pipe);
@@ -148,19 +145,23 @@ export function getBlocksInTopologicalSorting(pipeline: Pipeline): Block[] {
 export enum AttributeType {
   STRING = 'string',
   INT = 'integer',
+  BOOLEAN = 'boolean',
   LAYOUT = 'layout',
   CELL_RANGE = 'cell range',
-  CELL_RANGE_COLLECTION = 'cell range collection',
+  COLLECTION = 'collection',
+  DATA_TYPE_ASSIGNMENT = 'data type assignment',
 }
 
 export function runtimeParameterAllowedForType(type: AttributeType): boolean {
   switch (type) {
     case AttributeType.LAYOUT:
     case AttributeType.CELL_RANGE:
-    case AttributeType.CELL_RANGE_COLLECTION:
+    case AttributeType.DATA_TYPE_ASSIGNMENT:
+    case AttributeType.COLLECTION:
       return false;
     case AttributeType.STRING:
     case AttributeType.INT:
+    case AttributeType.BOOLEAN:
       return true;
     default:
       assertUnreachable(type);
@@ -176,14 +177,17 @@ export function convertAttributeValueToType(
   if (isIntValue(value)) {
     return AttributeType.INT;
   }
+  if (isBooleanValue(value)) {
+    return AttributeType.BOOLEAN;
+  }
   if (isCellRangeValue(value)) {
     return AttributeType.CELL_RANGE;
   }
-  if (isCellRangeCollection(value)) {
-    return AttributeType.CELL_RANGE_COLLECTION;
+  if (isDataTypeAssignmentValue(value)) {
+    return AttributeType.DATA_TYPE_ASSIGNMENT;
   }
-  if (isLayoutReferenceValue(value)) {
-    return AttributeType.LAYOUT;
+  if (isCollection(value)) {
+    return AttributeType.COLLECTION;
   }
   assertUnreachable(value);
 }

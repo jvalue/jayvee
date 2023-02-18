@@ -5,10 +5,16 @@ import {
   MaybePromise,
   NextFeature,
 } from 'langium';
-import { isRuleCall } from 'langium/lib/grammar/generated/ast';
 import { CompletionItemKind } from 'vscode-languageserver';
 
-import { Attribute, Block, isAttribute, isBlock } from '../ast/generated/ast';
+import {
+  Attribute,
+  Block,
+  BlockType,
+  isAttribute,
+  isBlock,
+  isBlockType,
+} from '../ast/generated/ast';
 import {
   getMetaInformation,
   getRegisteredBlockTypes,
@@ -21,23 +27,19 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
     const astNode = context.node;
-    if (
-      astNode !== undefined &&
-      isRuleCall(next.feature) &&
-      next.feature.rule.ref !== undefined
-    ) {
-      if (isBlock(astNode)) {
-        if (next.type === Attribute) {
-          return this.completionForAttributeName(astNode, acceptor);
-        }
-        if (next.property === 'type') {
-          return this.completionForBlockType(acceptor);
-        }
+    if (astNode !== undefined) {
+      const isBlockTypeCompletion =
+        (isBlock(astNode) || isBlockType(astNode)) && next.type === BlockType;
+      if (isBlockTypeCompletion) {
+        return this.completionForBlockType(acceptor);
       }
-      if (isAttribute(astNode)) {
-        if (next.property === 'name') {
-          return this.completionForAttributeName(astNode, acceptor);
-        }
+
+      const isFirstAttributeCompletion =
+        isBlock(astNode) && next.type === Attribute;
+      const isOtherAttributeCompletion =
+        isAttribute(astNode) && next.type === Attribute;
+      if (isFirstAttributeCompletion || isOtherAttributeCompletion) {
+        return this.completionForAttributeName(astNode, acceptor);
       }
     }
     return super.completionFor(context, next, acceptor);
@@ -73,7 +75,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       acceptor({
         label: attributeName,
         kind: CompletionItemKind.Field,
-        detail: `${block.type} Attribute`,
+        detail: `${blockMetaInf.blockType} Attribute`,
         sortText: '1',
       }),
     );
@@ -86,7 +88,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       acceptor({
         label: attributeName,
         kind: CompletionItemKind.Field,
-        detail: `Optional ${block.type} Attribute`,
+        detail: `Optional ${blockMetaInf.blockType} Attribute`,
         sortText: '2',
       }),
     );

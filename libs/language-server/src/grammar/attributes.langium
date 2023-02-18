@@ -1,5 +1,5 @@
 import 'terminals';
-import 'layout';
+import 'data-type';
 import 'cell-range';
 
 fragment AttributesFragment:
@@ -12,7 +12,13 @@ RuntimeParameter:
   'requires' name=ID;
 
 AttributeValue:
-  StringValue | IntValue | CellRangeValue | CellRangeCollection | LayoutReferenceValue;
+  AtomicValue | Collection;
+
+AtomicValue:
+  StringValue | IntValue | BooleanValue | CellRangeValue | DataTypeAssignmentValue;
+
+Collection:
+  '[' (values+=(AtomicValue) (',' values+=(AtomicValue))*)? ']';
 
 StringValue:
   value=STRING;
@@ -20,11 +26,11 @@ StringValue:
 IntValue:
   value=INT;
 
-CellRangeCollection:
-  '[' (value+=CellRange (',' value+=CellRange)*)? ']';
+BooleanValue:
+  value=(TRUE | FALSE);
 
 CellRangeValue:
   value=CellRange;
 
-LayoutReferenceValue:
-  value=[Layout];
+DataTypeAssignmentValue:
+  value=DataTypeAssignment;

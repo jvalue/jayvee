@@ -2,9 +2,13 @@ import { AbstractDataType } from '../data-types/AbstractDataType';
 
 import { IOType } from './io-type';
 
+export interface ColumnInformation {
+  name: string;
+  type: AbstractDataType;
+}
+
 export interface Table {
-  columnNames: string[];
-  columnTypes: Array<AbstractDataType | undefined>;
+  columnInformation: ColumnInformation[];
   data: string[][];
 }
 export const TABLE_TYPE = new IOType<Table>();

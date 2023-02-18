@@ -3,12 +3,12 @@ import { strict as assert } from 'assert';
 import { Block } from '@jayvee/language-server';
 
 import { BlockExecutor } from './block-executor';
-import { BlockExecutorType } from './block-executor-type';
+import { BlockExecutorClass } from './block-executor-class';
 import { Logger } from './logger';
 
-const registeredBlockExecutors = new Map<string, BlockExecutorType>();
+const registeredBlockExecutors = new Map<string, BlockExecutorClass>();
 
-export function registerBlockExecutor(blockExecutor: BlockExecutorType) {
+export function registerBlockExecutor(blockExecutor: BlockExecutorClass) {
   const blockType = new blockExecutor().blockType;
   assert(
     !registeredBlockExecutors.has(blockType),
@@ -23,10 +23,11 @@ export function createBlockExecutor(
   runtimeParameters: Map<string, string | number | boolean>,
   logger: Logger,
 ): BlockExecutor {
-  const blockExecutor = registeredBlockExecutors.get(block.type);
+  const blockType = block.type.name;
+  const blockExecutor = registeredBlockExecutors.get(blockType);
   assert(
     blockExecutor !== undefined,
-    `No executor was registered for block type ${block.type}`,
+    `No executor was registered for block type ${blockType}`,
   );
 
   const blockExecutorInstance = new blockExecutor();

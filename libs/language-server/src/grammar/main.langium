@@ -2,18 +2,20 @@ grammar Jayvee
 
 import 'terminals'
 import 'attributes'
-import 'layout'
 
 entry Model:
-  (pipelines+=Pipeline | layouts+=Layout)*;
+  (pipelines+=Pipeline)*;
 
 Pipeline:
   'pipeline' name=ID '{'
-    (blocks+=Block | layouts+=Layout | pipes+=Pipe)*
+    (blocks+=Block | pipes+=Pipe)*
   '}';
 
 Block:
-  'block' name=ID 'oftype' type=ID AttributesFragment;
+  'block' name=ID 'oftype' type=BlockType AttributesFragment;
+
+BlockType:
+  name=ID;
 
 Pipe:
   'pipe' '{'

@@ -3,11 +3,13 @@ import { strict as assert } from 'assert';
 import {
   Attribute,
   Block,
-  Layout,
+  DataTypeAssignment,
   SemanticCellRange,
   getOrFailMetaInformation,
   isCellRange,
-  isLayout,
+  isCellRangeValue,
+  isCollection,
+  isDataTypeAssignmentValue,
   isRuntimeParameter,
 } from '@jayvee/language-server';
 import { isReference } from 'langium';
@@ -33,8 +35,8 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
 
   set block(block: Block) {
     assert(
-      block.type === this.blockType,
-      `The provided block does not match the desired type: expected ${this.blockType}, actual ${block.type}`,
+      block.type.name === this.blockType,
+      `The provided block does not match the desired type: expected ${this.blockType}, actual ${block.type.name}`,
     );
 
     this._block = block;
@@ -90,11 +92,11 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
     return attributeValue;
   }
 
-  protected getLayoutAttributeValue(attributeName: string): Layout {
+  protected getBooleanAttributeValue(attributeName: string): boolean {
     const attributeValue = this.getAttributeValue(attributeName);
     assert(
-      isLayout(attributeValue),
-      `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type layout`,
+      typeof attributeValue === 'boolean',
+      `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type boolean`,
     );
 
     return attributeValue;
@@ -117,10 +119,32 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
   ): SemanticCellRange[] {
     const attributeValue = this.getAttributeValue(attributeName);
     assert(
-      Array.isArray(attributeValue) && attributeValue.every(isCellRange),
-      `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type cell range collection`,
+      Array.isArray(attributeValue),
+      `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type collection`,
     );
-    return attributeValue.map((cellRange) => new SemanticCellRange(cellRange));
+    assert(
+      attributeValue.every(isCellRangeValue),
+      `Some values of attribute "${attributeName}" in block "${this.block.name}" are unexpectedly not of type cell range`,
+    );
+    return attributeValue.map(
+      (cellRange) => new SemanticCellRange(cellRange.value),
+    );
+  }
+
+  protected getDataTypeAssignmentCollectionAttributeValue(
+    attributeName: string,
+  ): DataTypeAssignment[] {
+    const attributeValue = this.getAttributeValue(attributeName);
+    assert(
+      Array.isArray(attributeValue),
+      `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type collection`,
+    );
+    assert(
+      attributeValue.every(isDataTypeAssignmentValue),
+      `Some values of attribute "${attributeName}" in block "${this.block.name}" are unexpectedly not of type data type assignment`,
+    );
+
+    return attributeValue.map((assignment) => assignment.value);
   }
 
   private getAttributeValue(attributeName: string): unknown {
@@ -137,7 +161,7 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
       const defaultValue = attributeSpec.defaultValue;
       assert(
         defaultValue !== undefined,
-        `The block "${this.block.name}" of type ${this.block.type} is missing a required attribute called "${attributeName}"`,
+        `The block "${this.block.name}" of type ${this.block.type.name} is missing a required attribute called "${attributeName}"`,
       );
 
       return defaultValue;
@@ -146,6 +170,9 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
 
     if (isRuntimeParameter(attributeValue)) {
       return this.runtimeParameters.get(attributeValue.name);
+    }
+    if (isCollection(attributeValue)) {
+      return attributeValue.values;
     }
     const value = attributeValue.value;
     if (isReference(value)) {
@@ -165,7 +192,7 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
     const attribute = this.getAttribute(attributeName);
     assert(
       attribute !== undefined,
-      `Attribute with name ${attributeName} was expected to be present in block ${this.block.name} of type ${this.block.type}`,
+      `Attribute with name ${attributeName} was expected to be present in block ${this.block.name} of type ${this.block.type.name}`,
     );
     return attribute;
   }
