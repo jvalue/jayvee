@@ -33,12 +33,12 @@ export class FilePickerMetaInformation extends BlockMetaInformation {
       {
         code: blockExampleUsage,
         description:
-          'A local SQLite file is created at the given path and filled with table data about cars.',
+          'The block receives a Filesystem and gets the file specified in path-attribute',
       },
     ];
   }
 }
 
-const blockExampleUsage = `block GtfsFilePicker oftype FilePicker {
+const blockExampleUsage = `block AgencyFilePicker oftype FilePicker {
   path: "./Agencies.txt";
 }`;
