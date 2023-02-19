@@ -15,22 +15,24 @@ export class CSVInterpreterExecutor extends BlockExecutor<File, Sheet> {
   override async execute(file: File): Promise<R.Result<Sheet>> {
     const delimiter = this.getStringAttributeValue('delimiter');
 
-    if (file.extension !== FileExtension.ZIP) {
-      return Promise.resolve(
-        R.err({
-          message: `Input file's extensions expecteced to be ${
-            FileExtension.ZIP
-          } but was ${
-            file.extension === FileExtension.NONE ? 'NONE' : file.extension
-          }`,
-          diagnostic: { node: this.block, property: 'name' },
-        }),
-      );
+    if (
+      file.extension === FileExtension.TXT ||
+      file.extension === FileExtension.CSV
+    ) {
+      const decoder = new TextDecoder();
+      const csvFile = decoder.decode(file.content);
+      return await this.parseAsCsv(csvFile, delimiter);
     }
-
-    const decoder = new TextDecoder();
-    const csvFile = decoder.decode(file.content);
-    return await this.parseAsCsv(csvFile, delimiter);
+    return Promise.resolve(
+      R.err({
+        message: `Input file's extensions expecteced to be ${
+          FileExtension.TXT
+        } or ${FileExtension.CSV} but was ${
+          file.extension === FileExtension.NONE ? 'NONE' : file.extension
+        }`,
+        diagnostic: { node: this.block, property: 'name' },
+      }),
+    );
   }
 
   private parseAsCsv(
