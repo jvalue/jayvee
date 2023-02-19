@@ -136,35 +136,41 @@ pipeline GtfsPipeline {
 
 
 	block AgencyLoader oftype SQLiteTablesLoader {
+		table: "Agency";
 		file: "./gtfs.db";
 	}
 
 	block StopsLoader oftype SQLiteTablesLoader {
+		table: "Stops";
 		file: "./gtfs.db";
 	}
 
 
 	block RoutesLoader oftype SQLiteTablesLoader {
+		table: "Routes";
 		file: "./gtfs.db";
-		recreateDatabase: false;
 	}
 
 
-	lock TripsLoader oftype SQLiteTablesLoader {
+	block TripsLoader oftype SQLiteTablesLoader {
+		table: "Trips";
 		file: "./gtfs.db";
 	}
 
 
 	block StopTimesLoader oftype SQLiteTablesLoader {
+		table: "StopTimes"
 		file: "./gtfs.db";
 	}
 
 	block CalendarDatesLoader oftype SQLiteTablesLoader {
+		table: "CalendarDates";
 		file: "./gtfs.db";
 	}
 
 
 	block FeedInfoLoader oftype SQLiteTablesLoader {
+		table: "FeedInfo";
 		file: "./gtfs.db";
 	}
 
