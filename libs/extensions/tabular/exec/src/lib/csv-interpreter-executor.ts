@@ -3,7 +3,7 @@ import { TextDecoder } from 'util';
 import * as R from '@jayvee/execution';
 import { BlockExecutor } from '@jayvee/execution';
 import { File, FileExtension, Sheet } from '@jayvee/language-server';
-import * as E from 'fp-ts/lib/Either';
+import { isLeft } from 'fp-ts/lib/Either';
 
 import { getSheetWidth, parseAsCsv } from './csv-util';
 
@@ -27,7 +27,7 @@ export class CSVInterpreterExecutor extends BlockExecutor<File, Sheet> {
       );
 
       const csvData = await parseAsCsv(csvFile, delimiter);
-      if (E.isLeft(csvData)) {
+      if (isLeft(csvData)) {
         return Promise.resolve(
           R.err({
             message: `CSV parse failed: ${csvData.left.message}`,
