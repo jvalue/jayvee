@@ -1,0 +1,47 @@
+pipeline CarsPipeline {
+	block CarsExtractor oftype HttpExtractor {
+		url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
+	}
+	
+	pipe {
+		from: CarsExtractor;
+		to: CarCSVInterpreter;
+	}
+
+	block CarCSVInterpreter oftype CSVInterpreter {
+ 
+	}
+
+    pipe {
+        from: CarCSVInterpreter;
+        to: CarsTableInterpreter;
+    }
+
+	block CarsTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns: [
+			"" typed text,
+			"mpg" typed decimal,
+			"cyl" typed integer,
+			"disp" typed decimal,
+			"hp" typed integer,
+			"drat" typed decimal,
+			"wt" typed decimal,
+			"qsec" typed decimal,
+			"vs" typed integer,
+			"am" typed integer,
+			"gear" typed integer,
+			"carb" typed integer
+		];
+	}
+
+	pipe {
+		from: CarsTableInterpreter;
+		to: CarsLoader;
+	}
+
+	block CarsLoader oftype SQLiteLoader {
+		table: "Cars";
+		file: "./cars.db";
+	}
+}
