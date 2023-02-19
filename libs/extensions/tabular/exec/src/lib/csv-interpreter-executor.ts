@@ -9,13 +9,13 @@ import { File, FileExtension, Sheet } from '@jayvee/language-server';
 export class CSVInterpreterExecutor extends BlockExecutor<File, Sheet> {
   constructor() {
     // Needs to match the name in meta information:
-    super('MyExtractor');
+    super('CSVInterpreter');
   }
 
   override async execute(file: File): Promise<R.Result<Sheet>> {
     const delimiter = this.getStringAttributeValue('delimiter');
 
-    if (file.extension != FileExtension.ZIP) {
+    if (file.extension !== FileExtension.ZIP) {
       return Promise.resolve(
         R.err({
           message: `Input file's extensions expecteced to be ${
@@ -23,7 +23,7 @@ export class CSVInterpreterExecutor extends BlockExecutor<File, Sheet> {
           } but was ${
             file.extension === FileExtension.NONE ? 'NONE' : file.extension
           }`,
-          diagnostic: { node: this.getOrFailAttribute('url') },
+          diagnostic: { node: this.block, property: 'name' },
         }),
       );
     }
