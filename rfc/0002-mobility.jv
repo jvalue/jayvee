@@ -5,7 +5,7 @@ pipeline GtfsPipeline {
 	}
 
     block ZipArchiveInterpreter oftype ArchiveInterpreter{
-    
+    	archiveType: "zip"
     }
 
 	block AgencyFilePicker oftype FilePicker{
