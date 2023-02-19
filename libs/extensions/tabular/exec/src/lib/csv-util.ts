@@ -1,12 +1,12 @@
 import { parseString as parseStringAsCsv } from '@fast-csv/parse';
 import { ParserOptionsArgs } from '@fast-csv/parse/build/src/ParserOptions';
-import * as R from '@jayvee/execution';
-import { Sheet } from '@jayvee/language-server';
+import { Either } from 'fp-ts/lib/Either';
+import * as E from 'fp-ts/lib/Either';
 
 export function parseAsCsv(
   rawData: string,
   delimiter: string,
-): Promise<R.Result<Sheet> | Error> {
+): Promise<Either<Error, string[][]>> {
   return new Promise((resolve) => {
     const csvData: string[][] = [];
     const parseOptions: ParserOptionsArgs = { delimiter };
@@ -15,15 +15,10 @@ export function parseAsCsv(
         csvData.push(data);
       })
       .on('error', (error) => {
-        resolve(error);
+        resolve(E.left(error));
       })
       .on('end', () => {
-        const result = {
-          data: csvData,
-          width: getSheetWidth(csvData),
-          height: csvData.length,
-        };
-        resolve(R.ok(result));
+        resolve(E.right(csvData));
       });
   });
 }

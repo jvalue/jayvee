@@ -3,8 +3,9 @@ import * as http from 'https';
 import { BlockExecutor } from '@jayvee/execution';
 import * as R from '@jayvee/execution';
 import { Sheet } from '@jayvee/language-server';
+import * as E from 'fp-ts/lib/Either';
 
-import { parseAsCsv } from './csv-util';
+import { getSheetWidth, parseAsCsv } from './csv-util';
 
 export class CSVFileExtractorExecutor extends BlockExecutor<void, Sheet> {
   constructor() {
@@ -26,21 +27,24 @@ export class CSVFileExtractorExecutor extends BlockExecutor<void, Sheet> {
     this.logger.logDebug(
       `Parsing raw data as CSV using delimiter "${delimiter}"`,
     );
-    const sheet = await parseAsCsv(rawData.right, delimiter);
-    if (sheet instanceof Error) {
+
+    const csvData = await parseAsCsv(rawData.right, delimiter);
+    if (E.isLeft(csvData)) {
       return Promise.resolve(
         R.err({
-          message: `CSV parse failed: ${sheet.message}`,
+          message: `CSV parse failed: ${csvData.left.message}`,
           diagnostic: { node: this.block, property: 'name' },
         }),
       );
     }
+    const sheet = {
+      data: csvData.right,
+      width: getSheetWidth(csvData.right),
+      height: csvData.right.length,
+    };
 
-    if (R.isErr(sheet)) {
-      return sheet;
-    }
-    this.logger.logDebug(`Parsing raw data as CSV successfull"`);
-    return R.ok(sheet.right);
+    this.logger.logDebug(`Parsing raw data as CSV-sheet successfull`);
+    return Promise.resolve(R.ok(sheet));
   }
 
   private fetchRawData(url: string): Promise<R.Result<string>> {
