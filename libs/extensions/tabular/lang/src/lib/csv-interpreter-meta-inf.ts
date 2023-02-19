@@ -42,7 +42,7 @@ export class CSVInterpreterMetaInformation extends BlockMetaInformation {
       {
         code: blockExample,
         description:
-          'Interprets an input file coming from an file-collection as a csv-file containing string-values delimited by `;` and outputs `Sheet`.',
+          'Interprets an input file as a csv-file containing string-values delimited by `;` and outputs `Sheet`.',
       },
     ];
   }
