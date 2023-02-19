@@ -64,91 +64,74 @@ pipeline GtfsPipeline {
 	
 	}
 
-	layout agencyLayout {
-		header row 1: text;
-		column agency_id: text; //Conditional columns are considered as required
-		column agency_name: text;
-		column agency_url: text;
-		column agency_timezone: text;
+	block AgencyTableInterpreter oftype TableInterpreter  {
+		header: true;
+		columns:[
+			"agency_id" typed text, //Conditional columns are considered as required
+			"agency_name" typed text,
+			"agency_url" typed text,
+			"agency_timezone" typed text,
+		]
 	}
 
-	layout stopsLayout {
-		header row 1: text;
-		column stop_id: text;
-		column stop_name: text;
-		column stop_lat: text;
-		column stop_lon: text;
-		column stop_name: text;
+	block StopsTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns:[
+			"stop_id" typed text,
+			"stop_name" typed text,
+			"stop_lat" typed text,
+			"stop_lon" typed text,
+			"stop_name" typed text,
+		]
+
 	}
 
-	layout routesLayout {
-		header row 1: text;
-		column route_type: text;
-		column agency_id: text;
-		column route_type: text;
+	block RoutesTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns: [
+			"route_type" typed text,
+			"agency_id" typed text,
+			"route_type" typed text,
+		]
 	}
 
-	layout tripsLayout {
-		header row 1: text;
-		column route_id: text;
-		column service_id: text;
-		column trip_id: text;
+	block TripsTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns: [
+			"route_id" typed text,
+			"service_id" typed text,
+			"trip_id" typed text,
+		]
 	}
 
-	layout stop_timesLayout {
-		header row 1: text;
-		column trip_id: text;
-		column stop_id: text;
-		column stop_sequence: text;
-		column arrival_time: text
-		column departure_time: text
+	block StopTimesTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns: [
+			"trip_id" typed text,
+			"stop_id" typed text,
+			"stop_sequence" typed text,
+			"arrival_time" typed text
+			"departure_time" typed text		
+		]
 	}
 
-	layout calendar_datesLayout {
-		header row 1: text;
-		column service_id: text;
-		column date: text;
-		column exception_type: text;
+	block CalendarDatesTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns: [
+			"service_id" typed text,
+			"date" typed text,
+			"exception_type" typed text,
+		]
 	}
 
-	layout feed_infoLayout {
-		header row 1: text;
-		column feed_publisher_name: text;
-		column feed_publisher_url: text;
-		column feed_lang: text;
+	block FeedInfoTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns: [
+			"feed_publisher_name" typed text,
+			"feed_publisher_url" typed text,
+			"feed_lang" typed text,		
+		]
 	}
-
-
-
-
-	block AgencyValidator oftype LayoutValidator {
-		validationLayout: agencyLayout;
-	}
-
-	block StopsValidator oftype LayoutValidator {
-		validationLayout: stopsLayout;
-	}
-
-	block RoutesValidator oftype LayoutValidator {
-		validationLayout: routesLayout;
-	}
-
-	block TripsValidator oftype LayoutValidator {
-		validationLayout: tripsLayout;
-	}
-
-	block StopTimesValidator oftype LayoutValidator {
-		validationLayout: stop_timesLayout;
-	}
-
-	block CalendarDatesValidator oftype LayoutValidator {
-		validationLayout: calendar_datesLayout;
-	}
-
-	block FeedInfoValidator oftype LayoutValidator {
-		validationLayout: feed_infoLayout;
-	}
-
 
 
 
@@ -279,74 +262,74 @@ pipeline GtfsPipeline {
 
 	pipe {
 		from: AgencyCSVInterpreter;
-		to: AgencyValidator;
+		to: AgencyTableInterpreter;
 	}
 	
 	pipe {
 		from: StopsCSVInterpreter;
-		to: StopsValidator;
+		to: StopsTableInterpreter;
 	}
 
 	pipe {
 		from: RoutesCSVInterpreter;
-		to: RoutesValidator;
+		to: RoutesTableInterpreter;
 	}
 
 	pipe {
 		from: TripsCSVInterpreter;
-		to: TripsValidator;
+		to: TripsTableInterpreter;
 	}
 
 	pipe {
 		from: StopTimesCSVInterpreter;
-		to: StopTimesValidator;
+		to: StopTimesTableInterpreter;
 	}
 
 	pipe {
 		from: CalendarDatesCSVInterpreter;
-		to: CalendarDatesValidator;
+		to: CalendarDatesTableInterpreter;
 	}
 
 	pipe {
 		from: FeedInfoCSVInterpreter;
-		to: FeedInfoValidator;
+		to: FeedInfoTableInterpreter;
 	}
 
 
 
 
 	pipe {
-		from: AgencyValidator;
+		from: AgencyTableInterpreter;
 		to: AgencyLoader;
 	}
 	
 	pipe {
-		from: StopsValidator;
+		from: StopsTableInterpreter;
 		to: StopsLoader;
 	}
 
 	pipe {
-		from: RoutesValidator;
+		from: RoutesTableInterpreter;
 		to: RoutesLoader;
 	}
 
 	pipe {
-		from: TripsValidator;
-		to: TripsValidator;
+		from: TripsTableInterpreter;
+		to: TripsLoader;
 	}
 
 	pipe {
-		from: StopTimesValidator;
+		from: StopTimesTableInterpreter;
 		to: StopTimesLoader;
 	}
 
 	pipe {
-		from: CalendarDatesValidator;
+		from: CalendarDatesTableInterpreter;
 		to: CalendarDatesLoader;
 	}
 
 	pipe {
-		from: FeedInfoValidator;
+		from: FeedInfoTableInterpreter;
 		to: FeedInfoLoader;
 	}
 
