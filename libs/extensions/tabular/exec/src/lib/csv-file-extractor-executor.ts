@@ -23,8 +23,24 @@ export class CSVFileExtractorExecutor extends BlockExecutor<void, Sheet> {
     if (R.isErr(rawData)) {
       return rawData;
     }
+    this.logger.logDebug(
+      `Parsing raw data as CSV using delimiter "${delimiter}"`,
+    );
+    const sheet = await parseAsCsv(rawData.right, delimiter);
+    if (sheet instanceof Error) {
+      return Promise.resolve(
+        R.err({
+          message: `CSV parse failed: ${sheet.message}`,
+          diagnostic: { node: this.block, property: 'name' },
+        }),
+      );
+    }
 
-    return await parseAsCsv(rawData.right, delimiter, this);
+    if (R.isErr(sheet)) {
+      return sheet;
+    }
+    this.logger.logDebug(`Parsing raw data as CSV successfull"`);
+    return R.ok(sheet.right);
   }
 
   private fetchRawData(url: string): Promise<R.Result<string>> {

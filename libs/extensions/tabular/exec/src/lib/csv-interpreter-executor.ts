@@ -21,7 +21,25 @@ export class CSVInterpreterExecutor extends BlockExecutor<File, Sheet> {
     ) {
       const decoder = new TextDecoder();
       const csvFile = decoder.decode(file.content);
-      return await parseAsCsv(csvFile, delimiter, this);
+      this.logger.logDebug(
+        `Parsing raw data as CSV using delimiter "${delimiter}"`,
+      );
+
+      const sheet = await parseAsCsv(csvFile, delimiter);
+      if (sheet instanceof Error) {
+        return Promise.resolve(
+          R.err({
+            message: `CSV parse failed: ${sheet.message}`,
+            diagnostic: { node: this.block, property: 'name' },
+          }),
+        );
+      }
+
+      if (R.isErr(sheet)) {
+        return sheet;
+      }
+      this.logger.logDebug(`Parsing raw data as CSV successfull"`);
+      return R.ok(sheet.right);
     }
     return Promise.resolve(
       R.err({

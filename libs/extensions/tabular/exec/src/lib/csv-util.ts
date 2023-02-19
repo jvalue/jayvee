@@ -1,18 +1,12 @@
 import { parseString as parseStringAsCsv } from '@fast-csv/parse';
 import { ParserOptionsArgs } from '@fast-csv/parse/build/src/ParserOptions';
 import * as R from '@jayvee/execution';
-import { BlockExecutor } from '@jayvee/execution';
 import { Sheet } from '@jayvee/language-server';
 
 export function parseAsCsv(
   rawData: string,
   delimiter: string,
-  blockExecutor: BlockExecutor,
-): Promise<R.Result<Sheet>> {
-  blockExecutor.logger.logDebug(
-    `Parsing raw data as CSV using delimiter "${delimiter}"`,
-  );
-
+): Promise<R.Result<Sheet> | Error> {
   return new Promise((resolve) => {
     const csvData: string[][] = [];
     const parseOptions: ParserOptionsArgs = { delimiter };
@@ -21,15 +15,7 @@ export function parseAsCsv(
         csvData.push(data);
       })
       .on('error', (error) => {
-        resolve(
-          R.err({
-            message: `CSV parse failed: ${error.message}`,
-            diagnostic: {
-              node: blockExecutor.block,
-              property: 'name',
-            },
-          }),
-        );
+        resolve(error);
       })
       .on('end', () => {
         const result = {
@@ -37,7 +23,6 @@ export function parseAsCsv(
           width: getSheetWidth(csvData),
           height: csvData.length,
         };
-        blockExecutor.logger.logDebug(`Successfully parsed data as CSV`);
         resolve(R.ok(result));
       });
   });
