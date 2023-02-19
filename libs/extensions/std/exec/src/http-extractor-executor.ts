@@ -6,8 +6,9 @@ import { BlockExecutor } from '@jayvee/execution';
 import { File, FileExtension, MimeType } from '@jayvee/language-server';
 
 import {
-  inferFileExtensionFromString,
-  inferMimeTypeFromString,
+  inferFileExtensionFromContentTypeString,
+  inferFileExtensionFromFileExtensionString,
+  inferMimeTypeFromContentTypeString,
 } from './file-util';
 
 export class HttpExtractorExecutor extends BlockExecutor<void, File> {
@@ -62,8 +63,9 @@ export class HttpExtractorExecutor extends BlockExecutor<void, File> {
 
           // Infer Mimetype from HTTP-Header, if not inferrable, then default to application/octet-stream
           const mimeType =
-            inferMimeTypeFromString(response.headers['content-type']) ||
-            MimeType.APPLICATION_OCTET_STREAM;
+            inferMimeTypeFromContentTypeString(
+              response.headers['content-type'],
+            ) || MimeType.APPLICATION_OCTET_STREAM;
 
           // Infer FileName and FileExtension from url, if not inferrable, then default to None
           // Get last element of URL assuming this is a filename
@@ -72,7 +74,15 @@ export class HttpExtractorExecutor extends BlockExecutor<void, File> {
             .pop();
           const extName = path.extname(fileName === undefined ? '' : fileName);
           const fileExtension =
-            inferFileExtensionFromString(extName) || FileExtension.NONE;
+            inferFileExtensionFromFileExtensionString(extName) ||
+            FileExtension.NONE;
+
+          // If FileExtension is not in url, try to infer extension from content-type, if not inferrable, then default to None
+          if (fileExtension === FileExtension.NONE) {
+            inferFileExtensionFromContentTypeString(
+              response.headers['content-type'],
+            ) || FileExtension.NONE;
+          }
 
           // Create file and return file
           const file: File = {
