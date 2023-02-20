@@ -103,8 +103,8 @@ async function runPipeline(
     const inputValue = parentData[0]?.value;
     let result: R.Result<unknown>;
 
-    // Check, if parent emitted a value, but just, when it is not the root block (root blocks have no parents, so parentData holds no parents)
-    if (inputValue != null || parentData.length === 0) {
+    // Check, if parent emitted a value, root blocks have no parents to check
+    if (inputValue != null || isRootBlock(blockData.block, executionOrder)) {
       try {
         result = await blockExecutor.execute(inputValue);
       } catch (unexpectedError) {
@@ -143,6 +143,14 @@ async function runPipeline(
     }
   }
   return ExitCode.SUCCESS;
+}
+
+function isRootBlock(
+  blockToCheck: Block,
+  executionOrder: Array<{ block: Block; value: unknown }>,
+): boolean {
+  const executionRoot = executionOrder[0]?.block;
+  return blockToCheck === executionRoot;
 }
 
 export function printPipeline(
