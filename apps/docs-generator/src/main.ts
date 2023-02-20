@@ -13,22 +13,33 @@ import {
 useExtension(new StdLangExtension());
 
 function createMarkdownDoc(metaInf: BlockMetaInformation): string {
-  const metaTitle = `---
-title: ${metaInf.blockType}
----`;
-  return (
-    metaTitle +
-    new MarkdownDocBuilder()
-      .blockTypeTitle(metaInf.blockType)
-      .description(metaInf.docs.description)
-      .attributes(
-        Object.entries(metaInf.getAttributeSpecifications()).map(
-          ([key, spec]) => [key, spec.docs?.description],
-        ),
-      )
-      .examples(metaInf.docs.examples)
-      .build()
+  const builder = new MarkdownDocBuilder()
+    .metaData({ title: metaInf.blockType })
+    .comment(
+      'Do NOT change this document as it is auto-generated from the language server',
+    )
+    .newLine()
+    .blockTypeTitle(metaInf.blockType)
+    .description(metaInf.docs.description)
+    .attributes(
+      Object.entries(metaInf.getAttributeSpecifications()).map(
+        ([key, spec]) => [key, spec.docs?.description],
+      ),
+    )
+    .examples(metaInf.docs.examples);
+
+  builder.heading('Attribute Details', 2);
+  Object.entries(metaInf.getAttributeSpecifications()).forEach(
+    ([key, attribute]) => {
+      builder
+        .attributeTitle(key, 3)
+        .description(attribute.docs?.description, 4)
+        .validation(attribute.docs?.validation, 4)
+        .examples(attribute.docs?.examples, 4);
+    },
   );
+
+  return builder.build();
 }
 
 const blockNames = getRegisteredBlockTypes();

@@ -3,62 +3,85 @@ import type { BlockMetaInformation, ExampleDoc } from './block-meta-inf';
 export class MarkdownDocBuilder {
   private markdownTextLines: string[] = [];
 
-  title(title: string): MarkdownDocBuilder {
-    this.markdownTextLines.push(`# ${title}`);
+  private getHeaderPrefix(depth: number): string {
+    return '#'.repeat(depth);
+  }
+
+  metaData(headers: Record<string, string>): MarkdownDocBuilder {
+    this.markdownTextLines.push(
+      '---\n' +
+        Object.entries(headers)
+          .map(([key, value]) => `${key}: ${value}`)
+          .join('\n') +
+        '\n---\n',
+    );
     return this;
   }
 
-  blockTypeTitle(blockType: string): MarkdownDocBuilder {
-    return this.title(`BlockType \`${blockType}\``);
+  heading(title: string, depth: number): MarkdownDocBuilder {
+    this.markdownTextLines.push(`${this.getHeaderPrefix(depth)} ${title}`);
+    this.newLine();
+    return this;
   }
 
-  attributeTitle(attributeName: string): MarkdownDocBuilder {
-    return this.title(`Attribute \`${attributeName}\``);
+  section(heading: string, content: string, depth: number): MarkdownDocBuilder {
+    this.heading(heading, depth);
+    this.markdownTextLines.push(content);
+    this.newLine();
+    return this;
   }
 
-  description(text?: string): MarkdownDocBuilder {
+  newLine(): MarkdownDocBuilder {
+    this.markdownTextLines.push('\n');
+    return this;
+  }
+
+  comment(comment: string): MarkdownDocBuilder {
+    this.markdownTextLines.push(`<!-- ${comment} -->`);
+    return this;
+  }
+
+  blockTypeTitle(blockType: string, depth = 1): MarkdownDocBuilder {
+    return this.heading(`BlockType \`${blockType}\``, depth);
+  }
+
+  attributeTitle(attributeName: string, depth = 1): MarkdownDocBuilder {
+    return this.heading(`Attribute \`${attributeName}\``, depth);
+  }
+
+  description(text?: string, depth = 2): MarkdownDocBuilder {
     if (text === undefined) {
       return this;
     }
-    return this.newSection('Description', text);
+    return this.section('Description', text, depth);
   }
 
   attributes(
     attributes: Array<[string, string | undefined]>,
+    depth = 2,
   ): MarkdownDocBuilder {
     const content = attributes
       .map(([key, description]) => `- \`${key}\`: ${description ?? ''}`)
       .join('\n');
-    return this.newSection('Attributes', content);
+    return this.section('Attributes', content, depth);
   }
 
-  validation(text?: string): MarkdownDocBuilder {
+  validation(text?: string, depth = 2): MarkdownDocBuilder {
     if (text === undefined) {
       return this;
     }
-    return this.newSection('Validation', text);
+    return this.section('Validation', text, depth);
   }
 
-  examples(examples?: ExampleDoc[]): MarkdownDocBuilder {
+  examples(examples?: ExampleDoc[], depth = 2): MarkdownDocBuilder {
     if (examples === undefined) {
       return this;
     }
     for (const [index, example] of examples.entries()) {
       const exampleText =
         '```\n' + example.code + '\n```\n' + example.description;
-      this.newSection(`Example ${index + 1}`, exampleText);
+      this.section(`Example ${index + 1}`, exampleText, depth);
     }
-    return this;
-  }
-
-  newSection(heading: string, content: string): MarkdownDocBuilder {
-    this.markdownTextLines.push(`## ${heading}`);
-    this.markdownTextLines.push(content);
-    return this;
-  }
-
-  newLine(): MarkdownDocBuilder {
-    this.markdownTextLines.push('\n');
     return this;
   }
 
