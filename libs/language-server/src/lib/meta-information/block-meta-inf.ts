@@ -5,8 +5,6 @@ import { ValidationAcceptor } from 'langium';
 import { Attribute, AttributeType, Block } from '../ast';
 import { IOType, UNDEFINED_TYPE } from '../types/io-types/io-type';
 
-import { MarkdownDocBuilder } from './markdown-doc-builder';
-
 export interface AttributeSpecification {
   type: AttributeType;
   defaultValue?: unknown;
@@ -100,33 +98,5 @@ export abstract class BlockMetaInformation {
 
   hasOutput(): boolean {
     return this.outputType !== UNDEFINED_TYPE;
-  }
-
-  getMarkdownDoc(): string {
-    return new MarkdownDocBuilder()
-      .blockTypeTitle(this.blockType)
-      .description(this.docs.description)
-      .attributes(
-        Object.entries(this.attributes).map(([key, spec]) => [
-          key,
-          spec.docs?.description,
-        ]),
-      )
-      .examples(this.docs.examples)
-      .build();
-  }
-
-  getAttributeMarkdownDoc(attributeName: string): string | undefined {
-    const attribute = this.attributes[attributeName];
-    if (attribute === undefined || attribute.docs === undefined) {
-      return undefined;
-    }
-
-    return new MarkdownDocBuilder()
-      .attributeTitle(attributeName)
-      .description(attribute.docs.description)
-      .validation(attribute.docs.validation)
-      .examples(attribute.docs.examples)
-      .build();
   }
 }
