@@ -90,7 +90,6 @@ async function runPipeline(
     getBlocksInTopologicalSorting(pipeline).map((block) => {
       return { block: block, value: undefined };
     });
-
   for (const blockData of executionOrder) {
     const blockLogger = loggerFactory.createLogger(blockData.block.name);
     const blockExecutor = createBlockExecutor(
@@ -101,12 +100,11 @@ async function runPipeline(
     const parentData = collectParents(blockData.block).map((parent) =>
       executionOrder.find((blockData) => parent === blockData.block),
     );
-
     const inputValue = parentData[0]?.value;
     let result: R.Result<unknown>;
 
-    // Check, if parent emitted a value
-    if (inputValue != null) {
+    // Check, if parent emitted a value, but just, when it is not the root block (root blocks have no parents, so parentData holds no parents)
+    if (inputValue != null || parentData.length === 0) {
       try {
         result = await blockExecutor.execute(inputValue);
       } catch (unexpectedError) {
@@ -122,6 +120,7 @@ async function runPipeline(
         );
         return ExitCode.FAILURE;
       }
+
       if (R.isErr(result)) {
         pipelineLogger.logErrDiagnostic(
           result.left.message,
@@ -129,6 +128,7 @@ async function runPipeline(
         );
         return ExitCode.FAILURE;
       }
+
       blockData.value = result.right;
 
       // If parent emittet no value, skip all downstream blocks
