@@ -7,7 +7,6 @@ import { getMetaInformation } from '../meta-information/meta-inf-util';
 import {
   AttributeValue,
   Block,
-  Pipe,
   Pipeline,
   isBooleanValue,
   isCellRangeValue,
@@ -16,6 +15,7 @@ import {
   isIntValue,
   isStringValue,
 } from './generated/ast';
+import { SemanticPipe, createSemanticPipes } from './wrappers/semantic-pipe';
 
 export function collectStartingBlocks(pipeline: Pipeline): Block[] {
   const result: Block[] = [];
@@ -34,60 +34,46 @@ export function collectStartingBlocks(pipeline: Pipeline): Block[] {
 
 export function collectChildren(block: Block): Block[] {
   const outgoingPipes = collectOutgoingPipes(block);
-
-  const children = outgoingPipes.reduce<Block[]>((previousResult, pipe) => {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const blockTo = pipe.to?.ref;
-    if (blockTo === undefined) {
-      return previousResult;
-    }
-    return [...previousResult, blockTo];
-  }, []);
-
-  return children;
+  return outgoingPipes.map((pipe) => pipe.to);
 }
 
 export function collectParents(block: Block): Block[] {
   const ingoingPipes = collectIngoingPipes(block);
-
-  const parents = ingoingPipes.reduce<Block[]>((previousResult, pipe) => {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const blockFrom = pipe.from?.ref;
-    if (blockFrom === undefined) {
-      return previousResult;
-    }
-    return [...previousResult, blockFrom];
-  }, []);
-
-  return parents;
+  return ingoingPipes.map((pipe) => pipe.from);
 }
 
-export function collectOutgoingPipes(block: Block): Pipe[] {
-  const pipeline = block.$container;
-  const outgoingPipes: Pipe[] = [];
-
-  for (const pipe of pipeline.pipes) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (pipe.from?.ref === block) {
-      outgoingPipes.push(pipe);
-    }
-  }
-
-  return outgoingPipes;
+export function collectOutgoingPipes(block: Block) {
+  return collectPipes(block, 'outgoing');
 }
 
-export function collectIngoingPipes(block: Block): Pipe[] {
+export function collectIngoingPipes(block: Block) {
+  return collectPipes(block, 'ingoing');
+}
+
+function collectPipes(
+  block: Block,
+  kind: 'outgoing' | 'ingoing',
+): SemanticPipe[] {
   const pipeline = block.$container;
-  const ingoingPipes: Pipe[] = [];
+  const allPipes = collectAllPipes(pipeline);
 
-  for (const pipe of pipeline.pipes) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (pipe.to?.ref === block) {
-      ingoingPipes.push(pipe);
+  return allPipes.filter((semanticPipe) => {
+    switch (kind) {
+      case 'outgoing':
+        return semanticPipe.from === block;
+      case 'ingoing':
+        return semanticPipe.to === block;
     }
-  }
+    return assertUnreachable(kind);
+  });
+}
 
-  return ingoingPipes;
+export function collectAllPipes(pipeline: Pipeline): SemanticPipe[] {
+  const result: SemanticPipe[] = [];
+  for (const pipe of pipeline.pipes) {
+    result.push(...createSemanticPipes(pipe));
+  }
+  return result;
 }
 
 /**
@@ -108,23 +94,25 @@ export function collectIngoingPipes(block: Block): Pipe[] {
 export function getBlocksInTopologicalSorting(pipeline: Pipeline): Block[] {
   const sortedNodes = [];
   const currentNodes = [...collectStartingBlocks(pipeline)];
-  let unvisitedEdges = [...pipeline.pipes];
+  let unvisitedEdges = [...collectAllPipes(pipeline)];
 
   while (currentNodes.length > 0) {
-    const node: Block = currentNodes.pop() as Block;
+    const node = currentNodes.pop();
+    assert(node !== undefined);
+
     sortedNodes.push(node);
 
     for (const childNode of collectChildren(node)) {
       // Mark edges between parent and child as visited
       collectIngoingPipes(childNode)
-        .filter((e) => e.from.ref === node)
+        .filter((e) => e.from === node)
         .forEach((e) => {
-          unvisitedEdges = unvisitedEdges.filter((edge) => edge !== e);
+          unvisitedEdges = unvisitedEdges.filter((edge) => !edge.equals(e));
         });
 
       // If all edges to the child have been visited
       const notRemovedEdges = collectIngoingPipes(childNode).filter((e) =>
-        unvisitedEdges.includes(e),
+        unvisitedEdges.some((edge) => edge.equals(e)),
       );
       if (notRemovedEdges.length === 0) {
         // Insert it into currentBlocks

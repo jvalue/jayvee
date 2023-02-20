@@ -2,18 +2,22 @@
  * See the FAQ section of README.md for an explanation why the following ESLint rule is disabled for this file.
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
-import { ValidationAcceptor, ValidationChecks } from 'langium';
+import {
+  ValidationAcceptor,
+  ValidationChecks,
+  assertUnreachable,
+} from 'langium';
 
 import {
   Block,
   JayveeAstType,
-  Pipe,
   collectIngoingPipes,
   collectOutgoingPipes,
   convertAttributeValueToType,
   isRuntimeParameter,
   runtimeParameterAllowedForType,
 } from '../../ast';
+import { SemanticPipe } from '../../ast/wrappers/semantic-pipe';
 import { getMetaInformation } from '../../meta-information/meta-inf-util';
 import { JayveeValidator } from '../jayvee-validator';
 import {
@@ -174,7 +178,7 @@ export class BlockValidator implements JayveeValidator {
       return;
     }
 
-    let pipes: Pipe[];
+    let pipes: SemanticPipe[];
     switch (whatToCheck) {
       case 'input': {
         pipes = collectIngoingPipes(block);
@@ -183,6 +187,9 @@ export class BlockValidator implements JayveeValidator {
       case 'output': {
         pipes = collectOutgoingPipes(block);
         break;
+      }
+      default: {
+        assertUnreachable(whatToCheck);
       }
     }
 
@@ -194,10 +201,9 @@ export class BlockValidator implements JayveeValidator {
         accept(
           'error',
           `Blocks of type ${blockMetaInf.blockType} do not have an ${whatToCheck}`,
-          {
-            node: pipe,
-            property: whatToCheck === 'input' ? 'to' : 'from',
-          },
+          whatToCheck === 'input'
+            ? pipe.getToDiagnostic()
+            : pipe.getFromDiagnostic(),
         );
       }
     } else if (pipes.length > 1 && whatToCheck === 'input') {
@@ -205,10 +211,7 @@ export class BlockValidator implements JayveeValidator {
         accept(
           'error',
           `At most one pipe can be connected to the ${whatToCheck} of a ${blockMetaInf.blockType}`,
-          {
-            node: pipe,
-            property: 'to',
-          },
+          pipe.getToDiagnostic(),
         );
       }
     } else if (pipes.length === 0) {
