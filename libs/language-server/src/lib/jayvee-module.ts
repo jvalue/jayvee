@@ -15,13 +15,13 @@ import {
 } from './ast/generated/module';
 import { JayveeCompletionProvider } from './completion/jayvee-completion-provider';
 import { JayveeHoverProvider } from './hover/jayvee-hover-provider';
-import { BlockValidator } from './validation/block-validator';
-import { CellRangeSelectionValidator } from './validation/cell-range-selection-validator';
-import { ColumnExpressionValidator } from './validation/column-expression-validator';
-import { ModelValidator } from './validation/model-validator';
-import { PipeValidator } from './validation/pipe-validator';
-import { PipelineValidator } from './validation/pipeline-validator';
 import { JayveeValidationRegistry } from './validation/validation-registry';
+import { BlockValidator } from './validation/validators/block-validator';
+import { CellRangeSelectionValidator } from './validation/validators/cell-range-selection-validator';
+import { ColumnExpressionValidator } from './validation/validators/column-expression-validator';
+import { ModelValidator } from './validation/validators/model-validator';
+import { PipeValidator } from './validation/validators/pipe-validator';
+import { PipelineValidator } from './validation/validators/pipeline-validator';
 
 /**
  * Declaration of custom services - add your own service classes here.

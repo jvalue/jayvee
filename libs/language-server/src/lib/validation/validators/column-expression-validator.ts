@@ -1,8 +1,11 @@
+/**
+ * See the FAQ section of README.md for an explanation why the following eslint rule is disabled for this file.
+ */
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import { ValidationAcceptor, ValidationChecks } from 'langium';
 
-import { ColumnExpression, JayveeAstType } from '../ast/generated/ast';
-
-import { JayveeValidator } from './jayvee-validator';
+import { ColumnExpression, JayveeAstType } from '../../ast/generated/ast';
+import { JayveeValidator } from '../jayvee-validator';
 
 export class ColumnExpressionValidator implements JayveeValidator {
   get checks(): ValidationChecks<JayveeAstType> {
@@ -16,7 +19,6 @@ export class ColumnExpressionValidator implements JayveeValidator {
     columnExpression: ColumnExpression,
     accept: ValidationAcceptor,
   ): void {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (columnExpression.columnId === undefined) {
       return;
     }

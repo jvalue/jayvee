@@ -1,9 +1,12 @@
+/**
+ * See the FAQ section of README.md for an explanation why the following eslint rule is disabled for this file.
+ */
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import { ValidationAcceptor, ValidationChecks } from 'langium';
 
-import { JayveeAstType, Pipe } from '../ast/generated/ast';
-import { getMetaInformation } from '../meta-information/meta-inf-util';
-
-import { JayveeValidator } from './jayvee-validator';
+import { JayveeAstType, Pipe } from '../../ast/generated/ast';
+import { getMetaInformation } from '../../meta-information/meta-inf-util';
+import { JayveeValidator } from '../jayvee-validator';
 
 export class PipeValidator implements JayveeValidator {
   get checks(): ValidationChecks<JayveeAstType> {
@@ -17,9 +20,8 @@ export class PipeValidator implements JayveeValidator {
     pipe: Pipe,
     accept: ValidationAcceptor,
   ): void {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const fromBlockType = pipe.from?.ref?.type;
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+
     const toBlockType = pipe.to?.ref?.type;
 
     const fromBlockMetaInf = getMetaInformation(fromBlockType);

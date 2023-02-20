@@ -1,3 +1,7 @@
+/**
+ * See the FAQ section of README.md for an explanation why the following ESLint rule is disabled for this file.
+ */
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import { ValidationAcceptor, ValidationChecks } from 'langium';
 
 import {
@@ -9,14 +13,13 @@ import {
   convertAttributeValueToType,
   isRuntimeParameter,
   runtimeParameterAllowedForType,
-} from '../ast';
-import { getMetaInformation } from '../meta-information/meta-inf-util';
-
-import { JayveeValidator } from './jayvee-validator';
+} from '../../ast';
+import { getMetaInformation } from '../../meta-information/meta-inf-util';
+import { JayveeValidator } from '../jayvee-validator';
 import {
   generateNonUniqueNameErrorMessage,
   getNodesWithNonUniqueNames,
-} from './validation-util';
+} from '../validation-util';
 
 export class BlockValidator implements JayveeValidator {
   get checks(): ValidationChecks<JayveeAstType> {
@@ -85,7 +88,6 @@ export class BlockValidator implements JayveeValidator {
       }
       const attributeType = attributeSpec.type;
 
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (attribute.value === undefined) {
         continue;
       }
@@ -222,13 +224,11 @@ export class BlockValidator implements JayveeValidator {
   }
 
   checkBlockType(this: void, block: Block, accept: ValidationAcceptor): void {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (block.type === undefined) {
       return;
     }
     const metaInf = getMetaInformation(block.type);
     if (metaInf === undefined) {
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       accept('error', `Unknown block type '${block?.type?.name ?? ''}'`, {
         node: block,
         property: 'type',
