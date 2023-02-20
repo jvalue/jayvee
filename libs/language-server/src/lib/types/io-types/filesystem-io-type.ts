@@ -1,6 +1,5 @@
 import { File } from './file-io-type';
 import { IOType } from './io-type';
-import { None } from './none-io-type';
 
 /**
  * FileSystem interface defines the operations that a file system implementation should have.
@@ -11,9 +10,9 @@ export interface FileSystem {
    * Retrieves a file from the file system.
    * @function getFile
    * @param {string} filePath - The file path.
-   * @returns {File | None} - The file or None if the file does not exist.
+   * @returns {File} - The file or null if the file does not exist.
    */
-  getFile(filePath: string): File | None;
+  getFile(filePath: string): File | null;
 
   /**
    * Saves a file to the file system.
