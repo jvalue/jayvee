@@ -8,7 +8,6 @@
     "test": "nx run-many --target test",
     "generate": "nx run @jayvee/language-server:generate",
     "example:cars": "nx run interpreter:run -d example/cars.jv",
-    "example:cars_httpextractor": "nx run interpreter:run -d example/cars_httpextractor.jv",
     "example:gas": "nx run interpreter:run -d -e DB_HOST=localhost -e DB_PORT=5432 -e DB_USERNAME=postgres -e DB_PASSWORD=postgres -e DB_DATABASE=postgres -e DB_TABLE=GasReserve example/gas.jv"
   },
   "private": true,
