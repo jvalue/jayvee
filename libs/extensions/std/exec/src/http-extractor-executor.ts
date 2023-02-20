@@ -75,15 +75,16 @@ export class HttpExtractorExecutor extends BlockExecutor<void, File> {
             fileName = url.pathname.replace('/', '-');
           }
           const extName = path.extname(fileName);
-          const fileExtension =
+          let fileExtension =
             inferFileExtensionFromFileExtensionString(extName) ||
             FileExtension.NONE;
 
           // If FileExtension is not in url, try to infer extension from content-type, if not inferrable, then default to None
           if (fileExtension === FileExtension.NONE) {
-            inferFileExtensionFromContentTypeString(
-              response.headers['content-type'],
-            ) || FileExtension.NONE;
+            fileExtension =
+              inferFileExtensionFromContentTypeString(
+                response.headers['content-type'],
+              ) || FileExtension.NONE;
           }
 
           // Create file and return file
