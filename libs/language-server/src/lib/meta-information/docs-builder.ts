@@ -1,4 +1,4 @@
-import type { ExampleDoc } from './block-meta-inf';
+import type { BlockMetaInformation, ExampleDoc } from './block-meta-inf';
 
 export class MarkdownDocBuilder {
   private markdownTextLines: string[] = [];
@@ -65,4 +65,37 @@ export class MarkdownDocBuilder {
   build(): string {
     return this.markdownTextLines.join('\n');
   }
+}
+
+export function buildLspBlockTypeHoverDoc(
+  metaInf: BlockMetaInformation,
+): string {
+  return new MarkdownDocBuilder()
+    .blockTypeTitle(metaInf.blockType)
+    .description(metaInf.docs.description)
+    .attributes(
+      Object.entries(metaInf.getAttributeSpecifications()).map(
+        ([key, spec]) => [key, spec.docs?.description],
+      ),
+    )
+    .examples(metaInf.docs.examples)
+    .build();
+}
+
+export function buildLspHoverBlockAttributeDocs(
+  metaInf: BlockMetaInformation,
+  attributeName: string,
+): string | undefined {
+  const attributes = metaInf.getAttributeSpecifications();
+  const attribute = attributes[attributeName];
+  if (attribute === undefined || attribute.docs === undefined) {
+    return undefined;
+  }
+
+  return new MarkdownDocBuilder()
+    .attributeTitle(attributeName)
+    .description(attribute.docs.description)
+    .validation(attribute.docs.validation)
+    .examples(attribute.docs.examples)
+    .build();
 }
