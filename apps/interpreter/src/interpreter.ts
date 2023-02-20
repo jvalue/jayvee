@@ -103,35 +103,45 @@ async function runPipeline(
     );
 
     const inputValue = parentData[0]?.value;
-
     let result: R.Result<unknown>;
-    try {
-      result = await blockExecutor.execute(inputValue);
-    } catch (unexpectedError) {
-      pipelineLogger.logErrDiagnostic(
-        `An unknown error occurred during the execution of block ${
-          blockData.block.name
-        }: ${
-          unexpectedError instanceof Error
-            ? unexpectedError.message
-            : JSON.stringify(unexpectedError)
-        }`,
+
+    // Check, if parent emitted a value
+    if (inputValue != null) {
+      try {
+        result = await blockExecutor.execute(inputValue);
+      } catch (unexpectedError) {
+        pipelineLogger.logErrDiagnostic(
+          `An unknown error occurred during the execution of block ${
+            blockData.block.name
+          }: ${
+            unexpectedError instanceof Error
+              ? unexpectedError.message
+              : JSON.stringify(unexpectedError)
+          }`,
+          { node: blockData.block, property: 'name' },
+        );
+        return ExitCode.FAILURE;
+      }
+      if (R.isErr(result)) {
+        pipelineLogger.logErrDiagnostic(
+          result.left.message,
+          result.left.diagnostic,
+        );
+        return ExitCode.FAILURE;
+      }
+      blockData.value = result.right;
+
+      // If parent emittet no value, skip all downstream blocks
+    } else {
+      blockData.value = null;
+      pipelineLogger.logInfoDiagnostic(
+        `Skipped executing block ${blockData.block.name} because parent block ${
+          parentData[0] ? parentData[0].block.name : 'NAME NOT FOUND'
+        } emitted no value.`,
         { node: blockData.block, property: 'name' },
       );
-      return ExitCode.FAILURE;
     }
-
-    if (R.isErr(result)) {
-      pipelineLogger.logErrDiagnostic(
-        result.left.message,
-        result.left.diagnostic,
-      );
-      return ExitCode.FAILURE;
-    }
-
-    blockData.value = result.right;
   }
-
   return ExitCode.SUCCESS;
 }
 
