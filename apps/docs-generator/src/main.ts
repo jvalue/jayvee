@@ -42,28 +42,20 @@ function createMarkdownDoc(metaInf: BlockMetaInformation): string {
   return builder.build();
 }
 
-const blockNames = getRegisteredBlockTypes();
-for (const blockName of blockNames) {
-  const metaInf = getOrFailMetaInformation(blockName);
-  const markdown = createMarkdownDoc(metaInf);
+function main(docsDirName: string): void {
+  const rootPath = join(__dirname, '..', '..', '..');
+  const docsPath = join(rootPath, 'apps', 'docs', 'docs', docsDirName);
+  const blockNames = getRegisteredBlockTypes();
+  for (const blockName of blockNames) {
+    const metaInf = getOrFailMetaInformation(blockName);
+    const markdown = createMarkdownDoc(metaInf);
 
-  const fileName = `${blockName}.md`;
-  writeFileSync(
-    join(
-      __dirname,
-      '..',
-      '..',
-      '..',
-      'apps',
-      'docs',
-      'docs',
-      'block-types',
-      fileName,
-    ),
-    markdown,
-    {
+    const fileName = `${blockName}.md`;
+    writeFileSync(join(docsPath, fileName), markdown, {
       flag: 'w',
-    },
-  );
-  console.info(`Generated file ${fileName}`);
+    });
+    console.info(`Generated file ${fileName}`);
+  }
 }
+
+main('block-types');
