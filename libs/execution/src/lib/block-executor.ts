@@ -3,8 +3,8 @@ import { strict as assert } from 'assert';
 import {
   Attribute,
   Block,
+  CellRangeWrapper,
   DataTypeAssignment,
-  SemanticCellRange,
   getOrFailMetaInformation,
   isCellRange,
   isCellRangeValue,
@@ -104,19 +104,19 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
 
   protected getCellRangeAttributeValue(
     attributeName: string,
-  ): SemanticCellRange {
+  ): CellRangeWrapper {
     const attributeValue = this.getAttributeValue(attributeName);
     assert(
       isCellRange(attributeValue),
       `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type cell range`,
     );
 
-    return new SemanticCellRange(attributeValue);
+    return new CellRangeWrapper(attributeValue);
   }
 
   protected getCellRangeCollectionAttributeValue(
     attributeName: string,
-  ): SemanticCellRange[] {
+  ): CellRangeWrapper[] {
     const attributeValue = this.getAttributeValue(attributeName);
     assert(
       Array.isArray(attributeValue),
@@ -127,7 +127,7 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
       `Some values of attribute "${attributeName}" in block "${this.block.name}" are unexpectedly not of type cell range`,
     );
     return attributeValue.map(
-      (cellRange) => new SemanticCellRange(cellRange.value),
+      (cellRange) => new CellRangeWrapper(cellRange.value),
     );
   }
 

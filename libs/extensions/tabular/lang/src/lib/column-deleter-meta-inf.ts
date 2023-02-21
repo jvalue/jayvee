@@ -1,11 +1,11 @@
 import {
   AttributeType,
   BlockMetaInformation,
+  CellRangeWrapper,
   SHEET_TYPE,
-  SemanticCellRange,
   isCellRangeValue,
   isCollection,
-  isSemanticColumn,
+  isColumnWrapper,
 } from '@jayvee/language-server';
 
 export class ColumnDeleterMetaInformation extends BlockMetaInformation {
@@ -31,13 +31,13 @@ export class ColumnDeleterMetaInformation extends BlockMetaInformation {
               continue;
             }
 
-            if (!SemanticCellRange.canBeWrapped(collectionValue.value)) {
+            if (!CellRangeWrapper.canBeWrapped(collectionValue.value)) {
               continue;
             }
-            const semanticCellRange = new SemanticCellRange(
+            const semanticCellRange = new CellRangeWrapper(
               collectionValue.value,
             );
-            if (!isSemanticColumn(semanticCellRange)) {
+            if (!isColumnWrapper(semanticCellRange)) {
               accept('error', 'An entire column needs to be selected', {
                 node: semanticCellRange.astNode,
               });
