@@ -3,11 +3,11 @@ import { strict as assert } from 'assert';
 import { BlockExecutor } from '@jayvee/execution';
 import * as R from '@jayvee/execution';
 import {
-  SemanticColumn,
+  ColumnWrapper,
   Sheet,
   columnIndexToString,
   getColumnIndex,
-  isSemanticColumn,
+  isColumnWrapper,
 } from '@jayvee/language-server';
 
 import {
@@ -25,7 +25,7 @@ export class ColumnDeleterExecutor extends BlockExecutor<Sheet, Sheet> {
   // eslint-disable-next-line @typescript-eslint/require-await
   override async execute(inputSheet: Sheet): Promise<R.Result<Sheet>> {
     const relativeColumns = this.getCellRangeCollectionAttributeValue('delete');
-    assert(relativeColumns.every(isSemanticColumn));
+    assert(relativeColumns.every(isColumnWrapper));
 
     let absoluteColumns = relativeColumns.map((column) =>
       resolveRelativeIndexes(inputSheet, column),
@@ -67,14 +67,14 @@ export class ColumnDeleterExecutor extends BlockExecutor<Sheet, Sheet> {
     return R.ok(resultingSheet);
   }
 
-  private sortByColumnIndex(columns: SemanticColumn[]): void {
+  private sortByColumnIndex(columns: ColumnWrapper[]): void {
     columns.sort(
       (columnA, columnB) => getColumnIndex(columnA) - getColumnIndex(columnB),
     );
   }
 
-  private removeDuplicateColumns(columns: SemanticColumn[]): SemanticColumn[] {
-    return columns.reduce<SemanticColumn[]>((previous, column, index) => {
+  private removeDuplicateColumns(columns: ColumnWrapper[]): ColumnWrapper[] {
+    return columns.reduce<ColumnWrapper[]>((previous, column, index) => {
       const previousColumn = previous[index - 1];
       if (previousColumn !== undefined) {
         if (getColumnIndex(previousColumn) === getColumnIndex(column)) {

@@ -15,7 +15,7 @@ import {
   isIntValue,
   isStringValue,
 } from './generated/ast';
-import { SemanticPipe, createSemanticPipes } from './wrappers/semantic-pipe';
+import { PipeWrapper, createSemanticPipes } from './wrappers/pipe-wrapper';
 
 export function collectStartingBlocks(pipeline: Pipeline): Block[] {
   const result: Block[] = [];
@@ -53,7 +53,7 @@ export function collectIngoingPipes(block: Block) {
 function collectPipes(
   block: Block,
   kind: 'outgoing' | 'ingoing',
-): SemanticPipe[] {
+): PipeWrapper[] {
   const pipeline = block.$container;
   const allPipes = collectAllPipes(pipeline);
 
@@ -68,8 +68,8 @@ function collectPipes(
   });
 }
 
-export function collectAllPipes(pipeline: Pipeline): SemanticPipe[] {
-  const result: SemanticPipe[] = [];
+export function collectAllPipes(pipeline: Pipeline): PipeWrapper[] {
+  const result: PipeWrapper[] = [];
   for (const pipe of pipeline.pipes) {
     result.push(...createSemanticPipes(pipe));
   }

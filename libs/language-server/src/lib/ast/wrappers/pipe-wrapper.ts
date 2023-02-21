@@ -12,7 +12,7 @@ import {
 
 import { AstNodeWrapper } from './ast-node-wrapper';
 
-export class SemanticPipe<N extends Pipe = Pipe> implements AstNodeWrapper<N> {
+export class PipeWrapper<N extends Pipe = Pipe> implements AstNodeWrapper<N> {
   public readonly astNode: N;
   private readonly chainIndex?: number;
   public readonly from: Block;
@@ -74,7 +74,7 @@ export class SemanticPipe<N extends Pipe = Pipe> implements AstNodeWrapper<N> {
     return result;
   }
 
-  equals(pipe: SemanticPipe): boolean {
+  equals(pipe: PipeWrapper): boolean {
     return this.from === pipe.from && this.to === pipe.to;
   }
 
@@ -94,27 +94,27 @@ export class SemanticPipe<N extends Pipe = Pipe> implements AstNodeWrapper<N> {
   }
 }
 
-export function createSemanticPipes(pipe: Pipe): SemanticPipe[] {
+export function createSemanticPipes(pipe: Pipe): PipeWrapper[] {
   if (isSinglePipe(pipe)) {
     return createFromSinglePipe(pipe);
   }
   return createFromChainedPipe(pipe);
 }
 
-function createFromSinglePipe(pipe: SinglePipe): SemanticPipe[] {
-  if (SemanticPipe.canBeWrapped(pipe)) {
-    return [new SemanticPipe(pipe)];
+function createFromSinglePipe(pipe: SinglePipe): PipeWrapper[] {
+  if (PipeWrapper.canBeWrapped(pipe)) {
+    return [new PipeWrapper(pipe)];
   }
   return [];
 }
 
-function createFromChainedPipe(pipe: ChainedPipe): SemanticPipe[] {
-  const result: SemanticPipe[] = [];
+function createFromChainedPipe(pipe: ChainedPipe): PipeWrapper[] {
+  const result: PipeWrapper[] = [];
   for (let chainIndex = 0; chainIndex < pipe.blocks.length - 1; ++chainIndex) {
-    if (!SemanticPipe.canBeWrapped(pipe, chainIndex)) {
+    if (!PipeWrapper.canBeWrapped(pipe, chainIndex)) {
       continue;
     }
-    const semanticPipe = new SemanticPipe(pipe, chainIndex);
+    const semanticPipe = new PipeWrapper(pipe, chainIndex);
     result.push(semanticPipe);
   }
   return result;

@@ -17,7 +17,7 @@ import {
   isRuntimeParameter,
   runtimeParameterAllowedForType,
 } from '../../ast';
-import { SemanticPipe } from '../../ast/wrappers/semantic-pipe';
+import { PipeWrapper } from '../../ast/wrappers/pipe-wrapper';
 import { getMetaInformation } from '../../meta-information/meta-inf-util';
 import { JayveeValidator } from '../jayvee-validator';
 import {
@@ -178,7 +178,7 @@ export class BlockValidator implements JayveeValidator {
       return;
     }
 
-    let pipes: SemanticPipe[];
+    let pipes: PipeWrapper[];
     switch (whatToCheck) {
       case 'input': {
         pipes = collectIngoingPipes(block);

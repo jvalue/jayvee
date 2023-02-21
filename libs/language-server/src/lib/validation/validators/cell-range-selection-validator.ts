@@ -5,7 +5,7 @@
 import { ValidationAcceptor, ValidationChecks } from 'langium';
 
 import { JayveeAstType, RangeExpression } from '../../ast/generated/ast';
-import { SemanticCellRange } from '../../ast/wrappers/semantic-cell-range';
+import { CellRangeWrapper } from '../../ast/wrappers/cell-range-wrapper';
 import { JayveeValidator } from '../jayvee-validator';
 
 export class CellRangeSelectionValidator implements JayveeValidator {
@@ -26,7 +26,7 @@ export class CellRangeSelectionValidator implements JayveeValidator {
     ) {
       return;
     }
-    const semanticCellRange = new SemanticCellRange(rangeExpression);
+    const semanticCellRange = new CellRangeWrapper(rangeExpression);
     if (
       semanticCellRange.from.columnIndex > semanticCellRange.to.columnIndex ||
       semanticCellRange.from.rowIndex > semanticCellRange.to.rowIndex
