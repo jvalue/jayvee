@@ -1,7 +1,7 @@
 import { FileExtension, MimeType } from '@jayvee/language-server';
 import * as mime from 'mime-types';
 
-export function inferMimeTypeFromString(
+export function inferMimeTypeFromContentTypeString(
   fileExtension: string | undefined,
 ): MimeType | undefined {
   if (fileExtension !== undefined) {
@@ -13,7 +13,7 @@ export function inferMimeTypeFromString(
   return undefined;
 }
 
-export function inferFileExtensionFromString(
+export function inferFileExtensionFromFileExtensionString(
   fileExtension: string | undefined,
 ): FileExtension | undefined {
   if (fileExtension !== undefined) {
@@ -23,6 +23,24 @@ export function inferFileExtensionFromString(
     ) as FileExtension;
     if (Object.values(FileExtension).includes(inferredFileExtension)) {
       return inferredFileExtension;
+    }
+  }
+  return undefined;
+}
+
+export function inferFileExtensionFromContentTypeString(
+  contentType: string | undefined,
+): FileExtension | undefined {
+  if (contentType !== undefined) {
+    const inferredFileExtension = mime.extension(contentType);
+    if (inferredFileExtension !== false) {
+      if (
+        Object.values(FileExtension).includes(
+          inferredFileExtension as FileExtension,
+        )
+      ) {
+        return inferredFileExtension as FileExtension;
+      }
     }
   }
   return undefined;
