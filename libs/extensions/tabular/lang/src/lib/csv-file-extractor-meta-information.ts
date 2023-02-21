@@ -1,13 +1,12 @@
 import {
   AttributeType,
   BlockMetaInformation,
-  SHEET_TYPE,
-  UNDEFINED_TYPE,
+  IOType,
 } from '@jayvee/language-server';
 
 export class CSVFileExtractorMetaInformation extends BlockMetaInformation {
   constructor() {
-    super('CSVFileExtractor', UNDEFINED_TYPE, SHEET_TYPE, {
+    super('CSVFileExtractor', IOType.UNDEFINED, IOType.SHEET, {
       url: {
         type: AttributeType.STRING,
         docs: {

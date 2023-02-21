@@ -2,14 +2,14 @@ import {
   AttributeType,
   BlockMetaInformation,
   CellRangeWrapper,
-  SHEET_TYPE,
+  IOType,
   isCellRangeValue,
   isCellWrapper,
 } from '@jayvee/language-server';
 
 export class CellWriterMetaInformation extends BlockMetaInformation {
   constructor() {
-    super('CellWriter', SHEET_TYPE, SHEET_TYPE, {
+    super('CellWriter', IOType.SHEET, IOType.SHEET, {
       write: {
         type: AttributeType.STRING,
         docs: {

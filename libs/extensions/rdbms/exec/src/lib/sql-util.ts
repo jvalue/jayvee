@@ -1,4 +1,4 @@
-import { Table } from '@jayvee/language-server';
+import { Table } from '@jayvee/execution';
 
 import { SQLColumnTypeVisitor } from './visitors/SQLColumnTypeVisitor';
 import { SQLValueRepresentationVisitor } from './visitors/SQLValueRepresentationVisitor';

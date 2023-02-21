@@ -1,10 +1,9 @@
 import { strict as assert } from 'assert';
 
-import { BlockExecutor } from '@jayvee/execution';
+import { BlockExecutor, Sheet } from '@jayvee/execution';
 import * as R from '@jayvee/execution';
 import {
   ColumnWrapper,
-  Sheet,
   columnIndexToString,
   getColumnIndex,
   isColumnWrapper,

@@ -1,5 +1,4 @@
 import { File } from './file-io-type';
-import { IOType } from './io-type';
 
 /**
  * FileSystem interface defines the operations that a file system implementation should have.
@@ -23,9 +22,3 @@ export interface FileSystem {
    */
   putFile(filePath: string, file: File): FileSystem;
 }
-/**
- * FILE_SYSTEM_TYPE is an instance of IOType for the FileSystem interface.
- * @constant FILE_SYSTEM_TYPE
- * @type {IOType<FileSystem>}
- */
-export const FILE_SYSTEM_TYPE = new IOType<FileSystem>();

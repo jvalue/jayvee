@@ -1,8 +1,7 @@
 import {
   AttributeType,
   BlockMetaInformation,
-  FILE_TYPE,
-  UNDEFINED_TYPE,
+  IOType,
 } from '@jayvee/language-server';
 
 export class HttpExtractorMetaInformation extends BlockMetaInformation {
@@ -12,10 +11,10 @@ export class HttpExtractorMetaInformation extends BlockMetaInformation {
       'HttpExtractor',
 
       // Input type:
-      UNDEFINED_TYPE,
+      IOType.UNDEFINED,
 
       // Output type:
-      FILE_TYPE,
+      IOType.FILE,
 
       // Attribute definitions:
       {

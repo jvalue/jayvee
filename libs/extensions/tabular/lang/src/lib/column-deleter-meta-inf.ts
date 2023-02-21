@@ -2,7 +2,7 @@ import {
   AttributeType,
   BlockMetaInformation,
   CellRangeWrapper,
-  SHEET_TYPE,
+  IOType,
   isCellRangeValue,
   isCollection,
   isColumnWrapper,
@@ -10,7 +10,7 @@ import {
 
 export class ColumnDeleterMetaInformation extends BlockMetaInformation {
   constructor() {
-    super('ColumnDeleter', SHEET_TYPE, SHEET_TYPE, {
+    super('ColumnDeleter', IOType.SHEET, IOType.SHEET, {
       delete: {
         type: AttributeType.COLLECTION,
         validation: (attribute, accept) => {

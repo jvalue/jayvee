@@ -1,6 +1,5 @@
 import * as R from '@jayvee/execution';
-import { BlockExecutor } from '@jayvee/execution';
-import { File, FileSystem } from '@jayvee/language-server';
+import { BlockExecutor, File, FileSystem } from '@jayvee/execution';
 
 export class FilePickerExecutor extends BlockExecutor<FileSystem, File | null> {
   constructor() {

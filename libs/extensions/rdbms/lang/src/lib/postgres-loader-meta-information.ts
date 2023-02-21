@@ -1,13 +1,12 @@
 import {
   AttributeType,
   BlockMetaInformation,
-  TABLE_TYPE,
-  UNDEFINED_TYPE,
+  IOType,
 } from '@jayvee/language-server';
 
 export class PostgresLoaderMetaInformation extends BlockMetaInformation {
   constructor() {
-    super('PostgresLoader', TABLE_TYPE, UNDEFINED_TYPE, {
+    super('PostgresLoader', IOType.TABLE, IOType.UNDEFINED, {
       host: {
         type: AttributeType.STRING,
         docs: {

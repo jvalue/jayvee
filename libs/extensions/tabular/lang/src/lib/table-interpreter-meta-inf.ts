@@ -1,8 +1,7 @@
 import {
   AttributeType,
   BlockMetaInformation,
-  SHEET_TYPE,
-  TABLE_TYPE,
+  IOType,
   getNodesWithNonUniqueNames,
   isCollection,
   isDataTypeAssignmentValue,
@@ -10,7 +9,7 @@ import {
 
 export class TableInterpreterMetaInformation extends BlockMetaInformation {
   constructor() {
-    super('TableInterpreter', SHEET_TYPE, TABLE_TYPE, {
+    super('TableInterpreter', IOType.SHEET, IOType.TABLE, {
       header: {
         type: AttributeType.BOOLEAN,
         docs: {

@@ -1,8 +1,7 @@
 import * as http from 'https';
 
-import { BlockExecutor } from '@jayvee/execution';
+import { BlockExecutor, Sheet } from '@jayvee/execution';
 import * as R from '@jayvee/execution';
-import { Sheet } from '@jayvee/language-server';
 import * as E from 'fp-ts/lib/Either';
 
 import { getSheetWidth, parseAsCsv } from './csv-util';

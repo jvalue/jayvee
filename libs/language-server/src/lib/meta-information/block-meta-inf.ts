@@ -2,8 +2,8 @@ import { strict as assert } from 'assert';
 
 import { ValidationAcceptor } from 'langium';
 
-import { Attribute, AttributeType, Block } from '../ast';
-import { IOType, UNDEFINED_TYPE } from '../types/io-types/io-type';
+import { Attribute, Block } from '../ast/generated/ast';
+import { AttributeType, IOType } from '../ast/model-util';
 
 import { MarkdownDocBuilder } from './markdown-doc-builder';
 
@@ -91,11 +91,11 @@ export abstract class BlockMetaInformation {
   }
 
   hasInput(): boolean {
-    return this.inputType !== UNDEFINED_TYPE;
+    return this.inputType !== IOType.UNDEFINED;
   }
 
   hasOutput(): boolean {
-    return this.outputType !== UNDEFINED_TYPE;
+    return this.outputType !== IOType.UNDEFINED;
   }
 
   getMarkdownDoc(): string {
