@@ -10,8 +10,9 @@ import {
 } from '@jayvee/execution';
 
 import {
-  inferFileExtensionFromString,
-  inferMimeTypeFromString,
+  inferFileExtensionFromContentTypeString,
+  inferFileExtensionFromFileExtensionString,
+  inferMimeTypeFromContentTypeString,
 } from './file-util';
 
 export class HttpExtractorExecutor extends BlockExecutor<void, File> {
@@ -65,22 +66,34 @@ export class HttpExtractorExecutor extends BlockExecutor<void, File> {
           response.headers;
 
           // Infer Mimetype from HTTP-Header, if not inferrable, then default to application/octet-stream
-          const mimeType =
-            inferMimeTypeFromString(response.headers['content-type']) ||
-            MimeType.APPLICATION_OCTET_STREAM;
+          const mimeType: MimeType | undefined =
+            inferMimeTypeFromContentTypeString(
+              response.headers['content-type'],
+            ) || MimeType.APPLICATION_OCTET_STREAM;
 
           // Infer FileName and FileExtension from url, if not inferrable, then default to None
           // Get last element of URL assuming this is a filename
-          const fileName = new URL(this.getStringAttributeValue('url')).pathname
-            .split('/')
-            .pop();
-          const extName = path.extname(fileName === undefined ? '' : fileName);
-          const fileExtension =
-            inferFileExtensionFromString(extName) || FileExtension.NONE;
+          const url = new URL(this.getStringAttributeValue('url'));
+          let fileName = url.pathname.split('/').pop();
+          if (fileName === undefined) {
+            fileName = url.pathname.replace('/', '-');
+          }
+          const extName = path.extname(fileName);
+          let fileExtension =
+            inferFileExtensionFromFileExtensionString(extName) ||
+            FileExtension.NONE;
+
+          // If FileExtension is not in url, try to infer extension from content-type, if not inferrable, then default to None
+          if (fileExtension === FileExtension.NONE) {
+            fileExtension =
+              inferFileExtensionFromContentTypeString(
+                response.headers['content-type'],
+              ) || FileExtension.NONE;
+          }
 
           // Create file and return file
           const file: File = {
-            name: this.getStringAttributeValue('fileName'),
+            name: fileName,
             extension: fileExtension,
             content: rawData.buffer as ArrayBuffer,
             mimeType: mimeType,
