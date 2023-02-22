@@ -1,8 +1,7 @@
 import { TextDecoder } from 'util';
 
 import * as R from '@jayvee/execution';
-import { BlockExecutor } from '@jayvee/execution';
-import { File, FileExtension, Sheet } from '@jayvee/language-server';
+import { BlockExecutor, File, FileExtension, Sheet } from '@jayvee/execution';
 import { isLeft } from 'fp-ts/lib/Either';
 
 import { getSheetWidth, parseAsCsv } from './csv-util';

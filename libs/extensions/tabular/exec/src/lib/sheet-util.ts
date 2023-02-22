@@ -1,5 +1,6 @@
 import { strict as assert } from 'assert';
 
+import { Sheet } from '@jayvee/execution';
 import {
   CellIndexBounds,
   CellRange,
@@ -7,7 +8,6 @@ import {
   CellWrapper,
   ColumnWrapper,
   RowWrapper,
-  Sheet,
   getCellIndex,
   getColumnIndex,
   getRowIndex,

@@ -1,6 +1,5 @@
-import { BlockExecutor } from '@jayvee/execution';
+import { BlockExecutor, Table } from '@jayvee/execution';
 import * as R from '@jayvee/execution';
-import { Table } from '@jayvee/language-server';
 import { Client } from 'pg';
 
 import {

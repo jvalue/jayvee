@@ -1,8 +1,7 @@
 import {
   AttributeType,
   BlockMetaInformation,
-  FILE_TYPE,
-  SHEET_TYPE,
+  IOType,
 } from '@jayvee/language-server';
 
 export class CSVInterpreterMetaInformation extends BlockMetaInformation {
@@ -12,10 +11,10 @@ export class CSVInterpreterMetaInformation extends BlockMetaInformation {
       'CSVInterpreter',
 
       // Input type:
-      FILE_TYPE,
+      IOType.FILE,
 
       // Output type:
-      SHEET_TYPE,
+      IOType.SHEET,
 
       // Attribute definitions:
       {

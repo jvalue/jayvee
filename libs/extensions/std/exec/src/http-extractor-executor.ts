@@ -2,8 +2,12 @@ import * as https from 'https';
 import * as path from 'path';
 
 import * as R from '@jayvee/execution';
-import { BlockExecutor } from '@jayvee/execution';
-import { File, FileExtension, MimeType } from '@jayvee/language-server';
+import {
+  BlockExecutor,
+  File,
+  FileExtension,
+  MimeType,
+} from '@jayvee/execution';
 
 import {
   inferFileExtensionFromContentTypeString,

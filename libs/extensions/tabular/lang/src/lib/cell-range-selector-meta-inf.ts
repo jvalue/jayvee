@@ -1,12 +1,12 @@
 import {
   AttributeType,
   BlockMetaInformation,
-  SHEET_TYPE,
+  IOType,
 } from '@jayvee/language-server';
 
 export class CellRangeSelectorMetaInformation extends BlockMetaInformation {
   constructor() {
-    super('CellRangeSelector', SHEET_TYPE, SHEET_TYPE, {
+    super('CellRangeSelector', IOType.SHEET, IOType.SHEET, {
       select: {
         type: AttributeType.CELL_RANGE,
         docs: {

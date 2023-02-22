@@ -1,8 +1,7 @@
 import {
   AttributeType,
   BlockMetaInformation,
-  FILE_SYSTEM_TYPE,
-  FILE_TYPE,
+  IOType,
 } from '@jayvee/language-server';
 
 export class FilePickerMetaInformation extends BlockMetaInformation {
@@ -12,10 +11,10 @@ export class FilePickerMetaInformation extends BlockMetaInformation {
       'FilePicker',
 
       // Input type:
-      FILE_SYSTEM_TYPE,
+      IOType.FILE_SYSTEM,
 
       // Output type:
-      FILE_TYPE,
+      IOType.FILE,
 
       // Attribute definitions:
       {

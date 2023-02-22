@@ -130,6 +130,14 @@ export function getBlocksInTopologicalSorting(pipeline: Pipeline): Block[] {
   return sortedNodes;
 }
 
+export enum IOType {
+  UNDEFINED = 'Undefined',
+  FILE = 'File',
+  FILE_SYSTEM = 'FileSystem',
+  SHEET = 'Sheet',
+  TABLE = 'Table',
+}
+
 export enum AttributeType {
   STRING = 'string',
   INT = 'integer',
