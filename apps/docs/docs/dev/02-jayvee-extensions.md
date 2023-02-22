@@ -1,4 +1,6 @@
-# Jayvee extensions
+---
+title: Jayvee Extensions
+---
 
 ## Concepts
 
