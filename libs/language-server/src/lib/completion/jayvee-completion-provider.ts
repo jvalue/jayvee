@@ -24,6 +24,8 @@ import {
   getRegisteredMetaInformation,
 } from '../meta-information/meta-inf-util';
 
+const RIGHT_ARROW_SYMBOL = '\u{2192}';
+
 export class JayveeCompletionProvider extends DefaultCompletionProvider {
   override completionFor(
     context: CompletionContext,
@@ -57,7 +59,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       acceptor({
         label: metaInf.blockType,
         labelDetails: {
-          detail: ` ${metaInf.inputType} \u{2192} ${metaInf.outputType}`,
+          detail: ` ${metaInf.inputType} ${RIGHT_ARROW_SYMBOL} ${metaInf.outputType}`,
         },
         kind: CompletionItemKind.Class,
         detail: `(block type)`,
