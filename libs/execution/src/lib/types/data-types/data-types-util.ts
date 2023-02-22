@@ -1,6 +1,5 @@
+import { DataType } from '@jayvee/language-server';
 import { assertUnreachable } from 'langium/lib/utils/errors';
-
-import { DataType } from '../../ast/generated/ast';
 
 import { AbstractDataType } from './AbstractDataType';
 import { BooleanDataType } from './BooleanDataType';

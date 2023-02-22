@@ -1,5 +1,3 @@
-import { IOType } from './io-type';
-
 /**
  * Represents a file with its name, extension, file type, and content.
  * @interface File
@@ -39,6 +37,7 @@ export interface File {
 export enum FileExtension {
   ZIP = 'zip',
   TXT = 'txt',
+  CSV = 'csv',
   NONE = '',
 }
 
@@ -53,5 +52,3 @@ export enum MimeType {
   TEXT_CSV = 'text/csv',
   TEXT_PLAIN = 'text/plain',
 }
-
-export const FILE_TYPE = new IOType<File>();

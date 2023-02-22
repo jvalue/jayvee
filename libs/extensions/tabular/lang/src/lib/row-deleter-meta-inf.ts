@@ -1,16 +1,16 @@
 import {
   AttributeType,
   BlockMetaInformation,
-  SHEET_TYPE,
-  SemanticCellRange,
+  CellRangeWrapper,
+  IOType,
   isCellRangeValue,
   isCollection,
-  isSemanticRow,
+  isRowWrapper,
 } from '@jayvee/language-server';
 
 export class RowDeleterMetaInformation extends BlockMetaInformation {
   constructor() {
-    super('RowDeleter', SHEET_TYPE, SHEET_TYPE, {
+    super('RowDeleter', IOType.SHEET, IOType.SHEET, {
       delete: {
         type: AttributeType.COLLECTION,
         validation: (attribute, accept) => {
@@ -31,13 +31,13 @@ export class RowDeleterMetaInformation extends BlockMetaInformation {
               continue;
             }
 
-            if (!SemanticCellRange.canBeWrapped(collectionValue.value)) {
+            if (!CellRangeWrapper.canBeWrapped(collectionValue.value)) {
               continue;
             }
-            const semanticCellRange = new SemanticCellRange(
+            const semanticCellRange = new CellRangeWrapper(
               collectionValue.value,
             );
-            if (!isSemanticRow(semanticCellRange)) {
+            if (!isRowWrapper(semanticCellRange)) {
               accept('error', 'An entire row needs to be selected', {
                 node: semanticCellRange.astNode,
               });

@@ -5,6 +5,9 @@ import {
   JayveeLangExtension,
 } from '@jayvee/language-server';
 
+import { ArchiveInterpreterMetaInformation } from './archive-interpreter-meta-inf';
+import { HttpExtractorMetaInformation } from './http-extractor-meta-inf';
+
 export class StdLangExtension implements JayveeLangExtension {
   private readonly wrappedExtensions: JayveeLangExtension[] = [
     new TabularLangExtension(),
@@ -12,6 +15,10 @@ export class StdLangExtension implements JayveeLangExtension {
   ];
 
   getBlockMetaInf(): BlockMetaInformationClass[] {
-    return this.wrappedExtensions.map((x) => x.getBlockMetaInf()).flat();
+    return [
+      ...this.wrappedExtensions.map((x) => x.getBlockMetaInf()).flat(),
+      HttpExtractorMetaInformation,
+      ArchiveInterpreterMetaInformation,
+    ];
   }
 }

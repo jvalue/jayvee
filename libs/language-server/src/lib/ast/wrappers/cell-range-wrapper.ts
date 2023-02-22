@@ -88,7 +88,7 @@ export interface CellIndexBounds {
   lastRowIndex: number;
 }
 
-export class SemanticCellRange<N extends CellRange = CellRange>
+export class CellRangeWrapper<N extends CellRange = CellRange>
   implements AstNodeWrapper<N>
 {
   public readonly astNode: N;
@@ -138,10 +138,10 @@ export class SemanticCellRange<N extends CellRange = CellRange>
     return this.from.isInBounds(bounds) && this.to.isInBounds(bounds);
   }
 
-  resolveRelativeIndexes(bounds: CellIndexBounds): SemanticCellRange<N> {
+  resolveRelativeIndexes(bounds: CellIndexBounds): CellRangeWrapper<N> {
     const boundFrom = this.from.resolveRelativeIndexes(bounds);
     const boundTo = this.to.resolveRelativeIndexes(bounds);
-    return new SemanticCellRange<N>(this.astNode, {
+    return new CellRangeWrapper<N>(this.astNode, {
       from: boundFrom,
       to: boundTo,
     });
@@ -156,13 +156,13 @@ export class SemanticCellRange<N extends CellRange = CellRange>
   }
 }
 
-export type SemanticColumn = SemanticCellRange<
+export type ColumnWrapper = CellRangeWrapper<
   ColumnExpression | RangeExpression
 >;
 
-export function isSemanticColumn(
-  cellRange: SemanticCellRange,
-): cellRange is SemanticColumn {
+export function isColumnWrapper(
+  cellRange: CellRangeWrapper,
+): cellRange is ColumnWrapper {
   if (isColumnExpression(cellRange.astNode)) {
     return true;
   }
@@ -176,16 +176,16 @@ export function isSemanticColumn(
   return false;
 }
 
-export function getColumnIndex(column: SemanticColumn): number {
-  assert(isSemanticColumn(column));
+export function getColumnIndex(column: ColumnWrapper): number {
+  assert(isColumnWrapper(column));
   return column.from.columnIndex;
 }
 
-export type SemanticRow = SemanticCellRange<RowExpression | RangeExpression>;
+export type RowWrapper = CellRangeWrapper<RowExpression | RangeExpression>;
 
-export function isSemanticRow(
-  cellRange: SemanticCellRange,
-): cellRange is SemanticRow {
+export function isRowWrapper(
+  cellRange: CellRangeWrapper,
+): cellRange is RowWrapper {
   if (isRowExpression(cellRange.astNode)) {
     return true;
   }
@@ -199,16 +199,16 @@ export function isSemanticRow(
   return false;
 }
 
-export function getRowIndex(row: SemanticRow): number {
-  assert(isSemanticRow(row));
+export function getRowIndex(row: RowWrapper): number {
+  assert(isRowWrapper(row));
   return row.from.rowIndex;
 }
 
-export type SemanticCell = SemanticCellRange<CellExpression | RangeExpression>;
+export type CellWrapper = CellRangeWrapper<CellExpression | RangeExpression>;
 
-export function isSemanticCell(
-  cellRange: SemanticCellRange,
-): cellRange is SemanticCell {
+export function isCellWrapper(
+  cellRange: CellRangeWrapper,
+): cellRange is CellWrapper {
   if (isCellExpression(cellRange.astNode)) {
     return true;
   }
@@ -221,8 +221,8 @@ export function isSemanticCell(
   return false;
 }
 
-export function getCellIndex(cell: SemanticCell): CellIndex {
-  assert(isSemanticCell(cell));
+export function getCellIndex(cell: CellWrapper): CellIndex {
+  assert(isCellWrapper(cell));
   return cell.from;
 }
 

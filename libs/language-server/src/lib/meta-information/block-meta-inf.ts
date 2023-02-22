@@ -2,8 +2,8 @@ import { strict as assert } from 'assert';
 
 import { ValidationAcceptor } from 'langium';
 
-import { Attribute, AttributeType, Block } from '../ast';
-import { IOType, UNDEFINED_TYPE } from '../types/io-types/io-type';
+import { Attribute, Block } from '../ast/generated/ast';
+import { AttributeType, IOType } from '../ast/model-util';
 
 export interface AttributeSpecification {
   type: AttributeType;
@@ -32,9 +32,9 @@ export abstract class BlockMetaInformation {
   docs: BlockDocs = {};
 
   protected constructor(
-    readonly blockType: string,
-    private readonly inputType: IOType,
-    private readonly outputType: IOType,
+    public readonly blockType: string,
+    public readonly inputType: IOType,
+    public readonly outputType: IOType,
     private readonly attributes: Record<string, AttributeSpecification>,
   ) {}
 
@@ -93,10 +93,10 @@ export abstract class BlockMetaInformation {
   }
 
   hasInput(): boolean {
-    return this.inputType !== UNDEFINED_TYPE;
+    return this.inputType !== IOType.UNDEFINED;
   }
 
   hasOutput(): boolean {
-    return this.outputType !== UNDEFINED_TYPE;
+    return this.outputType !== IOType.UNDEFINED;
   }
 }

@@ -1,14 +1,16 @@
 import { strict as assert } from 'assert';
 
-import { BlockExecutor } from '@jayvee/execution';
-import * as R from '@jayvee/execution';
 import {
   AbstractDataType,
-  CellIndex,
-  DataTypeAssignment,
+  BlockExecutor,
   Sheet,
   Table,
   getDataType,
+} from '@jayvee/execution';
+import * as R from '@jayvee/execution';
+import {
+  CellIndex,
+  DataTypeAssignment,
   rowIndexToString,
 } from '@jayvee/language-server';
 

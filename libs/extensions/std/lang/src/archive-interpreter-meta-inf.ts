@@ -1,8 +1,7 @@
 import {
   AttributeType,
   BlockMetaInformation,
-  FILE_SYSTEM_TYPE,
-  FILE_TYPE,
+  IOType,
 } from '@jayvee/language-server';
 
 export class ArchiveInterpreterMetaInformation extends BlockMetaInformation {
@@ -12,10 +11,10 @@ export class ArchiveInterpreterMetaInformation extends BlockMetaInformation {
       'ArchiveInterpreter',
 
       // Input type:
-      FILE_TYPE,
+      IOType.FILE,
 
       // Output type:
-      FILE_SYSTEM_TYPE,
+      IOType.FILE_SYSTEM,
 
       // Attribute definitions:
       {

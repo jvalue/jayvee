@@ -1,4 +1,4 @@
-import { DataType } from '../../ast/generated/ast';
+import { DataType } from '@jayvee/language-server';
 
 // eslint-disable-next-line import/no-cycle
 import { DataTypeVisitor } from './visitors/DataTypeVisitor';

@@ -1,15 +1,15 @@
 import {
   AttributeType,
   BlockMetaInformation,
-  SHEET_TYPE,
-  SemanticCellRange,
+  CellRangeWrapper,
+  IOType,
   isCellRangeValue,
-  isSemanticCell,
+  isCellWrapper,
 } from '@jayvee/language-server';
 
 export class CellWriterMetaInformation extends BlockMetaInformation {
   constructor() {
-    super('CellWriter', SHEET_TYPE, SHEET_TYPE, {
+    super('CellWriter', IOType.SHEET, IOType.SHEET, {
       write: {
         type: AttributeType.STRING,
         docs: {
@@ -31,11 +31,11 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
           }
           const cellRange = attributeValue.value;
 
-          if (!SemanticCellRange.canBeWrapped(cellRange)) {
+          if (!CellRangeWrapper.canBeWrapped(cellRange)) {
             return;
           }
-          const semanticCelLRange = new SemanticCellRange(cellRange);
-          if (!isSemanticCell(semanticCelLRange)) {
+          const semanticCelLRange = new CellRangeWrapper(cellRange);
+          if (!isCellWrapper(semanticCelLRange)) {
             accept('error', 'A single cell needs to be selected', {
               node: semanticCelLRange.astNode,
             });

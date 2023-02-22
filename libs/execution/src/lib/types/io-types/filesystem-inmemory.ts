@@ -1,6 +1,5 @@
 import { File } from './file-io-type';
 import { FileSystem } from './filesystem-io-type';
-import { NONE, NONE_TYPE, None } from './none-io-type';
 
 export class InMemoryFileSystem implements FileSystem {
   private static PATH_SEPARATOR = '/';
@@ -29,7 +28,7 @@ export class InMemoryFileSystem implements FileSystem {
     return processedParts;
   }
 
-  getFile(filePath: string): File | None {
+  getFile(filePath: string): File | null {
     const processedParts = this.processPath(filePath);
 
     // If we have a minimum valid path
@@ -47,16 +46,16 @@ export class InMemoryFileSystem implements FileSystem {
 
         // If we dont find current path-part, stop methodcall
         if (!childFileSystem) {
-          return NONE;
+          return null;
         }
         currentFileSystemIndex = childFileSystem.fileSystemIndex;
       }
 
       // If we are in the correct directory
-      const file = currentFileSystemIndex.get(fileName);
-      return file ? file : NONE_TYPE;
+      const file = currentFileSystemIndex.get(fileName) as File | undefined;
+      return file === undefined ? null : file;
     }
-    return NONE;
+    return null;
   }
 
   putFile(filePath: string, file: File): FileSystem {

@@ -1,9 +1,12 @@
+/**
+ * See the FAQ section of README.md for an explanation why the following eslint rule is disabled for this file.
+ */
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import { ValidationAcceptor, ValidationChecks } from 'langium';
 
-import { JayveeAstType, RangeExpression } from '../ast/generated/ast';
-import { SemanticCellRange } from '../ast/wrappers/semantic-cell-range';
-
-import { JayveeValidator } from './jayvee-validator';
+import { JayveeAstType, RangeExpression } from '../../ast/generated/ast';
+import { CellRangeWrapper } from '../../ast/wrappers/cell-range-wrapper';
+import { JayveeValidator } from '../jayvee-validator';
 
 export class CellRangeSelectionValidator implements JayveeValidator {
   get checks(): ValidationChecks<JayveeAstType> {
@@ -18,14 +21,12 @@ export class CellRangeSelectionValidator implements JayveeValidator {
     accept: ValidationAcceptor,
   ): void {
     if (
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       rangeExpression.cellFrom === undefined ||
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       rangeExpression.cellTo === undefined
     ) {
       return;
     }
-    const semanticCellRange = new SemanticCellRange(rangeExpression);
+    const semanticCellRange = new CellRangeWrapper(rangeExpression);
     if (
       semanticCellRange.from.columnIndex > semanticCellRange.to.columnIndex ||
       semanticCellRange.from.rowIndex > semanticCellRange.to.rowIndex

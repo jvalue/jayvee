@@ -1,3 +1,5 @@
+export * from './types';
+
 export * from './block-executor';
 export * from './block-executor-class';
 export * from './block-executor-registry';

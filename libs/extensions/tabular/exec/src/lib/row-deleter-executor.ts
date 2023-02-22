@@ -1,12 +1,11 @@
 import { strict as assert } from 'assert';
 
-import { BlockExecutor } from '@jayvee/execution';
+import { BlockExecutor, Sheet } from '@jayvee/execution';
 import * as R from '@jayvee/execution';
 import {
-  SemanticRow,
-  Sheet,
+  RowWrapper,
   getRowIndex,
-  isSemanticRow,
+  isRowWrapper,
   rowIndexToString,
 } from '@jayvee/language-server';
 
@@ -25,7 +24,7 @@ export class RowDeleterExecutor extends BlockExecutor<Sheet, Sheet> {
   // eslint-disable-next-line @typescript-eslint/require-await
   override async execute(inputSheet: Sheet): Promise<R.Result<Sheet>> {
     const relativeRows = this.getCellRangeCollectionAttributeValue('delete');
-    assert(relativeRows.every(isSemanticRow));
+    assert(relativeRows.every(isRowWrapper));
 
     let absoluteRows = relativeRows.map((row) =>
       resolveRelativeIndexes(inputSheet, row),
@@ -67,14 +66,14 @@ export class RowDeleterExecutor extends BlockExecutor<Sheet, Sheet> {
     return R.ok(resultingSheet);
   }
 
-  private sortByRowIndex(rows: SemanticRow[]): void {
+  private sortByRowIndex(rows: RowWrapper[]): void {
     rows.sort(
       (firstRow, secondRow) => getRowIndex(firstRow) - getRowIndex(secondRow),
     );
   }
 
-  private removeDuplicateRows(rows: SemanticRow[]): SemanticRow[] {
-    return rows.reduce<SemanticRow[]>((previous, row, index) => {
+  private removeDuplicateRows(rows: RowWrapper[]): RowWrapper[] {
+    return rows.reduce<RowWrapper[]>((previous, row, index) => {
       const previousRow = previous[index - 1];
       if (previousRow !== undefined) {
         if (getRowIndex(previousRow) === getRowIndex(row)) {

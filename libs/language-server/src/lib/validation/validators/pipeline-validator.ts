@@ -1,13 +1,12 @@
 import { ValidationAcceptor, ValidationChecks } from 'langium';
 
-import { JayveeAstType, Pipeline } from '../ast/generated/ast';
-import { collectStartingBlocks } from '../ast/model-util';
-
-import { JayveeValidator } from './jayvee-validator';
+import { JayveeAstType, Pipeline } from '../../ast/generated/ast';
+import { collectStartingBlocks } from '../../ast/model-util';
+import { JayveeValidator } from '../jayvee-validator';
 import {
   generateNonUniqueNameErrorMessage,
   getNodesWithNonUniqueNames,
-} from './validation-util';
+} from '../validation-util';
 
 export class PipelineValidator implements JayveeValidator {
   get checks(): ValidationChecks<JayveeAstType> {

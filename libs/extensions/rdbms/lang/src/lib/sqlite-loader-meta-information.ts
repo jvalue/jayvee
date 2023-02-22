@@ -1,13 +1,12 @@
 import {
   AttributeType,
   BlockMetaInformation,
-  TABLE_TYPE,
-  UNDEFINED_TYPE,
+  IOType,
 } from '@jayvee/language-server';
 
 export class SQLiteLoaderMetaInformation extends BlockMetaInformation {
   constructor() {
-    super('SQLiteLoader', TABLE_TYPE, UNDEFINED_TYPE, {
+    super('SQLiteLoader', IOType.TABLE, IOType.UNDEFINED, {
       table: {
         type: AttributeType.STRING,
         docs: {
