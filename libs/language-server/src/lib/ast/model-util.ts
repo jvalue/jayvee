@@ -132,7 +132,6 @@ export function getBlocksInTopologicalSorting(pipeline: Pipeline): Block[] {
 
 export enum IOType {
   UNDEFINED = 'Undefined',
-  NONE = 'None',
   FILE = 'File',
   FILE_SYSTEM = 'FileSystem',
   SHEET = 'Sheet',
