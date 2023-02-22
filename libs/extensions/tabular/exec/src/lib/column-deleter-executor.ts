@@ -4,6 +4,7 @@ import { BlockExecutor, Sheet } from '@jayvee/execution';
 import * as R from '@jayvee/execution';
 import {
   ColumnWrapper,
+  IOType,
   columnIndexToString,
   getColumnIndex,
   isColumnWrapper,
@@ -16,7 +17,10 @@ import {
   resolveRelativeIndexes,
 } from './sheet-util';
 
-export class ColumnDeleterExecutor extends BlockExecutor<Sheet, Sheet> {
+export class ColumnDeleterExecutor extends BlockExecutor<
+  IOType.SHEET,
+  IOType.SHEET
+> {
   constructor() {
     super('ColumnDeleter');
   }

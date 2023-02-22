@@ -10,6 +10,7 @@ import {
   MimeType,
   err,
 } from '@jayvee/execution';
+import { IOType } from '@jayvee/language-server';
 import * as JSZip from 'jszip';
 
 import {
@@ -18,8 +19,8 @@ import {
 } from './file-util';
 
 export class ArchiveInterpreterExecutor extends BlockExecutor<
-  File,
-  FileSystem
+  IOType.FILE,
+  IOType.FILE_SYSTEM
 > {
   constructor() {
     // Needs to match the name in meta information:
@@ -65,6 +66,7 @@ export class ArchiveInterpreterExecutor extends BlockExecutor<
             inferFileExtensionFromFileExtensionString(extName) ||
             FileExtension.NONE;
           const file: File = {
+            ioType: IOType.FILE,
             name: fileName,
             extension: fileExtension,
             content,

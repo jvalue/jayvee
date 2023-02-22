@@ -1,6 +1,6 @@
 import { TextEncoder } from 'util';
 
-import { File, FileExtension, MimeType } from './file-io-type';
+import { File, FileExtension, MimeType } from './file';
 import { InMemoryFileSystem } from './filesystem-inmemory';
 
 describe('InMemoryFileSystem', () => {

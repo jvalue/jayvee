@@ -1,4 +1,6 @@
 import {
+  IOTypeImplementation,
+  UNDEFINED,
   createBlockExecutor,
   useExtension as useExecutionExtension,
 } from '@jayvee/execution';
@@ -86,10 +88,12 @@ async function runPipeline(
 
   printPipeline(pipeline, runtimeParameters);
 
-  const executionOrder: Array<{ block: Block; value: unknown }> =
-    getBlocksInTopologicalSorting(pipeline).map((block) => {
-      return { block: block, value: undefined };
-    });
+  const executionOrder: Array<{
+    block: Block;
+    value: IOTypeImplementation | null;
+  }> = getBlocksInTopologicalSorting(pipeline).map((block) => {
+    return { block: block, value: UNDEFINED };
+  });
   for (const blockData of executionOrder) {
     const blockLogger = loggerFactory.createLogger(blockData.block.name);
     const blockExecutor = createBlockExecutor(
@@ -100,11 +104,13 @@ async function runPipeline(
     const parentData = collectParents(blockData.block).map((parent) =>
       executionOrder.find((blockData) => parent === blockData.block),
     );
-    const inputValue = parentData[0]?.value;
-    let result: R.Result<unknown>;
+    const inputValue =
+      parentData[0]?.value === undefined ? UNDEFINED : parentData[0]?.value;
 
-    // Check, if parent emitted a value, root blocks have no parents to check
-    if (inputValue != null || isRootBlock(blockData.block, executionOrder)) {
+    let result: R.Result<IOTypeImplementation | null>;
+
+    // Check, if parent emitted a value
+    if (inputValue != null) {
       try {
         result = await blockExecutor.execute(inputValue);
       } catch (unexpectedError) {
@@ -143,14 +149,6 @@ async function runPipeline(
     }
   }
   return ExitCode.SUCCESS;
-}
-
-function isRootBlock(
-  blockToCheck: Block,
-  executionOrder: Array<{ block: Block; value: unknown }>,
-): boolean {
-  const executionRoot = executionOrder[0]?.block;
-  return blockToCheck === executionRoot;
 }
 
 export function printPipeline(
