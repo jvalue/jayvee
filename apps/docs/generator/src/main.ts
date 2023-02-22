@@ -5,8 +5,7 @@ import { StdLangExtension } from '@jayvee/extensions/std/lang';
 import {
   BlockMetaInformation,
   MarkdownDocBuilder,
-  getOrFailMetaInformation,
-  getRegisteredBlockTypes,
+  getRegisteredMetaInformation,
   useExtension,
 } from '@jayvee/language-server';
 
@@ -44,12 +43,11 @@ function createMarkdownDoc(metaInf: BlockMetaInformation): string {
 function main(docsDirName: string): void {
   const rootPath = join(__dirname, '..', '..', '..', '..');
   const docsPath = join(rootPath, 'apps', 'docs', 'docs', docsDirName);
-  const blockNames = getRegisteredBlockTypes();
-  for (const blockName of blockNames) {
-    const metaInf = getOrFailMetaInformation(blockName);
+  const metaInfs = getRegisteredMetaInformation();
+  for (const metaInf of metaInfs) {
     const markdown = createMarkdownDoc(metaInf);
 
-    const fileName = `${blockName}.md`;
+    const fileName = `${metaInf.blockType}.md`;
     writeFileSync(join(docsPath, fileName), markdown, {
       flag: 'w',
     });

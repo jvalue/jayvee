@@ -3,8 +3,8 @@ import { Hover } from 'vscode-languageserver-protocol';
 
 import { Attribute, BlockType, isAttribute, isBlockType } from '../ast';
 import {
-  buildLspBlockTypeHoverDoc,
-  buildLspHoverBlockAttributeDocs,
+  buildLspBlockAttributeDoc,
+  buildLspBlockTypeDoc,
   getMetaInformation,
 } from '../meta-information';
 
@@ -38,7 +38,7 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
       return;
     }
 
-    return buildLspBlockTypeHoverDoc(blockMetaInf);
+    return buildLspBlockTypeDoc(blockMetaInf);
   }
 
   private getAttributeMarkdownDoc(attribute: Attribute): string | undefined {
@@ -48,6 +48,6 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
       return;
     }
 
-    return buildLspHoverBlockAttributeDocs(blockMetaInf, attribute.name);
+    return buildLspBlockAttributeDoc(blockMetaInf, attribute.name);
   }
 }

@@ -90,9 +90,7 @@ export class MarkdownDocBuilder {
   }
 }
 
-export function buildLspBlockTypeHoverDoc(
-  metaInf: BlockMetaInformation,
-): string {
+export function buildLspBlockTypeDoc(metaInf: BlockMetaInformation): string {
   return new MarkdownDocBuilder()
     .blockTypeTitle(metaInf.blockType)
     .description(metaInf.docs.description)
@@ -105,7 +103,7 @@ export function buildLspBlockTypeHoverDoc(
     .build();
 }
 
-export function buildLspHoverBlockAttributeDocs(
+export function buildLspBlockAttributeDoc(
   metaInf: BlockMetaInformation,
   attributeName: string,
 ): string | undefined {
