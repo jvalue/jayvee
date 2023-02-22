@@ -6,8 +6,8 @@
     "types": ["node"],
     "lib": ["DOM"],
   },
-  "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"],
-  "include": ["src/**/*.ts"],
+  "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts", "generator/src/**/*.spec.ts", "generator/src/**/*.test.ts"],
+  "include": ["src/**/*.ts", "generator/src/**/*.ts"],
   "types": [
     "node",
     "@docusaurus/module-type-aliases",
