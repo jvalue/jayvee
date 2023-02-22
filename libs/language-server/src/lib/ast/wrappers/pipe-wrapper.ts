@@ -23,8 +23,10 @@ export class PipeWrapper<N extends Pipe = Pipe> implements AstNodeWrapper<N> {
   constructor(pipe: N, chainIndex?: number) {
     this.astNode = pipe;
     if (isSinglePipe(pipe)) {
-      assert(pipe.from.ref !== undefined);
-      assert(pipe.to.ref !== undefined);
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      assert(pipe.from?.ref !== undefined);
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      assert(pipe.to?.ref !== undefined);
       this.from = pipe.from.ref;
       this.to = pipe.to.ref;
     } else {
@@ -82,7 +84,8 @@ export class PipeWrapper<N extends Pipe = Pipe> implements AstNodeWrapper<N> {
   static canBeWrapped(pipe: SinglePipe): boolean;
   static canBeWrapped<N extends Pipe>(pipe: N, chainIndex?: number): boolean {
     if (isSinglePipe(pipe)) {
-      return pipe.from.ref !== undefined && pipe.to.ref !== undefined;
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      return pipe.from?.ref !== undefined && pipe.to?.ref !== undefined;
     }
     return (
       chainIndex !== undefined &&
