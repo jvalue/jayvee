@@ -28,10 +28,12 @@ export class PipeValidator implements JayveeValidator {
         continue;
       }
 
-      if (!fromBlockMetaInf.canBeConnectedTo(toBlockMetaInf)) {
-        const errorMessage = `The output of block ${fromBlockMetaInf.blockType} is incompatible with the input of block ${toBlockMetaInf.blockType}`;
-        accept('error', errorMessage, semanticPipe.getFromDiagnostic());
-        accept('error', errorMessage, semanticPipe.getToDiagnostic());
+      if (fromBlockMetaInf.hasOutput() && toBlockMetaInf.hasInput()) {
+        if (!fromBlockMetaInf.canBeConnectedTo(toBlockMetaInf)) {
+          const errorMessage = `The output type "${fromBlockMetaInf.outputType}" of ${fromBlockMetaInf.blockType} is incompatible with the input type "${toBlockMetaInf.inputType}" of ${toBlockMetaInf.blockType}`;
+          accept('error', errorMessage, semanticPipe.getFromDiagnostic());
+          accept('error', errorMessage, semanticPipe.getToDiagnostic());
+        }
       }
     }
   }

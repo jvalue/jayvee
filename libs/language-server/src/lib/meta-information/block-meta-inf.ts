@@ -34,9 +34,9 @@ export abstract class BlockMetaInformation {
   docs: BlockDocs = {};
 
   protected constructor(
-    readonly blockType: string,
-    private readonly inputType: IOType,
-    private readonly outputType: IOType,
+    public readonly blockType: string,
+    public readonly inputType: IOType,
+    public readonly outputType: IOType,
     private readonly attributes: Record<string, AttributeSpecification>,
   ) {}
 
