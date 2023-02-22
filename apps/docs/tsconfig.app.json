@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "module": "commonjs",
+    "types": ["node"],
+    "lib": ["DOM"],
+  },
+  "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"],
+  "include": ["src/**/*.ts"],
+  "types": [
+    "node",
+    "@docusaurus/module-type-aliases",
+    "@docusaurus/theme-classic"
+  ],
+  "baseUrl": ".",
+  "paths": {
+    "@site/*": ["./*"]
+  }
+}
