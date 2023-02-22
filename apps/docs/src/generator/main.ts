@@ -43,7 +43,7 @@ function createMarkdownDoc(metaInf: BlockMetaInformation): string {
 }
 
 function main(docsDirName: string): void {
-  const rootPath = join(__dirname, '..', '..', '..');
+  const rootPath = join(__dirname, '..', '..', '..', '..');
   const docsPath = join(rootPath, 'apps', 'docs', 'docs', docsDirName);
   const blockNames = getRegisteredBlockTypes();
   for (const blockName of blockNames) {
