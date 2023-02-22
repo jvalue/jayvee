@@ -61,7 +61,7 @@ export abstract class BlockMetaInformation {
   }
 
   getAttributeSpecifications(): Record<string, AttributeSpecification> {
-    return this.attributes; // TODO: return a clone
+    return this.attributes;
   }
 
   hasAttributeSpecification(name: string): boolean {
