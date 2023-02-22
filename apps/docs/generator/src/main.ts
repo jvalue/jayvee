@@ -19,7 +19,6 @@ function createMarkdownDoc(metaInf: BlockMetaInformation): string {
       'Do NOT change this document as it is auto-generated from the language server',
     )
     .newLine()
-    .blockTypeTitle(metaInf.blockType)
     .description(metaInf.docs.description)
     .attributes(
       Object.entries(metaInf.getAttributeSpecifications()).map(
