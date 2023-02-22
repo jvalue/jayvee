@@ -1,6 +1,9 @@
+import { strict as assert } from 'assert';
+
 import {
   CompletionAcceptor,
   CompletionContext,
+  CompletionValueItem,
   DefaultCompletionProvider,
   MaybePromise,
   NextFeature,
@@ -15,9 +18,10 @@ import {
   isBlock,
   isBlockType,
 } from '../ast/generated/ast';
+import { BlockMetaInformation } from '../meta-information/block-meta-inf';
 import {
   getMetaInformation,
-  getRegisteredBlockTypes,
+  getRegisteredMetaInformation,
 } from '../meta-information/meta-inf-util';
 
 export class JayveeCompletionProvider extends DefaultCompletionProvider {
@@ -48,11 +52,19 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
   private completionForBlockType(
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
-    getRegisteredBlockTypes().forEach((blockType) => {
+    getRegisteredMetaInformation().forEach((metaInf) => {
+      const markdownDoc = metaInf.getMarkdownDoc();
       acceptor({
-        label: blockType,
+        label: metaInf.blockType,
+        labelDetails: {
+          detail: ` ${metaInf.inputType} \u{2192} ${metaInf.outputType}`,
+        },
         kind: CompletionItemKind.Class,
-        detail: `Block Type`,
+        detail: `(block type)`,
+        documentation: {
+          kind: 'markdown',
+          value: markdownDoc,
+        },
       });
     });
   }
@@ -67,30 +79,51 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       return;
     }
     const presentAttributeNames = block.attributes.map((attr) => attr.name);
-    const missingRequiredAttributeNames = blockMetaInf.getAttributeNames(
-      'required',
-      presentAttributeNames,
-    );
-    missingRequiredAttributeNames.forEach((attributeName) =>
-      acceptor({
-        label: attributeName,
-        kind: CompletionItemKind.Field,
-        detail: `${blockMetaInf.blockType} Attribute`,
-        sortText: '1',
-      }),
-    );
 
-    const missingOptionalAttributeNames = blockMetaInf.getAttributeNames(
+    const attributeKinds: Array<'optional' | 'required'> = [
+      'required',
       'optional',
-      presentAttributeNames,
-    );
-    missingOptionalAttributeNames.forEach((attributeName) =>
-      acceptor({
+    ];
+    for (const attributeKind of attributeKinds) {
+      const attributeNames = blockMetaInf.getAttributeNames(
+        attributeKind,
+        presentAttributeNames,
+      );
+      this.constructAttributeCompletionValueItems(
+        blockMetaInf,
+        attributeNames,
+        attributeKind,
+      ).forEach(acceptor);
+    }
+  }
+
+  private constructAttributeCompletionValueItems(
+    blockMetaInf: BlockMetaInformation,
+    attributeNames: string[],
+    kind: 'required' | 'optional',
+  ): CompletionValueItem[] {
+    return attributeNames.map((attributeName) => {
+      const attributeSpec =
+        blockMetaInf.getAttributeSpecification(attributeName);
+      assert(attributeSpec !== undefined);
+
+      const completionValueItem: CompletionValueItem = {
         label: attributeName,
+        labelDetails: {
+          detail: ` ${attributeSpec.type}`,
+        },
         kind: CompletionItemKind.Field,
-        detail: `Optional ${blockMetaInf.blockType} Attribute`,
-        sortText: '2',
-      }),
-    );
+        detail: `(${kind} attribute)`,
+        sortText: kind === 'required' ? '1' : '2',
+      };
+      const markdownDoc = blockMetaInf.getAttributeMarkdownDoc(attributeName);
+      if (markdownDoc !== undefined) {
+        completionValueItem.documentation = {
+          kind: 'markdown',
+          value: markdownDoc,
+        };
+      }
+      return completionValueItem;
+    });
   }
 }
