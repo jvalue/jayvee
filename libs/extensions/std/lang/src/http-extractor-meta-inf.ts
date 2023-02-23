@@ -11,7 +11,7 @@ export class HttpExtractorMetaInformation extends BlockMetaInformation {
       'HttpExtractor',
 
       // Input type:
-      IOType.UNDEFINED,
+      IOType.NONE,
 
       // Output type:
       IOType.FILE,

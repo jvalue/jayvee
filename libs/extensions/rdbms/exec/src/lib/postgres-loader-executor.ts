@@ -1,4 +1,4 @@
-import { BlockExecutor, Table, UNDEFINED, Undefined } from '@jayvee/execution';
+import { BlockExecutor, NONE, None, Table } from '@jayvee/execution';
 import * as R from '@jayvee/execution';
 import { IOType } from '@jayvee/language-server';
 import { Client } from 'pg';
@@ -11,13 +11,13 @@ import {
 
 export class PostgresLoaderExecutor extends BlockExecutor<
   IOType.TABLE,
-  IOType.UNDEFINED
+  IOType.NONE
 > {
   constructor() {
     super('PostgresLoader');
   }
 
-  override async execute(input: Table): Promise<R.Result<Undefined>> {
+  override async execute(input: Table): Promise<R.Result<None>> {
     const host = this.getStringAttributeValue('host');
     const port = this.getIntAttributeValue('port');
     const user = this.getStringAttributeValue('username');
@@ -49,7 +49,7 @@ export class PostgresLoaderExecutor extends BlockExecutor<
       this.logger.logDebug(
         `The data was successfully loaded into the database`,
       );
-      return R.ok(UNDEFINED);
+      return R.ok(NONE);
     } catch (err: unknown) {
       return R.err({
         message: `Could not write to postgres database: ${

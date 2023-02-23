@@ -1,4 +1,4 @@
-import { BlockExecutor, Table, UNDEFINED, Undefined } from '@jayvee/execution';
+import { BlockExecutor, NONE, None, Table } from '@jayvee/execution';
 import * as R from '@jayvee/execution';
 import { IOType } from '@jayvee/language-server';
 import * as sqlite3 from 'sqlite3';
@@ -11,13 +11,13 @@ import {
 
 export class SQLiteLoaderExecutor extends BlockExecutor<
   IOType.TABLE,
-  IOType.UNDEFINED
+  IOType.NONE
 > {
   constructor() {
     super('SQLiteLoader');
   }
 
-  override async execute(input: Table): Promise<R.Result<Undefined>> {
+  override async execute(input: Table): Promise<R.Result<None>> {
     const file = this.getStringAttributeValue('file');
     const table = this.getStringAttributeValue('table');
 
@@ -39,7 +39,7 @@ export class SQLiteLoaderExecutor extends BlockExecutor<
       this.logger.logDebug(
         `The data was successfully loaded into the database`,
       );
-      return R.ok(UNDEFINED);
+      return R.ok(NONE);
     } catch (err: unknown) {
       return R.err({
         message: `Could not write to sqlite database: ${

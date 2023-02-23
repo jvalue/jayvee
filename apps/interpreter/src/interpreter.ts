@@ -1,6 +1,6 @@
 import {
   IOTypeImplementation,
-  UNDEFINED,
+  NONE,
   createBlockExecutor,
   useExtension as useExecutionExtension,
 } from '@jayvee/execution';
@@ -92,7 +92,7 @@ async function runPipeline(
     block: Block;
     value: IOTypeImplementation | null;
   }> = getBlocksInTopologicalSorting(pipeline).map((block) => {
-    return { block: block, value: UNDEFINED };
+    return { block: block, value: NONE };
   });
   for (const blockData of executionOrder) {
     const blockLogger = loggerFactory.createLogger(blockData.block.name);
@@ -105,7 +105,7 @@ async function runPipeline(
       executionOrder.find((blockData) => parent === blockData.block),
     );
     const inputValue =
-      parentData[0]?.value === undefined ? UNDEFINED : parentData[0]?.value;
+      parentData[0]?.value === undefined ? NONE : parentData[0]?.value;
 
     let result: R.Result<IOTypeImplementation | null>;
 

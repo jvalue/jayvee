@@ -91,11 +91,11 @@ export abstract class BlockMetaInformation {
   }
 
   hasInput(): boolean {
-    return this.inputType !== IOType.UNDEFINED;
+    return this.inputType !== IOType.NONE;
   }
 
   hasOutput(): boolean {
-    return this.outputType !== IOType.UNDEFINED;
+    return this.outputType !== IOType.NONE;
   }
 
   getMarkdownDoc(): string {

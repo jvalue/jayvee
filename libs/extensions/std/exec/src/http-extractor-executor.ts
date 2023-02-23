@@ -17,7 +17,7 @@ import {
 } from './file-util';
 
 export class HttpExtractorExecutor extends BlockExecutor<
-  IOType.UNDEFINED,
+  IOType.NONE,
   IOType.FILE
 > {
   constructor() {
