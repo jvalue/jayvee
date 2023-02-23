@@ -7,7 +7,7 @@ export class FilePickerExecutor extends BlockExecutor<
   IOType.FILE
 > {
   constructor() {
-    super('FilePicker');
+    super('FilePicker', IOType.FILE_SYSTEM, IOType.FILE);
   }
 
   override execute(fileSystem: FileSystem): Promise<R.Result<File | null>> {

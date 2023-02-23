@@ -1,7 +1,7 @@
 import { strict as assert } from 'assert';
 
-import { BlockExecutor, Sheet } from '@jayvee/execution';
 import * as R from '@jayvee/execution';
+import { BlockExecutor, Sheet } from '@jayvee/execution';
 import { IOType, getCellIndex, isCellWrapper } from '@jayvee/language-server';
 
 import {
@@ -16,7 +16,7 @@ export class CellWriterExecutor extends BlockExecutor<
   IOType.SHEET
 > {
   constructor() {
-    super('CellWriter');
+    super('CellWriter', IOType.SHEET, IOType.SHEET);
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await

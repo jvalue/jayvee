@@ -1,7 +1,7 @@
 import { strict as assert } from 'assert';
 
-import { BlockExecutor, Sheet } from '@jayvee/execution';
 import * as R from '@jayvee/execution';
+import { BlockExecutor, Sheet } from '@jayvee/execution';
 import {
   IOType,
   RowWrapper,
@@ -22,7 +22,7 @@ export class RowDeleterExecutor extends BlockExecutor<
   IOType.SHEET
 > {
   constructor() {
-    super('RowDeleter');
+    super('RowDeleter', IOType.SHEET, IOType.SHEET);
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await

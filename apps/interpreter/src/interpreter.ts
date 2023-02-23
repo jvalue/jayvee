@@ -33,8 +33,7 @@ export async function runAction(
 ): Promise<void> {
   const loggerFactory = new LoggerFactory(options.debug);
 
-  useLangExtension(new StdLangExtension());
-  useExecutionExtension(new StdExecExtension());
+  useStdExtension();
 
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   const model = await extractAstNode<Model>(
@@ -59,6 +58,11 @@ export async function runAction(
     loggerFactory,
   );
   process.exit(interpretationExitCode);
+}
+
+export function useStdExtension() {
+  useLangExtension(new StdLangExtension());
+  useExecutionExtension(new StdExecExtension());
 }
 
 async function interpretPipelineModel(

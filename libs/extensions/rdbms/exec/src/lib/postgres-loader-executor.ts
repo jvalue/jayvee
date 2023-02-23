@@ -1,5 +1,5 @@
-import { BlockExecutor, NONE, None, Table } from '@jayvee/execution';
 import * as R from '@jayvee/execution';
+import { BlockExecutor, NONE, None, Table } from '@jayvee/execution';
 import { IOType } from '@jayvee/language-server';
 import { Client } from 'pg';
 
@@ -14,7 +14,7 @@ export class PostgresLoaderExecutor extends BlockExecutor<
   IOType.NONE
 > {
   constructor() {
-    super('PostgresLoader');
+    super('PostgresLoader', IOType.TABLE, IOType.NONE);
   }
 
   override async execute(input: Table): Promise<R.Result<None>> {
