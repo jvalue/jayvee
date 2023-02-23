@@ -1,5 +1,6 @@
 import { strict as assert } from 'assert';
 
+import * as R from '@jayvee/execution';
 import {
   AbstractDataType,
   BlockExecutor,
@@ -7,10 +8,10 @@ import {
   Table,
   getDataType,
 } from '@jayvee/execution';
-import * as R from '@jayvee/execution';
 import {
   CellIndex,
   DataTypeAssignment,
+  IOType,
   rowIndexToString,
 } from '@jayvee/language-server';
 
@@ -21,7 +22,10 @@ interface ColumnDefinitionEntry {
   astNode: DataTypeAssignment;
 }
 
-export class TableInterpreterExecutor extends BlockExecutor<Sheet, Table> {
+export class TableInterpreterExecutor extends BlockExecutor<
+  IOType.SHEET,
+  IOType.TABLE
+> {
   constructor() {
     super('TableInterpreter');
   }
@@ -83,6 +87,7 @@ export class TableInterpreterExecutor extends BlockExecutor<Sheet, Table> {
     );
 
     const resultingTable: Table = {
+      ioType: IOType.TABLE,
       columnInformation: columnEntries.map((columnEntry) => ({
         name: columnEntry.columnName,
         type: columnEntry.dataType,

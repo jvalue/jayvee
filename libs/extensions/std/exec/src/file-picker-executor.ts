@@ -1,7 +1,11 @@
 import * as R from '@jayvee/execution';
 import { BlockExecutor, File, FileSystem } from '@jayvee/execution';
+import { IOType } from '@jayvee/language-server';
 
-export class FilePickerExecutor extends BlockExecutor<FileSystem, File | null> {
+export class FilePickerExecutor extends BlockExecutor<
+  IOType.FILE_SYSTEM,
+  IOType.FILE
+> {
   constructor() {
     super('FilePicker');
   }

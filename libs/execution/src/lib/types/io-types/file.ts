@@ -1,8 +1,12 @@
+import { IOType } from '@jayvee/language-server';
+
+import { IOTypeImplementation } from './io-type-implementation';
+
 /**
  * Represents a file with its name, extension, file type, and content.
  * @interface File
  */
-export interface File {
+export interface File extends IOTypeImplementation<IOType.FILE> {
   /**
    * The name of the file, without the extension.
    * @property {string} name

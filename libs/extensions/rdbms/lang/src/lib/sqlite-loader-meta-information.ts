@@ -6,7 +6,7 @@ import {
 
 export class SQLiteLoaderMetaInformation extends BlockMetaInformation {
   constructor() {
-    super('SQLiteLoader', IOType.TABLE, IOType.UNDEFINED, {
+    super('SQLiteLoader', IOType.TABLE, IOType.NONE, {
       table: {
         type: AttributeType.STRING,
         docs: {

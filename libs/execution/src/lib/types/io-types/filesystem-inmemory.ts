@@ -1,7 +1,11 @@
-import { File } from './file-io-type';
-import { FileSystem } from './filesystem-io-type';
+import { IOType } from '@jayvee/language-server';
+
+import { File } from './file';
+import { FileSystem } from './filesystem';
 
 export class InMemoryFileSystem implements FileSystem {
+  public readonly ioType = IOType.FILE_SYSTEM;
+
   private static PATH_SEPARATOR = '/';
   private static CURRENT_DIR = '.';
   private static PARENT_DIR = '..';

@@ -5,6 +5,7 @@ import {
   Block,
   CellRangeWrapper,
   DataTypeAssignment,
+  IOType,
   getOrFailMetaInformation,
   isCellRange,
   isCellRangeValue,
@@ -16,8 +17,12 @@ import { isReference } from 'langium';
 
 import * as R from './execution-result';
 import { Logger } from './logger';
+import { IOTypeImplementation } from './types/io-types/io-type-implementation';
 
-export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
+export abstract class BlockExecutor<
+  I extends IOType = IOType,
+  O extends IOType = IOType,
+> {
   private _block?: Block;
   private _runtimeParameters?: Map<string, string | number | boolean>;
   private _logger?: Logger;
@@ -70,7 +75,9 @@ export abstract class BlockExecutor<InputType = unknown, OutputType = unknown> {
     return this._logger;
   }
 
-  abstract execute(input: InputType): Promise<R.Result<OutputType>>;
+  abstract execute(
+    input: IOTypeImplementation<I>,
+  ): Promise<R.Result<IOTypeImplementation<O> | null>>;
 
   protected getStringAttributeValue(attributeName: string): string {
     const attributeValue = this.getAttributeValue(attributeName);
