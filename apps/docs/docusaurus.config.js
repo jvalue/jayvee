@@ -74,9 +74,7 @@ const config = {
           },
           {
             title: 'Developer Docs',
-            items: [
-              
-            ],
+            items: [],
           },
           {
             title: 'More',
