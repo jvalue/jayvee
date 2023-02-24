@@ -42,7 +42,7 @@ function createMarkdownDoc(metaInf: BlockMetaInformation): string {
 
 function main(docsDirName: string): void {
   const rootPath = join(__dirname, '..', '..', '..', '..');
-  const docsPath = join(rootPath, 'apps', 'docs', 'docs', docsDirName);
+  const docsPath = join(rootPath, 'apps', 'docs', 'docs', 'user', docsDirName);
   const metaInfs = getRegisteredMetaInformation();
   for (const metaInf of metaInfs) {
     const markdown = createMarkdownDoc(metaInf);
