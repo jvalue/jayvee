@@ -13,7 +13,7 @@ export class CSVInterpreterExecutor extends BlockExecutor<
 > {
   constructor() {
     // Needs to match the name in meta information:
-    super('CSVInterpreter');
+    super('CSVInterpreter', IOType.FILE, IOType.SHEET);
   }
 
   override async execute(file: File): Promise<R.Result<Sheet>> {

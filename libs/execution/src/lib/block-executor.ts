@@ -27,7 +27,11 @@ export abstract class BlockExecutor<
   private _runtimeParameters?: Map<string, string | number | boolean>;
   private _logger?: Logger;
 
-  protected constructor(readonly blockType: string) {}
+  protected constructor(
+    readonly blockType: string,
+    public readonly inputType: I,
+    public readonly outputType: O,
+  ) {}
 
   get block(): Block {
     assert(

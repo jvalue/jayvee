@@ -27,7 +27,7 @@ export class TableInterpreterExecutor extends BlockExecutor<
   IOType.TABLE
 > {
   constructor() {
-    super('TableInterpreter');
+    super('TableInterpreter', IOType.SHEET, IOType.TABLE);
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await

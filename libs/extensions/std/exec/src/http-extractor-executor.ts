@@ -21,7 +21,7 @@ export class HttpExtractorExecutor extends BlockExecutor<
   IOType.FILE
 > {
   constructor() {
-    super('HttpExtractor');
+    super('HttpExtractor', IOType.NONE, IOType.FILE);
   }
 
   override async execute(): Promise<R.Result<File>> {

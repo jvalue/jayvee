@@ -1,5 +1,5 @@
-import { BlockExecutor, NONE, None, Table } from '@jayvee/execution';
 import * as R from '@jayvee/execution';
+import { BlockExecutor, NONE, None, Table } from '@jayvee/execution';
 import { IOType } from '@jayvee/language-server';
 import * as sqlite3 from 'sqlite3';
 
@@ -14,7 +14,7 @@ export class SQLiteLoaderExecutor extends BlockExecutor<
   IOType.NONE
 > {
   constructor() {
-    super('SQLiteLoader');
+    super('SQLiteLoader', IOType.TABLE, IOType.NONE);
   }
 
   override async execute(input: Table): Promise<R.Result<None>> {

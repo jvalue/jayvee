@@ -24,7 +24,7 @@ export class ArchiveInterpreterExecutor extends BlockExecutor<
 > {
   constructor() {
     // Needs to match the name in meta information:
-    super('ArchiveInterpreter');
+    super('ArchiveInterpreter', IOType.FILE, IOType.FILE_SYSTEM);
   }
 
   override async execute(archiveFile: File): Promise<R.Result<FileSystem>> {

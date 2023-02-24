@@ -1,5 +1,5 @@
-import { BlockExecutor, Sheet } from '@jayvee/execution';
 import * as R from '@jayvee/execution';
+import { BlockExecutor, Sheet } from '@jayvee/execution';
 import { IOType } from '@jayvee/language-server';
 
 import {
@@ -14,7 +14,7 @@ export class CellRangeSelectorExecutor extends BlockExecutor<
   IOType.SHEET
 > {
   constructor() {
-    super('CellRangeSelector');
+    super('CellRangeSelector', IOType.SHEET, IOType.SHEET);
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
