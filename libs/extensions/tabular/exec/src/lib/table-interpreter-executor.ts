@@ -1,14 +1,17 @@
 import { strict as assert } from 'assert';
 
-import { BlockExecutor } from '@jayvee/execution';
 import * as R from '@jayvee/execution';
 import {
   AbstractDataType,
-  CellIndex,
-  DataTypeAssignment,
+  BlockExecutor,
   Sheet,
   Table,
   getDataType,
+} from '@jayvee/execution';
+import {
+  CellIndex,
+  DataTypeAssignment,
+  IOType,
   rowIndexToString,
 } from '@jayvee/language-server';
 
@@ -19,9 +22,12 @@ interface ColumnDefinitionEntry {
   astNode: DataTypeAssignment;
 }
 
-export class TableInterpreterExecutor extends BlockExecutor<Sheet, Table> {
+export class TableInterpreterExecutor extends BlockExecutor<
+  IOType.SHEET,
+  IOType.TABLE
+> {
   constructor() {
-    super('TableInterpreter');
+    super('TableInterpreter', IOType.SHEET, IOType.TABLE);
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
@@ -81,6 +87,7 @@ export class TableInterpreterExecutor extends BlockExecutor<Sheet, Table> {
     );
 
     const resultingTable: Table = {
+      ioType: IOType.TABLE,
       columnInformation: columnEntries.map((columnEntry) => ({
         name: columnEntry.columnName,
         type: columnEntry.dataType,

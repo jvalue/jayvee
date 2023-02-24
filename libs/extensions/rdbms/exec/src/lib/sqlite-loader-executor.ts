@@ -1,6 +1,6 @@
-import { BlockExecutor } from '@jayvee/execution';
 import * as R from '@jayvee/execution';
-import { Table } from '@jayvee/language-server';
+import { BlockExecutor, NONE, None, Table } from '@jayvee/execution';
+import { IOType } from '@jayvee/language-server';
 import * as sqlite3 from 'sqlite3';
 
 import {
@@ -9,12 +9,15 @@ import {
   buildInsertValuesStatement,
 } from './sql-util';
 
-export class SQLiteLoaderExecutor extends BlockExecutor<Table, void> {
+export class SQLiteLoaderExecutor extends BlockExecutor<
+  IOType.TABLE,
+  IOType.NONE
+> {
   constructor() {
-    super('SQLiteLoader');
+    super('SQLiteLoader', IOType.TABLE, IOType.NONE);
   }
 
-  override async execute(input: Table): Promise<R.Result<void>> {
+  override async execute(input: Table): Promise<R.Result<None>> {
     const file = this.getStringAttributeValue('file');
     const table = this.getStringAttributeValue('table');
 
@@ -36,7 +39,7 @@ export class SQLiteLoaderExecutor extends BlockExecutor<Table, void> {
       this.logger.logDebug(
         `The data was successfully loaded into the database`,
       );
-      return R.ok(undefined);
+      return R.ok(NONE);
     } catch (err: unknown) {
       return R.err({
         message: `Could not write to sqlite database: ${

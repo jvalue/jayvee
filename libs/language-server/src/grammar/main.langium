@@ -18,7 +18,13 @@ BlockType:
   name=ID;
 
 Pipe:
+  SinglePipe | ChainedPipe;
+
+SinglePipe:
   'pipe' '{'
     'from' ':' from=[Block] ';'
     'to' ':' to=[Block] ';'
   '}';
+
+ChainedPipe:
+    blocks+=[Block] ('->' blocks+=[Block])+ ';';

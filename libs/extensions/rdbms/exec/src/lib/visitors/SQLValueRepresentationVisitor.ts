@@ -4,7 +4,7 @@ import {
   DecimalDataType,
   IntegerDataType,
   TextDataType,
-} from '@jayvee/language-server';
+} from '@jayvee/execution';
 
 export class SQLValueRepresentationVisitor extends DataTypeVisitor<
   (value: unknown) => string

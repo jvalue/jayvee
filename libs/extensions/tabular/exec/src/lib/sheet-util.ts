@@ -1,13 +1,13 @@
 import { strict as assert } from 'assert';
 
+import { Sheet } from '@jayvee/execution';
 import {
   CellIndexBounds,
   CellRange,
-  SemanticCell,
-  SemanticCellRange,
-  SemanticColumn,
-  SemanticRow,
-  Sheet,
+  CellRangeWrapper,
+  CellWrapper,
+  ColumnWrapper,
+  RowWrapper,
   getCellIndex,
   getColumnIndex,
   getRowIndex,
@@ -17,7 +17,7 @@ export function clone(sheet: Sheet): Sheet {
   return structuredClone(sheet);
 }
 
-export function deleteRow(sheet: Sheet, row: SemanticRow): void {
+export function deleteRow(sheet: Sheet, row: RowWrapper): void {
   assert(isInBounds(sheet, row));
 
   row = resolveRelativeIndexes(sheet, row);
@@ -27,7 +27,7 @@ export function deleteRow(sheet: Sheet, row: SemanticRow): void {
   sheet.height--;
 }
 
-export function deleteColumn(sheet: Sheet, column: SemanticColumn): void {
+export function deleteColumn(sheet: Sheet, column: ColumnWrapper): void {
   assert(isInBounds(sheet, column));
 
   column = resolveRelativeIndexes(sheet, column);
@@ -41,7 +41,7 @@ export function deleteColumn(sheet: Sheet, column: SemanticColumn): void {
 
 export function writeCell(
   sheet: Sheet,
-  cell: SemanticCell,
+  cell: CellWrapper,
   content: string,
 ): void {
   assert(isInBounds(sheet, cell));
@@ -54,7 +54,7 @@ export function writeCell(
   sheet.data[cellIndex.rowIndex]![cellIndex.columnIndex] = content;
 }
 
-export function selectRange(sheet: Sheet, range: SemanticCellRange): void {
+export function selectRange(sheet: Sheet, range: CellRangeWrapper): void {
   assert(isInBounds(sheet, range));
 
   range = resolveRelativeIndexes(sheet, range);
@@ -73,15 +73,15 @@ export function selectRange(sheet: Sheet, range: SemanticCellRange): void {
   sheet.height = range.to.rowIndex - range.from.rowIndex + 1;
 }
 
-export function isInBounds(sheet: Sheet, range: SemanticCellRange): boolean {
+export function isInBounds(sheet: Sheet, range: CellRangeWrapper): boolean {
   const bounds = getSheetBounds(sheet);
   return range.isInBounds(bounds);
 }
 
 export function resolveRelativeIndexes<N extends CellRange>(
   sheet: Sheet,
-  range: SemanticCellRange<N>,
-): SemanticCellRange<N> {
+  range: CellRangeWrapper<N>,
+): CellRangeWrapper<N> {
   if (range.hasRelativeIndexes()) {
     const bounds = getSheetBounds(sheet);
     return range.resolveRelativeIndexes(bounds);

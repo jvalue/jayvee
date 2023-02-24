@@ -1,11 +1,19 @@
 pipeline GasReservePipeline {
-	block GasReserveExtractor oftype CSVFileExtractor {
+	block GasReserveHttpExtractor oftype HttpExtractor {
 		url: "https://www.bundesnetzagentur.de/_tools/SVG/js2/_functions/csv_export.html?view=renderCSV&id=1089590";
-	    delimiter: ";";
 	}
 
 	pipe {
-    	from: GasReserveExtractor;
+    	from: GasReserveHttpExtractor;
+    	to: GasReserveCSVInterpreter;
+    }
+
+	block GasReserveCSVInterpreter oftype CSVInterpreter {
+ 		delimiter: ";";
+	}
+
+	pipe {
+    	from: GasReserveCSVInterpreter;
     	to: DateHeaderWriter;
     }
 

@@ -1,17 +1,17 @@
 import {
   AttributeType,
   BlockMetaInformation,
-  SHEET_TYPE,
-  SemanticCellRange,
+  CellRangeWrapper,
+  IOType,
   isCellRangeValue,
   isCollection,
-  isSemanticRow,
+  isRowWrapper,
   validateTypedCollection,
 } from '@jayvee/language-server';
 
 export class RowDeleterMetaInformation extends BlockMetaInformation {
   constructor() {
-    super('RowDeleter', SHEET_TYPE, SHEET_TYPE, {
+    super('RowDeleter', IOType.SHEET, IOType.SHEET, {
       delete: {
         type: AttributeType.COLLECTION,
         validation: (attribute, accept) => {
@@ -32,20 +32,47 @@ export class RowDeleterMetaInformation extends BlockMetaInformation {
           );
 
           for (const collectionValue of validItems) {
-            if (!SemanticCellRange.canBeWrapped(collectionValue.value)) {
+            if (!CellRangeWrapper.canBeWrapped(collectionValue.value)) {
               continue;
             }
-            const semanticCellRange = new SemanticCellRange(
+            const semanticCellRange = new CellRangeWrapper(
               collectionValue.value,
             );
-            if (!isSemanticRow(semanticCellRange)) {
+            if (!isRowWrapper(semanticCellRange)) {
               accept('error', 'An entire row needs to be selected', {
                 node: semanticCellRange.astNode,
               });
             }
           }
         },
+        docs: {
+          description: 'The rows to delete.',
+          examples: [
+            {
+              code: 'delete: [row 2]',
+              description: 'Delete row 2.',
+            },
+            {
+              code: 'delete: [row 2, row 3]',
+              description: 'Delete row 2 and row 3.',
+            },
+          ],
+          validation: 'You need to specify at least one row.',
+        },
       },
     });
+
+    this.docs.description =
+      'Deletes one or more rows from a `Sheet`. Row IDs of subsequent rows will be shifted accordingly, so there will be no gaps.';
+    this.docs.examples = [
+      {
+        code: blockExample,
+        description: 'Deletes row 2 (i.e. the second row).',
+      },
+    ];
   }
 }
+
+const blockExample = `block SecondRowDeleter oftype ColumnDeleter {
+  delete: [row 2];
+}`;

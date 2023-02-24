@@ -18,6 +18,10 @@ export function registerBlockExecutor(blockExecutor: BlockExecutorClass) {
   registeredBlockExecutors.set(blockType, blockExecutor);
 }
 
+export function getRegisteredBlockExecutors(): BlockExecutorClass[] {
+  return [...registeredBlockExecutors.values()];
+}
+
 export function createBlockExecutor(
   block: Block,
   runtimeParameters: Map<string, string | number | boolean>,

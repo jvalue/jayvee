@@ -133,8 +133,7 @@ In `libs/extensions/<extension-name>/lang/src/lib/my-extractor-meta-inf.ts`:
 import {
   AttributeType,
   BlockMetaInformation,
-  SHEET_TYPE,
-  UNDEFINED_TYPE,
+  IOType,
 } from '@jayvee/language-server';
 
 export class MyExtractorMetaInformation extends BlockMetaInformation {
@@ -144,10 +143,10 @@ export class MyExtractorMetaInformation extends BlockMetaInformation {
       'MyExtractor',
 
       // Input type:
-      UNDEFINED_TYPE,
+      IOType.UNDEFINED,
 
       // Output type:
-      SHEET_TYPE,
+      IOType.SHEET,
 
       // Attribute definitions:
       {
@@ -165,7 +164,7 @@ export class MyExtractorMetaInformation extends BlockMetaInformation {
 ```
 
 > **Note**
-> Use `UNDEFINED_TYPE` whenever you expect no input or output:
+> Use `IOType.UNDEFINED` whenever you expect no input or output:
 >
 > - Use it as input type if you want to define an extractor
 > - Use it as output type if you want to define a loader
@@ -229,8 +228,8 @@ export class MyExtractorExecutor extends BlockExecutor<void, Sheet> {
 > **Warning**
 > The generic types of `BlockExecutor<I,O>` need to match the input and output types of the corresponding `BlockMetaInformation`.
 >
-> - Use `undefined` or `void` for `UNDEFINED_TYPE`
-> - For other types, see [`libs/language-server/src/lib/types/io-types`](../libs/language-server/src/lib/types/io-types)
+> - E.g. use `undefined` or `void` for `IOType.UNDEFINED`, `Sheet` for `IOType.SHEET` and so on
+> - For other types, see [`libs/execution/src/lib/types/io-types`](../libs/execution/src/lib/types/io-types)
 >
 > Be careful, as there is currently no mechanism to detect such potential mismatches.
 

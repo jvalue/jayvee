@@ -1,4 +1,6 @@
 import {
+  IOTypeImplementation,
+  NONE,
   createBlockExecutor,
   useExtension as useExecutionExtension,
 } from '@jayvee/execution';
@@ -31,8 +33,7 @@ export async function runAction(
 ): Promise<void> {
   const loggerFactory = new LoggerFactory(options.debug);
 
-  useLangExtension(new StdLangExtension());
-  useExecutionExtension(new StdExecExtension());
+  useStdExtension();
 
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   const model = await extractAstNode<Model>(
@@ -57,6 +58,11 @@ export async function runAction(
     loggerFactory,
   );
   process.exit(interpretationExitCode);
+}
+
+export function useStdExtension() {
+  useLangExtension(new StdLangExtension());
+  useExecutionExtension(new StdExecExtension());
 }
 
 async function interpretPipelineModel(
@@ -86,11 +92,12 @@ async function runPipeline(
 
   printPipeline(pipeline, runtimeParameters);
 
-  const executionOrder: Array<{ block: Block; value: unknown }> =
-    getBlocksInTopologicalSorting(pipeline).map((block) => {
-      return { block: block, value: undefined };
-    });
-
+  const executionOrder: Array<{
+    block: Block;
+    value: IOTypeImplementation | null;
+  }> = getBlocksInTopologicalSorting(pipeline).map((block) => {
+    return { block: block, value: NONE };
+  });
   for (const blockData of executionOrder) {
     const blockLogger = loggerFactory.createLogger(blockData.block.name);
     const blockExecutor = createBlockExecutor(
@@ -101,37 +108,50 @@ async function runPipeline(
     const parentData = collectParents(blockData.block).map((parent) =>
       executionOrder.find((blockData) => parent === blockData.block),
     );
+    const inputValue =
+      parentData[0]?.value === undefined ? NONE : parentData[0]?.value;
 
-    const inputValue = parentData[0]?.value;
+    let result: R.Result<IOTypeImplementation | null>;
 
-    let result: R.Result<unknown>;
-    try {
-      result = await blockExecutor.execute(inputValue);
-    } catch (unexpectedError) {
-      pipelineLogger.logErrDiagnostic(
-        `An unknown error occurred during the execution of block ${
-          blockData.block.name
-        }: ${
-          unexpectedError instanceof Error
-            ? unexpectedError.message
-            : JSON.stringify(unexpectedError)
-        }`,
+    // Check, if parent emitted a value
+    if (inputValue != null) {
+      try {
+        result = await blockExecutor.execute(inputValue);
+      } catch (unexpectedError) {
+        pipelineLogger.logErrDiagnostic(
+          `An unknown error occurred during the execution of block ${
+            blockData.block.name
+          }: ${
+            unexpectedError instanceof Error
+              ? unexpectedError.message
+              : JSON.stringify(unexpectedError)
+          }`,
+          { node: blockData.block, property: 'name' },
+        );
+        return ExitCode.FAILURE;
+      }
+
+      if (R.isErr(result)) {
+        pipelineLogger.logErrDiagnostic(
+          result.left.message,
+          result.left.diagnostic,
+        );
+        return ExitCode.FAILURE;
+      }
+
+      blockData.value = result.right;
+
+      // If parent emittet no value, skip all downstream blocks
+    } else {
+      blockData.value = null;
+      pipelineLogger.logInfoDiagnostic(
+        `Skipped executing block ${blockData.block.name} because parent block ${
+          parentData[0] ? parentData[0].block.name : 'NAME NOT FOUND'
+        } emitted no value.`,
         { node: blockData.block, property: 'name' },
       );
-      return ExitCode.FAILURE;
     }
-
-    if (R.isErr(result)) {
-      pipelineLogger.logErrDiagnostic(
-        result.left.message,
-        result.left.diagnostic,
-      );
-      return ExitCode.FAILURE;
-    }
-
-    blockData.value = result.right;
   }
-
   return ExitCode.SUCCESS;
 }
 

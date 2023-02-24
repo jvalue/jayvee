@@ -1,8 +1,8 @@
 import { strict as assert } from 'assert';
 
-import { BlockExecutor } from '@jayvee/execution';
 import * as R from '@jayvee/execution';
-import { Sheet, getCellIndex, isSemanticCell } from '@jayvee/language-server';
+import { BlockExecutor, Sheet } from '@jayvee/execution';
+import { IOType, getCellIndex, isCellWrapper } from '@jayvee/language-server';
 
 import {
   clone,
@@ -11,9 +11,12 @@ import {
   writeCell,
 } from './sheet-util';
 
-export class CellWriterExecutor extends BlockExecutor<Sheet, Sheet> {
+export class CellWriterExecutor extends BlockExecutor<
+  IOType.SHEET,
+  IOType.SHEET
+> {
   constructor() {
-    super('CellWriter');
+    super('CellWriter', IOType.SHEET, IOType.SHEET);
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
@@ -21,7 +24,7 @@ export class CellWriterExecutor extends BlockExecutor<Sheet, Sheet> {
     const relativeCell = this.getCellRangeAttributeValue('at');
     const content = this.getStringAttributeValue('write');
 
-    assert(isSemanticCell(relativeCell));
+    assert(isCellWrapper(relativeCell));
 
     const absoluteCell = resolveRelativeIndexes(inputSheet, relativeCell);
     if (!isInBounds(inputSheet, absoluteCell)) {
