@@ -8,12 +8,47 @@
       "executor": "@nx-plus/docusaurus:browser",
       "options": {
         "outputPath": "dist/apps/docs"
-      }
+      },
+      "dependsOn": ["generate"]
     },
     "serve": {
       "executor": "@nx-plus/docusaurus:dev-server",
       "options": {
         "port": 3000
+      },
+      "dependsOn": ["generate"]
+    },
+    "build-generator": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/docs/generator",
+        "main": "apps/docs/generator/src/main.ts",
+        "tsConfig": "apps/docs/tsconfig.json"
+      }
+    },
+    "generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node dist/apps/docs/generator/main.js"
+      },
+      "dependsOn": ["build-generator"]
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/docs/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/docs/jest.config.ts",
+        "passWithNoTests": true
       }
     }
   },

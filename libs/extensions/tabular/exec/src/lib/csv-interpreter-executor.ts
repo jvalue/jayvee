@@ -2,14 +2,18 @@ import { TextDecoder } from 'util';
 
 import * as R from '@jayvee/execution';
 import { BlockExecutor, File, FileExtension, Sheet } from '@jayvee/execution';
+import { IOType } from '@jayvee/language-server';
 import { isLeft } from 'fp-ts/lib/Either';
 
 import { getSheetWidth, parseAsCsv } from './csv-util';
 
-export class CSVInterpreterExecutor extends BlockExecutor<File, Sheet> {
+export class CSVInterpreterExecutor extends BlockExecutor<
+  IOType.FILE,
+  IOType.SHEET
+> {
   constructor() {
     // Needs to match the name in meta information:
-    super('CSVInterpreter');
+    super('CSVInterpreter', IOType.FILE, IOType.SHEET);
   }
 
   override async execute(file: File): Promise<R.Result<Sheet>> {
@@ -34,7 +38,8 @@ export class CSVInterpreterExecutor extends BlockExecutor<File, Sheet> {
           }),
         );
       }
-      const sheet = {
+      const sheet: Sheet = {
+        ioType: IOType.SHEET,
         data: csvData.right,
         width: getSheetWidth(csvData.right),
         height: csvData.right.length,

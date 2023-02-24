@@ -6,7 +6,7 @@ import {
 
 export class PostgresLoaderMetaInformation extends BlockMetaInformation {
   constructor() {
-    super('PostgresLoader', IOType.TABLE, IOType.UNDEFINED, {
+    super('PostgresLoader', IOType.TABLE, IOType.NONE, {
       host: {
         type: AttributeType.STRING,
         docs: {

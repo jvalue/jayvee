@@ -5,6 +5,7 @@ import {
   getNodesWithNonUniqueNames,
   isCollection,
   isDataTypeAssignmentValue,
+  validateTypedCollection,
 } from '@jayvee/language-server';
 
 export class TableInterpreterMetaInformation extends BlockMetaInformation {
@@ -37,21 +38,24 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
             return;
           }
 
-          attributeValue.values
-            .filter((value) => !isDataTypeAssignmentValue(value))
-            .forEach((forbiddenValue) => {
-              accept(
-                'error',
-                'Only data type assignments are allowed in this collection',
-                {
-                  node: forbiddenValue,
-                },
-              );
-            });
+          const { validItems, invalidItems } = validateTypedCollection(
+            attributeValue,
+            isDataTypeAssignmentValue,
+          );
 
-          const dataTypeAssignments = attributeValue.values
-            .filter(isDataTypeAssignmentValue)
-            .map((assignment) => assignment.value);
+          invalidItems.forEach((invalidValue) =>
+            accept(
+              'error',
+              'Only data type assignments are allowed in this collection',
+              {
+                node: invalidValue,
+              },
+            ),
+          );
+
+          const dataTypeAssignments = validItems.map(
+            (assignment) => assignment.value,
+          );
           getNodesWithNonUniqueNames(dataTypeAssignments).forEach(
             (dataTypeAssignment) => {
               accept(

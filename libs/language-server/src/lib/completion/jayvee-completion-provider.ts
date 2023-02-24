@@ -18,6 +18,10 @@ import {
   isBlock,
   isBlockType,
 } from '../ast/generated/ast';
+import {
+  buildLspBlockAttributeDoc,
+  buildLspBlockTypeDoc,
+} from '../meta-information';
 import { BlockMetaInformation } from '../meta-information/block-meta-inf';
 import {
   getMetaInformation,
@@ -55,7 +59,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
     getRegisteredMetaInformation().forEach((metaInf) => {
-      const markdownDoc = metaInf.getMarkdownDoc();
+      const markdownDoc = buildLspBlockTypeDoc(metaInf);
       acceptor({
         label: metaInf.blockType,
         labelDetails: {
@@ -118,7 +122,10 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
         detail: `(${kind} attribute)`,
         sortText: kind === 'required' ? '1' : '2',
       };
-      const markdownDoc = blockMetaInf.getAttributeMarkdownDoc(attributeName);
+      const markdownDoc = buildLspBlockAttributeDoc(
+        blockMetaInf,
+        attributeName,
+      );
       if (markdownDoc !== undefined) {
         completionValueItem.documentation = {
           kind: 'markdown',

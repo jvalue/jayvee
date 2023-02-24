@@ -8,6 +8,7 @@ import {
   FileExtension,
   MimeType,
 } from '@jayvee/execution';
+import { IOType } from '@jayvee/language-server';
 
 import {
   inferFileExtensionFromContentTypeString,
@@ -15,9 +16,12 @@ import {
   inferMimeTypeFromContentTypeString,
 } from './file-util';
 
-export class HttpExtractorExecutor extends BlockExecutor<void, File> {
+export class HttpExtractorExecutor extends BlockExecutor<
+  IOType.NONE,
+  IOType.FILE
+> {
   constructor() {
-    super('HttpExtractor');
+    super('HttpExtractor', IOType.NONE, IOType.FILE);
   }
 
   override async execute(): Promise<R.Result<File>> {
@@ -93,6 +97,7 @@ export class HttpExtractorExecutor extends BlockExecutor<void, File> {
 
           // Create file and return file
           const file: File = {
+            ioType: IOType.FILE,
             name: fileName,
             extension: fileExtension,
             content: rawData.buffer as ArrayBuffer,

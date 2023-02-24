@@ -1,10 +1,13 @@
-import { File } from './file-io-type';
+import { IOType } from '@jayvee/language-server';
+
+import { File } from './file';
+import { IOTypeImplementation } from './io-type-implementation';
 
 /**
  * FileSystem interface defines the operations that a file system implementation should have.
  * @interface FileSystem
  */
-export interface FileSystem {
+export interface FileSystem extends IOTypeImplementation<IOType.FILE_SYSTEM> {
   /**
    * Retrieves a file from the file system.
    * @function getFile

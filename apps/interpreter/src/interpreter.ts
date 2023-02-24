@@ -1,4 +1,6 @@
 import {
+  IOTypeImplementation,
+  NONE,
   createBlockExecutor,
   useExtension as useExecutionExtension,
 } from '@jayvee/execution';
@@ -31,8 +33,7 @@ export async function runAction(
 ): Promise<void> {
   const loggerFactory = new LoggerFactory(options.debug);
 
-  useLangExtension(new StdLangExtension());
-  useExecutionExtension(new StdExecExtension());
+  useStdExtension();
 
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   const model = await extractAstNode<Model>(
@@ -57,6 +58,11 @@ export async function runAction(
     loggerFactory,
   );
   process.exit(interpretationExitCode);
+}
+
+export function useStdExtension() {
+  useLangExtension(new StdLangExtension());
+  useExecutionExtension(new StdExecExtension());
 }
 
 async function interpretPipelineModel(
@@ -86,10 +92,12 @@ async function runPipeline(
 
   printPipeline(pipeline, runtimeParameters);
 
-  const executionOrder: Array<{ block: Block; value: unknown }> =
-    getBlocksInTopologicalSorting(pipeline).map((block) => {
-      return { block: block, value: undefined };
-    });
+  const executionOrder: Array<{
+    block: Block;
+    value: IOTypeImplementation | null;
+  }> = getBlocksInTopologicalSorting(pipeline).map((block) => {
+    return { block: block, value: NONE };
+  });
   for (const blockData of executionOrder) {
     const blockLogger = loggerFactory.createLogger(blockData.block.name);
     const blockExecutor = createBlockExecutor(
@@ -100,11 +108,13 @@ async function runPipeline(
     const parentData = collectParents(blockData.block).map((parent) =>
       executionOrder.find((blockData) => parent === blockData.block),
     );
-    const inputValue = parentData[0]?.value;
-    let result: R.Result<unknown>;
+    const inputValue =
+      parentData[0]?.value === undefined ? NONE : parentData[0]?.value;
 
-    // Check, if parent emitted a value, root blocks have no parents to check
-    if (inputValue != null || isRootBlock(blockData.block, executionOrder)) {
+    let result: R.Result<IOTypeImplementation | null>;
+
+    // Check, if parent emitted a value
+    if (inputValue != null) {
       try {
         result = await blockExecutor.execute(inputValue);
       } catch (unexpectedError) {
@@ -143,14 +153,6 @@ async function runPipeline(
     }
   }
   return ExitCode.SUCCESS;
-}
-
-function isRootBlock(
-  blockToCheck: Block,
-  executionOrder: Array<{ block: Block; value: unknown }>,
-): boolean {
-  const executionRoot = executionOrder[0]?.block;
-  return blockToCheck === executionRoot;
 }
 
 export function printPipeline(
