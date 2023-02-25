@@ -173,168 +173,46 @@ pipeline GtfsPipeline {
 	}
 
 
-
-
-	
-
-	pipe {
-		from: MyHttpExtractor;
-		to: ZipArchiveInterpreter;
-	}
-
-
-
-
-
-	pipe {
-		from: ZipArchiveInterpreter;
-		to: AgencyFilePicker;
-	}
-
-	pipe {
-		from: ZipArchiveInterpreter;
-		to: StopsFilePicker;
-	}
-
-	pipe {
-		from: ZipArchiveInterpreter;
-		to: RoutesFilePicker;
-	}
-
-	pipe {
-		from: ZipArchiveInterpreter;
-		to: TripsFilePicker;
-	}
-
-	pipe {
-		from: ZipArchiveInterpreter;
-		to: StopTimesFilePicker;
-	}
-
-	pipe {
-		from: ZipArchiveInterpreter;
-		to: CalendarDatesFilePicker;
-	}
-
-	pipe {
-		from: ZipArchiveInterpreter;
-		to: FeedInfoFilePicker;
-	}
-
-
-
-
-
-	pipe {
-		from: AgencyFilePicker;
-		to: AgencyCSVInterpreter;
-	}
-
-	pipe {
-		from: StopsFilePicker;
-		to: StopsCSVInterpreter;
-	}
-
-	pipe {
-		from: RoutesFilePicker;
-		to: RoutesCSVInterpreter;
-	}
-
-	pipe {
-		from: TripsFilePicker;
-		to: TripsCSVInterpreter;
-	}
-
-	pipe {
-		from: StopTimesFilePicker;
-		to: StopTimesCSVInterpreter;
-	}
-
-	pipe {
-		from: CalendarDatesFilePicker;
-		to: CalendarDatesCSVInterpreter;
-	}
-
-	pipe {
-		from: FeedInfoFilePicker;
-		to: FeedInfoCSVInterpreter;
-	}
-
-
-
-
-
-	pipe {
-		from: AgencyCSVInterpreter;
-		to: AgencyTableInterpreter;
-	}
-	
-	pipe {
-		from: StopsCSVInterpreter;
-		to: StopsTableInterpreter;
-	}
-
-	pipe {
-		from: RoutesCSVInterpreter;
-		to: RoutesTableInterpreter;
-	}
-
-	pipe {
-		from: TripsCSVInterpreter;
-		to: TripsTableInterpreter;
-	}
-
-	pipe {
-		from: StopTimesCSVInterpreter;
-		to: StopTimesTableInterpreter;
-	}
-
-	pipe {
-		from: CalendarDatesCSVInterpreter;
-		to: CalendarDatesTableInterpreter;
-	}
-
-	pipe {
-		from: FeedInfoCSVInterpreter;
-		to: FeedInfoTableInterpreter;
-	}
-
-
-
-
-	pipe {
-		from: AgencyTableInterpreter;
-		to: AgencyLoader;
-	}
-	
-	pipe {
-		from: StopsTableInterpreter;
-		to: StopsLoader;
-	}
-
-	pipe {
-		from: RoutesTableInterpreter;
-		to: RoutesLoader;
-	}
-
-	pipe {
-		from: TripsTableInterpreter;
-		to: TripsLoader;
-	}
-
-	pipe {
-		from: StopTimesTableInterpreter;
-		to: StopTimesLoader;
-	}
-
-	pipe {
-		from: CalendarDatesTableInterpreter;
-		to: CalendarDatesLoader;
-	}
-
-	pipe {
-		from: FeedInfoTableInterpreter;
-		to: FeedInfoLoader;
-	}
+	MyHttpExtractor
+	-> ZipArchiveInterpreter
+			-> AgencyFilePicker
+					-> AgencyCSVInterpreter 
+							-> AgencyTableInterpreter 
+									-> AgencyLoader; 
+		ZipArchiveInterpreter
+			-> StopsFilePicker 
+					-> StopsCSVInterpreter 
+							-> StopsTableInterpreter 
+									-> StopsLoader;
+			
+		ZipArchiveInterpreter			
+			-> RoutesFilePicker
+					-> RoutesCSVInterpreter 
+							-> RoutesTableInterpreter 
+									-> RoutesLoader;
+			
+		ZipArchiveInterpreter	
+			-> TripsFilePicker 
+					-> TripsCSVInterpreter 
+							-> TripsTableInterpreter 
+									-> TripsLoader;
+			
+		ZipArchiveInterpreter	
+			-> StopTimesFilePicker
+					-> StopTimesCSVInterpreter
+							-> StopTimesTableInterpreter 
+									-> StopTimesLoader;
+			
+		ZipArchiveInterpreter	
+			-> CalendarDatesFilePicker
+					-> CalendarDatesCSVInterpreter
+							-> CalendarDatesTableInterpreter
+									-> CalendarDatesLoader;
+			
+		ZipArchiveInterpreter	
+			-> FeedInfoFilePicker
+					-> FeedInfoCSVInterpreter
+							-> FeedInfoTableInterpreter
+									-> FeedInfoLoader;
 
 }
