@@ -51,8 +51,8 @@ export class ArchiveInterpreterExecutor extends BlockExecutor<
       const root = new InMemoryFileSystem();
       const archivedObjects = await jszip.loadAsync(archiveFile.content);
       for (const [relPath, archivedObject] of Object.entries(
-        archivedObjects,
-      ) as Array<[string, JSZip.JSZipObject]>) {
+        archivedObjects.files,
+      )) {
         if (!archivedObject.dir) {
           const content = await archivedObject.async('arraybuffer');
           // Ext incl. leading dot
