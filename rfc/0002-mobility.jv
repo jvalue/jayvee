@@ -12,47 +12,47 @@ pipeline GtfsPipeline {
 		path: "/agency.txt";
 	}
 
-	block StopsFilePicker oftype FilePicker{
-		path: "/stops.txt";
+	block CalendarDatesFilePicker oftype FilePicker{
+		path: "/calendar_dates.txt";
+	}
+
+	block CalendarFilePicker oftype FilePicker{
+		path: "/calendar.txt";
+	}
+
+	block FareAttributesFilePicker oftype FilePicker{
+		path: "/fare_attributes.txt";
+	}
+
+	block FareRulesFilePicker oftype FilePicker{
+		path: "/fare_rules.txt";
+	}
+
+	block FrequenciesFilePicker oftype FilePicker{
+		path: "/frequencies.txt";
 	}
 
 	block RoutesFilePicker oftype FilePicker{
 		path: "/routes.txt";
 	}
 
-	block TripsFilePicker oftype FilePicker{
-		path:" /trips.txt";
+	block ShapesFilePicker oftype FilePicker{
+		path: "/shapes.txt";
 	}
 
 	block StopTimesFilePicker oftype FilePicker{
 		path: "/stop_times.txt";
 	}
 
-	block CalendarDatesFilePicker oftype FilePicker{
-		path: "/calendar_dates.txt";
+	block StopsFilePicker oftype FilePicker{
+		path: "/stops.txt";
 	}
 
-	block FeedInfoFilePicker oftype FilePicker{
-		path: "/feed_info.txt";
+	block TripsFilePicker oftype FilePicker{
+		path: "/trips.txt";
 	}
 
 	block AgencyCSVInterpreter oftype CSVInterpreter{
-	
-	}
-
-	block  StopsCSVInterpreter oftype CSVInterpreter{
-	
-	}
-
-	block RoutesCSVInterpreter oftype CSVInterpreter{
-	
-	}
-
-	block TripsCSVInterpreter oftype CSVInterpreter{
-	
-	}
-
-	block StopTimesCSVInterpreter oftype CSVInterpreter{
 	
 	}
 
@@ -60,7 +60,40 @@ pipeline GtfsPipeline {
 	
 	}
 
-	block FeedInfoCSVInterpreter oftype CSVInterpreter{
+	block CalendarCSVInterpreter oftype CSVInterpreter{
+	
+	}
+
+	block FareAttributesCSVInterpreter oftype CSVInterpreter{
+	
+	}
+
+	block FareRulesCSVInterpreter oftype CSVInterpreter{
+	
+	}
+
+	block FrequenciesCSVInterpreter oftype CSVInterpreter{
+	
+	}
+
+	block RoutesCSVInterpreter oftype CSVInterpreter{
+	
+	}
+
+	block ShapesCSVInterpreter oftype CSVInterpreter{
+	
+	}
+
+	block StopTimesCSVInterpreter oftype CSVInterpreter{
+	
+	}
+
+	block  StopsCSVInterpreter oftype CSVInterpreter{
+	
+	}
+
+
+	block TripsCSVInterpreter oftype CSVInterpreter{
 	
 	}
 
@@ -74,45 +107,6 @@ pipeline GtfsPipeline {
 		];
 	}
 
-	block StopsTableInterpreter oftype TableInterpreter {
-		header: true;
-		columns:[
-			"stop_id" typed text,
-			"stop_name" typed text,
-			"stop_lat" typed text,
-			"stop_lon" typed text
-		];
-
-	}
-
-	block RoutesTableInterpreter oftype TableInterpreter {
-		header: true;
-		columns: [
-			"route_type" typed text,
-			"agency_id" typed text
-		];
-	}
-
-	block TripsTableInterpreter oftype TableInterpreter {
-		header: true;
-		columns: [
-			"route_id" typed text,
-			"service_id" typed text,
-			"trip_id" typed text
-		];
-	}
-
-	block StopTimesTableInterpreter oftype TableInterpreter {
-		header: true;
-		columns: [
-			"trip_id" typed text,
-			"stop_id" typed text,
-			"stop_sequence" typed text,
-			"arrival_time" typed text,
-			"departure_time" typed text		
-		];
-	}
-
 	block CalendarDatesTableInterpreter oftype TableInterpreter {
 		header: true;
 		columns: [
@@ -122,54 +116,176 @@ pipeline GtfsPipeline {
 		];
 	}
 
-	block FeedInfoTableInterpreter oftype TableInterpreter {
+	block CalendarTableInterpreter oftype TableInterpreter {
 		header: true;
 		columns: [
-			"feed_publisher_name" typed text,
-			"feed_publisher_url" typed text,
-			"feed_lang" typed text
+			"service_id" typed text,
+			"monday" typed text,
+			"tuesday" typed text,
+			"wednesday" typed text,
+			"thursday" typed text,
+			"friday" typed text,
+			"saturday" typed text,
+			"sunday" typed text,
+			"start_date" typed text,
+			"end_date" typed text
+		];
+	}
+
+	block FareAttributesTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns: [
+			"fare_id" typed text,
+			"price" typed text,
+			"currency_type" typed text,
+			"payment_method" typed text,
+			"transfers" typed text,
+			"transfer_duration" typed text
+		];
+	}
+
+	block FareRulesTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns: [
+			"fare_id" typed text,
+			"route_id" typed text,
+			"origin_id" typed text,
+			"destination_id" typed text,
+			"contains_id" typed text
+		];
+	}
+	
+	block FrequenciesTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns: [
+			"trip_id" typed text,
+			"start_time" typed text,
+			"end_time" typed text,
+			"headway_secs" typed text
+		];
+	}
+
+	block RoutesTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns: [
+			"route_id" typed text,
+			"agency_id" typed text,
+			"route_short_name" typed text,
+			"route_long_name" typed text,
+			"route_desc" typed text,
+			"route_type" typed text,
+			"route_url" typed text,
+			"route_color" typed text,
+			"route_text_color" typed text
+		];
+	}
+
+	block ShapesTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns: [
+			"shape_id" typed text,
+			"shape_pt_lat" typed text,
+			"shape_pt_lon" typed text,
+			"shape_pt_sequence" typed text,
+			"shape_dist_traveled" typed text
+		];
+	}
+
+	block StopTimesTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns: [
+			"trip_id" typed text,
+			"arrival_time" typed text,
+			"departure_time" typed text,
+			"stop_id" typed text,
+			"stop_sequence" typed text,
+			"stop_headsign" typed text,
+			"pickup_type" typed text,
+			"drop_off_time" typed text,
+			"shape_dist_traveled" typed text
+		];
+	}
+
+	block StopsTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns:[
+			"stop_id" typed text,
+			"stop_name" typed text,
+			"stop_desc" typed text,
+			"stop_lat" typed text,
+			"stop_lon" typed text,
+			"zone_id" typed text,
+			"stop_url" typed text
 		];
 	}
 
 
+	block TripsTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns: [
+			"route_id" typed text,
+			"service_id" typed text,
+			"trip_id" typed text,
+			"trip_headsign" typed text,
+			"direction_id" typed text,
+			"block_id" typed text,
+			"shape_id" typed text
+		];
+	}
 
 	block AgencyLoader oftype SQLiteLoader {
-		table: "Agency";
-		file: "./gtfs.db";
-	}
-
-	block StopsLoader oftype SQLiteLoader {
-		table: "Stops";
-		file: "./gtfs.db";
-	}
-
-
-	block RoutesLoader oftype SQLiteLoader {
-		table: "Routes";
-		file: "./gtfs.db";
-	}
-
-
-	block TripsLoader oftype SQLiteLoader {
-		table: "Trips";
-		file: "./gtfs.db";
-	}
-
-
-	block StopTimesLoader oftype SQLiteLoader {
-		table: "StopTimes";
-		file: "./gtfs.db";
+		table: "agency";
+		file: "./sample-feed.db";
 	}
 
 	block CalendarDatesLoader oftype SQLiteLoader {
-		table: "CalendarDates";
-		file: "./gtfs.db";
+		table: "calendar_dates";
+		file: "./sample-feed.db";
 	}
 
+	block CalendarLoader oftype SQLiteLoader {
+		table: "calendar";
+		file: "./sample-feed.db";
+	}
+	
+	block FareAttributesLoader oftype SQLiteLoader {
+		table: "fare_attributes";
+		file: "./sample-feed.db";
+	}
 
-	block FeedInfoLoader oftype SQLiteLoader {
-		table: "FeedInfo";
-		file: "./gtfs.db";
+	block FareRulesLoader oftype SQLiteLoader {
+		table: "fare_rules";
+		file: "./sample-feed.db";
+	}
+
+	block FrequenciesLoader oftype SQLiteLoader {
+		table: "frequencies";
+		file: "./sample-feed.db";
+	}
+
+	block RoutesLoader oftype SQLiteLoader {
+		table: "routes";
+		file: "./sample-feed.db";
+	}
+
+	block ShapesLoader oftype SQLiteLoader {
+		table: "shapes";
+		file: "./sample-feed.db";
+	}
+
+	block StopTimesLoader oftype SQLiteLoader {
+		table: "stop_times";
+		file: "./sample-feed.db";
+	}
+
+	block StopsLoader oftype SQLiteLoader {
+		table: "stops";
+		file: "./sample-feed.db";
+	}
+
+	block TripsLoader oftype SQLiteLoader {
+		table: "trips";
+		file: "./sample-feed.db";
 	}
 
 
@@ -178,18 +294,60 @@ pipeline GtfsPipeline {
 			-> AgencyFilePicker
 					-> AgencyCSVInterpreter 
 							-> AgencyTableInterpreter 
-									-> AgencyLoader; 
-		ZipArchiveInterpreter
-			-> StopsFilePicker 
-					-> StopsCSVInterpreter 
-							-> StopsTableInterpreter 
-									-> StopsLoader;
-			
+									-> AgencyLoader;
+
+		ZipArchiveInterpreter	
+			-> CalendarDatesFilePicker
+					-> CalendarDatesCSVInterpreter
+							-> CalendarDatesTableInterpreter
+									-> CalendarDatesLoader;
+		
+		ZipArchiveInterpreter	
+			-> CalendarFilePicker
+					-> CalendarCSVInterpreter
+							-> CalendarTableInterpreter
+									-> CalendarLoader;
+		ZipArchiveInterpreter	
+			-> FareAttributesFilePicker
+					-> FareAttributesCSVInterpreter
+							-> FareAttributesTableInterpreter
+									-> FareAttributesLoader;
+
+		ZipArchiveInterpreter	
+			-> FareRulesFilePicker
+					-> FareRulesCSVInterpreter
+							-> FareRulesTableInterpreter
+									-> FareRulesLoader;
+
+		ZipArchiveInterpreter	
+			-> FrequenciesFilePicker
+					-> FrequenciesCSVInterpreter
+							-> FrequenciesTableInterpreter
+									-> FrequenciesLoader;
+
 		ZipArchiveInterpreter			
 			-> RoutesFilePicker
 					-> RoutesCSVInterpreter 
 							-> RoutesTableInterpreter 
 									-> RoutesLoader;
+			
+		ZipArchiveInterpreter			
+			-> ShapesFilePicker
+					-> ShapesCSVInterpreter 
+							-> ShapesTableInterpreter 
+									-> ShapesLoader;
+
+		ZipArchiveInterpreter	
+			-> StopTimesFilePicker
+					-> StopTimesCSVInterpreter
+							-> StopTimesTableInterpreter 
+									-> StopTimesLoader;
+			
+		ZipArchiveInterpreter
+			-> StopsFilePicker 
+					-> StopsCSVInterpreter 
+							-> StopsTableInterpreter 
+									-> StopsLoader;
 			
 		ZipArchiveInterpreter	
 			-> TripsFilePicker 
@@ -197,22 +355,4 @@ pipeline GtfsPipeline {
 							-> TripsTableInterpreter 
 									-> TripsLoader;
 			
-		ZipArchiveInterpreter	
-			-> StopTimesFilePicker
-					-> StopTimesCSVInterpreter
-							-> StopTimesTableInterpreter 
-									-> StopTimesLoader;
-			
-		ZipArchiveInterpreter	
-			-> CalendarDatesFilePicker
-					-> CalendarDatesCSVInterpreter
-							-> CalendarDatesTableInterpreter
-									-> CalendarDatesLoader;
-			
-		ZipArchiveInterpreter	
-			-> FeedInfoFilePicker
-					-> FeedInfoCSVInterpreter
-							-> FeedInfoTableInterpreter
-									-> FeedInfoLoader;
-
 }
