@@ -1,11 +1,11 @@
 pipeline GtfsPipeline {
 
 	block MyHttpExtractor oftype HttpExtractor {
-		url: "https://www.data.gouv.fr/fr/datasets/r/c4d9326f-9f41-4dfb-9746-31bc97a31fc6";
+		url: "https://developers.google.com/static/transit/gtfs/examples/sample-feed.zip";
 	}
 
     block ZipArchiveInterpreter oftype ArchiveInterpreter{
-    	archiveType: "zip"
+    	archiveType: "zip";
     }
 
 	block AgencyFilePicker oftype FilePicker{
@@ -70,8 +70,8 @@ pipeline GtfsPipeline {
 			"agency_id" typed text, //Conditional columns are considered as required
 			"agency_name" typed text,
 			"agency_url" typed text,
-			"agency_timezone" typed text,
-		]
+			"agency_timezone" typed text
+		];
 	}
 
 	block StopsTableInterpreter oftype TableInterpreter {
@@ -81,8 +81,8 @@ pipeline GtfsPipeline {
 			"stop_name" typed text,
 			"stop_lat" typed text,
 			"stop_lon" typed text,
-			"stop_name" typed text,
-		]
+			"stop_name" typed text
+		];
 
 	}
 
@@ -91,8 +91,8 @@ pipeline GtfsPipeline {
 		columns: [
 			"route_type" typed text,
 			"agency_id" typed text,
-			"route_type" typed text,
-		]
+			"route_type" typed text
+		];
 	}
 
 	block TripsTableInterpreter oftype TableInterpreter {
@@ -100,8 +100,8 @@ pipeline GtfsPipeline {
 		columns: [
 			"route_id" typed text,
 			"service_id" typed text,
-			"trip_id" typed text,
-		]
+			"trip_id" typed text
+		];
 	}
 
 	block StopTimesTableInterpreter oftype TableInterpreter {
@@ -110,9 +110,9 @@ pipeline GtfsPipeline {
 			"trip_id" typed text,
 			"stop_id" typed text,
 			"stop_sequence" typed text,
-			"arrival_time" typed text
+			"arrival_time" typed text,
 			"departure_time" typed text		
-		]
+		];
 	}
 
 	block CalendarDatesTableInterpreter oftype TableInterpreter {
@@ -120,8 +120,8 @@ pipeline GtfsPipeline {
 		columns: [
 			"service_id" typed text,
 			"date" typed text,
-			"exception_type" typed text,
-		]
+			"exception_type" typed text
+		];
 	}
 
 	block FeedInfoTableInterpreter oftype TableInterpreter {
@@ -129,47 +129,47 @@ pipeline GtfsPipeline {
 		columns: [
 			"feed_publisher_name" typed text,
 			"feed_publisher_url" typed text,
-			"feed_lang" typed text,		
-		]
+			"feed_lang" typed text
+		];
 	}
 
 
 
-	block AgencyLoader oftype SQLiteTablesLoader {
+	block AgencyLoader oftype SQLiteLoader {
 		table: "Agency";
 		file: "./gtfs.db";
 	}
 
-	block StopsLoader oftype SQLiteTablesLoader {
+	block StopsLoader oftype SQLiteLoader {
 		table: "Stops";
 		file: "./gtfs.db";
 	}
 
 
-	block RoutesLoader oftype SQLiteTablesLoader {
+	block RoutesLoader oftype SQLiteLoader {
 		table: "Routes";
 		file: "./gtfs.db";
 	}
 
 
-	block TripsLoader oftype SQLiteTablesLoader {
+	block TripsLoader oftype SQLiteLoader {
 		table: "Trips";
 		file: "./gtfs.db";
 	}
 
 
-	block StopTimesLoader oftype SQLiteTablesLoader {
-		table: "StopTimes"
+	block StopTimesLoader oftype SQLiteLoader {
+		table: "StopTimes";
 		file: "./gtfs.db";
 	}
 
-	block CalendarDatesLoader oftype SQLiteTablesLoader {
+	block CalendarDatesLoader oftype SQLiteLoader {
 		table: "CalendarDates";
 		file: "./gtfs.db";
 	}
 
 
-	block FeedInfoLoader oftype SQLiteTablesLoader {
+	block FeedInfoLoader oftype SQLiteLoader {
 		table: "FeedInfo";
 		file: "./gtfs.db";
 	}

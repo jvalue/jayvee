@@ -6,6 +6,7 @@ import {
 } from '@jayvee/language-server';
 
 import { ArchiveInterpreterMetaInformation } from './archive-interpreter-meta-inf';
+import { FilePickerMetaInformation } from './file-picker-meta-inf';
 import { HttpExtractorMetaInformation } from './http-extractor-meta-inf';
 
 export class StdLangExtension implements JayveeLangExtension {
@@ -19,6 +20,7 @@ export class StdLangExtension implements JayveeLangExtension {
       ...this.wrappedExtensions.map((x) => x.getBlockMetaInf()).flat(),
       HttpExtractorMetaInformation,
       ArchiveInterpreterMetaInformation,
+      FilePickerMetaInformation,
     ];
   }
 }
