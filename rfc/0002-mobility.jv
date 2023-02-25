@@ -80,8 +80,7 @@ pipeline GtfsPipeline {
 			"stop_id" typed text,
 			"stop_name" typed text,
 			"stop_lat" typed text,
-			"stop_lon" typed text,
-			"stop_name" typed text
+			"stop_lon" typed text
 		];
 
 	}
@@ -90,8 +89,7 @@ pipeline GtfsPipeline {
 		header: true;
 		columns: [
 			"route_type" typed text,
-			"agency_id" typed text,
-			"route_type" typed text
+			"agency_id" typed text
 		];
 	}
 
