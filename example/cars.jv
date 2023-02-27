@@ -39,6 +39,6 @@ pipeline CarsPipeline {
 
 	block CarsLoader oftype SQLiteLoader {
 		table: "Cars";
-		file: "./cars.db";
+		file: "./cars.sqlite";
 	}
 }
