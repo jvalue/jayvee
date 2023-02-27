@@ -12,7 +12,7 @@
       "preLaunchTask": "Build VS Code Extension",
       "args": [
         "${workspaceFolder}/example",
-        "--extensionDevelopmentPath=${workspaceFolder}/apps/vs-code-extension"
+        "--extensionDevelopmentPath=${workspaceFolder}/dist/apps/vs-code-extension"
       ],
       "sourceMaps": true,
       "outFiles": [
