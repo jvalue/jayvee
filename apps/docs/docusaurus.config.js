@@ -43,9 +43,15 @@ const config = {
         items: [
           {
             type: 'doc',
-            docId: 'intro',
+            docId: 'user/intro',
             position: 'left',
             label: 'User Docs',
+          },
+          {
+            type: 'doc',
+            docId: 'dev/intro',
+            position: 'left',
+            label: 'Developer Docs',
           },
           {
             href: 'https://github.com/jvalue/jayvee',
@@ -62,15 +68,13 @@ const config = {
             items: [
               {
                 label: 'Introduction to Jayvee',
-                to: '/docs/intro',
+                to: '/docs/user/intro',
               },
             ],
           },
           {
             title: 'Developer Docs',
-            items: [
-              
-            ],
+            items: [],
           },
           {
             title: 'More',

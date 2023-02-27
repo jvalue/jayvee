@@ -1,4 +1,6 @@
-# Jayvee extensions
+---
+title: Jayvee Extensions
+---
 
 ## Concepts
 
@@ -6,11 +8,11 @@
 
 A Jayvee extension is used to add new block types to the language without having to modify the actual grammar of the language. Such a Jayvee extension usually consists of two parts: a language extension and an execution extension which are described in the upcoming two sections.
 
-Jayvee extensions that shall be used by default are bundled into the so-called [standard extension](../libs/extensions/std). That way, the [language server](../libs/language-server/) and the [interpreter](../apps/interpreter/) are able to load them out of the box.
+Jayvee extensions that shall be used by default are bundled into the so-called [standard extension](https://github.com/jvalue/jayvee/tree/main/libs/extensions/std). That way, the [language server](https://github.com/jvalue/jayvee/tree/main/libs/language-server) and the [interpreter](https://github.com/jvalue/jayvee/tree/main/apps/interpreter) are able to load them out of the box.
 
 ### Language extension
 
-A language extension defines meta information of block types which are required by the [language server](../libs/language-server/). Such meta information describes properties of block types such as their names, input / output types and their attributes.
+A language extension defines meta information of block types which are required by the [language server](https://github.com/jvalue/jayvee/tree/main/libs/language-server). Such meta information describes properties of block types such as their names, input / output types and their attributes.
 
 Note that language extensions don't define any behavior. Instead, this is done by the corresponding execution extension.
 
@@ -18,7 +20,7 @@ Note that language extensions don't define any behavior. Instead, this is done b
 
 An execution extension defines behavior for block types. They build on the meta information from the corresponding language extension, e.g. input / output types of the block need to match the signature of the execution method and attributes are accessed by their specified name.
 
-Execution extensions are only required by the [interpreter](../apps/interpreter/) and not necessarily by the [language server](../libs/language-server/) as they solely define behavior.
+Execution extensions are only required by the [interpreter](https://github.com/jvalue/jayvee/tree/main/apps/interpreter) and not necessarily by the [language server](https://github.com/jvalue/jayvee/tree/main/libs/language-server) as they solely define behavior.
 
 ## Recipes
 
@@ -229,7 +231,7 @@ export class MyExtractorExecutor extends BlockExecutor<void, Sheet> {
 > The generic types of `BlockExecutor<I,O>` need to match the input and output types of the corresponding `BlockMetaInformation`.
 >
 > - E.g. use `undefined` or `void` for `IOType.UNDEFINED`, `Sheet` for `IOType.SHEET` and so on
-> - For other types, see [`libs/execution/src/lib/types/io-types`](../libs/execution/src/lib/types/io-types)
+> - For other types, see [libs/execution/src/lib/types/io-types](https://github.com/jvalue/jayvee/tree/main/libs/execution/src/lib/types/io-types).
 >
 > Be careful, as there is currently no mechanism to detect such potential mismatches.
 
