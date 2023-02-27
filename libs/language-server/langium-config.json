@@ -6,7 +6,7 @@
       "grammar": "src/grammar/main.langium",
       "fileExtensions": [".jv"],
       "textMate": {
-        "out": "../../apps/vs-code-extension/jayvee.tmLanguage.json"
+        "out": "../../apps/vs-code-extension/assets/jayvee.tmLanguage.json"
       },
       "monarch": {
         "out": "../../libs/monaco-editor/src/lib/jayvee.monarch.ts"

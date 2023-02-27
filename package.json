@@ -66,6 +66,7 @@
     "@types/vscode": "^1.56.0",
     "@typescript-eslint/eslint-plugin": "^5.39.0",
     "@typescript-eslint/parser": "^5.39.0",
+    "@vscode/vsce": "^2.18.0",
     "babel-jest": "28.1.1",
     "esbuild": "^0.15.13",
     "eslint": "^8.24.0",

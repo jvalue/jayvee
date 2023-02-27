@@ -31,3 +31,18 @@ jobs:
         run: npx nx run @jayvee/monaco-editor:publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Pack VS Code extension
+        run: npx nx run vs-code-extension:pack
+      - id: get_release
+        uses: bruceadams/get-release@v1.3.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload packed VS Code extension as release artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: ./dist/apps/vs-code-extension/jayvee.vsix
+          asset_name: jayvee.vsix
+          asset_content_type: application/octet-stream
