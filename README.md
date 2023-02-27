@@ -88,6 +88,12 @@ npm run generate
 npm run example:cars
 ```
 
+#### Load GTFS data into SQLite db
+
+```bash
+npm run example:gtfs
+```
+
 #### Load data about german gas reserves into a postgres database
 
 1. Start postgres database
