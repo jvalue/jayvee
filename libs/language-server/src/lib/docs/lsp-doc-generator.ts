@@ -3,10 +3,10 @@ import { BlockMetaInformation } from '../meta-information';
 import {
   JayveeBlockAttributeDocBuilder,
   JayveeBlockTypeDocBuilder,
-} from './jayvee-doc-builder';
+} from './jayvee-doc-generator';
 import { MarkdownBuilder } from './markdown-builder';
 
-export class LspDocBuilder
+export class LspDocGenerator
   implements JayveeBlockTypeDocBuilder, JayveeBlockAttributeDocBuilder
 {
   buildBlockTypeDoc(metaInf: BlockMetaInformation): string {

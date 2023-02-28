@@ -7,7 +7,7 @@ import {
   useExtension,
 } from '@jayvee/language-server';
 
-import { UserDocBuilder } from './user-doc-builder';
+import { UserDocGenerator } from './user-doc-generator';
 
 useExtension(new StdLangExtension());
 
@@ -23,7 +23,7 @@ function main(): void {
   );
   const metaInfs = getRegisteredMetaInformation();
   for (const metaInf of metaInfs) {
-    const userDocBuilder = new UserDocBuilder();
+    const userDocBuilder = new UserDocGenerator();
     const blockTypeDoc = userDocBuilder.buildBlockTypeDoc(metaInf);
 
     const fileName = `${metaInf.blockType}.md`;

@@ -18,7 +18,7 @@ import {
   isBlock,
   isBlockType,
 } from '../ast/generated/ast';
-import { LspDocBuilder } from '../docs/lsp-doc-builder';
+import { LspDocGenerator } from '../docs/lsp-doc-generator';
 import { BlockMetaInformation } from '../meta-information/block-meta-inf';
 import {
   getMetaInformation,
@@ -56,7 +56,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
     getRegisteredMetaInformation().forEach((metaInf) => {
-      const lspDocBuilder = new LspDocBuilder();
+      const lspDocBuilder = new LspDocGenerator();
       const markdownDoc = lspDocBuilder.buildBlockTypeDoc(metaInf);
       acceptor({
         label: metaInf.blockType,
@@ -126,7 +126,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
         completionValueItem.labelDetails!.detail += ` = ${defaultValueString}`;
       }
 
-      const lspDocBuilder = new LspDocBuilder();
+      const lspDocBuilder = new LspDocGenerator();
       const markdownDoc = lspDocBuilder.buildBlockAttributeDoc(
         blockMetaInf,
         attributeName,

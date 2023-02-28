@@ -1,3 +1,3 @@
-export * from './jayvee-doc-builder';
-export * from './lsp-doc-builder';
+export * from './jayvee-doc-generator';
+export * from './lsp-doc-generator';
 export * from './markdown-builder';
