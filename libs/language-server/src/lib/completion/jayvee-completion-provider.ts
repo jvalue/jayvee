@@ -18,10 +18,7 @@ import {
   isBlock,
   isBlockType,
 } from '../ast/generated/ast';
-import {
-  buildLspBlockAttributeDoc,
-  buildLspBlockTypeDoc,
-} from '../meta-information';
+import { LspDocGenerator } from '../docs/lsp-doc-generator';
 import { BlockMetaInformation } from '../meta-information/block-meta-inf';
 import {
   getMetaInformation,
@@ -59,7 +56,8 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
     getRegisteredMetaInformation().forEach((metaInf) => {
-      const markdownDoc = buildLspBlockTypeDoc(metaInf);
+      const lspDocBuilder = new LspDocGenerator();
+      const markdownDoc = lspDocBuilder.generateBlockTypeDoc(metaInf);
       acceptor({
         label: metaInf.blockType,
         labelDetails: {
@@ -122,7 +120,14 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
         detail: `(${kind} attribute)`,
         sortText: kind === 'required' ? '1' : '2',
       };
-      const markdownDoc = buildLspBlockAttributeDoc(
+      if (attributeSpec.defaultValue !== undefined) {
+        const defaultValueString = JSON.stringify(attributeSpec.defaultValue);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        completionValueItem.labelDetails!.detail += ` = ${defaultValueString}`;
+      }
+
+      const lspDocBuilder = new LspDocGenerator();
+      const markdownDoc = lspDocBuilder.generateBlockAttributeDoc(
         blockMetaInf,
         attributeName,
       );
