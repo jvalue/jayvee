@@ -142,7 +142,6 @@ export enum AttributeType {
   STRING = 'string',
   INT = 'integer',
   BOOLEAN = 'boolean',
-  LAYOUT = 'layout',
   CELL_RANGE = 'cell range',
   COLLECTION = 'collection',
   DATA_TYPE_ASSIGNMENT = 'data type assignment',
@@ -150,7 +149,6 @@ export enum AttributeType {
 
 export function runtimeParameterAllowedForType(type: AttributeType): boolean {
   switch (type) {
-    case AttributeType.LAYOUT:
     case AttributeType.CELL_RANGE:
     case AttributeType.DATA_TYPE_ASSIGNMENT:
     case AttributeType.COLLECTION:
