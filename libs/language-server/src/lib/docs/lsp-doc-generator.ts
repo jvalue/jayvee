@@ -1,20 +1,20 @@
 import { BlockMetaInformation } from '../meta-information';
 
 import {
-  JayveeBlockAttributeDocBuilder,
-  JayveeBlockTypeDocBuilder,
+  JayveeBlockAttributeDocGenerator,
+  JayveeBlockTypeDocGenerator,
 } from './jayvee-doc-generator';
 import { MarkdownBuilder } from './markdown-builder';
 
 export class LspDocGenerator
-  implements JayveeBlockTypeDocBuilder, JayveeBlockAttributeDocBuilder
+  implements JayveeBlockTypeDocGenerator, JayveeBlockAttributeDocGenerator
 {
-  buildBlockTypeDoc(metaInf: BlockMetaInformation): string {
+  generateBlockTypeDoc(metaInf: BlockMetaInformation): string {
     const markdownBuilder = new MarkdownBuilder();
     return markdownBuilder.line(metaInf.docs.description).build();
   }
 
-  buildBlockAttributeDoc(
+  generateBlockAttributeDoc(
     metaInf: BlockMetaInformation,
     attributeName: string,
   ): string | undefined {

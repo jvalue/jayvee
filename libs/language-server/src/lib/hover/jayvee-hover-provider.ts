@@ -36,7 +36,7 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
     }
 
     const lspDocBuilder = new LspDocGenerator();
-    return lspDocBuilder.buildBlockTypeDoc(blockMetaInf);
+    return lspDocBuilder.generateBlockTypeDoc(blockMetaInf);
   }
 
   private getAttributeMarkdownDoc(attribute: Attribute): string | undefined {
@@ -47,6 +47,9 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
     }
 
     const lspDocBuilder = new LspDocGenerator();
-    return lspDocBuilder.buildBlockAttributeDoc(blockMetaInf, attribute.name);
+    return lspDocBuilder.generateBlockAttributeDoc(
+      blockMetaInf,
+      attribute.name,
+    );
   }
 }

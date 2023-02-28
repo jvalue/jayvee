@@ -24,7 +24,7 @@ function main(): void {
   const metaInfs = getRegisteredMetaInformation();
   for (const metaInf of metaInfs) {
     const userDocBuilder = new UserDocGenerator();
-    const blockTypeDoc = userDocBuilder.buildBlockTypeDoc(metaInf);
+    const blockTypeDoc = userDocBuilder.generateBlockTypeDoc(metaInf);
 
     const fileName = `${metaInf.blockType}.md`;
     writeFileSync(join(docsPath, fileName), blockTypeDoc, {

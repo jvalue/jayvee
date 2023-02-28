@@ -57,7 +57,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
   ): MaybePromise<void> {
     getRegisteredMetaInformation().forEach((metaInf) => {
       const lspDocBuilder = new LspDocGenerator();
-      const markdownDoc = lspDocBuilder.buildBlockTypeDoc(metaInf);
+      const markdownDoc = lspDocBuilder.generateBlockTypeDoc(metaInf);
       acceptor({
         label: metaInf.blockType,
         labelDetails: {
@@ -127,7 +127,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       }
 
       const lspDocBuilder = new LspDocGenerator();
-      const markdownDoc = lspDocBuilder.buildBlockAttributeDoc(
+      const markdownDoc = lspDocBuilder.generateBlockAttributeDoc(
         blockMetaInf,
         attributeName,
       );

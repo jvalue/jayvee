@@ -1,12 +1,12 @@
 import {
   BlockMetaInformation,
   ExampleDoc,
-  JayveeBlockTypeDocBuilder,
+  JayveeBlockTypeDocGenerator,
   MarkdownBuilder,
 } from '@jayvee/language-server';
 
-export class UserDocGenerator implements JayveeBlockTypeDocBuilder {
-  buildBlockTypeDoc(metaInf: BlockMetaInformation): string {
+export class UserDocGenerator implements JayveeBlockTypeDocGenerator {
+  generateBlockTypeDoc(metaInf: BlockMetaInformation): string {
     const builder = new UserDocMarkdownBuilder()
       .blockTypeHeading(metaInf.blockType)
       .generationComment()

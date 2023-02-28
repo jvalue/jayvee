@@ -1,11 +1,11 @@
 import { BlockMetaInformation } from '../meta-information/block-meta-inf';
 
-export interface JayveeBlockTypeDocBuilder {
-  buildBlockTypeDoc(metaInf: BlockMetaInformation): string;
+export interface JayveeBlockTypeDocGenerator {
+  generateBlockTypeDoc(metaInf: BlockMetaInformation): string;
 }
 
-export interface JayveeBlockAttributeDocBuilder {
-  buildBlockAttributeDoc(
+export interface JayveeBlockAttributeDocGenerator {
+  generateBlockAttributeDoc(
     metaInf: BlockMetaInformation,
     attributeName: string,
   ): string | undefined;
