@@ -2,11 +2,8 @@ import { AstNode, AstNodeHoverProvider, MaybePromise } from 'langium';
 import { Hover } from 'vscode-languageserver-protocol';
 
 import { Attribute, BlockType, isAttribute, isBlockType } from '../ast';
-import {
-  buildLspBlockAttributeDoc,
-  buildLspBlockTypeDoc,
-  getMetaInformation,
-} from '../meta-information';
+import { LspDocBuilder } from '../docs/lsp-doc-builder';
+import { getMetaInformation } from '../meta-information';
 
 export class JayveeHoverProvider extends AstNodeHoverProvider {
   override getAstNodeHoverContent(
@@ -38,7 +35,8 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
       return;
     }
 
-    return buildLspBlockTypeDoc(blockMetaInf);
+    const lspDocBuilder = new LspDocBuilder();
+    return lspDocBuilder.buildBlockTypeDoc(blockMetaInf);
   }
 
   private getAttributeMarkdownDoc(attribute: Attribute): string | undefined {
@@ -48,6 +46,7 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
       return;
     }
 
-    return buildLspBlockAttributeDoc(blockMetaInf, attribute.name);
+    const lspDocBuilder = new LspDocBuilder();
+    return lspDocBuilder.buildBlockAttributeDoc(blockMetaInf, attribute.name);
   }
 }
