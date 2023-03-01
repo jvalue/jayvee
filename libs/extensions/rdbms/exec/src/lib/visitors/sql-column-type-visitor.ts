@@ -1,6 +1,6 @@
-import { DataTypeVisitor } from '@jayvee/execution';
+import { ValueTypeVisitor } from '@jayvee/execution';
 
-export class SQLColumnTypeVisitor extends DataTypeVisitor<string> {
+export class SQLColumnTypeVisitor extends ValueTypeVisitor<string> {
   override visitBoolean(): string {
     return 'boolean';
   }

@@ -2,24 +2,24 @@ import { strict as assert } from 'assert';
 
 import * as R from '@jayvee/execution';
 import {
-  AbstractDataType,
+  AbstractValueType,
   BlockExecutor,
   Sheet,
   Table,
-  getDataType,
+  getValueType,
 } from '@jayvee/execution';
 import {
   CellIndex,
-  DataTypeAssignment,
   IOType,
+  TypeAssignment,
   rowIndexToString,
 } from '@jayvee/language-server';
 
 interface ColumnDefinitionEntry {
   sheetColumnIndex: number;
   columnName: string;
-  dataType: AbstractDataType;
-  astNode: DataTypeAssignment;
+  valueType: AbstractValueType;
+  astNode: TypeAssignment;
 }
 
 export class TableInterpreterExecutor extends BlockExecutor<
@@ -34,7 +34,7 @@ export class TableInterpreterExecutor extends BlockExecutor<
   override async execute(inputSheet: Sheet): Promise<R.Result<Table>> {
     const header = this.getBooleanAttributeValue('header');
     const columnDefinitions =
-      this.getDataTypeAssignmentCollectionAttributeValue('columns');
+      this.getTypeAssignmentCollectionAttributeValue('columns');
 
     let columnEntries: ColumnDefinitionEntry[];
 
@@ -90,7 +90,7 @@ export class TableInterpreterExecutor extends BlockExecutor<
       ioType: IOType.TABLE,
       columnInformation: columnEntries.map((columnEntry) => ({
         name: columnEntry.columnName,
-        type: columnEntry.dataType,
+        type: columnEntry.valueType,
       })),
       data: tableData,
     };
@@ -134,7 +134,7 @@ export class TableInterpreterExecutor extends BlockExecutor<
       const sheetColumnIndex = columnEntry.sheetColumnIndex;
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const value = sheetRow[sheetColumnIndex]!;
-      if (!columnEntry.dataType.isValid(value)) {
+      if (!columnEntry.valueType.isValid(value)) {
         const cellIndex = new CellIndex(sheetColumnIndex, sheetRowIndex);
         this.logger.logDebug(
           `The value at cell ${cellIndex.toString()} does not match the type ${
@@ -156,20 +156,20 @@ export class TableInterpreterExecutor extends BlockExecutor<
   }
 
   private deriveColumnDefinitionEntriesWithoutHeader(
-    columnDefinitions: DataTypeAssignment[],
+    columnDefinitions: TypeAssignment[],
   ): ColumnDefinitionEntry[] {
     return columnDefinitions.map<ColumnDefinitionEntry>(
       (columnDefinition, columnDefinitionIndex) => ({
         sheetColumnIndex: columnDefinitionIndex,
         columnName: columnDefinition.name,
-        dataType: getDataType(columnDefinition.type),
+        valueType: getValueType(columnDefinition.type),
         astNode: columnDefinition,
       }),
     );
   }
 
   private deriveColumnDefinitionEntriesFromHeader(
-    columnDefinitions: DataTypeAssignment[],
+    columnDefinitions: TypeAssignment[],
     headerRow: string[],
   ): ColumnDefinitionEntry[] {
     this.logger.logDebug(`Matching header with provided column names`);
@@ -188,7 +188,7 @@ export class TableInterpreterExecutor extends BlockExecutor<
       columnEntries.push({
         sheetColumnIndex: indexOfMatchingHeader,
         columnName: columnDefinition.name,
-        dataType: getDataType(columnDefinition.type),
+        valueType: getValueType(columnDefinition.type),
         astNode: columnDefinition,
       });
     }

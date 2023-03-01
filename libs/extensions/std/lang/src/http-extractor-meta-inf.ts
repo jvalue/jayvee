@@ -1,5 +1,5 @@
 import {
-  AttributeType,
+  AttributeValueType,
   BlockMetaInformation,
   IOType,
 } from '@jayvee/language-server';
@@ -19,7 +19,7 @@ export class HttpExtractorMetaInformation extends BlockMetaInformation {
       // Attribute definitions:
       {
         url: {
-          type: AttributeType.STRING,
+          type: AttributeValueType.TEXT,
           docs: {
             description: 'The URL to the file in the web to extract.',
             examples: [

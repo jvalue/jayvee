@@ -1,5 +1,5 @@
 import {
-  AttributeType,
+  AttributeValueType,
   BlockMetaInformation,
   CellRangeWrapper,
   IOType,
@@ -11,7 +11,7 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
   constructor() {
     super('CellWriter', IOType.SHEET, IOType.SHEET, {
       write: {
-        type: AttributeType.STRING,
+        type: AttributeValueType.TEXT,
         docs: {
           description: 'The value to write.',
           examples: [
@@ -23,7 +23,7 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
         },
       },
       at: {
-        type: AttributeType.CELL_RANGE,
+        type: AttributeValueType.CELL_RANGE,
         validation: (attribute, accept) => {
           const attributeValue = attribute.value;
           if (!isCellRangeValue(attributeValue)) {

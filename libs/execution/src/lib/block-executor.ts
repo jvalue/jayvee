@@ -4,14 +4,14 @@ import {
   Attribute,
   Block,
   CellRangeWrapper,
-  DataTypeAssignment,
   IOType,
+  TypeAssignment,
   getOrFailMetaInformation,
   isCellRange,
   isCellRangeValue,
   isCollection,
-  isDataTypeAssignmentValue,
   isRuntimeParameter,
+  isTypeAssignmentValue,
 } from '@jayvee/language-server';
 import { isReference } from 'langium';
 
@@ -142,17 +142,17 @@ export abstract class BlockExecutor<
     );
   }
 
-  protected getDataTypeAssignmentCollectionAttributeValue(
+  protected getTypeAssignmentCollectionAttributeValue(
     attributeName: string,
-  ): DataTypeAssignment[] {
+  ): TypeAssignment[] {
     const attributeValue = this.getAttributeValue(attributeName);
     assert(
       Array.isArray(attributeValue),
       `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type collection`,
     );
     assert(
-      attributeValue.every(isDataTypeAssignmentValue),
-      `Some values of attribute "${attributeName}" in block "${this.block.name}" are unexpectedly not of type data type assignment`,
+      attributeValue.every(isTypeAssignmentValue),
+      `Some values of attribute "${attributeName}" in block "${this.block.name}" are unexpectedly not of type type-assignment`,
     );
 
     return attributeValue.map((assignment) => assignment.value);

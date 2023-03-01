@@ -1,5 +1,5 @@
 import {
-  AttributeType,
+  AttributeValueType,
   BlockMetaInformation,
   IOType,
 } from '@jayvee/language-server';
@@ -19,7 +19,7 @@ export class ArchiveInterpreterMetaInformation extends BlockMetaInformation {
       // Attribute definitions:
       {
         archiveType: {
-          type: AttributeType.STRING,
+          type: AttributeValueType.TEXT,
           docs: {
             description: 'The archive type to be interpreted, e.g., `"zip"`.',
           },

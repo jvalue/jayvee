@@ -1,14 +1,14 @@
 // eslint-disable-next-line import/no-cycle
-import { AbstractDataType } from './AbstractDataType';
+import { AbstractValueType } from './abstract-value-type';
 // eslint-disable-next-line import/no-cycle
-import { DataTypeVisitor } from './visitors/DataTypeVisitor';
+import { ValueTypeVisitor } from './visitors/value-type-visitor';
 
-export class TextDataType extends AbstractDataType {
+export class TextValueType extends AbstractValueType {
   override isValid(value: unknown): boolean {
     return typeof value === 'string';
   }
 
-  override acceptVisitor<R>(visitor: DataTypeVisitor<R>): R {
+  override acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R {
     return visitor.visitText(this);
   }
 
@@ -21,6 +21,6 @@ export class TextDataType extends AbstractDataType {
     }
 
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    throw new Error(`Invalid value: ${value} for type ${this.dataType}`);
+    throw new Error(`Invalid value: ${value} for type ${this.valueType}`);
   }
 }

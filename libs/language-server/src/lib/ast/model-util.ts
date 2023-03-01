@@ -11,9 +11,9 @@ import {
   isBooleanValue,
   isCellRangeValue,
   isCollection,
-  isDataTypeAssignmentValue,
-  isIntValue,
-  isStringValue,
+  isIntegerValue,
+  isTextValue,
+  isTypeAssignmentValue,
 } from './generated/ast';
 import { PipeWrapper, createSemanticPipes } from './wrappers/pipe-wrapper';
 
@@ -138,24 +138,26 @@ export enum IOType {
   TABLE = 'Table',
 }
 
-export enum AttributeType {
-  STRING = 'string',
-  INT = 'integer',
+export enum AttributeValueType {
+  TEXT = 'text',
+  INTEGER = 'integer',
   BOOLEAN = 'boolean',
-  CELL_RANGE = 'cell range',
+  CELL_RANGE = 'cell-range',
   COLLECTION = 'collection',
-  DATA_TYPE_ASSIGNMENT = 'data type assignment',
+  TYPE_ASSIGNMENT = 'type-assignment',
 }
 
-export function runtimeParameterAllowedForType(type: AttributeType): boolean {
+export function runtimeParameterAllowedForType(
+  type: AttributeValueType,
+): boolean {
   switch (type) {
-    case AttributeType.CELL_RANGE:
-    case AttributeType.DATA_TYPE_ASSIGNMENT:
-    case AttributeType.COLLECTION:
+    case AttributeValueType.CELL_RANGE:
+    case AttributeValueType.TYPE_ASSIGNMENT:
+    case AttributeValueType.COLLECTION:
       return false;
-    case AttributeType.STRING:
-    case AttributeType.INT:
-    case AttributeType.BOOLEAN:
+    case AttributeValueType.TEXT:
+    case AttributeValueType.INTEGER:
+    case AttributeValueType.BOOLEAN:
       return true;
     default:
       assertUnreachable(type);
@@ -164,24 +166,24 @@ export function runtimeParameterAllowedForType(type: AttributeType): boolean {
 
 export function convertAttributeValueToType(
   value: AttributeValue,
-): AttributeType {
-  if (isStringValue(value)) {
-    return AttributeType.STRING;
+): AttributeValueType {
+  if (isTextValue(value)) {
+    return AttributeValueType.TEXT;
   }
-  if (isIntValue(value)) {
-    return AttributeType.INT;
+  if (isIntegerValue(value)) {
+    return AttributeValueType.INTEGER;
   }
   if (isBooleanValue(value)) {
-    return AttributeType.BOOLEAN;
+    return AttributeValueType.BOOLEAN;
   }
   if (isCellRangeValue(value)) {
-    return AttributeType.CELL_RANGE;
+    return AttributeValueType.CELL_RANGE;
   }
-  if (isDataTypeAssignmentValue(value)) {
-    return AttributeType.DATA_TYPE_ASSIGNMENT;
+  if (isTypeAssignmentValue(value)) {
+    return AttributeValueType.TYPE_ASSIGNMENT;
   }
   if (isCollection(value)) {
-    return AttributeType.COLLECTION;
+    return AttributeValueType.COLLECTION;
   }
   assertUnreachable(value);
 }

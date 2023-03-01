@@ -1,5 +1,5 @@
 import {
-  AttributeType,
+  AttributeValueType,
   RuntimeParameter,
   runtimeParameterAllowedForType,
 } from '@jayvee/language-server';
@@ -8,25 +8,27 @@ import { parseParameterAsMatchingType } from './runtime-parameter-util';
 
 describe('runtime parameter utils', () => {
   describe('parameter parsing', () => {
-    Object.keys(AttributeType).forEach((attributeTypeKey) => {
-      const attributeType =
-        AttributeType[attributeTypeKey as keyof typeof AttributeType];
+    Object.keys(AttributeValueType).forEach((attributeValueTypeKey) => {
+      const attributeValueType =
+        AttributeValueType[
+          attributeValueTypeKey as keyof typeof AttributeValueType
+        ];
 
       const parseParameterFn = () => {
         parseParameterAsMatchingType(
           '',
-          attributeType,
+          attributeValueType,
           // Don't care about the diagnostics:
           {} as RuntimeParameter,
         );
       };
 
-      if (runtimeParameterAllowedForType(attributeType)) {
-        it(`should not throw error on allowed type ${attributeType}`, () => {
+      if (runtimeParameterAllowedForType(attributeValueType)) {
+        it(`should not throw error on allowed type ${attributeValueType}`, () => {
           expect(parseParameterFn).not.toThrowError();
         });
       } else {
-        it(`should throw error on forbidden type ${attributeType}`, () => {
+        it(`should throw error on forbidden type ${attributeValueType}`, () => {
           expect(parseParameterFn).toThrowError();
         });
       }

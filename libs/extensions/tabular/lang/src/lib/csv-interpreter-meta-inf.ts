@@ -1,5 +1,5 @@
 import {
-  AttributeType,
+  AttributeValueType,
   BlockMetaInformation,
   IOType,
 } from '@jayvee/language-server';
@@ -19,7 +19,7 @@ export class CSVInterpreterMetaInformation extends BlockMetaInformation {
       // Attribute definitions:
       {
         delimiter: {
-          type: AttributeType.STRING,
+          type: AttributeValueType.TEXT,
           defaultValue: ',',
           docs: {
             description: 'The delimiter for values in the CSV file.',

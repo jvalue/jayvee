@@ -1,7 +1,7 @@
 pipeline CarsPipeline {
 
 	CarsExtractor
-    -> CarCSVInterpreter
+    -> CarsCSVInterpreter
 	  -> NameHeaderWriter
 	  -> CarsTableInterpreter
 	  -> CarsLoader;
@@ -10,7 +10,7 @@ pipeline CarsPipeline {
 		url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
 	}
 
-	block CarCSVInterpreter oftype CSVInterpreter {
+	block CarsCSVInterpreter oftype CSVInterpreter {
  
 	}
 

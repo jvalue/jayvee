@@ -1,5 +1,5 @@
 import {
-  AttributeType,
+  AttributeValueType,
   BlockMetaInformation,
   IOType,
 } from '@jayvee/language-server';
@@ -8,37 +8,37 @@ export class PostgresLoaderMetaInformation extends BlockMetaInformation {
   constructor() {
     super('PostgresLoader', IOType.TABLE, IOType.NONE, {
       host: {
-        type: AttributeType.STRING,
+        type: AttributeValueType.TEXT,
         docs: {
           description: 'The hostname or IP address of the Postgres database.',
         },
       },
       port: {
-        type: AttributeType.INT,
+        type: AttributeValueType.INTEGER,
         docs: {
           description: 'The port of the Postgres database.',
         },
       },
       username: {
-        type: AttributeType.STRING,
+        type: AttributeValueType.TEXT,
         docs: {
           description: 'The username to login to the Postgres database.',
         },
       },
       password: {
-        type: AttributeType.STRING,
+        type: AttributeValueType.TEXT,
         docs: {
           description: 'The password to login to the Postgres database.',
         },
       },
       database: {
-        type: AttributeType.STRING,
+        type: AttributeValueType.TEXT,
         docs: {
           description: 'The database to use.',
         },
       },
       table: {
-        type: AttributeType.STRING,
+        type: AttributeValueType.TEXT,
         docs: {
           description: 'The name of the table to write into.',
         },

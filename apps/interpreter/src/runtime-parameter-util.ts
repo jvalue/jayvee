@@ -3,7 +3,7 @@ import { strict as assert } from 'assert';
 import * as R from '@jayvee/execution';
 import { Logger } from '@jayvee/execution';
 import {
-  AttributeType,
+  AttributeValueType,
   Model,
   RuntimeParameter,
   getOrFailMetaInformation,
@@ -100,7 +100,7 @@ const FALSE = 'false';
  */
 export function parseParameterAsMatchingType(
   value: string,
-  type: AttributeType,
+  type: AttributeValueType,
   astNode: RuntimeParameter,
 ): R.Result<string | number | boolean> {
   assert(
@@ -109,9 +109,9 @@ export function parseParameterAsMatchingType(
   );
 
   switch (type) {
-    case AttributeType.STRING:
+    case AttributeValueType.TEXT:
       return R.ok(value);
-    case AttributeType.INT:
+    case AttributeValueType.INTEGER:
       if (!/^[1-9][0-9]*$/.test(value)) {
         return R.err({
           message: `Runtime parameter ${astNode.name} has value "${value}" which is not of type integer.`,
@@ -119,7 +119,7 @@ export function parseParameterAsMatchingType(
         });
       }
       return R.ok(Number.parseInt(value, 10));
-    case AttributeType.BOOLEAN:
+    case AttributeValueType.BOOLEAN:
       if (value === TRUE) {
         return R.ok(true);
       }

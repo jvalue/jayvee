@@ -1,9 +1,9 @@
 // eslint-disable-next-line import/no-cycle
-import { AbstractDataType } from './AbstractDataType';
+import { AbstractValueType } from './abstract-value-type';
 // eslint-disable-next-line import/no-cycle
-import { DataTypeVisitor } from './visitors/DataTypeVisitor';
+import { ValueTypeVisitor } from './visitors/value-type-visitor';
 
-export class IntegerDataType extends AbstractDataType {
+export class IntegerValueType extends AbstractValueType {
   override isValid(value: unknown): boolean {
     if (typeof value === 'string') {
       return !!value.match(/[+-]?[0-9]+/);
@@ -12,7 +12,7 @@ export class IntegerDataType extends AbstractDataType {
     return Number.isInteger(value);
   }
 
-  override acceptVisitor<R>(visitor: DataTypeVisitor<R>): R {
+  override acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R {
     return visitor.visitInteger(this);
   }
 
@@ -25,6 +25,6 @@ export class IntegerDataType extends AbstractDataType {
     }
 
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    throw new Error(`Invalid value: ${value} for type ${this.dataType}`);
+    throw new Error(`Invalid value: ${value} for type ${this.valueType}`);
   }
 }

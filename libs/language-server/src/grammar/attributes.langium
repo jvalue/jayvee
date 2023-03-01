@@ -1,5 +1,5 @@
 import 'terminals';
-import 'data-type';
+import 'value-type';
 import 'cell-range';
 
 fragment AttributesFragment:
@@ -15,15 +15,15 @@ AttributeValue:
   AtomicValue | Collection;
 
 AtomicValue:
-  StringValue | IntValue | BooleanValue | CellRangeValue | DataTypeAssignmentValue;
+  TextValue | IntegerValue | BooleanValue | CellRangeValue | TypeAssignmentValue;
 
 Collection:
   '[' (values+=(AtomicValue) (',' values+=(AtomicValue))*)? ']';
 
-StringValue:
+TextValue:
   value=STRING;
 
-IntValue:
+IntegerValue:
   value=INT;
 
 BooleanValue:
@@ -32,5 +32,5 @@ BooleanValue:
 CellRangeValue:
   value=CellRange;
 
-DataTypeAssignmentValue:
-  value=DataTypeAssignment;
+TypeAssignmentValue:
+  value=TypeAssignment;
