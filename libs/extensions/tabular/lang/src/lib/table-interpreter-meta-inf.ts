@@ -1,10 +1,10 @@
 import {
-  AttributeType,
+  AttributeValueType,
   BlockMetaInformation,
   IOType,
   getNodesWithNonUniqueNames,
   isCollection,
-  isDataTypeAssignmentValue,
+  isTypeAssignmentValue,
   validateTypedCollection,
 } from '@jayvee/language-server';
 
@@ -12,7 +12,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
   constructor() {
     super('TableInterpreter', IOType.SHEET, IOType.TABLE, {
       header: {
-        type: AttributeType.BOOLEAN,
+        type: AttributeValueType.BOOLEAN,
         docs: {
           description:
             'Whether the first row should be interpreted as header row.',
@@ -31,7 +31,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
         },
       },
       columns: {
-        type: AttributeType.COLLECTION,
+        type: AttributeValueType.COLLECTION,
         validation: (attribute, accept) => {
           const attributeValue = attribute.value;
           if (!isCollection(attributeValue)) {
@@ -40,29 +40,29 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
 
           const { validItems, invalidItems } = validateTypedCollection(
             attributeValue,
-            isDataTypeAssignmentValue,
+            isTypeAssignmentValue,
           );
 
           invalidItems.forEach((invalidValue) =>
             accept(
               'error',
-              'Only data type assignments are allowed in this collection',
+              'Only type assignments are allowed in this collection',
               {
                 node: invalidValue,
               },
             ),
           );
 
-          const dataTypeAssignments = validItems.map(
+          const typeAssignments = validItems.map(
             (assignment) => assignment.value,
           );
-          getNodesWithNonUniqueNames(dataTypeAssignments).forEach(
-            (dataTypeAssignment) => {
+          getNodesWithNonUniqueNames(typeAssignments).forEach(
+            (typeAssignment) => {
               accept(
                 'error',
-                `The column name "${dataTypeAssignment.name}" needs to be unique.`,
+                `The column name "${typeAssignment.name}" needs to be unique.`,
                 {
-                  node: dataTypeAssignment,
+                  node: typeAssignment,
                   property: 'name',
                 },
               );
@@ -71,7 +71,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
         },
         docs: {
           description:
-            'Collection of data type assignments. Uses column names (potentially matched with the header or by sequence depending on the `header` attribute) to assign a data type to each column.',
+            'Collection of type assignments. Uses column names (potentially matched with the header or by sequence depending on the `header` attribute) to assign a primitive value type to each column.',
           examples: [
             {
               code: 'columns: [ "name" typed text ]',
@@ -80,7 +80,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
             },
           ],
           validation:
-            'Needs to be a collection of data type assignments. Each column needs to have a unique name.',
+            'Needs to be a collection of type assignments. Each column needs to have a unique name.',
         },
       },
     });
@@ -90,12 +90,12 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
       {
         code: blockExampleWithHeader,
         description:
-          'Interprets a `Sheet` about cars with a topmost header row and interprets it as a `Table` by assigning a data type to each column. The column names are matched to the header, so the order of the column data type assignments does not matter.',
+          'Interprets a `Sheet` about cars with a topmost header row and interprets it as a `Table` by assigning a primitive value type to each column. The column names are matched to the header, so the order of the type assignments does not matter.',
       },
       {
         code: blockExampleWithoutHeader,
         description:
-          'Interprets a `Sheet` about cars without a topmost header row and interprets it as a `Table` by sequentially assigning a name and a data type to each column of the sheet. Note that the order of columns matters here. The first column (column `A`) will be named "name", the second column (column `B`) will be named "mpg" etc.',
+          'Interprets a `Sheet` about cars without a topmost header row and interprets it as a `Table` by sequentially assigning a name and a primitive value type to each column of the sheet. Note that the order of columns matters here. The first column (column `A`) will be named "name", the second column (column `B`) will be named "mpg" etc.',
       },
     ];
   }

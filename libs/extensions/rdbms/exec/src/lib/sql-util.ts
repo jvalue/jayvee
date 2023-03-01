@@ -1,7 +1,7 @@
 import { Table } from '@jayvee/execution';
 
-import { SQLColumnTypeVisitor } from './visitors/SQLColumnTypeVisitor';
-import { SQLValueRepresentationVisitor } from './visitors/SQLValueRepresentationVisitor';
+import { SQLColumnTypeVisitor } from './visitors/sql-column-type-visitor';
+import { SQLValueRepresentationVisitor } from './visitors/sql-value-representation-visitor';
 
 export function buildDropTableStatement(tableName: string): string {
   return `DROP TABLE IF EXISTS "${tableName}";`;

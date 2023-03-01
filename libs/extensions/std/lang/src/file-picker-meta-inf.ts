@@ -1,5 +1,5 @@
 import {
-  AttributeType,
+  AttributeValueType,
   BlockMetaInformation,
   IOType,
 } from '@jayvee/language-server';
@@ -19,7 +19,7 @@ export class FilePickerMetaInformation extends BlockMetaInformation {
       // Attribute definitions:
       {
         path: {
-          type: AttributeType.STRING,
+          type: AttributeValueType.TEXT,
           docs: {
             description: 'The path of the file to get',
           },

@@ -1,5 +1,5 @@
 import {
-  AttributeType,
+  AttributeValueType,
   BlockMetaInformation,
   IOType,
 } from '@jayvee/language-server';
@@ -8,13 +8,13 @@ export class SQLiteLoaderMetaInformation extends BlockMetaInformation {
   constructor() {
     super('SQLiteLoader', IOType.TABLE, IOType.NONE, {
       table: {
-        type: AttributeType.STRING,
+        type: AttributeValueType.TEXT,
         docs: {
           description: 'The name of the table to write into.',
         },
       },
       file: {
-        type: AttributeType.STRING,
+        type: AttributeValueType.TEXT,
         docs: {
           description:
             'The path to the SQLite file that will be created. Usual file extensions are `.sqlite` and `.db`.',

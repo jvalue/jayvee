@@ -3,10 +3,10 @@ import { strict as assert } from 'assert';
 import { ValidationAcceptor } from 'langium';
 
 import { Attribute, Block } from '../ast/generated/ast';
-import { AttributeType, IOType } from '../ast/model-util';
+import { AttributeValueType, IOType } from '../ast/model-util';
 
 export interface AttributeSpecification {
-  type: AttributeType;
+  type: AttributeValueType;
   defaultValue?: unknown;
   validation?: (attribute: Attribute, accept: ValidationAcceptor) => void;
   docs?: AttributeDocs;

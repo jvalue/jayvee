@@ -4,100 +4,100 @@ pipeline GtfsPipeline {
 		url: "https://developers.google.com/static/transit/gtfs/examples/sample-feed.zip";
 	}
 
-    block ZipArchiveInterpreter oftype ArchiveInterpreter{
+    block ZipArchiveInterpreter oftype ArchiveInterpreter {
     	archiveType: "zip";
     }
 
-	block AgencyFilePicker oftype FilePicker{
+	block AgencyFilePicker oftype FilePicker {
 		path: "/agency.txt";
 	}
 
-	block CalendarDatesFilePicker oftype FilePicker{
+	block CalendarDatesFilePicker oftype FilePicker {
 		path: "/calendar_dates.txt";
 	}
 
-	block CalendarFilePicker oftype FilePicker{
+	block CalendarFilePicker oftype FilePicker {
 		path: "/calendar.txt";
 	}
 
-	block FareAttributesFilePicker oftype FilePicker{
+	block FareAttributesFilePicker oftype FilePicker {
 		path: "/fare_attributes.txt";
 	}
 
-	block FareRulesFilePicker oftype FilePicker{
+	block FareRulesFilePicker oftype FilePicker {
 		path: "/fare_rules.txt";
 	}
 
-	block FrequenciesFilePicker oftype FilePicker{
+	block FrequenciesFilePicker oftype FilePicker {
 		path: "/frequencies.txt";
 	}
 
-	block RoutesFilePicker oftype FilePicker{
+	block RoutesFilePicker oftype FilePicker {
 		path: "/routes.txt";
 	}
 
-	block ShapesFilePicker oftype FilePicker{
+	block ShapesFilePicker oftype FilePicker {
 		path: "/shapes.txt";
 	}
 
-	block StopTimesFilePicker oftype FilePicker{
+	block StopTimesFilePicker oftype FilePicker {
 		path: "/stop_times.txt";
 	}
 
-	block StopsFilePicker oftype FilePicker{
+	block StopsFilePicker oftype FilePicker {
 		path: "/stops.txt";
 	}
 
-	block TripsFilePicker oftype FilePicker{
+	block TripsFilePicker oftype FilePicker {
 		path: "/trips.txt";
 	}
 
-	block AgencyCSVInterpreter oftype CSVInterpreter{
+	block AgencyCSVInterpreter oftype CSVInterpreter {
 	
 	}
 
-	block CalendarDatesCSVInterpreter oftype CSVInterpreter{
+	block CalendarDatesCSVInterpreter oftype CSVInterpreter {
 	
 	}
 
-	block CalendarCSVInterpreter oftype CSVInterpreter{
+	block CalendarCSVInterpreter oftype CSVInterpreter {
 	
 	}
 
-	block FareAttributesCSVInterpreter oftype CSVInterpreter{
+	block FareAttributesCSVInterpreter oftype CSVInterpreter {
 	
 	}
 
-	block FareRulesCSVInterpreter oftype CSVInterpreter{
+	block FareRulesCSVInterpreter oftype CSVInterpreter {
 	
 	}
 
-	block FrequenciesCSVInterpreter oftype CSVInterpreter{
+	block FrequenciesCSVInterpreter oftype CSVInterpreter {
 	
 	}
 
-	block RoutesCSVInterpreter oftype CSVInterpreter{
+	block RoutesCSVInterpreter oftype CSVInterpreter {
 	
 	}
 
-	block ShapesCSVInterpreter oftype CSVInterpreter{
+	block ShapesCSVInterpreter oftype CSVInterpreter {
 	
 	}
 
-	block StopTimesCSVInterpreter oftype CSVInterpreter{
+	block StopTimesCSVInterpreter oftype CSVInterpreter {
 	
 	}
 
-	block  StopsCSVInterpreter oftype CSVInterpreter{
+	block StopsCSVInterpreter oftype CSVInterpreter {
 	
 	}
 
 
-	block TripsCSVInterpreter oftype CSVInterpreter{
+	block TripsCSVInterpreter oftype CSVInterpreter {
 	
 	}
 
-	block AgencyTableInterpreter oftype TableInterpreter  {
+	block AgencyTableInterpreter oftype TableInterpreter {
 		header: true;
 		columns:[
 			"agency_id" typed text, //Conditional columns are considered as required
@@ -235,57 +235,57 @@ pipeline GtfsPipeline {
 
 	block AgencyLoader oftype SQLiteLoader {
 		table: "agency";
-		file: "./mobility.sqlite";
+		file: "./gtfs.sqlite";
 	}
 
 	block CalendarDatesLoader oftype SQLiteLoader {
 		table: "calendar_dates";
-		file: "./mobility.sqlite";
+		file: "./gtfs.sqlite";
 	}
 
 	block CalendarLoader oftype SQLiteLoader {
 		table: "calendar";
-		file: "./mobility.sqlite";
+		file: "./gtfs.sqlite";
 	}
 	
 	block FareAttributesLoader oftype SQLiteLoader {
 		table: "fare_attributes";
-		file: "./mobility.sqlite";
+		file: "./gtfs.sqlite";
 	}
 
 	block FareRulesLoader oftype SQLiteLoader {
 		table: "fare_rules";
-		file: "./mobility.sqlite";
+		file: "./gtfs.sqlite";
 	}
 
 	block FrequenciesLoader oftype SQLiteLoader {
 		table: "frequencies";
-		file: "./mobility.sqlite";
+		file: "./gtfs.sqlite";
 	}
 
 	block RoutesLoader oftype SQLiteLoader {
 		table: "routes";
-		file: "./mobility.sqlite";
+		file: "./gtfs.sqlite";
 	}
 
 	block ShapesLoader oftype SQLiteLoader {
 		table: "shapes";
-		file: "./mobility.sqlite";
+		file: "./gtfs.sqlite";
 	}
 
 	block StopTimesLoader oftype SQLiteLoader {
 		table: "stop_times";
-		file: "./mobility.sqlite";
+		file: "./gtfs.sqlite";
 	}
 
 	block StopsLoader oftype SQLiteLoader {
 		table: "stops";
-		file: "./mobility.sqlite";
+		file: "./gtfs.sqlite";
 	}
 
 	block TripsLoader oftype SQLiteLoader {
 		table: "trips";
-		file: "./mobility.sqlite";
+		file: "./gtfs.sqlite";
 	}
 
 

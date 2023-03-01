@@ -1,5 +1,5 @@
 import {
-  AttributeType,
+  AttributeValueType,
   BlockMetaInformation,
   CellRangeWrapper,
   IOType,
@@ -13,7 +13,7 @@ export class RowDeleterMetaInformation extends BlockMetaInformation {
   constructor() {
     super('RowDeleter', IOType.SHEET, IOType.SHEET, {
       delete: {
-        type: AttributeType.COLLECTION,
+        type: AttributeValueType.COLLECTION,
         validation: (attribute, accept) => {
           const attributeValue = attribute.value;
           if (!isCollection(attributeValue)) {

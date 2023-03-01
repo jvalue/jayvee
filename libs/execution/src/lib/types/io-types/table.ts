@@ -1,6 +1,6 @@
 import { IOType } from '@jayvee/language-server';
 
-import { AbstractDataType } from '../data-types/AbstractDataType';
+import { AbstractValueType } from '../value-types/abstract-value-type';
 
 import { IOTypeImplementation } from './io-type-implementation';
 
@@ -11,5 +11,5 @@ export interface Table extends IOTypeImplementation<IOType.TABLE> {
 
 export interface ColumnInformation {
   name: string;
-  type: AbstractDataType;
+  type: AbstractValueType;
 }
