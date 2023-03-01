@@ -38,14 +38,39 @@
         "passWithNoTests": true
       }
     },
-    "publish": {
+    "pre-publish": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
         "commands": [
-          // Prepend shebang to the binary file
-          "sed -i '1i#!/usr/bin/env node' dist/apps/interpreter/main.js",
+          "node tools/scripts/interpreter/prepend-shebang.mjs interpreter main.js"
+        ]
+      }
+    },
+    "publish": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["pre-publish"],
+      "options": {
+        "commands": [
           "node tools/scripts/publish.mjs interpreter"
+        ]
+      }
+    },
+    "pack": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["pre-publish"],
+      "options": {
+        "commands": [
+          "node tools/scripts/pack.mjs interpreter"
+        ]
+      }
+    },
+    "install": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["pack"],
+      "options": {
+        "commands": [
+          "npm i -g dist/apps/interpreter/jvalue-interpreter-*.tgz"
         ]
       }
     }

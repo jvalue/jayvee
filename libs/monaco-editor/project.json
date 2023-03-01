@@ -58,13 +58,13 @@
       }
     },
     "pack": {
-        "executor": "nx:run-commands",
-        "dependsOn": ["pre-publish"],
-        "options": {
-          "commands": [
-            "node tools/scripts/pack.mjs @jayvee/monaco-editor"
-          ]
-        }
+      "executor": "nx:run-commands",
+      "dependsOn": ["pre-publish"],
+      "options": {
+        "commands": [
+          "node tools/scripts/pack.mjs @jayvee/monaco-editor"
+        ]
+      }
     }
   }
 }
