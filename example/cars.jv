@@ -22,18 +22,18 @@ pipeline CarsPipeline {
 	block CarsTableInterpreter oftype TableInterpreter {
 		header: true;
 		columns: [
-			"name" typed text,
-			"mpg" typed decimal,
-			"cyl" typed integer,
-			"disp" typed decimal,
-			"hp" typed integer,
-			"drat" typed decimal,
-			"wt" typed decimal,
-			"qsec" typed decimal,
-			"vs" typed integer,
-			"am" typed integer,
-			"gear" typed integer,
-			"carb" typed integer
+			"name" oftype text,
+			"mpg" oftype decimal,
+			"cyl" oftype integer,
+			"disp" oftype decimal,
+			"hp" oftype integer,
+			"drat" oftype decimal,
+			"wt" oftype decimal,
+			"qsec" oftype decimal,
+			"vs" oftype integer,
+			"am" oftype integer,
+			"gear" oftype integer,
+			"carb" oftype integer
 		];
 	}
 
