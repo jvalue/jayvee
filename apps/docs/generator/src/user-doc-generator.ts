@@ -1,6 +1,8 @@
 import {
+  AttributeSpecification,
   BlockMetaInformation,
   ExampleDoc,
+  IOType,
   JayveeBlockTypeDocGenerator,
   MarkdownBuilder,
 } from '@jayvee/language-server';
@@ -10,19 +12,16 @@ export class UserDocGenerator implements JayveeBlockTypeDocGenerator {
     const builder = new UserDocMarkdownBuilder()
       .blockTypeHeading(metaInf.blockType)
       .generationComment()
+      .ioTypes(metaInf.inputType, metaInf.outputType)
       .description(metaInf.docs.description)
-      .attributes(
-        Object.entries(metaInf.getAttributeSpecifications()).map(
-          ([key, spec]) => [key, spec.docs?.description],
-        ),
-      )
       .examples(metaInf.docs.examples);
 
-    builder.attributeDetailsHeading();
+    builder.attributesHeading();
     Object.entries(metaInf.getAttributeSpecifications()).forEach(
       ([key, attribute]) => {
         builder
           .attributeHeading(key, 3)
+          .attributeSpec(attribute)
           .description(attribute.docs?.description, 4)
           .validation(attribute.docs?.validation, 4)
           .examples(attribute.docs?.examples, 4);
@@ -37,7 +36,11 @@ class UserDocMarkdownBuilder {
   private markdownBuilder = new MarkdownBuilder();
 
   blockTypeHeading(blockType: string): UserDocMarkdownBuilder {
-    this.markdownBuilder.line('---').line(`title: ${blockType}`).line('---');
+    this.markdownBuilder
+      .line('---')
+      .line(`title: ${blockType}`)
+      .line('---')
+      .newLine();
     return this;
   }
 
@@ -51,7 +54,27 @@ class UserDocMarkdownBuilder {
   }
 
   attributeHeading(attributeName: string, depth = 1): UserDocMarkdownBuilder {
-    this.markdownBuilder.heading(`Attribute \`${attributeName}\``, depth);
+    this.markdownBuilder.heading(`\`${attributeName}\``, depth);
+    return this;
+  }
+
+  attributeSpec(attributeSpec: AttributeSpecification): UserDocMarkdownBuilder {
+    this.markdownBuilder.line(`Type \`${attributeSpec.type}\``);
+    if (attributeSpec.defaultValue !== undefined) {
+      this.markdownBuilder
+        .newLine()
+        .line(`Default: \`${JSON.stringify(attributeSpec.defaultValue)}\``);
+    }
+    this.markdownBuilder.newLine();
+    return this;
+  }
+
+  ioTypes(inputType: IOType, outputType: IOType): UserDocMarkdownBuilder {
+    this.markdownBuilder
+      .line(`Input type: \`${inputType}\``)
+      .newLine()
+      .line(`Output type: \`${outputType}\``)
+      .newLine();
     return this;
   }
 
@@ -59,23 +82,12 @@ class UserDocMarkdownBuilder {
     if (text === undefined) {
       return this;
     }
-    this.markdownBuilder.heading('Description', depth).line(text);
+    this.markdownBuilder.heading('Description', depth).line(text).newLine();
     return this;
   }
 
-  attributeDetailsHeading(): UserDocMarkdownBuilder {
-    this.markdownBuilder.heading('Attribute Details', 2);
-    return this;
-  }
-
-  attributes(
-    attributes: Array<[string, string | undefined]>,
-    depth = 2,
-  ): UserDocMarkdownBuilder {
-    const content = attributes
-      .map(([key, description]) => `- \`${key}\`: ${description ?? ''}`)
-      .join('\n');
-    this.markdownBuilder.heading('Attributes', depth).line(content);
+  attributesHeading(): UserDocMarkdownBuilder {
+    this.markdownBuilder.heading('Attributes', 2);
     return this;
   }
 
@@ -83,7 +95,7 @@ class UserDocMarkdownBuilder {
     if (text === undefined) {
       return this;
     }
-    this.markdownBuilder.heading('Validation', depth).line(text);
+    this.markdownBuilder.heading('Validation', depth).line(text).newLine();
     return this;
   }
 
@@ -95,7 +107,8 @@ class UserDocMarkdownBuilder {
       this.markdownBuilder
         .heading(`Example ${index + 1}`, depth)
         .code(example.code)
-        .line(example.description);
+        .line(example.description)
+        .newLine();
     }
     return this;
   }
