@@ -100,122 +100,122 @@ pipeline GtfsPipeline {
 	block AgencyTableInterpreter oftype TableInterpreter {
 		header: true;
 		columns:[
-			"agency_id" typed text, //Conditional columns are considered as required
-			"agency_name" typed text,
-			"agency_url" typed text,
-			"agency_timezone" typed text
+			"agency_id" oftype text, //Conditional columns are considered as required
+			"agency_name" oftype text,
+			"agency_url" oftype text,
+			"agency_timezone" oftype text
 		];
 	}
 
 	block CalendarDatesTableInterpreter oftype TableInterpreter {
 		header: true;
 		columns: [
-			"service_id" typed text,
-			"date" typed text,
-			"exception_type" typed text
+			"service_id" oftype text,
+			"date" oftype text,
+			"exception_type" oftype text
 		];
 	}
 
 	block CalendarTableInterpreter oftype TableInterpreter {
 		header: true;
 		columns: [
-			"service_id" typed text,
-			"monday" typed text,
-			"tuesday" typed text,
-			"wednesday" typed text,
-			"thursday" typed text,
-			"friday" typed text,
-			"saturday" typed text,
-			"sunday" typed text,
-			"start_date" typed text,
-			"end_date" typed text
+			"service_id" oftype text,
+			"monday" oftype text,
+			"tuesday" oftype text,
+			"wednesday" oftype text,
+			"thursday" oftype text,
+			"friday" oftype text,
+			"saturday" oftype text,
+			"sunday" oftype text,
+			"start_date" oftype text,
+			"end_date" oftype text
 		];
 	}
 
 	block FareAttributesTableInterpreter oftype TableInterpreter {
 		header: true;
 		columns: [
-			"fare_id" typed text,
-			"price" typed text,
-			"currency_type" typed text,
-			"payment_method" typed text,
-			"transfers" typed text,
-			"transfer_duration" typed text
+			"fare_id" oftype text,
+			"price" oftype text,
+			"currency_type" oftype text,
+			"payment_method" oftype text,
+			"transfers" oftype text,
+			"transfer_duration" oftype text
 		];
 	}
 
 	block FareRulesTableInterpreter oftype TableInterpreter {
 		header: true;
 		columns: [
-			"fare_id" typed text,
-			"route_id" typed text,
-			"origin_id" typed text,
-			"destination_id" typed text,
-			"contains_id" typed text
+			"fare_id" oftype text,
+			"route_id" oftype text,
+			"origin_id" oftype text,
+			"destination_id" oftype text,
+			"contains_id" oftype text
 		];
 	}
 	
 	block FrequenciesTableInterpreter oftype TableInterpreter {
 		header: true;
 		columns: [
-			"trip_id" typed text,
-			"start_time" typed text,
-			"end_time" typed text,
-			"headway_secs" typed text
+			"trip_id" oftype text,
+			"start_time" oftype text,
+			"end_time" oftype text,
+			"headway_secs" oftype text
 		];
 	}
 
 	block RoutesTableInterpreter oftype TableInterpreter {
 		header: true;
 		columns: [
-			"route_id" typed text,
-			"agency_id" typed text,
-			"route_short_name" typed text,
-			"route_long_name" typed text,
-			"route_desc" typed text,
-			"route_type" typed text,
-			"route_url" typed text,
-			"route_color" typed text,
-			"route_text_color" typed text
+			"route_id" oftype text,
+			"agency_id" oftype text,
+			"route_short_name" oftype text,
+			"route_long_name" oftype text,
+			"route_desc" oftype text,
+			"route_type" oftype text,
+			"route_url" oftype text,
+			"route_color" oftype text,
+			"route_text_color" oftype text
 		];
 	}
 
 	block ShapesTableInterpreter oftype TableInterpreter {
 		header: true;
 		columns: [
-			"shape_id" typed text,
-			"shape_pt_lat" typed text,
-			"shape_pt_lon" typed text,
-			"shape_pt_sequence" typed text,
-			"shape_dist_traveled" typed text
+			"shape_id" oftype text,
+			"shape_pt_lat" oftype text,
+			"shape_pt_lon" oftype text,
+			"shape_pt_sequence" oftype text,
+			"shape_dist_traveled" oftype text
 		];
 	}
 
 	block StopTimesTableInterpreter oftype TableInterpreter {
 		header: true;
 		columns: [
-			"trip_id" typed text,
-			"arrival_time" typed text,
-			"departure_time" typed text,
-			"stop_id" typed text,
-			"stop_sequence" typed text,
-			"stop_headsign" typed text,
-			"pickup_type" typed text,
-			"drop_off_time" typed text,
-			"shape_dist_traveled" typed text
+			"trip_id" oftype text,
+			"arrival_time" oftype text,
+			"departure_time" oftype text,
+			"stop_id" oftype text,
+			"stop_sequence" oftype text,
+			"stop_headsign" oftype text,
+			"pickup_type" oftype text,
+			"drop_off_time" oftype text,
+			"shape_dist_traveled" oftype text
 		];
 	}
 
 	block StopsTableInterpreter oftype TableInterpreter {
 		header: true;
 		columns:[
-			"stop_id" typed text,
-			"stop_name" typed text,
-			"stop_desc" typed text,
-			"stop_lat" typed text,
-			"stop_lon" typed text,
-			"zone_id" typed text,
-			"stop_url" typed text
+			"stop_id" oftype text,
+			"stop_name" oftype text,
+			"stop_desc" oftype text,
+			"stop_lat" oftype text,
+			"stop_lon" oftype text,
+			"zone_id" oftype text,
+			"stop_url" oftype text
 		];
 	}
 
@@ -223,13 +223,13 @@ pipeline GtfsPipeline {
 	block TripsTableInterpreter oftype TableInterpreter {
 		header: true;
 		columns: [
-			"route_id" typed text,
-			"service_id" typed text,
-			"trip_id" typed text,
-			"trip_headsign" typed text,
-			"direction_id" typed text,
-			"block_id" typed text,
-			"shape_id" typed text
+			"route_id" oftype text,
+			"service_id" oftype text,
+			"trip_id" oftype text,
+			"trip_headsign" oftype text,
+			"direction_id" oftype text,
+			"block_id" oftype text,
+			"shape_id" oftype text
 		];
 	}
 

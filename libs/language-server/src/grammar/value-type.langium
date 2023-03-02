@@ -1,7 +1,7 @@
 import 'terminals'
 
 TypeAssignment:
-  name=STRING 'typed' type=PrimitiveValueType;
+  name=STRING 'oftype' type=PrimitiveValueType;
 
 PrimitiveValueType returns string:
   'text' | 'decimal' | 'integer' | 'boolean';

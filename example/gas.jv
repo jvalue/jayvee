@@ -30,12 +30,12 @@ pipeline GasReservePipeline {
 	block GasReserveTableInterpreter oftype TableInterpreter {
     	header: true;
     	columns: [
-    		"Datum" typed text,
-    		"Kritisch" typed decimal,
-    		"Angespannt" typed decimal,
-    		"Stabil" typed decimal,
-    		"Speicherstand IST" typed decimal,
-    		"gesetzliche Ziele" typed decimal
+    		"Datum" oftype text,
+    		"Kritisch" oftype decimal,
+    		"Angespannt" oftype decimal,
+    		"Stabil" oftype decimal,
+    		"Speicherstand IST" oftype decimal,
+    		"gesetzliche Ziele" oftype decimal
     	];
     }
 
