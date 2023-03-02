@@ -1,4 +1,5 @@
 export * from './types';
+export * from './visitors';
 
 export * from './block-executor';
 export * from './block-executor-class';

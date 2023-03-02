@@ -10,13 +10,6 @@ import {
   rowIndexToString,
 } from '@jayvee/language-server';
 
-import {
-  clone,
-  deleteRow,
-  isInBounds,
-  resolveRelativeIndexes,
-} from './sheet-util';
-
 export class RowDeleterExecutor extends BlockExecutor<
   IOType.SHEET,
   IOType.SHEET
@@ -31,11 +24,11 @@ export class RowDeleterExecutor extends BlockExecutor<
     assert(relativeRows.every(isRowWrapper));
 
     let absoluteRows = relativeRows.map((row) =>
-      resolveRelativeIndexes(inputSheet, row),
+      inputSheet.resolveRelativeIndexes(row),
     );
 
     for (const row of absoluteRows) {
-      if (!isInBounds(inputSheet, row)) {
+      if (!inputSheet.isInBounds(row)) {
         const rowIndex = getRowIndex(row);
         return R.err({
           message: `The specified row ${rowIndexToString(
@@ -62,9 +55,9 @@ export class RowDeleterExecutor extends BlockExecutor<
     // By reversing the order, the row indexes stay stable during deletion
     absoluteRows.reverse();
 
-    const resultingSheet = clone(inputSheet);
+    const resultingSheet = inputSheet.clone();
     absoluteRows.forEach((row) => {
-      deleteRow(resultingSheet, row);
+      resultingSheet.deleteRow(row);
     });
 
     return R.ok(resultingSheet);

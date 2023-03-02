@@ -4,13 +4,6 @@ import * as R from '@jayvee/execution';
 import { BlockExecutor, Sheet } from '@jayvee/execution';
 import { IOType, getCellIndex, isCellWrapper } from '@jayvee/language-server';
 
-import {
-  clone,
-  isInBounds,
-  resolveRelativeIndexes,
-  writeCell,
-} from './sheet-util';
-
 export class CellWriterExecutor extends BlockExecutor<
   IOType.SHEET,
   IOType.SHEET
@@ -26,8 +19,8 @@ export class CellWriterExecutor extends BlockExecutor<
 
     assert(isCellWrapper(relativeCell));
 
-    const absoluteCell = resolveRelativeIndexes(inputSheet, relativeCell);
-    if (!isInBounds(inputSheet, absoluteCell)) {
+    const absoluteCell = inputSheet.resolveRelativeIndexes(relativeCell);
+    if (!inputSheet.isInBounds(absoluteCell)) {
       return R.err({
         message: 'The specified cell does not exist in the sheet',
         diagnostic: { node: absoluteCell.astNode },
@@ -38,8 +31,8 @@ export class CellWriterExecutor extends BlockExecutor<
       `Writing "${content}" at cell ${getCellIndex(absoluteCell).toString()}`,
     );
 
-    const resultingSheet = clone(inputSheet);
-    writeCell(resultingSheet, absoluteCell, content);
+    const resultingSheet = inputSheet.clone();
+    resultingSheet.writeCell(absoluteCell, content);
 
     return R.ok(resultingSheet);
   }

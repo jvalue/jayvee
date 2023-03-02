@@ -4,6 +4,7 @@ import * as R from '@jayvee/execution';
 import {
   AbstractValueType,
   BlockExecutor,
+  ColumnInformation,
   Sheet,
   Table,
   getValueType,
@@ -39,7 +40,7 @@ export class TableInterpreterExecutor extends BlockExecutor<
     let columnEntries: ColumnDefinitionEntry[];
 
     if (header) {
-      if (inputSheet.height < 1) {
+      if (inputSheet.getNumberOfRows() < 1) {
         return R.err({
           message: 'The input sheet is empty and thus has no header',
           diagnostic: {
@@ -48,17 +49,18 @@ export class TableInterpreterExecutor extends BlockExecutor<
         });
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const headerRow = inputSheet.data[0]!;
+      const headerRow = inputSheet.getHeaderRow();
 
       columnEntries = this.deriveColumnDefinitionEntriesFromHeader(
         columnDefinitions,
         headerRow,
       );
     } else {
-      if (inputSheet.width < columnDefinitions.length) {
+      if (inputSheet.getNumberOfColumns() < columnDefinitions.length) {
         return R.err({
-          message: `There are ${columnDefinitions.length} column definitions but the input sheet only has ${inputSheet.width} columns`,
+          message: `There are ${
+            columnDefinitions.length
+          } column definitions but the input sheet only has ${inputSheet.getNumberOfColumns()} columns`,
           diagnostic: {
             node: this.getOrFailAttribute('columns'),
           },
@@ -70,8 +72,8 @@ export class TableInterpreterExecutor extends BlockExecutor<
     }
 
     const numberOfTableRows = header
-      ? inputSheet.height - 1
-      : inputSheet.height;
+      ? inputSheet.getNumberOfRows() - 1
+      : inputSheet.getNumberOfRows();
     this.logger.logDebug(
       `Validating ${numberOfTableRows} row(s) according to the column types`,
     );
@@ -86,15 +88,13 @@ export class TableInterpreterExecutor extends BlockExecutor<
       `Validation completed, the resulting table has ${tableData.length} row(s) and ${columnEntries.length} column(s)`,
     );
 
-    const resultingTable: Table = {
-      ioType: IOType.TABLE,
-      columnInformation: columnEntries.map((columnEntry) => ({
+    const columnInformation = columnEntries.map<ColumnInformation>(
+      (columnEntry) => ({
         name: columnEntry.columnName,
         type: columnEntry.valueType,
-      })),
-      data: tableData,
-    };
-
+      }),
+    );
+    const resultingTable = new Table(columnInformation, tableData);
     return R.ok(resultingTable);
   }
 
@@ -104,7 +104,7 @@ export class TableInterpreterExecutor extends BlockExecutor<
     columnEntries: ColumnDefinitionEntry[],
   ): string[][] {
     const tableData: string[][] = [];
-    sheet.data.forEach((sheetRow, sheetRowIndex) => {
+    sheet.iterateRows((sheetRow, sheetRowIndex) => {
       if (header && sheetRowIndex === 0) {
         return;
       }

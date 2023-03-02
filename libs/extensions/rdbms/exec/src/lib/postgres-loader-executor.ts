@@ -3,12 +3,6 @@ import { BlockExecutor, NONE, None, Table } from '@jayvee/execution';
 import { IOType } from '@jayvee/language-server';
 import { Client } from 'pg';
 
-import {
-  buildCreateTableStatement,
-  buildDropTableStatement,
-  buildInsertValuesStatement,
-} from './sql-util';
-
 export class PostgresLoaderExecutor extends BlockExecutor<
   IOType.TABLE,
   IOType.NONE
@@ -38,13 +32,13 @@ export class PostgresLoaderExecutor extends BlockExecutor<
       await client.connect();
 
       this.logger.logDebug(`Dropping previous table "${table}" if it exists`);
-      await client.query(buildDropTableStatement(table));
+      await client.query(Table.generateDropTableStatement(table));
       this.logger.logDebug(`Creating table "${table}"`);
-      await client.query(buildCreateTableStatement(table, input));
+      await client.query(input.generateCreateTableStatement(table));
       this.logger.logDebug(
-        `Inserting ${input.data.length} row(s) into table "${table}"`,
+        `Inserting ${input.getNumberOfRows()} row(s) into table "${table}"`,
       );
-      await client.query(buildInsertValuesStatement(table, input));
+      await client.query(input.generateInsertValuesStatement(table));
 
       this.logger.logDebug(
         `The data was successfully loaded into the database`,

@@ -65,13 +65,7 @@ export class ArchiveInterpreterExecutor extends BlockExecutor<
           const fileExtension =
             inferFileExtensionFromFileExtensionString(extName) ||
             FileExtension.NONE;
-          const file: File = {
-            ioType: IOType.FILE,
-            name: fileName,
-            extension: fileExtension,
-            content,
-            mimeType,
-          };
+          const file = new File(fileName, fileExtension, mimeType, content);
           root.putFile(relPath, file);
         }
       }
