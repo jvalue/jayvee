@@ -7,6 +7,7 @@ export class MarkdownBuilder {
 
   heading(title: string, depth: number): MarkdownBuilder {
     this.markdownTextLines.push(`${this.getHeaderPrefix(depth)} ${title}`);
+    this.newLine();
     return this;
   }
 
@@ -20,11 +21,12 @@ export class MarkdownBuilder {
   code(code: string, language?: string) {
     return this.line('```' + (language ?? ''))
       .line(code)
-      .line('```');
+      .line('```')
+      .newLine();
   }
 
   newLine(): MarkdownBuilder {
-    this.markdownTextLines.push('\n');
+    this.markdownTextLines.push('');
     return this;
   }
 
