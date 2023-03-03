@@ -52,6 +52,15 @@
           "cd dist/apps/vs-code-extension && npx vsce package --out jayvee.vsix"
         ]
       }
+    },
+    "install": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["pack"],
+      "options": {
+        "commands": [
+          "code --install-extension dist/apps/vs-code-extension/jayvee.vsix"
+        ]
+      }
     }
   },
   "tags": []
