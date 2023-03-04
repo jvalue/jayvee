@@ -1,12 +1,11 @@
 pipeline GtfsPipeline {
-
-	block MyHttpExtractor oftype HttpExtractor {
+	block GTFSSampleFeedExtractor oftype HttpExtractor {
 		url: "https://developers.google.com/static/transit/gtfs/examples/sample-feed.zip";
 	}
 
-    block ZipArchiveInterpreter oftype ArchiveInterpreter {
-    	archiveType: "zip";
-    }
+	block ZipArchiveInterpreter oftype ArchiveInterpreter {
+		archiveType: "zip";
+	}
 
 	block AgencyFilePicker oftype FilePicker {
 		path: "/agency.txt";
@@ -53,48 +52,36 @@ pipeline GtfsPipeline {
 	}
 
 	block AgencyCSVInterpreter oftype CSVInterpreter {
-	
 	}
 
 	block CalendarDatesCSVInterpreter oftype CSVInterpreter {
-	
 	}
 
 	block CalendarCSVInterpreter oftype CSVInterpreter {
-	
 	}
 
 	block FareAttributesCSVInterpreter oftype CSVInterpreter {
-	
 	}
 
 	block FareRulesCSVInterpreter oftype CSVInterpreter {
-	
 	}
 
 	block FrequenciesCSVInterpreter oftype CSVInterpreter {
-	
 	}
 
 	block RoutesCSVInterpreter oftype CSVInterpreter {
-	
 	}
 
 	block ShapesCSVInterpreter oftype CSVInterpreter {
-	
 	}
 
 	block StopTimesCSVInterpreter oftype CSVInterpreter {
-	
 	}
 
 	block StopsCSVInterpreter oftype CSVInterpreter {
-	
 	}
 
-
 	block TripsCSVInterpreter oftype CSVInterpreter {
-	
 	}
 
 	block AgencyTableInterpreter oftype TableInterpreter {
@@ -154,7 +141,7 @@ pipeline GtfsPipeline {
 			"contains_id" oftype text
 		];
 	}
-	
+
 	block FrequenciesTableInterpreter oftype TableInterpreter {
 		header: true;
 		columns: [
@@ -219,7 +206,6 @@ pipeline GtfsPipeline {
 		];
 	}
 
-
 	block TripsTableInterpreter oftype TableInterpreter {
 		header: true;
 		columns: [
@@ -247,7 +233,7 @@ pipeline GtfsPipeline {
 		table: "calendar";
 		file: "./gtfs.sqlite";
 	}
-	
+
 	block FareAttributesLoader oftype SQLiteLoader {
 		table: "fare_attributes";
 		file: "./gtfs.sqlite";
@@ -288,71 +274,72 @@ pipeline GtfsPipeline {
 		file: "./gtfs.sqlite";
 	}
 
+	GTFSSampleFeedExtractor -> ZipArchiveInterpreter;
 
-	MyHttpExtractor
-	-> ZipArchiveInterpreter
-			-> AgencyFilePicker
-					-> AgencyCSVInterpreter 
-							-> AgencyTableInterpreter 
-									-> AgencyLoader;
+	ZipArchiveInterpreter
+		-> AgencyFilePicker
+			-> AgencyCSVInterpreter
+				-> AgencyTableInterpreter
+					-> AgencyLoader;
 
-		ZipArchiveInterpreter	
-			-> CalendarDatesFilePicker
-					-> CalendarDatesCSVInterpreter
-							-> CalendarDatesTableInterpreter
-									-> CalendarDatesLoader;
-		
-		ZipArchiveInterpreter	
-			-> CalendarFilePicker
-					-> CalendarCSVInterpreter
-							-> CalendarTableInterpreter
-									-> CalendarLoader;
-		ZipArchiveInterpreter	
-			-> FareAttributesFilePicker
-					-> FareAttributesCSVInterpreter
-							-> FareAttributesTableInterpreter
-									-> FareAttributesLoader;
+	ZipArchiveInterpreter	
+		-> CalendarDatesFilePicker
+			-> CalendarDatesCSVInterpreter
+				-> CalendarDatesTableInterpreter
+					-> CalendarDatesLoader;
 
-		ZipArchiveInterpreter	
-			-> FareRulesFilePicker
-					-> FareRulesCSVInterpreter
-							-> FareRulesTableInterpreter
-									-> FareRulesLoader;
+	ZipArchiveInterpreter	
+		-> CalendarFilePicker
+			-> CalendarCSVInterpreter
+				-> CalendarTableInterpreter
+					-> CalendarLoader;
 
-		ZipArchiveInterpreter	
-			-> FrequenciesFilePicker
-					-> FrequenciesCSVInterpreter
-							-> FrequenciesTableInterpreter
-									-> FrequenciesLoader;
+	ZipArchiveInterpreter	
+		-> FareAttributesFilePicker
+			-> FareAttributesCSVInterpreter
+				-> FareAttributesTableInterpreter
+					-> FareAttributesLoader;
 
-		ZipArchiveInterpreter			
-			-> RoutesFilePicker
-					-> RoutesCSVInterpreter 
-							-> RoutesTableInterpreter 
-									-> RoutesLoader;
-			
-		ZipArchiveInterpreter			
-			-> ShapesFilePicker
-					-> ShapesCSVInterpreter 
-							-> ShapesTableInterpreter 
-									-> ShapesLoader;
+	ZipArchiveInterpreter	
+		-> FareRulesFilePicker
+			-> FareRulesCSVInterpreter
+				-> FareRulesTableInterpreter
+					-> FareRulesLoader;
 
-		ZipArchiveInterpreter	
-			-> StopTimesFilePicker
-					-> StopTimesCSVInterpreter
-							-> StopTimesTableInterpreter 
-									-> StopTimesLoader;
-			
-		ZipArchiveInterpreter
-			-> StopsFilePicker 
-					-> StopsCSVInterpreter 
-							-> StopsTableInterpreter 
-									-> StopsLoader;
-			
-		ZipArchiveInterpreter	
-			-> TripsFilePicker 
-					-> TripsCSVInterpreter 
-							-> TripsTableInterpreter 
-									-> TripsLoader;
-			
+	ZipArchiveInterpreter	
+		-> FrequenciesFilePicker
+			-> FrequenciesCSVInterpreter
+				-> FrequenciesTableInterpreter
+					-> FrequenciesLoader;
+
+	ZipArchiveInterpreter			
+		-> RoutesFilePicker
+			-> RoutesCSVInterpreter 
+				-> RoutesTableInterpreter 
+					-> RoutesLoader;
+
+	ZipArchiveInterpreter			
+		-> ShapesFilePicker
+			-> ShapesCSVInterpreter 
+				-> ShapesTableInterpreter 
+					-> ShapesLoader;
+
+	ZipArchiveInterpreter	
+		-> StopTimesFilePicker
+			-> StopTimesCSVInterpreter
+				-> StopTimesTableInterpreter 
+					-> StopTimesLoader;
+
+	ZipArchiveInterpreter
+		-> StopsFilePicker 
+			-> StopsCSVInterpreter 
+				-> StopsTableInterpreter 
+					-> StopsLoader;
+
+	ZipArchiveInterpreter	
+		-> TripsFilePicker 
+			-> TripsCSVInterpreter 
+				-> TripsTableInterpreter 
+					-> TripsLoader;
+
 }

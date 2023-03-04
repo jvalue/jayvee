@@ -4,32 +4,32 @@ pipeline GasReservePipeline {
 	}
 
 	pipe {
-    	from: GasReserveHttpExtractor;
-    	to: GasReserveCSVInterpreter;
-    }
+		from: GasReserveHttpExtractor;
+		to: GasReserveCSVInterpreter;
+	}
 
 	block GasReserveCSVInterpreter oftype CSVInterpreter {
- 		delimiter: ";";
+		delimiter: ";";
 	}
 
 	pipe {
-    	from: GasReserveCSVInterpreter;
-    	to: DateHeaderWriter;
-    }
+		from: GasReserveCSVInterpreter;
+		to: DateHeaderWriter;
+	}
 
 	block DateHeaderWriter oftype CellWriter {
-    	at: cell A1;
-    	write: "Datum";
-    }
+		at: cell A1;
+		write: "Datum";
+	}
 
-    pipe {
-       	from: DateHeaderWriter;
-      	to: GasReserveTableInterpreter;
-    }
+	pipe {
+		from: DateHeaderWriter;
+		to: GasReserveTableInterpreter;
+	}
 
 	block GasReserveTableInterpreter oftype TableInterpreter {
-    	header: true;
-    	columns: [
+		header: true;
+		columns: [
     		"Datum" oftype text,
     		"Kritisch" oftype decimal,
     		"Angespannt" oftype decimal,
@@ -37,12 +37,12 @@ pipeline GasReservePipeline {
     		"Speicherstand IST" oftype decimal,
     		"gesetzliche Ziele" oftype decimal
     	];
-    }
+	}
 
-    pipe {
-        from: GasReserveTableInterpreter;
-        to: GasReserveLoader;
-    }
+	pipe {
+		from: GasReserveTableInterpreter;
+		to: GasReserveLoader;
+	}
 
 	block GasReserveLoader oftype PostgresLoader {
 		host: requires DB_HOST;
