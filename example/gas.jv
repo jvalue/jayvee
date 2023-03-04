@@ -1,30 +1,22 @@
 pipeline GasReservePipeline {
+
+    GasReserveHttpExtractor
+		-> GasReserveCSVInterpreter
+		-> DateHeaderWriter
+		-> GasReserveTableInterpreter
+		-> GasReserveLoader;
+
 	block GasReserveHttpExtractor oftype HttpExtractor {
 		url: "https://www.bundesnetzagentur.de/_tools/SVG/js2/_functions/csv_export.html?view=renderCSV&id=1089590";
-	}
-
-	pipe {
-		from: GasReserveHttpExtractor;
-		to: GasReserveCSVInterpreter;
 	}
 
 	block GasReserveCSVInterpreter oftype CSVInterpreter {
 		delimiter: ";";
 	}
 
-	pipe {
-		from: GasReserveCSVInterpreter;
-		to: DateHeaderWriter;
-	}
-
 	block DateHeaderWriter oftype CellWriter {
 		at: cell A1;
 		write: "Datum";
-	}
-
-	pipe {
-		from: DateHeaderWriter;
-		to: GasReserveTableInterpreter;
 	}
 
 	block GasReserveTableInterpreter oftype TableInterpreter {
@@ -37,11 +29,6 @@ pipeline GasReservePipeline {
     		"Speicherstand IST" oftype decimal,
     		"gesetzliche Ziele" oftype decimal
     	];
-	}
-
-	pipe {
-		from: GasReserveTableInterpreter;
-		to: GasReserveLoader;
 	}
 
 	block GasReserveLoader oftype PostgresLoader {

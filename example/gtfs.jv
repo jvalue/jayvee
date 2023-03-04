@@ -1,4 +1,5 @@
 pipeline GtfsPipeline {
+
 	block GTFSSampleFeedExtractor oftype HttpExtractor {
 		url: "https://developers.google.com/static/transit/gtfs/examples/sample-feed.zip";
 	}

@@ -1,21 +1,30 @@
 pipeline CarsPipeline {
 
-	CarsExtractor
-		-> CarsCSVInterpreter
-		-> NameHeaderWriter
-		-> CarsTableInterpreter
-		-> CarsLoader;
-
 	block CarsExtractor oftype HttpExtractor {
 		url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
+	}
+
+	pipe {
+		from: CarsExtractor;
+		to: CarsCSVInterpreter;
 	}
 
 	block CarsCSVInterpreter oftype CSVInterpreter {
 	}
 
+	pipe {
+		from: CarsCSVInterpreter;
+		to: NameHeaderWriter;
+	}
+
 	block NameHeaderWriter oftype CellWriter {
 		at: cell A1;
 		write: "name";
+	}
+
+	pipe {
+	   	from: NameHeaderWriter;
+	   	to: CarsTableInterpreter;
 	}
 
 	block CarsTableInterpreter oftype TableInterpreter {
@@ -34,6 +43,11 @@ pipeline CarsPipeline {
 			"gear" oftype integer,
 			"carb" oftype integer
 		];
+	}
+
+	pipe {
+		from: CarsTableInterpreter;
+		to: CarsLoader;
 	}
 
 	block CarsLoader oftype SQLiteLoader {
