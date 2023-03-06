@@ -96,13 +96,12 @@ export class HttpExtractorExecutor extends BlockExecutor<
           }
 
           // Create file and return file
-          const file: File = {
-            ioType: IOType.FILE,
-            name: fileName,
-            extension: fileExtension,
-            content: rawData.buffer as ArrayBuffer,
-            mimeType: mimeType,
-          };
+          const file = new File(
+            fileName,
+            fileExtension,
+            mimeType,
+            rawData.buffer as ArrayBuffer,
+          );
           resolve(R.ok(file));
         });
 

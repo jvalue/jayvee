@@ -10,13 +10,6 @@ import {
   isColumnWrapper,
 } from '@jayvee/language-server';
 
-import {
-  clone,
-  deleteColumn,
-  isInBounds,
-  resolveRelativeIndexes,
-} from './sheet-util';
-
 export class ColumnDeleterExecutor extends BlockExecutor<
   IOType.SHEET,
   IOType.SHEET
@@ -31,11 +24,11 @@ export class ColumnDeleterExecutor extends BlockExecutor<
     assert(relativeColumns.every(isColumnWrapper));
 
     let absoluteColumns = relativeColumns.map((column) =>
-      resolveRelativeIndexes(inputSheet, column),
+      inputSheet.resolveRelativeIndexes(column),
     );
 
     for (const column of absoluteColumns) {
-      if (!isInBounds(inputSheet, column)) {
+      if (!inputSheet.isInBounds(column)) {
         const columnIndex = getColumnIndex(column);
         return R.err({
           message: `The specified column ${columnIndexToString(
@@ -62,9 +55,9 @@ export class ColumnDeleterExecutor extends BlockExecutor<
     // By reversing the order, the column indexes stay stable during deletion
     absoluteColumns.reverse();
 
-    const resultingSheet = clone(inputSheet);
+    const resultingSheet = inputSheet.clone();
     absoluteColumns.forEach((column) => {
-      deleteColumn(resultingSheet, column);
+      resultingSheet.deleteColumn(column);
     });
 
     return R.ok(resultingSheet);

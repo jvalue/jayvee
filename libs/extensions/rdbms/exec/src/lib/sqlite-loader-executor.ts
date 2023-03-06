@@ -3,12 +3,6 @@ import { BlockExecutor, NONE, None, Table } from '@jayvee/execution';
 import { IOType } from '@jayvee/language-server';
 import * as sqlite3 from 'sqlite3';
 
-import {
-  buildCreateTableStatement,
-  buildDropTableStatement,
-  buildInsertValuesStatement,
-} from './sql-util';
-
 export class SQLiteLoaderExecutor extends BlockExecutor<
   IOType.TABLE,
   IOType.NONE
@@ -28,13 +22,13 @@ export class SQLiteLoaderExecutor extends BlockExecutor<
       db = new sqlite3.Database(file);
 
       this.logger.logDebug(`Dropping previous table "${table}" if it exists`);
-      await this.runQuery(db, buildDropTableStatement(table));
+      await this.runQuery(db, Table.generateDropTableStatement(table));
       this.logger.logDebug(`Creating table "${table}"`);
-      await this.runQuery(db, buildCreateTableStatement(table, input));
+      await this.runQuery(db, input.generateCreateTableStatement(table));
       this.logger.logDebug(
-        `Inserting ${input.data.length} row(s) into table "${table}"`,
+        `Inserting ${input.getNumberOfRows()} row(s) into table "${table}"`,
       );
-      await this.runQuery(db, buildInsertValuesStatement(table, input));
+      await this.runQuery(db, input.generateInsertValuesStatement(table));
 
       this.logger.logDebug(
         `The data was successfully loaded into the database`,

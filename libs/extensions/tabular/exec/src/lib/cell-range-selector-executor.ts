@@ -2,13 +2,6 @@ import * as R from '@jayvee/execution';
 import { BlockExecutor, Sheet } from '@jayvee/execution';
 import { IOType } from '@jayvee/language-server';
 
-import {
-  clone,
-  isInBounds,
-  resolveRelativeIndexes,
-  selectRange,
-} from './sheet-util';
-
 export class CellRangeSelectorExecutor extends BlockExecutor<
   IOType.SHEET,
   IOType.SHEET
@@ -21,9 +14,9 @@ export class CellRangeSelectorExecutor extends BlockExecutor<
   override async execute(inputSheet: Sheet): Promise<R.Result<Sheet>> {
     const relativeRange = this.getCellRangeAttributeValue('select');
 
-    const absoluteRange = resolveRelativeIndexes(inputSheet, relativeRange);
+    const absoluteRange = inputSheet.resolveRelativeIndexes(relativeRange);
 
-    if (!isInBounds(inputSheet, absoluteRange)) {
+    if (!inputSheet.isInBounds(absoluteRange)) {
       return R.err({
         message: 'The specified cell range does not fit the sheet',
         diagnostic: { node: absoluteRange.astNode },
@@ -32,8 +25,8 @@ export class CellRangeSelectorExecutor extends BlockExecutor<
 
     this.logger.logDebug(`Selecting cell range ${absoluteRange.toString()}`);
 
-    const resultingSheet = clone(inputSheet);
-    selectRange(resultingSheet, absoluteRange);
+    const resultingSheet = inputSheet.clone();
+    resultingSheet.selectRange(absoluteRange);
 
     return R.ok(resultingSheet);
   }

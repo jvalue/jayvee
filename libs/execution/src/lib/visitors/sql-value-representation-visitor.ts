@@ -3,8 +3,8 @@ import {
   DecimalValueType,
   IntegerValueType,
   TextValueType,
-  ValueTypeVisitor,
-} from '@jayvee/execution';
+} from '../types/value-types';
+import { ValueTypeVisitor } from '../types/value-types/visitors/value-type-visitor';
 
 export class SQLValueRepresentationVisitor extends ValueTypeVisitor<
   (value: unknown) => string
