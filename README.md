@@ -44,7 +44,7 @@ see [here](./apps/interpreter/README.md#global-installation).
 
 ## VS Code extension
 
-To set up Jayvee locally in VS Code, you need to install the latest Jayvee VS Code extension and the Jayvee interpreter.
+To set up Jayvee locally in VS Code, you need to install the latest Jayvee VS Code extension.
 
 To install the most recent extension, go to our [latest release](https://github.com/jvalue/jayvee/releases/latest) 
 and download the `jayvee.vsix` file from the release assets.
