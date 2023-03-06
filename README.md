@@ -27,18 +27,6 @@
 
 In case you run into problems, make sure to use the current LTS version of Node.js and npm.
 
-## Using Jayvee in VS Code
-
-To set up Jayvee locally in VS Code, you need to install the latest Jayvee VS Code extension and the Jayvee interpreter.
-
-To install the most recent extension, go to our [latest release](https://github.com/jvalue/jayvee/releases/latest) 
-and download the `jayvee.vsix` file from the release assets.
-Next, go to [this page](https://code.visualstudio.com/docs/editor/extension-marketplace#_install-from-a-vsix) and 
-follow the instructions for installing the downloaded extension.
-
-For globally installing the latest version of the Jayvee interpreter,
-see [here](./apps/interpreter/README.md#actual-installation).
-
 ## Documentation
 
 **User documentation** and **developer documentation** can be found in our `docs` project.
@@ -47,8 +35,23 @@ Start the documentation app locally and open the browser on the URL of the outpu
 npx nx serve docs
 ```
 
+## Using Jayvee
 
-## Development
+## Installing the interpreter
+
+For globally installing the latest version of the Jayvee interpreter,
+see [here](./apps/interpreter/README.md#global-installation).
+
+## VS Code extension
+
+To set up Jayvee locally in VS Code, you need to install the latest Jayvee VS Code extension.
+
+To install the most recent extension, go to our [latest release](https://github.com/jvalue/jayvee/releases/latest) 
+and download the `jayvee.vsix` file from the release assets.
+Next, go to [this page](https://code.visualstudio.com/docs/editor/extension-marketplace#_install-from-a-vsix) and 
+follow the instructions for installing the downloaded extension.
+
+## Developing Jayvee
 
 ### Building all projects
 
