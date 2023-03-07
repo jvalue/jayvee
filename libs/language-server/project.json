@@ -37,11 +37,31 @@
         "passWithNoTests": true
       }
     },
-    "publish": {
+    "pre-publish": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
-        "commands": ["node tools/scripts/publish.mjs @jvalue/language-server"]
+        "commands": [
+          "node tools/scripts/relax-peer-dependency-versions.mjs @jvalue/language-server"
+        ]
+      }
+    },
+    "publish": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["pre-publish"],
+      "options": {
+        "commands": [
+          "node tools/scripts/publish.mjs @jvalue/language-server"
+        ]
+      }
+    },
+    "pack": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["pre-publish"],
+      "options": {
+        "commands": [
+          "node tools/scripts/pack.mjs @jvalue/language-server"
+        ]
       }
     }
   },
