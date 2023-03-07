@@ -41,7 +41,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
-        "commands": ["npm publish dist/libs/language-server"]
+        "commands": ["node tools/scripts/publish.mjs @jayvee/language-server"]
       }
     }
   },
