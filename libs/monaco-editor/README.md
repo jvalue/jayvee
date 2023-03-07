@@ -1,4 +1,4 @@
-# @jayvee/monaco-editor
+# @jvalue/monaco-editor
 
 This library contains a React component that will spawn an instance of the Monaco Editor. This instance can only be used to edit Jayvee language files.
 
@@ -86,7 +86,7 @@ required in a later step.
 To build and pack the monaco editor, navigate to the project root folder and run
 
 ```bash
-npx nx pack @jayvee/monaco-editor
+npx nx pack @jvalue/monaco-editor
 ```
 
 Now, in the directory `<jayvee project

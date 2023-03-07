@@ -1,9 +1,9 @@
-import { RdbmsLangExtension } from '@jayvee/extensions/rdbms/lang';
-import { TabularLangExtension } from '@jayvee/extensions/tabular/lang';
+import { RdbmsLangExtension } from '@jvalue/extensions/rdbms/lang';
+import { TabularLangExtension } from '@jvalue/extensions/tabular/lang';
 import {
   BlockMetaInformationClass,
   JayveeLangExtension,
-} from '@jayvee/language-server';
+} from '@jvalue/language-server';
 
 import { ArchiveInterpreterMetaInformation } from './archive-interpreter-meta-inf';
 import { FilePickerMetaInformation } from './file-picker-meta-inf';

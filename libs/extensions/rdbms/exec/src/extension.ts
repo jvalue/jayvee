@@ -1,4 +1,4 @@
-import { BlockExecutorClass, JayveeExecExtension } from '@jayvee/execution';
+import { BlockExecutorClass, JayveeExecExtension } from '@jvalue/execution';
 
 import { PostgresLoaderExecutor, SQLiteLoaderExecutor } from './lib';
 

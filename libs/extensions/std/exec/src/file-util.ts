@@ -1,4 +1,4 @@
-import { FileExtension, MimeType } from '@jayvee/execution';
+import { FileExtension, MimeType } from '@jvalue/execution';
 import * as mime from 'mime-types';
 
 export function inferMimeTypeFromContentTypeString(

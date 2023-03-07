@@ -5,7 +5,7 @@ import {
   IOType,
   isCellRangeValue,
   isCellWrapper,
-} from '@jayvee/language-server';
+} from '@jvalue/language-server';
 
 export class CellWriterMetaInformation extends BlockMetaInformation {
   constructor() {

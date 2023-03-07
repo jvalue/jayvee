@@ -1,6 +1,6 @@
 import { strict as assert } from 'assert';
 
-import * as R from '@jayvee/execution';
+import * as R from '@jvalue/execution';
 import {
   AbstractValueType,
   BlockExecutor,
@@ -8,13 +8,13 @@ import {
   Sheet,
   Table,
   getValueType,
-} from '@jayvee/execution';
+} from '@jvalue/execution';
 import {
   CellIndex,
   IOType,
   TypeAssignment,
   rowIndexToString,
-} from '@jayvee/language-server';
+} from '@jvalue/language-server';
 
 interface ColumnDefinitionEntry {
   sheetColumnIndex: number;

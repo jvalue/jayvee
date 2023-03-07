@@ -1,6 +1,6 @@
-import { BlockExecutorClass, JayveeExecExtension } from '@jayvee/execution';
-import { RdbmsExecExtension } from '@jayvee/extensions/rdbms/exec';
-import { TabularExecExtension } from '@jayvee/extensions/tabular/exec';
+import { BlockExecutorClass, JayveeExecExtension } from '@jvalue/execution';
+import { RdbmsExecExtension } from '@jvalue/extensions/rdbms/exec';
+import { TabularExecExtension } from '@jvalue/extensions/tabular/exec';
 
 import { ArchiveInterpreterExecutor } from './archive-interpreter-executor';
 import { FilePickerExecutor } from './file-picker-executor';

@@ -1,5 +1,5 @@
-import { StdLangExtension } from '@jayvee/extensions/std/lang';
-import { createJayveeServices, useExtension } from '@jayvee/language-server';
+import { StdLangExtension } from '@jvalue/extensions/std/lang';
+import { createJayveeServices, useExtension } from '@jvalue/language-server';
 import { startLanguageServer } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { ProposedFeatures, createConnection } from 'vscode-languageserver/node';

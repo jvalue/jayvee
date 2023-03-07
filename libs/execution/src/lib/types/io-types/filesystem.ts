@@ -1,4 +1,4 @@
-import { IOType } from '@jayvee/language-server';
+import { IOType } from '@jvalue/language-server';
 
 import { File } from './file';
 import { IOTypeImplementation } from './io-type-implementation';

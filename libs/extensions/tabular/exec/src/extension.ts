@@ -1,4 +1,4 @@
-import { BlockExecutorClass, JayveeExecExtension } from '@jayvee/execution';
+import { BlockExecutorClass, JayveeExecExtension } from '@jvalue/execution';
 
 import { CellRangeSelectorExecutor } from './lib/cell-range-selector-executor';
 import { CellWriterExecutor } from './lib/cell-writer-executor';

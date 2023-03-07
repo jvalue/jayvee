@@ -1,6 +1,6 @@
 import { strict as assert } from 'assert';
 
-import { Block } from '@jayvee/language-server';
+import { Block } from '@jvalue/language-server';
 
 import { BlockExecutor } from './block-executor';
 import { BlockExecutorClass } from './block-executor-class';

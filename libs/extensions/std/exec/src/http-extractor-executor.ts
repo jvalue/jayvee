@@ -1,14 +1,14 @@
 import * as https from 'https';
 import * as path from 'path';
 
-import * as R from '@jayvee/execution';
+import * as R from '@jvalue/execution';
 import {
   BlockExecutor,
   File,
   FileExtension,
   MimeType,
-} from '@jayvee/execution';
-import { IOType } from '@jayvee/language-server';
+} from '@jvalue/execution';
+import { IOType } from '@jvalue/language-server';
 
 import {
   inferFileExtensionFromContentTypeString,

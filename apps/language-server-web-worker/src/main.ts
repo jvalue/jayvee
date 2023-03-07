@@ -1,5 +1,5 @@
-import { StdLangExtension } from '@jayvee/extensions/std/lang';
-import { createJayveeServices, useExtension } from '@jayvee/language-server';
+import { StdLangExtension } from '@jvalue/extensions/std/lang';
+import { createJayveeServices, useExtension } from '@jvalue/language-server';
 import { EmptyFileSystem, startLanguageServer } from 'langium';
 import {
   BrowserMessageReader,

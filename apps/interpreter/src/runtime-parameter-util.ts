@@ -1,7 +1,7 @@
 import { strict as assert } from 'assert';
 
-import * as R from '@jayvee/execution';
-import { Logger } from '@jayvee/execution';
+import * as R from '@jvalue/execution';
+import { Logger } from '@jvalue/execution';
 import {
   AttributeValueType,
   Model,
@@ -9,7 +9,7 @@ import {
   getOrFailMetaInformation,
   isRuntimeParameter,
   runtimeParameterAllowedForType,
-} from '@jayvee/language-server';
+} from '@jvalue/language-server';
 import { streamAst } from 'langium';
 
 /**

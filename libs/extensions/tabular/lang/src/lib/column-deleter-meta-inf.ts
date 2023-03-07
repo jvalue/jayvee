@@ -7,7 +7,7 @@ import {
   isCollection,
   isColumnWrapper,
   validateTypedCollection,
-} from '@jayvee/language-server';
+} from '@jvalue/language-server';
 
 export class ColumnDeleterMetaInformation extends BlockMetaInformation {
   constructor() {

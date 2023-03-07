@@ -1,4 +1,4 @@
-import { DiagnosticSeverity, Logger } from '@jayvee/execution';
+import { DiagnosticSeverity, Logger } from '@jvalue/execution';
 import * as chalk from 'chalk';
 import { LangiumDocument } from 'langium';
 import { assertUnreachable } from 'langium/lib/utils/errors';

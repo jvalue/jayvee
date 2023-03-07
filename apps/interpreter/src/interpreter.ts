@@ -3,10 +3,10 @@ import {
   NONE,
   createBlockExecutor,
   useExtension as useExecutionExtension,
-} from '@jayvee/execution';
-import * as R from '@jayvee/execution';
-import { StdExecExtension } from '@jayvee/extensions/std/exec';
-import { StdLangExtension } from '@jayvee/extensions/std/lang';
+} from '@jvalue/execution';
+import * as R from '@jvalue/execution';
+import { StdExecExtension } from '@jvalue/extensions/std/exec';
+import { StdLangExtension } from '@jvalue/extensions/std/lang';
 import {
   Block,
   Model,
@@ -17,7 +17,7 @@ import {
   createJayveeServices,
   getBlocksInTopologicalSorting,
   useExtension as useLangExtension,
-} from '@jayvee/language-server';
+} from '@jvalue/language-server';
 import { NodeFileSystem } from 'langium/node';
 
 import { ExitCode, extractAstNode } from './cli-util';

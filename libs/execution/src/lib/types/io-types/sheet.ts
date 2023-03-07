@@ -11,7 +11,7 @@ import {
   getCellIndex,
   getColumnIndex,
   getRowIndex,
-} from '@jayvee/language-server';
+} from '@jvalue/language-server';
 
 import { IOTypeImplementation } from './io-type-implementation';
 

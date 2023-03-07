@@ -1,5 +1,5 @@
 {
-  "name": "@jayvee/language-server",
+  "name": "@jvalue/language-server",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/language-server/src",
   "projectType": "library",
@@ -41,7 +41,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
-        "commands": ["node tools/scripts/publish.mjs @jayvee/language-server"]
+        "commands": ["node tools/scripts/publish.mjs @jvalue/language-server"]
       }
     }
   },

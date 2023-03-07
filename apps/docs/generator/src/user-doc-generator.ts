@@ -5,7 +5,7 @@ import {
   IOType,
   JayveeBlockTypeDocGenerator,
   MarkdownBuilder,
-} from '@jayvee/language-server';
+} from '@jvalue/language-server';
 
 export class UserDocGenerator implements JayveeBlockTypeDocGenerator {
   generateBlockTypeDoc(metaInf: BlockMetaInformation): string {
