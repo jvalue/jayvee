@@ -1,4 +1,4 @@
-import { PrimitiveValueType } from '@jayvee/language-server';
+import { PrimitiveValueType } from '@jvalue/language-server';
 
 // eslint-disable-next-line import/no-cycle
 import { ValueTypeVisitor } from './visitors/value-type-visitor';

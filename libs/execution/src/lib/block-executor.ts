@@ -12,7 +12,7 @@ import {
   isCollection,
   isRuntimeParameter,
   isTypeAssignmentValue,
-} from '@jayvee/language-server';
+} from '@jvalue/language-server';
 import { isReference } from 'langium';
 
 import * as R from './execution-result';

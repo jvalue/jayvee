@@ -2,9 +2,9 @@ import { TextDecoder } from 'util';
 
 import { parseString as parseStringAsCsv } from '@fast-csv/parse';
 import { ParserOptionsArgs } from '@fast-csv/parse/build/src/ParserOptions';
-import * as R from '@jayvee/execution';
-import { BlockExecutor, File, FileExtension, Sheet } from '@jayvee/execution';
-import { IOType } from '@jayvee/language-server';
+import * as R from '@jvalue/execution';
+import { BlockExecutor, File, FileExtension, Sheet } from '@jvalue/execution';
+import { IOType } from '@jvalue/language-server';
 import { Either, isLeft } from 'fp-ts/lib/Either';
 import * as E from 'fp-ts/lib/Either';
 

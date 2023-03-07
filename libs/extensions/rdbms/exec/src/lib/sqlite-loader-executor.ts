@@ -1,6 +1,6 @@
-import * as R from '@jayvee/execution';
-import { BlockExecutor, NONE, None, Table } from '@jayvee/execution';
-import { IOType } from '@jayvee/language-server';
+import * as R from '@jvalue/execution';
+import { BlockExecutor, NONE, None, Table } from '@jvalue/execution';
+import { IOType } from '@jvalue/language-server';
 import * as sqlite3 from 'sqlite3';
 
 export class SQLiteLoaderExecutor extends BlockExecutor<

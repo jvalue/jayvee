@@ -1,11 +1,11 @@
 import { writeFileSync } from 'fs';
 import { join } from 'path';
 
-import { StdLangExtension } from '@jayvee/extensions/std/lang';
+import { StdLangExtension } from '@jvalue/extensions/std/lang';
 import {
   getRegisteredMetaInformation,
   useExtension,
-} from '@jayvee/language-server';
+} from '@jvalue/language-server';
 
 import { UserDocGenerator } from './user-doc-generator';
 

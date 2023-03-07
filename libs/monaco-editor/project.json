@@ -1,5 +1,5 @@
 {
-  "name": "@jayvee/monaco-editor",
+  "name": "@jvalue/monaco-editor",
   "sourceRoot": "libs/monaco-editor/src",
   "projectType": "library",
   "tags": [],
@@ -44,7 +44,7 @@
       "dependsOn": ["build"],
       "options": {
         "commands": [
-          "node tools/scripts/monaco-editor/fix-peer-dependencies.mjs @jayvee/monaco-editor"
+          "node tools/scripts/monaco-editor/fix-peer-dependencies.mjs @jvalue/monaco-editor"
         ]
       }
     },
@@ -53,7 +53,7 @@
       "dependsOn": ["pre-publish"],
       "options": {
         "commands": [
-          "node tools/scripts/publish.mjs @jayvee/monaco-editor"
+          "node tools/scripts/publish.mjs @jvalue/monaco-editor"
         ]
       }
     },
@@ -62,7 +62,7 @@
       "dependsOn": ["pre-publish"],
       "options": {
         "commands": [
-          "node tools/scripts/pack.mjs @jayvee/monaco-editor"
+          "node tools/scripts/pack.mjs @jvalue/monaco-editor"
         ]
       }
     }

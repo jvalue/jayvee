@@ -1,14 +1,14 @@
 import { strict as assert } from 'assert';
 
-import * as R from '@jayvee/execution';
-import { BlockExecutor, Sheet } from '@jayvee/execution';
+import * as R from '@jvalue/execution';
+import { BlockExecutor, Sheet } from '@jvalue/execution';
 import {
   ColumnWrapper,
   IOType,
   columnIndexToString,
   getColumnIndex,
   isColumnWrapper,
-} from '@jayvee/language-server';
+} from '@jvalue/language-server';
 
 export class ColumnDeleterExecutor extends BlockExecutor<
   IOType.SHEET,

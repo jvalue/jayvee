@@ -6,7 +6,7 @@ import {
   isCollection,
   isTypeAssignmentValue,
   validateTypedCollection,
-} from '@jayvee/language-server';
+} from '@jvalue/language-server';
 
 export class TableInterpreterMetaInformation extends BlockMetaInformation {
   constructor() {

@@ -1,4 +1,4 @@
-import { Logger } from '@jayvee/execution';
+import { Logger } from '@jvalue/execution';
 
 import { DefaultLogger } from './default-logger';
 

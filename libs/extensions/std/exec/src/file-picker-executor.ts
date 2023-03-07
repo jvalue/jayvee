@@ -1,6 +1,6 @@
-import * as R from '@jayvee/execution';
-import { BlockExecutor, File, FileSystem } from '@jayvee/execution';
-import { IOType } from '@jayvee/language-server';
+import * as R from '@jvalue/execution';
+import { BlockExecutor, File, FileSystem } from '@jvalue/execution';
+import { IOType } from '@jvalue/language-server';
 
 export class FilePickerExecutor extends BlockExecutor<
   IOType.FILE_SYSTEM,

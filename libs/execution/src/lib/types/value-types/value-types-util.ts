@@ -1,4 +1,4 @@
-import { PrimitiveValueType } from '@jayvee/language-server';
+import { PrimitiveValueType } from '@jvalue/language-server';
 import { assertUnreachable } from 'langium/lib/utils/errors';
 
 import { AbstractValueType } from './abstract-value-type';

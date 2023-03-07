@@ -41,7 +41,7 @@ In `libs/extensions/<extension-name>/lang/src/extension.ts`:
 import {
   BlockMetaInformationClass,
   JayveeLangExtension,
-} from '@jayvee/language-server';
+} from '@jvalue/language-server';
 
 export class MyLangExtension implements JayveeLangExtension {
   getBlockMetaInf(): BlockMetaInformationClass[] {
@@ -56,7 +56,7 @@ In `libs/extensions/<extension-name>/exec/src/extension.ts`:
 import {
   BlockExecutorClass,
   JayveeExecExtension,
-} from '@jayvee/execution';
+} from '@jvalue/execution';
 
 export class MyExecExtension implements JayveeExecExtension {
   getBlockExecutors(): BlockExecutorClass[] {
@@ -86,7 +86,7 @@ In `libs/extensions/std/lang/src/extension.ts`:
 ```typescript
 // ...
 
-import { MyLangExtension } from '@jayvee/extensions/<extension-name>/lang';
+import { MyLangExtension } from '@jvalue/extensions/<extension-name>/lang';
 
 export class StdLangExtension implements JayveeLangExtension {
   private readonly wrappedExtensions: JayveeLangExtension[] = [
@@ -105,7 +105,7 @@ In `libs/extensions/std/exec/src/extension.ts`:
 ```typescript
 // ...
 
-import { MyExecExtension } from '@jayvee/extensions/<extension-name>/exec';
+import { MyExecExtension } from '@jvalue/extensions/<extension-name>/exec';
 
 export class StdExecExtension implements JayveeExecExtension {
   private readonly wrappedExtensions: JayveeExecExtension[] = [
@@ -136,7 +136,7 @@ import {
   AttributeType,
   BlockMetaInformation,
   IOType,
-} from '@jayvee/language-server';
+} from '@jvalue/language-server';
 
 export class MyExtractorMetaInformation extends BlockMetaInformation {
   constructor() {
@@ -201,9 +201,9 @@ The `execute` method defines the behavior when a block is executed. Its signatur
 In `libs/extensions/<extension-name>/exec/src/lib/my-extractor-executor.ts`:
 
 ```typescript
-import * as R from '@jayvee/execution';
-import { BlockExecutor } from '@jayvee/execution';
-import { Sheet } from '@jayvee/language-server';
+import * as R from '@jvalue/execution';
+import { BlockExecutor } from '@jvalue/execution';
+import { Sheet } from '@jvalue/language-server';
 
 export class MyExtractorExecutor extends BlockExecutor<void, Sheet> {
   constructor() {

@@ -14,9 +14,6 @@ import {
  * The following changes are made to the peer dependencies:
  * - If a package version like "1.2.3" is specified, it gets rewritten to "^1.0.0".
  * - A special case of the previous one: If a package version like "0.1.2" is specified, then this version gets rewritten to "^0.1.0". This is because work-in-progress packages are often versioned in a way that minor releases indicate larger changes.
- * - If a peer dependency is part of the `@jayvee` scope, the scope gets changed to `@jvalue`. This is necessary because the packages are eventually published under the `@jvalue` scope.
- * Example:
- * `"@jayvee/language-server": "1.2.3"` is rewritten to `"@jayvee/language-server": "npm:@jvalue/language-server@1.2.3"`
  *
  * Summary:
  *
@@ -26,9 +23,6 @@ import {
  *
  * "foo": "0.1.2"
  * --> foo": "^0.1.0"
- *
- * "@jayvee/foo": "1.2.3"
- * --> "@jayvee/foo": "npm:@jvalue/foo@1.2.3"
  * ```
  */
 
@@ -42,25 +36,6 @@ invariant(packageJson.peerDependencies, 'Found no peer dependencies in package.j
 for (const [packageName, packageVersion] of Object.entries(
     packageJson.peerDependencies,
 )) {
-    /*
-      Packages in the "@jayvee" scope get renamed to have the "@jvalue" scope after publishing.
-      This is a problem for us, because we internally still refer to the "@jayvee" scope.
-      To fix this, we rename the package in our peer deps, so that
-      "@jayvee/foo": "1.2.3"
-      becomes
-      "@jayvee/foo": "npm:@jvalue/foo@1.2.3"
-
-      We intentionally do not rewrite the version to "^1.2.3" here, because it is very likely that our packages are tightly connected with each other.
-    */
-    const jayveeScope = '@jayvee/';
-    if (packageName.startsWith(jayveeScope)) {
-        const nameWithoutScope = packageName.replace(jayveeScope, '');
-        packageJson.peerDependencies[
-            packageName
-            ] = `npm:@jvalue/${nameWithoutScope}@${packageVersion}`;
-        continue;
-    }
-
     const parsedVersion = parsePackageVersion(packageVersion);
     let newVersion;
     if (parsedVersion.major < 1) {

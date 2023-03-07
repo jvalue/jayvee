@@ -2,7 +2,7 @@ import {
   AttributeValueType,
   BlockMetaInformation,
   IOType,
-} from '@jayvee/language-server';
+} from '@jvalue/language-server';
 
 export class PostgresLoaderMetaInformation extends BlockMetaInformation {
   constructor() {

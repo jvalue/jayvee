@@ -2,7 +2,7 @@ import {
   AttributeValueType,
   RuntimeParameter,
   runtimeParameterAllowedForType,
-} from '@jayvee/language-server';
+} from '@jvalue/language-server';
 
 import { parseParameterAsMatchingType } from './runtime-parameter-util';
 
