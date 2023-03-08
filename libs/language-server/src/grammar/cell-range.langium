@@ -4,13 +4,13 @@ CellRange:
   RangeExpression | ColumnExpression | RowExpression | CellExpression;
 
 RangeExpression:
-  'range' cellFrom=CELL_ID ':' cellTo=CELL_ID;
+  'range' cellFrom=CELL_REFERENCE ':' cellTo=CELL_REFERENCE;
 
 ColumnExpression:
   'column' columnId=(ID | '*');
 
 RowExpression:
-  'row' rowId=(INT | '*');
+  'row' rowId=(INTEGER | '*');
 
 CellExpression:
-  'cell' cellId=CELL_ID;
+  'cell' cellId=CELL_REFERENCE;
