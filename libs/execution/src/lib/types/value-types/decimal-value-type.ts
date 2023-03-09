@@ -4,9 +4,15 @@ import { AbstractValueType } from './abstract-value-type';
 import { ValueTypeVisitor } from './visitors/value-type-visitor';
 
 export class DecimalValueType extends AbstractValueType {
+  private readonly DOT_SEPARATOR_REGEX = /^[+-]?([0-9]*[.])?[0-9]+$/;
+  private readonly COMMA_SEPARATOR_REGEX = /^[+-]?([0-9]*[,])?[0-9]+$/;
+
   override isValid(value: unknown): boolean {
     if (typeof value === 'string') {
-      return !!value.match(/[+-]?([0-9]*[.])?[0-9]+/);
+      return (
+        this.DOT_SEPARATOR_REGEX.test(value) ||
+        this.COMMA_SEPARATOR_REGEX.test(value)
+      );
     }
 
     return !Number.isNaN(value);
@@ -21,7 +27,11 @@ export class DecimalValueType extends AbstractValueType {
       return value;
     }
     if (typeof value === 'string') {
-      return Number.parseFloat(value);
+      let stringValue: string = value;
+      if (this.COMMA_SEPARATOR_REGEX.test(stringValue)) {
+        stringValue = stringValue.replace(',', '.');
+      }
+      return Number.parseFloat(stringValue);
     }
 
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
