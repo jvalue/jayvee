@@ -1,12 +1,15 @@
-hidden terminal WS: /\s+/;
+// The order of the terminals matters here, it implicitly defines the prioritization for the lexer.
+// For more details, see https://langium.org/docs/grammar-language/#terminal-rules
 
-// The CELL_ID terminal needs to be above the ID terminal, so the lexer returns the correct match.
-// See https://langium.org/docs/grammar-language/#terminal-rules for details.
-terminal CELL_ID: /([A-Z]+|\*)([0-9]+|\*)/;
+hidden terminal WHITESPACE: /\s+/;
+
 terminal TRUE returns boolean: /true/;
 terminal FALSE returns boolean: /false/;
+terminal CELL_REFERENCE: /([A-Z]+|\*)([0-9]+|\*)/;
 terminal ID: /[_a-zA-Z][\w_]*/;
-terminal INT returns number: /[0-9]+/;
+
+terminal INTEGER returns number: /[0-9]+/;
+
 terminal STRING: /"[^"]*"|'[^']*'/;
 
-hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
+hidden terminal SINGLE_LINE_COMMENT: /\/\/[^\n\r]*/;

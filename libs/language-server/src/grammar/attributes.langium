@@ -24,7 +24,7 @@ TextValue:
   value=STRING;
 
 IntegerValue:
-  value=INT;
+  value=INTEGER;
 
 BooleanValue:
   value=(TRUE | FALSE);
