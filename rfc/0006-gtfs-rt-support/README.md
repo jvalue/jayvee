@@ -12,7 +12,7 @@
   - ACCEPTED: The RFC was accepted. Create issues to prepare implementation of the RFC.
   - REJECTED: The RFC was rejected. If another revision emerges, switch to status DRAFT.
 -->
-
+Disclaimer: This RFC is part of my master-thesis "Archiving open transport data using the JValue tooling ecosystem" supervised by @rhazn.
 ## Summary
 Introduces support for [GTFS-RT](https://developers.google.com/transit/gtfs-realtime) (realtime) endpoints and extends therefore functionality of [0002-mobility-extension](https://github.com/jvalue/jayvee/tree/main/rfc/0002-mobility-extension). With this RFC, Jayvee can then process pipelines, which are extracting static public transportation schedules and associated geographic information and on top  realtime updates about associated fleets like delays, cancellations, vehicle positions, etc.
 
@@ -32,21 +32,47 @@ work
 ![Visualization of a GTFS file collection including GTFS-RT](./visualization-gtfs-file-collection-including-gtfs-rt.png)
 
 ## Explanation
+In contrast to static GTFS, which only changes manually, when new schedules are
+released, realtime feeds require a frequent update rate (in the range of seconds),
+since live locations are played out. For this reason, it is specified that GTFS-RT is
+streamed using the protocol buffer format, which corresponds to a very efficient
+binary representation of the data. As a result, consuming
+and processing a GTFS-RT-feed needs an additional encoding stage to convert
+the messages to human readable plain text. The `gtfs-realtime.proto` textfile is used for parsing the protocol buffer into an JSON-like representation.
 
-<!-- 
-  TODO: Explain the details of the RFC. 
-  If the RFC contains more than a single cohesive aspect, structure this section accordingly.
-  Make sure to provide realistic modelling examples on the example data set introduced above.
--->
+A simple GTFS-RT-Pipeline is shown in the picture below.
+![Simple GTFS-RT pipeline](simple-gtfs-rt-pipeline.png). 
 
+Since realtime feeds require a frequent update rate, we enable a periodical load from GTFS **and** GTFS-RT data by following concept already discussed with @rhazn:
+
+1. One pipeline containing both, GTFS and GTFS-RT sections.
+2. Periodical execution of the pipeline.
+3. An additional attribute for SQLite-sink indicates whether tables should be dropped before load starts. GTFS-tables are dropped every run, GTFS-RT-tables not, which leads to the dataset visualized above in the Output-SQLite-Database containing the static GTFS-information as well as  the incrementally growing RT-tables.
+
+This concept results in following pipeline.
+
+![Example pipeline for GTFS and GTFS-RT](./gtfs-and-gtfs-rt-pipeline.png)
+
+## Block Types
+### 1) GtfsRTInterpreter *(Requires implementation from scratch)*
+Input: File, Output: Sheet
+
+A GtfsRTInterpreter gets an entity ("vehicle", "trip_update" or "alert") to process from the incoming protobuf-file, decodes the protobuf-file and outputs the entity as a sheet. In a first step, just required columns (defined in `gtfs-realtime.proto`) are considered. As we dont have a dedicated mobility-extension folder in Jayvee this should be implemented in the std-extension (already discussed with @rhazn).
+```
+block MyGtfsRTInterpreter oftype GtfsRTInterpreter {
+    entity: "vehicle"; // TEXT: "vehicle", "trip_update" or "alert"
+}
+```
+### 2) SQLiteSink *(Requires minor change)*
+The SQLite sink needs an additional attribute indicating whether tables should be dropped before load starts.
+```
+block VehicleLoader oftype SQLiteLoader {
+		file: "./gtfs.db";
+    drop_table: false // BOOLEAN
+}
+```
 ## Drawbacks
-
-<!-- TODO: (optional) Discuss the drawbacks of the proposed design. -->
+The proposed concept is functional, but it could be more efficient if it did not involve dropping static data with each run. However, since addressing this issue would make the RFC more complex, we have decided to implement this optimization at a later stage, and focus on creating a first proof of concept for now.
 
 ## Alternatives
-
-<!-- TODO: (optional) Point out alternatives to the design or parts of the design. -->
-
-## Possible Future Changes/Enhancements
-
-<!-- TODO: (optional) Point out what changes or enhancements you see in the future to the proposed concepts. -->
+An alternative approach could involve using a generic block type called `JsonInterpreter` instead of the proposed `GtfsRTInterpreter`. This block type would parse incoming files into a new io-datatype called `JSON`. A downstream block type `JsonFlattener` would then flatten the `JSON`  into a tabular sheet representation. Since the flattening of generic JSON files is a fundamental topic for ETL systems, this approach should be discussed in a separate RFC as it falls outside the scope of the master thesis.
