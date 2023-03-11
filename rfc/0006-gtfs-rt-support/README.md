@@ -14,14 +14,22 @@
 -->
 
 ## Summary
-
-<!-- TODO: Write a 1-3 sentence summary what this RFC is about. -->
+Introduces support for [GTFS-RT](https://developers.google.com/transit/gtfs-realtime) (realtime) endpoints and extends therefore functionality of [0002-mobility-extension](https://github.com/jvalue/jayvee/tree/main/rfc/0002-mobility-extension). With this RFC, Jayvee can then process pipelines, which are extracting static public transportation schedules and associated geographic information and on top  realtime updates about associated fleets like delays, cancellations, vehicle positions, etc.
 
 ## Motivation
+When it comes to nearly realtime updates, Google introduced an additional specification GTFS-RT on top of GTFS. This specification provides real-time up-dates to transit schedules and locations. It allows developers to access real-time
+information about the location and status of vehicles, as well as any disruptions
+or delays in service. GTFS-RT data is typically provided in
+shape of streaming data feeds that are updated in real-time as events occur.
+This realtime-feed always needs its corresponding static feed, which defines the
+schedule and dimensions like `agency.txt` or `routes.txt` around live updates. The realtime specification can be divided into three types
+of additional information, which enriches the static GTFS-feed:
+* Trip updates - cancellations, delays and changed routes
+* Service alerts - unforeseen events with impact on the transportation net-
+work
+* Vehicle positions - realtime information on vehicles position in coordinates
 
-<!-- TODO: Describe the challenge the RFC addresses. -->
-
-<!-- TODO: (optional) Introduce an exemplary data set that benefits from this RFC (used later in explanation). -->
+![Visualization of a GTFS file collection including GTFS-RT](./visualization-gtfs-file-collection-including-gtfs-rt.png)
 
 ## Explanation
 
