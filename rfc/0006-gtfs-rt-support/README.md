@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Feature Tag | `gtfs-rt-support` | 
-| Status | `DRAFT` | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED -->
+| Status | `DISCUSSION` | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED -->
 | Responsible | `@schlingling` |
 <!-- 
   Status Overview:
@@ -42,6 +42,7 @@ the messages to human readable plain text. The `gtfs-realtime.proto` textfile is
 
 A simple GTFS-RT-Pipeline is shown in the picture below.
 ![Simple GTFS-RT pipeline](simple-gtfs-rt-pipeline.png). 
+The red block types need to be created from scratch whereas the green block types are either already present or only require minor changes (this classification is also reflected in the following chapter titles).
 
 Since realtime feeds require a frequent update rate, we enable a periodical load from GTFS **and** GTFS-RT data by following concept already discussed with @rhazn:
 
@@ -64,7 +65,7 @@ block MyGtfsRTInterpreter oftype GtfsRTInterpreter {
 }
 ```
 ### 2) SQLiteSink *(Requires minor change)*
-The SQLite sink needs an additional attribute indicating whether tables should be dropped before load starts.
+The SQLite sink needs an additional attribute indicating whether table should be dropped before load starts. Since blocks currently just support one input, a boolean data type for dropping a table is enough.
 ```
 block VehicleLoader oftype SQLiteLoader {
 		file: "./gtfs.db";
@@ -72,7 +73,7 @@ block VehicleLoader oftype SQLiteLoader {
 }
 ```
 ## Drawbacks
-The proposed concept is functional, but it could be more efficient if it did not involve dropping static data with each run. However, since addressing this issue would make the RFC more complex, we have decided to implement this optimization at a later stage, and focus on creating a first proof of concept for now.
+The proposed concept is functional, but it could be more efficient if it would not involve dropping static data with each run. However, since addressing this issue would make the RFC more complex, we have decided to implement this optimization at a later stage, and focus on creating a first proof of concept for now.
 
 ## Alternatives
-An alternative approach could involve using a generic block type called `JsonInterpreter` instead of the proposed `GtfsRTInterpreter`. This block type would parse incoming files into a new io-datatype called `JSON`. A downstream block type `JsonFlattener` would then flatten the `JSON`  into a tabular sheet representation. Since the flattening of generic JSON files is a fundamental topic for ETL systems, this approach should be discussed in a separate RFC as it falls outside the scope of the master thesis.
+An alternative approach could involve using a generic block type called `JsonInterpreter` instead of the proposed `GtfsRTInterpreter`. This block type would parse incoming files into a new io-datatype called `JSON`. A downstream block type `JsonFlattener` would then flatten the `JSON`  into a tabular sheet representation. Since the flattening of generic JSON files into tabular representation is a fundamental topic for ETL systems, this approach should be discussed in a separate RFC as it falls outside the scope of the master thesis.
