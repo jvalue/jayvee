@@ -41,7 +41,8 @@ and processing a GTFS-RT-feed needs an additional encoding stage to convert
 the messages to human readable plain text. The `gtfs-realtime.proto` textfile is used for parsing the protocol buffer into an JSON-like representation.
 
 A simple GTFS-RT-Pipeline is shown in the picture below.
-![Simple GTFS-RT pipeline](simple-gtfs-rt-pipeline.png). 
+![Simple GTFS-RT pipeline](simple-gtfs-rt-pipeline.png) 
+
 The red block types need to be created from scratch whereas the green block types are either already present or only require minor changes (this classification is also reflected in the following chapter titles).
 
 Since realtime feeds require a frequent update rate, we enable a periodical load from GTFS **and** GTFS-RT data by following concept already discussed with @rhazn:
