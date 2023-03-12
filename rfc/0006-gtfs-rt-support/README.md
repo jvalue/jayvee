@@ -55,8 +55,6 @@ This concept results in following pipeline.
 
 ![Example pipeline for GTFS and GTFS-RT](./gtfs-and-gtfs-rt-pipeline.png)
 
-The thought on connecting them sequentially is, that once we want to logically validate the data model during load, we have the dependency to first load the static data and afterwards the realtime data because realtime depends on static. We just want to load realtime data to the sink, if the data is conform to the static data which was loaded in advance. Unfortunally state now we cannot model this sequential dependency in one pipeline(eg. by connecting the GTFS-sink with the GTFS-RT-Extractor) but to shed light on this the dependcy is already visualized in this figure..
-
 ## Block Types
 ### 1) GtfsRTInterpreter *(Requires implementation from scratch)*
 Input: File, Output: Sheet
@@ -80,3 +78,6 @@ The proposed concept is functional, but it could be more efficient if it would n
 
 ## Alternatives
 An alternative approach could involve using a generic block type called `JsonInterpreter` instead of the proposed `GtfsRTInterpreter`. This block type would parse incoming files into a new io-datatype called `JSON`. A downstream block type `JsonFlattener` would then flatten the `JSON`  into a tabular sheet representation (eg. by having a file map to some form of tree structure for JSON which maps to sheets). Since the flattening of generic JSON files into tabular representation is a fundamental topic for ETL systems, this approach should be discussed in a separate RFC as it falls outside the scope of the master thesis.
+
+## Outlook
+Once we want to logically validate the data model during load, we have the dependency to first load the static data and afterwards the realtime data because realtime depends on static. We just want to load realtime data to the sink, if the data is conform to the static data which was loaded in advance. Unfortunally state now we cannot model this sequential dependency in one pipeline(eg. by connecting the GTFS-sink with the GTFS-RT-Extractor) but to shed light on this the dependcy this is mentioned as an outlook.
