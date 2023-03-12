@@ -61,7 +61,7 @@ Input: File, Output: Sheet
 A GtfsRTInterpreter gets an entity ("vehicle", "trip_update" or "alert") to process from the incoming protobuf-file, decodes the protobuf-file and outputs the entity as a sheet. In a first step, just required columns (defined in `gtfs-realtime.proto`) are considered. As we dont have a dedicated mobility-extension folder in Jayvee this should be implemented in the std-extension (already discussed with @rhazn).
 ```
 block MyGtfsRTInterpreter oftype GtfsRTInterpreter {
-    entity: "vehicle"; // TEXT: "vehicle", "trip_update" or "alert"
+    entity: "vehiclePosition"; // TEXT: "vehiclePosition", "tripUpdate" or "alert"
 }
 ```
 ### 2) SQLiteSink *(Requires minor change)*
@@ -69,11 +69,11 @@ The SQLite sink needs an additional attribute indicating whether table should be
 ```
 block VehicleLoader oftype SQLiteLoader {
 		file: "./gtfs.db";
-    drop_table: false // BOOLEAN
+    dropTable: false // BOOLEAN
 }
 ```
 ## Drawbacks
 The proposed concept is functional, but it could be more efficient if it would not involve dropping static data with each run. However, since addressing this issue would make the RFC more complex, we have decided to implement this optimization at a later stage, and focus on creating a first proof of concept for now.
 
 ## Alternatives
-An alternative approach could involve using a generic block type called `JsonInterpreter` instead of the proposed `GtfsRTInterpreter`. This block type would parse incoming files into a new io-datatype called `JSON`. A downstream block type `JsonFlattener` would then flatten the `JSON`  into a tabular sheet representation. Since the flattening of generic JSON files into tabular representation is a fundamental topic for ETL systems, this approach should be discussed in a separate RFC as it falls outside the scope of the master thesis.
+An alternative approach could involve using a generic block type called `JsonInterpreter` instead of the proposed `GtfsRTInterpreter`. This block type would parse incoming files into a new io-datatype called `JSON`. A downstream block type `JsonFlattener` would then flatten the `JSON`  into a tabular sheet representation (eg. by having a file map to some form of tree structure for JSON which maps to sheets). Since the flattening of generic JSON files into tabular representation is a fundamental topic for ETL systems, this approach should be discussed in a separate RFC as it falls outside the scope of the master thesis.
