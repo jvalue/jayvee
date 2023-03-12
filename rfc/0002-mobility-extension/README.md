@@ -1,5 +1,8 @@
-* Feature Name: mobility-extension
-* Status: `ACCEPTED`
+| | |
+|---|---|
+| Feature Tag | `mobility-extension` | 
+| Status | `ACCEPTED` | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED -->
+| Responsible | `@schlingling` |
 
 Disclaimer: This RFC is part of my master-thesis "Archiving open transport data using the JValue tooling ecosystem" supervised by @rhazn.
 
