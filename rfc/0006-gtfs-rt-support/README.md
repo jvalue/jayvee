@@ -54,6 +54,8 @@ This concept results in following pipeline.
 
 ![Example pipeline for GTFS and GTFS-RT](./gtfs-and-gtfs-rt-pipeline.png)
 
+The thought on connecting them sequentially is, that once we want to logically validate the data model during load, we have the dependency to first load the static data and afterwards the realtime data because realtime depends on static. We just want to load realtime data to the sink, if the data is conform to the static data which was loaded in advance. Unfortunally state now we cannot model this sequential dependency in one pipeline(eg. by connecting the GTFS-sink with the GTFS-RT-Extractor) but to shed light on this the dependcy is already visualized in this figure..
+
 ## Block Types
 ### 1) GtfsRTInterpreter *(Requires implementation from scratch)*
 Input: File, Output: Sheet
