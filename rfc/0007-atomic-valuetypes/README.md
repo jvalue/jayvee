@@ -207,14 +207,14 @@ block DbStopsTableInterpreter oftype TableInterpreter {
 
 ## Alternatives
 
-- Introduce enums as a language feature rather than implicitly via a `text` valuetype with a `WhitelistRestriction` 
-  applied
 - Allow arbitrary restrictions using boolean expressions that can be combined with boolean operators
   - Unsure how this could be expressed, esp. when restrictions of a valuetype are written down as a collection
   - The syntactic sugar versions in this RFC could be turned into inline boolean expressions
 
 ## Possible Future Changes/Enhancements
 
+- Introduce enums as a language feature rather than implicitly via a `text` valuetype with a `WhitelistRestriction` 
+  applied
 - Readers and writers to handle different value representations
 - Mechanisms for handling invalid values
 - More mighty restrictions using arbitrary boolean expressions
