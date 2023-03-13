@@ -16,7 +16,7 @@
 ## Summary
 
 This RFC introduces an initial, limited valuetype concept that allows users to define custom atomic valuetypes 
-based on builtin primitive valuetypes. Common restrictions can be defined and applied to valuetypes, allowing to restrict the 
+based on builtin primitive valuetypes. Common constraints can be defined and applied to valuetypes, allowing to restrict the 
 set of valid values for a given valuetype.
 
 ## Motivation
@@ -26,7 +26,7 @@ to values. This RFC proposes a domain-agnostic way to accomplish this using user
 
 A valuetype is used to define a set of valid values, so invalid values can easily be identified. In many cases, it 
 is sufficient to specify a valuetype based on a primitive valuetype (like `text` or `decimal`) and apply 
-restrictions to further limit the set of values. Consider the following excerpt from a [dataset found on mobilithek.info](
+constraints to further limit the set of values. Consider the following excerpt from a [dataset found on mobilithek.info](
 https://mobilithek.info/offers/-8739430008147831066):
 
 | EVA_NR  | DS100 |      IFOPT      |        NAME        | Verkehr |  Laenge   |  Breite   |      Betreiber_Name       | Betreiber_Nr | Status |
@@ -44,44 +44,44 @@ in upcoming sections.
 ### User-defined valuetypes based on primitive valuetypes
 
 Valuetypes are defined using the `valuetype` keyword, giving a name and specifying the underlying primitive valuetype. 
-Restrictions can be added via the `restrictions` collection, see [this upcoming section](#adding-restrictions-to-valuetypes)
+constraints can be added via the `constraints` collection, see [this upcoming section](#adding-constraints-to-valuetypes)
 for details.
 
 Here are some examples:
 
 ```jayvee
 valuetype IFOPT oftype text {
-   restrictions: [ ... ];
+   constraints: [ ... ];
 }
 
 valuetype Longitude oftype decimal {
-   restrictions: [ ... ];
+   constraints: [ ... ];
 }
 ```
 
-### Defining restrictions for valuetypes
+### Defining constraints for valuetypes
 
-Restrictions can be defined using the `restriction` keyword, providing a name and by selecting the type of 
-restriction. There are several builtin restrictions to choose from, see
-[the next section](#builtin-types-of-restrictions) for details. Restrictions are configured by assigning values to attributes (similar 
+Constraints can be defined using the `constraint` keyword, providing a name and by selecting the type of 
+constraint. There are several builtin constraints to choose from, see
+[the next section](#builtin-types-of-constraints) for details. Constraints are configured by assigning values to attributes (similar 
 to block types).
 
 Some examples:
 
 ```jayvee
-restriction IFOPT_Format oftype RegexRestriction {
+constraint IFOPT_Format oftype RegexConstraint {
    regex: /[a-z]{2}:\d+:\d+(:\d+)?/;
 }
 ```
 
 ```jayvee
-restriction TrafficValueRange oftype WhitelistRestriction {
+constraint TrafficValueRange oftype WhitelistConstraint {
    whitelist: [ "FV", "RV", "nur DPN" ];
 }
 ```
 
 ```jayvee
-restriction GeographicCoordinateRange oftype RangeRestriction {
+constraint GeographicCoordinateRange oftype RangeConstraint {
    lowerBound: -90;
    lowerBoundInclusive: true;
    upperBound: 90;
@@ -89,83 +89,83 @@ restriction GeographicCoordinateRange oftype RangeRestriction {
 }
 ```
 
-#### Builtin types of restrictions
+#### Builtin types of constraints
 
-There are a number of restrictions that are built into the language. They should be sufficient to cover most use cases.
+There are a number of constraints that are built into the language. They should be sufficient to cover most use cases.
 
 ##### For any primitive valuetype
 
-**`WhitelistRestriction`**: Configured via a collection of values to be considered valid. Any other values are 
+**`WhitelistConstraint`**: Configured via a collection of values to be considered valid. Any other values are 
 considered invalid.
 
-**`BlacklistRestriction`**: Configured via a collection of values that are considered invalid.
+**`BlacklistConstraint`**: Configured via a collection of values that are considered invalid.
 
 ##### Specifically for `text`
 
-**`RegexRestriction`**: Configured via a regex. Only text values that are matching the given regex are considered valid.
+**`RegexConstraint`**: Configured via a regex. Only text values that are matching the given regex are considered valid.
 
-**`LengthRestriction`**: Configured via a minimum and/or a maximum length for text values to be considered valid.
+**`LengthConstraint`**: Configured via a minimum and/or a maximum length for text values to be considered valid.
 
 ##### Specifically for `decimal` and `integer`
 
-**`RangeRestriction`**: Configured via a lower and an upper bound (each either inclusive or exclusive). Only values in 
+**`RangeConstraint`**: Configured via a lower and an upper bound (each either inclusive or exclusive). Only values in 
 that range are considered valid.
 
-### Adding restrictions to valuetypes
+### Adding constraints to valuetypes
 
-To add restrictions to a valuetype, they have to be added to the `restrictions` collection of that valuetype:
+To add constraints to a valuetype, they have to be added to the `constraints` collection of that valuetype:
 
 ```jayvee
 valuetype MyValuetype oftype text {
-   restrictions: [
-       MyRegexRestriction,
-       MyLengthRestriction
+   constraints: [
+       MyRegexConstraint,
+       MyLengthConstraint
    ];
 }
 
-restriction MyRegexRestriction oftype RegexRestriction {
+constraint MyRegexConstraint oftype RegexConstraint {
    // ...
 }
 
-restriction MyLengthRestriction oftype LengthRestriction {
+constraint MyLengthConstraint oftype LengthConstraint {
    // ...
 }
 ```
 
-Note that the restrictions have to be suitable regarding the primitive valuetype.
+Note that the constraints have to be suitable regarding the primitive valuetype.
 
-### Syntactic sugar for common restrictions
+### Syntactic sugar for common constraints
 
-There are syntactic sugar variants for common restrictions. They can be used within the `restrictions` collection of 
-a valuetype. Using such a syntax implicitly creates a corresponding restriction with no name.
+There are syntactic sugar variants for common constraints. They can be used within the `constraints` collection of 
+a valuetype. Using such a syntax implicitly creates a corresponding constraint with no name.
 
-#### For `RegexRestriction`:
+#### For `RegexConstraint`:
 
 ```jayvee
 valuetype IFOPT oftype text {
-   restrictions: [
+   constraints: [
        /[a-z]{2}:\d+:\d+(:\d+)?/
    ];
 }
 ```
 
-#### For `WhitelistRestriction`:
+#### For `WhitelistConstraint`:
 
 Enumeration of all valid values, each separated with `|`:
 
 ```jayvee
 valuetype DB_Traffic oftype text {
-   restrictions: [
+   constraints: [
        "FV" | "RV" | "nur DPN"
    ];
 }
 ```
 
-#### For `RangeRestriction`:
+#### For `RangeConstraint`:
 
 ```jayvee
 valuetype Longitude oftype decimal {
-   restrictions: [
+   constraints: [
        -90 <= value <= 90
    ];
 }
@@ -201,22 +201,22 @@ block DbStopsTableInterpreter oftype TableInterpreter {
 
 ## Drawbacks
 
-- No syntactic sugar available for reusable restrictions
-- No arbitrary boolean expressions can be used to define custom restrictions
-- Users are unable to apply boolean operators to restrictions other than `AND`
+- No syntactic sugar available for reusable constraints
+- No arbitrary boolean expressions can be used to define custom constraints
+- Users are unable to apply boolean operators to constraints other than `AND`
 
 ## Alternatives
 
-- Allow arbitrary restrictions using boolean expressions that can be combined with boolean operators
-  - Unsure how this could be expressed, esp. when restrictions of a valuetype are written down as a collection
+- Allow arbitrary constraints using boolean expressions that can be combined with boolean operators
+  - Unsure how this could be expressed, esp. when constraints of a valuetype are written down as a collection
   - The syntactic sugar versions in this RFC could be turned into inline boolean expressions
 
 ## Possible Future Changes/Enhancements
 
-- Introduce enums as a language feature rather than implicitly via a `text` valuetype with a `WhitelistRestriction` 
+- Introduce enums as a language feature rather than implicitly via a `text` valuetype with a `WhitelistConstraint` 
   applied
 - Readers and writers to handle different value representations
 - Mechanisms for handling invalid values
-- More mighty restrictions using arbitrary boolean expressions
+- More mighty constraints using arbitrary boolean expressions
 - Concept for composite value types
 - Concept for SI units and operators
