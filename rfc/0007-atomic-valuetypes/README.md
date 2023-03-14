@@ -3,7 +3,7 @@
 |             |                     |
 |-------------|---------------------|
 | Feature Tag | `atomic-valuetypes` |
-| Status      | `DISCUSSION`        |
+| Status      | `ACCEPTED`        |
 | Responsible | `@felix-oq`         |
 <!-- 
   Status Overview:
