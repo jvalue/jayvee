@@ -151,18 +151,26 @@ export enum AttributeValueType {
   INTEGER = 'integer',
   DECIMAL = 'decimal',
   BOOLEAN = 'boolean',
+  REGEX = 'regex',
   CELL_RANGE = 'cell-range',
   COLLECTION = 'collection',
-  TYPE_ASSIGNMENT = 'type-assignment',
+  VALUETYPE_ASSIGNMENT = 'valuetype-assignment',
+  RESTRICTION_REFERENCE = 'restriction-reference',
+  WHITELIST = 'whitelist',
+  VALUE_RANGE = 'value-range',
 }
 
 export function runtimeParameterAllowedForType(
   type: AttributeValueType,
 ): boolean {
   switch (type) {
+    case AttributeValueType.REGEX:
     case AttributeValueType.CELL_RANGE:
-    case AttributeValueType.TYPE_ASSIGNMENT:
+    case AttributeValueType.VALUETYPE_ASSIGNMENT:
     case AttributeValueType.COLLECTION:
+    case AttributeValueType.RESTRICTION_REFERENCE:
+    case AttributeValueType.WHITELIST:
+    case AttributeValueType.VALUE_RANGE:
       return false;
     case AttributeValueType.TEXT:
     case AttributeValueType.INTEGER:
@@ -189,22 +197,26 @@ export function convertAttributeValueToType(
   if (isBooleanValue(value)) {
     return AttributeValueType.BOOLEAN;
   }
+  if (isRegexValue(value)) {
+    return AttributeValueType.REGEX;
+  }
   if (isCellRangeValue(value)) {
     return AttributeValueType.CELL_RANGE;
   }
   if (isValuetypeAssignmentValue(value)) {
-    return AttributeValueType.TYPE_ASSIGNMENT;
+    return AttributeValueType.VALUETYPE_ASSIGNMENT;
   }
   if (isCollection(value)) {
     return AttributeValueType.COLLECTION;
   }
-  if (
-    isRestrictionReferenceValue(value) ||
-    isRegexValue(value) ||
-    isWhitelistValue(value) ||
-    isValueRangeValue(value)
-  ) {
-    throw new Error('TODO');
+  if (isRestrictionReferenceValue(value)) {
+    return AttributeValueType.RESTRICTION_REFERENCE;
+  }
+  if (isWhitelistValue(value)) {
+    return AttributeValueType.WHITELIST;
+  }
+  if (isValueRangeValue(value)) {
+    return AttributeValueType.VALUE_RANGE;
   }
   assertUnreachable(value);
 }
