@@ -9,7 +9,8 @@
     "generate": "nx run @jvalue/language-server:generate",
     "example:cars": "nx run interpreter:run -d example/cars.jv",
     "example:gtfs": "nx run interpreter:run -d example/gtfs.jv",
-    "example:gas": "nx run interpreter:run -d -e DB_HOST=localhost -e DB_PORT=5432 -e DB_USERNAME=postgres -e DB_PASSWORD=postgres -e DB_DATABASE=postgres -e DB_TABLE=GasReserve example/gas.jv"
+    "example:gas": "nx run interpreter:run -d -e DB_HOST=localhost -e DB_PORT=5432 -e DB_USERNAME=postgres -e DB_PASSWORD=postgres -e DB_DATABASE=postgres -e DB_TABLE=GasReserve example/gas.jv",
+    "example:db": "nx run interpreter:run -d example/deutschebahn.jv"
   },
   "private": true,
   "dependencies": {

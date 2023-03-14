@@ -5,13 +5,13 @@ import {
   Block,
   CellRangeWrapper,
   IOType,
-  TypeAssignment,
-  getOrFailMetaInformation,
+  ValuetypeAssignment,
+  getOrFailBlockMetaInformation,
   isCellRange,
   isCellRangeValue,
   isCollection,
   isRuntimeParameter,
-  isTypeAssignmentValue,
+  isValuetypeAssignmentValue,
 } from '@jvalue/language-server';
 import { isReference } from 'langium';
 
@@ -142,16 +142,16 @@ export abstract class BlockExecutor<
     );
   }
 
-  protected getTypeAssignmentCollectionAttributeValue(
+  protected getValuetypeAssignmentCollectionAttributeValue(
     attributeName: string,
-  ): TypeAssignment[] {
+  ): ValuetypeAssignment[] {
     const attributeValue = this.getAttributeValue(attributeName);
     assert(
       Array.isArray(attributeValue),
       `The value of attribute "${attributeName}" in block "${this.block.name}" is unexpectedly not of type collection`,
     );
     assert(
-      attributeValue.every(isTypeAssignmentValue),
+      attributeValue.every(isValuetypeAssignmentValue),
       `Some values of attribute "${attributeName}" in block "${this.block.name}" are unexpectedly not of type type-assignment`,
     );
 
@@ -161,7 +161,7 @@ export abstract class BlockExecutor<
   private getAttributeValue(attributeName: string): unknown {
     const attribute = this.getAttribute(attributeName);
     if (attribute === undefined) {
-      const metaInf = getOrFailMetaInformation(this.blockType);
+      const metaInf = getOrFailBlockMetaInformation(this.blockType);
 
       const attributeSpec = metaInf.getAttributeSpecification(attributeName);
       assert(

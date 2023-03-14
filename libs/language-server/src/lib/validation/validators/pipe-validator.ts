@@ -30,7 +30,7 @@ export class PipeValidator implements JayveeValidator {
 
       if (fromBlockMetaInf.hasOutput() && toBlockMetaInf.hasInput()) {
         if (!fromBlockMetaInf.canBeConnectedTo(toBlockMetaInf)) {
-          const errorMessage = `The output type "${fromBlockMetaInf.outputType}" of ${fromBlockMetaInf.blockType} is incompatible with the input type "${toBlockMetaInf.inputType}" of ${toBlockMetaInf.blockType}`;
+          const errorMessage = `The output type "${fromBlockMetaInf.outputType}" of ${fromBlockMetaInf.type} is incompatible with the input type "${toBlockMetaInf.inputType}" of ${toBlockMetaInf.type}`;
           accept('error', errorMessage, semanticPipe.getFromDiagnostic());
           accept('error', errorMessage, semanticPipe.getToDiagnostic());
         }

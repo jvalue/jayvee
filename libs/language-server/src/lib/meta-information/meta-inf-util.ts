@@ -1,48 +1,101 @@
 import { strict as assert } from 'assert';
 
-import { BlockType } from '../ast/generated/ast';
+import { assertUnreachable } from 'langium/lib/utils/errors';
+
+import {
+  BlockType,
+  ConstraintType,
+  isBlockType,
+  isConstraintType,
+} from '../ast/generated/ast';
 
 import type { BlockMetaInformation } from './block-meta-inf';
+import type { ConstraintMetaInformation } from './constraint-meta-inf';
+import type { MetaInformation } from './meta-inf';
 
 const registeredBlockMetaInformation = new Map<string, BlockMetaInformation>();
+const registeredConstraintMetaInformation = new Map<
+  string,
+  ConstraintMetaInformation
+>();
 
 export function registerBlockMetaInformation(metaInf: BlockMetaInformation) {
-  registeredBlockMetaInformation.set(metaInf.blockType, metaInf);
+  registeredBlockMetaInformation.set(metaInf.type, metaInf);
+}
+
+export function registerConstraintMetaInformation(
+  metaInf: ConstraintMetaInformation,
+) {
+  registeredConstraintMetaInformation.set(metaInf.type, metaInf);
 }
 
 export function getMetaInformation(
-  blockType: BlockType | undefined,
-): BlockMetaInformation | undefined {
-  const blockTypeString = blockType?.name;
-  if (blockTypeString === undefined) {
+  type: BlockType,
+): BlockMetaInformation | undefined;
+export function getMetaInformation(
+  type: ConstraintType,
+): ConstraintMetaInformation | undefined;
+export function getMetaInformation(
+  type: BlockType | ConstraintType,
+): MetaInformation | undefined;
+export function getMetaInformation(
+  type: BlockType | ConstraintType | undefined,
+): BlockMetaInformation | ConstraintMetaInformation | undefined {
+  const typeString = type?.name;
+  if (typeString === undefined) {
     return undefined;
   }
-  return registeredBlockMetaInformation.get(blockTypeString);
+  assert(type !== undefined);
+
+  if (isBlockType(type)) {
+    return registeredBlockMetaInformation.get(typeString);
+  }
+  if (isConstraintType(type)) {
+    return registeredConstraintMetaInformation.get(typeString);
+  }
+  assertUnreachable(type);
 }
 
 export function getRegisteredMetaInformation(): BlockMetaInformation[] {
   return [...registeredBlockMetaInformation.values()];
 }
 
+export function getOrFailMetaInformation(type: BlockType): BlockMetaInformation;
 export function getOrFailMetaInformation(
-  blockType: BlockType | string,
-): BlockMetaInformation {
-  const blockTypeString = getBlockTypeString(blockType);
-  assert(
-    blockTypeString !== undefined,
-    'The block type string is expected to be defined',
-  );
-  const result = registeredBlockMetaInformation.get(blockTypeString);
+  type: ConstraintType,
+): ConstraintMetaInformation;
+export function getOrFailMetaInformation(
+  type: BlockType | ConstraintType,
+): MetaInformation;
+export function getOrFailMetaInformation(
+  type: BlockType | ConstraintType,
+): MetaInformation {
+  const result = getMetaInformation(type);
   assert(
     result !== undefined,
-    `Meta information for block type ${blockTypeString} was expected to be present`,
+    `Meta information for type ${type.name} was expected to be present`,
   );
   return result;
 }
 
-function getBlockTypeString(blockType: BlockType | string): string | undefined {
-  if (typeof blockType === 'string') {
-    return blockType;
-  }
-  return blockType.name;
+export function getOrFailBlockMetaInformation(
+  typeString: string,
+): BlockMetaInformation {
+  const result = registeredBlockMetaInformation.get(typeString);
+  assert(
+    result !== undefined,
+    `Meta information for block type ${typeString} was expected to be present`,
+  );
+  return result;
+}
+
+export function getOrFailConstraintMetaInformation(
+  typeString: string,
+): ConstraintMetaInformation {
+  const result = registeredConstraintMetaInformation.get(typeString);
+  assert(
+    result !== undefined,
+    `Meta information for constraint type ${typeString} was expected to be present`,
+  );
+  return result;
 }

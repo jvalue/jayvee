@@ -10,12 +10,6 @@ export class ArchiveInterpreterMetaInformation extends BlockMetaInformation {
       // How the block type should be called:
       'ArchiveInterpreter',
 
-      // Input type:
-      IOType.FILE,
-
-      // Output type:
-      IOType.FILE_SYSTEM,
-
       // Attribute definitions:
       {
         archiveType: {
@@ -25,6 +19,11 @@ export class ArchiveInterpreterMetaInformation extends BlockMetaInformation {
           },
         },
       },
+      // Input type:
+      IOType.FILE,
+
+      // Output type:
+      IOType.FILE_SYSTEM,
     );
     this.docs.description =
       'Interprets an archive file of type `File` as a `FileSystem`.';

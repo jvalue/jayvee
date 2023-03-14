@@ -9,13 +9,6 @@ export class CSVInterpreterMetaInformation extends BlockMetaInformation {
     super(
       // How the block type should be called:
       'CSVInterpreter',
-
-      // Input type:
-      IOType.FILE,
-
-      // Output type:
-      IOType.SHEET,
-
       // Attribute definitions:
       {
         delimiter: {
@@ -33,6 +26,11 @@ export class CSVInterpreterMetaInformation extends BlockMetaInformation {
           },
         },
       },
+      // Input type:
+      IOType.FILE,
+
+      // Output type:
+      IOType.SHEET,
     );
 
     this.docs.description =

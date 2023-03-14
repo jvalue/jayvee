@@ -8,10 +8,10 @@ import { useStdExtension } from './interpreter';
 describe('std extension', () => {
   useStdExtension();
   getRegisteredMetaInformation().forEach((metaInf) => {
-    it(`should provide a matching block executor for block type ${metaInf.blockType}`, () => {
+    it(`should provide a matching block executor for block type ${metaInf.type}`, () => {
       const matchingBlockExecutor = getRegisteredBlockExecutors()
         .map((blockExecutorClass) => new blockExecutorClass())
-        .find((blockExecutor) => blockExecutor.blockType === metaInf.blockType);
+        .find((blockExecutor) => blockExecutor.blockType === metaInf.type);
 
       expect(matchingBlockExecutor).toBeDefined();
       assert(matchingBlockExecutor !== undefined);

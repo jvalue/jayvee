@@ -2,13 +2,15 @@ grammar Jayvee
 
 import 'terminals'
 import 'attributes'
+import 'value-type'
+import 'constraints'
 
 entry Model:
-  (pipelines+=Pipeline)*;
+  (pipelines+=Pipeline | valuetypes+=Valuetype | constraints+=Constraint)*;
 
 Pipeline:
   'pipeline' name=ID '{'
-    (blocks+=Block | pipes+=Pipe)*
+    (blocks+=Block | pipes+=Pipe | valuetypes+=Valuetype | constraints+=Constraint)*
   '}';
 
 Block:

@@ -10,12 +10,6 @@ export class HttpExtractorMetaInformation extends BlockMetaInformation {
       // How the block type should be called:
       'HttpExtractor',
 
-      // Input type:
-      IOType.NONE,
-
-      // Output type:
-      IOType.FILE,
-
       // Attribute definitions:
       {
         url: {
@@ -31,6 +25,11 @@ export class HttpExtractorMetaInformation extends BlockMetaInformation {
           },
         },
       },
+      // Input type:
+      IOType.NONE,
+
+      // Output type:
+      IOType.FILE,
     );
     this.docs.description = 'Extracts a `File` from the web.';
     this.docs.examples = [

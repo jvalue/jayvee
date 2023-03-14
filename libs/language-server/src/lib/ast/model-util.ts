@@ -8,12 +8,20 @@ import {
   AttributeValue,
   Block,
   Pipeline,
+  PrimitiveValuetype,
+  ValuetypeReference,
   isBooleanValue,
   isCellRangeValue,
   isCollection,
+  isDecimalValue,
   isIntegerValue,
+  isRegexValue,
+  isRestrictionReferenceValue,
   isTextValue,
-  isTypeAssignmentValue,
+  isValueRangeValue,
+  isValuetypeAssignmentValue,
+  isValuetypeReference,
+  isWhitelistValue,
 } from './generated/ast';
 import { PipeWrapper, createSemanticPipes } from './wrappers/pipe-wrapper';
 
@@ -141,6 +149,7 @@ export enum IOType {
 export enum AttributeValueType {
   TEXT = 'text',
   INTEGER = 'integer',
+  DECIMAL = 'decimal',
   BOOLEAN = 'boolean',
   CELL_RANGE = 'cell-range',
   COLLECTION = 'collection',
@@ -157,6 +166,7 @@ export function runtimeParameterAllowedForType(
       return false;
     case AttributeValueType.TEXT:
     case AttributeValueType.INTEGER:
+    case AttributeValueType.DECIMAL:
     case AttributeValueType.BOOLEAN:
       return true;
     default:
@@ -173,17 +183,37 @@ export function convertAttributeValueToType(
   if (isIntegerValue(value)) {
     return AttributeValueType.INTEGER;
   }
+  if (isDecimalValue(value)) {
+    return AttributeValueType.DECIMAL;
+  }
   if (isBooleanValue(value)) {
     return AttributeValueType.BOOLEAN;
   }
   if (isCellRangeValue(value)) {
     return AttributeValueType.CELL_RANGE;
   }
-  if (isTypeAssignmentValue(value)) {
+  if (isValuetypeAssignmentValue(value)) {
     return AttributeValueType.TYPE_ASSIGNMENT;
   }
   if (isCollection(value)) {
     return AttributeValueType.COLLECTION;
   }
+  if (
+    isRestrictionReferenceValue(value) ||
+    isRegexValue(value) ||
+    isWhitelistValue(value) ||
+    isValueRangeValue(value)
+  ) {
+    throw new Error('TODO');
+  }
   assertUnreachable(value);
+}
+
+export function getValuetypeName(
+  valuetype: PrimitiveValuetype | ValuetypeReference,
+): string {
+  if (isValuetypeReference(valuetype)) {
+    return valuetype.reference.$refText;
+  }
+  return valuetype;
 }

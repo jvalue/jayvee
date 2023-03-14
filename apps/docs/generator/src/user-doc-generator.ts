@@ -10,7 +10,7 @@ import {
 export class UserDocGenerator implements JayveeBlockTypeDocGenerator {
   generateBlockTypeDoc(metaInf: BlockMetaInformation): string {
     const builder = new UserDocMarkdownBuilder()
-      .blockTypeHeading(metaInf.blockType)
+      .blockTypeHeading(metaInf.type)
       .generationComment()
       .ioTypes(metaInf.inputType, metaInf.outputType)
       .description(metaInf.docs.description)

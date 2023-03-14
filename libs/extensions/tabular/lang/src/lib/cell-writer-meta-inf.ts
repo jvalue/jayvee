@@ -9,45 +9,50 @@ import {
 
 export class CellWriterMetaInformation extends BlockMetaInformation {
   constructor() {
-    super('CellWriter', IOType.SHEET, IOType.SHEET, {
-      write: {
-        type: AttributeValueType.TEXT,
-        docs: {
-          description: 'The value to write.',
-          examples: [
-            {
-              code: 'write: "Name"',
-              description: 'Write the value "Name" into the cell',
-            },
-          ],
+    super(
+      'CellWriter',
+      {
+        write: {
+          type: AttributeValueType.TEXT,
+          docs: {
+            description: 'The value to write.',
+            examples: [
+              {
+                code: 'write: "Name"',
+                description: 'Write the value "Name" into the cell',
+              },
+            ],
+          },
         },
-      },
-      at: {
-        type: AttributeValueType.CELL_RANGE,
-        validation: (attribute, accept) => {
-          const attributeValue = attribute.value;
-          if (!isCellRangeValue(attributeValue)) {
-            return;
-          }
-          const cellRange = attributeValue.value;
+        at: {
+          type: AttributeValueType.CELL_RANGE,
+          validation: (attribute, accept) => {
+            const attributeValue = attribute.value;
+            if (!isCellRangeValue(attributeValue)) {
+              return;
+            }
+            const cellRange = attributeValue.value;
 
-          if (!CellRangeWrapper.canBeWrapped(cellRange)) {
-            return;
-          }
-          const semanticCelLRange = new CellRangeWrapper(cellRange);
-          if (!isCellWrapper(semanticCelLRange)) {
-            accept('error', 'A single cell needs to be selected', {
-              node: semanticCelLRange.astNode,
-            });
-          }
-        },
-        docs: {
-          description: 'The cell to write into.',
-          examples: [{ code: 'at: A1', description: 'Write into cell A1' }],
-          validation: 'You need to specify exactly one cell.',
+            if (!CellRangeWrapper.canBeWrapped(cellRange)) {
+              return;
+            }
+            const semanticCelLRange = new CellRangeWrapper(cellRange);
+            if (!isCellWrapper(semanticCelLRange)) {
+              accept('error', 'A single cell needs to be selected', {
+                node: semanticCelLRange.astNode,
+              });
+            }
+          },
+          docs: {
+            description: 'The cell to write into.',
+            examples: [{ code: 'at: A1', description: 'Write into cell A1' }],
+            validation: 'You need to specify exactly one cell.',
+          },
         },
       },
-    });
+      IOType.SHEET,
+      IOType.SHEET,
+    );
     this.docs.description = 'Writes a textual value into a cell of a `Sheet`.';
     this.docs.examples = [
       {

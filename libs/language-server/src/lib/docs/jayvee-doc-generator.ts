@@ -4,8 +4,8 @@ export interface JayveeBlockTypeDocGenerator {
   generateBlockTypeDoc(metaInf: BlockMetaInformation): string;
 }
 
-export interface JayveeBlockAttributeDocGenerator {
-  generateBlockAttributeDoc(
+export interface JayveeAttributeDocGenerator {
+  generateAttributeDoc(
     metaInf: BlockMetaInformation,
     attributeName: string,
   ): string | undefined;
