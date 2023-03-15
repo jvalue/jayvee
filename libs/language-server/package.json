@@ -1,6 +1,6 @@
 {
   "name": "@jvalue/language-server",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "main": "./src/index.js",
   "bugs": {
     "url": "https://github.com/jvalue/jayvee/issues"
