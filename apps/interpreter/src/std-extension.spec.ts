@@ -1,13 +1,13 @@
 import { strict as assert } from 'assert';
 
 import { getRegisteredBlockExecutors } from '@jvalue/execution';
-import { getRegisteredMetaInformation } from '@jvalue/language-server';
+import { getRegisteredBlockMetaInformation } from '@jvalue/language-server';
 
 import { useStdExtension } from './interpreter';
 
 describe('std extension', () => {
   useStdExtension();
-  getRegisteredMetaInformation().forEach((metaInf) => {
+  getRegisteredBlockMetaInformation().forEach((metaInf) => {
     it(`should provide a matching block executor for block type ${metaInf.type}`, () => {
       const matchingBlockExecutor = getRegisteredBlockExecutors()
         .map((blockExecutorClass) => new blockExecutorClass())

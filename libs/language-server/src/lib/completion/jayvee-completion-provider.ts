@@ -12,19 +12,24 @@ import { CompletionItemKind } from 'vscode-languageserver';
 
 import {
   Attribute,
+  AttributeBody,
   Block,
   BlockType,
   Constraint,
+  ConstraintType,
   isAttribute,
+  isAttributeBody,
   isBlock,
   isBlockType,
   isConstraint,
+  isConstraintType,
 } from '../ast/generated/ast';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
 import { MetaInformation } from '../meta-information/meta-inf';
 import {
   getMetaInformation,
-  getRegisteredMetaInformation,
+  getRegisteredBlockMetaInformation,
+  getRegisteredConstraintMetaInformation,
 } from '../meta-information/meta-inf-util';
 
 const RIGHT_ARROW_SYMBOL = '\u{2192}';
@@ -39,12 +44,20 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     if (astNode !== undefined) {
       const isBlockTypeCompletion =
         (isBlock(astNode) || isBlockType(astNode)) && next.type === BlockType;
+      next.type === ConstraintType;
       if (isBlockTypeCompletion) {
         return this.completionForBlockType(acceptor);
       }
 
+      const isConstraintTypeCompletion =
+        (isConstraint(astNode) || isConstraintType(astNode)) &&
+        next.type === ConstraintType;
+      if (isConstraintTypeCompletion) {
+        return this.completionForConstraintType(acceptor);
+      }
+
       const isFirstAttributeCompletion =
-        isBlock(astNode) && next.type === Attribute;
+        isAttributeBody(astNode) && next.type === Attribute;
       const isOtherAttributeCompletion =
         isAttribute(astNode) && next.type === Attribute;
       if (isFirstAttributeCompletion || isOtherAttributeCompletion) {
@@ -57,7 +70,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
   private completionForBlockType(
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
-    getRegisteredMetaInformation().forEach((metaInf) => {
+    getRegisteredBlockMetaInformation().forEach((metaInf) => {
       const lspDocBuilder = new LspDocGenerator();
       const markdownDoc = lspDocBuilder.generateBlockTypeDoc(metaInf);
       acceptor({
@@ -75,22 +88,39 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     });
   }
 
+  private completionForConstraintType(
+    acceptor: CompletionAcceptor,
+  ): MaybePromise<void> {
+    getRegisteredConstraintMetaInformation().forEach((metaInf) => {
+      acceptor({
+        label: metaInf.type,
+        labelDetails: {
+          detail: ` ${metaInf.primitiveValuetype}`,
+        },
+        kind: CompletionItemKind.Class,
+        detail: `(constraint type)`,
+      });
+    });
+  }
+
   private completionForAttributeName(
-    astNode: Block | Constraint | Attribute,
+    astNode: AttributeBody | Attribute,
     acceptor: CompletionAcceptor,
   ) {
     let container: Block | Constraint;
-    if (isBlock(astNode) || isConstraint(astNode)) {
-      container = astNode;
-    } else {
+    if (isAttributeBody(astNode)) {
       container = astNode.$container;
+    } else {
+      container = astNode.$container.$container;
     }
 
     const metaInf = getMetaInformation(container.type);
     if (metaInf === undefined) {
       return;
     }
-    const presentAttributeNames = container.attributes.map((attr) => attr.name);
+    const presentAttributeNames = container.body.attributes.map(
+      (attr) => attr.name,
+    );
 
     const attributeKinds: Array<'optional' | 'required'> = [
       'required',

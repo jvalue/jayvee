@@ -1,9 +1,10 @@
 import 'terminals';
+import 'primitives';
 import 'value-type';
 import 'cell-range';
 import 'constraints';
 
-fragment AttributesFragment:
+AttributeBody:
   '{' (attributes+=Attribute)* '}';
 
 Attribute:
@@ -21,8 +22,9 @@ AtomicValue:
   DecimalValue |
   BooleanValue |
   CellRangeValue |
+  RegexValue |
   ValuetypeAssignmentValue |
-  ConstraintValue;
+  ConstraintReferenceValue;
 
 Collection:
   '[' (values+=(AtomicValue) (',' values+=(AtomicValue))*)? ']';
@@ -31,19 +33,22 @@ TextValue:
   value=STRING;
 
 IntegerValue:
-  value=INTEGER;
+  value=SignedInteger;
 
 DecimalValue:
-  value=DECIMAL;
+  value=SignedDecimal;
 
 BooleanValue:
-  value=(TRUE | FALSE);
+  value=Boolean;
 
 CellRangeValue:
   value=CellRange;
 
+RegexValue:
+  value=REGEX_LITERAL;
+
 ValuetypeAssignmentValue:
   value=ValuetypeAssignment;
 
-ConstraintValue:
-  value=(ConstraintReference | InlineConstraint);
+ConstraintReferenceValue:
+  value=[Constraint];

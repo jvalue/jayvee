@@ -40,13 +40,13 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   }
 
   private getAttributeMarkdownDoc(attribute: Attribute): string | undefined {
-    const block = attribute.$container;
-    const blockMetaInf = getMetaInformation(block.type);
-    if (blockMetaInf === undefined) {
+    const block = attribute.$container.$container;
+    const metaInf = getMetaInformation(block.type);
+    if (metaInf === undefined) {
       return;
     }
 
     const lspDocBuilder = new LspDocGenerator();
-    return lspDocBuilder.generateAttributeDoc(blockMetaInf, attribute.name);
+    return lspDocBuilder.generateAttributeDoc(metaInf, attribute.name);
   }
 }

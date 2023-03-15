@@ -58,7 +58,7 @@ export function extractRuntimeParameters(
     }
 
     const type: BlockType | ConstraintType =
-      requiredParameter.$container.$container.type;
+      requiredParameter.$container.$container.$container.type;
     const metaInf = getOrFailMetaInformation(type);
     const attributeName = requiredParameter.$container.name;
 

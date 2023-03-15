@@ -1,24 +1,9 @@
 import 'attributes'
 import 'terminals'
-import 'numbers'
+import 'primitives'
 
 Constraint:
-  'constraint' name=ID 'oftype' type=ConstraintType AttributesFragment;
+  'constraint' name=ID 'oftype' type=ConstraintType body=AttributeBody;
 
 ConstraintType:
   name=ID;
-
-ConstraintReference:
-  reference=[Constraint];
-
-InlineConstraint:
-  InlineRegexConstraint | InlineWhitelistConstraint | InlineRangeConstraint;
-
-InlineRegexConstraint:
-  regex=REGEX_LITERAL;
-
-InlineWhitelistConstraint:
-  value+=(STRING | SignedNumber) ('|' value+=(STRING | SignedNumber))*;
-
-InlineRangeConstraint:
-  (lowerBound=SignedNumber ('<' | lowerBoundInclusive?='<='))? 'value' (('<' | upperBoundInclusive?='<=') upperBound=SignedNumber)?;

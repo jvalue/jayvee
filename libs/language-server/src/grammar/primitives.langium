@@ -8,3 +8,6 @@ SignedDecimal returns number:
 
 SignedNumber returns number:
   SignedInteger | SignedDecimal;
+
+Boolean returns boolean:
+  TRUE | FALSE;
