@@ -13,15 +13,12 @@ import {
   isBooleanValue,
   isCellRangeValue,
   isCollection,
+  isConstraintValue,
   isDecimalValue,
   isIntegerValue,
-  isRegexValue,
-  isRestrictionReferenceValue,
   isTextValue,
-  isValueRangeValue,
   isValuetypeAssignmentValue,
   isValuetypeReference,
-  isWhitelistValue,
 } from './generated/ast';
 import { PipeWrapper, createSemanticPipes } from './wrappers/pipe-wrapper';
 
@@ -151,26 +148,20 @@ export enum AttributeValueType {
   INTEGER = 'integer',
   DECIMAL = 'decimal',
   BOOLEAN = 'boolean',
-  REGEX = 'regex',
   CELL_RANGE = 'cell-range',
   COLLECTION = 'collection',
   VALUETYPE_ASSIGNMENT = 'valuetype-assignment',
-  RESTRICTION_REFERENCE = 'restriction-reference',
-  WHITELIST = 'whitelist',
-  VALUE_RANGE = 'value-range',
+  CONSTRAINT = 'constraint',
 }
 
 export function runtimeParameterAllowedForType(
   type: AttributeValueType,
 ): boolean {
   switch (type) {
-    case AttributeValueType.REGEX:
     case AttributeValueType.CELL_RANGE:
     case AttributeValueType.VALUETYPE_ASSIGNMENT:
     case AttributeValueType.COLLECTION:
-    case AttributeValueType.RESTRICTION_REFERENCE:
-    case AttributeValueType.WHITELIST:
-    case AttributeValueType.VALUE_RANGE:
+    case AttributeValueType.CONSTRAINT:
       return false;
     case AttributeValueType.TEXT:
     case AttributeValueType.INTEGER:
@@ -197,9 +188,6 @@ export function convertAttributeValueToType(
   if (isBooleanValue(value)) {
     return AttributeValueType.BOOLEAN;
   }
-  if (isRegexValue(value)) {
-    return AttributeValueType.REGEX;
-  }
   if (isCellRangeValue(value)) {
     return AttributeValueType.CELL_RANGE;
   }
@@ -209,14 +197,8 @@ export function convertAttributeValueToType(
   if (isCollection(value)) {
     return AttributeValueType.COLLECTION;
   }
-  if (isRestrictionReferenceValue(value)) {
-    return AttributeValueType.RESTRICTION_REFERENCE;
-  }
-  if (isWhitelistValue(value)) {
-    return AttributeValueType.WHITELIST;
-  }
-  if (isValueRangeValue(value)) {
-    return AttributeValueType.VALUE_RANGE;
+  if (isConstraintValue(value)) {
+    return AttributeValueType.CONSTRAINT;
   }
   assertUnreachable(value);
 }

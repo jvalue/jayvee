@@ -22,10 +22,7 @@ AtomicValue:
   BooleanValue |
   CellRangeValue |
   ValuetypeAssignmentValue |
-  RestrictionReferenceValue |
-  RegexValue |
-  WhitelistValue |
-  ValueRangeValue;
+  ConstraintValue;
 
 Collection:
   '[' (values+=(AtomicValue) (',' values+=(AtomicValue))*)? ']';
@@ -48,26 +45,5 @@ CellRangeValue:
 ValuetypeAssignmentValue:
   value=ValuetypeAssignment;
 
-RegexValue:
-  value=REGEX_LITERAL;
-
-RestrictionReferenceValue:
-  value=[Constraint];
-
-SignedInteger returns number:
-  ('+'|'-')? INTEGER;
-
-SignedDecimal returns number:
-  ('+'|'-')? DECIMAL;
-
-SignedNumber returns number:
-  SignedInteger | SignedDecimal;
-
-WhitelistValue:
-  value+=(STRING | SignedNumber) ('|' value+=(STRING | SignedNumber))*;
-
-ValueRangeValue:
-  value=ValueRangeExpression;
-
-ValueRangeExpression:
-  (lowerBound=SignedNumber ('<' | lowerBoundInclusive?='<='))? 'value' (('<' | upperBoundInclusive?='<=') upperBound=SignedNumber)?;
+ConstraintValue:
+  value=(ConstraintReference | InlineConstraint);
