@@ -8,12 +8,17 @@ import {
   AttributeValue,
   Block,
   Pipeline,
+  PrimitiveValuetype,
+  ValuetypeReference,
   isBooleanValue,
   isCellRangeValue,
   isCollection,
+  isConstraintValue,
+  isDecimalValue,
   isIntegerValue,
   isTextValue,
-  isTypeAssignmentValue,
+  isValuetypeAssignmentValue,
+  isValuetypeReference,
 } from './generated/ast';
 import { PipeWrapper, createSemanticPipes } from './wrappers/pipe-wrapper';
 
@@ -141,10 +146,12 @@ export enum IOType {
 export enum AttributeValueType {
   TEXT = 'text',
   INTEGER = 'integer',
+  DECIMAL = 'decimal',
   BOOLEAN = 'boolean',
   CELL_RANGE = 'cell-range',
   COLLECTION = 'collection',
-  TYPE_ASSIGNMENT = 'type-assignment',
+  VALUETYPE_ASSIGNMENT = 'valuetype-assignment',
+  CONSTRAINT = 'constraint',
 }
 
 export function runtimeParameterAllowedForType(
@@ -152,11 +159,13 @@ export function runtimeParameterAllowedForType(
 ): boolean {
   switch (type) {
     case AttributeValueType.CELL_RANGE:
-    case AttributeValueType.TYPE_ASSIGNMENT:
+    case AttributeValueType.VALUETYPE_ASSIGNMENT:
     case AttributeValueType.COLLECTION:
+    case AttributeValueType.CONSTRAINT:
       return false;
     case AttributeValueType.TEXT:
     case AttributeValueType.INTEGER:
+    case AttributeValueType.DECIMAL:
     case AttributeValueType.BOOLEAN:
       return true;
     default:
@@ -173,17 +182,32 @@ export function convertAttributeValueToType(
   if (isIntegerValue(value)) {
     return AttributeValueType.INTEGER;
   }
+  if (isDecimalValue(value)) {
+    return AttributeValueType.DECIMAL;
+  }
   if (isBooleanValue(value)) {
     return AttributeValueType.BOOLEAN;
   }
   if (isCellRangeValue(value)) {
     return AttributeValueType.CELL_RANGE;
   }
-  if (isTypeAssignmentValue(value)) {
-    return AttributeValueType.TYPE_ASSIGNMENT;
+  if (isValuetypeAssignmentValue(value)) {
+    return AttributeValueType.VALUETYPE_ASSIGNMENT;
   }
   if (isCollection(value)) {
     return AttributeValueType.COLLECTION;
   }
+  if (isConstraintValue(value)) {
+    return AttributeValueType.CONSTRAINT;
+  }
   assertUnreachable(value);
+}
+
+export function getValuetypeName(
+  valuetype: PrimitiveValuetype | ValuetypeReference,
+): string {
+  if (isValuetypeReference(valuetype)) {
+    return valuetype.reference.$refText;
+  }
+  return valuetype;
 }

@@ -1,4 +1,4 @@
-import { PrimitiveValueType } from '@jvalue/language-server';
+import { PrimitiveValuetype } from '@jvalue/language-server';
 
 // eslint-disable-next-line import/no-cycle
 import { ValueTypeVisitor } from './visitors/value-type-visitor';
@@ -6,7 +6,7 @@ import { ValueTypeVisitor } from './visitors/value-type-visitor';
 import { VisitableValueType } from './visitors/visitable-value-type';
 
 export abstract class AbstractValueType implements VisitableValueType {
-  constructor(readonly valueType: PrimitiveValueType) {}
+  constructor(readonly valueType: PrimitiveValuetype) {}
 
   abstract acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R;
 

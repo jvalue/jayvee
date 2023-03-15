@@ -14,12 +14,14 @@ import {
   Attribute,
   Block,
   BlockType,
+  Constraint,
   isAttribute,
   isBlock,
   isBlockType,
+  isConstraint,
 } from '../ast/generated/ast';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
-import { BlockMetaInformation } from '../meta-information/block-meta-inf';
+import { MetaInformation } from '../meta-information/meta-inf';
 import {
   getMetaInformation,
   getRegisteredMetaInformation,
@@ -59,7 +61,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       const lspDocBuilder = new LspDocGenerator();
       const markdownDoc = lspDocBuilder.generateBlockTypeDoc(metaInf);
       acceptor({
-        label: metaInf.blockType,
+        label: metaInf.type,
         labelDetails: {
           detail: ` ${metaInf.inputType} ${RIGHT_ARROW_SYMBOL} ${metaInf.outputType}`,
         },
@@ -74,27 +76,33 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
   }
 
   private completionForAttributeName(
-    astNode: Block | Attribute,
+    astNode: Block | Constraint | Attribute,
     acceptor: CompletionAcceptor,
   ) {
-    const block = isBlock(astNode) ? astNode : astNode.$container;
-    const blockMetaInf = getMetaInformation(block.type);
-    if (blockMetaInf === undefined) {
+    let container: Block | Constraint;
+    if (isBlock(astNode) || isConstraint(astNode)) {
+      container = astNode;
+    } else {
+      container = astNode.$container;
+    }
+
+    const metaInf = getMetaInformation(container.type);
+    if (metaInf === undefined) {
       return;
     }
-    const presentAttributeNames = block.attributes.map((attr) => attr.name);
+    const presentAttributeNames = container.attributes.map((attr) => attr.name);
 
     const attributeKinds: Array<'optional' | 'required'> = [
       'required',
       'optional',
     ];
     for (const attributeKind of attributeKinds) {
-      const attributeNames = blockMetaInf.getAttributeNames(
+      const attributeNames = metaInf.getAttributeNames(
         attributeKind,
         presentAttributeNames,
       );
       this.constructAttributeCompletionValueItems(
-        blockMetaInf,
+        metaInf,
         attributeNames,
         attributeKind,
       ).forEach(acceptor);
@@ -102,13 +110,12 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
   }
 
   private constructAttributeCompletionValueItems(
-    blockMetaInf: BlockMetaInformation,
+    metaInf: MetaInformation,
     attributeNames: string[],
     kind: 'required' | 'optional',
   ): CompletionValueItem[] {
     return attributeNames.map((attributeName) => {
-      const attributeSpec =
-        blockMetaInf.getAttributeSpecification(attributeName);
+      const attributeSpec = metaInf.getAttributeSpecification(attributeName);
       assert(attributeSpec !== undefined);
 
       const completionValueItem: CompletionValueItem = {
@@ -127,8 +134,8 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       }
 
       const lspDocBuilder = new LspDocGenerator();
-      const markdownDoc = lspDocBuilder.generateBlockAttributeDoc(
-        blockMetaInf,
+      const markdownDoc = lspDocBuilder.generateAttributeDoc(
+        metaInf,
         attributeName,
       );
       if (markdownDoc !== undefined) {

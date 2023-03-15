@@ -26,7 +26,7 @@ function main(): void {
     const userDocBuilder = new UserDocGenerator();
     const blockTypeDoc = userDocBuilder.generateBlockTypeDoc(metaInf);
 
-    const fileName = `${metaInf.blockType}.md`;
+    const fileName = `${metaInf.type}.md`;
     writeFileSync(join(docsPath, fileName), blockTypeDoc, {
       flag: 'w',
     });

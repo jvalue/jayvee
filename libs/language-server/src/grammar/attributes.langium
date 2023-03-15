@@ -1,6 +1,7 @@
 import 'terminals';
 import 'value-type';
 import 'cell-range';
+import 'constraints';
 
 fragment AttributesFragment:
   '{' (attributes+=Attribute)* '}';
@@ -15,7 +16,13 @@ AttributeValue:
   AtomicValue | Collection;
 
 AtomicValue:
-  TextValue | IntegerValue | BooleanValue | CellRangeValue | TypeAssignmentValue;
+  TextValue |
+  IntegerValue |
+  DecimalValue |
+  BooleanValue |
+  CellRangeValue |
+  ValuetypeAssignmentValue |
+  ConstraintValue;
 
 Collection:
   '[' (values+=(AtomicValue) (',' values+=(AtomicValue))*)? ']';
@@ -26,11 +33,17 @@ TextValue:
 IntegerValue:
   value=INTEGER;
 
+DecimalValue:
+  value=DECIMAL;
+
 BooleanValue:
   value=(TRUE | FALSE);
 
 CellRangeValue:
   value=CellRange;
 
-TypeAssignmentValue:
-  value=TypeAssignment;
+ValuetypeAssignmentValue:
+  value=ValuetypeAssignment;
+
+ConstraintValue:
+  value=(ConstraintReference | InlineConstraint);

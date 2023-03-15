@@ -12,7 +12,8 @@ import {
 import {
   CellIndex,
   IOType,
-  TypeAssignment,
+  ValuetypeAssignment,
+  getValuetypeName,
   rowIndexToString,
 } from '@jvalue/language-server';
 
@@ -20,7 +21,7 @@ interface ColumnDefinitionEntry {
   sheetColumnIndex: number;
   columnName: string;
   valueType: AbstractValueType;
-  astNode: TypeAssignment;
+  astNode: ValuetypeAssignment;
 }
 
 export class TableInterpreterExecutor extends BlockExecutor<
@@ -35,7 +36,7 @@ export class TableInterpreterExecutor extends BlockExecutor<
   override async execute(inputSheet: Sheet): Promise<R.Result<Table>> {
     const header = this.getBooleanAttributeValue('header');
     const columnDefinitions =
-      this.getTypeAssignmentCollectionAttributeValue('columns');
+      this.getValuetypeAssignmentCollectionAttributeValue('columns');
 
     let columnEntries: ColumnDefinitionEntry[];
 
@@ -137,9 +138,9 @@ export class TableInterpreterExecutor extends BlockExecutor<
       if (!columnEntry.valueType.isValid(value)) {
         const cellIndex = new CellIndex(sheetColumnIndex, sheetRowIndex);
         this.logger.logDebug(
-          `The value at cell ${cellIndex.toString()} does not match the type ${
-            columnEntry.astNode.type
-          }`,
+          `The value at cell ${cellIndex.toString()} does not match the type ${getValuetypeName(
+            columnEntry.astNode.type,
+          )}`,
         );
         invalidRow = true;
         return;
@@ -156,7 +157,7 @@ export class TableInterpreterExecutor extends BlockExecutor<
   }
 
   private deriveColumnDefinitionEntriesWithoutHeader(
-    columnDefinitions: TypeAssignment[],
+    columnDefinitions: ValuetypeAssignment[],
   ): ColumnDefinitionEntry[] {
     return columnDefinitions.map<ColumnDefinitionEntry>(
       (columnDefinition, columnDefinitionIndex) => ({
@@ -169,7 +170,7 @@ export class TableInterpreterExecutor extends BlockExecutor<
   }
 
   private deriveColumnDefinitionEntriesFromHeader(
-    columnDefinitions: TypeAssignment[],
+    columnDefinitions: ValuetypeAssignment[],
     headerRow: string[],
   ): ColumnDefinitionEntry[] {
     this.logger.logDebug(`Matching header with provided column names`);

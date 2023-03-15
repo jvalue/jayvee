@@ -4,6 +4,8 @@ import * as R from '@jvalue/execution';
 import { Logger } from '@jvalue/execution';
 import {
   AttributeValueType,
+  BlockType,
+  ConstraintType,
   Model,
   RuntimeParameter,
   getOrFailMetaInformation,
@@ -55,14 +57,15 @@ export function extractRuntimeParameters(
       continue;
     }
 
-    const block = requiredParameter.$container.$container;
-    const metaInf = getOrFailMetaInformation(block.type);
+    const type: BlockType | ConstraintType =
+      requiredParameter.$container.$container.type;
+    const metaInf = getOrFailMetaInformation(type);
     const attributeName = requiredParameter.$container.name;
 
     const attributeSpec = metaInf.getAttributeSpecification(attributeName);
     assert(
       attributeSpec !== undefined,
-      `Attribute with name "${attributeName}" is not allowed in a block of type ${block.type.name}`,
+      `Attribute with name "${attributeName}" is not allowed in ${type.name}`,
     );
 
     const parseResult = parseParameterAsMatchingType(
@@ -112,13 +115,21 @@ export function parseParameterAsMatchingType(
     case AttributeValueType.TEXT:
       return R.ok(value);
     case AttributeValueType.INTEGER:
-      if (!/^[1-9][0-9]*$/.test(value)) {
+      if (!/^[+-]?[1-9][0-9]*$/.test(value)) {
         return R.err({
           message: `Runtime parameter ${astNode.name} has value "${value}" which is not of type integer.`,
           diagnostic: { node: astNode },
         });
       }
       return R.ok(Number.parseInt(value, 10));
+    case AttributeValueType.DECIMAL:
+      if (!/^[+-]?[0-9]+(\.[0-9]+)?$/.test(value)) {
+        return R.err({
+          message: `Runtime parameter ${astNode.name} has value "${value}" which is not of type decimal.`,
+          diagnostic: { node: astNode },
+        });
+      }
+      return R.ok(Number.parseFloat(value));
     case AttributeValueType.BOOLEAN:
       if (value === TRUE) {
         return R.ok(true);

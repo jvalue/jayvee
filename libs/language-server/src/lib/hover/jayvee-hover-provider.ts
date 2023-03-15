@@ -47,9 +47,6 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
     }
 
     const lspDocBuilder = new LspDocGenerator();
-    return lspDocBuilder.generateBlockAttributeDoc(
-      blockMetaInf,
-      attribute.name,
-    );
+    return lspDocBuilder.generateAttributeDoc(blockMetaInf, attribute.name);
   }
 }

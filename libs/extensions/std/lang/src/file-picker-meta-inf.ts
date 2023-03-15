@@ -10,12 +10,6 @@ export class FilePickerMetaInformation extends BlockMetaInformation {
       // How the block type should be called:
       'FilePicker',
 
-      // Input type:
-      IOType.FILE_SYSTEM,
-
-      // Output type:
-      IOType.FILE,
-
       // Attribute definitions:
       {
         path: {
@@ -25,6 +19,11 @@ export class FilePickerMetaInformation extends BlockMetaInformation {
           },
         },
       },
+      // Input type:
+      IOType.FILE_SYSTEM,
+
+      // Output type:
+      IOType.FILE,
     );
 
     this.docs.description = 'Picks an File out of an FileSystem and outputs it';

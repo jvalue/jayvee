@@ -1,9 +1,9 @@
-import { strict as assert } from 'assert';
-
 import { ValidationAcceptor } from 'langium';
 
-import { Attribute, Block } from '../ast/generated/ast';
+import { Attribute } from '../ast/generated/ast';
 import { AttributeValueType, IOType } from '../ast/model-util';
+
+import { MetaInformation } from './meta-inf';
 
 export interface AttributeSpecification {
   type: AttributeValueType;
@@ -28,64 +28,16 @@ interface BlockDocs {
   examples?: ExampleDoc[];
 }
 
-export abstract class BlockMetaInformation {
+export abstract class BlockMetaInformation extends MetaInformation {
   docs: BlockDocs = {};
 
   protected constructor(
-    public readonly blockType: string,
+    blockType: string,
+    attributes: Record<string, AttributeSpecification>,
     public readonly inputType: IOType,
     public readonly outputType: IOType,
-    private readonly attributes: Record<string, AttributeSpecification>,
-  ) {}
-
-  validate(block: Block, accept: ValidationAcceptor): void {
-    assert(
-      block.type.name === this.blockType,
-      `The block to be validated is expected to be of type ${this.blockType} but is of type ${block.type.name}`,
-    );
-
-    for (const attribute of block.attributes) {
-      const attributeSpecification = this.getAttributeSpecification(
-        attribute.name,
-      );
-      const attributeValidationFn = attributeSpecification?.validation;
-      if (attributeValidationFn === undefined) {
-        continue;
-      }
-      attributeValidationFn(attribute, accept);
-    }
-  }
-
-  getAttributeSpecification(name: string): AttributeSpecification | undefined {
-    return this.attributes[name];
-  }
-
-  getAttributeSpecifications(): Record<string, AttributeSpecification> {
-    return this.attributes;
-  }
-
-  hasAttributeSpecification(name: string): boolean {
-    return this.getAttributeSpecification(name) !== undefined;
-  }
-
-  getAttributeNames(
-    kind: 'optional' | 'required' | undefined = undefined,
-    excludeNames: string[] = [],
-  ): string[] {
-    const resultingAttributeNames: string[] = [];
-    for (const [name, spec] of Object.entries(this.attributes)) {
-      if (kind === 'optional' && spec.defaultValue === undefined) {
-        continue;
-      }
-      if (kind === 'required' && spec.defaultValue !== undefined) {
-        continue;
-      }
-      if (excludeNames.includes(name)) {
-        continue;
-      }
-      resultingAttributeNames.push(name);
-    }
-    return resultingAttributeNames;
+  ) {
+    super(blockType, attributes);
   }
 
   canBeConnectedTo(blockAfter: BlockMetaInformation): boolean {

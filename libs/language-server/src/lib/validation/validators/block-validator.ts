@@ -200,7 +200,7 @@ export class BlockValidator implements JayveeValidator {
       for (const pipe of pipes) {
         accept(
           'error',
-          `Blocks of type ${blockMetaInf.blockType} do not have an ${whatToCheck}`,
+          `Blocks of type ${blockMetaInf.type} do not have an ${whatToCheck}`,
           whatToCheck === 'input'
             ? pipe.getToDiagnostic()
             : pipe.getFromDiagnostic(),
@@ -210,7 +210,7 @@ export class BlockValidator implements JayveeValidator {
       for (const pipe of pipes) {
         accept(
           'error',
-          `At most one pipe can be connected to the ${whatToCheck} of a ${blockMetaInf.blockType}`,
+          `At most one pipe can be connected to the ${whatToCheck} of a ${blockMetaInf.type}`,
           pipe.getToDiagnostic(),
         );
       }
@@ -248,6 +248,6 @@ export class BlockValidator implements JayveeValidator {
     if (metaInf === undefined) {
       return;
     }
-    metaInf.validate(block, accept);
+    metaInf.validate(block.attributes, accept);
   }
 }

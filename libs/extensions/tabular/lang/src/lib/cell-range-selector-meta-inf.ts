@@ -6,21 +6,26 @@ import {
 
 export class CellRangeSelectorMetaInformation extends BlockMetaInformation {
   constructor() {
-    super('CellRangeSelector', IOType.SHEET, IOType.SHEET, {
-      select: {
-        type: AttributeValueType.CELL_RANGE,
-        docs: {
-          description: 'The cell range to select.',
-          examples: [
-            {
-              code: 'select: A1:E*',
-              description:
-                'Select cells from `A1` to the last cell of column `E`.',
-            },
-          ],
+    super(
+      'CellRangeSelector',
+      {
+        select: {
+          type: AttributeValueType.CELL_RANGE,
+          docs: {
+            description: 'The cell range to select.',
+            examples: [
+              {
+                code: 'select: A1:E*',
+                description:
+                  'Select cells from `A1` to the last cell of column `E`.',
+              },
+            ],
+          },
         },
       },
-    });
+      IOType.SHEET,
+      IOType.SHEET,
+    );
     this.docs.description =
       'Selects a subset of a `Sheet` to produce a new `Sheet`.';
     this.docs.examples = [

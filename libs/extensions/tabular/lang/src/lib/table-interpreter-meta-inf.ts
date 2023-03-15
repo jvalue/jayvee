@@ -4,86 +4,91 @@ import {
   IOType,
   getNodesWithNonUniqueNames,
   isCollection,
-  isTypeAssignmentValue,
+  isValuetypeAssignmentValue,
   validateTypedCollection,
 } from '@jvalue/language-server';
 
 export class TableInterpreterMetaInformation extends BlockMetaInformation {
   constructor() {
-    super('TableInterpreter', IOType.SHEET, IOType.TABLE, {
-      header: {
-        type: AttributeValueType.BOOLEAN,
-        docs: {
-          description:
-            'Whether the first row should be interpreted as header row.',
-          examples: [
-            {
-              code: 'header: true',
-              description:
-                'The first row is interpreted as table header. The values in the header row will become the column names of the table.',
-            },
-            {
-              code: 'header: false',
-              description:
-                'The first row is NOT interpreted as table header and columns of the sheet are directly mapped to table columns. The column names are taken form the provided names in the `columns` attribute.',
-            },
-          ],
-        },
-      },
-      columns: {
-        type: AttributeValueType.COLLECTION,
-        validation: (attribute, accept) => {
-          const attributeValue = attribute.value;
-          if (!isCollection(attributeValue)) {
-            return;
-          }
-
-          const { validItems, invalidItems } = validateTypedCollection(
-            attributeValue,
-            isTypeAssignmentValue,
-          );
-
-          invalidItems.forEach((invalidValue) =>
-            accept(
-              'error',
-              'Only type assignments are allowed in this collection',
+    super(
+      'TableInterpreter',
+      {
+        header: {
+          type: AttributeValueType.BOOLEAN,
+          docs: {
+            description:
+              'Whether the first row should be interpreted as header row.',
+            examples: [
               {
-                node: invalidValue,
+                code: 'header: true',
+                description:
+                  'The first row is interpreted as table header. The values in the header row will become the column names of the table.',
               },
-            ),
-          );
+              {
+                code: 'header: false',
+                description:
+                  'The first row is NOT interpreted as table header and columns of the sheet are directly mapped to table columns. The column names are taken form the provided names in the `columns` attribute.',
+              },
+            ],
+          },
+        },
+        columns: {
+          type: AttributeValueType.COLLECTION,
+          validation: (attribute, accept) => {
+            const attributeValue = attribute.value;
+            if (!isCollection(attributeValue)) {
+              return;
+            }
 
-          const typeAssignments = validItems.map(
-            (assignment) => assignment.value,
-          );
-          getNodesWithNonUniqueNames(typeAssignments).forEach(
-            (typeAssignment) => {
+            const { validItems, invalidItems } = validateTypedCollection(
+              attributeValue,
+              isValuetypeAssignmentValue,
+            );
+
+            invalidItems.forEach((invalidValue) =>
               accept(
                 'error',
-                `The column name "${typeAssignment.name}" needs to be unique.`,
+                'Only type assignments are allowed in this collection',
                 {
-                  node: typeAssignment,
-                  property: 'name',
+                  node: invalidValue,
                 },
-              );
-            },
-          );
-        },
-        docs: {
-          description:
-            'Collection of type assignments. Uses column names (potentially matched with the header or by sequence depending on the `header` attribute) to assign a primitive value type to each column.',
-          examples: [
-            {
-              code: 'columns: [ "name" typed text ]',
-              description:
-                'There is one column with the header "name". All values in this colum are typed as text.',
-            },
-          ],
-          validation:
-            'Needs to be a collection of type assignments. Each column needs to have a unique name.',
+              ),
+            );
+
+            const typeAssignments = validItems.map(
+              (assignment) => assignment.value,
+            );
+            getNodesWithNonUniqueNames(typeAssignments).forEach(
+              (typeAssignment) => {
+                accept(
+                  'error',
+                  `The column name "${typeAssignment.name}" needs to be unique.`,
+                  {
+                    node: typeAssignment,
+                    property: 'name',
+                  },
+                );
+              },
+            );
+          },
+          docs: {
+            description:
+              'Collection of type assignments. Uses column names (potentially matched with the header or by sequence depending on the `header` attribute) to assign a primitive value type to each column.',
+            examples: [
+              {
+                code: 'columns: [ "name" typed text ]',
+                description:
+                  'There is one column with the header "name". All values in this colum are typed as text.',
+              },
+            ],
+            validation:
+              'Needs to be a collection of type assignments. Each column needs to have a unique name.',
+          },
         },
       },
-    });
+      IOType.SHEET,
+      IOType.TABLE,
+    );
     this.docs.description =
       'Interprets a `Sheet` as a `Table`. In case a header row is present in the sheet, its names can be matched with the provided column names. Otherwise, the provided column names are assigned in order.';
     this.docs.examples = [
