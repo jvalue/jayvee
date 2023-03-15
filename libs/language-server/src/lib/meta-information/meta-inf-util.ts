@@ -73,7 +73,7 @@ export function getOrFailMetaInformation(
   const result = getMetaInformation(type);
   assert(
     result !== undefined,
-    `Meta information for type ${type.name} was expected to be present`,
+    `Meta information for type ${type.name} was expected to be present, got undefined instead`,
   );
   return result;
 }
@@ -84,7 +84,7 @@ export function getOrFailBlockMetaInformation(
   const result = registeredBlockMetaInformation.get(typeString);
   assert(
     result !== undefined,
-    `Meta information for block type ${typeString} was expected to be present`,
+    `Meta information for block type ${typeString} was expected to be present, got undefined instead`,
   );
   return result;
 }
@@ -95,7 +95,7 @@ export function getOrFailConstraintMetaInformation(
   const result = registeredConstraintMetaInformation.get(typeString);
   assert(
     result !== undefined,
-    `Meta information for constraint type ${typeString} was expected to be present`,
+    `Meta information for constraint type ${typeString} was expected to be present, got undefined instead`,
   );
   return result;
 }
