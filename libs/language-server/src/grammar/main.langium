@@ -14,7 +14,7 @@ Pipeline:
   '}';
 
 Block:
-  'block' name=ID 'oftype' type=BlockType AttributesFragment;
+  'block' name=ID 'oftype' type=BlockType body=AttributeBody;
 
 BlockType:
   name=ID;

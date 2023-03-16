@@ -14,14 +14,19 @@ import {
   JayveeGeneratedSharedModule,
 } from './ast/generated/module';
 import { JayveeCompletionProvider } from './completion/jayvee-completion-provider';
+import { registerConstraints } from './constraint/constraint-registry';
 import { JayveeHoverProvider } from './hover/jayvee-hover-provider';
 import { JayveeValidationRegistry } from './validation/validation-registry';
+import { AttributeBodyValidator } from './validation/validators/attribute-body-validator';
 import { BlockValidator } from './validation/validators/block-validator';
 import { CellRangeSelectionValidator } from './validation/validators/cell-range-selection-validator';
 import { ColumnExpressionValidator } from './validation/validators/column-expression-validator';
+import { ConstraintValidator } from './validation/validators/constraint-validator';
 import { ModelValidator } from './validation/validators/model-validator';
 import { PipeValidator } from './validation/validators/pipe-validator';
 import { PipelineValidator } from './validation/validators/pipeline-validator';
+import { RegexValueValidator } from './validation/validators/regex-value-validator';
+import { ValuetypeValidator } from './validation/validators/valuetype-validator';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -32,8 +37,12 @@ export interface JayveeAddedServices {
     PipelineValidator: PipelineValidator;
     PipeValidator: PipeValidator;
     BlockValidator: BlockValidator;
+    AttributeBodyValidator: AttributeBodyValidator;
     CellRangeSelectionValidator: CellRangeSelectionValidator;
     ColumnExpressionValidator: ColumnExpressionValidator;
+    ConstraintValidator: ConstraintValidator;
+    RegexValueValidator: RegexValueValidator;
+    ValuetypeValidator: ValuetypeValidator;
   };
 }
 
@@ -58,8 +67,12 @@ export const JayveeModule: Module<
     PipelineValidator: () => new PipelineValidator(),
     PipeValidator: () => new PipeValidator(),
     BlockValidator: () => new BlockValidator(),
+    AttributeBodyValidator: () => new AttributeBodyValidator(),
     CellRangeSelectionValidator: () => new CellRangeSelectionValidator(),
     ColumnExpressionValidator: () => new ColumnExpressionValidator(),
+    ConstraintValidator: () => new ConstraintValidator(),
+    RegexValueValidator: () => new RegexValueValidator(),
+    ValuetypeValidator: () => new ValuetypeValidator(),
   },
   lsp: {
     CompletionProvider: (services: LangiumServices) =>
@@ -98,5 +111,8 @@ export function createJayveeServices(context: DefaultSharedModuleContext): {
     JayveeModule,
   );
   shared.ServiceRegistry.register(Jayvee);
+
+  registerConstraints();
+
   return { shared, Jayvee };
 }

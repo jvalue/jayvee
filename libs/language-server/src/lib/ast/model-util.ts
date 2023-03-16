@@ -1,6 +1,6 @@
 import { strict as assert } from 'assert';
 
-import { assertUnreachable } from 'langium/lib/utils/errors';
+import { AstNode, assertUnreachable } from 'langium';
 
 import { getMetaInformation } from '../meta-information/meta-inf-util';
 
@@ -13,9 +13,10 @@ import {
   isBooleanValue,
   isCellRangeValue,
   isCollection,
-  isConstraintValue,
+  isConstraintReferenceValue,
   isDecimalValue,
   isIntegerValue,
+  isRegexValue,
   isTextValue,
   isValuetypeAssignmentValue,
   isValuetypeReference,
@@ -149,6 +150,7 @@ export enum AttributeValueType {
   DECIMAL = 'decimal',
   BOOLEAN = 'boolean',
   CELL_RANGE = 'cell-range',
+  REGEX = 'regex',
   COLLECTION = 'collection',
   VALUETYPE_ASSIGNMENT = 'valuetype-assignment',
   CONSTRAINT = 'constraint',
@@ -159,6 +161,7 @@ export function runtimeParameterAllowedForType(
 ): boolean {
   switch (type) {
     case AttributeValueType.CELL_RANGE:
+    case AttributeValueType.REGEX:
     case AttributeValueType.VALUETYPE_ASSIGNMENT:
     case AttributeValueType.COLLECTION:
     case AttributeValueType.CONSTRAINT:
@@ -173,32 +176,35 @@ export function runtimeParameterAllowedForType(
   }
 }
 
-export function convertAttributeValueToType(
+export function inferTypesFromValue(
   value: AttributeValue,
-): AttributeValueType {
+): AttributeValueType[] {
   if (isTextValue(value)) {
-    return AttributeValueType.TEXT;
+    return [AttributeValueType.TEXT];
   }
   if (isIntegerValue(value)) {
-    return AttributeValueType.INTEGER;
+    return [AttributeValueType.INTEGER, AttributeValueType.DECIMAL];
   }
   if (isDecimalValue(value)) {
-    return AttributeValueType.DECIMAL;
+    return [AttributeValueType.DECIMAL];
   }
   if (isBooleanValue(value)) {
-    return AttributeValueType.BOOLEAN;
+    return [AttributeValueType.BOOLEAN];
   }
   if (isCellRangeValue(value)) {
-    return AttributeValueType.CELL_RANGE;
+    return [AttributeValueType.CELL_RANGE];
+  }
+  if (isRegexValue(value)) {
+    return [AttributeValueType.REGEX];
   }
   if (isValuetypeAssignmentValue(value)) {
-    return AttributeValueType.VALUETYPE_ASSIGNMENT;
+    return [AttributeValueType.VALUETYPE_ASSIGNMENT];
   }
   if (isCollection(value)) {
-    return AttributeValueType.COLLECTION;
+    return [AttributeValueType.COLLECTION];
   }
-  if (isConstraintValue(value)) {
-    return AttributeValueType.CONSTRAINT;
+  if (isConstraintReferenceValue(value)) {
+    return [AttributeValueType.CONSTRAINT];
   }
   assertUnreachable(value);
 }
@@ -211,3 +217,7 @@ export function getValuetypeName(
   }
   return valuetype;
 }
+
+export type AstTypeGuard<T extends AstNode = AstNode> = (
+  obj: unknown,
+) => obj is T;

@@ -3,7 +3,7 @@ import { join } from 'path';
 
 import { StdLangExtension } from '@jvalue/extensions/std/lang';
 import {
-  getRegisteredMetaInformation,
+  getRegisteredBlockMetaInformation,
   useExtension,
 } from '@jvalue/language-server';
 
@@ -21,7 +21,7 @@ function main(): void {
     'user',
     'block-types',
   );
-  const metaInfs = getRegisteredMetaInformation();
+  const metaInfs = getRegisteredBlockMetaInformation();
   for (const metaInf of metaInfs) {
     const userDocBuilder = new UserDocGenerator();
     const blockTypeDoc = userDocBuilder.generateBlockTypeDoc(metaInf);

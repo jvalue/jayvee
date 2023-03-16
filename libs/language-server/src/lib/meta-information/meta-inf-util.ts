@@ -56,8 +56,12 @@ export function getMetaInformation(
   assertUnreachable(type);
 }
 
-export function getRegisteredMetaInformation(): BlockMetaInformation[] {
+export function getRegisteredBlockMetaInformation(): BlockMetaInformation[] {
   return [...registeredBlockMetaInformation.values()];
+}
+
+export function getRegisteredConstraintMetaInformation(): ConstraintMetaInformation[] {
+  return [...registeredConstraintMetaInformation.values()];
 }
 
 export function getOrFailMetaInformation(type: BlockType): BlockMetaInformation;

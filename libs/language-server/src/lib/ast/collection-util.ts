@@ -1,12 +1,11 @@
 import { AstNode } from 'langium';
 
 import { AtomicValue, Collection, isCollection } from './generated/ast';
+import { AstTypeGuard } from './model-util';
 
-type TypeGuard<T> = (obj: unknown) => obj is T;
-
-export function isTypedCollection<T extends AtomicValue>(
+export function isTypedCollection<G extends AstTypeGuard<AtomicValue>>(
   collection: AstNode,
-  collectionItemTypeGuard: TypeGuard<T>,
+  collectionItemTypeGuard: G,
 ): collection is Collection {
   if (!isCollection(collection)) {
     return false;
@@ -23,19 +22,17 @@ export interface TypedCollectionValidation<T> {
   invalidItems: AtomicValue[];
 }
 
-export function validateTypedCollection<T>(
+export function validateTypedCollection<T extends AtomicValue>(
   collection: Collection,
-  collectionItemTypeGuard: TypeGuard<T>,
+  collectionItemTypeGuard: AstTypeGuard<T>,
 ): TypedCollectionValidation<T> {
-  const validItems = collection.values.filter((item) =>
-    collectionItemTypeGuard(item),
-  );
+  const validItems: T[] = collection.values.filter(collectionItemTypeGuard);
   const invalidItems = collection.values.filter(
     (item) => !collectionItemTypeGuard(item),
   );
 
   return {
-    validItems: validItems as T[],
+    validItems: validItems,
     invalidItems: invalidItems,
   };
 }

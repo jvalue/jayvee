@@ -194,7 +194,7 @@ export abstract class BlockExecutor<
   }
 
   protected getAttribute(attributeName: string): Attribute | undefined {
-    return this.block.attributes.find(
+    return this.block.body.attributes.find(
       (attribute) => attribute.name === attributeName,
     );
   }

@@ -21,6 +21,9 @@ export class JayveeValidationRegistry extends ValidationRegistry {
     const blockValidator = services.validation.BlockValidator;
     this.register(blockValidator.checks, blockValidator);
 
+    const attributeBodyValidator = services.validation.AttributeBodyValidator;
+    this.register(attributeBodyValidator.checks, attributeBodyValidator);
+
     const cellRangeSelectionValidator =
       services.validation.CellRangeSelectionValidator;
     this.register(
@@ -31,5 +34,14 @@ export class JayveeValidationRegistry extends ValidationRegistry {
     const columnExpressionValidator =
       services.validation.ColumnExpressionValidator;
     this.register(columnExpressionValidator.checks, columnExpressionValidator);
+
+    const regexValueValidator = services.validation.RegexValueValidator;
+    this.register(regexValueValidator.checks, regexValueValidator);
+
+    const constraintValidator = services.validation.ConstraintValidator;
+    this.register(constraintValidator.checks, constraintValidator);
+
+    const valuetypeValidator = services.validation.ValuetypeValidator;
+    this.register(valuetypeValidator.checks, valuetypeValidator);
   }
 }
