@@ -5,7 +5,8 @@ import {
 } from '@jvalue/language-server';
 import { assertUnreachable } from 'langium/lib/utils/errors';
 
-import { AbstractValueType } from './abstract-value-type';
+import { ValueType } from './abstract-value-type';
+import { AtomicValueType } from './atomic-value-type';
 import { BooleanValueType } from './boolean-value-type';
 import { DecimalValueType } from './decimal-value-type';
 import { IntegerValueType } from './integer-value-type';
@@ -13,20 +14,33 @@ import { TextValueType } from './text-value-type';
 
 export function getValueType(
   valueType: PrimitiveValuetype | ValuetypeReference,
-): AbstractValueType {
-  const primitiveValuetype: PrimitiveValuetype = isValuetypeReference(valueType)
-    ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      valueType.reference.ref!.type
-    : valueType;
+  runtimeParameters: Map<string, string | number | boolean>,
+): ValueType {
+  if (isValuetypeReference(valueType)) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const valuetypeAstNode = valueType.reference.ref!;
+    const primitiveValuetype = valuetypeAstNode.type;
+    return new AtomicValueType(
+      getPrimitiveValueType(primitiveValuetype),
+      valuetypeAstNode,
+      runtimeParameters,
+    );
+  }
+  return getPrimitiveValueType(valueType);
+}
+
+function getPrimitiveValueType(
+  primitiveValuetype: PrimitiveValuetype,
+): ValueType {
   switch (primitiveValuetype) {
     case 'text':
-      return new TextValueType(primitiveValuetype);
+      return new TextValueType();
     case 'decimal':
-      return new DecimalValueType(primitiveValuetype);
+      return new DecimalValueType();
     case 'integer':
-      return new IntegerValueType(primitiveValuetype);
+      return new IntegerValueType();
     case 'boolean':
-      return new BooleanValueType(primitiveValuetype);
+      return new BooleanValueType();
     default:
       assertUnreachable(primitiveValuetype);
   }

@@ -5,12 +5,12 @@ import { ValueTypeVisitor } from './visitors/value-type-visitor';
 // eslint-disable-next-line import/no-cycle
 import { VisitableValueType } from './visitors/visitable-value-type';
 
-export abstract class AbstractValueType implements VisitableValueType {
-  constructor(readonly valueType: PrimitiveValuetype) {}
+export interface ValueType<T = unknown> extends VisitableValueType {
+  readonly primitiveValuetype: PrimitiveValuetype;
 
-  abstract acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R;
+  acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R;
 
-  abstract isValid(value: unknown): boolean;
+  isValid(value: unknown): boolean;
 
-  abstract getStandardRepresentation(value: unknown): unknown;
+  getStandardRepresentation(value: unknown): T;
 }

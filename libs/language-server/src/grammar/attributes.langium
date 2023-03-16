@@ -1,5 +1,4 @@
 import 'terminals';
-import 'primitives';
 import 'value-type';
 import 'cell-range';
 import 'constraints';
@@ -18,8 +17,7 @@ AttributeValue:
 
 AtomicValue:
   TextValue |
-  IntegerValue |
-  DecimalValue |
+  NumericValue |
   BooleanValue |
   CellRangeValue |
   RegexValue |
@@ -32,14 +30,11 @@ Collection:
 TextValue:
   value=STRING;
 
-IntegerValue:
-  value=SignedInteger;
-
-DecimalValue:
-  value=SignedDecimal;
+NumericValue:
+  value=(INTEGER | NUMBER);
 
 BooleanValue:
-  value=Boolean;
+  value=(TRUE | FALSE);
 
 CellRangeValue:
   value=CellRange;

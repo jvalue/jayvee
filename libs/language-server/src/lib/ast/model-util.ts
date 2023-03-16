@@ -14,8 +14,7 @@ import {
   isCellRangeValue,
   isCollection,
   isConstraintReferenceValue,
-  isDecimalValue,
-  isIntegerValue,
+  isNumericValue,
   isRegexValue,
   isTextValue,
   isValuetypeAssignmentValue,
@@ -182,10 +181,10 @@ export function inferTypesFromValue(
   if (isTextValue(value)) {
     return [AttributeValueType.TEXT];
   }
-  if (isIntegerValue(value)) {
-    return [AttributeValueType.INTEGER, AttributeValueType.DECIMAL];
-  }
-  if (isDecimalValue(value)) {
+  if (isNumericValue(value)) {
+    if (Number.isInteger(value.value)) {
+      return [AttributeValueType.INTEGER, AttributeValueType.DECIMAL];
+    }
     return [AttributeValueType.DECIMAL];
   }
   if (isBooleanValue(value)) {

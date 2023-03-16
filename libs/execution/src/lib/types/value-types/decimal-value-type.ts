@@ -1,13 +1,15 @@
 // eslint-disable-next-line import/no-cycle
-import { AbstractValueType } from './abstract-value-type';
+import { ValueType } from './abstract-value-type';
 // eslint-disable-next-line import/no-cycle
 import { ValueTypeVisitor } from './visitors/value-type-visitor';
 
-export class DecimalValueType extends AbstractValueType {
+export class DecimalValueType implements ValueType {
+  public readonly primitiveValuetype = 'decimal';
+
   private readonly DOT_SEPARATOR_REGEX = /^[+-]?([0-9]*[.])?[0-9]+$/;
   private readonly COMMA_SEPARATOR_REGEX = /^[+-]?([0-9]*[,])?[0-9]+$/;
 
-  override isValid(value: unknown): boolean {
+  isValid(value: unknown): boolean {
     if (typeof value === 'string') {
       return (
         this.DOT_SEPARATOR_REGEX.test(value) ||
@@ -18,11 +20,11 @@ export class DecimalValueType extends AbstractValueType {
     return !Number.isNaN(value);
   }
 
-  override acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R {
+  acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R {
     return visitor.visitDecimal(this);
   }
 
-  override getStandardRepresentation(value: unknown): number {
+  getStandardRepresentation(value: unknown): number {
     if (typeof value === 'number') {
       return value;
     }
@@ -34,7 +36,9 @@ export class DecimalValueType extends AbstractValueType {
       return Number.parseFloat(stringValue);
     }
 
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    throw new Error(`Invalid value: ${value} for type ${this.valueType}`);
+    throw new Error(
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      `Invalid value: ${value} for type ${this.primitiveValuetype}`,
+    );
   }
 }

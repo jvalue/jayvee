@@ -2,6 +2,7 @@ import {
   IOTypeImplementation,
   NONE,
   createBlockExecutor,
+  registerDefaultConstraintExecutors,
   useExtension as useExecutionExtension,
 } from '@jvalue/execution';
 import * as R from '@jvalue/execution';
@@ -34,6 +35,7 @@ export async function runAction(
   const loggerFactory = new LoggerFactory(options.debug);
 
   useStdExtension();
+  registerDefaultConstraintExecutors();
 
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   const model = await extractAstNode<Model>(

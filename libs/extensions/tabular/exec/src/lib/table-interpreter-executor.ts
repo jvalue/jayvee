@@ -2,11 +2,11 @@ import { strict as assert } from 'assert';
 
 import * as R from '@jvalue/execution';
 import {
-  AbstractValueType,
   BlockExecutor,
   ColumnInformation,
   Sheet,
   Table,
+  ValueType,
   getValueType,
 } from '@jvalue/execution';
 import {
@@ -20,7 +20,7 @@ import {
 interface ColumnDefinitionEntry {
   sheetColumnIndex: number;
   columnName: string;
-  valueType: AbstractValueType;
+  valueType: ValueType;
   astNode: ValuetypeAssignment;
 }
 
@@ -163,7 +163,7 @@ export class TableInterpreterExecutor extends BlockExecutor<
       (columnDefinition, columnDefinitionIndex) => ({
         sheetColumnIndex: columnDefinitionIndex,
         columnName: columnDefinition.name,
-        valueType: getValueType(columnDefinition.type),
+        valueType: getValueType(columnDefinition.type, this.runtimeParameters),
         astNode: columnDefinition,
       }),
     );
@@ -189,7 +189,7 @@ export class TableInterpreterExecutor extends BlockExecutor<
       columnEntries.push({
         sheetColumnIndex: indexOfMatchingHeader,
         columnName: columnDefinition.name,
-        valueType: getValueType(columnDefinition.type),
+        valueType: getValueType(columnDefinition.type, this.runtimeParameters),
         astNode: columnDefinition,
       });
     }
