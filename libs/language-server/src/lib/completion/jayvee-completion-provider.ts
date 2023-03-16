@@ -44,7 +44,6 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     if (astNode !== undefined) {
       const isBlockTypeCompletion =
         (isBlock(astNode) || isBlockType(astNode)) && next.type === BlockType;
-      next.type === ConstraintType;
       if (isBlockTypeCompletion) {
         return this.completionForBlockType(acceptor);
       }
