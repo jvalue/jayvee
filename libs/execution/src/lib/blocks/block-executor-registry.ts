@@ -4,7 +4,6 @@ import { Block } from '@jvalue/language-server';
 
 import { BlockExecutor } from './block-executor';
 import { BlockExecutorClass } from './block-executor-class';
-import { Logger } from './logger';
 
 const registeredBlockExecutors = new Map<string, BlockExecutorClass>();
 
@@ -22,11 +21,7 @@ export function getRegisteredBlockExecutors(): BlockExecutorClass[] {
   return [...registeredBlockExecutors.values()];
 }
 
-export function createBlockExecutor(
-  block: Block,
-  runtimeParameters: Map<string, string | number | boolean>,
-  logger: Logger,
-): BlockExecutor {
+export function createBlockExecutor(block: Block): BlockExecutor {
   const blockType = block.type.name;
   const blockExecutor = registeredBlockExecutors.get(blockType);
   assert(
@@ -34,10 +29,5 @@ export function createBlockExecutor(
     `No executor was registered for block type ${blockType}`,
   );
 
-  const blockExecutorInstance = new blockExecutor();
-  blockExecutorInstance.block = block;
-  blockExecutorInstance.runtimeParameters = runtimeParameters;
-  blockExecutorInstance.logger = logger;
-
-  return blockExecutorInstance;
+  return new blockExecutor();
 }

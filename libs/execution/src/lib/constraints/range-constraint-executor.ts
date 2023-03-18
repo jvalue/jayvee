@@ -1,11 +1,11 @@
+import { ExecutionContext } from '../execution-context';
+
 import { ConstraintExecutor } from './constraint-executor';
 
-export class RangeConstraintExecutor extends ConstraintExecutor {
-  constructor() {
-    super('RangeConstraint');
-  }
+export class RangeConstraintExecutor implements ConstraintExecutor {
+  public readonly constraintType = 'RangeConstraint';
 
-  isValid(value: unknown): boolean {
+  isValid(value: unknown, context: ExecutionContext): boolean {
     let numericValue: number;
     if (typeof value === 'string') {
       numericValue = Number.parseFloat(value);
@@ -15,12 +15,12 @@ export class RangeConstraintExecutor extends ConstraintExecutor {
       return false;
     }
 
-    const lowerBound = this.getNumericAttributeValue('lowerBound');
-    const lowerBoundInclusive = this.getBooleanAttributeValue(
+    const lowerBound = context.getNumericAttributeValue('lowerBound');
+    const lowerBoundInclusive = context.getBooleanAttributeValue(
       'lowerBoundInclusive',
     );
-    const upperBound = this.getNumericAttributeValue('upperBound');
-    const upperBoundInclusive = this.getBooleanAttributeValue(
+    const upperBound = context.getNumericAttributeValue('upperBound');
+    const upperBoundInclusive = context.getBooleanAttributeValue(
       'upperBoundInclusive',
     );
 

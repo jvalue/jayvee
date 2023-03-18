@@ -10,7 +10,7 @@ export class DefaultLogger extends Logger {
 
   constructor(
     private readonly enableDebugLogging: boolean,
-    private readonly loggingContext?: string,
+    private loggingContext?: string,
   ) {
     super();
   }
@@ -23,6 +23,10 @@ export class DefaultLogger extends Logger {
 
   override logErr(message: string): void {
     console.error(`${chalk.bold(this.getContext())}${chalk.red(message)}`);
+  }
+
+  override setLoggingContext(loggingContext: string | undefined) {
+    this.loggingContext = loggingContext;
   }
 
   private getContext(): string {

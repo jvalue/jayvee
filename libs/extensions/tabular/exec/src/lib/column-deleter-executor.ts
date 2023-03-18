@@ -1,7 +1,7 @@
 import { strict as assert } from 'assert';
 
 import * as R from '@jvalue/execution';
-import { BlockExecutor, Sheet } from '@jvalue/execution';
+import { BlockExecutor, ExecutionContext, Sheet } from '@jvalue/execution';
 import {
   ColumnWrapper,
   IOType,
@@ -10,17 +10,20 @@ import {
   isColumnWrapper,
 } from '@jvalue/language-server';
 
-export class ColumnDeleterExecutor extends BlockExecutor<
-  IOType.SHEET,
-  IOType.SHEET
-> {
-  constructor() {
-    super('ColumnDeleter', IOType.SHEET, IOType.SHEET);
-  }
+export class ColumnDeleterExecutor
+  implements BlockExecutor<IOType.SHEET, IOType.SHEET>
+{
+  public readonly blockType = 'ColumnDeleter';
+  public readonly inputType = IOType.SHEET;
+  public readonly outputType = IOType.SHEET;
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  override async execute(inputSheet: Sheet): Promise<R.Result<Sheet>> {
-    const relativeColumns = this.getCellRangeCollectionAttributeValue('delete');
+  async execute(
+    inputSheet: Sheet,
+    context: ExecutionContext,
+  ): Promise<R.Result<Sheet>> {
+    const relativeColumns =
+      context.getCellRangeCollectionAttributeValue('delete');
     assert(relativeColumns.every(isColumnWrapper));
 
     let absoluteColumns = relativeColumns.map((column) =>
@@ -45,7 +48,7 @@ export class ColumnDeleterExecutor extends BlockExecutor<
     // That way, the upcoming deletion is only called once per individual column
     absoluteColumns = this.removeDuplicateColumns(absoluteColumns);
 
-    this.logger.logDebug(
+    context.logger.logDebug(
       `Deleting column(s) ${absoluteColumns
         .map(getColumnIndex)
         .map(columnIndexToString)

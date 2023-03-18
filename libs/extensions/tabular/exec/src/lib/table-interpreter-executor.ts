@@ -4,9 +4,10 @@ import * as R from '@jvalue/execution';
 import {
   BlockExecutor,
   ColumnInformation,
+  ExecutionContext,
   Sheet,
   Table,
-  ValueType,
+  Valuetype,
   getValueType,
 } from '@jvalue/execution';
 import {
@@ -20,23 +21,25 @@ import {
 interface ColumnDefinitionEntry {
   sheetColumnIndex: number;
   columnName: string;
-  valueType: ValueType;
+  valueType: Valuetype;
   astNode: ValuetypeAssignment;
 }
 
-export class TableInterpreterExecutor extends BlockExecutor<
-  IOType.SHEET,
-  IOType.TABLE
-> {
-  constructor() {
-    super('TableInterpreter', IOType.SHEET, IOType.TABLE);
-  }
+export class TableInterpreterExecutor
+  implements BlockExecutor<IOType.SHEET, IOType.TABLE>
+{
+  public readonly blockType = 'TableInterpreter';
+  public readonly inputType = IOType.SHEET;
+  public readonly outputType = IOType.TABLE;
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  override async execute(inputSheet: Sheet): Promise<R.Result<Table>> {
-    const header = this.getBooleanAttributeValue('header');
+  async execute(
+    inputSheet: Sheet,
+    context: ExecutionContext,
+  ): Promise<R.Result<Table>> {
+    const header = context.getBooleanAttributeValue('header');
     const columnDefinitions =
-      this.getValuetypeAssignmentCollectionAttributeValue('columns');
+      context.getValuetypeAssignmentCollectionAttributeValue('columns');
 
     let columnEntries: ColumnDefinitionEntry[];
 
@@ -45,7 +48,7 @@ export class TableInterpreterExecutor extends BlockExecutor<
         return R.err({
           message: 'The input sheet is empty and thus has no header',
           diagnostic: {
-            node: this.getOrFailAttribute('header'),
+            node: context.getOrFailAttribute('header'),
           },
         });
       }
@@ -55,6 +58,7 @@ export class TableInterpreterExecutor extends BlockExecutor<
       columnEntries = this.deriveColumnDefinitionEntriesFromHeader(
         columnDefinitions,
         headerRow,
+        context,
       );
     } else {
       if (inputSheet.getNumberOfColumns() < columnDefinitions.length) {
@@ -63,7 +67,7 @@ export class TableInterpreterExecutor extends BlockExecutor<
             columnDefinitions.length
           } column definitions but the input sheet only has ${inputSheet.getNumberOfColumns()} columns`,
           diagnostic: {
-            node: this.getOrFailAttribute('columns'),
+            node: context.getOrFailAttribute('columns'),
           },
         });
       }
@@ -75,7 +79,7 @@ export class TableInterpreterExecutor extends BlockExecutor<
     const numberOfTableRows = header
       ? inputSheet.getNumberOfRows() - 1
       : inputSheet.getNumberOfRows();
-    this.logger.logDebug(
+    context.logger.logDebug(
       `Validating ${numberOfTableRows} row(s) according to the column types`,
     );
 
@@ -83,9 +87,10 @@ export class TableInterpreterExecutor extends BlockExecutor<
       inputSheet,
       header,
       columnEntries,
+      context,
     );
 
-    this.logger.logDebug(
+    context.logger.logDebug(
       `Validation completed, the resulting table has ${tableData.length} row(s) and ${columnEntries.length} column(s)`,
     );
 
@@ -103,6 +108,7 @@ export class TableInterpreterExecutor extends BlockExecutor<
     sheet: Sheet,
     header: boolean,
     columnEntries: ColumnDefinitionEntry[],
+    context: ExecutionContext,
   ): string[][] {
     const tableData: string[][] = [];
     sheet.iterateRows((sheetRow, sheetRowIndex) => {
@@ -114,9 +120,12 @@ export class TableInterpreterExecutor extends BlockExecutor<
         sheetRow,
         sheetRowIndex,
         columnEntries,
+        context,
       );
       if (tableRow === undefined) {
-        this.logger.logDebug(`Omitting row ${rowIndexToString(sheetRowIndex)}`);
+        context.logger.logDebug(
+          `Omitting row ${rowIndexToString(sheetRowIndex)}`,
+        );
       } else {
         tableData.push(tableRow);
       }
@@ -128,6 +137,7 @@ export class TableInterpreterExecutor extends BlockExecutor<
     sheetRow: string[],
     sheetRowIndex: number,
     columnEntries: ColumnDefinitionEntry[],
+    context: ExecutionContext,
   ): string[] | undefined {
     let invalidRow = false;
     const tableRow: string[] = [];
@@ -135,9 +145,9 @@ export class TableInterpreterExecutor extends BlockExecutor<
       const sheetColumnIndex = columnEntry.sheetColumnIndex;
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const value = sheetRow[sheetColumnIndex]!;
-      if (!columnEntry.valueType.isValid(value)) {
+      if (!columnEntry.valueType.isValid(value, context)) {
         const cellIndex = new CellIndex(sheetColumnIndex, sheetRowIndex);
-        this.logger.logDebug(
+        context.logger.logDebug(
           `The value at cell ${cellIndex.toString()} does not match the type ${getValuetypeName(
             columnEntry.astNode.type,
           )}`,
@@ -163,7 +173,7 @@ export class TableInterpreterExecutor extends BlockExecutor<
       (columnDefinition, columnDefinitionIndex) => ({
         sheetColumnIndex: columnDefinitionIndex,
         columnName: columnDefinition.name,
-        valueType: getValueType(columnDefinition.type, this.runtimeParameters),
+        valueType: getValueType(columnDefinition.type),
         astNode: columnDefinition,
       }),
     );
@@ -172,8 +182,9 @@ export class TableInterpreterExecutor extends BlockExecutor<
   private deriveColumnDefinitionEntriesFromHeader(
     columnDefinitions: ValuetypeAssignment[],
     headerRow: string[],
+    context: ExecutionContext,
   ): ColumnDefinitionEntry[] {
-    this.logger.logDebug(`Matching header with provided column names`);
+    context.logger.logDebug(`Matching header with provided column names`);
 
     const columnEntries: ColumnDefinitionEntry[] = [];
     for (const columnDefinition of columnDefinitions) {
@@ -181,7 +192,7 @@ export class TableInterpreterExecutor extends BlockExecutor<
         (headerColumnName) => headerColumnName === columnDefinition.name,
       );
       if (indexOfMatchingHeader === -1) {
-        this.logger.logDebug(
+        context.logger.logDebug(
           `Omitting column "${columnDefinition.name}" as the name was not found in the header`,
         );
         continue;
@@ -189,7 +200,7 @@ export class TableInterpreterExecutor extends BlockExecutor<
       columnEntries.push({
         sheetColumnIndex: indexOfMatchingHeader,
         columnName: columnDefinition.name,
-        valueType: getValueType(columnDefinition.type, this.runtimeParameters),
+        valueType: getValueType(columnDefinition.type),
         astNode: columnDefinition,
       });
     }

@@ -5,25 +5,23 @@ import {
 } from '@jvalue/language-server';
 import { assertUnreachable } from 'langium/lib/utils/errors';
 
-import { ValueType } from './abstract-value-type';
-import { AtomicValueType } from './atomic-value-type';
-import { BooleanValueType } from './boolean-value-type';
-import { DecimalValueType } from './decimal-value-type';
-import { IntegerValueType } from './integer-value-type';
-import { TextValueType } from './text-value-type';
+import { AtomicValuetype } from './atomic-valuetype';
+import { BooleanValuetype } from './boolean-valuetype';
+import { DecimalValuetype } from './decimal-valuetype';
+import { IntegerValuetype } from './integer-valuetype';
+import { TextValuetype } from './text-valuetype';
+import { Valuetype } from './valuetype';
 
 export function getValueType(
   valueType: PrimitiveValuetype | ValuetypeReference,
-  runtimeParameters: Map<string, string | number | boolean>,
-): ValueType {
+): Valuetype {
   if (isValuetypeReference(valueType)) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const valuetypeAstNode = valueType.reference.ref!;
     const primitiveValuetype = valuetypeAstNode.type;
-    return new AtomicValueType(
+    return new AtomicValuetype(
       getPrimitiveValueType(primitiveValuetype),
       valuetypeAstNode,
-      runtimeParameters,
     );
   }
   return getPrimitiveValueType(valueType);
@@ -31,16 +29,16 @@ export function getValueType(
 
 function getPrimitiveValueType(
   primitiveValuetype: PrimitiveValuetype,
-): ValueType {
+): Valuetype {
   switch (primitiveValuetype) {
     case 'text':
-      return new TextValueType();
+      return new TextValuetype();
     case 'decimal':
-      return new DecimalValueType();
+      return new DecimalValuetype();
     case 'integer':
-      return new IntegerValueType();
+      return new IntegerValuetype();
     case 'boolean':
-      return new BooleanValueType();
+      return new BooleanValuetype();
     default:
       assertUnreachable(primitiveValuetype);
   }

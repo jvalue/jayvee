@@ -37,7 +37,6 @@ export function registerConstraintExecutor(
 
 export function createConstraintExecutor(
   constraint: Constraint,
-  runtimeParameters: Map<string, string | number | boolean>,
 ): ConstraintExecutor {
   const constraintType = constraint.type.name;
   const constraintExecutor = registeredConstraintExecutors.get(constraintType);
@@ -46,9 +45,5 @@ export function createConstraintExecutor(
     `No executor was registered for constraint type ${constraintType}`,
   );
 
-  const constraintExecutorInstance = new constraintExecutor();
-  constraintExecutorInstance.constraint = constraint;
-  constraintExecutorInstance.runtimeParameters = runtimeParameters;
-
-  return constraintExecutorInstance;
+  return new constraintExecutor();
 }

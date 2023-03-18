@@ -1,4 +1,5 @@
 import {
+  ExecutionContext,
   IOTypeImplementation,
   NONE,
   createBlockExecutor,
@@ -90,9 +91,13 @@ async function runPipeline(
   runtimeParameters: Map<string, string | number | boolean>,
   loggerFactory: LoggerFactory,
 ): Promise<ExitCode> {
-  const pipelineLogger = loggerFactory.createLogger(pipeline.name);
-
   printPipeline(pipeline, runtimeParameters);
+
+  const executionContext = new ExecutionContext(
+    pipeline,
+    loggerFactory.createLogger(),
+    runtimeParameters,
+  );
 
   const executionOrder: Array<{
     block: Block;
@@ -101,13 +106,11 @@ async function runPipeline(
     return { block: block, value: NONE };
   });
   for (const blockData of executionOrder) {
-    const blockLogger = loggerFactory.createLogger(blockData.block.name);
-    const blockExecutor = createBlockExecutor(
-      blockData.block,
-      runtimeParameters,
-      blockLogger,
-    );
-    const parentData = collectParents(blockData.block).map((parent) =>
+    const block = blockData.block;
+    executionContext.enterNode(block);
+
+    const blockExecutor = createBlockExecutor(block);
+    const parentData = collectParents(block).map((parent) =>
       executionOrder.find((blockData) => parent === blockData.block),
     );
     const inputValue =
@@ -118,12 +121,10 @@ async function runPipeline(
     // Check, if parent emitted a value
     if (inputValue != null) {
       try {
-        result = await blockExecutor.execute(inputValue);
+        result = await blockExecutor.execute(inputValue, executionContext);
       } catch (unexpectedError) {
-        pipelineLogger.logErrDiagnostic(
-          `An unknown error occurred during the execution of block ${
-            blockData.block.name
-          }: ${
+        executionContext.logger.logErrDiagnostic(
+          `An unknown error occurred: ${
             unexpectedError instanceof Error
               ? unexpectedError.message
               : JSON.stringify(unexpectedError)
@@ -134,7 +135,7 @@ async function runPipeline(
       }
 
       if (R.isErr(result)) {
-        pipelineLogger.logErrDiagnostic(
+        executionContext.logger.logErrDiagnostic(
           result.left.message,
           result.left.diagnostic,
         );
@@ -143,16 +144,17 @@ async function runPipeline(
 
       blockData.value = result.right;
 
-      // If parent emittet no value, skip all downstream blocks
+      // If parent emitted no value, skip all downstream blocks
     } else {
       blockData.value = null;
-      pipelineLogger.logInfoDiagnostic(
-        `Skipped executing block ${blockData.block.name} because parent block ${
+      executionContext.logger.logInfoDiagnostic(
+        `Skipped execution because parent block ${
           parentData[0] ? parentData[0].block.name : 'NAME NOT FOUND'
         } emitted no value.`,
         { node: blockData.block, property: 'name' },
       );
     }
+    executionContext.exitNode(block);
   }
   return ExitCode.SUCCESS;
 }

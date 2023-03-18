@@ -1,16 +1,16 @@
 // eslint-disable-next-line import/no-cycle
-import { ValueType } from './abstract-value-type';
+import { Valuetype } from './valuetype';
 // eslint-disable-next-line import/no-cycle
-import { ValueTypeVisitor } from './visitors/value-type-visitor';
+import { ValuetypeVisitor } from './visitors/valuetype-visitor';
 
-export class TextValueType implements ValueType<string> {
+export class TextValuetype implements Valuetype<string> {
   public readonly primitiveValuetype = 'text';
 
   isValid(value: unknown): boolean {
     return typeof value === 'string';
   }
 
-  acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R {
+  acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
     return visitor.visitText(this);
   }
 

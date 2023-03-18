@@ -1,2 +1,2 @@
-export * from './value-type-visitor';
-export * from './visitable-value-type';
+export * from './valuetype-visitor';
+export * from './visitable-valuetype';

@@ -1,17 +1,17 @@
+import { ExecutionContext } from '../execution-context';
+
 import { ConstraintExecutor } from './constraint-executor';
 
-export class LengthConstraintExecutor extends ConstraintExecutor {
-  constructor() {
-    super('LengthConstraint');
-  }
+export class LengthConstraintExecutor implements ConstraintExecutor {
+  public readonly constraintType = 'LengthConstraint';
 
-  isValid(value: unknown): boolean {
+  isValid(value: unknown, context: ExecutionContext): boolean {
     if (typeof value !== 'string') {
       return false;
     }
 
-    const minLength = this.getNumericAttributeValue('minLength');
-    const maxLength = this.getNumericAttributeValue('maxLength');
+    const minLength = context.getNumericAttributeValue('minLength');
+    const maxLength = context.getNumericAttributeValue('maxLength');
 
     return minLength <= value.length && value.length <= maxLength;
   }

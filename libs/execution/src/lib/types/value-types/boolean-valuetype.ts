@@ -1,9 +1,9 @@
 // eslint-disable-next-line import/no-cycle
-import { ValueType } from './abstract-value-type';
+import { Valuetype } from './valuetype';
 // eslint-disable-next-line import/no-cycle
-import { ValueTypeVisitor } from './visitors/value-type-visitor';
+import { ValuetypeVisitor } from './visitors/valuetype-visitor';
 
-export class BooleanValueType implements ValueType {
+export class BooleanValuetype implements Valuetype {
   public readonly primitiveValuetype = 'boolean';
 
   private readonly BOOLEAN_STRING_REPRESENTATIONS = [
@@ -13,7 +13,7 @@ export class BooleanValueType implements ValueType {
     'False',
   ];
 
-  acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R {
+  acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
     return visitor.visitBoolean(this);
   }
 

@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as R from '@jvalue/execution';
 import {
   BlockExecutor,
+  ExecutionContext,
   File,
   FileExtension,
   FileSystem,
@@ -18,19 +19,22 @@ import {
   inferMimeTypeFromContentTypeString,
 } from './file-util';
 
-export class ArchiveInterpreterExecutor extends BlockExecutor<
-  IOType.FILE,
-  IOType.FILE_SYSTEM
-> {
-  constructor() {
-    // Needs to match the name in meta information:
-    super('ArchiveInterpreter', IOType.FILE, IOType.FILE_SYSTEM);
-  }
+export class ArchiveInterpreterExecutor
+  implements BlockExecutor<IOType.FILE, IOType.FILE_SYSTEM>
+{
+  public readonly blockType = 'ArchiveInterpreter';
+  public readonly inputType = IOType.FILE;
+  public readonly outputType = IOType.FILE_SYSTEM;
 
-  override async execute(archiveFile: File): Promise<R.Result<FileSystem>> {
-    // Accessing attribute values by their name:
-    if (this.getStringAttributeValue('archiveType') === 'zip') {
-      const fs = await this.loadZipFileToInMemoryFileSystem(archiveFile);
+  async execute(
+    archiveFile: File,
+    context: ExecutionContext,
+  ): Promise<R.Result<FileSystem>> {
+    if (context.getTextAttributeValue('archiveType') === 'zip') {
+      const fs = await this.loadZipFileToInMemoryFileSystem(
+        archiveFile,
+        context,
+      );
       if (R.isErr(fs)) {
         return fs;
       }
@@ -38,14 +42,15 @@ export class ArchiveInterpreterExecutor extends BlockExecutor<
     }
     return R.err({
       message: `Archive is not a zip-archive`,
-      diagnostic: { node: this.block, property: 'name' },
+      diagnostic: { node: context.getCurrentNode(), property: 'name' },
     });
   }
 
   private async loadZipFileToInMemoryFileSystem(
     archiveFile: File,
+    context: ExecutionContext,
   ): Promise<R.Result<FileSystem>> {
-    this.logger.logDebug(`Loading zip file from binary content`);
+    context.logger.logDebug(`Loading zip file from binary content`);
     try {
       const jszip = JSZip();
       const root = new InMemoryFileSystem();
@@ -75,7 +80,7 @@ export class ArchiveInterpreterExecutor extends BlockExecutor<
         message: `Unexpected Error ${
           error instanceof Error ? error.message : JSON.stringify(err)
         } occured during processing`,
-        diagnostic: { node: this.block, property: 'name' },
+        diagnostic: { node: context.getCurrentNode(), property: 'name' },
       });
     }
   }

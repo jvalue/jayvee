@@ -1,9 +1,9 @@
 // eslint-disable-next-line import/no-cycle
-import { ValueType } from './abstract-value-type';
+import { Valuetype } from './valuetype';
 // eslint-disable-next-line import/no-cycle
-import { ValueTypeVisitor } from './visitors/value-type-visitor';
+import { ValuetypeVisitor } from './visitors/valuetype-visitor';
 
-export class DecimalValueType implements ValueType {
+export class DecimalValuetype implements Valuetype {
   public readonly primitiveValuetype = 'decimal';
 
   private readonly DOT_SEPARATOR_REGEX = /^[+-]?([0-9]*[.])?[0-9]+$/;
@@ -20,7 +20,7 @@ export class DecimalValueType implements ValueType {
     return !Number.isNaN(value);
   }
 
-  acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R {
+  acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
     return visitor.visitDecimal(this);
   }
 

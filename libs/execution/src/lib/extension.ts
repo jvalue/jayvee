@@ -1,5 +1,5 @@
-import { BlockExecutorClass } from './block-executor-class';
-import { registerBlockExecutor } from './block-executor-registry';
+import { BlockExecutorClass } from './blocks/block-executor-class';
+import { registerBlockExecutor } from './blocks/block-executor-registry';
 
 export interface JayveeExecExtension {
   getBlockExecutors(): BlockExecutorClass[];

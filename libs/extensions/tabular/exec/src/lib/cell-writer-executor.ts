@@ -1,21 +1,23 @@
 import { strict as assert } from 'assert';
 
 import * as R from '@jvalue/execution';
-import { BlockExecutor, Sheet } from '@jvalue/execution';
+import { BlockExecutor, ExecutionContext, Sheet } from '@jvalue/execution';
 import { IOType, getCellIndex, isCellWrapper } from '@jvalue/language-server';
 
-export class CellWriterExecutor extends BlockExecutor<
-  IOType.SHEET,
-  IOType.SHEET
-> {
-  constructor() {
-    super('CellWriter', IOType.SHEET, IOType.SHEET);
-  }
+export class CellWriterExecutor
+  implements BlockExecutor<IOType.SHEET, IOType.SHEET>
+{
+  public readonly blockType = 'CellWriter';
+  public readonly inputType = IOType.SHEET;
+  public readonly outputType = IOType.SHEET;
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  override async execute(inputSheet: Sheet): Promise<R.Result<Sheet>> {
-    const relativeCell = this.getCellRangeAttributeValue('at');
-    const content = this.getStringAttributeValue('write');
+  async execute(
+    inputSheet: Sheet,
+    context: ExecutionContext,
+  ): Promise<R.Result<Sheet>> {
+    const relativeCell = context.getCellRangeAttributeValue('at');
+    const content = context.getTextAttributeValue('write');
 
     assert(isCellWrapper(relativeCell));
 
@@ -27,7 +29,7 @@ export class CellWriterExecutor extends BlockExecutor<
       });
     }
 
-    this.logger.logDebug(
+    context.logger.logDebug(
       `Writing "${content}" at cell ${getCellIndex(absoluteCell).toString()}`,
     );
 

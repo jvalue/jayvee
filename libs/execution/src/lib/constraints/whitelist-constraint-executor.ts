@@ -1,16 +1,16 @@
+import { ExecutionContext } from '../execution-context';
+
 import { ConstraintExecutor } from './constraint-executor';
 
-export class WhitelistConstraintExecutor extends ConstraintExecutor {
-  constructor() {
-    super('WhitelistConstraint');
-  }
+export class WhitelistConstraintExecutor implements ConstraintExecutor {
+  public readonly constraintType = 'WhitelistConstraint';
 
-  isValid(value: unknown): boolean {
+  isValid(value: unknown, context: ExecutionContext): boolean {
     if (typeof value !== 'string') {
       return false;
     }
 
-    const whitelist = this.getTextCollectionAttributeValue('whitelist');
+    const whitelist = context.getTextCollectionAttributeValue('whitelist');
     const whitelistValues = whitelist.map(
       (whitelistElement) => whitelistElement.value,
     );
