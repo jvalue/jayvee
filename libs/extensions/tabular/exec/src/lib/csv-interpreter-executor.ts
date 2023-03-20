@@ -19,6 +19,8 @@ export class CSVInterpreterExecutor extends BlockExecutor<
 
   override async execute(file: File): Promise<R.Result<Sheet>> {
     const delimiter = this.getStringAttributeValue('delimiter');
+    const enclosing = this.getStringAttributeValue('enclosing');
+    const enclosingEscape = this.getStringAttributeValue('enclosingEscape');
 
     const decoder = new TextDecoder();
     const csvFile = decoder.decode(file.content);
@@ -26,7 +28,13 @@ export class CSVInterpreterExecutor extends BlockExecutor<
       `Parsing raw data as CSV using delimiter "${delimiter}"`,
     );
 
-    const csvData = await parseAsCsv(csvFile, delimiter);
+    const parseOptions: ParserOptionsArgs = {
+      delimiter,
+      quote: enclosing,
+      escape: enclosingEscape,
+    };
+    const csvData = await parseAsCsv(csvFile, parseOptions);
+
     if (isLeft(csvData)) {
       return Promise.resolve(
         R.err({
@@ -44,11 +52,10 @@ export class CSVInterpreterExecutor extends BlockExecutor<
 
 function parseAsCsv(
   rawData: string,
-  delimiter: string,
+  parseOptions: ParserOptionsArgs,
 ): Promise<Either<Error, string[][]>> {
   return new Promise((resolve) => {
     const csvData: string[][] = [];
-    const parseOptions: ParserOptionsArgs = { delimiter };
     parseStringAsCsv(rawData, parseOptions)
       .on('data', (data: string[]) => {
         csvData.push(data);
