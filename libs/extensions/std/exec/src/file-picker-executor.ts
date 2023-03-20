@@ -1,16 +1,19 @@
 import * as R from '@jvalue/execution';
 import {
   BlockExecutor,
+  BlockExecutorClass,
   ExecutionContext,
   File,
   FileSystem,
+  implementsStatic,
 } from '@jvalue/execution';
 import { IOType } from '@jvalue/language-server';
 
+@implementsStatic<BlockExecutorClass>()
 export class FilePickerExecutor
   implements BlockExecutor<IOType.FILE_SYSTEM, IOType.FILE>
 {
-  public readonly blockType = 'FilePicker';
+  public static readonly type = 'FilePicker';
   public readonly inputType = IOType.FILE_SYSTEM;
   public readonly outputType = IOType.FILE;
 

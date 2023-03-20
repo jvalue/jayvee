@@ -1,3 +1,3 @@
 export * from './block-meta-inf';
 export * from './meta-inf';
-export * from './meta-inf-util';
+export * from './meta-inf-registry';

@@ -2,7 +2,8 @@ import { strict as assert } from 'assert';
 
 import { AstNode, assertUnreachable } from 'langium';
 
-import { getMetaInformation } from '../meta-information/meta-inf-util';
+// eslint-disable-next-line import/no-cycle
+import { getMetaInformation } from '../meta-information/meta-inf-registry';
 
 import {
   AttributeValue,

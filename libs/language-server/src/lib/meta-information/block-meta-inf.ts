@@ -1,5 +1,7 @@
+// eslint-disable-next-line import/no-cycle
 import { IOType } from '../ast/model-util';
 
+// eslint-disable-next-line import/no-cycle
 import {
   AttributeSpecification,
   ExampleDoc,

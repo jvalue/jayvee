@@ -1,5 +1,6 @@
 import { PrimitiveValuetype } from '../ast/generated/ast';
 
+// eslint-disable-next-line import/no-cycle
 import { AttributeSpecification, MetaInformation } from './meta-inf';
 
 export abstract class ConstraintMetaInformation extends MetaInformation {

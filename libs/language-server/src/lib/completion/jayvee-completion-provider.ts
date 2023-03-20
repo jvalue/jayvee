@@ -30,7 +30,7 @@ import {
   getMetaInformation,
   getRegisteredBlockMetaInformation,
   getRegisteredConstraintMetaInformation,
-} from '../meta-information/meta-inf-util';
+} from '../meta-information/meta-inf-registry';
 
 const RIGHT_ARROW_SYMBOL = '\u{2192}';
 

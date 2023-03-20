@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as R from '@jvalue/execution';
 import {
   BlockExecutor,
+  BlockExecutorClass,
   ExecutionContext,
   File,
   FileExtension,
@@ -10,6 +11,7 @@ import {
   InMemoryFileSystem,
   MimeType,
   err,
+  implementsStatic,
 } from '@jvalue/execution';
 import { IOType } from '@jvalue/language-server';
 import * as JSZip from 'jszip';
@@ -19,10 +21,11 @@ import {
   inferMimeTypeFromContentTypeString,
 } from './file-util';
 
+@implementsStatic<BlockExecutorClass>()
 export class ArchiveInterpreterExecutor
   implements BlockExecutor<IOType.FILE, IOType.FILE_SYSTEM>
 {
-  public readonly blockType = 'ArchiveInterpreter';
+  public static readonly type = 'ArchiveInterpreter';
   public readonly inputType = IOType.FILE;
   public readonly outputType = IOType.FILE_SYSTEM;
 

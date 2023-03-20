@@ -1,18 +1,21 @@
 import * as R from '@jvalue/execution';
 import {
   BlockExecutor,
+  BlockExecutorClass,
   ExecutionContext,
   NONE,
   None,
   Table,
+  implementsStatic,
 } from '@jvalue/execution';
 import { IOType } from '@jvalue/language-server';
 import { Client } from 'pg';
 
+@implementsStatic<BlockExecutorClass>()
 export class PostgresLoaderExecutor
   implements BlockExecutor<IOType.TABLE, IOType.NONE>
 {
-  public readonly blockType = 'PostgresLoader';
+  public static readonly type = 'PostgresLoader';
   public readonly inputType = IOType.TABLE;
   public readonly outputType = IOType.NONE;
 

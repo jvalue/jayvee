@@ -1,22 +1,11 @@
-import {
-  BlockMetaInformation,
-  registerBlockMetaInformation,
-} from './meta-information';
-
-export interface BlockMetaInformationClass<
-  T extends BlockMetaInformation = BlockMetaInformation,
-> extends Function {
-  new (): T;
-}
+import { BlockMetaInformation } from './meta-information';
+import { registerMetaInformation } from './meta-information/meta-inf-registry';
+import { ConstructorClass } from './util/constructor-class';
 
 export interface JayveeLangExtension {
-  getBlockMetaInf(): BlockMetaInformationClass[];
+  getBlockMetaInf(): Array<ConstructorClass<BlockMetaInformation>>;
 }
 
 export function useExtension(extension: JayveeLangExtension) {
-  extension
-    .getBlockMetaInf()
-    .forEach((blockMetaInformation) =>
-      registerBlockMetaInformation(new blockMetaInformation()),
-    );
+  extension.getBlockMetaInf().forEach(registerMetaInformation);
 }

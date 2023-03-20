@@ -9,7 +9,6 @@ export interface BlockExecutor<
   I extends IOType = IOType,
   O extends IOType = IOType,
 > {
-  readonly blockType: string;
   readonly inputType: I;
   readonly outputType: O;
 

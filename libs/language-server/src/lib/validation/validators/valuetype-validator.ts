@@ -12,7 +12,7 @@ import {
   inferTypesFromValue,
   isConstraintReferenceValue,
 } from '../../ast';
-import { getMetaInformation } from '../../meta-information/meta-inf-util';
+import { getMetaInformation } from '../../meta-information/meta-inf-registry';
 import { JayveeValidator } from '../jayvee-validator';
 
 export class ValuetypeValidator implements JayveeValidator {

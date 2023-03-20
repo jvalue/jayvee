@@ -1,5 +1,6 @@
 import {
-  BlockMetaInformationClass,
+  BlockMetaInformation,
+  ConstructorClass,
   JayveeLangExtension,
 } from '@jvalue/language-server';
 
@@ -11,7 +12,7 @@ import { RowDeleterMetaInformation } from './lib/row-deleter-meta-inf';
 import { TableInterpreterMetaInformation } from './lib/table-interpreter-meta-inf';
 
 export class TabularLangExtension implements JayveeLangExtension {
-  getBlockMetaInf(): BlockMetaInformationClass[] {
+  getBlockMetaInf(): Array<ConstructorClass<BlockMetaInformation>> {
     return [
       ColumnDeleterMetaInformation,
       RowDeleterMetaInformation,

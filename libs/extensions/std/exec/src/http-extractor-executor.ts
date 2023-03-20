@@ -4,11 +4,13 @@ import * as path from 'path';
 import * as R from '@jvalue/execution';
 import {
   BlockExecutor,
+  BlockExecutorClass,
   ExecutionContext,
   File,
   FileExtension,
   MimeType,
   None,
+  implementsStatic,
 } from '@jvalue/execution';
 import { IOType } from '@jvalue/language-server';
 
@@ -18,10 +20,11 @@ import {
   inferMimeTypeFromContentTypeString,
 } from './file-util';
 
+@implementsStatic<BlockExecutorClass>()
 export class HttpExtractorExecutor
   implements BlockExecutor<IOType.NONE, IOType.FILE>
 {
-  public readonly blockType = 'HttpExtractor';
+  public static readonly type = 'HttpExtractor';
   public readonly inputType = IOType.NONE;
   public readonly outputType = IOType.FILE;
 

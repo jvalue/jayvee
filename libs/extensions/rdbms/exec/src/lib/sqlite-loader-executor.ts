@@ -1,18 +1,21 @@
 import * as R from '@jvalue/execution';
 import {
   BlockExecutor,
+  BlockExecutorClass,
   ExecutionContext,
   NONE,
   None,
   Table,
+  implementsStatic,
 } from '@jvalue/execution';
 import { IOType } from '@jvalue/language-server';
 import * as sqlite3 from 'sqlite3';
 
+@implementsStatic<BlockExecutorClass>()
 export class SQLiteLoaderExecutor
   implements BlockExecutor<IOType.TABLE, IOType.NONE>
 {
-  public readonly blockType = 'SQLiteLoader';
+  public static readonly type = 'SQLiteLoader';
   public readonly inputType = IOType.TABLE;
   public readonly outputType = IOType.NONE;
 

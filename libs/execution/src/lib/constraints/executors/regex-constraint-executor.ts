@@ -1,6 +1,5 @@
-import { ExecutionContext } from '../execution-context';
-
-import { ConstraintExecutor } from './constraint-executor';
+import { ExecutionContext } from '../../execution-context';
+import { ConstraintExecutor } from '../constraint-executor';
 
 export class RegexConstraintExecutor implements ConstraintExecutor {
   public readonly constraintType = 'RegexConstraint';

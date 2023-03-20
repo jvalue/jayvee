@@ -1,7 +1,13 @@
 import { strict as assert } from 'assert';
 
 import * as R from '@jvalue/execution';
-import { BlockExecutor, ExecutionContext, Sheet } from '@jvalue/execution';
+import {
+  BlockExecutor,
+  BlockExecutorClass,
+  ExecutionContext,
+  Sheet,
+  implementsStatic,
+} from '@jvalue/execution';
 import {
   IOType,
   RowWrapper,
@@ -10,10 +16,11 @@ import {
   rowIndexToString,
 } from '@jvalue/language-server';
 
+@implementsStatic<BlockExecutorClass>()
 export class RowDeleterExecutor
   implements BlockExecutor<IOType.SHEET, IOType.SHEET>
 {
-  public readonly blockType = 'RowDeleter';
+  public static readonly type = 'RowDeleter';
   public readonly inputType = IOType.SHEET;
   public readonly outputType = IOType.SHEET;
 

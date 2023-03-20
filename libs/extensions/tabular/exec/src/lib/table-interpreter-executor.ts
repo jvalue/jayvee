@@ -3,12 +3,14 @@ import { strict as assert } from 'assert';
 import * as R from '@jvalue/execution';
 import {
   BlockExecutor,
+  BlockExecutorClass,
   ColumnInformation,
   ExecutionContext,
   Sheet,
   Table,
   Valuetype,
   getValueType,
+  implementsStatic,
 } from '@jvalue/execution';
 import {
   CellIndex,
@@ -25,10 +27,11 @@ interface ColumnDefinitionEntry {
   astNode: ValuetypeAssignment;
 }
 
+@implementsStatic<BlockExecutorClass>()
 export class TableInterpreterExecutor
   implements BlockExecutor<IOType.SHEET, IOType.TABLE>
 {
-  public readonly blockType = 'TableInterpreter';
+  public static readonly type = 'TableInterpreter';
   public readonly inputType = IOType.SHEET;
   public readonly outputType = IOType.TABLE;
 

@@ -5,19 +5,22 @@ import { ParserOptionsArgs } from '@fast-csv/parse/build/src/ParserOptions';
 import * as R from '@jvalue/execution';
 import {
   BlockExecutor,
+  BlockExecutorClass,
   ExecutionContext,
   File,
   FileExtension,
   Sheet,
+  implementsStatic,
 } from '@jvalue/execution';
 import { IOType } from '@jvalue/language-server';
 import { Either, isLeft } from 'fp-ts/lib/Either';
 import * as E from 'fp-ts/lib/Either';
 
+@implementsStatic<BlockExecutorClass>()
 export class CSVInterpreterExecutor
   implements BlockExecutor<IOType.FILE, IOType.SHEET>
 {
-  public readonly blockType = 'CSVInterpreter';
+  public static readonly type = 'CSVInterpreter';
   public readonly inputType = IOType.FILE;
   public readonly outputType = IOType.SHEET;
 

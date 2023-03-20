@@ -1,11 +1,18 @@
 import * as R from '@jvalue/execution';
-import { BlockExecutor, ExecutionContext, Sheet } from '@jvalue/execution';
+import {
+  BlockExecutor,
+  BlockExecutorClass,
+  ExecutionContext,
+  Sheet,
+  implementsStatic,
+} from '@jvalue/execution';
 import { IOType } from '@jvalue/language-server';
 
+@implementsStatic<BlockExecutorClass>()
 export class CellRangeSelectorExecutor
   implements BlockExecutor<IOType.SHEET, IOType.SHEET>
 {
-  public readonly blockType = 'CellRangeSelector';
+  public static readonly type = 'CellRangeSelector';
   public readonly inputType = IOType.SHEET;
   public readonly outputType = IOType.SHEET;
 

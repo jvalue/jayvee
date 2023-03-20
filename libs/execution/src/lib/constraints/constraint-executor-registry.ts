@@ -2,13 +2,13 @@ import { strict as assert } from 'assert';
 
 import { Constraint } from '@jvalue/language-server';
 
-import { BlacklistConstraintExecutor } from './blacklist-constraint-executor';
 import { ConstraintExecutor } from './constraint-executor';
 import { ConstraintExecutorClass } from './constraint-executor-class';
-import { LengthConstraintExecutor } from './length-constraint-executor';
-import { RangeConstraintExecutor } from './range-constraint-executor';
-import { RegexConstraintExecutor } from './regex-constraint-executor';
-import { WhitelistConstraintExecutor } from './whitelist-constraint-executor';
+import { BlacklistConstraintExecutor } from './executors/blacklist-constraint-executor';
+import { LengthConstraintExecutor } from './executors/length-constraint-executor';
+import { RangeConstraintExecutor } from './executors/range-constraint-executor';
+import { RegexConstraintExecutor } from './executors/regex-constraint-executor';
+import { WhitelistConstraintExecutor } from './executors/whitelist-constraint-executor';
 
 const registeredConstraintExecutors = new Map<
   string,
