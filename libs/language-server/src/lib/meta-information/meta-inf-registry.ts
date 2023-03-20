@@ -94,21 +94,3 @@ export function getOrFailMetaInformation(
   );
   return result;
 }
-
-export function getOrFailBlockMetaInformation(
-  typeString: string,
-): BlockMetaInformation {
-  const result = metaInformationRegistry.get(typeString);
-  assert(result !== undefined);
-  assert(result instanceof BlockMetaInformation);
-  return result;
-}
-
-export function getOrFailConstraintMetaInformation(
-  typeString: string,
-): ConstraintMetaInformation {
-  const result = metaInformationRegistry.get(typeString);
-  assert(result !== undefined);
-  assert(result instanceof ConstraintMetaInformation);
-  return result;
-}
