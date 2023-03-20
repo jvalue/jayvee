@@ -26,6 +26,7 @@
     "core-js": "^3.6.5",
     "fast-csv": "^4.3.6",
     "fp-ts": "^2.13.1",
+    "gtfs-realtime-bindings": "^1.1.1",
     "jszip": "^3.10.1",
     "langium": "^1.1.0",
     "mime-types": "^2.1.35",
