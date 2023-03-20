@@ -27,7 +27,7 @@ AtomicValue:
   ConstraintReferenceValue;
 
 Collection:
-  '[' (values+=(AtomicValue) (',' values+=(AtomicValue))*)? ']';
+  '[' (values+=(AtomicValue) (',' values+=(AtomicValue))*)? ','? ']';
 
 TextValue:
   value=STRING;
