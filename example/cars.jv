@@ -10,6 +10,7 @@ pipeline CarsPipeline {
 	}
 
 	block CarsCSVInterpreter oftype CSVInterpreter {
+		enclosing: '"';
 	}
 
 	pipe {
