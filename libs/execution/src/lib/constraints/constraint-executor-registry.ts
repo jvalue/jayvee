@@ -1,6 +1,6 @@
 import { strict as assert } from 'assert';
 
-import { Constraint } from '@jvalue/language-server';
+import { Constraint, Registry } from '@jvalue/language-server';
 
 import { ConstraintExecutor } from './constraint-executor';
 import { ConstraintExecutorClass } from './constraint-executor-class';
@@ -10,10 +10,7 @@ import { RangeConstraintExecutor } from './executors/range-constraint-executor';
 import { RegexConstraintExecutor } from './executors/regex-constraint-executor';
 import { WhitelistConstraintExecutor } from './executors/whitelist-constraint-executor';
 
-const registeredConstraintExecutors = new Map<
-  string,
-  ConstraintExecutorClass
->();
+const constraintExecutorRegistry = new Registry<ConstraintExecutorClass>();
 
 export function registerDefaultConstraintExecutors() {
   registerConstraintExecutor(WhitelistConstraintExecutor);
@@ -24,22 +21,16 @@ export function registerDefaultConstraintExecutors() {
 }
 
 export function registerConstraintExecutor(
-  constraintExecutor: ConstraintExecutorClass,
+  executorClass: ConstraintExecutorClass,
 ) {
-  const constraintType = new constraintExecutor().constraintType;
-  assert(
-    !registeredConstraintExecutors.has(constraintType),
-    `Multiple executors were registered for constraint type ${constraintType}`,
-  );
-
-  registeredConstraintExecutors.set(constraintType, constraintExecutor);
+  constraintExecutorRegistry.register(executorClass.type, executorClass);
 }
 
 export function createConstraintExecutor(
   constraint: Constraint,
 ): ConstraintExecutor {
   const constraintType = constraint.type.name;
-  const constraintExecutor = registeredConstraintExecutors.get(constraintType);
+  const constraintExecutor = constraintExecutorRegistry.get(constraintType);
   assert(
     constraintExecutor !== undefined,
     `No executor was registered for constraint type ${constraintType}`,

@@ -1,8 +1,11 @@
 import { ExecutionContext } from '../../execution-context';
+import { implementsStatic } from '../../util/implements-static-decorator';
 import { ConstraintExecutor } from '../constraint-executor';
+import { ConstraintExecutorClass } from '../constraint-executor-class';
 
+@implementsStatic<ConstraintExecutorClass>()
 export class LengthConstraintExecutor implements ConstraintExecutor {
-  public readonly constraintType = 'LengthConstraint';
+  public static readonly type = 'LengthConstraint';
 
   isValid(value: unknown, context: ExecutionContext): boolean {
     if (typeof value !== 'string') {

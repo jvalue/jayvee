@@ -1,7 +1,9 @@
+import { ConstructorClass } from '@jvalue/language-server';
+
 import { ConstraintExecutor } from './constraint-executor';
 
 export interface ConstraintExecutorClass<
   T extends ConstraintExecutor = ConstraintExecutor,
-> extends Function {
-  new (): T;
+> extends ConstructorClass<T> {
+  readonly type: string;
 }

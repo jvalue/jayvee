@@ -1,8 +1,11 @@
 import { ExecutionContext } from '../../execution-context';
+import { implementsStatic } from '../../util/implements-static-decorator';
 import { ConstraintExecutor } from '../constraint-executor';
+import { ConstraintExecutorClass } from '../constraint-executor-class';
 
+@implementsStatic<ConstraintExecutorClass>()
 export class RangeConstraintExecutor implements ConstraintExecutor {
-  public readonly constraintType = 'RangeConstraint';
+  public static readonly type = 'RangeConstraint';
 
   isValid(value: unknown, context: ExecutionContext): boolean {
     let numericValue: number;
