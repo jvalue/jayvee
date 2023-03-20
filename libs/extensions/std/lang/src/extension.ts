@@ -7,6 +7,7 @@ import {
 
 import { ArchiveInterpreterMetaInformation } from './archive-interpreter-meta-inf';
 import { FilePickerMetaInformation } from './file-picker-meta-inf';
+import { GtfsRTInterpreterMetaInformation } from './gtfs-rt-interpreter-meta-inf';
 import { HttpExtractorMetaInformation } from './http-extractor-meta-inf';
 
 export class StdLangExtension implements JayveeLangExtension {
@@ -21,6 +22,7 @@ export class StdLangExtension implements JayveeLangExtension {
       HttpExtractorMetaInformation,
       ArchiveInterpreterMetaInformation,
       FilePickerMetaInformation,
+      GtfsRTInterpreterMetaInformation,
     ];
   }
 }

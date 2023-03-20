@@ -4,6 +4,7 @@ import { TabularExecExtension } from '@jvalue/extensions/tabular/exec';
 
 import { ArchiveInterpreterExecutor } from './archive-interpreter-executor';
 import { FilePickerExecutor } from './file-picker-executor';
+import { GtfsRTInterpreterExecutor } from './gtfs-rt-interpreter-executor';
 import { HttpExtractorExecutor } from './http-extractor-executor';
 
 export class StdExecExtension implements JayveeExecExtension {
@@ -18,6 +19,7 @@ export class StdExecExtension implements JayveeExecExtension {
       HttpExtractorExecutor,
       ArchiveInterpreterExecutor,
       FilePickerExecutor,
+      GtfsRTInterpreterExecutor,
     ];
   }
 }
