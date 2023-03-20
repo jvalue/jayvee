@@ -25,6 +25,22 @@ export class CSVInterpreterMetaInformation extends BlockMetaInformation {
             ],
           },
         },
+        enclosing: {
+          type: AttributeValueType.TEXT,
+          defaultValue: '',
+          docs: {
+            description:
+              'The enclosing character that may be used for values in the CSV file.',
+          },
+        },
+        enclosingEscape: {
+          type: AttributeValueType.TEXT,
+          defaultValue: '',
+          docs: {
+            description:
+              'The character to escape enclosing characters in values.',
+          },
+        },
       },
       // Input type:
       IOType.FILE,
