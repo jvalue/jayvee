@@ -15,7 +15,7 @@ export class CellRangeSelectorMetaInformation extends BlockMetaInformation {
             description: 'The cell range to select.',
             examples: [
               {
-                code: 'select: A1:E*',
+                code: 'select: range A1:E*',
                 description:
                   'Select cells from `A1` to the last cell of column `E`.',
               },
@@ -39,5 +39,5 @@ export class CellRangeSelectorMetaInformation extends BlockMetaInformation {
 }
 
 const blockExample = `block CarsCoreDataSelector oftype CellRangeSelector {
-  select: A1:E*;
+  select: range A1:E*;
 }`;
