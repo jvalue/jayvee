@@ -33,7 +33,7 @@ export class BlacklistConstraintMetaInformation extends ConstraintMetaInformatio
           },
         },
       },
-      'text',
+      ['text'],
     );
   }
 }

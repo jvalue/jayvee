@@ -7,7 +7,7 @@ export abstract class ConstraintMetaInformation extends MetaInformation {
   protected constructor(
     constraintType: string,
     attributes: Record<string, AttributeSpecification>,
-    public readonly primitiveValuetype: PrimitiveValuetype,
+    public readonly compatiblePrimitiveValuetypes: PrimitiveValuetype[],
   ) {
     super(constraintType, attributes);
   }

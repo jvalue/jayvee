@@ -23,7 +23,7 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
           defaultValue: true,
         },
       },
-      'decimal',
+      ['integer', 'decimal'],
     );
   }
 }

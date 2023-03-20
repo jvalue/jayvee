@@ -10,7 +10,7 @@ export class RegexConstraintMetaInformation extends ConstraintMetaInformation {
           type: AttributeValueType.REGEX,
         },
       },
-      'text',
+      ['text'],
     );
   }
 }

@@ -8,7 +8,7 @@ export class IntegerValuetype implements Valuetype {
 
   isValid(value: unknown): boolean {
     if (typeof value === 'string') {
-      return !!value.match(/[+-]?[0-9]+/);
+      return /^[+-]?[0-9]+$/.test(value);
     }
 
     return Number.isInteger(value);
