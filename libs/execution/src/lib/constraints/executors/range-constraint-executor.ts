@@ -26,13 +26,13 @@ export class RangeConstraintExecutor implements ConstraintExecutor {
       'upperBoundInclusive',
     );
 
-    const lowerBoundFulfilled =
-      (lowerBoundInclusive && lowerBound <= numericValue) ||
-      (!lowerBoundInclusive && lowerBound < numericValue);
+    const lowerBoundFulfilled = lowerBoundInclusive
+      ? lowerBound <= numericValue
+      : lowerBound < numericValue;
 
-    const upperBoundFulfilled =
-      (upperBoundInclusive && numericValue <= upperBound) ||
-      (!upperBoundInclusive && numericValue < upperBound);
+    const upperBoundFulfilled = upperBoundInclusive
+      ? numericValue <= upperBound
+      : numericValue < upperBound;
 
     return lowerBoundFulfilled && upperBoundFulfilled;
   }
