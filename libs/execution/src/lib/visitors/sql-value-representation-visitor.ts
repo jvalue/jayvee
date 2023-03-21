@@ -28,7 +28,16 @@ export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
   }
   visitText(valueType: TextValuetype): (value: unknown) => string {
     return (value: unknown) => {
-      return `'${valueType.getStandardRepresentation(value)}'`;
+      const standardValueRepresentation =
+        valueType.getStandardRepresentation(value);
+      const escapedValueRepresentation = escapeSingleQuotes(
+        standardValueRepresentation,
+      );
+      return `'${escapedValueRepresentation}'`;
     };
   }
+}
+
+function escapeSingleQuotes(value: string): string {
+  return value.replace(/'/g, `''`);
 }
