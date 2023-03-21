@@ -1,33 +1,32 @@
 import { strict as assert } from 'assert';
 
 import {
-  Attribute,
-  Block,
+  BlockDefinition,
   CellRangeWrapper,
-  Constraint,
-  Pipeline,
-  TextValue,
+  ConstraintDefinition,
+  PipelineDefinition,
+  PropertyAssignment,
+  TextLiteral,
   ValuetypeAssignment,
   getOrFailMetaInformation,
-  isCellRange,
-  isCellRangeValue,
-  isCollection,
-  isPipeline,
-  isRuntimeParameter,
-  isTextValue,
-  isValuetypeAssignmentValue,
+  isCellRangeLiteral,
+  isCollectionLiteral,
+  isPipelineDefinition,
+  isRuntimeParameterLiteral,
+  isTextLiteral,
+  isValuetypeAssignmentLiteral,
 } from '@jvalue/language-server';
 import { isReference } from 'langium';
 
 import { Logger } from './logger';
 
-export type StackNode = Block | Constraint;
+export type StackNode = BlockDefinition | ConstraintDefinition;
 
 export class ExecutionContext {
   private readonly stack: StackNode[] = [];
 
   constructor(
-    public readonly pipeline: Pipeline,
+    public readonly pipeline: PipelineDefinition,
     public readonly logger: Logger,
     public readonly runtimeParameters: Map<string, string | number | boolean>,
   ) {
@@ -47,7 +46,7 @@ export class ExecutionContext {
     this.updateLoggingContext();
   }
 
-  public getCurrentNode(): StackNode | Pipeline {
+  public getCurrentNode(): StackNode | PipelineDefinition {
     const currentNode = this.stack[this.stack.length - 1];
     if (currentNode === undefined) {
       return this.pipeline;
@@ -60,103 +59,104 @@ export class ExecutionContext {
     this.logger.setLoggingContext(this.getCurrentNode().name);
   }
 
-  public getTextAttributeValue(attributeName: string): string {
-    const attributeValue = this.getAttributeValue(attributeName);
-    assert(typeof attributeValue === 'string');
+  public getTextPropertyValue(propertyName: string): string {
+    const propertyValue = this.getPropertyValue(propertyName);
+    assert(typeof propertyValue === 'string');
 
-    return attributeValue;
+    return propertyValue;
   }
 
-  public getNumericAttributeValue(attributeName: string): number {
-    const attributeValue = this.getAttributeValue(attributeName);
-    assert(typeof attributeValue === 'number');
+  public getNumericPropertyValue(propertyName: string): number {
+    const propertyValue = this.getPropertyValue(propertyName);
+    assert(typeof propertyValue === 'number');
 
-    return attributeValue;
+    return propertyValue;
   }
 
-  public getBooleanAttributeValue(attributeName: string): boolean {
-    const attributeValue = this.getAttributeValue(attributeName);
-    assert(typeof attributeValue === 'boolean');
+  public getBooleanPropertyValue(propertyName: string): boolean {
+    const propertyValue = this.getPropertyValue(propertyName);
+    assert(typeof propertyValue === 'boolean');
 
-    return attributeValue;
+    return propertyValue;
   }
 
-  public getRegexAttributeValue(attributeName: string): RegExp {
-    const attributeValue = this.getAttributeValue(attributeName);
-    assert(typeof attributeValue === 'string');
+  public getRegexPropertyValue(propertyName: string): RegExp {
+    const propertyValue = this.getPropertyValue(propertyName);
+    assert(typeof propertyValue === 'string');
 
-    return new RegExp(attributeValue);
+    return new RegExp(propertyValue);
   }
 
-  public getCellRangeAttributeValue(attributeName: string): CellRangeWrapper {
-    const attributeValue = this.getAttributeValue(attributeName);
-    assert(isCellRange(attributeValue));
+  public getCellRangePropertyValue(propertyName: string): CellRangeWrapper {
+    const propertyValue = this.getPropertyValue(propertyName);
+    assert(isCellRangeLiteral(propertyValue));
 
-    return new CellRangeWrapper(attributeValue);
+    return new CellRangeWrapper(propertyValue);
   }
 
-  public getTextCollectionAttributeValue(attributeName: string): TextValue[] {
-    const attributeValue = this.getAttributeValue(attributeName);
-    assert(Array.isArray(attributeValue));
-    assert(attributeValue.every(isTextValue));
+  public getTextCollectionPropertyValue(propertyName: string): TextLiteral[] {
+    const propertyValue = this.getPropertyValue(propertyName);
+    assert(Array.isArray(propertyValue));
+    assert(propertyValue.every(isTextLiteral));
 
-    return attributeValue;
+    return propertyValue;
   }
 
-  public getCellRangeCollectionAttributeValue(
-    attributeName: string,
+  public getCellRangeCollectionPropertyValue(
+    propertyName: string,
   ): CellRangeWrapper[] {
-    const attributeValue = this.getAttributeValue(attributeName);
-    assert(Array.isArray(attributeValue));
-    assert(attributeValue.every(isCellRangeValue));
+    const propertyValue = this.getPropertyValue(propertyName);
+    assert(Array.isArray(propertyValue));
+    assert(propertyValue.every(isCellRangeLiteral));
 
-    return attributeValue.map(
-      (cellRange) => new CellRangeWrapper(cellRange.value),
-    );
+    return propertyValue.map((cellRange) => new CellRangeWrapper(cellRange));
   }
 
-  public getValuetypeAssignmentCollectionAttributeValue(
-    attributeName: string,
+  public getValuetypeAssignmentCollectionPropertyValue(
+    propertyName: string,
   ): ValuetypeAssignment[] {
-    const attributeValue = this.getAttributeValue(attributeName);
-    assert(Array.isArray(attributeValue));
-    assert(attributeValue.every(isValuetypeAssignmentValue));
+    const propertyValue = this.getPropertyValue(propertyName);
+    assert(Array.isArray(propertyValue));
+    assert(propertyValue.every(isValuetypeAssignmentLiteral));
 
-    return attributeValue.map((assignment) => assignment.value);
+    return propertyValue.map((assignment) => assignment.value);
   }
 
-  public getAttribute(attributeName: string): Attribute | undefined {
+  public getProperty(propertyName: string): PropertyAssignment | undefined {
     const currentNode = this.getCurrentNode();
-    if (isPipeline(currentNode)) {
+    if (isPipelineDefinition(currentNode)) {
       return undefined;
     }
-    return currentNode.body.attributes.find(
-      (attribute) => attribute.name === attributeName,
+    return currentNode.body.properties.find(
+      (property) => property.name === propertyName,
     );
   }
 
-  public getOrFailAttribute(attributeName: string): Attribute {
-    const attribute = this.getAttribute(attributeName);
-    assert(attribute !== undefined);
+  public getOrFailProperty(propertyName: string): PropertyAssignment {
+    const property = this.getProperty(propertyName);
+    assert(property !== undefined);
 
-    return attribute;
+    return property;
   }
 
-  private getAttributeValue(attributeName: string): unknown {
-    const attribute = this.getAttribute(attributeName);
+  private getPropertyValue(propertyName: string): unknown {
+    const property = this.getProperty(propertyName);
 
-    if (attribute === undefined) {
-      return this.getDefaultAttributeValue(attributeName);
+    if (property === undefined) {
+      return this.getDefaultPropertyValue(propertyName);
     }
-    const attributeValue = attribute.value;
+    const propertyValue = property.value;
 
-    if (isRuntimeParameter(attributeValue)) {
-      return this.runtimeParameters.get(attributeValue.name);
+    if (isRuntimeParameterLiteral(propertyValue)) {
+      return this.runtimeParameters.get(propertyValue.name);
     }
-    if (isCollection(attributeValue)) {
-      return attributeValue.values;
+    if (isCollectionLiteral(propertyValue)) {
+      return propertyValue.values;
     }
-    const value = attributeValue.value;
+    if (isCellRangeLiteral(propertyValue)) {
+      return propertyValue;
+    }
+    const value = propertyValue.value;
     if (isReference(value)) {
       const reference = value.ref;
       assert(reference !== undefined);
@@ -166,15 +166,15 @@ export class ExecutionContext {
     return value;
   }
 
-  private getDefaultAttributeValue(attributeName: string): unknown {
+  private getDefaultPropertyValue(propertyName: string): unknown {
     const currentNode = this.getCurrentNode();
-    assert(!isPipeline(currentNode));
+    assert(!isPipelineDefinition(currentNode));
 
     const metaInf = getOrFailMetaInformation(currentNode.type);
-    const attributeSpec = metaInf.getAttributeSpecification(attributeName);
-    assert(attributeSpec !== undefined);
+    const propertySpec = metaInf.getPropertySpecification(propertyName);
+    assert(propertySpec !== undefined);
 
-    const defaultValue = attributeSpec.defaultValue;
+    const defaultValue = propertySpec.defaultValue;
     assert(defaultValue !== undefined);
 
     return defaultValue;

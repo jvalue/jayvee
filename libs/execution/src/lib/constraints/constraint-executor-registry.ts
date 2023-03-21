@@ -1,6 +1,6 @@
 import { strict as assert } from 'assert';
 
-import { Constraint, Registry } from '@jvalue/language-server';
+import { ConstraintDefinition, Registry } from '@jvalue/language-server';
 
 import { ConstraintExecutor } from './constraint-executor';
 import { ConstraintExecutorClass } from './constraint-executor-class';
@@ -31,7 +31,7 @@ export function getRegisteredConstraintExecutors(): ConstraintExecutorClass[] {
 }
 
 export function createConstraintExecutor(
-  constraint: Constraint,
+  constraint: ConstraintDefinition,
 ): ConstraintExecutor {
   const constraintType = constraint.type.name;
   const constraintExecutor = constraintExecutorRegistry.get(constraintType);

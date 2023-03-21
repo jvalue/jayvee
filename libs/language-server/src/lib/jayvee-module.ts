@@ -18,14 +18,14 @@ import { registerConstraints } from './constraint/constraint-registry';
 import { JayveeHoverProvider } from './hover/jayvee-hover-provider';
 import { JayveeValueConverter } from './jayvee-value-converter';
 import { JayveeValidationRegistry } from './validation/validation-registry';
-import { AttributeBodyValidator } from './validation/validators/attribute-body-validator';
 import { BlockValidator } from './validation/validators/block-validator';
 import { CellRangeSelectionValidator } from './validation/validators/cell-range-selection-validator';
 import { ColumnExpressionValidator } from './validation/validators/column-expression-validator';
 import { ConstraintValidator } from './validation/validators/constraint-validator';
-import { ModelValidator } from './validation/validators/model-validator';
+import { JayveeModelValidator } from './validation/validators/model-validator';
 import { PipeValidator } from './validation/validators/pipe-validator';
-import { PipelineValidator } from './validation/validators/pipeline-validator';
+import { PipelineDefinitionValidator } from './validation/validators/pipeline-validator';
+import { PropertyBodyValidator } from './validation/validators/property-body-validator';
 import { RegexValueValidator } from './validation/validators/regex-value-validator';
 import { ValuetypeValidator } from './validation/validators/valuetype-validator';
 
@@ -34,11 +34,11 @@ import { ValuetypeValidator } from './validation/validators/valuetype-validator'
  */
 export interface JayveeAddedServices {
   validation: {
-    ModelValidator: ModelValidator;
-    PipelineValidator: PipelineValidator;
+    JayveeModelValidator: JayveeModelValidator;
+    PipelineDefinitionValidator: PipelineDefinitionValidator;
     PipeValidator: PipeValidator;
     BlockValidator: BlockValidator;
-    AttributeBodyValidator: AttributeBodyValidator;
+    PropertyBodyValidator: PropertyBodyValidator;
     CellRangeSelectionValidator: CellRangeSelectionValidator;
     ColumnExpressionValidator: ColumnExpressionValidator;
     ConstraintValidator: ConstraintValidator;
@@ -67,11 +67,11 @@ export const JayveeModule: Module<
   },
   validation: {
     ValidationRegistry: (services) => new JayveeValidationRegistry(services),
-    ModelValidator: () => new ModelValidator(),
-    PipelineValidator: () => new PipelineValidator(),
+    JayveeModelValidator: () => new JayveeModelValidator(),
+    PipelineDefinitionValidator: () => new PipelineDefinitionValidator(),
     PipeValidator: () => new PipeValidator(),
     BlockValidator: () => new BlockValidator(),
-    AttributeBodyValidator: () => new AttributeBodyValidator(),
+    PropertyBodyValidator: () => new PropertyBodyValidator(),
     CellRangeSelectionValidator: () => new CellRangeSelectionValidator(),
     ColumnExpressionValidator: () => new ColumnExpressionValidator(),
     ConstraintValidator: () => new ConstraintValidator(),

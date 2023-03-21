@@ -1,6 +1,6 @@
 import {
-  AttributeValueType,
-  RuntimeParameter,
+  PropertyValueType,
+  RuntimeParameterLiteral,
   runtimeParameterAllowedForType,
 } from '@jvalue/language-server';
 
@@ -8,27 +8,27 @@ import { parseParameterAsMatchingType } from './runtime-parameter-util';
 
 describe('runtime parameter utils', () => {
   describe('parameter parsing', () => {
-    Object.keys(AttributeValueType).forEach((attributeValueTypeKey) => {
-      const attributeValueType =
-        AttributeValueType[
-          attributeValueTypeKey as keyof typeof AttributeValueType
+    Object.keys(PropertyValueType).forEach((propertyValueTypeKey) => {
+      const propertyValueType =
+        PropertyValueType[
+          propertyValueTypeKey as keyof typeof PropertyValueType
         ];
 
       const parseParameterFn = () => {
         parseParameterAsMatchingType(
           '',
-          attributeValueType,
+          propertyValueType,
           // Don't care about the diagnostics:
-          {} as RuntimeParameter,
+          {} as RuntimeParameterLiteral,
         );
       };
 
-      if (runtimeParameterAllowedForType(attributeValueType)) {
-        it(`should not throw error on allowed type ${attributeValueType}`, () => {
+      if (runtimeParameterAllowedForType(propertyValueType)) {
+        it(`should not throw error on allowed type ${propertyValueType}`, () => {
           expect(parseParameterFn).not.toThrowError();
         });
       } else {
-        it(`should throw error on forbidden type ${attributeValueType}`, () => {
+        it(`should throw error on forbidden type ${propertyValueType}`, () => {
           expect(parseParameterFn).toThrowError();
         });
       }

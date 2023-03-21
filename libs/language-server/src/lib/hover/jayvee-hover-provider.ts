@@ -1,7 +1,12 @@
 import { AstNode, AstNodeHoverProvider, MaybePromise } from 'langium';
 import { Hover } from 'vscode-languageserver-protocol';
 
-import { Attribute, BlockType, isAttribute, isBlockType } from '../ast';
+import {
+  BlockTypeLiteral,
+  PropertyAssignment,
+  isBlockTypeLiteral,
+  isPropertyAssignment,
+} from '../ast';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
 import { getMetaInformation } from '../meta-information';
 
@@ -10,11 +15,11 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
     astNode: AstNode,
   ): MaybePromise<Hover | undefined> {
     let doc = undefined;
-    if (isBlockType(astNode)) {
+    if (isBlockTypeLiteral(astNode)) {
       doc = this.getBlockTypeMarkdownDoc(astNode);
     }
-    if (isAttribute(astNode)) {
-      doc = this.getAttributeMarkdownDoc(astNode);
+    if (isPropertyAssignment(astNode)) {
+      doc = this.getPropertyMarkdownDoc(astNode);
     }
 
     if (doc === undefined) {
@@ -29,7 +34,9 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
     return hover;
   }
 
-  private getBlockTypeMarkdownDoc(blockType: BlockType): string | undefined {
+  private getBlockTypeMarkdownDoc(
+    blockType: BlockTypeLiteral,
+  ): string | undefined {
     const blockMetaInf = getMetaInformation(blockType);
     if (blockMetaInf === undefined) {
       return;
@@ -39,14 +46,16 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
     return lspDocBuilder.generateBlockTypeDoc(blockMetaInf);
   }
 
-  private getAttributeMarkdownDoc(attribute: Attribute): string | undefined {
-    const block = attribute.$container.$container;
+  private getPropertyMarkdownDoc(
+    property: PropertyAssignment,
+  ): string | undefined {
+    const block = property.$container.$container;
     const metaInf = getMetaInformation(block.type);
     if (metaInf === undefined) {
       return;
     }
 
     const lspDocBuilder = new LspDocGenerator();
-    return lspDocBuilder.generateAttributeDoc(metaInf, attribute.name);
+    return lspDocBuilder.generatePropertyDoc(metaInf, property.name);
   }
 }

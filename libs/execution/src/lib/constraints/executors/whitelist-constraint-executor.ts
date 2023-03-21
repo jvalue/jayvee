@@ -12,7 +12,7 @@ export class WhitelistConstraintExecutor implements ConstraintExecutor {
       return false;
     }
 
-    const whitelist = context.getTextCollectionAttributeValue('whitelist');
+    const whitelist = context.getTextCollectionPropertyValue('whitelist');
     const whitelistValues = whitelist.map(
       (whitelistElement) => whitelistElement.value,
     );

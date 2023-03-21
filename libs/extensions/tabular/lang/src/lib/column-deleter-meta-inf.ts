@@ -1,10 +1,10 @@
 import {
-  AttributeValueType,
   BlockMetaInformation,
   CellRangeWrapper,
   IOType,
-  isCellRangeValue,
-  isCollection,
+  PropertyValueType,
+  isCellRangeLiteral,
+  isCollectionLiteral,
   isColumnWrapper,
   validateTypedCollection,
 } from '@jvalue/language-server';
@@ -15,16 +15,16 @@ export class ColumnDeleterMetaInformation extends BlockMetaInformation {
       'ColumnDeleter',
       {
         delete: {
-          type: AttributeValueType.COLLECTION,
-          validation: (attribute, accept) => {
-            const attributeValue = attribute.value;
-            if (!isCollection(attributeValue)) {
+          type: PropertyValueType.COLLECTION,
+          validation: (property, accept) => {
+            const propertyValue = property.value;
+            if (!isCollectionLiteral(propertyValue)) {
               return;
             }
 
             const { validItems, invalidItems } = validateTypedCollection(
-              attributeValue,
-              isCellRangeValue,
+              propertyValue,
+              isCellRangeLiteral,
             );
 
             invalidItems.forEach((invalidValue) =>
@@ -38,12 +38,10 @@ export class ColumnDeleterMetaInformation extends BlockMetaInformation {
             );
 
             for (const collectionValue of validItems) {
-              if (!CellRangeWrapper.canBeWrapped(collectionValue.value)) {
+              if (!CellRangeWrapper.canBeWrapped(collectionValue)) {
                 continue;
               }
-              const semanticCellRange = new CellRangeWrapper(
-                collectionValue.value,
-              );
+              const semanticCellRange = new CellRangeWrapper(collectionValue);
               if (!isColumnWrapper(semanticCellRange)) {
                 accept('error', 'An entire column needs to be selected', {
                   node: semanticCellRange.astNode,

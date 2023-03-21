@@ -29,7 +29,7 @@ export class RowDeleterExecutor
     inputSheet: Sheet,
     context: ExecutionContext,
   ): Promise<R.Result<Sheet>> {
-    const relativeRows = context.getCellRangeCollectionAttributeValue('delete');
+    const relativeRows = context.getCellRangeCollectionPropertyValue('delete');
     assert(relativeRows.every(isRowWrapper));
 
     let absoluteRows = relativeRows.map((row) =>

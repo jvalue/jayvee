@@ -2,11 +2,7 @@
 import { IOType } from '../ast/model-util';
 
 // eslint-disable-next-line import/no-cycle
-import {
-  AttributeSpecification,
-  ExampleDoc,
-  MetaInformation,
-} from './meta-inf';
+import { ExampleDoc, MetaInformation, PropertySpecification } from './meta-inf';
 
 interface BlockDocs {
   description?: string;
@@ -18,11 +14,11 @@ export abstract class BlockMetaInformation extends MetaInformation {
 
   protected constructor(
     blockType: string,
-    attributes: Record<string, AttributeSpecification>,
+    properties: Record<string, PropertySpecification>,
     public readonly inputType: IOType,
     public readonly outputType: IOType,
   ) {
-    super(blockType, attributes);
+    super(blockType, properties);
   }
 
   canBeConnectedTo(blockAfter: BlockMetaInformation): boolean {

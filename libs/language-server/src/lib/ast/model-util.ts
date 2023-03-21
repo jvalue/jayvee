@@ -6,25 +6,27 @@ import { AstNode, assertUnreachable } from 'langium';
 import { getMetaInformation } from '../meta-information/meta-inf-registry';
 
 import {
-  AttributeValue,
-  Block,
-  Pipeline,
-  PrimitiveValuetype,
-  ValuetypeReference,
-  isBooleanValue,
-  isCellRangeValue,
-  isCollection,
-  isConstraintReferenceValue,
-  isNumericValue,
-  isRegexValue,
-  isTextValue,
-  isValuetypeAssignmentValue,
-  isValuetypeReference,
+  BlockDefinition,
+  PipelineDefinition,
+  PrimitiveValuetypeKeyword,
+  PropertyValueLiteral,
+  ValuetypeDefinitionReference,
+  isBooleanLiteral,
+  isCellRangeLiteral,
+  isCollectionLiteral,
+  isConstraintReferenceLiteral,
+  isNumericLiteral,
+  isRegexLiteral,
+  isTextLiteral,
+  isValuetypeAssignmentLiteral,
+  isValuetypeDefinitionReference,
 } from './generated/ast';
 import { PipeWrapper, createSemanticPipes } from './wrappers/pipe-wrapper';
 
-export function collectStartingBlocks(pipeline: Pipeline): Block[] {
-  const result: Block[] = [];
+export function collectStartingBlocks(
+  pipeline: PipelineDefinition,
+): BlockDefinition[] {
+  const result: BlockDefinition[] = [];
   for (const block of pipeline.blocks) {
     const blockMetaInf = getMetaInformation(block.type);
     if (blockMetaInf === undefined) {
@@ -38,26 +40,26 @@ export function collectStartingBlocks(pipeline: Pipeline): Block[] {
   return result;
 }
 
-export function collectChildren(block: Block): Block[] {
+export function collectChildren(block: BlockDefinition): BlockDefinition[] {
   const outgoingPipes = collectOutgoingPipes(block);
   return outgoingPipes.map((pipe) => pipe.to);
 }
 
-export function collectParents(block: Block): Block[] {
+export function collectParents(block: BlockDefinition): BlockDefinition[] {
   const ingoingPipes = collectIngoingPipes(block);
   return ingoingPipes.map((pipe) => pipe.from);
 }
 
-export function collectOutgoingPipes(block: Block) {
+export function collectOutgoingPipes(block: BlockDefinition) {
   return collectPipes(block, 'outgoing');
 }
 
-export function collectIngoingPipes(block: Block) {
+export function collectIngoingPipes(block: BlockDefinition) {
   return collectPipes(block, 'ingoing');
 }
 
 function collectPipes(
-  block: Block,
+  block: BlockDefinition,
   kind: 'outgoing' | 'ingoing',
 ): PipeWrapper[] {
   const pipeline = block.$container;
@@ -74,7 +76,7 @@ function collectPipes(
   });
 }
 
-export function collectAllPipes(pipeline: Pipeline): PipeWrapper[] {
+export function collectAllPipes(pipeline: PipelineDefinition): PipeWrapper[] {
   const result: PipeWrapper[] = [];
   for (const pipe of pipeline.pipes) {
     result.push(...createSemanticPipes(pipe));
@@ -97,7 +99,9 @@ export function collectAllPipes(pipeline: Pipeline): PipeWrapper[] {
  *
  * Kahn, A. B. (1962). Topological sorting of large networks. Communications of the ACM, 5(11), 558–562.
  */
-export function getBlocksInTopologicalSorting(pipeline: Pipeline): Block[] {
+export function getBlocksInTopologicalSorting(
+  pipeline: PipelineDefinition,
+): BlockDefinition[] {
   const sortedNodes = [];
   const currentNodes = [...collectStartingBlocks(pipeline)];
   let unvisitedEdges = [...collectAllPipes(pipeline)];
@@ -144,7 +148,7 @@ export enum IOType {
   TABLE = 'Table',
 }
 
-export enum AttributeValueType {
+export enum PropertyValueType {
   TEXT = 'text',
   INTEGER = 'integer',
   DECIMAL = 'decimal',
@@ -157,19 +161,19 @@ export enum AttributeValueType {
 }
 
 export function runtimeParameterAllowedForType(
-  type: AttributeValueType,
+  type: PropertyValueType,
 ): boolean {
   switch (type) {
-    case AttributeValueType.CELL_RANGE:
-    case AttributeValueType.REGEX:
-    case AttributeValueType.VALUETYPE_ASSIGNMENT:
-    case AttributeValueType.COLLECTION:
-    case AttributeValueType.CONSTRAINT:
+    case PropertyValueType.CELL_RANGE:
+    case PropertyValueType.REGEX:
+    case PropertyValueType.VALUETYPE_ASSIGNMENT:
+    case PropertyValueType.COLLECTION:
+    case PropertyValueType.CONSTRAINT:
       return false;
-    case AttributeValueType.TEXT:
-    case AttributeValueType.INTEGER:
-    case AttributeValueType.DECIMAL:
-    case AttributeValueType.BOOLEAN:
+    case PropertyValueType.TEXT:
+    case PropertyValueType.INTEGER:
+    case PropertyValueType.DECIMAL:
+    case PropertyValueType.BOOLEAN:
       return true;
     default:
       assertUnreachable(type);
@@ -177,42 +181,42 @@ export function runtimeParameterAllowedForType(
 }
 
 export function inferTypesFromValue(
-  value: AttributeValue,
-): AttributeValueType[] {
-  if (isTextValue(value)) {
-    return [AttributeValueType.TEXT];
+  value: PropertyValueLiteral,
+): PropertyValueType[] {
+  if (isTextLiteral(value)) {
+    return [PropertyValueType.TEXT];
   }
-  if (isNumericValue(value)) {
+  if (isNumericLiteral(value)) {
     if (Number.isInteger(value.value)) {
-      return [AttributeValueType.INTEGER, AttributeValueType.DECIMAL];
+      return [PropertyValueType.INTEGER, PropertyValueType.DECIMAL];
     }
-    return [AttributeValueType.DECIMAL];
+    return [PropertyValueType.DECIMAL];
   }
-  if (isBooleanValue(value)) {
-    return [AttributeValueType.BOOLEAN];
+  if (isBooleanLiteral(value)) {
+    return [PropertyValueType.BOOLEAN];
   }
-  if (isCellRangeValue(value)) {
-    return [AttributeValueType.CELL_RANGE];
+  if (isCellRangeLiteral(value)) {
+    return [PropertyValueType.CELL_RANGE];
   }
-  if (isRegexValue(value)) {
-    return [AttributeValueType.REGEX];
+  if (isRegexLiteral(value)) {
+    return [PropertyValueType.REGEX];
   }
-  if (isValuetypeAssignmentValue(value)) {
-    return [AttributeValueType.VALUETYPE_ASSIGNMENT];
+  if (isValuetypeAssignmentLiteral(value)) {
+    return [PropertyValueType.VALUETYPE_ASSIGNMENT];
   }
-  if (isCollection(value)) {
-    return [AttributeValueType.COLLECTION];
+  if (isCollectionLiteral(value)) {
+    return [PropertyValueType.COLLECTION];
   }
-  if (isConstraintReferenceValue(value)) {
-    return [AttributeValueType.CONSTRAINT];
+  if (isConstraintReferenceLiteral(value)) {
+    return [PropertyValueType.CONSTRAINT];
   }
   assertUnreachable(value);
 }
 
 export function getValuetypeName(
-  valuetype: PrimitiveValuetype | ValuetypeReference,
+  valuetype: PrimitiveValuetypeKeyword | ValuetypeDefinitionReference,
 ): string {
-  if (isValuetypeReference(valuetype)) {
+  if (isValuetypeDefinitionReference(valuetype)) {
     return valuetype.reference.$refText;
   }
   return valuetype;

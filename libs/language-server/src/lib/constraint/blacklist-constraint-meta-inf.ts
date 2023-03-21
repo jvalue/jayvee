@@ -1,6 +1,6 @@
 import { validateTypedCollection } from '../ast/collection-util';
-import { isCollection, isTextValue } from '../ast/generated/ast';
-import { AttributeValueType } from '../ast/model-util';
+import { isCollectionLiteral, isTextLiteral } from '../ast/generated/ast';
+import { PropertyValueType } from '../ast/model-util';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 
 export class BlacklistConstraintMetaInformation extends ConstraintMetaInformation {
@@ -9,16 +9,16 @@ export class BlacklistConstraintMetaInformation extends ConstraintMetaInformatio
       'BlacklistConstraint',
       {
         blacklist: {
-          type: AttributeValueType.COLLECTION,
-          validation: (attribute, accept) => {
-            const attributeValue = attribute.value;
-            if (!isCollection(attributeValue)) {
+          type: PropertyValueType.COLLECTION,
+          validation: (property, accept) => {
+            const propertyValue = property.value;
+            if (!isCollectionLiteral(propertyValue)) {
               return;
             }
 
             const { invalidItems } = validateTypedCollection(
-              attributeValue,
-              isTextValue,
+              propertyValue,
+              isTextLiteral,
             );
 
             invalidItems.forEach((invalidValue) =>

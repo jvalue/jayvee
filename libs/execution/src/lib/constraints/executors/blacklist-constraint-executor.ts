@@ -12,7 +12,7 @@ export class BlacklistConstraintExecutor implements ConstraintExecutor {
       return false;
     }
 
-    const blacklist = context.getTextCollectionAttributeValue('blacklist');
+    const blacklist = context.getTextCollectionPropertyValue('blacklist');
     const blacklistValues = blacklist.map(
       (blacklistElement) => blacklistElement.value,
     );

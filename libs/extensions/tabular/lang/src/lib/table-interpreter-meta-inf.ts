@@ -1,10 +1,10 @@
 import {
-  AttributeValueType,
   BlockMetaInformation,
   IOType,
+  PropertyValueType,
   getNodesWithNonUniqueNames,
-  isCollection,
-  isValuetypeAssignmentValue,
+  isCollectionLiteral,
+  isValuetypeAssignmentLiteral,
   validateTypedCollection,
 } from '@jvalue/language-server';
 
@@ -14,7 +14,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
       'TableInterpreter',
       {
         header: {
-          type: AttributeValueType.BOOLEAN,
+          type: PropertyValueType.BOOLEAN,
           docs: {
             description:
               'Whether the first row should be interpreted as header row.',
@@ -27,22 +27,22 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
               {
                 code: 'header: false',
                 description:
-                  'The first row is NOT interpreted as table header and columns of the sheet are directly mapped to table columns. The column names are taken form the provided names in the `columns` attribute.',
+                  'The first row is NOT interpreted as table header and columns of the sheet are directly mapped to table columns. The column names are taken form the provided names in the `columns` property.',
               },
             ],
           },
         },
         columns: {
-          type: AttributeValueType.COLLECTION,
-          validation: (attribute, accept) => {
-            const attributeValue = attribute.value;
-            if (!isCollection(attributeValue)) {
+          type: PropertyValueType.COLLECTION,
+          validation: (property, accept) => {
+            const propertyValue = property.value;
+            if (!isCollectionLiteral(propertyValue)) {
               return;
             }
 
             const { validItems, invalidItems } = validateTypedCollection(
-              attributeValue,
-              isValuetypeAssignmentValue,
+              propertyValue,
+              isValuetypeAssignmentLiteral,
             );
 
             invalidItems.forEach((invalidValue) =>
@@ -73,7 +73,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
           },
           docs: {
             description:
-              'Collection of type assignments. Uses column names (potentially matched with the header or by sequence depending on the `header` attribute) to assign a primitive value type to each column.',
+              'Collection of type assignments. Uses column names (potentially matched with the header or by sequence depending on the `header` property) to assign a primitive value type to each column.',
             examples: [
               {
                 code: 'columns: [ "name" typed text ]',

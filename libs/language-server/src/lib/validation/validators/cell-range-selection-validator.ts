@@ -4,20 +4,20 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import { ValidationAcceptor, ValidationChecks } from 'langium';
 
-import { JayveeAstType, RangeExpression } from '../../ast/generated/ast';
+import { JayveeAstType, RangeLiteral } from '../../ast/generated/ast';
 import { CellRangeWrapper } from '../../ast/wrappers/cell-range-wrapper';
 import { JayveeValidator } from '../jayvee-validator';
 
 export class CellRangeSelectionValidator implements JayveeValidator {
   get checks(): ValidationChecks<JayveeAstType> {
     return {
-      RangeExpression: [this.checkRangeLimits],
+      RangeLiteral: [this.checkRangeLimits],
     };
   }
 
   checkRangeLimits(
     this: void,
-    rangeExpression: RangeExpression,
+    rangeExpression: RangeLiteral,
     accept: ValidationAcceptor,
   ): void {
     if (

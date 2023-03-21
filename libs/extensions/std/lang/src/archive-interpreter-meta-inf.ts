@@ -1,7 +1,7 @@
 import {
-  AttributeValueType,
   BlockMetaInformation,
   IOType,
+  PropertyValueType,
 } from '@jvalue/language-server';
 
 export class ArchiveInterpreterMetaInformation extends BlockMetaInformation {
@@ -10,10 +10,10 @@ export class ArchiveInterpreterMetaInformation extends BlockMetaInformation {
       // How the block type should be called:
       'ArchiveInterpreter',
 
-      // Attribute definitions:
+      // Property definitions:
       {
         archiveType: {
-          type: AttributeValueType.TEXT,
+          type: PropertyValueType.TEXT,
           docs: {
             description: 'The archive type to be interpreted, e.g., `"zip"`.',
           },

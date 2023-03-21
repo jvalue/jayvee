@@ -1,4 +1,4 @@
-import { AttributeValueType } from '../ast/model-util';
+import { PropertyValueType } from '../ast/model-util';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 
 export class LengthConstraintMetaInformation extends ConstraintMetaInformation {
@@ -7,11 +7,11 @@ export class LengthConstraintMetaInformation extends ConstraintMetaInformation {
       'LengthConstraint',
       {
         minLength: {
-          type: AttributeValueType.INTEGER,
+          type: PropertyValueType.INTEGER,
           defaultValue: 0,
         },
         maxLength: {
-          type: AttributeValueType.INTEGER,
+          type: PropertyValueType.INTEGER,
           defaultValue: Number.POSITIVE_INFINITY,
         },
       },

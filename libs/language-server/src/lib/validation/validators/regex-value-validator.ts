@@ -1,18 +1,18 @@
 import { ValidationAcceptor, ValidationChecks } from 'langium';
 
-import { JayveeAstType, RegexValue } from '../../ast';
+import { JayveeAstType, RegexLiteral } from '../../ast';
 import { JayveeValidator } from '../jayvee-validator';
 
 export class RegexValueValidator implements JayveeValidator {
   get checks(): ValidationChecks<JayveeAstType> {
     return {
-      RegexValue: [this.checkRegexParsability],
+      RegexLiteral: [this.checkRegexParsability],
     };
   }
 
   checkRegexParsability(
     this: void,
-    regexValue: RegexValue,
+    regexValue: RegexLiteral,
     accept: ValidationAcceptor,
   ): void {
     try {

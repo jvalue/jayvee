@@ -21,7 +21,7 @@ export class CellRangeSelectorExecutor
     inputSheet: Sheet,
     context: ExecutionContext,
   ): Promise<R.Result<Sheet>> {
-    const relativeRange = context.getCellRangeAttributeValue('select');
+    const relativeRange = context.getCellRangePropertyValue('select');
 
     const absoluteRange = inputSheet.resolveRelativeIndexes(relativeRange);
 

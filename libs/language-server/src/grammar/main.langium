@@ -1,32 +1,41 @@
 grammar Jayvee
 
-import 'terminals'
-import 'attributes'
-import 'value-type'
-import 'constraints'
+import 'terminal'
+import 'property'
+import 'valuetype'
+import 'constraint'
 
-entry Model:
-  (pipelines+=Pipeline | valuetypes+=Valuetype | constraints+=Constraint)*;
+entry JayveeModel:
+  (
+    pipelines+=PipelineDefinition
+    | valuetypes+=ValuetypeDefinition
+    | constraints+=ConstraintDefinition
+  )*;
 
-Pipeline:
+PipelineDefinition:
   'pipeline' name=ID '{'
-    (blocks+=Block | pipes+=Pipe | valuetypes+=Valuetype | constraints+=Constraint)*
+    (
+      blocks+=BlockDefinition
+      | pipes+=PipeDefinition
+      | valuetypes+=ValuetypeDefinition
+      | constraints+=ConstraintDefinition
+    )*
   '}';
 
-Block:
-  'block' name=ID 'oftype' type=BlockType body=AttributeBody;
+BlockDefinition:
+  'block' name=ID 'oftype' type=BlockTypeLiteral body=PropertyBody;
 
-BlockType:
+BlockTypeLiteral:
   name=ID;
 
-Pipe:
-  SinglePipe | ChainedPipe;
+PipeDefinition:
+  SinglePipeDefinition | ChainedPipeDefinition;
 
-SinglePipe:
+SinglePipeDefinition:
   'pipe' '{'
-    'from' ':' from=[Block] ';'
-    'to' ':' to=[Block] ';'
+    'from' ':' from=[BlockDefinition] ';'
+    'to' ':' to=[BlockDefinition] ';'
   '}';
 
-ChainedPipe:
-    blocks+=[Block] ('->' blocks+=[Block])+ ';';
+ChainedPipeDefinition:
+    blocks+=[BlockDefinition] ('->' blocks+=[BlockDefinition])+ ';';

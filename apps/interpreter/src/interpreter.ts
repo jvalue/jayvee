@@ -11,9 +11,9 @@ import * as R from '@jvalue/execution';
 import { StdExecExtension } from '@jvalue/extensions/std/exec';
 import { StdLangExtension } from '@jvalue/extensions/std/lang';
 import {
-  Block,
-  Model,
-  Pipeline,
+  BlockDefinition,
+  JayveeModel,
+  PipelineDefinition,
   collectChildren,
   collectParents,
   collectStartingBlocks,
@@ -41,7 +41,7 @@ export async function runAction(
   registerDefaultConstraintExecutors();
 
   const services = createJayveeServices(NodeFileSystem).Jayvee;
-  const model = await extractAstNode<Model>(
+  const model = await extractAstNode<JayveeModel>(
     fileName,
     services,
     loggerFactory.createLogger(),
@@ -57,7 +57,7 @@ export async function runAction(
     process.exit(ExitCode.FAILURE);
   }
 
-  const interpretationExitCode = await interpretPipelineModel(
+  const interpretationExitCode = await interpretJayveeModel(
     model,
     parameterReadResult,
     loggerFactory,
@@ -70,8 +70,8 @@ export function useStdExtension() {
   useExecutionExtension(new StdExecExtension());
 }
 
-async function interpretPipelineModel(
-  model: Model,
+async function interpretJayveeModel(
+  model: JayveeModel,
   runtimeParameters: Map<string, string | number | boolean>,
   loggerFactory: LoggerFactory,
 ): Promise<ExitCode> {
@@ -89,7 +89,7 @@ async function interpretPipelineModel(
 }
 
 async function runPipeline(
-  pipeline: Pipeline,
+  pipeline: PipelineDefinition,
   runtimeParameters: Map<string, string | number | boolean>,
   loggerFactory: LoggerFactory,
 ): Promise<ExitCode> {
@@ -102,7 +102,7 @@ async function runPipeline(
   logPipelineOverview(pipeline, runtimeParameters, executionContext.logger);
 
   const executionOrder: Array<{
-    block: Block;
+    block: BlockDefinition;
     value: IOTypeImplementation | null;
   }> = getBlocksInTopologicalSorting(pipeline).map((block) => {
     return { block: block, value: NONE };
@@ -162,11 +162,11 @@ async function runPipeline(
 }
 
 export function logPipelineOverview(
-  pipeline: Pipeline,
+  pipeline: PipelineDefinition,
   runtimeParameters: Map<string, string | number | boolean>,
   logger: Logger,
 ) {
-  const toString = (block: Block, depth = 0): string => {
+  const toString = (block: BlockDefinition, depth = 0): string => {
     const blockString = `${'\t'.repeat(depth)} -> ${block.name} (${
       block.type.name
     })`;

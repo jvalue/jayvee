@@ -40,9 +40,9 @@ export class TableInterpreterExecutor
     inputSheet: Sheet,
     context: ExecutionContext,
   ): Promise<R.Result<Table>> {
-    const header = context.getBooleanAttributeValue('header');
+    const header = context.getBooleanPropertyValue('header');
     const columnDefinitions =
-      context.getValuetypeAssignmentCollectionAttributeValue('columns');
+      context.getValuetypeAssignmentCollectionPropertyValue('columns');
 
     let columnEntries: ColumnDefinitionEntry[];
 
@@ -51,7 +51,7 @@ export class TableInterpreterExecutor
         return R.err({
           message: 'The input sheet is empty and thus has no header',
           diagnostic: {
-            node: context.getOrFailAttribute('header'),
+            node: context.getOrFailProperty('header'),
           },
         });
       }
@@ -70,7 +70,7 @@ export class TableInterpreterExecutor
             columnDefinitions.length
           } column definitions but the input sheet only has ${inputSheet.getNumberOfColumns()} columns`,
           diagnostic: {
-            node: context.getOrFailAttribute('columns'),
+            node: context.getOrFailProperty('columns'),
           },
         });
       }
