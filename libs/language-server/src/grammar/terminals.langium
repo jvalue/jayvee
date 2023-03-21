@@ -6,8 +6,9 @@ terminal FALSE returns boolean: /false/;
 terminal CELL_REFERENCE: /([A-Z]+|\*)([0-9]+|\*)/;
 terminal ID: /[_a-zA-Z][\w_]*/;
 
-terminal DECIMAL returns number: INTEGER '.' INTEGER;
+// INTEGER is required for row IDs and overlaps with NUMBER below
 terminal INTEGER returns number: /[0-9]+/;
+terminal NUMBER returns number: /[+-]?[0-9]+(\.[0-9]+)?/;
 
 terminal STRING: /"[^"]*"|'[^']*'/;
 

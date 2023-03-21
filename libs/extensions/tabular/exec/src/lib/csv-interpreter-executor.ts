@@ -3,28 +3,34 @@ import { TextDecoder } from 'util';
 import { parseString as parseStringAsCsv } from '@fast-csv/parse';
 import { ParserOptionsArgs } from '@fast-csv/parse/build/src/ParserOptions';
 import * as R from '@jvalue/execution';
-import { BlockExecutor, File, Sheet } from '@jvalue/execution';
+import {
+  BlockExecutor,
+  BlockExecutorClass,
+  ExecutionContext,
+  File,
+  Sheet,
+  implementsStatic,
+} from '@jvalue/execution';
 import { IOType } from '@jvalue/language-server';
 import * as E from 'fp-ts/lib/Either';
 import { Either, isLeft } from 'fp-ts/lib/Either';
 
-export class CSVInterpreterExecutor extends BlockExecutor<
-  IOType.FILE,
-  IOType.SHEET
-> {
-  constructor() {
-    // Needs to match the name in meta information:
-    super('CSVInterpreter', IOType.FILE, IOType.SHEET);
-  }
+@implementsStatic<BlockExecutorClass>()
+export class CSVInterpreterExecutor
+  implements BlockExecutor<IOType.FILE, IOType.SHEET>
+{
+  public static readonly type = 'CSVInterpreter';
+  public readonly inputType = IOType.FILE;
+  public readonly outputType = IOType.SHEET;
 
-  override async execute(file: File): Promise<R.Result<Sheet>> {
-    const delimiter = this.getStringAttributeValue('delimiter');
-    const enclosing = this.getStringAttributeValue('enclosing');
-    const enclosingEscape = this.getStringAttributeValue('enclosingEscape');
+  async execute(file: File, context: ExecutionContext,): Promise<R.Result<Sheet>> {
+    const delimiter = context.getTextAttributeValue('delimiter');
+    const enclosing = context.getTextAttributeValue('enclosing');
+    const enclosingEscape = context.getTextAttributeValue('enclosingEscape');
 
     const decoder = new TextDecoder();
     const csvFile = decoder.decode(file.content);
-    this.logger.logDebug(
+    context.logger.logDebug(
       `Parsing raw data as CSV using delimiter "${delimiter}"`,
     );
 
@@ -39,13 +45,13 @@ export class CSVInterpreterExecutor extends BlockExecutor<
       return Promise.resolve(
         R.err({
           message: `CSV parse failed: ${csvData.left.message}`,
-          diagnostic: { node: this.block, property: 'name' },
+          diagnostic: { node: context.getCurrentNode(), property: 'name' },
         }),
       );
     }
     const sheet = new Sheet(csvData.right);
 
-    this.logger.logDebug(`Parsing raw data as CSV-sheet successful`);
+    context.logger.logDebug(`Parsing raw data as CSV-sheet successful`);
     return Promise.resolve(R.ok(sheet));
   }
 }

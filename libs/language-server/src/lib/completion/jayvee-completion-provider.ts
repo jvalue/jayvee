@@ -30,7 +30,7 @@ import {
   getMetaInformation,
   getRegisteredBlockMetaInformation,
   getRegisteredConstraintMetaInformation,
-} from '../meta-information/meta-inf-util';
+} from '../meta-information/meta-inf-registry';
 
 const RIGHT_ARROW_SYMBOL = '\u{2192}';
 
@@ -94,7 +94,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       acceptor({
         label: metaInf.type,
         labelDetails: {
-          detail: ` ${metaInf.primitiveValuetype}`,
+          detail: ` ${metaInf.compatiblePrimitiveValuetypes.join(',')}`,
         },
         kind: CompletionItemKind.Class,
         detail: `(constraint type)`,

@@ -13,7 +13,7 @@ import {
   runtimeParameterAllowedForType,
 } from '../../ast';
 import { MetaInformation } from '../../meta-information/meta-inf';
-import { getMetaInformation } from '../../meta-information/meta-inf-util';
+import { getMetaInformation } from '../../meta-information/meta-inf-registry';
 import { JayveeValidator } from '../jayvee-validator';
 import {
   generateNonUniqueNameErrorMessage,

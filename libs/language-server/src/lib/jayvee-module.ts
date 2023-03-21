@@ -16,6 +16,7 @@ import {
 import { JayveeCompletionProvider } from './completion/jayvee-completion-provider';
 import { registerConstraints } from './constraint/constraint-registry';
 import { JayveeHoverProvider } from './hover/jayvee-hover-provider';
+import { JayveeValueConverter } from './jayvee-value-converter';
 import { JayveeValidationRegistry } from './validation/validation-registry';
 import { AttributeBodyValidator } from './validation/validators/attribute-body-validator';
 import { BlockValidator } from './validation/validators/block-validator';
@@ -61,6 +62,9 @@ export const JayveeModule: Module<
   JayveeServices,
   PartialLangiumServices & JayveeAddedServices
 > = {
+  parser: {
+    ValueConverter: () => new JayveeValueConverter(),
+  },
   validation: {
     ValidationRegistry: (services) => new JayveeValidationRegistry(services),
     ModelValidator: () => new ModelValidator(),

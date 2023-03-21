@@ -12,7 +12,7 @@ import {
   inferTypesFromValue,
   isConstraintReferenceValue,
 } from '../../ast';
-import { getMetaInformation } from '../../meta-information/meta-inf-util';
+import { getMetaInformation } from '../../meta-information/meta-inf-registry';
 import { JayveeValidator } from '../jayvee-validator';
 
 export class ValuetypeValidator implements JayveeValidator {
@@ -66,7 +66,7 @@ export class ValuetypeValidator implements JayveeValidator {
         continue;
       }
 
-      if (metaInf.primitiveValuetype !== valuetype.type) {
+      if (!metaInf.compatiblePrimitiveValuetypes.includes(valuetype.type)) {
         accept(
           'error',
           `Only constraints for type "${valuetype.type}" are allowed in this collection`,

@@ -2,7 +2,7 @@ import { ValidationAcceptor, ValidationChecks } from 'langium';
 
 import { JayveeAstType, Pipe } from '../../ast/generated/ast';
 import { createSemanticPipes } from '../../ast/wrappers/pipe-wrapper';
-import { getMetaInformation } from '../../meta-information/meta-inf-util';
+import { getMetaInformation } from '../../meta-information/meta-inf-registry';
 import { JayveeValidator } from '../jayvee-validator';
 
 export class PipeValidator implements JayveeValidator {

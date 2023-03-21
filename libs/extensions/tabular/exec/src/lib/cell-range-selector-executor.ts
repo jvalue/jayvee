@@ -1,18 +1,27 @@
 import * as R from '@jvalue/execution';
-import { BlockExecutor, Sheet } from '@jvalue/execution';
+import {
+  BlockExecutor,
+  BlockExecutorClass,
+  ExecutionContext,
+  Sheet,
+  implementsStatic,
+} from '@jvalue/execution';
 import { IOType } from '@jvalue/language-server';
 
-export class CellRangeSelectorExecutor extends BlockExecutor<
-  IOType.SHEET,
-  IOType.SHEET
-> {
-  constructor() {
-    super('CellRangeSelector', IOType.SHEET, IOType.SHEET);
-  }
+@implementsStatic<BlockExecutorClass>()
+export class CellRangeSelectorExecutor
+  implements BlockExecutor<IOType.SHEET, IOType.SHEET>
+{
+  public static readonly type = 'CellRangeSelector';
+  public readonly inputType = IOType.SHEET;
+  public readonly outputType = IOType.SHEET;
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  override async execute(inputSheet: Sheet): Promise<R.Result<Sheet>> {
-    const relativeRange = this.getCellRangeAttributeValue('select');
+  async execute(
+    inputSheet: Sheet,
+    context: ExecutionContext,
+  ): Promise<R.Result<Sheet>> {
+    const relativeRange = context.getCellRangeAttributeValue('select');
 
     const absoluteRange = inputSheet.resolveRelativeIndexes(relativeRange);
 
@@ -23,7 +32,7 @@ export class CellRangeSelectorExecutor extends BlockExecutor<
       });
     }
 
-    this.logger.logDebug(`Selecting cell range ${absoluteRange.toString()}`);
+    context.logger.logDebug(`Selecting cell range ${absoluteRange.toString()}`);
 
     const resultingSheet = inputSheet.clone();
     resultingSheet.selectRange(absoluteRange);

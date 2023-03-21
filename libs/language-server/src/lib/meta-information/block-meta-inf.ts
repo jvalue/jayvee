@@ -1,27 +1,12 @@
-import { ValidationAcceptor } from 'langium';
+// eslint-disable-next-line import/no-cycle
+import { IOType } from '../ast/model-util';
 
-import { Attribute } from '../ast/generated/ast';
-import { AttributeValueType, IOType } from '../ast/model-util';
-
-import { MetaInformation } from './meta-inf';
-
-export interface AttributeSpecification {
-  type: AttributeValueType;
-  defaultValue?: unknown;
-  validation?: (attribute: Attribute, accept: ValidationAcceptor) => void;
-  docs?: AttributeDocs;
-}
-
-export interface ExampleDoc {
-  code: string;
-  description: string;
-}
-
-export interface AttributeDocs {
-  description?: string;
-  examples?: ExampleDoc[];
-  validation?: string;
-}
+// eslint-disable-next-line import/no-cycle
+import {
+  AttributeSpecification,
+  ExampleDoc,
+  MetaInformation,
+} from './meta-inf';
 
 interface BlockDocs {
   description?: string;

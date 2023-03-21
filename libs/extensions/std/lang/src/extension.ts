@@ -1,7 +1,8 @@
 import { RdbmsLangExtension } from '@jvalue/extensions/rdbms/lang';
 import { TabularLangExtension } from '@jvalue/extensions/tabular/lang';
 import {
-  BlockMetaInformationClass,
+  BlockMetaInformation,
+  ConstructorClass,
   JayveeLangExtension,
 } from '@jvalue/language-server';
 
@@ -15,7 +16,7 @@ export class StdLangExtension implements JayveeLangExtension {
     new RdbmsLangExtension(),
   ];
 
-  getBlockMetaInf(): BlockMetaInformationClass[] {
+  getBlockMetaInf(): Array<ConstructorClass<BlockMetaInformation>> {
     return [
       ...this.wrappedExtensions.map((x) => x.getBlockMetaInf()).flat(),
       HttpExtractorMetaInformation,

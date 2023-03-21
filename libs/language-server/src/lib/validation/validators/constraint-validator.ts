@@ -6,7 +6,7 @@
 import { ValidationAcceptor, ValidationChecks } from 'langium';
 
 import { Constraint, JayveeAstType } from '../../ast';
-import { getMetaInformation } from '../../meta-information/meta-inf-util';
+import { getMetaInformation } from '../../meta-information/meta-inf-registry';
 import { JayveeValidator } from '../jayvee-validator';
 
 export class ConstraintValidator implements JayveeValidator {

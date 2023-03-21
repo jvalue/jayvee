@@ -1,6 +1,7 @@
 import { ValidationAcceptor } from 'langium';
 
 import { Attribute } from '../ast/generated/ast';
+// eslint-disable-next-line import/no-cycle
 import { AttributeValueType } from '../ast/model-util';
 
 export interface AttributeSpecification {

@@ -15,7 +15,7 @@ export class LengthConstraintMetaInformation extends ConstraintMetaInformation {
           defaultValue: Number.POSITIVE_INFINITY,
         },
       },
-      'text',
+      ['text'],
     );
   }
 }

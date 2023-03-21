@@ -2,7 +2,7 @@ import { IOType } from '@jvalue/language-server';
 
 import { SQLColumnTypeVisitor } from '../../visitors/sql-column-type-visitor';
 import { SQLValueRepresentationVisitor } from '../../visitors/sql-value-representation-visitor';
-import { AbstractValueType } from '../value-types/abstract-value-type';
+import { Valuetype } from '../value-types/valuetype';
 
 import { IOTypeImplementation } from './io-type-implementation';
 
@@ -70,5 +70,5 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
 
 export interface ColumnInformation {
   name: string;
-  type: AbstractValueType;
+  type: Valuetype;
 }

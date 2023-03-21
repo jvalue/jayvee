@@ -33,7 +33,7 @@ export class WhitelistConstraintMetaInformation extends ConstraintMetaInformatio
           },
         },
       },
-      'text',
+      ['text'],
     );
   }
 }

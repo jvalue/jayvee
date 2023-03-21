@@ -1,32 +1,32 @@
 import {
-  BooleanValueType,
-  DecimalValueType,
-  IntegerValueType,
-  TextValueType,
+  BooleanValuetype,
+  DecimalValuetype,
+  IntegerValuetype,
+  TextValuetype,
 } from '../types/value-types';
-import { ValueTypeVisitor } from '../types/value-types/visitors/value-type-visitor';
+import { ValuetypeVisitor } from '../types/value-types/visitors/valuetype-visitor';
 
-export class SQLValueRepresentationVisitor extends ValueTypeVisitor<
+export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
   (value: unknown) => string
 > {
-  visitBoolean(valueType: BooleanValueType): (value: unknown) => string {
+  visitBoolean(valueType: BooleanValuetype): (value: unknown) => string {
     return (value: unknown) => {
       return valueType.getStandardRepresentation(value)
         ? String.raw`'true'`
         : String.raw`'false'`;
     };
   }
-  visitDecimal(valueType: DecimalValueType): (value: unknown) => string {
+  visitDecimal(valueType: DecimalValuetype): (value: unknown) => string {
     return (value: unknown) => {
       return valueType.getStandardRepresentation(value).toString();
     };
   }
-  visitInteger(valueType: IntegerValueType): (value: unknown) => string {
+  visitInteger(valueType: IntegerValuetype): (value: unknown) => string {
     return (value: unknown) => {
       return valueType.getStandardRepresentation(value).toString();
     };
   }
-  visitText(valueType: TextValueType): (value: unknown) => string {
+  visitText(valueType: TextValuetype): (value: unknown) => string {
     return (value: unknown) => {
       const standardValueRepresentation =
         valueType.getStandardRepresentation(value);
