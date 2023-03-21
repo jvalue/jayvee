@@ -47,7 +47,8 @@
           "node tools/scripts/relax-peer-dependency-versions.mjs @jvalue/monaco-editor",
           "node tools/scripts/monaco-editor/delete-vscode-peer-dependency.mjs @jvalue/monaco-editor",
           "node tools/scripts/monaco-editor/relax-react-version.mjs @jvalue/monaco-editor"
-        ]
+        ],
+        "parallel": false
       }
     },
     "publish": {

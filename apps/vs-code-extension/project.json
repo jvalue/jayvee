@@ -50,7 +50,8 @@
           // Add an empty license file, so vsce does not complain during packaging
           "touch dist/apps/vs-code-extension/LICENSE",
           "cd dist/apps/vs-code-extension && npx vsce package --out jayvee.vsix"
-        ]
+        ],
+        "parallel": false
       }
     },
     "install": {
