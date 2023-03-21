@@ -1,6 +1,7 @@
 import {
   ExecutionContext,
   IOTypeImplementation,
+  Logger,
   NONE,
   createBlockExecutor,
   registerDefaultConstraintExecutors,
@@ -20,6 +21,7 @@ import {
   getBlocksInTopologicalSorting,
   useExtension as useLangExtension,
 } from '@jvalue/language-server';
+import * as chalk from 'chalk';
 import { NodeFileSystem } from 'langium/node';
 
 import { ExitCode, extractAstNode } from './cli-util';
@@ -91,13 +93,13 @@ async function runPipeline(
   runtimeParameters: Map<string, string | number | boolean>,
   loggerFactory: LoggerFactory,
 ): Promise<ExitCode> {
-  printPipeline(pipeline, runtimeParameters);
-
   const executionContext = new ExecutionContext(
     pipeline,
     loggerFactory.createLogger(),
     runtimeParameters,
   );
+
+  logPipelineOverview(pipeline, runtimeParameters, executionContext.logger);
 
   const executionOrder: Array<{
     block: Block;
@@ -159,10 +161,10 @@ async function runPipeline(
   return ExitCode.SUCCESS;
 }
 
-export function printPipeline(
+export function logPipelineOverview(
   pipeline: Pipeline,
   runtimeParameters: Map<string, string | number | boolean>,
-  printCallback: (output: string) => void = console.info,
+  logger: Logger,
 ) {
   const toString = (block: Block, depth = 0): string => {
     const blockString = `${'\t'.repeat(depth)} -> ${block.name} (${
@@ -174,22 +176,28 @@ export function printPipeline(
     return blockString + '\n' + childString;
   };
 
-  printCallback(`Pipeline ${pipeline.name}:`);
-  printCallback(`\tRuntime Parameters (${runtimeParameters.size}):`);
-  for (const key of runtimeParameters.keys()) {
-    console.log(
-      `\t ${key}: ${
-        runtimeParameters.has(key)
-          ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            runtimeParameters.get(key)!.toString()
-          : 'undefined'
-      }`,
-    );
+  const linesBuffer: string[] = [];
+
+  linesBuffer.push(chalk.underline('Overview:'));
+
+  if (runtimeParameters.size > 0) {
+    linesBuffer.push(`\tRuntime Parameters (${runtimeParameters.size}):`);
+    for (const key of runtimeParameters.keys()) {
+      linesBuffer.push(
+        `\t\t${key}: ${
+          runtimeParameters.has(key)
+            ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              runtimeParameters.get(key)!.toString()
+            : 'undefined'
+        }`,
+      );
+    }
   }
-  printCallback(
+  linesBuffer.push(
     `\tBlocks (${pipeline.blocks.length} blocks with ${pipeline.pipes.length} pipes):`,
   );
   for (const block of collectStartingBlocks(pipeline)) {
-    printCallback(toString(block, 1));
+    linesBuffer.push(toString(block, 1));
   }
+  logger.logInfo(linesBuffer.join('\n'));
 }

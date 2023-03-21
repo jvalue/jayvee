@@ -15,6 +15,10 @@ export class DefaultLogger extends Logger {
     super();
   }
 
+  override logInfo(message: string): void {
+    console.log(`${chalk.bold(this.getContext())}${message}`);
+  }
+
   override logDebug(message: string): void {
     if (this.enableDebugLogging) {
       console.log(`${chalk.bold(this.getContext())}${message}`);
