@@ -26,6 +26,10 @@ export function registerConstraintExecutor(
   constraintExecutorRegistry.register(executorClass.type, executorClass);
 }
 
+export function getRegisteredConstraintExecutors(): ConstraintExecutorClass[] {
+  return constraintExecutorRegistry.getAll();
+}
+
 export function createConstraintExecutor(
   constraint: Constraint,
 ): ConstraintExecutor {
