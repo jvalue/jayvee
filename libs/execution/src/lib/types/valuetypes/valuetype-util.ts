@@ -9,6 +9,7 @@ import { AtomicValuetype } from './atomic-valuetype';
 import { BooleanValuetype } from './boolean-valuetype';
 import { DecimalValuetype } from './decimal-valuetype';
 import { IntegerValuetype } from './integer-valuetype';
+import { PrimitiveValuetype } from './primitive-valuetype';
 import { TextValuetype } from './text-valuetype';
 import { Valuetype } from './valuetype';
 
@@ -28,9 +29,9 @@ export function getValuetype(
 }
 
 function getPrimitiveValuetype(
-  primitiveValuetype: PrimitiveValuetypeKeyword,
-): Valuetype {
-  switch (primitiveValuetype) {
+  keyword: PrimitiveValuetypeKeyword,
+): PrimitiveValuetype {
+  switch (keyword) {
     case 'text':
       return new TextValuetype();
     case 'decimal':
@@ -40,6 +41,6 @@ function getPrimitiveValuetype(
     case 'boolean':
       return new BooleanValuetype();
     default:
-      assertUnreachable(primitiveValuetype);
+      assertUnreachable(keyword);
   }
 }

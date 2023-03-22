@@ -1,10 +1,10 @@
 // eslint-disable-next-line import/no-cycle
-import { Valuetype } from './valuetype';
+import { PrimitiveValuetype } from './primitive-valuetype';
 // eslint-disable-next-line import/no-cycle
 import { ValuetypeVisitor } from './visitors/valuetype-visitor';
 
-export class DecimalValuetype implements Valuetype {
-  public readonly primitiveValuetype = 'decimal';
+export class DecimalValuetype implements PrimitiveValuetype<number> {
+  public readonly primitiveValuetypeKeyword = 'decimal';
 
   private readonly DOT_SEPARATOR_REGEX = /^[+-]?([0-9]*[.])?[0-9]+$/;
   private readonly COMMA_SEPARATOR_REGEX = /^[+-]?([0-9]*[,])?[0-9]+$/;
@@ -38,7 +38,7 @@ export class DecimalValuetype implements Valuetype {
 
     throw new Error(
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      `Invalid value: ${value} for type ${this.primitiveValuetype}`,
+      `Invalid value: ${value} for type ${this.primitiveValuetypeKeyword}`,
     );
   }
 }

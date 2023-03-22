@@ -8,25 +8,22 @@ import {
 import { createConstraintExecutor } from '../../constraints/constraint-executor-registry';
 import { ExecutionContext } from '../../execution-context';
 
+import { PrimitiveType, PrimitiveValuetype } from './primitive-valuetype';
 import { Valuetype } from './valuetype';
 import { ValuetypeVisitor } from './visitors/valuetype-visitor';
 
-export class AtomicValuetype<T> implements Valuetype<T> {
+export class AtomicValuetype<T extends PrimitiveType> implements Valuetype<T> {
   constructor(
-    private readonly baseValuetype: Valuetype<T>,
+    private readonly primitiveValuetype: PrimitiveValuetype<T>,
     private readonly astNode: ValuetypeDefinition,
   ) {}
 
-  get primitiveValuetype() {
-    return this.baseValuetype.primitiveValuetype;
-  }
-
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
-    return this.baseValuetype.acceptVisitor(visitor);
+    return this.primitiveValuetype.acceptVisitor(visitor);
   }
 
   isValid(value: unknown, context: ExecutionContext): boolean {
-    if (!this.baseValuetype.isValid(value, context)) {
+    if (!this.primitiveValuetype.isValid(value, context)) {
       return false;
     }
 
@@ -50,7 +47,7 @@ export class AtomicValuetype<T> implements Valuetype<T> {
   }
 
   getStandardRepresentation(value: unknown): T {
-    return this.baseValuetype.getStandardRepresentation(value);
+    return this.primitiveValuetype.getStandardRepresentation(value);
   }
 
   private getConstraints(): ConstraintDefinition[] {
