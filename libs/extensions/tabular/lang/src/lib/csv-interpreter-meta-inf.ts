@@ -43,7 +43,7 @@ export class CSVInterpreterMetaInformation extends BlockMetaInformation {
         },
       },
       // Input type:
-      IOType.FILE,
+      IOType.TEXT_FILE,
 
       // Output type:
       IOType.SHEET,

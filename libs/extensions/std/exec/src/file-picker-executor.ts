@@ -1,9 +1,9 @@
 import * as R from '@jvalue/execution';
 import {
+  BinaryFile,
   BlockExecutor,
   BlockExecutorClass,
   ExecutionContext,
-  File,
   FileSystem,
   implementsStatic,
 } from '@jvalue/execution';
@@ -21,7 +21,7 @@ export class FilePickerExecutor
   async execute(
     fileSystem: FileSystem,
     context: ExecutionContext,
-  ): Promise<R.Result<File | null>> {
+  ): Promise<R.Result<BinaryFile | null>> {
     const file = fileSystem.getFile(context.getTextPropertyValue('path'));
     return R.ok(file);
   }

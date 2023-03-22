@@ -143,6 +143,7 @@ export function getBlocksInTopologicalSorting(
 export enum IOType {
   NONE = 'None',
   FILE = 'File',
+  TEXT_FILE = 'TextFile',
   FILE_SYSTEM = 'FileSystem',
   SHEET = 'Sheet',
   TABLE = 'Table',

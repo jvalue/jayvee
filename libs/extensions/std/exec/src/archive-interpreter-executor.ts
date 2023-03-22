@@ -2,10 +2,10 @@ import * as path from 'path';
 
 import * as R from '@jvalue/execution';
 import {
+  BinaryFile,
   BlockExecutor,
   BlockExecutorClass,
   ExecutionContext,
-  File,
   FileExtension,
   FileSystem,
   InMemoryFileSystem,
@@ -30,7 +30,7 @@ export class ArchiveInterpreterExecutor
   public readonly outputType = IOType.FILE_SYSTEM;
 
   async execute(
-    archiveFile: File,
+    archiveFile: BinaryFile,
     context: ExecutionContext,
   ): Promise<R.Result<FileSystem>> {
     if (context.getTextPropertyValue('archiveType') === 'zip') {
@@ -50,7 +50,7 @@ export class ArchiveInterpreterExecutor
   }
 
   private async loadZipFileToInMemoryFileSystem(
-    archiveFile: File,
+    archiveFile: BinaryFile,
     context: ExecutionContext,
   ): Promise<R.Result<FileSystem>> {
     context.logger.logDebug(`Loading zip file from binary content`);
@@ -73,7 +73,12 @@ export class ArchiveInterpreterExecutor
           const fileExtension =
             inferFileExtensionFromFileExtensionString(extName) ||
             FileExtension.NONE;
-          const file = new File(fileName, fileExtension, mimeType, content);
+          const file = new BinaryFile(
+            fileName,
+            fileExtension,
+            mimeType,
+            content,
+          );
           root.putFile(relPath, file);
         }
       }

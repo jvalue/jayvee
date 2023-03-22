@@ -1,14 +1,8 @@
-import { IOType } from '@jvalue/language-server';
-
-import { IOTypeImplementation } from './io-type-implementation';
-
 /**
  * Represents a file with its name, extension, file type, and content.
  * @class File
  */
-export class File implements IOTypeImplementation<IOType.FILE> {
-  public readonly ioType = IOType.FILE;
-
+export abstract class File<T> {
   constructor(
     /**
      * The name of the file, without the extension.
@@ -29,11 +23,7 @@ export class File implements IOTypeImplementation<IOType.FILE> {
      */
     public readonly mimeType: MimeType,
 
-    /**
-     * The content of the file as an ArrayBuffer.
-     * @property {ArrayBuffer} content
-     */
-    public readonly content: ArrayBuffer,
+    public readonly content: T,
   ) {}
 }
 
