@@ -1,10 +1,10 @@
 // eslint-disable-next-line import/no-cycle
-import { Valuetype } from './valuetype';
+import { PrimitiveValuetype } from './primitive-valuetype';
 // eslint-disable-next-line import/no-cycle
 import { ValuetypeVisitor } from './visitors/valuetype-visitor';
 
-export class TextValuetype implements Valuetype<string> {
-  public readonly primitiveValuetype = 'text';
+export class TextValuetype implements PrimitiveValuetype<string> {
+  public readonly primitiveValuetypeKeyword = 'text';
 
   isValid(value: unknown): boolean {
     return typeof value === 'string';
@@ -24,7 +24,7 @@ export class TextValuetype implements Valuetype<string> {
 
     throw new Error(
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      `Invalid value: ${value} for type ${this.primitiveValuetype}`,
+      `Invalid value: ${value} for type ${this.primitiveValuetypeKeyword}`,
     );
   }
 }
