@@ -1,10 +1,10 @@
 import {
-  AttributeSpecification,
   BlockMetaInformation,
   ExampleDoc,
   IOType,
   JayveeBlockTypeDocGenerator,
   MarkdownBuilder,
+  PropertySpecification,
 } from '@jvalue/language-server';
 
 export class UserDocGenerator implements JayveeBlockTypeDocGenerator {
@@ -16,15 +16,15 @@ export class UserDocGenerator implements JayveeBlockTypeDocGenerator {
       .description(metaInf.docs.description)
       .examples(metaInf.docs.examples);
 
-    builder.attributesHeading();
-    Object.entries(metaInf.getAttributeSpecifications()).forEach(
-      ([key, attribute]) => {
+    builder.propertiesHeading();
+    Object.entries(metaInf.getPropertySpecifications()).forEach(
+      ([key, property]) => {
         builder
-          .attributeHeading(key, 3)
-          .attributeSpec(attribute)
-          .description(attribute.docs?.description, 4)
-          .validation(attribute.docs?.validation, 4)
-          .examples(attribute.docs?.examples, 4);
+          .propertyHeading(key, 3)
+          .propertySpec(property)
+          .description(property.docs?.description, 4)
+          .validation(property.docs?.validation, 4)
+          .examples(property.docs?.examples, 4);
       },
     );
 
@@ -53,17 +53,17 @@ class UserDocMarkdownBuilder {
     return this;
   }
 
-  attributeHeading(attributeName: string, depth = 1): UserDocMarkdownBuilder {
-    this.markdownBuilder.heading(`\`${attributeName}\``, depth);
+  propertyHeading(propertyName: string, depth = 1): UserDocMarkdownBuilder {
+    this.markdownBuilder.heading(`\`${propertyName}\``, depth);
     return this;
   }
 
-  attributeSpec(attributeSpec: AttributeSpecification): UserDocMarkdownBuilder {
-    this.markdownBuilder.line(`Type \`${attributeSpec.type}\``);
-    if (attributeSpec.defaultValue !== undefined) {
+  propertySpec(propertySpec: PropertySpecification): UserDocMarkdownBuilder {
+    this.markdownBuilder.line(`Type \`${propertySpec.type}\``);
+    if (propertySpec.defaultValue !== undefined) {
       this.markdownBuilder
         .newLine()
-        .line(`Default: \`${JSON.stringify(attributeSpec.defaultValue)}\``);
+        .line(`Default: \`${JSON.stringify(propertySpec.defaultValue)}\``);
     }
     this.markdownBuilder.newLine();
     return this;
@@ -86,8 +86,8 @@ class UserDocMarkdownBuilder {
     return this;
   }
 
-  attributesHeading(): UserDocMarkdownBuilder {
-    this.markdownBuilder.heading('Attributes', 2);
+  propertiesHeading(): UserDocMarkdownBuilder {
+    this.markdownBuilder.heading('Properties', 2);
     return this;
   }
 

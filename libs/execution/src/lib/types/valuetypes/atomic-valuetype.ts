@@ -1,7 +1,7 @@
 import {
-  Valuetype as AstValuetype,
-  Constraint,
-  isConstraintReferenceValue,
+  ConstraintDefinition,
+  ValuetypeDefinition,
+  isConstraintReferenceLiteral,
   validateTypedCollection,
 } from '@jvalue/language-server';
 
@@ -14,7 +14,7 @@ import { ValuetypeVisitor } from './visitors/valuetype-visitor';
 export class AtomicValuetype<T> implements Valuetype<T> {
   constructor(
     private readonly baseValuetype: Valuetype<T>,
-    private readonly astNode: AstValuetype,
+    private readonly astNode: ValuetypeDefinition,
   ) {}
 
   get primitiveValuetype() {
@@ -53,11 +53,11 @@ export class AtomicValuetype<T> implements Valuetype<T> {
     return this.baseValuetype.getStandardRepresentation(value);
   }
 
-  private getConstraints(): Constraint[] {
+  private getConstraints(): ConstraintDefinition[] {
     const constraintCollection = this.astNode.constraints;
     const constraintReferences = validateTypedCollection(
       constraintCollection,
-      isConstraintReferenceValue,
+      isConstraintReferenceLiteral,
     ).validItems;
 
     const constraints = constraintReferences.map(

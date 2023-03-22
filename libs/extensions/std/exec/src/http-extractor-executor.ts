@@ -32,7 +32,7 @@ export class HttpExtractorExecutor
     input: None,
     context: ExecutionContext,
   ): Promise<R.Result<File>> {
-    const url = context.getTextAttributeValue('url');
+    const url = context.getTextPropertyValue('url');
 
     const file = await this.fetchRawDataAsFile(url, context);
 
@@ -59,7 +59,7 @@ export class HttpExtractorExecutor
               message: `HTTP fetch failed with code ${
                 responseCode ?? 'undefined'
               }. Please check your connection.`,
-              diagnostic: { node: context.getOrFailAttribute('url') },
+              diagnostic: { node: context.getOrFailProperty('url') },
             }),
           );
         }
@@ -86,7 +86,7 @@ export class HttpExtractorExecutor
 
           // Infer FileName and FileExtension from url, if not inferrable, then default to None
           // Get last element of URL assuming this is a filename
-          const url = new URL(context.getTextAttributeValue('url'));
+          const url = new URL(context.getTextPropertyValue('url'));
           let fileName = url.pathname.split('/').pop();
           if (fileName === undefined) {
             fileName = url.pathname.replace('/', '-');

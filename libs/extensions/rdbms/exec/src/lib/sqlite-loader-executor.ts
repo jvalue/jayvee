@@ -23,8 +23,8 @@ export class SQLiteLoaderExecutor
     input: Table,
     context: ExecutionContext,
   ): Promise<R.Result<None>> {
-    const file = context.getTextAttributeValue('file');
-    const table = context.getTextAttributeValue('table');
+    const file = context.getTextPropertyValue('file');
+    const table = context.getTextPropertyValue('table');
 
     let db: sqlite3.Database | undefined;
 

@@ -1,10 +1,10 @@
 import {
-  AttributeValueType,
   BlockMetaInformation,
   IOType,
+  PropertyValuetype,
   getNodesWithNonUniqueNames,
-  isCollection,
-  isValuetypeAssignmentValue,
+  isCollectionLiteral,
+  isValuetypeAssignmentLiteral,
   validateTypedCollection,
 } from '@jvalue/language-server';
 
@@ -14,7 +14,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
       'TableInterpreter',
       {
         header: {
-          type: AttributeValueType.BOOLEAN,
+          type: PropertyValuetype.BOOLEAN,
           docs: {
             description:
               'Whether the first row should be interpreted as header row.',
@@ -27,22 +27,22 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
               {
                 code: 'header: false',
                 description:
-                  'The first row is NOT interpreted as table header and columns of the sheet are directly mapped to table columns. The column names are taken form the provided names in the `columns` attribute.',
+                  'The first row is NOT interpreted as table header and columns of the sheet are directly mapped to table columns. The column names are taken form the provided names in the `columns` property.',
               },
             ],
           },
         },
         columns: {
-          type: AttributeValueType.COLLECTION,
-          validation: (attribute, accept) => {
-            const attributeValue = attribute.value;
-            if (!isCollection(attributeValue)) {
+          type: PropertyValuetype.COLLECTION,
+          validation: (property, accept) => {
+            const propertyValue = property.value;
+            if (!isCollectionLiteral(propertyValue)) {
               return;
             }
 
             const { validItems, invalidItems } = validateTypedCollection(
-              attributeValue,
-              isValuetypeAssignmentValue,
+              propertyValue,
+              isValuetypeAssignmentLiteral,
             );
 
             invalidItems.forEach((invalidValue) =>
@@ -55,16 +55,16 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
               ),
             );
 
-            const typeAssignments = validItems.map(
+            const valuetypeAssignments = validItems.map(
               (assignment) => assignment.value,
             );
-            getNodesWithNonUniqueNames(typeAssignments).forEach(
-              (typeAssignment) => {
+            getNodesWithNonUniqueNames(valuetypeAssignments).forEach(
+              (valuetypeAssignment) => {
                 accept(
                   'error',
-                  `The column name "${typeAssignment.name}" needs to be unique.`,
+                  `The column name "${valuetypeAssignment.name}" needs to be unique.`,
                   {
-                    node: typeAssignment,
+                    node: valuetypeAssignment,
                     property: 'name',
                   },
                 );
@@ -73,7 +73,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
           },
           docs: {
             description:
-              'Collection of type assignments. Uses column names (potentially matched with the header or by sequence depending on the `header` attribute) to assign a primitive value type to each column.',
+              'Collection of valuetype assignments. Uses column names (potentially matched with the header or by sequence depending on the `header` property) to assign a primitive valuetype to each column.',
             examples: [
               {
                 code: 'columns: [ "name" typed text ]',
@@ -82,7 +82,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
               },
             ],
             validation:
-              'Needs to be a collection of type assignments. Each column needs to have a unique name.',
+              'Needs to be a collection of valuetype assignments. Each column needs to have a unique name.',
           },
         },
       },
@@ -95,12 +95,12 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
       {
         code: blockExampleWithHeader,
         description:
-          'Interprets a `Sheet` about cars with a topmost header row and interprets it as a `Table` by assigning a primitive value type to each column. The column names are matched to the header, so the order of the type assignments does not matter.',
+          'Interprets a `Sheet` about cars with a topmost header row and interprets it as a `Table` by assigning a primitive valuetype to each column. The column names are matched to the header, so the order of the type assignments does not matter.',
       },
       {
         code: blockExampleWithoutHeader,
         description:
-          'Interprets a `Sheet` about cars without a topmost header row and interprets it as a `Table` by sequentially assigning a name and a primitive value type to each column of the sheet. Note that the order of columns matters here. The first column (column `A`) will be named "name", the second column (column `B`) will be named "mpg" etc.',
+          'Interprets a `Sheet` about cars without a topmost header row and interprets it as a `Table` by sequentially assigning a name and a primitive valuetype to each column of the sheet. Note that the order of columns matters here. The first column (column `A`) will be named "name", the second column (column `B`) will be named "mpg" etc.',
       },
     ];
   }

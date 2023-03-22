@@ -5,8 +5,8 @@ import { IntegerValuetype } from '../integer-valuetype';
 import { TextValuetype } from '../text-valuetype';
 
 export abstract class ValuetypeVisitor<R> {
-  abstract visitBoolean(valueType: BooleanValuetype): R;
-  abstract visitDecimal(valueType: DecimalValuetype): R;
-  abstract visitInteger(valueType: IntegerValuetype): R;
-  abstract visitText(valueType: TextValuetype): R;
+  abstract visitBoolean(valuetype: BooleanValuetype): R;
+  abstract visitDecimal(valuetype: DecimalValuetype): R;
+  abstract visitInteger(valuetype: IntegerValuetype): R;
+  abstract visitText(valuetype: TextValuetype): R;
 }

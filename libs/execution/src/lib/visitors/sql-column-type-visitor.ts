@@ -1,4 +1,4 @@
-import { ValuetypeVisitor } from '../types/value-types/visitors/valuetype-visitor';
+import { ValuetypeVisitor } from '../types/valuetypes/visitors/valuetype-visitor';
 
 export class SQLColumnTypeVisitor extends ValuetypeVisitor<string> {
   override visitBoolean(): string {

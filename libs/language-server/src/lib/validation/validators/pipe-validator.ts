@@ -1,6 +1,6 @@
 import { ValidationAcceptor, ValidationChecks } from 'langium';
 
-import { JayveeAstType, Pipe } from '../../ast/generated/ast';
+import { JayveeAstType, PipeDefinition } from '../../ast/generated/ast';
 import { createSemanticPipes } from '../../ast/wrappers/pipe-wrapper';
 import { getMetaInformation } from '../../meta-information/meta-inf-registry';
 import { JayveeValidator } from '../jayvee-validator';
@@ -8,13 +8,13 @@ import { JayveeValidator } from '../jayvee-validator';
 export class PipeValidator implements JayveeValidator {
   get checks(): ValidationChecks<JayveeAstType> {
     return {
-      Pipe: this.checkBlockCompatibility,
+      PipeDefinition: this.checkBlockCompatibility,
     };
   }
 
   checkBlockCompatibility(
     this: void,
-    pipe: Pipe,
+    pipe: PipeDefinition,
     accept: ValidationAcceptor,
   ): void {
     const semanticPipes = createSemanticPipes(pipe);

@@ -1,7 +1,7 @@
 import {
-  PrimitiveValuetype,
-  ValuetypeReference,
-  isValuetypeReference,
+  PrimitiveValuetypeKeyword,
+  ValuetypeDefinitionReference,
+  isValuetypeDefinitionReference,
 } from '@jvalue/language-server';
 import { assertUnreachable } from 'langium/lib/utils/errors';
 
@@ -12,23 +12,23 @@ import { IntegerValuetype } from './integer-valuetype';
 import { TextValuetype } from './text-valuetype';
 import { Valuetype } from './valuetype';
 
-export function getValueType(
-  valueType: PrimitiveValuetype | ValuetypeReference,
+export function getValuetype(
+  valuetype: PrimitiveValuetypeKeyword | ValuetypeDefinitionReference,
 ): Valuetype {
-  if (isValuetypeReference(valueType)) {
+  if (isValuetypeDefinitionReference(valuetype)) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const valuetypeAstNode = valueType.reference.ref!;
+    const valuetypeAstNode = valuetype.reference.ref!;
     const primitiveValuetype = valuetypeAstNode.type;
     return new AtomicValuetype(
-      getPrimitiveValueType(primitiveValuetype),
+      getPrimitiveValuetype(primitiveValuetype),
       valuetypeAstNode,
     );
   }
-  return getPrimitiveValueType(valueType);
+  return getPrimitiveValuetype(valuetype);
 }
 
-function getPrimitiveValueType(
-  primitiveValuetype: PrimitiveValuetype,
+function getPrimitiveValuetype(
+  primitiveValuetype: PrimitiveValuetypeKeyword,
 ): Valuetype {
   switch (primitiveValuetype) {
     case 'text':

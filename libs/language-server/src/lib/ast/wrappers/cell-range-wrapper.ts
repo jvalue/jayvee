@@ -1,15 +1,15 @@
 import { strict as assert } from 'assert';
 
 import {
-  CellExpression,
-  CellRange,
-  ColumnExpression,
-  RangeExpression,
-  RowExpression,
-  isCellExpression,
-  isColumnExpression,
-  isRangeExpression,
-  isRowExpression,
+  CellLiteral,
+  CellRangeLiteral,
+  ColumnLiteral,
+  RangeLiteral,
+  RowLiteral,
+  isCellLiteral,
+  isColumnLiteral,
+  isRangeLiteral,
+  isRowLiteral,
 } from '../generated/ast';
 
 import { AstNodeWrapper } from './ast-node-wrapper';
@@ -88,7 +88,7 @@ export interface CellIndexBounds {
   lastRowIndex: number;
 }
 
-export class CellRangeWrapper<N extends CellRange = CellRange>
+export class CellRangeWrapper<N extends CellRangeLiteral = CellRangeLiteral>
   implements AstNodeWrapper<N>
 {
   public readonly astNode: N;
@@ -101,15 +101,15 @@ export class CellRangeWrapper<N extends CellRange = CellRange>
     if (indexes !== undefined) {
       this.from = indexes.from;
       this.to = indexes.to;
-    } else if (isCellExpression(cellRange)) {
+    } else if (isCellLiteral(cellRange)) {
       const cellIndex = parseCellId(cellRange.cellId);
       this.from = cellIndex;
       this.to = cellIndex;
-    } else if (isColumnExpression(cellRange)) {
+    } else if (isColumnLiteral(cellRange)) {
       const columnIndex = parseColumnId(cellRange.columnId);
       this.from = new CellIndex(columnIndex, 0);
       this.to = new CellIndex(columnIndex, LAST_INDEX);
-    } else if (isRowExpression(cellRange)) {
+    } else if (isRowLiteral(cellRange)) {
       const rowIndex = parseRowId(cellRange.rowId);
       this.from = new CellIndex(0, rowIndex);
       this.to = new CellIndex(LAST_INDEX, rowIndex);
@@ -119,14 +119,14 @@ export class CellRangeWrapper<N extends CellRange = CellRange>
     }
   }
 
-  static canBeWrapped(cellRange: CellRange): boolean {
-    if (isCellExpression(cellRange)) {
+  static canBeWrapped(cellRange: CellRangeLiteral): boolean {
+    if (isCellLiteral(cellRange)) {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       return cellRange.cellId !== undefined;
-    } else if (isColumnExpression(cellRange)) {
+    } else if (isColumnLiteral(cellRange)) {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       return cellRange.columnId !== undefined;
-    } else if (isRowExpression(cellRange)) {
+    } else if (isRowLiteral(cellRange)) {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       return cellRange.rowId !== undefined;
     }
@@ -156,17 +156,15 @@ export class CellRangeWrapper<N extends CellRange = CellRange>
   }
 }
 
-export type ColumnWrapper = CellRangeWrapper<
-  ColumnExpression | RangeExpression
->;
+export type ColumnWrapper = CellRangeWrapper<ColumnLiteral | RangeLiteral>;
 
 export function isColumnWrapper(
   cellRange: CellRangeWrapper,
 ): cellRange is ColumnWrapper {
-  if (isColumnExpression(cellRange.astNode)) {
+  if (isColumnLiteral(cellRange.astNode)) {
     return true;
   }
-  if (isRangeExpression(cellRange.astNode)) {
+  if (isRangeLiteral(cellRange.astNode)) {
     return (
       cellRange.from.columnIndex === cellRange.to.columnIndex &&
       cellRange.from.rowIndex === 0 &&
@@ -181,15 +179,15 @@ export function getColumnIndex(column: ColumnWrapper): number {
   return column.from.columnIndex;
 }
 
-export type RowWrapper = CellRangeWrapper<RowExpression | RangeExpression>;
+export type RowWrapper = CellRangeWrapper<RowLiteral | RangeLiteral>;
 
 export function isRowWrapper(
   cellRange: CellRangeWrapper,
 ): cellRange is RowWrapper {
-  if (isRowExpression(cellRange.astNode)) {
+  if (isRowLiteral(cellRange.astNode)) {
     return true;
   }
-  if (isRangeExpression(cellRange.astNode)) {
+  if (isRangeLiteral(cellRange.astNode)) {
     return (
       cellRange.from.rowIndex === cellRange.to.rowIndex &&
       cellRange.from.columnIndex === 0 &&
@@ -204,15 +202,15 @@ export function getRowIndex(row: RowWrapper): number {
   return row.from.rowIndex;
 }
 
-export type CellWrapper = CellRangeWrapper<CellExpression | RangeExpression>;
+export type CellWrapper = CellRangeWrapper<CellLiteral | RangeLiteral>;
 
 export function isCellWrapper(
   cellRange: CellRangeWrapper,
 ): cellRange is CellWrapper {
-  if (isCellExpression(cellRange.astNode)) {
+  if (isCellLiteral(cellRange.astNode)) {
     return true;
   }
-  if (isRangeExpression(cellRange.astNode)) {
+  if (isRangeLiteral(cellRange.astNode)) {
     return (
       cellRange.from.columnIndex === cellRange.to.columnIndex &&
       cellRange.from.rowIndex === cellRange.to.rowIndex

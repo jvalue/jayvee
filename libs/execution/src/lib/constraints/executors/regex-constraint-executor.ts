@@ -12,7 +12,7 @@ export class RegexConstraintExecutor implements ConstraintExecutor {
       return false;
     }
 
-    const regex = context.getRegexAttributeValue('regex');
+    const regex = context.getRegexPropertyValue('regex');
     return regex.test(value);
   }
 }

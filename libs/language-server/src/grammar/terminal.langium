@@ -12,7 +12,7 @@ terminal NUMBER returns number: /[+-]?[0-9]+(\.[0-9]+)?/;
 
 terminal STRING: /"[^"]*"|'[^']*'/;
 
-terminal REGEX_LITERAL: /\/.+\//;
+terminal REGEX: /\/.+\//;
 
 hidden terminal WHITESPACE: /\s+/;
 hidden terminal SINGLE_LINE_COMMENT: /\/\/[^\n\r]*/;

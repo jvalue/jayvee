@@ -23,12 +23,12 @@ export class PostgresLoaderExecutor
     input: Table,
     context: ExecutionContext,
   ): Promise<R.Result<None>> {
-    const host = context.getTextAttributeValue('host');
-    const port = context.getNumericAttributeValue('port');
-    const user = context.getTextAttributeValue('username');
-    const password = context.getTextAttributeValue('password');
-    const database = context.getTextAttributeValue('database');
-    const table = context.getTextAttributeValue('table');
+    const host = context.getTextPropertyValue('host');
+    const port = context.getNumericPropertyValue('port');
+    const user = context.getTextPropertyValue('username');
+    const password = context.getTextPropertyValue('password');
+    const database = context.getTextPropertyValue('database');
+    const table = context.getTextPropertyValue('table');
 
     const client = new Client({
       host,

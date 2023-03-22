@@ -3,10 +3,10 @@ import { strict as assert } from 'assert';
 import { assertUnreachable } from 'langium/lib/utils/errors';
 
 import {
-  BlockType,
-  ConstraintType,
-  isBlockType,
-  isConstraintType,
+  BlockTypeLiteral,
+  ConstraintTypeLiteral,
+  isBlockTypeLiteral,
+  isConstraintTypeLiteral,
 } from '../ast/generated/ast';
 import { ConstructorClass } from '../util/constructor-class';
 import { Registry } from '../util/registry';
@@ -28,16 +28,16 @@ export function registerMetaInformation(
 }
 
 export function getMetaInformation(
-  type: BlockType,
+  type: BlockTypeLiteral,
 ): BlockMetaInformation | undefined;
 export function getMetaInformation(
-  type: ConstraintType,
+  type: ConstraintTypeLiteral,
 ): ConstraintMetaInformation | undefined;
 export function getMetaInformation(
-  type: BlockType | ConstraintType,
+  type: BlockTypeLiteral | ConstraintTypeLiteral,
 ): MetaInformation | undefined;
 export function getMetaInformation(
-  type: BlockType | ConstraintType | undefined,
+  type: BlockTypeLiteral | ConstraintTypeLiteral | undefined,
 ): BlockMetaInformation | ConstraintMetaInformation | undefined {
   const typeString = type?.name;
   if (typeString === undefined) {
@@ -50,11 +50,11 @@ export function getMetaInformation(
     return undefined;
   }
 
-  if (isBlockType(type)) {
+  if (isBlockTypeLiteral(type)) {
     assert(metaInf instanceof BlockMetaInformation);
     return metaInf;
   }
-  if (isConstraintType(type)) {
+  if (isConstraintTypeLiteral(type)) {
     assert(metaInf instanceof ConstraintMetaInformation);
     return metaInf;
   }
@@ -77,15 +77,17 @@ export function getRegisteredConstraintMetaInformation(): ConstraintMetaInformat
     ) as ConstraintMetaInformation[];
 }
 
-export function getOrFailMetaInformation(type: BlockType): BlockMetaInformation;
 export function getOrFailMetaInformation(
-  type: ConstraintType,
+  type: BlockTypeLiteral,
+): BlockMetaInformation;
+export function getOrFailMetaInformation(
+  type: ConstraintTypeLiteral,
 ): ConstraintMetaInformation;
 export function getOrFailMetaInformation(
-  type: BlockType | ConstraintType,
+  type: BlockTypeLiteral | ConstraintTypeLiteral,
 ): MetaInformation;
 export function getOrFailMetaInformation(
-  type: BlockType | ConstraintType,
+  type: BlockTypeLiteral | ConstraintTypeLiteral,
 ): MetaInformation {
   const result = getMetaInformation(type);
   assert(

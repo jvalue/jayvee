@@ -2,15 +2,14 @@
  * See the FAQ section of README.md for an explanation why the following ESLint rule is disabled for this file.
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
-
 import { ValidationAcceptor, ValidationChecks } from 'langium';
 
 import {
-  AttributeValueType,
   JayveeAstType,
-  Valuetype,
+  PropertyValuetype,
+  ValuetypeDefinition,
   inferTypesFromValue,
-  isConstraintReferenceValue,
+  isConstraintReferenceLiteral,
 } from '../../ast';
 import { getMetaInformation } from '../../meta-information/meta-inf-registry';
 import { JayveeValidator } from '../jayvee-validator';
@@ -18,7 +17,7 @@ import { JayveeValidator } from '../jayvee-validator';
 export class ValuetypeValidator implements JayveeValidator {
   get checks(): ValidationChecks<JayveeAstType> {
     return {
-      Valuetype: [
+      ValuetypeDefinition: [
         this.checkConstraintsCollectionValues,
         this.checkConstraintsMatchPrimitiveValuetype,
       ],
@@ -27,13 +26,13 @@ export class ValuetypeValidator implements JayveeValidator {
 
   checkConstraintsCollectionValues(
     this: void,
-    valuetype: Valuetype,
+    valuetype: ValuetypeDefinition,
     accept: ValidationAcceptor,
   ): void {
     const constraints = valuetype.constraints;
     constraints.values.forEach((collectionValue) => {
       const types = inferTypesFromValue(collectionValue);
-      if (!types.includes(AttributeValueType.CONSTRAINT)) {
+      if (!types.includes(PropertyValuetype.CONSTRAINT)) {
         accept('error', 'Only constraints are allowed in this collection', {
           node: collectionValue,
         });
@@ -43,7 +42,7 @@ export class ValuetypeValidator implements JayveeValidator {
 
   checkConstraintsMatchPrimitiveValuetype(
     this: void,
-    valuetype: Valuetype,
+    valuetype: ValuetypeDefinition,
     accept: ValidationAcceptor,
   ): void {
     if (valuetype.type === undefined) {
@@ -51,7 +50,7 @@ export class ValuetypeValidator implements JayveeValidator {
     }
 
     const constraintReferences = valuetype?.constraints?.values.filter(
-      isConstraintReferenceValue,
+      isConstraintReferenceLiteral,
     );
     for (const constraintReference of constraintReferences) {
       const constraint = constraintReference?.value.ref;

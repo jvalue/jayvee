@@ -2,7 +2,7 @@ import { strict as assert } from 'assert';
 
 import {
   CellIndexBounds,
-  CellRange,
+  CellRangeLiteral,
   CellRangeWrapper,
   CellWrapper,
   ColumnWrapper,
@@ -108,7 +108,7 @@ export class Sheet implements IOTypeImplementation<IOType.SHEET> {
     return range.isInBounds(bounds);
   }
 
-  resolveRelativeIndexes<N extends CellRange>(
+  resolveRelativeIndexes<N extends CellRangeLiteral>(
     range: CellRangeWrapper<N>,
   ): CellRangeWrapper<N> {
     if (range.hasRelativeIndexes()) {

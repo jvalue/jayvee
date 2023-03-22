@@ -2,7 +2,6 @@
  * See the FAQ section of README.md for an explanation why the following ESLint rule is disabled for this file.
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
-
 import {
   ValidationAcceptor,
   ValidationChecks,
@@ -10,7 +9,7 @@ import {
 } from 'langium';
 
 import {
-  Block,
+  BlockDefinition,
   JayveeAstType,
   collectIngoingPipes,
   collectOutgoingPipes,
@@ -22,7 +21,7 @@ import { JayveeValidator } from '../jayvee-validator';
 export class BlockValidator implements JayveeValidator {
   get checks(): ValidationChecks<JayveeAstType> {
     return {
-      Block: [
+      BlockDefinition: [
         this.checkIngoingPipes,
         this.checkOutgoingPipes,
         this.checkBlockType,
@@ -32,7 +31,7 @@ export class BlockValidator implements JayveeValidator {
 
   checkIngoingPipes(
     this: void,
-    block: Block,
+    block: BlockDefinition,
     accept: ValidationAcceptor,
   ): void {
     BlockValidator.checkPipesOfBlock(block, 'input', accept);
@@ -40,14 +39,14 @@ export class BlockValidator implements JayveeValidator {
 
   checkOutgoingPipes(
     this: void,
-    block: Block,
+    block: BlockDefinition,
     accept: ValidationAcceptor,
   ): void {
     BlockValidator.checkPipesOfBlock(block, 'output', accept);
   }
 
   private static checkPipesOfBlock(
-    block: Block,
+    block: BlockDefinition,
     whatToCheck: 'input' | 'output',
     accept: ValidationAcceptor,
   ): void {
@@ -104,7 +103,11 @@ export class BlockValidator implements JayveeValidator {
     }
   }
 
-  checkBlockType(this: void, block: Block, accept: ValidationAcceptor): void {
+  checkBlockType(
+    this: void,
+    block: BlockDefinition,
+    accept: ValidationAcceptor,
+  ): void {
     if (block.type === undefined) {
       return;
     }

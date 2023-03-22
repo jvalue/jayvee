@@ -1,4 +1,4 @@
-import { PrimitiveValuetype } from '@jvalue/language-server';
+import { PrimitiveValuetypeKeyword } from '@jvalue/language-server';
 
 import { ExecutionContext } from '../../execution-context';
 
@@ -8,7 +8,7 @@ import { ValuetypeVisitor } from './visitors/valuetype-visitor';
 import { VisitableValuetype } from './visitors/visitable-valuetype';
 
 export interface Valuetype<T = unknown> extends VisitableValuetype {
-  readonly primitiveValuetype: PrimitiveValuetype;
+  readonly primitiveValuetype: PrimitiveValuetypeKeyword;
 
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R;
 

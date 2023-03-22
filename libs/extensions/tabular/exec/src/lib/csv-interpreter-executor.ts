@@ -23,10 +23,13 @@ export class CSVInterpreterExecutor
   public readonly inputType = IOType.FILE;
   public readonly outputType = IOType.SHEET;
 
-  async execute(file: File, context: ExecutionContext,): Promise<R.Result<Sheet>> {
-    const delimiter = context.getTextAttributeValue('delimiter');
-    const enclosing = context.getTextAttributeValue('enclosing');
-    const enclosingEscape = context.getTextAttributeValue('enclosingEscape');
+  async execute(
+    file: File,
+    context: ExecutionContext,
+  ): Promise<R.Result<Sheet>> {
+    const delimiter = context.getTextPropertyValue('delimiter');
+    const enclosing = context.getTextPropertyValue('enclosing');
+    const enclosingEscape = context.getTextPropertyValue('enclosingEscape');
 
     const decoder = new TextDecoder();
     const csvFile = decoder.decode(file.content);

@@ -1,33 +1,33 @@
 import { ValidationAcceptor, ValidationChecks } from 'langium';
 
-import { JayveeAstType, RegexValue } from '../../ast';
+import { JayveeAstType, RegexLiteral } from '../../ast';
 import { JayveeValidator } from '../jayvee-validator';
 
 export class RegexValueValidator implements JayveeValidator {
   get checks(): ValidationChecks<JayveeAstType> {
     return {
-      RegexValue: [this.checkRegexParsability],
+      RegexLiteral: [this.checkRegexParsability],
     };
   }
 
   checkRegexParsability(
     this: void,
-    regexValue: RegexValue,
+    regex: RegexLiteral,
     accept: ValidationAcceptor,
   ): void {
     try {
-      new RegExp(regexValue.value);
+      new RegExp(regex.value);
     } catch (error) {
       if (error instanceof SyntaxError) {
         accept('error', `A parsing error occurred: ${error.message}`, {
-          node: regexValue,
+          node: regex,
         });
       } else {
         accept(
           'error',
           `An unknown parsing error occurred: ${JSON.stringify(error)}.`,
           {
-            node: regexValue,
+            node: regex,
           },
         );
       }

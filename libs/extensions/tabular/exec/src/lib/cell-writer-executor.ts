@@ -23,8 +23,8 @@ export class CellWriterExecutor
     inputSheet: Sheet,
     context: ExecutionContext,
   ): Promise<R.Result<Sheet>> {
-    const relativeCell = context.getCellRangeAttributeValue('at');
-    const content = context.getTextAttributeValue('write');
+    const relativeCell = context.getCellRangePropertyValue('at');
+    const content = context.getTextPropertyValue('write');
 
     assert(isCellWrapper(relativeCell));
 

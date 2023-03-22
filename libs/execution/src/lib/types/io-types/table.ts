@@ -2,7 +2,7 @@ import { IOType } from '@jvalue/language-server';
 
 import { SQLColumnTypeVisitor } from '../../visitors/sql-column-type-visitor';
 import { SQLValueRepresentationVisitor } from '../../visitors/sql-value-representation-visitor';
-import { Valuetype } from '../value-types/valuetype';
+import { Valuetype } from '../valuetypes/valuetype';
 
 import { IOTypeImplementation } from './io-type-implementation';
 

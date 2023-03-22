@@ -22,7 +22,7 @@ export class FilePickerExecutor
     fileSystem: FileSystem,
     context: ExecutionContext,
   ): Promise<R.Result<File | null>> {
-    const file = fileSystem.getFile(context.getTextAttributeValue('path'));
+    const file = fileSystem.getFile(context.getTextPropertyValue('path'));
     return R.ok(file);
   }
 }

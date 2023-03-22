@@ -30,7 +30,7 @@ export class ColumnDeleterExecutor
     context: ExecutionContext,
   ): Promise<R.Result<Sheet>> {
     const relativeColumns =
-      context.getCellRangeCollectionAttributeValue('delete');
+      context.getCellRangeCollectionPropertyValue('delete');
     assert(relativeColumns.every(isColumnWrapper));
 
     let absoluteColumns = relativeColumns.map((column) =>

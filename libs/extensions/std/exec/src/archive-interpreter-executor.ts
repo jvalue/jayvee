@@ -33,7 +33,7 @@ export class ArchiveInterpreterExecutor
     archiveFile: File,
     context: ExecutionContext,
   ): Promise<R.Result<FileSystem>> {
-    if (context.getTextAttributeValue('archiveType') === 'zip') {
+    if (context.getTextPropertyValue('archiveType') === 'zip') {
       const fs = await this.loadZipFileToInMemoryFileSystem(
         archiveFile,
         context,

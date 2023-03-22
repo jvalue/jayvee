@@ -4,9 +4,9 @@ export interface JayveeBlockTypeDocGenerator {
   generateBlockTypeDoc(metaInf: BlockMetaInformation): string;
 }
 
-export interface JayveeAttributeDocGenerator {
-  generateAttributeDoc(
+export interface JayveePropertyDocGenerator {
+  generatePropertyDoc(
     metaInf: BlockMetaInformation,
-    attributeName: string,
+    propertyName: string,
   ): string | undefined;
 }

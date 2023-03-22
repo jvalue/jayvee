@@ -17,12 +17,12 @@ export class RangeConstraintExecutor implements ConstraintExecutor {
       return false;
     }
 
-    const lowerBound = context.getNumericAttributeValue('lowerBound');
-    const lowerBoundInclusive = context.getBooleanAttributeValue(
+    const lowerBound = context.getNumericPropertyValue('lowerBound');
+    const lowerBoundInclusive = context.getBooleanPropertyValue(
       'lowerBoundInclusive',
     );
-    const upperBound = context.getNumericAttributeValue('upperBound');
-    const upperBoundInclusive = context.getBooleanAttributeValue(
+    const upperBound = context.getNumericPropertyValue('upperBound');
+    const upperBoundInclusive = context.getBooleanPropertyValue(
       'upperBoundInclusive',
     );
 
