@@ -1,6 +1,6 @@
 import { IOType } from '@jvalue/language-server';
 
-import { File } from './file';
+import { BinaryFile } from './binary-file';
 import { IOTypeImplementation } from './io-type-implementation';
 
 /**
@@ -14,7 +14,7 @@ export interface FileSystem extends IOTypeImplementation<IOType.FILE_SYSTEM> {
    * @param {string} filePath - The file path.
    * @returns {File} - The file or null if the file does not exist.
    */
-  getFile(filePath: string): File | null;
+  getFile(filePath: string): BinaryFile | null;
 
   /**
    * Saves a file to the file system.
@@ -23,5 +23,5 @@ export interface FileSystem extends IOTypeImplementation<IOType.FILE_SYSTEM> {
    * @param {File} file - The file to save.
    * @returns {FileSystem}
    */
-  putFile(filePath: string, file: File): FileSystem;
+  putFile(filePath: string, file: BinaryFile): FileSystem;
 }

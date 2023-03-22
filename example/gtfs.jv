@@ -52,6 +52,39 @@ pipeline GtfsPipeline {
 		path: "/trips.txt";
 	}
 
+	block AgencyTextFileInterpreter oftype TextFileInterpreter {
+	}
+
+	block CalendarDatesTextFileInterpreter oftype TextFileInterpreter {
+	}
+
+	block CalendarTextFileInterpreter oftype TextFileInterpreter {
+	}
+
+	block FareAttributesTextFileInterpreter oftype TextFileInterpreter {
+	}
+
+	block FareRulesTextFileInterpreter oftype TextFileInterpreter {
+	}
+
+	block FrequenciesTextFileInterpreter oftype TextFileInterpreter {
+	}
+
+	block RoutesTextFileInterpreter oftype TextFileInterpreter {
+	}
+
+	block ShapesTextFileInterpreter oftype TextFileInterpreter {
+	}
+
+	block StopTimesTextFileInterpreter oftype TextFileInterpreter {
+	}
+
+	block StopsTextFileInterpreter oftype TextFileInterpreter {
+	}
+
+	block TripsTextFileInterpreter oftype TextFileInterpreter {
+	}
+
 	block AgencyCSVInterpreter oftype CSVInterpreter {
 	}
 
@@ -279,68 +312,79 @@ pipeline GtfsPipeline {
 
 	ZipArchiveInterpreter
 		-> AgencyFilePicker
-			-> AgencyCSVInterpreter
-				-> AgencyTableInterpreter
-					-> AgencyLoader;
+		-> AgencyTextFileInterpreter
+		-> AgencyCSVInterpreter
+		-> AgencyTableInterpreter
+		-> AgencyLoader;
 
 	ZipArchiveInterpreter	
 		-> CalendarDatesFilePicker
-			-> CalendarDatesCSVInterpreter
-				-> CalendarDatesTableInterpreter
-					-> CalendarDatesLoader;
+		-> CalendarDatesTextFileInterpreter
+		-> CalendarDatesCSVInterpreter
+		-> CalendarDatesTableInterpreter
+		-> CalendarDatesLoader;
 
 	ZipArchiveInterpreter	
 		-> CalendarFilePicker
-			-> CalendarCSVInterpreter
-				-> CalendarTableInterpreter
-					-> CalendarLoader;
+		-> CalendarTextFileInterpreter
+		-> CalendarCSVInterpreter
+		-> CalendarTableInterpreter
+		-> CalendarLoader;
 
 	ZipArchiveInterpreter	
 		-> FareAttributesFilePicker
-			-> FareAttributesCSVInterpreter
-				-> FareAttributesTableInterpreter
-					-> FareAttributesLoader;
+		-> FareAttributesTextFileInterpreter
+		-> FareAttributesCSVInterpreter
+		-> FareAttributesTableInterpreter
+		-> FareAttributesLoader;
 
 	ZipArchiveInterpreter	
 		-> FareRulesFilePicker
-			-> FareRulesCSVInterpreter
-				-> FareRulesTableInterpreter
-					-> FareRulesLoader;
+		-> FareRulesTextFileInterpreter
+		-> FareRulesCSVInterpreter
+		-> FareRulesTableInterpreter
+		-> FareRulesLoader;
 
 	ZipArchiveInterpreter	
 		-> FrequenciesFilePicker
-			-> FrequenciesCSVInterpreter
-				-> FrequenciesTableInterpreter
-					-> FrequenciesLoader;
+		-> FrequenciesTextFileInterpreter
+		-> FrequenciesCSVInterpreter
+		-> FrequenciesTableInterpreter
+		-> FrequenciesLoader;
 
 	ZipArchiveInterpreter			
 		-> RoutesFilePicker
-			-> RoutesCSVInterpreter 
-				-> RoutesTableInterpreter 
-					-> RoutesLoader;
+		-> RoutesTextFileInterpreter
+		-> RoutesCSVInterpreter 
+		-> RoutesTableInterpreter 
+		-> RoutesLoader;
 
 	ZipArchiveInterpreter			
 		-> ShapesFilePicker
-			-> ShapesCSVInterpreter 
-				-> ShapesTableInterpreter 
-					-> ShapesLoader;
+		-> ShapesTextFileInterpreter
+		-> ShapesCSVInterpreter 
+		-> ShapesTableInterpreter 
+		-> ShapesLoader;
 
 	ZipArchiveInterpreter	
 		-> StopTimesFilePicker
-			-> StopTimesCSVInterpreter
-				-> StopTimesTableInterpreter 
-					-> StopTimesLoader;
+		-> StopTimesTextFileInterpreter
+		-> StopTimesCSVInterpreter
+		-> StopTimesTableInterpreter 
+		-> StopTimesLoader;
 
 	ZipArchiveInterpreter
 		-> StopsFilePicker 
-			-> StopsCSVInterpreter 
-				-> StopsTableInterpreter 
-					-> StopsLoader;
+		-> StopsTextFileInterpreter
+		-> StopsCSVInterpreter 
+		-> StopsTableInterpreter 
+		-> StopsLoader;
 
 	ZipArchiveInterpreter	
 		-> TripsFilePicker 
-			-> TripsCSVInterpreter 
-				-> TripsTableInterpreter 
-					-> TripsLoader;
+		-> TripsTextFileInterpreter
+		-> TripsCSVInterpreter 
+		-> TripsTableInterpreter 
+		-> TripsLoader;
 
 }

@@ -5,6 +5,7 @@ import { TabularExecExtension } from '@jvalue/extensions/tabular/exec';
 import { ArchiveInterpreterExecutor } from './archive-interpreter-executor';
 import { FilePickerExecutor } from './file-picker-executor';
 import { HttpExtractorExecutor } from './http-extractor-executor';
+import { TextFileInterpreterExecutor } from './text-file-interpreter-executor';
 
 export class StdExecExtension implements JayveeExecExtension {
   private readonly wrappedExtensions: JayveeExecExtension[] = [
@@ -16,6 +17,7 @@ export class StdExecExtension implements JayveeExecExtension {
     return [
       ...this.wrappedExtensions.map((x) => x.getBlockExecutors()).flat(),
       HttpExtractorExecutor,
+      TextFileInterpreterExecutor,
       ArchiveInterpreterExecutor,
       FilePickerExecutor,
     ];

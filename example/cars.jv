@@ -6,6 +6,15 @@ pipeline CarsPipeline {
 
 	pipe {
 		from: CarsExtractor;
+		to: CarsTextFileInterpreter;
+	}
+
+	block CarsTextFileInterpreter oftype TextFileInterpreter {
+
+	}
+
+	pipe {
+		from: CarsTextFileInterpreter;
 		to: CarsCSVInterpreter;
 	}
 

@@ -3,10 +3,10 @@ import * as path from 'path';
 
 import * as R from '@jvalue/execution';
 import {
+  BinaryFile,
   BlockExecutor,
   BlockExecutorClass,
   ExecutionContext,
-  File,
   FileExtension,
   MimeType,
   None,
@@ -31,7 +31,7 @@ export class HttpExtractorExecutor
   async execute(
     input: None,
     context: ExecutionContext,
-  ): Promise<R.Result<File>> {
+  ): Promise<R.Result<BinaryFile>> {
     const url = context.getTextPropertyValue('url');
 
     const file = await this.fetchRawDataAsFile(url, context);
@@ -46,7 +46,7 @@ export class HttpExtractorExecutor
   private fetchRawDataAsFile(
     url: string,
     context: ExecutionContext,
-  ): Promise<R.Result<File>> {
+  ): Promise<R.Result<BinaryFile>> {
     context.logger.logDebug(`Fetching raw data from ${url}`);
     return new Promise((resolve) => {
       https.get(url, (response) => {
@@ -105,7 +105,7 @@ export class HttpExtractorExecutor
           }
 
           // Create file and return file
-          const file = new File(
+          const file = new BinaryFile(
             fileName,
             fileExtension,
             mimeType,

@@ -1,6 +1,7 @@
 import { TextEncoder } from 'util';
 
-import { File, FileExtension, MimeType } from './file';
+import { BinaryFile } from './binary-file';
+import { FileExtension, MimeType } from './file';
 import { InMemoryFileSystem } from './filesystem-inmemory';
 
 describe('InMemoryFileSystem', () => {
@@ -15,7 +16,7 @@ describe('InMemoryFileSystem', () => {
   });
 
   it('should return the file if it exists', () => {
-    const file = new File(
+    const file = new BinaryFile(
       'file1.txt',
       FileExtension.ZIP,
       MimeType.APPLICATION_OCTET_STREAM,
@@ -27,7 +28,7 @@ describe('InMemoryFileSystem', () => {
   });
 
   it('should return null if directory does not exist', () => {
-    const file = new File(
+    const file = new BinaryFile(
       'file1.txt',
       FileExtension.ZIP,
       MimeType.APPLICATION_OCTET_STREAM,
@@ -39,7 +40,7 @@ describe('InMemoryFileSystem', () => {
   });
 
   it('should handle relative paths correctly', () => {
-    const file = new File(
+    const file = new BinaryFile(
       'file1.txt',
       FileExtension.ZIP,
       MimeType.APPLICATION_OCTET_STREAM,
@@ -52,7 +53,7 @@ describe('InMemoryFileSystem', () => {
   });
 
   it('should handle path case sensitivity correctly', () => {
-    const file = new File(
+    const file = new BinaryFile(
       'file1.txt',
       FileExtension.ZIP,
       MimeType.APPLICATION_OCTET_STREAM,

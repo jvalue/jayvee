@@ -1,5 +1,3 @@
-import { TextDecoder } from 'util';
-
 import { parseString as parseStringAsCsv } from '@fast-csv/parse';
 import { ParserOptionsArgs } from '@fast-csv/parse/build/src/ParserOptions';
 import * as R from '@jvalue/execution';
@@ -7,8 +5,8 @@ import {
   BlockExecutor,
   BlockExecutorClass,
   ExecutionContext,
-  File,
   Sheet,
+  TextFile,
   implementsStatic,
 } from '@jvalue/execution';
 import { IOType } from '@jvalue/language-server';
@@ -17,22 +15,20 @@ import { Either, isLeft } from 'fp-ts/lib/Either';
 
 @implementsStatic<BlockExecutorClass>()
 export class CSVInterpreterExecutor
-  implements BlockExecutor<IOType.FILE, IOType.SHEET>
+  implements BlockExecutor<IOType.TEXT_FILE, IOType.SHEET>
 {
   public static readonly type = 'CSVInterpreter';
-  public readonly inputType = IOType.FILE;
+  public readonly inputType = IOType.TEXT_FILE;
   public readonly outputType = IOType.SHEET;
 
   async execute(
-    file: File,
+    file: TextFile,
     context: ExecutionContext,
   ): Promise<R.Result<Sheet>> {
     const delimiter = context.getTextPropertyValue('delimiter');
     const enclosing = context.getTextPropertyValue('enclosing');
     const enclosingEscape = context.getTextPropertyValue('enclosingEscape');
 
-    const decoder = new TextDecoder();
-    const csvFile = decoder.decode(file.content);
     context.logger.logDebug(
       `Parsing raw data as CSV using delimiter "${delimiter}"`,
     );
@@ -42,12 +38,12 @@ export class CSVInterpreterExecutor
       quote: enclosing,
       escape: enclosingEscape,
     };
-    const csvData = await parseAsCsv(csvFile, parseOptions);
+    const csvData = await parseAsCsv(file.content, parseOptions);
 
     if (isLeft(csvData)) {
       return Promise.resolve(
         R.err({
-          message: `CSV parse failed: ${csvData.left.message}`,
+          message: `CSV parse failed in line ${csvData.left.lineNumber}: ${csvData.left.error.message}`,
           diagnostic: { node: context.getCurrentNode(), property: 'name' },
         }),
       );
@@ -59,21 +55,39 @@ export class CSVInterpreterExecutor
   }
 }
 
-function parseAsCsv(
-  rawData: string,
+async function parseAsCsv(
+  lines: string[],
   parseOptions: ParserOptionsArgs,
-): Promise<Either<Error, string[][]>> {
+): Promise<Either<{ error: Error; lineNumber: number }, string[][]>> {
+  let lineNumber = 1;
+  const rows: string[][] = [];
+  for await (const line of lines) {
+    const rowParseResult = await parseLineAsRow(line, parseOptions);
+    if (isLeft(rowParseResult)) {
+      return E.left({ error: rowParseResult.left, lineNumber });
+    }
+    rows.push(rowParseResult.right);
+
+    ++lineNumber;
+  }
+  return E.right(rows);
+}
+
+async function parseLineAsRow(
+  line: string,
+  parseOptions: ParserOptionsArgs,
+): Promise<Either<Error, string[]>> {
   return new Promise((resolve) => {
-    const csvData: string[][] = [];
-    parseStringAsCsv(rawData, parseOptions)
+    let row: string[];
+    parseStringAsCsv(line, parseOptions)
       .on('data', (data: string[]) => {
-        csvData.push(data);
+        row = data;
       })
       .on('error', (error) => {
         resolve(E.left(error));
       })
       .on('end', () => {
-        resolve(E.right(csvData));
+        resolve(E.right(row));
       });
   });
 }
