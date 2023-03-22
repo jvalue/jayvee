@@ -6,7 +6,7 @@ import { ValidationAcceptor, ValidationChecks } from 'langium';
 
 import {
   JayveeAstType,
-  PropertyValueType,
+  PropertyValuetype,
   ValuetypeDefinition,
   inferTypesFromValue,
   isConstraintReferenceLiteral,
@@ -32,7 +32,7 @@ export class ValuetypeValidator implements JayveeValidator {
     const constraints = valuetype.constraints;
     constraints.values.forEach((collectionValue) => {
       const types = inferTypesFromValue(collectionValue);
-      if (!types.includes(PropertyValueType.CONSTRAINT)) {
+      if (!types.includes(PropertyValuetype.CONSTRAINT)) {
         accept('error', 'Only constraints are allowed in this collection', {
           node: collectionValue,
         });

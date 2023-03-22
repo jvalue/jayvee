@@ -6,7 +6,7 @@ import {
   BlockTypeLiteral,
   ConstraintTypeLiteral,
   JayveeModel,
-  PropertyValueType,
+  PropertyValuetype,
   RuntimeParameterLiteral,
   getOrFailMetaInformation,
   isRuntimeParameterLiteral,
@@ -17,7 +17,7 @@ import { streamAst } from 'langium';
 /**
  * Extracts all required runtime parameter ast nodes.
  * @param model The @see JayveeModel ast node
- * @returns a list of @see RuntimeParameter
+ * @returns a list of @see RuntimeParameterLiteral
  */
 export function extractRequiredRuntimeParameters(
   model: JayveeModel,
@@ -103,7 +103,7 @@ const FALSE = 'false';
  */
 export function parseParameterAsMatchingType(
   value: string,
-  type: PropertyValueType,
+  type: PropertyValuetype,
   astNode: RuntimeParameterLiteral,
 ): R.Result<string | number | boolean> {
   assert(
@@ -112,9 +112,9 @@ export function parseParameterAsMatchingType(
   );
 
   switch (type) {
-    case PropertyValueType.TEXT:
+    case PropertyValuetype.TEXT:
       return R.ok(value);
-    case PropertyValueType.INTEGER:
+    case PropertyValuetype.INTEGER:
       if (!/^[+-]?[1-9][0-9]*$/.test(value)) {
         return R.err({
           message: `Runtime parameter ${astNode.name} has value "${value}" which is not of type integer.`,
@@ -122,7 +122,7 @@ export function parseParameterAsMatchingType(
         });
       }
       return R.ok(Number.parseInt(value, 10));
-    case PropertyValueType.DECIMAL:
+    case PropertyValuetype.DECIMAL:
       if (!/^[+-]?[0-9]+(\.[0-9]+)?$/.test(value)) {
         return R.err({
           message: `Runtime parameter ${astNode.name} has value "${value}" which is not of type decimal.`,
@@ -130,7 +130,7 @@ export function parseParameterAsMatchingType(
         });
       }
       return R.ok(Number.parseFloat(value));
-    case PropertyValueType.BOOLEAN:
+    case PropertyValuetype.BOOLEAN:
       if (value === TRUE) {
         return R.ok(true);
       }

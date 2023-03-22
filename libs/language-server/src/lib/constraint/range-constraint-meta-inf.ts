@@ -1,4 +1,4 @@
-import { PropertyValueType } from '../ast/model-util';
+import { PropertyValuetype } from '../ast/model-util';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 
 export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
@@ -7,19 +7,19 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
       'RangeConstraint',
       {
         lowerBound: {
-          type: PropertyValueType.DECIMAL,
+          type: PropertyValuetype.DECIMAL,
           defaultValue: Number.NEGATIVE_INFINITY,
         },
         lowerBoundInclusive: {
-          type: PropertyValueType.BOOLEAN,
+          type: PropertyValuetype.BOOLEAN,
           defaultValue: true,
         },
         upperBound: {
-          type: PropertyValueType.DECIMAL,
+          type: PropertyValuetype.DECIMAL,
           defaultValue: Number.POSITIVE_INFINITY,
         },
         upperBoundInclusive: {
-          type: PropertyValueType.BOOLEAN,
+          type: PropertyValuetype.BOOLEAN,
           defaultValue: true,
         },
       },

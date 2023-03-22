@@ -2,10 +2,10 @@ import { ValidationAcceptor } from 'langium';
 
 import { PropertyAssignment } from '../ast/generated/ast';
 // eslint-disable-next-line import/no-cycle
-import { PropertyValueType } from '../ast/model-util';
+import { PropertyValuetype } from '../ast/model-util';
 
 export interface PropertySpecification {
-  type: PropertyValueType;
+  type: PropertyValuetype;
   defaultValue?: unknown;
   validation?: (
     property: PropertyAssignment,

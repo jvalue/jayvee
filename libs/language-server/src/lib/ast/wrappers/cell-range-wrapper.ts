@@ -95,30 +95,27 @@ export class CellRangeWrapper<N extends CellRangeLiteral = CellRangeLiteral>
   public readonly from: CellIndex;
   public readonly to: CellIndex;
 
-  constructor(
-    cellRangeLiteral: N,
-    indexes?: { from: CellIndex; to: CellIndex },
-  ) {
-    this.astNode = cellRangeLiteral;
+  constructor(cellRange: N, indexes?: { from: CellIndex; to: CellIndex }) {
+    this.astNode = cellRange;
 
     if (indexes !== undefined) {
       this.from = indexes.from;
       this.to = indexes.to;
-    } else if (isCellLiteral(cellRangeLiteral)) {
-      const cellIndex = parseCellId(cellRangeLiteral.cellId);
+    } else if (isCellLiteral(cellRange)) {
+      const cellIndex = parseCellId(cellRange.cellId);
       this.from = cellIndex;
       this.to = cellIndex;
-    } else if (isColumnLiteral(cellRangeLiteral)) {
-      const columnIndex = parseColumnId(cellRangeLiteral.columnId);
+    } else if (isColumnLiteral(cellRange)) {
+      const columnIndex = parseColumnId(cellRange.columnId);
       this.from = new CellIndex(columnIndex, 0);
       this.to = new CellIndex(columnIndex, LAST_INDEX);
-    } else if (isRowLiteral(cellRangeLiteral)) {
-      const rowIndex = parseRowId(cellRangeLiteral.rowId);
+    } else if (isRowLiteral(cellRange)) {
+      const rowIndex = parseRowId(cellRange.rowId);
       this.from = new CellIndex(0, rowIndex);
       this.to = new CellIndex(LAST_INDEX, rowIndex);
     } else {
-      this.from = parseCellId(cellRangeLiteral.cellFrom);
-      this.to = parseCellId(cellRangeLiteral.cellTo);
+      this.from = parseCellId(cellRange.cellFrom);
+      this.to = parseCellId(cellRange.cellTo);
     }
   }
 

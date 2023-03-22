@@ -17,16 +17,13 @@ export class CellRangeSelectionValidator implements JayveeValidator {
 
   checkRangeLimits(
     this: void,
-    rangeExpression: RangeLiteral,
+    range: RangeLiteral,
     accept: ValidationAcceptor,
   ): void {
-    if (
-      rangeExpression.cellFrom === undefined ||
-      rangeExpression.cellTo === undefined
-    ) {
+    if (range.cellFrom === undefined || range.cellTo === undefined) {
       return;
     }
-    const semanticCellRange = new CellRangeWrapper(rangeExpression);
+    const semanticCellRange = new CellRangeWrapper(range);
     if (
       semanticCellRange.from.columnIndex > semanticCellRange.to.columnIndex ||
       semanticCellRange.from.rowIndex > semanticCellRange.to.rowIndex

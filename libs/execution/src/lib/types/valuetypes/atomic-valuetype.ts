@@ -1,6 +1,6 @@
 import {
-  ValuetypeDefinition as AstValuetype,
   ConstraintDefinition,
+  ValuetypeDefinition,
   isConstraintReferenceLiteral,
   validateTypedCollection,
 } from '@jvalue/language-server';
@@ -14,7 +14,7 @@ import { ValuetypeVisitor } from './visitors/valuetype-visitor';
 export class AtomicValuetype<T> implements Valuetype<T> {
   constructor(
     private readonly baseValuetype: Valuetype<T>,
-    private readonly astNode: AstValuetype,
+    private readonly astNode: ValuetypeDefinition,
   ) {}
 
   get primitiveValuetype() {

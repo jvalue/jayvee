@@ -1,7 +1,7 @@
 import {
   BlockMetaInformation,
   IOType,
-  PropertyValueType,
+  PropertyValuetype,
 } from '@jvalue/language-server';
 
 export class SQLiteLoaderMetaInformation extends BlockMetaInformation {
@@ -10,13 +10,13 @@ export class SQLiteLoaderMetaInformation extends BlockMetaInformation {
       'SQLiteLoader',
       {
         table: {
-          type: PropertyValueType.TEXT,
+          type: PropertyValuetype.TEXT,
           docs: {
             description: 'The name of the table to write into.',
           },
         },
         file: {
-          type: PropertyValueType.TEXT,
+          type: PropertyValuetype.TEXT,
           docs: {
             description:
               'The path to the SQLite file that will be created. Usual file extensions are `.sqlite` and `.db`.',

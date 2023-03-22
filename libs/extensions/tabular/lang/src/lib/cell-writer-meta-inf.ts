@@ -2,7 +2,7 @@ import {
   BlockMetaInformation,
   CellRangeWrapper,
   IOType,
-  PropertyValueType,
+  PropertyValuetype,
   isCellRangeLiteral,
   isCellWrapper,
 } from '@jvalue/language-server';
@@ -13,7 +13,7 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
       'CellWriter',
       {
         write: {
-          type: PropertyValueType.TEXT,
+          type: PropertyValuetype.TEXT,
           docs: {
             description: 'The value to write.',
             examples: [
@@ -25,7 +25,7 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
           },
         },
         at: {
-          type: PropertyValueType.CELL_RANGE,
+          type: PropertyValuetype.CELL_RANGE,
           validation: (property, accept) => {
             const propertyValue = property.value;
             if (!isCellRangeLiteral(propertyValue)) {

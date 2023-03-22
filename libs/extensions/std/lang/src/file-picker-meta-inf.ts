@@ -1,7 +1,7 @@
 import {
   BlockMetaInformation,
   IOType,
-  PropertyValueType,
+  PropertyValuetype,
 } from '@jvalue/language-server';
 
 export class FilePickerMetaInformation extends BlockMetaInformation {
@@ -13,7 +13,7 @@ export class FilePickerMetaInformation extends BlockMetaInformation {
       // Property definitions:
       {
         path: {
-          type: PropertyValueType.TEXT,
+          type: PropertyValuetype.TEXT,
           docs: {
             description: 'The path of the file to get',
           },

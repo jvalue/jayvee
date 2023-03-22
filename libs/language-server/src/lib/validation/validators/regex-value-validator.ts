@@ -12,22 +12,22 @@ export class RegexValueValidator implements JayveeValidator {
 
   checkRegexParsability(
     this: void,
-    regexValue: RegexLiteral,
+    regex: RegexLiteral,
     accept: ValidationAcceptor,
   ): void {
     try {
-      new RegExp(regexValue.value);
+      new RegExp(regex.value);
     } catch (error) {
       if (error instanceof SyntaxError) {
         accept('error', `A parsing error occurred: ${error.message}`, {
-          node: regexValue,
+          node: regex,
         });
       } else {
         accept(
           'error',
           `An unknown parsing error occurred: ${JSON.stringify(error)}.`,
           {
-            node: regexValue,
+            node: regex,
           },
         );
       }

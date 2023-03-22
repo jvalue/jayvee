@@ -1,7 +1,7 @@
 import {
   BlockMetaInformation,
   IOType,
-  PropertyValueType,
+  PropertyValuetype,
 } from '@jvalue/language-server';
 
 export class HttpExtractorMetaInformation extends BlockMetaInformation {
@@ -13,7 +13,7 @@ export class HttpExtractorMetaInformation extends BlockMetaInformation {
       // Property definitions:
       {
         url: {
-          type: PropertyValueType.TEXT,
+          type: PropertyValuetype.TEXT,
           docs: {
             description: 'The URL to the file in the web to extract.',
             examples: [

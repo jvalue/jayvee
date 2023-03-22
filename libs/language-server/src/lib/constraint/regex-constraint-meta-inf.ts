@@ -1,4 +1,4 @@
-import { PropertyValueType } from '../ast/model-util';
+import { PropertyValuetype } from '../ast/model-util';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 
 export class RegexConstraintMetaInformation extends ConstraintMetaInformation {
@@ -7,7 +7,7 @@ export class RegexConstraintMetaInformation extends ConstraintMetaInformation {
       'RegexConstraint',
       {
         regex: {
-          type: PropertyValueType.REGEX,
+          type: PropertyValuetype.REGEX,
         },
       },
       ['text'],

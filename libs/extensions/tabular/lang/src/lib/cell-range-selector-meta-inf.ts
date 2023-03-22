@@ -1,7 +1,7 @@
 import {
   BlockMetaInformation,
   IOType,
-  PropertyValueType,
+  PropertyValuetype,
 } from '@jvalue/language-server';
 
 export class CellRangeSelectorMetaInformation extends BlockMetaInformation {
@@ -10,7 +10,7 @@ export class CellRangeSelectorMetaInformation extends BlockMetaInformation {
       'CellRangeSelector',
       {
         select: {
-          type: PropertyValueType.CELL_RANGE,
+          type: PropertyValuetype.CELL_RANGE,
           docs: {
             description: 'The cell range to select.',
             examples: [

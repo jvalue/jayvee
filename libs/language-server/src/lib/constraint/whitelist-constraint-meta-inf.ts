@@ -1,6 +1,6 @@
 import { validateTypedCollection } from '../ast/collection-util';
 import { isCollectionLiteral, isTextLiteral } from '../ast/generated/ast';
-import { PropertyValueType } from '../ast/model-util';
+import { PropertyValuetype } from '../ast/model-util';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 
 export class WhitelistConstraintMetaInformation extends ConstraintMetaInformation {
@@ -9,7 +9,7 @@ export class WhitelistConstraintMetaInformation extends ConstraintMetaInformatio
       'WhitelistConstraint',
       {
         whitelist: {
-          type: PropertyValueType.COLLECTION,
+          type: PropertyValuetype.COLLECTION,
           validation: (property, accept) => {
             const propertyValue = property.value;
             if (!isCollectionLiteral(propertyValue)) {

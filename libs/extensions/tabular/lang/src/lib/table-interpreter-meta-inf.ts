@@ -1,7 +1,7 @@
 import {
   BlockMetaInformation,
   IOType,
-  PropertyValueType,
+  PropertyValuetype,
   getNodesWithNonUniqueNames,
   isCollectionLiteral,
   isValuetypeAssignmentLiteral,
@@ -14,7 +14,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
       'TableInterpreter',
       {
         header: {
-          type: PropertyValueType.BOOLEAN,
+          type: PropertyValuetype.BOOLEAN,
           docs: {
             description:
               'Whether the first row should be interpreted as header row.',
@@ -33,7 +33,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
           },
         },
         columns: {
-          type: PropertyValueType.COLLECTION,
+          type: PropertyValuetype.COLLECTION,
           validation: (property, accept) => {
             const propertyValue = property.value;
             if (!isCollectionLiteral(propertyValue)) {
@@ -55,16 +55,16 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
               ),
             );
 
-            const typeAssignments = validItems.map(
+            const valuetypeAssignments = validItems.map(
               (assignment) => assignment.value,
             );
-            getNodesWithNonUniqueNames(typeAssignments).forEach(
-              (typeAssignment) => {
+            getNodesWithNonUniqueNames(valuetypeAssignments).forEach(
+              (valuetypeAssignment) => {
                 accept(
                   'error',
-                  `The column name "${typeAssignment.name}" needs to be unique.`,
+                  `The column name "${valuetypeAssignment.name}" needs to be unique.`,
                   {
-                    node: typeAssignment,
+                    node: valuetypeAssignment,
                     property: 'name',
                   },
                 );
@@ -73,7 +73,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
           },
           docs: {
             description:
-              'Collection of type assignments. Uses column names (potentially matched with the header or by sequence depending on the `header` property) to assign a primitive value type to each column.',
+              'Collection of valuetype assignments. Uses column names (potentially matched with the header or by sequence depending on the `header` property) to assign a primitive valuetype to each column.',
             examples: [
               {
                 code: 'columns: [ "name" typed text ]',
@@ -82,7 +82,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
               },
             ],
             validation:
-              'Needs to be a collection of type assignments. Each column needs to have a unique name.',
+              'Needs to be a collection of valuetype assignments. Each column needs to have a unique name.',
           },
         },
       },
@@ -95,12 +95,12 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
       {
         code: blockExampleWithHeader,
         description:
-          'Interprets a `Sheet` about cars with a topmost header row and interprets it as a `Table` by assigning a primitive value type to each column. The column names are matched to the header, so the order of the type assignments does not matter.',
+          'Interprets a `Sheet` about cars with a topmost header row and interprets it as a `Table` by assigning a primitive valuetype to each column. The column names are matched to the header, so the order of the type assignments does not matter.',
       },
       {
         code: blockExampleWithoutHeader,
         description:
-          'Interprets a `Sheet` about cars without a topmost header row and interprets it as a `Table` by sequentially assigning a name and a primitive value type to each column of the sheet. Note that the order of columns matters here. The first column (column `A`) will be named "name", the second column (column `B`) will be named "mpg" etc.',
+          'Interprets a `Sheet` about cars without a topmost header row and interprets it as a `Table` by sequentially assigning a name and a primitive valuetype to each column of the sheet. Note that the order of columns matters here. The first column (column `A`) will be named "name", the second column (column `B`) will be named "mpg" etc.',
       },
     ];
   }

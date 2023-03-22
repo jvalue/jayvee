@@ -1,7 +1,7 @@
 import {
   BlockMetaInformation,
   IOType,
-  PropertyValueType,
+  PropertyValuetype,
 } from '@jvalue/language-server';
 
 export class CSVInterpreterMetaInformation extends BlockMetaInformation {
@@ -12,7 +12,7 @@ export class CSVInterpreterMetaInformation extends BlockMetaInformation {
       // Property definitions:
       {
         delimiter: {
-          type: PropertyValueType.TEXT,
+          type: PropertyValuetype.TEXT,
           defaultValue: ',',
           docs: {
             description: 'The delimiter for values in the CSV file.',
@@ -26,7 +26,7 @@ export class CSVInterpreterMetaInformation extends BlockMetaInformation {
           },
         },
         enclosing: {
-          type: PropertyValueType.TEXT,
+          type: PropertyValuetype.TEXT,
           defaultValue: '',
           docs: {
             description:
@@ -34,7 +34,7 @@ export class CSVInterpreterMetaInformation extends BlockMetaInformation {
           },
         },
         enclosingEscape: {
-          type: PropertyValueType.TEXT,
+          type: PropertyValuetype.TEXT,
           defaultValue: '',
           docs: {
             description:

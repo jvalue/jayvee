@@ -2,7 +2,7 @@ import {
   BlockMetaInformation,
   CellRangeWrapper,
   IOType,
-  PropertyValueType,
+  PropertyValuetype,
   isCellRangeLiteral,
   isCollectionLiteral,
   isColumnWrapper,
@@ -15,7 +15,7 @@ export class ColumnDeleterMetaInformation extends BlockMetaInformation {
       'ColumnDeleter',
       {
         delete: {
-          type: PropertyValueType.COLLECTION,
+          type: PropertyValuetype.COLLECTION,
           validation: (property, accept) => {
             const propertyValue = property.value;
             if (!isCollectionLiteral(propertyValue)) {

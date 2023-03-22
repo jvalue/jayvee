@@ -148,7 +148,7 @@ export enum IOType {
   TABLE = 'Table',
 }
 
-export enum PropertyValueType {
+export enum PropertyValuetype {
   TEXT = 'text',
   INTEGER = 'integer',
   DECIMAL = 'decimal',
@@ -161,19 +161,19 @@ export enum PropertyValueType {
 }
 
 export function runtimeParameterAllowedForType(
-  type: PropertyValueType,
+  type: PropertyValuetype,
 ): boolean {
   switch (type) {
-    case PropertyValueType.CELL_RANGE:
-    case PropertyValueType.REGEX:
-    case PropertyValueType.VALUETYPE_ASSIGNMENT:
-    case PropertyValueType.COLLECTION:
-    case PropertyValueType.CONSTRAINT:
+    case PropertyValuetype.CELL_RANGE:
+    case PropertyValuetype.REGEX:
+    case PropertyValuetype.VALUETYPE_ASSIGNMENT:
+    case PropertyValuetype.COLLECTION:
+    case PropertyValuetype.CONSTRAINT:
       return false;
-    case PropertyValueType.TEXT:
-    case PropertyValueType.INTEGER:
-    case PropertyValueType.DECIMAL:
-    case PropertyValueType.BOOLEAN:
+    case PropertyValuetype.TEXT:
+    case PropertyValuetype.INTEGER:
+    case PropertyValuetype.DECIMAL:
+    case PropertyValuetype.BOOLEAN:
       return true;
     default:
       assertUnreachable(type);
@@ -182,33 +182,33 @@ export function runtimeParameterAllowedForType(
 
 export function inferTypesFromValue(
   value: PropertyValueLiteral,
-): PropertyValueType[] {
+): PropertyValuetype[] {
   if (isTextLiteral(value)) {
-    return [PropertyValueType.TEXT];
+    return [PropertyValuetype.TEXT];
   }
   if (isNumericLiteral(value)) {
     if (Number.isInteger(value.value)) {
-      return [PropertyValueType.INTEGER, PropertyValueType.DECIMAL];
+      return [PropertyValuetype.INTEGER, PropertyValuetype.DECIMAL];
     }
-    return [PropertyValueType.DECIMAL];
+    return [PropertyValuetype.DECIMAL];
   }
   if (isBooleanLiteral(value)) {
-    return [PropertyValueType.BOOLEAN];
+    return [PropertyValuetype.BOOLEAN];
   }
   if (isCellRangeLiteral(value)) {
-    return [PropertyValueType.CELL_RANGE];
+    return [PropertyValuetype.CELL_RANGE];
   }
   if (isRegexLiteral(value)) {
-    return [PropertyValueType.REGEX];
+    return [PropertyValuetype.REGEX];
   }
   if (isValuetypeAssignmentLiteral(value)) {
-    return [PropertyValueType.VALUETYPE_ASSIGNMENT];
+    return [PropertyValuetype.VALUETYPE_ASSIGNMENT];
   }
   if (isCollectionLiteral(value)) {
-    return [PropertyValueType.COLLECTION];
+    return [PropertyValuetype.COLLECTION];
   }
   if (isConstraintReferenceLiteral(value)) {
-    return [PropertyValueType.CONSTRAINT];
+    return [PropertyValuetype.CONSTRAINT];
   }
   assertUnreachable(value);
 }

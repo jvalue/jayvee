@@ -7,7 +7,7 @@ export class JayveeValueConverter extends DefaultValueConverter {
     input: string,
     cstNode: CstNode,
   ): ValueType {
-    if (rule.name.toUpperCase() === 'REGEX_LITERAL') {
+    if (rule.name === 'REGEX') {
       // Trim leading and trailing '/' character:
       return input.substring(1, input.length - 1);
     }

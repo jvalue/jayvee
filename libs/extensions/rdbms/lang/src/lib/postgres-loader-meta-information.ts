@@ -1,7 +1,7 @@
 import {
   BlockMetaInformation,
   IOType,
-  PropertyValueType,
+  PropertyValuetype,
 } from '@jvalue/language-server';
 
 export class PostgresLoaderMetaInformation extends BlockMetaInformation {
@@ -10,37 +10,37 @@ export class PostgresLoaderMetaInformation extends BlockMetaInformation {
       'PostgresLoader',
       {
         host: {
-          type: PropertyValueType.TEXT,
+          type: PropertyValuetype.TEXT,
           docs: {
             description: 'The hostname or IP address of the Postgres database.',
           },
         },
         port: {
-          type: PropertyValueType.INTEGER,
+          type: PropertyValuetype.INTEGER,
           docs: {
             description: 'The port of the Postgres database.',
           },
         },
         username: {
-          type: PropertyValueType.TEXT,
+          type: PropertyValuetype.TEXT,
           docs: {
             description: 'The username to login to the Postgres database.',
           },
         },
         password: {
-          type: PropertyValueType.TEXT,
+          type: PropertyValuetype.TEXT,
           docs: {
             description: 'The password to login to the Postgres database.',
           },
         },
         database: {
-          type: PropertyValueType.TEXT,
+          type: PropertyValuetype.TEXT,
           docs: {
             description: 'The database to use.',
           },
         },
         table: {
-          type: PropertyValueType.TEXT,
+          type: PropertyValuetype.TEXT,
           docs: {
             description: 'The name of the table to write into.',
           },

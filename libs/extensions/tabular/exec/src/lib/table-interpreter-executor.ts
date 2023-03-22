@@ -9,7 +9,7 @@ import {
   Sheet,
   Table,
   Valuetype,
-  getValueType,
+  getValuetype,
   implementsStatic,
 } from '@jvalue/execution';
 import {
@@ -23,7 +23,7 @@ import {
 interface ColumnDefinitionEntry {
   sheetColumnIndex: number;
   columnName: string;
-  valueType: Valuetype;
+  valuetype: Valuetype;
   astNode: ValuetypeAssignment;
 }
 
@@ -100,7 +100,7 @@ export class TableInterpreterExecutor
     const columnInformation = columnEntries.map<ColumnInformation>(
       (columnEntry) => ({
         name: columnEntry.columnName,
-        type: columnEntry.valueType,
+        type: columnEntry.valuetype,
       }),
     );
     const resultingTable = new Table(columnInformation, tableData);
@@ -148,7 +148,7 @@ export class TableInterpreterExecutor
       const sheetColumnIndex = columnEntry.sheetColumnIndex;
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const value = sheetRow[sheetColumnIndex]!;
-      if (!columnEntry.valueType.isValid(value, context)) {
+      if (!columnEntry.valuetype.isValid(value, context)) {
         const cellIndex = new CellIndex(sheetColumnIndex, sheetRowIndex);
         context.logger.logDebug(
           `The value at cell ${cellIndex.toString()} does not match the type ${getValuetypeName(
@@ -176,7 +176,7 @@ export class TableInterpreterExecutor
       (columnDefinition, columnDefinitionIndex) => ({
         sheetColumnIndex: columnDefinitionIndex,
         columnName: columnDefinition.name,
-        valueType: getValueType(columnDefinition.type),
+        valuetype: getValuetype(columnDefinition.type),
         astNode: columnDefinition,
       }),
     );
@@ -203,7 +203,7 @@ export class TableInterpreterExecutor
       columnEntries.push({
         sheetColumnIndex: indexOfMatchingHeader,
         columnName: columnDefinition.name,
-        valueType: getValueType(columnDefinition.type),
+        valuetype: getValuetype(columnDefinition.type),
         astNode: columnDefinition,
       });
     }

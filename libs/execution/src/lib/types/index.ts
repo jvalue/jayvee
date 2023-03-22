@@ -1,2 +1,2 @@
 export * from './io-types';
-export * from './value-types';
+export * from './valuetypes';
