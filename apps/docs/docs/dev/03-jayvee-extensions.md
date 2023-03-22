@@ -12,13 +12,18 @@ Jayvee extensions that shall be used by default are bundled into the so-called [
 
 ### Language extension
 
-A language extension defines meta information of block types which are required by the [language server](https://github.com/jvalue/jayvee/tree/main/libs/language-server). Such meta information describes properties of block types such as their names, input / output types and their attributes.
+A language extension defines meta information of block types which are required by the
+[language server](https://github.com/jvalue/jayvee/tree/main/libs/language-server).
+Such meta information describes properties of 
+block types such as their names, input / output types and their properties.
 
 Note that language extensions don't define any behavior. Instead, this is done by the corresponding execution extension.
 
 ### Execution extension
 
-An execution extension defines behavior for block types. They build on the meta information from the corresponding language extension, e.g. input / output types of the block need to match the signature of the execution method and attributes are accessed by their specified name.
+An execution extension defines behavior for block types. They build on the meta information from the corresponding 
+language extension, e.g. input / output types of the block need to match the signature of the execution method and 
+properties are accessed by their specified name.
 
 Execution extensions are only required by the [interpreter](https://github.com/jvalue/jayvee/tree/main/apps/interpreter) and not necessarily by the [language server](https://github.com/jvalue/jayvee/tree/main/libs/language-server) as they solely define behavior.
 
@@ -39,24 +44,23 @@ In `libs/extensions/<extension-name>/lang/src/extension.ts`:
 
 ```typescript
 import {
-  BlockMetaInformationClass,
+  BlockMetaInformation,
+  ConstructorClass,
   JayveeLangExtension,
 } from '@jvalue/language-server';
 
 export class MyLangExtension implements JayveeLangExtension {
-  getBlockMetaInf(): BlockMetaInformationClass[] {
+  getBlockMetaInf(): Array<ConstructorClass<BlockMetaInformation>> {
     return [];
   }
 }
+
 ```
 
 In `libs/extensions/<extension-name>/exec/src/extension.ts`:
 
 ```typescript
-import {
-  BlockExecutorClass,
-  JayveeExecExtension,
-} from '@jvalue/execution';
+import { BlockExecutorClass, JayveeExecExtension } from '@jvalue/execution';
 
 export class MyExecExtension implements JayveeExecExtension {
   getBlockExecutors(): BlockExecutorClass[] {
@@ -123,9 +127,10 @@ export class StdExecExtension implements JayveeExecExtension {
 
 #### 1. Implement `BlockMetaInformation`
 
-The following example defines a block type called `MyExtractor`. This block type, for instance, takes no input and outputs a sheet. Furthermore, it defines two attributes:
+The following example defines a block type called `MyExtractor`. This block type, for instance, takes no input and 
+outputs a sheet. Furthermore, it defines two properties:
 
-- `url` of type string
+- `url` of type text
 - `limit` of type integer and default value `10`
   - Considered optional due to the specified default value
 
@@ -133,9 +138,9 @@ In `libs/extensions/<extension-name>/lang/src/lib/my-extractor-meta-inf.ts`:
 
 ```typescript
 import {
-  AttributeType,
   BlockMetaInformation,
   IOType,
+  PropertyValuetype,
 } from '@jvalue/language-server';
 
 export class MyExtractorMetaInformation extends BlockMetaInformation {
@@ -144,29 +149,29 @@ export class MyExtractorMetaInformation extends BlockMetaInformation {
       // How the block type should be called:
       'MyExtractor',
 
+      // Property definitions:
+      {
+        url: {
+          type: PropertyValuetype.TEXT,
+        },
+        limit: {
+          type: PropertyValuetype.INTEGER,
+          defaultValue: 10,
+        },
+      },
+
       // Input type:
-      IOType.UNDEFINED,
+      IOType.NONE,
 
       // Output type:
       IOType.SHEET,
-
-      // Attribute definitions:
-      {
-        url: {
-          type: AttributeType.STRING,
-        },
-        limit: {
-          type: AttributeType.INT,
-          defaultValue: 10,
-        },
-      }
     );
   }
 }
 ```
 
 > **Note**
-> Use `IOType.UNDEFINED` whenever you expect no input or output:
+> Use `IOType.NONE` whenever you expect no input or output:
 >
 > - Use it as input type if you want to define an extractor
 > - Use it as output type if you want to define a loader
@@ -181,7 +186,7 @@ In `libs/extensions/<extension-name>/lang/src/extension.ts`:
 import { MyExtractorMetaInformation } from './lib/my-extractor-meta-inf';
 
 export class MyLangExtension implements JayveeLangExtension {
-  getBlockMetaInf(): BlockMetaInformationClass[] {
+  getBlockMetaInf(): Array<ConstructorClass<BlockMetaInformation>> {
     return [
       // ...
       // Register your meta information here:
@@ -193,7 +198,7 @@ export class MyLangExtension implements JayveeLangExtension {
 ```
 
 #### 3. Implement `BlockExecutor`
-warn
+
 The following example implements an executor for the previously defined block type `MyExtractor`.
 
 The `execute` method defines the behavior when a block is executed. Its signature matches the input and output types defined in `MyExtractorMetaInformation`.
@@ -202,19 +207,31 @@ In `libs/extensions/<extension-name>/exec/src/lib/my-extractor-executor.ts`:
 
 ```typescript
 import * as R from '@jvalue/execution';
-import { BlockExecutor } from '@jvalue/execution';
-import { Sheet } from '@jvalue/language-server';
+import {
+  BlockExecutor,
+  BlockExecutorClass,
+  ExecutionContext,
+  Sheet,
+  implementsStatic,
+} from '@jvalue/execution';
 
-export class MyExtractorExecutor extends BlockExecutor<void, Sheet> {
-  constructor() {
-    // Needs to match the name in meta information:
-    super('MyExtractor');
-  }
+@implementsStatic<BlockExecutorClass>()
+export class MyExtractorExecutor
+        implements BlockExecutor<IOType.NONE, IOType.SHEET>
+{
+  // Needs to match the type in meta information:
+  public static readonly type = 'CellRangeSelector';
+  
+  public readonly inputType = IOType.NONE;
+  public readonly outputType = IOType.SHEET;
 
-  override async execute(): Promise<R.Result<Sheet>> {
-    // Accessing attribute values by their name:
-    const url = this.getStringAttributeValue('url');
-    const limit = this.getIntAttributeValue('limit');
+  async execute(
+    input: None,
+    context: ExecutionContext,
+  ): Promise<R.Result<Sheet>> {
+    // Accessing property values by their name:
+    const url = context.getTextPropertyValue('url');
+    const limit = context.getNumericPropertyValue('limit');
     
     // ...
 
@@ -229,11 +246,6 @@ export class MyExtractorExecutor extends BlockExecutor<void, Sheet> {
 
 > **Warning**
 > The generic types of `BlockExecutor<I,O>` need to match the input and output types of the corresponding `BlockMetaInformation`.
->
-> - E.g. use `undefined` or `void` for `IOType.UNDEFINED`, `Sheet` for `IOType.SHEET` and so on
-> - For other types, see [libs/execution/src/lib/types/io-types](https://github.com/jvalue/jayvee/tree/main/libs/execution/src/lib/types/io-types).
->
-> Be careful, as there is currently no mechanism to detect such potential mismatches.
 
 #### 4. Register the new `BlockExecutor` in the execution extension
 
