@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { CstNode, DefaultValueConverter, ValueType } from 'langium';
 import { AbstractRule } from 'langium/lib/grammar/generated/ast';
 
