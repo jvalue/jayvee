@@ -29,9 +29,13 @@ node_modules
 # IDE - VSCode
 .vscode/*
 !.vscode/settings.json
+!.vscode/settings.json.license
 !.vscode/tasks.json
+!.vscode/tasks.json.license
 !.vscode/launch.json
+!.vscode/launch.json.license
 !.vscode/extensions.json
+!.vscode/extensions.json.license
 
 # misc
 /.sass-cache
