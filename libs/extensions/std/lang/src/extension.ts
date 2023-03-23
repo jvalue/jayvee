@@ -10,6 +10,7 @@ import { ArchiveInterpreterMetaInformation } from './archive-interpreter-meta-in
 import { FilePickerMetaInformation } from './file-picker-meta-inf';
 import { HttpExtractorMetaInformation } from './http-extractor-meta-inf';
 import { TextFileInterpreterMetaInformation } from './text-file-interpreter-meta-inf';
+import { TextRangeSelectorMetaInformation } from './text-range-selector-meta-inf';
 
 export class StdLangExtension implements JayveeLangExtension {
   private readonly wrappedExtensions: JayveeLangExtension[] = [
@@ -22,6 +23,7 @@ export class StdLangExtension implements JayveeLangExtension {
       ...this.wrappedExtensions.map((x) => x.getBlockMetaInf()).flat(),
       HttpExtractorMetaInformation,
       TextFileInterpreterMetaInformation,
+      TextRangeSelectorMetaInformation,
       ArchiveInterpreterMetaInformation,
       FilePickerMetaInformation,
     ];

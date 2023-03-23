@@ -6,6 +6,7 @@ import { ArchiveInterpreterExecutor } from './archive-interpreter-executor';
 import { FilePickerExecutor } from './file-picker-executor';
 import { HttpExtractorExecutor } from './http-extractor-executor';
 import { TextFileInterpreterExecutor } from './text-file-interpreter-executor';
+import { TextRangeSelectorExecutor } from './text-range-selector-executor';
 
 export class StdExecExtension implements JayveeExecExtension {
   private readonly wrappedExtensions: JayveeExecExtension[] = [
@@ -18,6 +19,7 @@ export class StdExecExtension implements JayveeExecExtension {
       ...this.wrappedExtensions.map((x) => x.getBlockExecutors()).flat(),
       HttpExtractorExecutor,
       TextFileInterpreterExecutor,
+      TextRangeSelectorExecutor,
       ArchiveInterpreterExecutor,
       FilePickerExecutor,
     ];
