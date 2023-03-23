@@ -12,7 +12,7 @@ const config = {
   baseUrl: '/jayvee/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/jayvee.png',
   organizationName: 'jvalue', // Usually your GitHub org/user name.
   projectName: 'jayvee', // Usually your repo name.
 
@@ -35,10 +35,9 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       navbar: {
-        title: 'Jayvee',
         logo: {
           alt: 'Jayvee logo',
-          src: 'img/logo.svg',
+          src: 'img/jayvee.png',
         },
         items: [
           {
