@@ -3,48 +3,48 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  PrimitiveValuetypeKeyword,
+  PrimitiveValuetypeKeywordLiteral,
   ValuetypeDefinitionReference,
   isValuetypeDefinitionReference,
 } from '@jvalue/language-server';
 import { assertUnreachable } from 'langium/lib/utils/errors';
 
 import { AtomicValuetype } from './atomic-valuetype';
-import { BooleanValuetype } from './boolean-valuetype';
-import { DecimalValuetype } from './decimal-valuetype';
-import { IntegerValuetype } from './integer-valuetype';
-import { PrimitiveValuetype } from './primitive-valuetype';
-import { TextValuetype } from './text-valuetype';
+import { BooleanValuetype } from './primitive/boolean-valuetype';
+import { DecimalValuetype } from './primitive/decimal-valuetype';
+import { IntegerValuetype } from './primitive/integer-valuetype';
+import { PrimitiveValuetype } from './primitive/primitive-valuetype';
+import { TextValuetype } from './primitive/text-valuetype';
 import { Valuetype } from './valuetype';
 
-export function getValuetype(
-  valuetype: PrimitiveValuetypeKeyword | ValuetypeDefinitionReference,
+export function createValuetype(
+  valuetype: PrimitiveValuetypeKeywordLiteral | ValuetypeDefinitionReference,
 ): Valuetype {
   if (isValuetypeDefinitionReference(valuetype)) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const valuetypeAstNode = valuetype.reference.ref!;
-    const primitiveValuetype = valuetypeAstNode.type;
-    return new AtomicValuetype(
-      getPrimitiveValuetype(primitiveValuetype),
-      valuetypeAstNode,
+    const valuetypeDefinition = valuetype.reference.ref!;
+    const primitiveValuetypeKeyword = valuetypeDefinition.type;
+    const primitiveValuetype = createPrimitiveValuetype(
+      primitiveValuetypeKeyword,
     );
+    return new AtomicValuetype(valuetypeDefinition, primitiveValuetype);
   }
-  return getPrimitiveValuetype(valuetype);
+  return createPrimitiveValuetype(valuetype);
 }
 
-function getPrimitiveValuetype(
-  keyword: PrimitiveValuetypeKeyword,
+function createPrimitiveValuetype(
+  keywordLiteral: PrimitiveValuetypeKeywordLiteral,
 ): PrimitiveValuetype {
-  switch (keyword) {
+  switch (keywordLiteral.keyword) {
     case 'text':
-      return new TextValuetype();
+      return new TextValuetype(keywordLiteral);
     case 'decimal':
-      return new DecimalValuetype();
+      return new DecimalValuetype(keywordLiteral);
     case 'integer':
-      return new IntegerValuetype();
+      return new IntegerValuetype(keywordLiteral);
     case 'boolean':
-      return new BooleanValuetype();
+      return new BooleanValuetype(keywordLiteral);
     default:
-      assertUnreachable(keyword);
+      assertUnreachable(keywordLiteral.keyword);
   }
 }
