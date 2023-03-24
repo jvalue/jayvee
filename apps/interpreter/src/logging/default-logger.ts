@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { DiagnosticSeverity, Logger } from '@jvalue/execution';
 import * as chalk from 'chalk';
 import { LangiumDocument } from 'langium';

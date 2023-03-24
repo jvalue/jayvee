@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { strict as assert } from 'assert';
 
 import { BlockDefinition, Registry } from '@jvalue/language-server';

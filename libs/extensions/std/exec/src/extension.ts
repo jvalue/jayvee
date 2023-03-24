@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { BlockExecutorClass, JayveeExecExtension } from '@jvalue/execution';
 import { RdbmsExecExtension } from '@jvalue/extensions/rdbms/exec';
 import { TabularExecExtension } from '@jvalue/extensions/tabular/exec';
