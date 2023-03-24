@@ -4,6 +4,8 @@
 
 import { Command } from 'commander';
 
+import { version as packageJsonVersion } from '../package.json';
+
 import { runAction } from './interpreter';
 
 const runtimeParameterRegex = /^([_a-zA-Z][\w_]*)=(.*)$/;
@@ -27,6 +29,9 @@ function collectRuntimeParameters(
 }
 
 const program = new Command();
+
+const version: string = packageJsonVersion as string;
+program.version(version);
 
 program
   .argument('<file>', `path to the .jv source file`)
