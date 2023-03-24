@@ -52,6 +52,9 @@ In order to validate REUSE compliance in your local development environment, you
 reuse lint
 ```
 
+You can also set up a pre-commit hook, so the above command is run before each commit.
+See [here](https://reuse.readthedocs.io/en/latest/readme.html#run-as-pre-commit-hook) for details on how to set it up.
+
 ## How to hide `*.license` files in IDEs
 
 During development, the file explorer of your IDE may be cluttered due to the numerous `*.license` files in the 
