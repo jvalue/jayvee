@@ -12,14 +12,19 @@ import {
 import { createConstraintExecutor } from '../../constraints/constraint-executor-registry';
 import { ExecutionContext } from '../../execution-context';
 
-import { PrimitiveType, PrimitiveValuetype } from './primitive-valuetype';
+import {
+  PrimitiveType,
+  PrimitiveValuetype,
+} from './primitive/primitive-valuetype';
 import { Valuetype } from './valuetype';
 import { ValuetypeVisitor } from './visitors/valuetype-visitor';
 
-export class AtomicValuetype<T extends PrimitiveType> implements Valuetype<T> {
+export class AtomicValuetype<T extends PrimitiveType>
+  implements Valuetype<ValuetypeDefinition, T>
+{
   constructor(
+    public readonly astNode: ValuetypeDefinition,
     private readonly primitiveValuetype: PrimitiveValuetype<T>,
-    private readonly astNode: ValuetypeDefinition,
   ) {}
 
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {

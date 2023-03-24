@@ -12,7 +12,7 @@ import { getMetaInformation } from '../meta-information/meta-inf-registry';
 import {
   BlockDefinition,
   PipelineDefinition,
-  PrimitiveValuetypeKeyword,
+  PrimitiveValuetypeKeywordLiteral,
   PropertyValueLiteral,
   ValuetypeDefinitionReference,
   isBooleanLiteral,
@@ -219,12 +219,12 @@ export function inferTypesFromValue(
 }
 
 export function getValuetypeName(
-  valuetype: PrimitiveValuetypeKeyword | ValuetypeDefinitionReference,
+  valuetype: PrimitiveValuetypeKeywordLiteral | ValuetypeDefinitionReference,
 ): string {
   if (isValuetypeDefinitionReference(valuetype)) {
     return valuetype.reference.$refText;
   }
-  return valuetype;
+  return valuetype.keyword;
 }
 
 export type AstTypeGuard<T extends AstNode = AstNode> = (

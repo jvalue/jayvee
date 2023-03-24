@@ -69,10 +69,12 @@ export class ValuetypeValidator implements JayveeValidator {
         continue;
       }
 
-      if (!metaInf.compatiblePrimitiveValuetypes.includes(valuetype.type)) {
+      if (
+        !metaInf.compatiblePrimitiveValuetypes.includes(valuetype.type.keyword)
+      ) {
         accept(
           'error',
-          `Only constraints for type "${valuetype.type}" are allowed in this collection`,
+          `Only constraints for type "${valuetype.type.keyword}" are allowed in this collection`,
           {
             node: constraintReference,
           },

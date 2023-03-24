@@ -13,7 +13,7 @@ import {
   Sheet,
   Table,
   Valuetype,
-  getValuetype,
+  createValuetype,
   implementsStatic,
 } from '@jvalue/execution';
 import {
@@ -180,7 +180,7 @@ export class TableInterpreterExecutor
       (columnDefinition, columnDefinitionIndex) => ({
         sheetColumnIndex: columnDefinitionIndex,
         columnName: columnDefinition.name,
-        valuetype: getValuetype(columnDefinition.type),
+        valuetype: createValuetype(columnDefinition.type),
         astNode: columnDefinition,
       }),
     );
@@ -207,7 +207,7 @@ export class TableInterpreterExecutor
       columnEntries.push({
         sheetColumnIndex: indexOfMatchingHeader,
         columnName: columnDefinition.name,
-        valuetype: getValuetype(columnDefinition.type),
+        valuetype: createValuetype(columnDefinition.type),
         astNode: columnDefinition,
       });
     }

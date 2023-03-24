@@ -6,7 +6,7 @@ import 'property'
 import 'terminal'
 
 ValuetypeDefinition:
-  'valuetype' name=ID 'oftype' type=PrimitiveValuetypeKeyword '{'
+  'valuetype' name=ID 'oftype' type=PrimitiveValuetypeKeywordLiteral '{'
     'constraints' ':' constraints=CollectionLiteral ';'
   '}';
 
@@ -14,11 +14,14 @@ ValuetypeAssignmentLiteral:
   value=ValuetypeAssignment;
 
 ValuetypeAssignment:
-  name=STRING 'oftype' type=(PrimitiveValuetypeKeyword | ValuetypeDefinitionReference);
+  name=STRING 'oftype' type=(PrimitiveValuetypeKeywordLiteral | ValuetypeDefinitionReference);
 
 // Workaround as cross-references cannot be mixed with other types
 ValuetypeDefinitionReference:
   reference=[ValuetypeDefinition];
+
+PrimitiveValuetypeKeywordLiteral:
+  keyword=PrimitiveValuetypeKeyword;
 
 PrimitiveValuetypeKeyword returns string:
   'text'
