@@ -7,6 +7,7 @@ pipeline GtfsRTSimplePipeline {
     }
 
     // 	Data about the realtime departure delays of a trip. At least one of the fields trip_update, vehicle, or alert must be provided - all these fields cannot be empty.
+    // Considers all required and conditional required fields of the gtfs-rt-schema
     block TripUpdateTableInterpreter oftype TableInterpreter {
 		header: true;
 		columns:[

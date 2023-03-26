@@ -22,7 +22,6 @@ export class GtfsRTInterpreterExecutor
   public readonly inputType = IOType.FILE;
   public readonly outputType = IOType.SHEET;
 
-  // eslint-disable-next-line @typescript-eslint/require-await
   async execute(
     inputFile: BinaryFile,
     context: ExecutionContext,
@@ -31,22 +30,51 @@ export class GtfsRTInterpreterExecutor
     const entity = context.getTextPropertyValue('entity');
 
     // https://github.com/MobilityData/gtfs-realtime-bindings/tree/master/nodejs
-    const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(
-      new Uint8Array(inputFile.content),
-    );
+    const feedMessage =
+      GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(
+        new Uint8Array(inputFile.content),
+      );
+
     // TODO: Parse all possible feedentity to table
+    const parsedFeedMessage = await this.parseFeedMessage(
+      entity,
+      feedMessage,
+      context,
+    );
+    if (R.isErr(parsedFeedMessage)) {
+      return parsedFeedMessage;
+    }
 
-    // Let val = 1;
-    // // TODO: Error
-    // // eslint-disable-next-line no-constant-condition
-    // If (val === 1) {
-    //   Return R.err({
-    //     Message: 'The specified cell range does not fit the sheet',
-    //     Diagnostic: { node: this.block, property: 'name' },
-    //   });
-    // }
-    // Val++;
+    return R.ok(parsedFeedMessage.right);
+  }
 
-    return R.ok(null as unknown as Sheet);
+  private parseFeedMessage(
+    entity: string,
+    feedMessage: GtfsRealtimeBindings.transit_realtime.FeedMessage,
+    context: ExecutionContext,
+  ): Promise<R.Result<Sheet>> {
+    return new Promise((resolve) => {
+      switch (entity) {
+        case 'trip_update':
+          // TODO;
+          break;
+        case 'alert':
+          // TODO;
+          break;
+        case 'vehicle':
+          // TODO;
+          break;
+
+        // No entitiy detected -> error
+        default:
+          resolve(
+            R.err({
+              message: `For parsing GTFS-RT data provide an entity to parse such as "trip_update", "alert" or "vehicle"`,
+              diagnostic: { node: context.getCurrentNode(), property: 'name' },
+            }),
+          );
+          break;
+      }
+    });
   }
 }
