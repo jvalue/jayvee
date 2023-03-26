@@ -30,22 +30,22 @@ export class GtfsRTInterpreterExecutor
     // Accessing attribute values by their name:
     const entity = context.getTextPropertyValue('entity');
 
-    //https://github.com/MobilityData/gtfs-realtime-bindings/tree/master/nodejs
+    // https://github.com/MobilityData/gtfs-realtime-bindings/tree/master/nodejs
     const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(
       new Uint8Array(inputFile.content),
     );
     // TODO: Parse all possible feedentity to table
 
-    // let val = 1;
+    // Let val = 1;
     // // TODO: Error
     // // eslint-disable-next-line no-constant-condition
-    // if (val === 1) {
-    //   return R.err({
-    //     message: 'The specified cell range does not fit the sheet',
-    //     diagnostic: { node: this.block, property: 'name' },
+    // If (val === 1) {
+    //   Return R.err({
+    //     Message: 'The specified cell range does not fit the sheet',
+    //     Diagnostic: { node: this.block, property: 'name' },
     //   });
     // }
-    // val++;
+    // Val++;
 
     return R.ok(null as unknown as Sheet);
   }

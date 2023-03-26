@@ -1,0 +1,44 @@
+pipeline GtfsRTSimplePipeline {
+	block GTFSRTFeedExtractor oftype HttpExtractor {
+		url: "https://proxy.transport.data.gouv.fr/resource/bibus-brest-gtfs-rt-trip-update";
+	}
+    block GtfsRTTripUpdateInterpreter oftype GtfsRTInterpreter{
+        entity: "trip_update";
+    }
+
+    // 	Data about the realtime departure delays of a trip. At least one of the fields trip_update, vehicle, or alert must be provided - all these fields cannot be empty.
+    block TripUpdateTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns:[
+            // header
+			"header_gtfs_realtime_version" oftype text, // version of speed specification. Currently "2.0"
+			"header_timestamp" oftype text, // The moment where this dataset was generated on the server.
+            "header_incementality" oftype text, // DIFFERENTIAL is unsupported. use FULL_DATASET only
+			
+            //entity
+            "entity_id" oftype text, // unique identifier for the entity within the feed update message
+			
+                //tripupdate
+                //tripdescriptor
+                "tripid" oftype text,
+                "routeid" oftype text,
+
+                    //stoptimeupdate
+                    "stop_sequence" oftype text, // Must be the same as in stop_times.txt in the corresponding GTFS feed. Either stop_sequence or stop_id must be provided within a StopTimeUpdate - both fields cannot be empty. stop_sequence is required for trips that visit the same stop_id more than once (e.g., a loop) to disambiguate which stop the prediction is for.
+                    "stop_id" oftype text, // Must be the same as in stops.txt in the corresponding GTFS feed. Either stop_sequence or stop_id must be provided within a StopTimeUpdate - both fields cannot be empty.
+                    "stop_time_event" oftype text,  // Timing information for a single predicted event (either arrival or departure) Timing consists of delay and or estimated time
+                    "time" oftype text, //Event as absolute time. In POSIX time (i.e., number of seconds since January 1st 1970 00:00:00 UTC). Either delay or time must be provided within a StopTimeEvent - both fields cannot be empty
+                    "delay"  oftype text // The delay field (in seconds) can be positive (meaning that the vehicle is late) or negative (meaning that the vehicle is ahead of schedule). A delay of 0 means that the vehicle is exactly on time. Either delay or time must be provided within a StopTimeEvent - both fields cannot be empty.
+		];
+	}
+
+    block TripUpdateLoader oftype SQLiteLoader {
+		table: "trip_update";
+		file: "./gtfs.sqlite";
+	}
+
+    GTFSRTFeedExtractor
+        ->GtfsRTTripUpdateInterpreter
+            ->TripUpdateTableInterpreter
+                ->TripUpdateLoader
+}
