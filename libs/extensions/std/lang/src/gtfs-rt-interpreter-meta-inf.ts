@@ -1,7 +1,7 @@
 import {
-  AttributeValueType,
   BlockMetaInformation,
   IOType,
+  PropertyValuetype,
 } from '@jvalue/language-server';
 
 export class GtfsRTInterpreterMetaInformation extends BlockMetaInformation {
@@ -13,7 +13,7 @@ export class GtfsRTInterpreterMetaInformation extends BlockMetaInformation {
       // Attribute definitions:
       {
         entity: {
-          type: AttributeValueType.TEXT,
+          type: PropertyValuetype.TEXT,
           docs: {
             description:
               'Entity to process from GTFS-RT-feed. Could be `vehiclePosition`, `tripUpdate` or alert.',
