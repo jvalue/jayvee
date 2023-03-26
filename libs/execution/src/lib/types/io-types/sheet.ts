@@ -1,8 +1,12 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { strict as assert } from 'assert';
 
 import {
   CellIndexBounds,
-  CellRange,
+  CellRangeLiteral,
   CellRangeWrapper,
   CellWrapper,
   ColumnWrapper,
@@ -108,7 +112,7 @@ export class Sheet implements IOTypeImplementation<IOType.SHEET> {
     return range.isInBounds(bounds);
   }
 
-  resolveRelativeIndexes<N extends CellRange>(
+  resolveRelativeIndexes<N extends CellRangeLiteral>(
     range: CellRangeWrapper<N>,
   ): CellRangeWrapper<N> {
     if (range.hasRelativeIndexes()) {

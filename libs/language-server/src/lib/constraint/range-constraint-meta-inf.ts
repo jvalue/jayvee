@@ -1,4 +1,8 @@
-import { AttributeValueType } from '../ast/model-util';
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+import { PropertyValuetype } from '../ast/model-util';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 
 export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
@@ -7,23 +11,23 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
       'RangeConstraint',
       {
         lowerBound: {
-          type: AttributeValueType.DECIMAL,
+          type: PropertyValuetype.DECIMAL,
           defaultValue: Number.NEGATIVE_INFINITY,
         },
         lowerBoundInclusive: {
-          type: AttributeValueType.BOOLEAN,
+          type: PropertyValuetype.BOOLEAN,
           defaultValue: true,
         },
         upperBound: {
-          type: AttributeValueType.DECIMAL,
+          type: PropertyValuetype.DECIMAL,
           defaultValue: Number.POSITIVE_INFINITY,
         },
         upperBoundInclusive: {
-          type: AttributeValueType.BOOLEAN,
+          type: PropertyValuetype.BOOLEAN,
           defaultValue: true,
         },
       },
-      'decimal',
+      ['integer', 'decimal'],
     );
   }
 }

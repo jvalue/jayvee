@@ -1,22 +1,26 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { ValidationAcceptor, ValidationChecks } from 'langium';
 
-import { JayveeAstType, Model } from '../../ast/generated/ast';
+import { JayveeAstType, JayveeModel } from '../../ast/generated/ast';
 import { JayveeValidator } from '../jayvee-validator';
 import {
   generateNonUniqueNameErrorMessage,
   getNodesWithNonUniqueNames,
 } from '../validation-util';
 
-export class ModelValidator implements JayveeValidator {
+export class JayveeModelValidator implements JayveeValidator {
   get checks(): ValidationChecks<JayveeAstType> {
     return {
-      Model: [this.checkUniquePipelineNames],
+      JayveeModel: [this.checkUniquePipelineDefinitionNames],
     };
   }
 
-  checkUniquePipelineNames(
+  checkUniquePipelineDefinitionNames(
     this: void,
-    model: Model,
+    model: JayveeModel,
     accept: ValidationAcceptor,
   ): void {
     getNodesWithNonUniqueNames(model.pipelines).forEach((pipeline) => {

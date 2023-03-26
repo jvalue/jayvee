@@ -1,7 +1,11 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import {
-  AttributeValueType,
   BlockMetaInformation,
   IOType,
+  PropertyValuetype,
 } from '@jvalue/language-server';
 
 export class HttpExtractorMetaInformation extends BlockMetaInformation {
@@ -10,10 +14,10 @@ export class HttpExtractorMetaInformation extends BlockMetaInformation {
       // How the block type should be called:
       'HttpExtractor',
 
-      // Attribute definitions:
+      // Property definitions:
       {
         url: {
-          type: AttributeValueType.TEXT,
+          type: PropertyValuetype.TEXT,
           docs: {
             description: 'The URL to the file in the web to extract.',
             examples: [

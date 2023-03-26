@@ -1,4 +1,10 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { Command } from 'commander';
+
+import { version as packageJsonVersion } from '../package.json';
 
 import { runAction } from './interpreter';
 
@@ -23,6 +29,9 @@ function collectRuntimeParameters(
 }
 
 const program = new Command();
+
+const version: string = packageJsonVersion as string;
+program.version(version);
 
 program
   .argument('<file>', `path to the .jv source file`)

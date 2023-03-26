@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { strict as assert } from 'assert';
 
 import { getRegisteredBlockExecutors } from '@jvalue/execution';
@@ -9,12 +13,14 @@ describe('std extension', () => {
   useStdExtension();
   getRegisteredBlockMetaInformation().forEach((metaInf) => {
     it(`should provide a matching block executor for block type ${metaInf.type}`, () => {
-      const matchingBlockExecutor = getRegisteredBlockExecutors()
-        .map((blockExecutorClass) => new blockExecutorClass())
-        .find((blockExecutor) => blockExecutor.blockType === metaInf.type);
+      const matchingBlockExecutorClass = getRegisteredBlockExecutors().find(
+        (blockExecutorClass) => blockExecutorClass.type === metaInf.type,
+      );
 
-      expect(matchingBlockExecutor).toBeDefined();
-      assert(matchingBlockExecutor !== undefined);
+      expect(matchingBlockExecutorClass).toBeDefined();
+      assert(matchingBlockExecutorClass !== undefined);
+
+      const matchingBlockExecutor = new matchingBlockExecutorClass();
 
       expect(matchingBlockExecutor.inputType).toEqual(metaInf.inputType);
       expect(matchingBlockExecutor.outputType).toEqual(metaInf.outputType);

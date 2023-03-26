@@ -1,34 +1,47 @@
-import {
-  BooleanValueType,
-  DecimalValueType,
-  IntegerValueType,
-  TextValueType,
-} from '../types/value-types';
-import { ValueTypeVisitor } from '../types/value-types/visitors/value-type-visitor';
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
 
-export class SQLValueRepresentationVisitor extends ValueTypeVisitor<
+import {
+  BooleanValuetype,
+  DecimalValuetype,
+  IntegerValuetype,
+  TextValuetype,
+} from '../types/valuetypes';
+import { ValuetypeVisitor } from '../types/valuetypes/visitors/valuetype-visitor';
+
+export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
   (value: unknown) => string
 > {
-  visitBoolean(valueType: BooleanValueType): (value: unknown) => string {
+  visitBoolean(valuetype: BooleanValuetype): (value: unknown) => string {
     return (value: unknown) => {
-      return valueType.getStandardRepresentation(value)
+      return valuetype.getStandardRepresentation(value)
         ? String.raw`'true'`
         : String.raw`'false'`;
     };
   }
-  visitDecimal(valueType: DecimalValueType): (value: unknown) => string {
+  visitDecimal(valuetype: DecimalValuetype): (value: unknown) => string {
     return (value: unknown) => {
-      return valueType.getStandardRepresentation(value).toString();
+      return valuetype.getStandardRepresentation(value).toString();
     };
   }
-  visitInteger(valueType: IntegerValueType): (value: unknown) => string {
+  visitInteger(valuetype: IntegerValuetype): (value: unknown) => string {
     return (value: unknown) => {
-      return valueType.getStandardRepresentation(value).toString();
+      return valuetype.getStandardRepresentation(value).toString();
     };
   }
-  visitText(valueType: TextValueType): (value: unknown) => string {
+  visitText(valuetype: TextValuetype): (value: unknown) => string {
     return (value: unknown) => {
-      return `'${valueType.getStandardRepresentation(value)}'`;
+      const standardValueRepresentation =
+        valuetype.getStandardRepresentation(value);
+      const escapedValueRepresentation = escapeSingleQuotes(
+        standardValueRepresentation,
+      );
+      return `'${escapedValueRepresentation}'`;
     };
   }
+}
+
+function escapeSingleQuotes(value: string): string {
+  return value.replace(/'/g, `''`);
 }

@@ -1,5 +1,10 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import {
-  BlockMetaInformationClass,
+  BlockMetaInformation,
+  ConstructorClass,
   JayveeLangExtension,
 } from '@jvalue/language-server';
 
@@ -9,7 +14,7 @@ import {
 } from './lib';
 
 export class RdbmsLangExtension implements JayveeLangExtension {
-  getBlockMetaInf(): BlockMetaInformationClass[] {
+  getBlockMetaInf(): Array<ConstructorClass<BlockMetaInformation>> {
     return [PostgresLoaderMetaInformation, SQLiteLoaderMetaInformation];
   }
 }

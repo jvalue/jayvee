@@ -1,7 +1,17 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { strict as assert } from 'assert';
 
 import * as R from '@jvalue/execution';
-import { BlockExecutor, Sheet } from '@jvalue/execution';
+import {
+  BlockExecutor,
+  BlockExecutorClass,
+  ExecutionContext,
+  Sheet,
+  implementsStatic,
+} from '@jvalue/execution';
 import {
   IOType,
   RowWrapper,
@@ -10,17 +20,20 @@ import {
   rowIndexToString,
 } from '@jvalue/language-server';
 
-export class RowDeleterExecutor extends BlockExecutor<
-  IOType.SHEET,
-  IOType.SHEET
-> {
-  constructor() {
-    super('RowDeleter', IOType.SHEET, IOType.SHEET);
-  }
+@implementsStatic<BlockExecutorClass>()
+export class RowDeleterExecutor
+  implements BlockExecutor<IOType.SHEET, IOType.SHEET>
+{
+  public static readonly type = 'RowDeleter';
+  public readonly inputType = IOType.SHEET;
+  public readonly outputType = IOType.SHEET;
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  override async execute(inputSheet: Sheet): Promise<R.Result<Sheet>> {
-    const relativeRows = this.getCellRangeCollectionAttributeValue('delete');
+  async execute(
+    inputSheet: Sheet,
+    context: ExecutionContext,
+  ): Promise<R.Result<Sheet>> {
+    const relativeRows = context.getCellRangeCollectionPropertyValue('delete');
     assert(relativeRows.every(isRowWrapper));
 
     let absoluteRows = relativeRows.map((row) =>
@@ -45,7 +58,7 @@ export class RowDeleterExecutor extends BlockExecutor<
     // That way, the upcoming deletion is only called once per individual row
     absoluteRows = this.removeDuplicateRows(absoluteRows);
 
-    this.logger.logDebug(
+    context.logger.logDebug(
       `Deleting row(s) ${absoluteRows
         .map(getRowIndex)
         .map(rowIndexToString)

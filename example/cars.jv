@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 pipeline CarsPipeline {
 
 	block CarsExtractor oftype HttpExtractor {
@@ -6,10 +10,20 @@ pipeline CarsPipeline {
 
 	pipe {
 		from: CarsExtractor;
+		to: CarsTextFileInterpreter;
+	}
+
+	block CarsTextFileInterpreter oftype TextFileInterpreter {
+
+	}
+
+	pipe {
+		from: CarsTextFileInterpreter;
 		to: CarsCSVInterpreter;
 	}
 
 	block CarsCSVInterpreter oftype CSVInterpreter {
+		enclosing: '"';
 	}
 
 	pipe {

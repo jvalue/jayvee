@@ -1,28 +1,34 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { strict as assert } from 'assert';
 
 import { DiagnosticInfo } from 'langium';
 
 import {
-  Block,
-  ChainedPipe,
-  Pipe,
-  SinglePipe,
-  isSinglePipe,
+  BlockDefinition,
+  ChainedPipeDefinition,
+  PipeDefinition,
+  SinglePipeDefinition,
+  isSinglePipeDefinition,
 } from '../generated/ast';
 
 import { AstNodeWrapper } from './ast-node-wrapper';
 
-export class PipeWrapper<N extends Pipe = Pipe> implements AstNodeWrapper<N> {
+export class PipeWrapper<N extends PipeDefinition = PipeDefinition>
+  implements AstNodeWrapper<N>
+{
   public readonly astNode: N;
   private readonly chainIndex?: number;
-  public readonly from: Block;
-  public readonly to: Block;
+  public readonly from: BlockDefinition;
+  public readonly to: BlockDefinition;
 
-  constructor(pipe: ChainedPipe, chainIndex: number);
-  constructor(pipe: SinglePipe);
+  constructor(pipe: ChainedPipeDefinition, chainIndex: number);
+  constructor(pipe: SinglePipeDefinition);
   constructor(pipe: N, chainIndex?: number) {
     this.astNode = pipe;
-    if (isSinglePipe(pipe)) {
+    if (isSinglePipeDefinition(pipe)) {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       assert(pipe.from?.ref !== undefined);
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -42,16 +48,16 @@ export class PipeWrapper<N extends Pipe = Pipe> implements AstNodeWrapper<N> {
     }
   }
 
-  getFromDiagnostic(): DiagnosticInfo<Pipe> {
-    if (isSinglePipe(this.astNode)) {
-      const result: DiagnosticInfo<SinglePipe> = {
+  getFromDiagnostic(): DiagnosticInfo<PipeDefinition> {
+    if (isSinglePipeDefinition(this.astNode)) {
+      const result: DiagnosticInfo<SinglePipeDefinition> = {
         node: this.astNode,
         property: 'from',
       };
       return result;
     }
     assert(this.chainIndex !== undefined);
-    const result: DiagnosticInfo<ChainedPipe> = {
+    const result: DiagnosticInfo<ChainedPipeDefinition> = {
       node: this.astNode,
       property: 'blocks',
       index: this.chainIndex,
@@ -59,16 +65,16 @@ export class PipeWrapper<N extends Pipe = Pipe> implements AstNodeWrapper<N> {
     return result;
   }
 
-  getToDiagnostic(): DiagnosticInfo<Pipe> {
-    if (isSinglePipe(this.astNode)) {
-      const result: DiagnosticInfo<SinglePipe> = {
+  getToDiagnostic(): DiagnosticInfo<PipeDefinition> {
+    if (isSinglePipeDefinition(this.astNode)) {
+      const result: DiagnosticInfo<SinglePipeDefinition> = {
         node: this.astNode,
         property: 'to',
       };
       return result;
     }
     assert(this.chainIndex !== undefined);
-    const result: DiagnosticInfo<ChainedPipe> = {
+    const result: DiagnosticInfo<ChainedPipeDefinition> = {
       node: this.astNode,
       property: 'blocks',
       index: this.chainIndex + 1,
@@ -80,10 +86,13 @@ export class PipeWrapper<N extends Pipe = Pipe> implements AstNodeWrapper<N> {
     return this.from === pipe.from && this.to === pipe.to;
   }
 
-  static canBeWrapped(pipe: ChainedPipe, chainIndex: number): boolean;
-  static canBeWrapped(pipe: SinglePipe): boolean;
-  static canBeWrapped<N extends Pipe>(pipe: N, chainIndex?: number): boolean {
-    if (isSinglePipe(pipe)) {
+  static canBeWrapped(pipe: ChainedPipeDefinition, chainIndex: number): boolean;
+  static canBeWrapped(pipe: SinglePipeDefinition): boolean;
+  static canBeWrapped<N extends PipeDefinition>(
+    pipe: N,
+    chainIndex?: number,
+  ): boolean {
+    if (isSinglePipeDefinition(pipe)) {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       return pipe.from?.ref !== undefined && pipe.to?.ref !== undefined;
     }
@@ -97,21 +106,21 @@ export class PipeWrapper<N extends Pipe = Pipe> implements AstNodeWrapper<N> {
   }
 }
 
-export function createSemanticPipes(pipe: Pipe): PipeWrapper[] {
-  if (isSinglePipe(pipe)) {
+export function createSemanticPipes(pipe: PipeDefinition): PipeWrapper[] {
+  if (isSinglePipeDefinition(pipe)) {
     return createFromSinglePipe(pipe);
   }
   return createFromChainedPipe(pipe);
 }
 
-function createFromSinglePipe(pipe: SinglePipe): PipeWrapper[] {
+function createFromSinglePipe(pipe: SinglePipeDefinition): PipeWrapper[] {
   if (PipeWrapper.canBeWrapped(pipe)) {
     return [new PipeWrapper(pipe)];
   }
   return [];
 }
 
-function createFromChainedPipe(pipe: ChainedPipe): PipeWrapper[] {
+function createFromChainedPipe(pipe: ChainedPipeDefinition): PipeWrapper[] {
   const result: PipeWrapper[] = [];
   for (let chainIndex = 0; chainIndex < pipe.blocks.length - 1; ++chainIndex) {
     if (!PipeWrapper.canBeWrapped(pipe, chainIndex)) {

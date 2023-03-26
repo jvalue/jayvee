@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { strict as assert } from 'assert';
 
 import {
@@ -17,6 +21,8 @@ export enum DiagnosticSeverity {
 }
 
 export abstract class Logger {
+  abstract setLoggingContext(loggingContext: string | undefined): void;
+  abstract logInfo(message: string): void;
   abstract logDebug(message: string): void;
   abstract logErr(message: string): void;
 

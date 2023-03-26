@@ -1,6 +1,10 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { IOType } from '@jvalue/language-server';
 
-import { File } from './file';
+import { BinaryFile } from './binary-file';
 import { FileSystem } from './filesystem';
 
 export class InMemoryFileSystem implements FileSystem {
@@ -11,7 +15,7 @@ export class InMemoryFileSystem implements FileSystem {
   private static PARENT_DIR = '..';
 
   // Hierachical file system
-  private fileSystemIndex: Map<string, File | FileSystem> = new Map();
+  private fileSystemIndex: Map<string, BinaryFile | FileSystem> = new Map();
 
   private processPath(path: string): string[] {
     const parts = path
@@ -32,7 +36,7 @@ export class InMemoryFileSystem implements FileSystem {
     return processedParts;
   }
 
-  getFile(filePath: string): File | null {
+  getFile(filePath: string): BinaryFile | null {
     const processedParts = this.processPath(filePath);
 
     // If we have a minimum valid path
@@ -56,13 +60,15 @@ export class InMemoryFileSystem implements FileSystem {
       }
 
       // If we are in the correct directory
-      const file = currentFileSystemIndex.get(fileName) as File | undefined;
+      const file = currentFileSystemIndex.get(fileName) as
+        | BinaryFile
+        | undefined;
       return file === undefined ? null : file;
     }
     return null;
   }
 
-  putFile(filePath: string, file: File): FileSystem {
+  putFile(filePath: string, file: BinaryFile): FileSystem {
     const processedParts = this.processPath(filePath);
     let currentFileSystemIndex = this.fileSystemIndex;
 

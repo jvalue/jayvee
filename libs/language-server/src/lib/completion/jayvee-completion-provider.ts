@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { strict as assert } from 'assert';
 
 import {
@@ -11,18 +15,18 @@ import {
 import { CompletionItemKind } from 'vscode-languageserver';
 
 import {
-  Attribute,
-  AttributeBody,
-  Block,
-  BlockType,
-  Constraint,
-  ConstraintType,
-  isAttribute,
-  isAttributeBody,
-  isBlock,
-  isBlockType,
-  isConstraint,
-  isConstraintType,
+  BlockDefinition,
+  BlockTypeLiteral,
+  ConstraintDefinition,
+  ConstraintTypeLiteral,
+  PropertyAssignment,
+  PropertyBody,
+  isBlockDefinition,
+  isBlockTypeLiteral,
+  isConstraintDefinition,
+  isConstraintTypeLiteral,
+  isPropertyAssignment,
+  isPropertyBody,
 } from '../ast/generated/ast';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
 import { MetaInformation } from '../meta-information/meta-inf';
@@ -30,7 +34,7 @@ import {
   getMetaInformation,
   getRegisteredBlockMetaInformation,
   getRegisteredConstraintMetaInformation,
-} from '../meta-information/meta-inf-util';
+} from '../meta-information/meta-inf-registry';
 
 const RIGHT_ARROW_SYMBOL = '\u{2192}';
 
@@ -43,24 +47,25 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     const astNode = context.node;
     if (astNode !== undefined) {
       const isBlockTypeCompletion =
-        (isBlock(astNode) || isBlockType(astNode)) && next.type === BlockType;
+        (isBlockDefinition(astNode) || isBlockTypeLiteral(astNode)) &&
+        next.type === BlockTypeLiteral;
       if (isBlockTypeCompletion) {
         return this.completionForBlockType(acceptor);
       }
 
       const isConstraintTypeCompletion =
-        (isConstraint(astNode) || isConstraintType(astNode)) &&
-        next.type === ConstraintType;
+        (isConstraintDefinition(astNode) || isConstraintTypeLiteral(astNode)) &&
+        next.type === ConstraintTypeLiteral;
       if (isConstraintTypeCompletion) {
         return this.completionForConstraintType(acceptor);
       }
 
-      const isFirstAttributeCompletion =
-        isAttributeBody(astNode) && next.type === Attribute;
-      const isOtherAttributeCompletion =
-        isAttribute(astNode) && next.type === Attribute;
-      if (isFirstAttributeCompletion || isOtherAttributeCompletion) {
-        return this.completionForAttributeName(astNode, acceptor);
+      const isFirstPropertyCompletion =
+        isPropertyBody(astNode) && next.type === PropertyAssignment;
+      const isOtherPropertyCompletion =
+        isPropertyAssignment(astNode) && next.type === PropertyAssignment;
+      if (isFirstPropertyCompletion || isOtherPropertyCompletion) {
+        return this.completionForPropertyName(astNode, acceptor);
       }
     }
     return super.completionFor(context, next, acceptor);
@@ -94,7 +99,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       acceptor({
         label: metaInf.type,
         labelDetails: {
-          detail: ` ${metaInf.primitiveValuetype}`,
+          detail: ` ${metaInf.compatiblePrimitiveValuetypes.join(',')}`,
         },
         kind: CompletionItemKind.Class,
         detail: `(constraint type)`,
@@ -102,12 +107,12 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     });
   }
 
-  private completionForAttributeName(
-    astNode: AttributeBody | Attribute,
+  private completionForPropertyName(
+    astNode: PropertyBody | PropertyAssignment,
     acceptor: CompletionAcceptor,
   ) {
-    let container: Block | Constraint;
-    if (isAttributeBody(astNode)) {
+    let container: BlockDefinition | ConstraintDefinition;
+    if (isPropertyBody(astNode)) {
       container = astNode.$container;
     } else {
       container = astNode.$container.$container;
@@ -117,55 +122,55 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     if (metaInf === undefined) {
       return;
     }
-    const presentAttributeNames = container.body.attributes.map(
+    const presentPropertyNames = container.body.properties.map(
       (attr) => attr.name,
     );
 
-    const attributeKinds: Array<'optional' | 'required'> = [
+    const propertyKinds: Array<'optional' | 'required'> = [
       'required',
       'optional',
     ];
-    for (const attributeKind of attributeKinds) {
-      const attributeNames = metaInf.getAttributeNames(
-        attributeKind,
-        presentAttributeNames,
+    for (const propertyKind of propertyKinds) {
+      const propertyNames = metaInf.getPropertyNames(
+        propertyKind,
+        presentPropertyNames,
       );
-      this.constructAttributeCompletionValueItems(
+      this.constructPropertyCompletionValueItems(
         metaInf,
-        attributeNames,
-        attributeKind,
+        propertyNames,
+        propertyKind,
       ).forEach(acceptor);
     }
   }
 
-  private constructAttributeCompletionValueItems(
+  private constructPropertyCompletionValueItems(
     metaInf: MetaInformation,
-    attributeNames: string[],
+    propertyNames: string[],
     kind: 'required' | 'optional',
   ): CompletionValueItem[] {
-    return attributeNames.map((attributeName) => {
-      const attributeSpec = metaInf.getAttributeSpecification(attributeName);
-      assert(attributeSpec !== undefined);
+    return propertyNames.map((propertyName) => {
+      const propertySpec = metaInf.getPropertySpecification(propertyName);
+      assert(propertySpec !== undefined);
 
       const completionValueItem: CompletionValueItem = {
-        label: attributeName,
+        label: propertyName,
         labelDetails: {
-          detail: ` ${attributeSpec.type}`,
+          detail: ` ${propertySpec.type}`,
         },
         kind: CompletionItemKind.Field,
-        detail: `(${kind} attribute)`,
+        detail: `(${kind} property)`,
         sortText: kind === 'required' ? '1' : '2',
       };
-      if (attributeSpec.defaultValue !== undefined) {
-        const defaultValueString = JSON.stringify(attributeSpec.defaultValue);
+      if (propertySpec.defaultValue !== undefined) {
+        const defaultValueString = JSON.stringify(propertySpec.defaultValue);
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         completionValueItem.labelDetails!.detail += ` = ${defaultValueString}`;
       }
 
       const lspDocBuilder = new LspDocGenerator();
-      const markdownDoc = lspDocBuilder.generateAttributeDoc(
+      const markdownDoc = lspDocBuilder.generatePropertyDoc(
         metaInf,
-        attributeName,
+        propertyName,
       );
       if (markdownDoc !== undefined) {
         completionValueItem.documentation = {

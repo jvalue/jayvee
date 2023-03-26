@@ -1,30 +1,34 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { strict as assert } from 'assert';
 
 import * as R from '@jvalue/execution';
 import { Logger } from '@jvalue/execution';
 import {
-  AttributeValueType,
-  BlockType,
-  ConstraintType,
-  Model,
-  RuntimeParameter,
+  BlockTypeLiteral,
+  ConstraintTypeLiteral,
+  JayveeModel,
+  PropertyValuetype,
+  RuntimeParameterLiteral,
   getOrFailMetaInformation,
-  isRuntimeParameter,
+  isRuntimeParameterLiteral,
   runtimeParameterAllowedForType,
 } from '@jvalue/language-server';
 import { streamAst } from 'langium';
 
 /**
  * Extracts all required runtime parameter ast nodes.
- * @param model The @see Model ast node
- * @returns a list of @see RuntimeParameter
+ * @param model The @see JayveeModel ast node
+ * @returns a list of @see RuntimeParameterLiteral
  */
 export function extractRequiredRuntimeParameters(
-  model: Model,
-): RuntimeParameter[] {
-  const runtimeParameters: RuntimeParameter[] = [];
+  model: JayveeModel,
+): RuntimeParameterLiteral[] {
+  const runtimeParameters: RuntimeParameterLiteral[] = [];
   streamAst(model).forEach((node) => {
-    if (isRuntimeParameter(node)) {
+    if (isRuntimeParameterLiteral(node)) {
       runtimeParameters.push(node);
     }
   });
@@ -39,7 +43,7 @@ export function extractRequiredRuntimeParameters(
  * @returns all runtime parameters stored as a map if all required ones are present
  */
 export function extractRuntimeParameters(
-  requiredParameters: RuntimeParameter[],
+  requiredParameters: RuntimeParameterLiteral[],
   env: Map<string, string>,
   logger: Logger,
 ): Map<string, string | number | boolean> | undefined {
@@ -57,20 +61,20 @@ export function extractRuntimeParameters(
       continue;
     }
 
-    const type: BlockType | ConstraintType =
+    const type: BlockTypeLiteral | ConstraintTypeLiteral =
       requiredParameter.$container.$container.$container.type;
     const metaInf = getOrFailMetaInformation(type);
-    const attributeName = requiredParameter.$container.name;
+    const propertyName = requiredParameter.$container.name;
 
-    const attributeSpec = metaInf.getAttributeSpecification(attributeName);
+    const propertySpec = metaInf.getPropertySpecification(propertyName);
     assert(
-      attributeSpec !== undefined,
-      `Attribute with name "${attributeName}" is not allowed in ${type.name}`,
+      propertySpec !== undefined,
+      `Property with name "${propertyName}" is not allowed in ${type.name}`,
     );
 
     const parseResult = parseParameterAsMatchingType(
       parameterValue,
-      attributeSpec.type,
+      propertySpec.type,
       requiredParameter,
     );
     if (R.isErr(parseResult)) {
@@ -103,8 +107,8 @@ const FALSE = 'false';
  */
 export function parseParameterAsMatchingType(
   value: string,
-  type: AttributeValueType,
-  astNode: RuntimeParameter,
+  type: PropertyValuetype,
+  astNode: RuntimeParameterLiteral,
 ): R.Result<string | number | boolean> {
   assert(
     runtimeParameterAllowedForType(type),
@@ -112,9 +116,9 @@ export function parseParameterAsMatchingType(
   );
 
   switch (type) {
-    case AttributeValueType.TEXT:
+    case PropertyValuetype.TEXT:
       return R.ok(value);
-    case AttributeValueType.INTEGER:
+    case PropertyValuetype.INTEGER:
       if (!/^[+-]?[1-9][0-9]*$/.test(value)) {
         return R.err({
           message: `Runtime parameter ${astNode.name} has value "${value}" which is not of type integer.`,
@@ -122,7 +126,7 @@ export function parseParameterAsMatchingType(
         });
       }
       return R.ok(Number.parseInt(value, 10));
-    case AttributeValueType.DECIMAL:
+    case PropertyValuetype.DECIMAL:
       if (!/^[+-]?[0-9]+(\.[0-9]+)?$/.test(value)) {
         return R.err({
           message: `Runtime parameter ${astNode.name} has value "${value}" which is not of type decimal.`,
@@ -130,7 +134,7 @@ export function parseParameterAsMatchingType(
         });
       }
       return R.ok(Number.parseFloat(value));
-    case AttributeValueType.BOOLEAN:
+    case PropertyValuetype.BOOLEAN:
       if (value === TRUE) {
         return R.ok(true);
       }

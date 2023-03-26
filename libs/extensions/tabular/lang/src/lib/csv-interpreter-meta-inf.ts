@@ -1,7 +1,11 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import {
-  AttributeValueType,
   BlockMetaInformation,
   IOType,
+  PropertyValuetype,
 } from '@jvalue/language-server';
 
 export class CSVInterpreterMetaInformation extends BlockMetaInformation {
@@ -9,10 +13,10 @@ export class CSVInterpreterMetaInformation extends BlockMetaInformation {
     super(
       // How the block type should be called:
       'CSVInterpreter',
-      // Attribute definitions:
+      // Property definitions:
       {
         delimiter: {
-          type: AttributeValueType.TEXT,
+          type: PropertyValuetype.TEXT,
           defaultValue: ',',
           docs: {
             description: 'The delimiter for values in the CSV file.',
@@ -25,9 +29,25 @@ export class CSVInterpreterMetaInformation extends BlockMetaInformation {
             ],
           },
         },
+        enclosing: {
+          type: PropertyValuetype.TEXT,
+          defaultValue: '',
+          docs: {
+            description:
+              'The enclosing character that may be used for values in the CSV file.',
+          },
+        },
+        enclosingEscape: {
+          type: PropertyValuetype.TEXT,
+          defaultValue: '',
+          docs: {
+            description:
+              'The character to escape enclosing characters in values.',
+          },
+        },
       },
       // Input type:
-      IOType.FILE,
+      IOType.TEXT_FILE,
 
       // Output type:
       IOType.SHEET,

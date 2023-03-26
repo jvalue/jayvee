@@ -1,14 +1,21 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import * as path from 'path';
 
 import * as R from '@jvalue/execution';
 import {
+  BinaryFile,
   BlockExecutor,
-  File,
+  BlockExecutorClass,
+  ExecutionContext,
   FileExtension,
   FileSystem,
   InMemoryFileSystem,
   MimeType,
   err,
+  implementsStatic,
 } from '@jvalue/execution';
 import { IOType } from '@jvalue/language-server';
 import * as JSZip from 'jszip';
@@ -18,19 +25,23 @@ import {
   inferMimeTypeFromContentTypeString,
 } from './file-util';
 
-export class ArchiveInterpreterExecutor extends BlockExecutor<
-  IOType.FILE,
-  IOType.FILE_SYSTEM
-> {
-  constructor() {
-    // Needs to match the name in meta information:
-    super('ArchiveInterpreter', IOType.FILE, IOType.FILE_SYSTEM);
-  }
+@implementsStatic<BlockExecutorClass>()
+export class ArchiveInterpreterExecutor
+  implements BlockExecutor<IOType.FILE, IOType.FILE_SYSTEM>
+{
+  public static readonly type = 'ArchiveInterpreter';
+  public readonly inputType = IOType.FILE;
+  public readonly outputType = IOType.FILE_SYSTEM;
 
-  override async execute(archiveFile: File): Promise<R.Result<FileSystem>> {
-    // Accessing attribute values by their name:
-    if (this.getStringAttributeValue('archiveType') === 'zip') {
-      const fs = await this.loadZipFileToInMemoryFileSystem(archiveFile);
+  async execute(
+    archiveFile: BinaryFile,
+    context: ExecutionContext,
+  ): Promise<R.Result<FileSystem>> {
+    if (context.getTextPropertyValue('archiveType') === 'zip') {
+      const fs = await this.loadZipFileToInMemoryFileSystem(
+        archiveFile,
+        context,
+      );
       if (R.isErr(fs)) {
         return fs;
       }
@@ -38,14 +49,15 @@ export class ArchiveInterpreterExecutor extends BlockExecutor<
     }
     return R.err({
       message: `Archive is not a zip-archive`,
-      diagnostic: { node: this.block, property: 'name' },
+      diagnostic: { node: context.getCurrentNode(), property: 'name' },
     });
   }
 
   private async loadZipFileToInMemoryFileSystem(
-    archiveFile: File,
+    archiveFile: BinaryFile,
+    context: ExecutionContext,
   ): Promise<R.Result<FileSystem>> {
-    this.logger.logDebug(`Loading zip file from binary content`);
+    context.logger.logDebug(`Loading zip file from binary content`);
     try {
       const jszip = JSZip();
       const root = new InMemoryFileSystem();
@@ -65,7 +77,12 @@ export class ArchiveInterpreterExecutor extends BlockExecutor<
           const fileExtension =
             inferFileExtensionFromFileExtensionString(extName) ||
             FileExtension.NONE;
-          const file = new File(fileName, fileExtension, mimeType, content);
+          const file = new BinaryFile(
+            fileName,
+            fileExtension,
+            mimeType,
+            content,
+          );
           root.putFile(relPath, file);
         }
       }
@@ -75,7 +92,7 @@ export class ArchiveInterpreterExecutor extends BlockExecutor<
         message: `Unexpected Error ${
           error instanceof Error ? error.message : JSON.stringify(err)
         } occured during processing`,
-        diagnostic: { node: this.block, property: 'name' },
+        diagnostic: { node: context.getCurrentNode(), property: 'name' },
       });
     }
   }

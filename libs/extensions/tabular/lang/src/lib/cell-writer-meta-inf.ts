@@ -1,9 +1,13 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import {
-  AttributeValueType,
   BlockMetaInformation,
   CellRangeWrapper,
   IOType,
-  isCellRangeValue,
+  PropertyValuetype,
+  isCellRangeLiteral,
   isCellWrapper,
 } from '@jvalue/language-server';
 
@@ -13,7 +17,7 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
       'CellWriter',
       {
         write: {
-          type: AttributeValueType.TEXT,
+          type: PropertyValuetype.TEXT,
           docs: {
             description: 'The value to write.',
             examples: [
@@ -25,21 +29,20 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
           },
         },
         at: {
-          type: AttributeValueType.CELL_RANGE,
-          validation: (attribute, accept) => {
-            const attributeValue = attribute.value;
-            if (!isCellRangeValue(attributeValue)) {
+          type: PropertyValuetype.CELL_RANGE,
+          validation: (property, accept) => {
+            const propertyValue = property.value;
+            if (!isCellRangeLiteral(propertyValue)) {
               return;
             }
-            const cellRange = attributeValue.value;
 
-            if (!CellRangeWrapper.canBeWrapped(cellRange)) {
+            if (!CellRangeWrapper.canBeWrapped(propertyValue)) {
               return;
             }
-            const semanticCelLRange = new CellRangeWrapper(cellRange);
-            if (!isCellWrapper(semanticCelLRange)) {
+            const semanticCellRange = new CellRangeWrapper(propertyValue);
+            if (!isCellWrapper(semanticCellRange)) {
               accept('error', 'A single cell needs to be selected', {
-                node: semanticCelLRange.astNode,
+                node: semanticCellRange.astNode,
               });
             }
           },

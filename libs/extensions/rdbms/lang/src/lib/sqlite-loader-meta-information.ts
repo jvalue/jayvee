@@ -1,7 +1,11 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import {
-  AttributeValueType,
   BlockMetaInformation,
   IOType,
+  PropertyValuetype,
 } from '@jvalue/language-server';
 
 export class SQLiteLoaderMetaInformation extends BlockMetaInformation {
@@ -10,13 +14,13 @@ export class SQLiteLoaderMetaInformation extends BlockMetaInformation {
       'SQLiteLoader',
       {
         table: {
-          type: AttributeValueType.TEXT,
+          type: PropertyValuetype.TEXT,
           docs: {
             description: 'The name of the table to write into.',
           },
         },
         file: {
-          type: AttributeValueType.TEXT,
+          type: PropertyValuetype.TEXT,
           docs: {
             description:
               'The path to the SQLite file that will be created. Usual file extensions are `.sqlite` and `.db`.',

@@ -1,32 +1,33 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 /**
  * See the FAQ section of README.md for an explanation why the following eslint rule is disabled for this file.
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import { ValidationAcceptor, ValidationChecks } from 'langium';
 
-import { JayveeAstType, RangeExpression } from '../../ast/generated/ast';
+import { JayveeAstType, RangeLiteral } from '../../ast/generated/ast';
 import { CellRangeWrapper } from '../../ast/wrappers/cell-range-wrapper';
 import { JayveeValidator } from '../jayvee-validator';
 
 export class CellRangeSelectionValidator implements JayveeValidator {
   get checks(): ValidationChecks<JayveeAstType> {
     return {
-      RangeExpression: [this.checkRangeLimits],
+      RangeLiteral: [this.checkRangeLimits],
     };
   }
 
   checkRangeLimits(
     this: void,
-    rangeExpression: RangeExpression,
+    range: RangeLiteral,
     accept: ValidationAcceptor,
   ): void {
-    if (
-      rangeExpression.cellFrom === undefined ||
-      rangeExpression.cellTo === undefined
-    ) {
+    if (range.cellFrom === undefined || range.cellTo === undefined) {
       return;
     }
-    const semanticCellRange = new CellRangeWrapper(rangeExpression);
+    const semanticCellRange = new CellRangeWrapper(range);
     if (
       semanticCellRange.from.columnIndex > semanticCellRange.to.columnIndex ||
       semanticCellRange.from.rowIndex > semanticCellRange.to.rowIndex

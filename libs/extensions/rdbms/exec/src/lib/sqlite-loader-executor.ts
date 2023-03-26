@@ -1,36 +1,53 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import * as R from '@jvalue/execution';
-import { BlockExecutor, NONE, None, Table } from '@jvalue/execution';
+import {
+  BlockExecutor,
+  BlockExecutorClass,
+  ExecutionContext,
+  NONE,
+  None,
+  Table,
+  implementsStatic,
+} from '@jvalue/execution';
 import { IOType } from '@jvalue/language-server';
 import * as sqlite3 from 'sqlite3';
 
-export class SQLiteLoaderExecutor extends BlockExecutor<
-  IOType.TABLE,
-  IOType.NONE
-> {
-  constructor() {
-    super('SQLiteLoader', IOType.TABLE, IOType.NONE);
-  }
+@implementsStatic<BlockExecutorClass>()
+export class SQLiteLoaderExecutor
+  implements BlockExecutor<IOType.TABLE, IOType.NONE>
+{
+  public static readonly type = 'SQLiteLoader';
+  public readonly inputType = IOType.TABLE;
+  public readonly outputType = IOType.NONE;
 
-  override async execute(input: Table): Promise<R.Result<None>> {
-    const file = this.getStringAttributeValue('file');
-    const table = this.getStringAttributeValue('table');
+  async execute(
+    input: Table,
+    context: ExecutionContext,
+  ): Promise<R.Result<None>> {
+    const file = context.getTextPropertyValue('file');
+    const table = context.getTextPropertyValue('table');
 
     let db: sqlite3.Database | undefined;
 
     try {
-      this.logger.logDebug(`Opening database file ${file}`);
+      context.logger.logDebug(`Opening database file ${file}`);
       db = new sqlite3.Database(file);
 
-      this.logger.logDebug(`Dropping previous table "${table}" if it exists`);
+      context.logger.logDebug(
+        `Dropping previous table "${table}" if it exists`,
+      );
       await this.runQuery(db, Table.generateDropTableStatement(table));
-      this.logger.logDebug(`Creating table "${table}"`);
+      context.logger.logDebug(`Creating table "${table}"`);
       await this.runQuery(db, input.generateCreateTableStatement(table));
-      this.logger.logDebug(
+      context.logger.logDebug(
         `Inserting ${input.getNumberOfRows()} row(s) into table "${table}"`,
       );
       await this.runQuery(db, input.generateInsertValuesStatement(table));
 
-      this.logger.logDebug(
+      context.logger.logDebug(
         `The data was successfully loaded into the database`,
       );
       return R.ok(NONE);
@@ -39,7 +56,7 @@ export class SQLiteLoaderExecutor extends BlockExecutor<
         message: `Could not write to sqlite database: ${
           err instanceof Error ? err.message : JSON.stringify(err)
         }`,
-        diagnostic: { node: this.block, property: 'name' },
+        diagnostic: { node: context.getCurrentNode(), property: 'name' },
       });
     } finally {
       db?.close();

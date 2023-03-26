@@ -1,10 +1,14 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import {
-  AttributeValueType,
   BlockMetaInformation,
   CellRangeWrapper,
   IOType,
-  isCellRangeValue,
-  isCollection,
+  PropertyValuetype,
+  isCellRangeLiteral,
+  isCollectionLiteral,
   isRowWrapper,
   validateTypedCollection,
 } from '@jvalue/language-server';
@@ -15,16 +19,16 @@ export class RowDeleterMetaInformation extends BlockMetaInformation {
       'RowDeleter',
       {
         delete: {
-          type: AttributeValueType.COLLECTION,
-          validation: (attribute, accept) => {
-            const attributeValue = attribute.value;
-            if (!isCollection(attributeValue)) {
+          type: PropertyValuetype.COLLECTION,
+          validation: (property, accept) => {
+            const propertyValue = property.value;
+            if (!isCollectionLiteral(propertyValue)) {
               return;
             }
 
             const { validItems, invalidItems } = validateTypedCollection(
-              attributeValue,
-              isCellRangeValue,
+              propertyValue,
+              isCellRangeLiteral,
             );
 
             invalidItems.forEach((invalidValue) =>
@@ -38,12 +42,10 @@ export class RowDeleterMetaInformation extends BlockMetaInformation {
             );
 
             for (const collectionValue of validItems) {
-              if (!CellRangeWrapper.canBeWrapped(collectionValue.value)) {
+              if (!CellRangeWrapper.canBeWrapped(collectionValue)) {
                 continue;
               }
-              const semanticCellRange = new CellRangeWrapper(
-                collectionValue.value,
-              );
+              const semanticCellRange = new CellRangeWrapper(collectionValue);
               if (!isRowWrapper(semanticCellRange)) {
                 accept('error', 'An entire row needs to be selected', {
                   node: semanticCellRange.astNode,

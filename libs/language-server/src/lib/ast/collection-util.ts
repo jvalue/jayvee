@@ -1,13 +1,21 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { AstNode } from 'langium';
 
-import { AtomicValue, Collection, isCollection } from './generated/ast';
+import {
+  AtomicLiteral,
+  CollectionLiteral,
+  isCollectionLiteral,
+} from './generated/ast';
 import { AstTypeGuard } from './model-util';
 
-export function isTypedCollection<G extends AstTypeGuard<AtomicValue>>(
+export function isTypedCollection<G extends AstTypeGuard<AtomicLiteral>>(
   collection: AstNode,
   collectionItemTypeGuard: G,
-): collection is Collection {
-  if (!isCollection(collection)) {
+): collection is CollectionLiteral {
+  if (!isCollectionLiteral(collection)) {
     return false;
   }
 
@@ -19,11 +27,11 @@ export function isTypedCollection<G extends AstTypeGuard<AtomicValue>>(
 
 export interface TypedCollectionValidation<T> {
   validItems: T[];
-  invalidItems: AtomicValue[];
+  invalidItems: AtomicLiteral[];
 }
 
-export function validateTypedCollection<T extends AtomicValue>(
-  collection: Collection,
+export function validateTypedCollection<T extends AtomicLiteral>(
+  collection: CollectionLiteral,
   collectionItemTypeGuard: AstTypeGuard<T>,
 ): TypedCollectionValidation<T> {
   const validItems: T[] = collection.values.filter(collectionItemTypeGuard);

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+
+SPDX-License-Identifier: AGPL-3.0-only
+-->
+
 # @jvalue/monaco-editor
 
 This library contains a React component that will spawn an instance of the Monaco Editor. This instance can only be used to edit Jayvee language files.

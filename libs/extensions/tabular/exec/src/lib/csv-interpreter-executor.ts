@@ -1,78 +1,97 @@
-import { TextDecoder } from 'util';
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
 
 import { parseString as parseStringAsCsv } from '@fast-csv/parse';
 import { ParserOptionsArgs } from '@fast-csv/parse/build/src/ParserOptions';
 import * as R from '@jvalue/execution';
-import { BlockExecutor, File, FileExtension, Sheet } from '@jvalue/execution';
+import {
+  BlockExecutor,
+  BlockExecutorClass,
+  ExecutionContext,
+  Sheet,
+  TextFile,
+  implementsStatic,
+} from '@jvalue/execution';
 import { IOType } from '@jvalue/language-server';
-import { Either, isLeft } from 'fp-ts/lib/Either';
 import * as E from 'fp-ts/lib/Either';
+import { Either, isLeft } from 'fp-ts/lib/Either';
 
-export class CSVInterpreterExecutor extends BlockExecutor<
-  IOType.FILE,
-  IOType.SHEET
-> {
-  constructor() {
-    // Needs to match the name in meta information:
-    super('CSVInterpreter', IOType.FILE, IOType.SHEET);
-  }
+@implementsStatic<BlockExecutorClass>()
+export class CSVInterpreterExecutor
+  implements BlockExecutor<IOType.TEXT_FILE, IOType.SHEET>
+{
+  public static readonly type = 'CSVInterpreter';
+  public readonly inputType = IOType.TEXT_FILE;
+  public readonly outputType = IOType.SHEET;
 
-  override async execute(file: File): Promise<R.Result<Sheet>> {
-    const delimiter = this.getStringAttributeValue('delimiter');
+  async execute(
+    file: TextFile,
+    context: ExecutionContext,
+  ): Promise<R.Result<Sheet>> {
+    const delimiter = context.getTextPropertyValue('delimiter');
+    const enclosing = context.getTextPropertyValue('enclosing');
+    const enclosingEscape = context.getTextPropertyValue('enclosingEscape');
 
-    if (
-      file.extension === FileExtension.TXT ||
-      file.extension === FileExtension.CSV
-    ) {
-      const decoder = new TextDecoder();
-      const csvFile = decoder.decode(file.content);
-      this.logger.logDebug(
-        `Parsing raw data as CSV using delimiter "${delimiter}"`,
-      );
-
-      const csvData = await parseAsCsv(csvFile, delimiter);
-      if (isLeft(csvData)) {
-        return Promise.resolve(
-          R.err({
-            message: `CSV parse failed: ${csvData.left.message}`,
-            diagnostic: { node: this.block, property: 'name' },
-          }),
-        );
-      }
-      const sheet = new Sheet(csvData.right);
-
-      this.logger.logDebug(`Parsing raw data as CSV-sheet successful`);
-      return Promise.resolve(R.ok(sheet));
-    }
-    return Promise.resolve(
-      R.err({
-        message: `Input file's extensions expected to be ${
-          FileExtension.TXT
-        } or ${FileExtension.CSV} but was ${
-          file.extension === FileExtension.NONE ? 'NONE' : file.extension
-        }`,
-        diagnostic: { node: this.block, property: 'name' },
-      }),
+    context.logger.logDebug(
+      `Parsing raw data as CSV using delimiter "${delimiter}"`,
     );
+
+    const parseOptions: ParserOptionsArgs = {
+      delimiter,
+      quote: enclosing,
+      escape: enclosingEscape,
+    };
+    const csvData = await parseAsCsv(file.content, parseOptions);
+
+    if (isLeft(csvData)) {
+      return Promise.resolve(
+        R.err({
+          message: `CSV parse failed in line ${csvData.left.lineNumber}: ${csvData.left.error.message}`,
+          diagnostic: { node: context.getCurrentNode(), property: 'name' },
+        }),
+      );
+    }
+    const sheet = new Sheet(csvData.right);
+
+    context.logger.logDebug(`Parsing raw data as CSV-sheet successful`);
+    return Promise.resolve(R.ok(sheet));
   }
 }
 
-function parseAsCsv(
-  rawData: string,
-  delimiter: string,
-): Promise<Either<Error, string[][]>> {
+async function parseAsCsv(
+  lines: string[],
+  parseOptions: ParserOptionsArgs,
+): Promise<Either<{ error: Error; lineNumber: number }, string[][]>> {
+  let lineNumber = 1;
+  const rows: string[][] = [];
+  for await (const line of lines) {
+    const rowParseResult = await parseLineAsRow(line, parseOptions);
+    if (isLeft(rowParseResult)) {
+      return E.left({ error: rowParseResult.left, lineNumber });
+    }
+    rows.push(rowParseResult.right);
+
+    ++lineNumber;
+  }
+  return E.right(rows);
+}
+
+async function parseLineAsRow(
+  line: string,
+  parseOptions: ParserOptionsArgs,
+): Promise<Either<Error, string[]>> {
   return new Promise((resolve) => {
-    const csvData: string[][] = [];
-    const parseOptions: ParserOptionsArgs = { delimiter };
-    parseStringAsCsv(rawData, parseOptions)
+    let row: string[];
+    parseStringAsCsv(line, parseOptions)
       .on('data', (data: string[]) => {
-        csvData.push(data);
+        row = data;
       })
       .on('error', (error) => {
         resolve(E.left(error));
       })
       .on('end', () => {
-        resolve(E.right(csvData));
+        resolve(E.right(row));
       });
   });
 }

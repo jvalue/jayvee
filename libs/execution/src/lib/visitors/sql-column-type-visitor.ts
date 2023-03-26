@@ -1,6 +1,10 @@
-import { ValueTypeVisitor } from '../types/value-types/visitors/value-type-visitor';
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
 
-export class SQLColumnTypeVisitor extends ValueTypeVisitor<string> {
+import { ValuetypeVisitor } from '../types/valuetypes/visitors/valuetype-visitor';
+
+export class SQLColumnTypeVisitor extends ValuetypeVisitor<string> {
   override visitBoolean(): string {
     return 'boolean';
   }

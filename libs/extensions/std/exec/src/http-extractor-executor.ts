@@ -1,12 +1,20 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import * as https from 'https';
 import * as path from 'path';
 
 import * as R from '@jvalue/execution';
 import {
+  BinaryFile,
   BlockExecutor,
-  File,
+  BlockExecutorClass,
+  ExecutionContext,
   FileExtension,
   MimeType,
+  None,
+  implementsStatic,
 } from '@jvalue/execution';
 import { IOType } from '@jvalue/language-server';
 
@@ -16,19 +24,21 @@ import {
   inferMimeTypeFromContentTypeString,
 } from './file-util';
 
-export class HttpExtractorExecutor extends BlockExecutor<
-  IOType.NONE,
-  IOType.FILE
-> {
-  constructor() {
-    super('HttpExtractor', IOType.NONE, IOType.FILE);
-  }
+@implementsStatic<BlockExecutorClass>()
+export class HttpExtractorExecutor
+  implements BlockExecutor<IOType.NONE, IOType.FILE>
+{
+  public static readonly type = 'HttpExtractor';
+  public readonly inputType = IOType.NONE;
+  public readonly outputType = IOType.FILE;
 
-  override async execute(): Promise<R.Result<File>> {
-    // Accessing attribute values by their name:
-    const url = this.getStringAttributeValue('url');
+  async execute(
+    input: None,
+    context: ExecutionContext,
+  ): Promise<R.Result<BinaryFile>> {
+    const url = context.getTextPropertyValue('url');
 
-    const file = await this.fetchRawDataAsFile(url);
+    const file = await this.fetchRawDataAsFile(url, context);
 
     if (R.isErr(file)) {
       return file;
@@ -37,8 +47,11 @@ export class HttpExtractorExecutor extends BlockExecutor<
     return R.ok(file.right);
   }
 
-  private fetchRawDataAsFile(url: string): Promise<R.Result<File>> {
-    this.logger.logDebug(`Fetching raw data from ${url}`);
+  private fetchRawDataAsFile(
+    url: string,
+    context: ExecutionContext,
+  ): Promise<R.Result<BinaryFile>> {
+    context.logger.logDebug(`Fetching raw data from ${url}`);
     return new Promise((resolve) => {
       https.get(url, (response) => {
         const responseCode = response.statusCode;
@@ -50,7 +63,7 @@ export class HttpExtractorExecutor extends BlockExecutor<
               message: `HTTP fetch failed with code ${
                 responseCode ?? 'undefined'
               }. Please check your connection.`,
-              diagnostic: { node: this.getOrFailAttribute('url') },
+              diagnostic: { node: context.getOrFailProperty('url') },
             }),
           );
         }
@@ -66,7 +79,7 @@ export class HttpExtractorExecutor extends BlockExecutor<
 
         // When all data is downloaded, create file
         response.on('end', () => {
-          this.logger.logDebug(`Successfully fetched raw data`);
+          context.logger.logDebug(`Successfully fetched raw data`);
           response.headers;
 
           // Infer Mimetype from HTTP-Header, if not inferrable, then default to application/octet-stream
@@ -77,7 +90,7 @@ export class HttpExtractorExecutor extends BlockExecutor<
 
           // Infer FileName and FileExtension from url, if not inferrable, then default to None
           // Get last element of URL assuming this is a filename
-          const url = new URL(this.getStringAttributeValue('url'));
+          const url = new URL(context.getTextPropertyValue('url'));
           let fileName = url.pathname.split('/').pop();
           if (fileName === undefined) {
             fileName = url.pathname.replace('/', '-');
@@ -96,7 +109,7 @@ export class HttpExtractorExecutor extends BlockExecutor<
           }
 
           // Create file and return file
-          const file = new File(
+          const file = new BinaryFile(
             fileName,
             fileExtension,
             mimeType,
@@ -109,7 +122,7 @@ export class HttpExtractorExecutor extends BlockExecutor<
           resolve(
             R.err({
               message: errorObj.message,
-              diagnostic: { node: this.block, property: 'name' },
+              diagnostic: { node: context.getCurrentNode(), property: 'name' },
             }),
           );
         });

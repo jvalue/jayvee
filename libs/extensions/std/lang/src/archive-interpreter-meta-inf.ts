@@ -1,7 +1,11 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import {
-  AttributeValueType,
   BlockMetaInformation,
   IOType,
+  PropertyValuetype,
 } from '@jvalue/language-server';
 
 export class ArchiveInterpreterMetaInformation extends BlockMetaInformation {
@@ -10,10 +14,10 @@ export class ArchiveInterpreterMetaInformation extends BlockMetaInformation {
       // How the block type should be called:
       'ArchiveInterpreter',
 
-      // Attribute definitions:
+      // Property definitions:
       {
         archiveType: {
-          type: AttributeValueType.TEXT,
+          type: PropertyValuetype.TEXT,
           docs: {
             description: 'The archive type to be interpreted, e.g., `"zip"`.',
           },

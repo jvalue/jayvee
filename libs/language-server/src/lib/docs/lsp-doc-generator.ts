@@ -1,33 +1,37 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { BlockMetaInformation } from '../meta-information';
 import { MetaInformation } from '../meta-information/meta-inf';
 
 import {
-  JayveeAttributeDocGenerator,
   JayveeBlockTypeDocGenerator,
+  JayveePropertyDocGenerator,
 } from './jayvee-doc-generator';
 import { MarkdownBuilder } from './markdown-builder';
 
 export class LspDocGenerator
-  implements JayveeBlockTypeDocGenerator, JayveeAttributeDocGenerator
+  implements JayveeBlockTypeDocGenerator, JayveePropertyDocGenerator
 {
   generateBlockTypeDoc(metaInf: BlockMetaInformation): string {
     const markdownBuilder = new MarkdownBuilder();
     return markdownBuilder.line(metaInf.docs.description).build();
   }
 
-  generateAttributeDoc(
+  generatePropertyDoc(
     metaInf: MetaInformation,
-    attributeName: string,
+    propertyName: string,
   ): string | undefined {
     const markdownBuilder = new MarkdownBuilder();
-    const attributeSpec = metaInf.getAttributeSpecification(attributeName);
-    if (attributeSpec === undefined) {
+    const propertySpec = metaInf.getPropertySpecification(propertyName);
+    if (propertySpec === undefined) {
       return undefined;
     }
     return markdownBuilder
-      .line(attributeSpec.docs?.description)
+      .line(propertySpec.docs?.description)
       .newLine()
-      .line(attributeSpec.docs?.validation)
+      .line(propertySpec.docs?.validation)
       .build();
   }
 }

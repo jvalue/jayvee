@@ -1,27 +1,12 @@
-import { ValidationAcceptor } from 'langium';
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
 
-import { Attribute } from '../ast/generated/ast';
-import { AttributeValueType, IOType } from '../ast/model-util';
+// eslint-disable-next-line import/no-cycle
+import { IOType } from '../ast/model-util';
 
-import { MetaInformation } from './meta-inf';
-
-export interface AttributeSpecification {
-  type: AttributeValueType;
-  defaultValue?: unknown;
-  validation?: (attribute: Attribute, accept: ValidationAcceptor) => void;
-  docs?: AttributeDocs;
-}
-
-export interface ExampleDoc {
-  code: string;
-  description: string;
-}
-
-export interface AttributeDocs {
-  description?: string;
-  examples?: ExampleDoc[];
-  validation?: string;
-}
+// eslint-disable-next-line import/no-cycle
+import { ExampleDoc, MetaInformation, PropertySpecification } from './meta-inf';
 
 interface BlockDocs {
   description?: string;
@@ -33,11 +18,11 @@ export abstract class BlockMetaInformation extends MetaInformation {
 
   protected constructor(
     blockType: string,
-    attributes: Record<string, AttributeSpecification>,
+    properties: Record<string, PropertySpecification>,
     public readonly inputType: IOType,
     public readonly outputType: IOType,
   ) {
-    super(blockType, attributes);
+    super(blockType, properties);
   }
 
   canBeConnectedTo(blockAfter: BlockMetaInformation): boolean {

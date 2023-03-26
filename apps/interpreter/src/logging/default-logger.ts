@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { DiagnosticSeverity, Logger } from '@jvalue/execution';
 import * as chalk from 'chalk';
 import { LangiumDocument } from 'langium';
@@ -10,9 +14,13 @@ export class DefaultLogger extends Logger {
 
   constructor(
     private readonly enableDebugLogging: boolean,
-    private readonly loggingContext?: string,
+    private loggingContext?: string,
   ) {
     super();
+  }
+
+  override logInfo(message: string): void {
+    console.log(`${chalk.bold(this.getContext())}${message}`);
   }
 
   override logDebug(message: string): void {
@@ -23,6 +31,10 @@ export class DefaultLogger extends Logger {
 
   override logErr(message: string): void {
     console.error(`${chalk.bold(this.getContext())}${chalk.red(message)}`);
+  }
+
+  override setLoggingContext(loggingContext: string | undefined) {
+    this.loggingContext = loggingContext;
   }
 
   private getContext(): string {

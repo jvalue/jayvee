@@ -1,5 +1,10 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import {
-  BlockMetaInformationClass,
+  BlockMetaInformation,
+  ConstructorClass,
   JayveeLangExtension,
 } from '@jvalue/language-server';
 
@@ -11,7 +16,7 @@ import { RowDeleterMetaInformation } from './lib/row-deleter-meta-inf';
 import { TableInterpreterMetaInformation } from './lib/table-interpreter-meta-inf';
 
 export class TabularLangExtension implements JayveeLangExtension {
-  getBlockMetaInf(): BlockMetaInformationClass[] {
+  getBlockMetaInf(): Array<ConstructorClass<BlockMetaInformation>> {
     return [
       ColumnDeleterMetaInformation,
       RowDeleterMetaInformation,
