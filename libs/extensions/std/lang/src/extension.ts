@@ -14,6 +14,7 @@ import { ArchiveInterpreterMetaInformation } from './archive-interpreter-meta-in
 import { FilePickerMetaInformation } from './file-picker-meta-inf';
 import { HttpExtractorMetaInformation } from './http-extractor-meta-inf';
 import { TextFileInterpreterMetaInformation } from './text-file-interpreter-meta-inf';
+import { TextLineDeleterMetaInformation } from './text-line-deleter-meta-inf';
 import { TextRangeSelectorMetaInformation } from './text-range-selector-meta-inf';
 
 export class StdLangExtension implements JayveeLangExtension {
@@ -28,6 +29,7 @@ export class StdLangExtension implements JayveeLangExtension {
       HttpExtractorMetaInformation,
       TextFileInterpreterMetaInformation,
       TextRangeSelectorMetaInformation,
+      TextLineDeleterMetaInformation,
       ArchiveInterpreterMetaInformation,
       FilePickerMetaInformation,
     ];
