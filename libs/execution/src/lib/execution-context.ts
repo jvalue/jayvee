@@ -8,6 +8,7 @@ import {
   BlockDefinition,
   CellRangeWrapper,
   ConstraintDefinition,
+  NumericLiteral,
   PipelineDefinition,
   PropertyAssignment,
   TextLiteral,
@@ -15,6 +16,7 @@ import {
   getOrFailMetaInformation,
   isCellRangeLiteral,
   isCollectionLiteral,
+  isNumericLiteral,
   isPipelineDefinition,
   isRuntimeParameterLiteral,
   isTextLiteral,
@@ -102,6 +104,16 @@ export class ExecutionContext {
     const propertyValue = this.getPropertyValue(propertyName);
     assert(Array.isArray(propertyValue));
     assert(propertyValue.every(isTextLiteral));
+
+    return propertyValue;
+  }
+
+  public getNumericCollectionPropertyValue(
+    propertyName: string,
+  ): NumericLiteral[] {
+    const propertyValue = this.getPropertyValue(propertyName);
+    assert(Array.isArray(propertyValue));
+    assert(propertyValue.every(isNumericLiteral));
 
     return propertyValue;
   }
