@@ -7,12 +7,12 @@ import { isCollectionLiteral, isTextLiteral } from '../ast/generated/ast';
 import { PropertyValuetype } from '../ast/model-util';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 
-export class BlacklistConstraintMetaInformation extends ConstraintMetaInformation {
+export class AllowlistConstraintMetaInformation extends ConstraintMetaInformation {
   constructor() {
     super(
-      'BlacklistConstraint',
+      'AllowlistConstraint',
       {
-        blacklist: {
+        allowlist: {
           type: PropertyValuetype.COLLECTION,
           validation: (property, accept) => {
             const propertyValue = property.value;
