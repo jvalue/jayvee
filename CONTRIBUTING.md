@@ -20,6 +20,7 @@ It outlines the expectations of behavior and respect that we expect from all con
 
 There are several ways in which you can contribute to Jayvee:
 - Reporting issues or suggesting new features
+- Designing an RFC
 - Writing code
 - Reviewing code
 - Creating and updating documentation
@@ -31,6 +32,12 @@ If you find a bug or have a suggestion for a new feature, please submit an [issu
 Please make sure to include as much information as possible, such as steps to reproduce the issue, error messages, and screenshots. 
 We recommend to use one of the existing issue templates to ensure consistent form of the issues.
 We appreciate any input you have to offer.
+
+
+### Designing an RFC
+
+We use an RFC process to design new language features. Please find the previous RFCs [here](/rfc/). 
+If you want to contribute an RFC, please use the [RFC template](/rfc/0000-rfc-template.md) for guidance and to ensure consistent structure across RFCs. 
 
 
 ### Writing Code
@@ -46,7 +53,7 @@ If you're interested in writing code for Jayvee, please follow these steps:
 8. Submit a pull request to our main repository.
 9. Self-review your pull request. If you have open questions, please add comments to the code accordingly.
 
-Please make sure to include a detailed description of your changes in your pull request. 
+Please make sure to include a detailed description of your changes in your pull request and document additions and change on the language in the [developer docs](/apps/docs//docs/dev/). 
 We appreciate comments explaining why you made specific changes, and any context that may be useful for reviewers.
 
 
