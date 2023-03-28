@@ -2,6 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
+
+import { isBooleanLiteral, isNumericLiteral } from '../ast';
 import { PropertyValuetype } from '../ast/model-util';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 
@@ -28,6 +31,70 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
         },
       },
       ['integer', 'decimal'],
+      (propertyBody, accept) => {
+        const lowerBoundProperty = propertyBody.properties.find(
+          (p) => p.name === 'lowerBound',
+        );
+        const upperBoundProperty = propertyBody.properties.find(
+          (p) => p.name === 'upperBound',
+        );
+
+        if (
+          lowerBoundProperty === undefined ||
+          upperBoundProperty === undefined
+        ) {
+          return;
+        }
+
+        assert(isNumericLiteral(lowerBoundProperty.value));
+        assert(isNumericLiteral(upperBoundProperty.value));
+
+        const lowerBound = lowerBoundProperty.value.value;
+        const upperBound = upperBoundProperty.value.value;
+
+        if (lowerBound > upperBound) {
+          [lowerBoundProperty, upperBoundProperty].forEach((property) => {
+            accept(
+              'error',
+              'The lower bound needs to be smaller or equal to the upper bound',
+              { node: property.value },
+            );
+          });
+        } else if (lowerBound === upperBound) {
+          const lowerBoundInclusiveProperty = propertyBody.properties.find(
+            (p) => p.name === 'lowerBoundInclusive',
+          );
+          let lowerBoundInclusive = true;
+          if (lowerBoundInclusiveProperty !== undefined) {
+            assert(isBooleanLiteral(lowerBoundInclusiveProperty.value));
+            lowerBoundInclusive = lowerBoundInclusiveProperty.value.value;
+          }
+
+          const upperBoundInclusiveProperty = propertyBody.properties.find(
+            (p) => p.name === 'upperBoundInclusive',
+          );
+          let upperBoundInclusive = true;
+          if (upperBoundInclusiveProperty !== undefined) {
+            assert(isBooleanLiteral(upperBoundInclusiveProperty.value));
+            upperBoundInclusive = upperBoundInclusiveProperty.value.value;
+          }
+
+          const errorMessage =
+            'Lower and upper bounds need to be inclusive if they are identical';
+          if (!lowerBoundInclusive) {
+            accept('error', errorMessage, {
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              node: lowerBoundInclusiveProperty!.value,
+            });
+          }
+          if (!upperBoundInclusive) {
+            accept('error', errorMessage, {
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              node: upperBoundInclusiveProperty!.value,
+            });
+          }
+        }
+      },
     );
   }
 }

@@ -154,7 +154,7 @@ export class PropertyBodyValidator implements JayveeValidator {
     if (metaInf === undefined) {
       return;
     }
-    metaInf.validate(propertyBody.properties, accept);
+    metaInf.validate(propertyBody, accept);
   }
 }
 

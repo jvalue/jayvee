@@ -2,6 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
+
+import { ValidationAcceptor } from 'langium';
+
+import { PropertyAssignment, isNumericLiteral } from '../ast';
 import { PropertyValuetype } from '../ast/model-util';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 
@@ -13,13 +18,60 @@ export class LengthConstraintMetaInformation extends ConstraintMetaInformation {
         minLength: {
           type: PropertyValuetype.INTEGER,
           defaultValue: 0,
+          validation: nonNegativeValidation,
         },
         maxLength: {
           type: PropertyValuetype.INTEGER,
           defaultValue: Number.POSITIVE_INFINITY,
+          validation: nonNegativeValidation,
         },
       },
       ['text'],
+      (propertyBody, accept) => {
+        const minLengthProperty = propertyBody.properties.find(
+          (p) => p.name === 'minLength',
+        );
+        const maxLengthProperty = propertyBody.properties.find(
+          (p) => p.name === 'maxLength',
+        );
+
+        if (
+          minLengthProperty === undefined ||
+          maxLengthProperty === undefined
+        ) {
+          return;
+        }
+
+        assert(isNumericLiteral(minLengthProperty.value));
+        assert(isNumericLiteral(maxLengthProperty.value));
+
+        const minLength = minLengthProperty.value.value;
+        const maxLength = maxLengthProperty.value.value;
+
+        if (minLength > maxLength) {
+          [minLengthProperty, maxLengthProperty].forEach((property) => {
+            accept(
+              'error',
+              'The minimum length needs to be smaller or equal to the maximum length',
+              { node: property.value },
+            );
+          });
+        }
+      },
     );
+  }
+}
+
+function nonNegativeValidation(
+  property: PropertyAssignment,
+  accept: ValidationAcceptor,
+) {
+  const propertyValue = property.value;
+  assert(isNumericLiteral(propertyValue));
+
+  if (propertyValue.value < 0) {
+    accept('error', `Bounds for length need to be equal or greater than zero`, {
+      node: propertyValue,
+    });
   }
 }
