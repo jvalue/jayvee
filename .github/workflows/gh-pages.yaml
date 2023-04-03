@@ -1,9 +1,13 @@
+# SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
 name: Deploy Docs to GitHub Pages
 
 on: 
   push:
     branches:
-      - main
+      - deploy-gh-pages # - main
   workflow_dispatch:
 
 permissions:
