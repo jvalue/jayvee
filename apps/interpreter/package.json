@@ -1,5 +1,5 @@
 {
-  "name": "@jvalue/interpreter",
+  "name": "@jvalue/jayvee-interpreter",
   "version": "0.0.12",
   "description": "Interpreter for .jv files",
   "main": "main.js",
@@ -16,7 +16,7 @@
   },
   "homepage": "https://github.com/jvalue/jayvee",
   "publishConfig": {
-    "access": "restricted",
-    "registry": "https://npm.pkg.github.com"
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   }
 }

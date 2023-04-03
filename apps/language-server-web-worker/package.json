@@ -1,5 +1,5 @@
 {
-  "name": "@jvalue/language-server-web-worker",
+  "name": "@jvalue/jayvee-language-server-web-worker",
   "version": "0.0.12",
   "main": "main.js",
   "bugs": {
@@ -11,7 +11,7 @@
   },
   "homepage": "https://github.com/jvalue/jayvee",
   "publishConfig": {
-    "access": "restricted",
-    "registry": "https://npm.pkg.github.com"
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   }
 }
