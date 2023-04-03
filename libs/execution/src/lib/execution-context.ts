@@ -21,7 +21,7 @@ import {
   isRuntimeParameterLiteral,
   isTextLiteral,
   isValuetypeAssignmentLiteral,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 import { isReference } from 'langium';
 
 import { Logger } from './logger';

@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
 SPDX-License-Identifier: AGPL-3.0-only
 -->
 
-# @jvalue/monaco-editor
+# Jayvee Monaco Editor
 
 This library contains a React component that will spawn an instance of the Monaco Editor. This instance can only be used to edit Jayvee language files.
 
@@ -13,7 +13,7 @@ This library contains a React component that will spawn an instance of the Monac
 Install both the monaco editor and the language server via `npm`:
 
 ```bash
-npm install @jvalue/monaco-editor @jvalue/language-server-web-worker
+npm install @jvalue/jayvee-monaco @jvalue/jayvee-language-server-web-worker
 ```
 
 Enable Web Workers in your React project as the language server will run in its own Web Worker.
@@ -32,7 +32,7 @@ The following sample code spawns an instance of the monaco editor and runs the c
 language server in a separate Web Worker:
 
 ```tsx
-import { MonacoEditor } from '@jvalue/monaco-editor';
+import { MonacoEditor } from '@jvalue/jayvee-monaco';
 import React from 'react';
 
 function startJayveeWorker(): Worker {
@@ -57,11 +57,11 @@ export const EditorExample: React.FC = () => {
 ```
 
 In case you bundle your React app with webpack, you are able to use a hard-coded relative path to the `main.js` file
-included in `@jvalue/language-server-web-worker`.
-Such a path looks like `../../node_modules/@jvalue/language-server-web-worker/main.js` but probably needs 
+included in `@jvalue/jayvee-language-server-web-worker`.
+Such a path looks like `../../node_modules/@jvalue/jayvee-language-server-web-worker/main.js` but probably needs 
 slight adjustments, so it navigates to the desired file location.
 
-Alternatively, you can host the `main.js` file of `@jvalue/language-server-web-worker` and make it available under a 
+Alternatively, you can host the `main.js` file of `@jvalue/jayvee-language-server-web-worker` and make it available under a 
 certain URL.
 Then, you can use that URL for instantiating the Web Worker instead of the previously mentioned file path.
 
@@ -92,7 +92,7 @@ required in a later step.
 To build and pack the monaco editor, navigate to the project root folder and run
 
 ```bash
-npx nx pack @jvalue/monaco-editor
+npx nx pack @jvalue/jayvee-monaco
 ```
 
 Now, in the directory `<jayvee project
@@ -114,7 +114,7 @@ and add the following dependency:
 
 ```
   "dependencies": {
-    "@jvalue/monaco-editor": "file:../../../jayvee/dist/libs/monaco-editor/jvalue-monaco-editor-0.0.0.tgz"
+    "@jvalue/jayvee-monaco": "file:../../../jayvee/dist/libs/monaco-editor/jvalue-monaco-editor-0.0.0.tgz"
   },
 ```
 
@@ -145,7 +145,7 @@ lib array:
 Now, create a new file `my-editor.tsx` where the actual editor will be contained. Add the following file content:
 
 ```tsx
-import { MonacoEditor } from '@jvalue/monaco-editor';
+import { MonacoEditor } from '@jvalue/jayvee-monaco';
 import React from 'react';
 
 const exampleCode = 'Add example code here';

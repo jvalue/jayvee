@@ -1,5 +1,5 @@
 {
-  "name": "@jvalue/jayvee-language-server",
+  "name": "language-server",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/language-server/src",
   "projectType": "library",
@@ -42,7 +42,7 @@
       "dependsOn": ["build"],
       "options": {
         "commands": [
-          "node tools/scripts/relax-peer-dependency-versions.mjs @jvalue/language-server"
+          "node tools/scripts/relax-peer-dependency-versions.mjs @jvalue/jayvee-language-server"
         ]
       }
     },
@@ -51,7 +51,7 @@
       "dependsOn": ["pre-publish"],
       "options": {
         "commands": [
-          "node tools/scripts/publish.mjs @jvalue/language-server"
+          "node tools/scripts/publish.mjs @jvalue/jayvee-language-server"
         ]
       }
     },
@@ -60,7 +60,7 @@
       "dependsOn": ["pre-publish"],
       "options": {
         "commands": [
-          "node tools/scripts/pack.mjs @jvalue/language-server"
+          "node tools/scripts/pack.mjs @jvalue/jayvee-language-server"
         ]
       }
     }

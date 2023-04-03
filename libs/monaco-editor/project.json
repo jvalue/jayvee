@@ -1,5 +1,5 @@
 {
-  "name": "@jvalue/jayvee-monaco",
+  "name": "jayvee-monaco",
   "sourceRoot": "libs/monaco-editor/src",
   "projectType": "library",
   "tags": [],
@@ -44,9 +44,9 @@
       "dependsOn": ["build"],
       "options": {
         "commands": [
-          "node tools/scripts/relax-peer-dependency-versions.mjs @jvalue/monaco-editor",
-          "node tools/scripts/monaco-editor/delete-vscode-peer-dependency.mjs @jvalue/monaco-editor",
-          "node tools/scripts/monaco-editor/relax-react-version.mjs @jvalue/monaco-editor"
+          "node tools/scripts/relax-peer-dependency-versions.mjs @jvalue/jayvee-monaco",
+          "node tools/scripts/monaco-editor/delete-vscode-peer-dependency.mjs @jvalue/jayvee-monaco",
+          "node tools/scripts/monaco-editor/relax-react-version.mjs @jvalue/jayvee-monaco"
         ],
         "parallel": false
       }
@@ -56,7 +56,7 @@
       "dependsOn": ["pre-publish"],
       "options": {
         "commands": [
-          "node tools/scripts/publish.mjs @jvalue/monaco-editor"
+          "node tools/scripts/publish.mjs @jvalue/jayvee-monaco"
         ]
       }
     },
@@ -65,7 +65,7 @@
       "dependsOn": ["pre-publish"],
       "options": {
         "commands": [
-          "node tools/scripts/pack.mjs @jvalue/monaco-editor"
+          "node tools/scripts/pack.mjs @jvalue/jayvee-monaco"
         ]
       }
     }

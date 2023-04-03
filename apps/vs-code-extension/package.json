@@ -1,5 +1,5 @@
 {
-  "name": "jayvee",
+  "name": "@jvalue/jayvee-vscode-extension",
   "displayName": "Jayvee",
   "description": "Support for the Jayvee language",
   "version": "0.0.12",

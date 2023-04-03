@@ -6,7 +6,7 @@ import {
   PrimitiveValuetypeKeywordLiteral,
   ValuetypeDefinitionReference,
   isValuetypeDefinitionReference,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 import { assertUnreachable } from 'langium/lib/utils/errors';
 
 import { AtomicValuetype } from './atomic-valuetype';

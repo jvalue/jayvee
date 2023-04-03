@@ -4,7 +4,7 @@
 
 import { strict as assert } from 'assert';
 
-import { ConstraintDefinition, Registry } from '@jvalue/language-server';
+import { ConstraintDefinition, Registry } from '@jvalue/jayvee-language-server';
 
 import { ConstraintExecutor } from './constraint-executor';
 import { ConstraintExecutorClass } from './constraint-executor-class';

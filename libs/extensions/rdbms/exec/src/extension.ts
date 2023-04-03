@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { BlockExecutorClass, JayveeExecExtension } from '@jvalue/execution';
+import { BlockExecutorClass, JayveeExecExtension } from '@jvalue/jayvee-execution';
 
 import { PostgresLoaderExecutor, SQLiteLoaderExecutor } from './lib';
 

@@ -7,7 +7,7 @@ import {
   ValuetypeDefinition,
   isConstraintReferenceLiteral,
   validateTypedCollection,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 
 import { createConstraintExecutor } from '../../constraints/constraint-executor-registry';
 import { ExecutionContext } from '../../execution-context';

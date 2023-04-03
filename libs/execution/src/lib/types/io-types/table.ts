@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { IOType } from '@jvalue/language-server';
+import { IOType } from '@jvalue/jayvee-language-server';
 
 import { SQLColumnTypeVisitor } from '../../visitors/sql-column-type-visitor';
 import { SQLValueRepresentationVisitor } from '../../visitors/sql-value-representation-visitor';

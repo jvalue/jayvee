@@ -5,7 +5,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { Logger } from '@jvalue/execution';
+import { Logger } from '@jvalue/jayvee-execution';
 import { AstNode, LangiumDocument, LangiumServices } from 'langium';
 import { DiagnosticSeverity } from 'vscode-languageserver-protocol';
 import { URI } from 'vscode-uri';

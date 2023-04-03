@@ -11,7 +11,7 @@ import {
   isCollectionLiteral,
   isNumericLiteral,
   validateTypedCollection,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 
 export class TextLineDeleterMetaInformation extends BlockMetaInformation {
   constructor() {
