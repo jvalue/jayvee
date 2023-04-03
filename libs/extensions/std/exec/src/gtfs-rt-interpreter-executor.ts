@@ -13,7 +13,7 @@ import {
 } from '@jvalue/execution';
 import { IOType } from '@jvalue/language-server';
 import * as E from 'fp-ts/lib/Either';
-import { Either, isLeft } from 'fp-ts/lib/Either';
+import { Either } from 'fp-ts/lib/Either';
 import * as GtfsRealtimeBindings from 'gtfs-realtime-bindings';
 
 @implementsStatic<BlockExecutorClass>()
@@ -39,24 +39,27 @@ export class GtfsRTInterpreterExecutor
 
     // Parse all possible feedentity to Sheet
     const sheet = await this.parseFeedMessage(entity, feedMessage, context);
-    if (R.isErr(sheet)) {
-      return sheet;
+    if (E.isLeft(sheet)) {
+      return Promise.resolve(
+        R.err({
+          message: sheet.left.message,
+          diagnostic: { node: context.getCurrentNode(), property: 'name' },
+        }),
+      );
     }
-
     return R.ok(sheet.right);
   }
 
-  private parseFeedMessage(
+  private async parseFeedMessage(
     entity_type: string,
     feedMessage: GtfsRealtimeBindings.transit_realtime.FeedMessage,
     context: ExecutionContext,
-  ): Promise<R.Result<Sheet>> {
+  ): Promise<Either<Error, Sheet>> {
     return new Promise((resolve) => {
-      let data: Promise<E.Either<Error, string[][]>>;
       switch (entity_type) {
         case 'trip_update':
           // Extract the trip updates from thee feed message
-          data = this.parseTripUpdates(feedMessage);
+          resolve(this.parseTripUpdates(feedMessage, context));
           break;
         case 'alert':
           // TODO;
@@ -67,22 +70,18 @@ export class GtfsRTInterpreterExecutor
 
         // No entitiy detected -> error
         default:
-          resolve(
-            R.err({
-              message: `For parsing GTFS-RT data provide an entity to parse such as "trip_update", "alert" or "vehicle"`,
-              diagnostic: { node: context.getCurrentNode(), property: 'name' },
-            }),
-          );
+          resolve(E.left(new Error('No entity detected in GTFS-RT-Feed. ')));
           break;
       }
-      resolve(R.ok(new Sheet()));
     });
   }
 
   private parseTripUpdates(
     feedMessage: GtfsRealtimeBindings.transit_realtime.FeedMessage,
-  ): Promise<Either<Error, string[][]>> {
+    context: ExecutionContext,
+  ): Promise<Either<Error, Sheet>> {
     return new Promise((resolve) => {
+      context.logger.logDebug(`Parsing raw data as TripUpdates"`);
       const header: string[] = Object.keys({} as TripUpdates);
       const rows: string[][] = [];
       rows.push(header);
@@ -120,13 +119,27 @@ export class GtfsRTInterpreterExecutor
               rows.push(Object.values(tripUpdate) as string[]);
             }
           } else {
-            // TODO: Error case with left
+            // TODO: Should we continue here or break?
+            resolve(
+              E.left(
+                new Error(
+                  'Error when parsing TripUpdates: Array stop_times_Update does not exist',
+                ),
+              ),
+            );
           }
         } else {
-          // TODO: Error case with left
+          // TODO: Should we continue here or break?
+          resolve(
+            E.left(
+              new Error(
+                'Error when parsing TripUpdates: TripUpdates does not exist',
+              ),
+            ),
+          );
         }
       }
-      resolve(E.right(rows));
+      resolve(E.right(new Sheet(rows)));
     });
   }
 }
