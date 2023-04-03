@@ -144,6 +144,7 @@ export class GtfsRTInterpreterExecutor
   }
 }
 
+// This interface has to match with schema defined in downstream TableInterpreter
 interface TripUpdates {
   'header.gtfs_realtime_version': string;
   'header.timestamp': string;
