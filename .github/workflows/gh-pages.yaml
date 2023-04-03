@@ -7,7 +7,7 @@ name: Deploy Docs to GitHub Pages
 on: 
   push:
     branches:
-      - deploy-gh-pages # - main
+      - main
   workflow_dispatch:
 
 permissions:
