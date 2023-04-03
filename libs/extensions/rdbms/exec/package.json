@@ -1,5 +1,5 @@
 {
-  "name": "@jvalue/extensions/rdbms/exec",
+  "name": "@jvalue/jayvee-extensions/rdbms/exec",
   "version": "0.0.1",
   "type": "commonjs"
 }

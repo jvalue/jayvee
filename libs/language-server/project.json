@@ -1,5 +1,5 @@
 {
-  "name": "@jvalue/language-server",
+  "name": "@jvalue/jayvee-language-server",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/language-server/src",
   "projectType": "library",

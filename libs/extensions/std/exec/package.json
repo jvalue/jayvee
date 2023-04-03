@@ -1,5 +1,5 @@
 {
-  "name": "@jvalue/extensions/std/exec",
+  "name": "@jvalue/jayvee-extensions/std/exec",
   "version": "0.0.1",
   "type": "commonjs",
   "devDependencies": {
