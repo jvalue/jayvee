@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 pipeline GtfsRTSimplePipeline {
 	block GTFSRTFeedExtractor oftype HttpExtractor {
 		url: "https://proxy.transport.data.gouv.fr/resource/bibus-brest-gtfs-rt-trip-update";
