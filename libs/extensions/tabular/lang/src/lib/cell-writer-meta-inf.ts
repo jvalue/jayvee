@@ -9,7 +9,7 @@ import {
   PropertyValuetype,
   isCellRangeLiteral,
   isCellWrapper,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 
 export class CellWriterMetaInformation extends BlockMetaInformation {
   constructor() {

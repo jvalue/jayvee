@@ -4,7 +4,7 @@
 
 import { strict as assert } from 'assert';
 
-import { PrimitiveValuetypeKeywordLiteral } from '@jvalue/language-server';
+import { PrimitiveValuetypeKeywordLiteral } from '@jvalue/jayvee-language-server';
 
 // eslint-disable-next-line import/no-cycle
 import { ValuetypeVisitor } from '../visitors/valuetype-visitor';

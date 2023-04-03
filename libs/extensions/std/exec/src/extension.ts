@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { BlockExecutorClass, JayveeExecExtension } from '@jvalue/execution';
-import { RdbmsExecExtension } from '@jvalue/extensions/rdbms/exec';
-import { TabularExecExtension } from '@jvalue/extensions/tabular/exec';
+import { BlockExecutorClass, JayveeExecExtension } from '@jvalue/jayvee-execution';
+import { RdbmsExecExtension } from '@jvalue/jayvee-extensions/rdbms/exec';
+import { TabularExecExtension } from '@jvalue/jayvee-extensions/tabular/exec';
 
 import { ArchiveInterpreterExecutor } from './archive-interpreter-executor';
 import { FilePickerExecutor } from './file-picker-executor';

@@ -5,7 +5,7 @@
 import {
   getRegisteredConstraintMetaInformation,
   registerConstraints,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 
 import {
   getRegisteredConstraintExecutors,

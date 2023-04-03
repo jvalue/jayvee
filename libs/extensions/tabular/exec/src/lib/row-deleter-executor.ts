@@ -4,21 +4,21 @@
 
 import { strict as assert } from 'assert';
 
-import * as R from '@jvalue/execution';
+import * as R from '@jvalue/jayvee-execution';
 import {
   BlockExecutor,
   BlockExecutorClass,
   ExecutionContext,
   Sheet,
   implementsStatic,
-} from '@jvalue/execution';
+} from '@jvalue/jayvee-execution';
 import {
   IOType,
   RowWrapper,
   getRowIndex,
   isRowWrapper,
   rowIndexToString,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
 export class RowDeleterExecutor

@@ -6,7 +6,7 @@ import {
   BlockMetaInformation,
   ConstructorClass,
   JayveeLangExtension,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 
 import { CellRangeSelectorMetaInformation } from './lib/cell-range-selector-meta-inf';
 import { CellWriterMetaInformation } from './lib/cell-writer-meta-inf';

@@ -4,7 +4,7 @@
 
 import { strict as assert } from 'assert';
 
-import { BlockDefinition, Registry } from '@jvalue/language-server';
+import { BlockDefinition, Registry } from '@jvalue/jayvee-language-server';
 
 import { BlockExecutor } from './block-executor';
 import { BlockExecutorClass } from './block-executor-class';

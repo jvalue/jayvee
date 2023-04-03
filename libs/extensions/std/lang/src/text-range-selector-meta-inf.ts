@@ -10,7 +10,7 @@ import {
   PropertyAssignment,
   PropertyValuetype,
   isNumericLiteral,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 import { ValidationAcceptor } from 'langium';
 
 export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
