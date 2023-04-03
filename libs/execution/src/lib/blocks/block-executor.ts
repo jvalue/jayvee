@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { IOType } from '@jvalue/language-server';
+import { IOType } from '@jvalue/jayvee-language-server';
 
 import { ExecutionContext } from '../execution-context';
 import { IOTypeImplementation } from '../types/io-types/io-type-implementation';

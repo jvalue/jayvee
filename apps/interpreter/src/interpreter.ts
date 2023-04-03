@@ -10,10 +10,10 @@ import {
   createBlockExecutor,
   registerDefaultConstraintExecutors,
   useExtension as useExecutionExtension,
-} from '@jvalue/execution';
-import * as R from '@jvalue/execution';
-import { StdExecExtension } from '@jvalue/extensions/std/exec';
-import { StdLangExtension } from '@jvalue/extensions/std/lang';
+} from '@jvalue/jayvee-execution';
+import * as R from '@jvalue/jayvee-execution';
+import { StdExecExtension } from '@jvalue/jayvee-extensions/std/exec';
+import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
 import {
   BlockDefinition,
   JayveeModel,
@@ -24,7 +24,7 @@ import {
   createJayveeServices,
   getBlocksInTopologicalSorting,
   useExtension as useLangExtension,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 import * as chalk from 'chalk';
 import { NodeFileSystem } from 'langium/node';
 

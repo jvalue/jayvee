@@ -47,7 +47,7 @@ import {
   BlockMetaInformation,
   ConstructorClass,
   JayveeLangExtension,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 
 export class MyLangExtension implements JayveeLangExtension {
   getBlockMetaInf(): Array<ConstructorClass<BlockMetaInformation>> {
@@ -60,7 +60,7 @@ export class MyLangExtension implements JayveeLangExtension {
 In `libs/extensions/<extension-name>/exec/src/extension.ts`:
 
 ```typescript
-import { BlockExecutorClass, JayveeExecExtension } from '@jvalue/execution';
+import { BlockExecutorClass, JayveeExecExtension } from '@jvalue/jayvee-execution';
 
 export class MyExecExtension implements JayveeExecExtension {
   getBlockExecutors(): BlockExecutorClass[] {
@@ -90,7 +90,7 @@ In `libs/extensions/std/lang/src/extension.ts`:
 ```typescript
 // ...
 
-import { MyLangExtension } from '@jvalue/extensions/<extension-name>/lang';
+import { MyLangExtension } from '@jvalue/jayvee-extensions/<extension-name>/lang';
 
 export class StdLangExtension implements JayveeLangExtension {
   private readonly wrappedExtensions: JayveeLangExtension[] = [
@@ -109,7 +109,7 @@ In `libs/extensions/std/exec/src/extension.ts`:
 ```typescript
 // ...
 
-import { MyExecExtension } from '@jvalue/extensions/<extension-name>/exec';
+import { MyExecExtension } from '@jvalue/jayvee-extensions/<extension-name>/exec';
 
 export class StdExecExtension implements JayveeExecExtension {
   private readonly wrappedExtensions: JayveeExecExtension[] = [
@@ -141,7 +141,7 @@ import {
   BlockMetaInformation,
   IOType,
   PropertyValuetype,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 
 export class MyExtractorMetaInformation extends BlockMetaInformation {
   constructor() {
@@ -206,14 +206,14 @@ The `execute` method defines the behavior when a block is executed. Its signatur
 In `libs/extensions/<extension-name>/exec/src/lib/my-extractor-executor.ts`:
 
 ```typescript
-import * as R from '@jvalue/execution';
+import * as R from '@jvalue/jayvee-execution';
 import {
   BlockExecutor,
   BlockExecutorClass,
   ExecutionContext,
   Sheet,
   implementsStatic,
-} from '@jvalue/execution';
+} from '@jvalue/jayvee-execution';
 
 @implementsStatic<BlockExecutorClass>()
 export class MyExtractorExecutor

@@ -4,8 +4,8 @@
 
 import { strict as assert } from 'assert';
 
-import * as R from '@jvalue/execution';
-import { Logger } from '@jvalue/execution';
+import * as R from '@jvalue/jayvee-execution';
+import { Logger } from '@jvalue/jayvee-execution';
 import {
   BlockTypeLiteral,
   ConstraintTypeLiteral,
@@ -15,7 +15,7 @@ import {
   getOrFailMetaInformation,
   isRuntimeParameterLiteral,
   runtimeParameterAllowedForType,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 import { streamAst } from 'langium';
 
 /**

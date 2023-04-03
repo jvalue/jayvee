@@ -6,7 +6,7 @@ import {
   AstNodeWrapper,
   PrimitiveValuetypeKeywordLiteral,
   ValuetypeDefinition,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 
 import { ExecutionContext } from '../../execution-context';
 

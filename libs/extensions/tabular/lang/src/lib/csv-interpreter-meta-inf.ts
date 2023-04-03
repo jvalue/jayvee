@@ -6,7 +6,7 @@ import {
   BlockMetaInformation,
   IOType,
   PropertyValuetype,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 
 export class CSVInterpreterMetaInformation extends BlockMetaInformation {
   constructor() {

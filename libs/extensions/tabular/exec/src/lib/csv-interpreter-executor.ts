@@ -4,7 +4,7 @@
 
 import { parseString as parseStringAsCsv } from '@fast-csv/parse';
 import { ParserOptionsArgs } from '@fast-csv/parse/build/src/ParserOptions';
-import * as R from '@jvalue/execution';
+import * as R from '@jvalue/jayvee-execution';
 import {
   BlockExecutor,
   BlockExecutorClass,
@@ -12,8 +12,8 @@ import {
   Sheet,
   TextFile,
   implementsStatic,
-} from '@jvalue/execution';
-import { IOType } from '@jvalue/language-server';
+} from '@jvalue/jayvee-execution';
+import { IOType } from '@jvalue/jayvee-language-server';
 import * as E from 'fp-ts/lib/Either';
 import { Either, isLeft } from 'fp-ts/lib/Either';
 

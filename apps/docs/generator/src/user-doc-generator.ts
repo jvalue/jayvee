@@ -9,7 +9,7 @@ import {
   JayveeBlockTypeDocGenerator,
   MarkdownBuilder,
   PropertySpecification,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 
 export class UserDocGenerator implements JayveeBlockTypeDocGenerator {
   generateBlockTypeDoc(metaInf: BlockMetaInformation): string {

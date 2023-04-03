@@ -4,7 +4,7 @@
 
 import * as path from 'path';
 
-import * as R from '@jvalue/execution';
+import * as R from '@jvalue/jayvee-execution';
 import {
   BinaryFile,
   BlockExecutor,
@@ -16,8 +16,8 @@ import {
   MimeType,
   err,
   implementsStatic,
-} from '@jvalue/execution';
-import { IOType } from '@jvalue/language-server';
+} from '@jvalue/jayvee-execution';
+import { IOType } from '@jvalue/jayvee-language-server';
 import * as JSZip from 'jszip';
 
 import {

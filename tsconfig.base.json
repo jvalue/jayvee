@@ -23,23 +23,23 @@
     "strictNullChecks": true,
     "baseUrl": ".",
     "paths": {
-      "@jvalue/execution": ["libs/execution/src/index.ts"],
-      "@jvalue/extensions/rdbms/exec": [
+      "@jvalue/jayvee-execution": ["libs/execution/src/index.ts"],
+      "@jvalue/jayvee-extensions/rdbms/exec": [
         "libs/extensions/rdbms/exec/src/index.ts"
       ],
-      "@jvalue/extensions/rdbms/lang": [
+      "@jvalue/jayvee-extensions/rdbms/lang": [
         "libs/extensions/rdbms/lang/src/index.ts"
       ],
-      "@jvalue/extensions/std/exec": ["libs/extensions/std/exec/src/index.ts"],
-      "@jvalue/extensions/std/lang": ["libs/extensions/std/lang/src/index.ts"],
-      "@jvalue/extensions/tabular/exec": [
+      "@jvalue/jayvee-extensions/std/exec": ["libs/extensions/std/exec/src/index.ts"],
+      "@jvalue/jayvee-extensions/std/lang": ["libs/extensions/std/lang/src/index.ts"],
+      "@jvalue/jayvee-extensions/tabular/exec": [
         "libs/extensions/tabular/exec/src/index.ts"
       ],
-      "@jvalue/extensions/tabular/lang": [
+      "@jvalue/jayvee-extensions/tabular/lang": [
         "libs/extensions/tabular/lang/src/index.ts"
       ],
-      "@jvalue/language-server": ["libs/language-server/src/index.ts"],
-      "@jvalue/monaco-editor": ["libs/monaco-editor/src/index.ts"]
+      "@jvalue/jayvee-language-server": ["libs/language-server/src/index.ts"],
+      "@jvalue/jayvee-monaco": ["libs/monaco-editor/src/index.ts"]
     }
   }
 }

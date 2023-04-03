@@ -2,13 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { RdbmsLangExtension } from '@jvalue/extensions/rdbms/lang';
-import { TabularLangExtension } from '@jvalue/extensions/tabular/lang';
+import { RdbmsLangExtension } from '@jvalue/jayvee-extensions/rdbms/lang';
+import { TabularLangExtension } from '@jvalue/jayvee-extensions/tabular/lang';
 import {
   BlockMetaInformation,
   ConstructorClass,
   JayveeLangExtension,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 
 import { ArchiveInterpreterMetaInformation } from './archive-interpreter-meta-inf';
 import { FilePickerMetaInformation } from './file-picker-meta-inf';

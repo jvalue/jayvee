@@ -6,7 +6,7 @@ import {
   PropertyValuetype,
   RuntimeParameterLiteral,
   runtimeParameterAllowedForType,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 
 import { parseParameterAsMatchingType } from './runtime-parameter-util';
 
