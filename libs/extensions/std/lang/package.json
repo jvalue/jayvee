@@ -1,5 +1,5 @@
 {
-  "name": "@jvalue/extensions/std/lang",
+  "name": "@jvalue/jayvee-extensions/std/lang",
   "version": "0.0.1",
   "type": "commonjs"
 }
