@@ -62,10 +62,10 @@ export class GtfsRTInterpreterExecutor
           resolve(this.parseTripUpdates(feedMessage, context));
           break;
         case 'alert':
-          // TODO;
+          // TODO: parse alert;
           break;
         case 'vehicle':
-          // TODO;
+          // TODO: parse vehicle;
           break;
 
         // No entitiy detected -> error
