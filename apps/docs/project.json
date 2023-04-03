@@ -33,7 +33,7 @@
     "prepare-generator": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["nx run @jvalue/language-server:generate"]
+        "commands": ["nx run language-server:generate"]
       }
     },
     "generate": {
