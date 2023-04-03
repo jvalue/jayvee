@@ -24,7 +24,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: npm ci
       - name: Publish language server
-        run: npx nx run @jvalue/language-server:publish
+        run: npx nx run language-server:publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish interpreter
@@ -36,7 +36,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish monaco editor
-        run: npx nx run @jvalue/monaco-editor:publish
+        run: npx nx run monaco-editor:publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Pack VS Code extension
