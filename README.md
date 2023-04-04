@@ -6,6 +6,27 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 # Jayvee
 
+Jayvee is a DSL to model and execute automated data pipelines, e.g., for data engineering. 
+
+<div style="background-color: #f5f5f5; padding: 20px; border: solid 1px #cccccc; border-radius: 10px; margin-bottom:40px">
+  <h2 style="color: #333333;">📚 Official Documentation</h2>
+  <p style="color: #666666;">Check out the official <a href="https://jvalue.github.io/jayvee" style="color: #007bff; text-decoration: underline;" target="_blank">documentation</a> for more information on how to install and use Jayvee.</p>
+</div>
+
+
+## Development Quickstart
+
+1. Run `npm ci` to install the dependencies.
+2. Run `npm run generate` to generate TypeScript code from the Jayvee grammar definition.
+3. Run `npm run build` to compile all projects.
+4. In Visual Studio Code, press `F5` to open a new window with the Jayvee extension loaded.
+5. Create a new file with a `.jv` file name suffix or open an existing file in the directory `example`.
+6. Verify that syntax highlighting, validation, completion etc. are working as expected.
+7. Run `node dist/apps/interpreter/main.js` to see options for the CLI of the interpreter; `node dist/apps/interpreter/main.js <file>` interprets a given `.jv` file.
+
+In case you run into problems, make sure to use the current LTS version of Node.js and npm.
+
+
 ## Projects overview
 
 | Name                                                              | Description                                                                                                                      | NPM package                                |
@@ -21,43 +42,9 @@ SPDX-License-Identifier: AGPL-3.0-only
 | [`extensions/rdbms`](./libs/extensions/rdbms)                     | Jayvee extension for relational databases                                                                                        | - |
 | [`extensions/tabular`](./libs/extensions/tabular)                 | Jayvee extension for tabular data                                                                                                | - |
 
-## Quick start
 
-1. Run `npm ci` to install the dependencies.
-2. Run `npm run generate` to generate TypeScript code from the Jayvee grammar definition.
-3. Run `npm run build` to compile all projects.
-4. In Visual Studio Code, press `F5` to open a new window with the Jayvee extension loaded.
-5. Create a new file with a `.jv` file name suffix or open an existing file in the directory `example`.
-6. Verify that syntax highlighting, validation, completion etc. are working as expected.
-7. Run `node dist/apps/interpreter/main.js` to see options for the CLI of the interpreter; `node dist/apps/interpreter/main.js <file>` interprets a given `.jv` file.
 
-In case you run into problems, make sure to use the current LTS version of Node.js and npm.
-
-## Documentation
-
-**User documentation** and **developer documentation** can be found in our `docs` project.
-Start the documentation app locally and open the browser on the URL of the output:
-```bash
-npx nx serve docs
-```
-
-## Using Jayvee
-
-## Installing the interpreter
-
-For globally installing the latest version of the Jayvee interpreter,
-see [here](./apps/interpreter/README.md#global-installation).
-
-## VS Code extension
-
-To set up Jayvee locally in VS Code, you need to install the latest Jayvee VS Code extension.
-
-To install the most recent extension, go to our [latest release](https://github.com/jvalue/jayvee/releases/latest) 
-and download the `jayvee.vsix` file from the release assets.
-Next, go to [this page](https://code.visualstudio.com/docs/editor/extension-marketplace#_install-from-a-vsix) and 
-follow the instructions for installing the downloaded extension.
-
-## Developing Jayvee
+## Scripts
 
 ### Building all projects
 
