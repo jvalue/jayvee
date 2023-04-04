@@ -60,7 +60,7 @@ flowchart LR
     C --> D(LoaderBlock)
 ```
 
-The common syntax of blocks is at its core a key-value map to provide configuration to the block. The availability of attribute keys and their respective `ValueTypes` is determined by the type of the `Block` - indicated by the identifier after the keyword `oftype`:
+The common syntax of blocks is at its core a key-value map to provide configuration to the block. The availability of property keys and their respective `ValueTypes` is determined by the type of the `Block` - indicated by the identifier after the keyword `oftype`:
 
 ```javascript
 block GasReserveHttpExtractor oftype HttpExtractor {
@@ -80,7 +80,7 @@ A `ValueType` is the definition of a data type of the processed data. Some `Bloc
 
 ### Constraints
 
-`Constraints` of `ValueTypes` declare the validity criteria that each concrete value is checked against. The syntax of `Constraints` is similar to the syntax of `Blocks`. The availability of attribute keys and their respective `ValueTypes` is determined by the type of the `Constraint` - indicated by the identifier after the keyword `oftype`:
+`Constraints` of `ValueTypes` declare the validity criteria that each concrete value is checked against. The syntax of `Constraints` is similar to the syntax of `Blocks`. The availability of property keys and their respective `ValueTypes` is determined by the type of the `Constraint` - indicated by the identifier after the keyword `oftype`:
 
 ```javascript
 constraint GasFillLevelRange oftype RangeConstraint {
