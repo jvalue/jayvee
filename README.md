@@ -8,10 +8,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 Jayvee is a DSL to model and execute automated data pipelines, e.g., for data engineering. 
 
-<div style="background-color: #f5f5f5; padding: 20px; border: solid 1px #cccccc; border-radius: 10px; margin-bottom:40px">
-  <h2 style="color: #333333;">📚 Official Documentation</h2>
-  <p style="color: #666666;">Check out the official <a href="https://jvalue.github.io/jayvee" style="color: #007bff; text-decoration: underline;" target="_blank">documentation</a> for more information on how to install and use Jayvee.</p>
-</div>
+[![Official Docs](assets/docs-banner.png)](https://jvalue.github.io/jayvee)
+
 
 
 ## Development Quickstart
