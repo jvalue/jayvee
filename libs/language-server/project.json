@@ -1,5 +1,5 @@
 {
-  "name": "language-server",
+  "name": "@jvalue/language-server",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/language-server/src",
   "projectType": "library",
