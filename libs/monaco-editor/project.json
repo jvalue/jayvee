@@ -1,5 +1,5 @@
 {
-  "name": "monaco-editor",
+  "name": "@jvalue/monaco-editor",
   "sourceRoot": "libs/monaco-editor/src",
   "projectType": "library",
   "tags": [],
