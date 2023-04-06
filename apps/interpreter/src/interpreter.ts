@@ -149,8 +149,16 @@ async function executeBlocks(
 
     // Check, if parent emitted a value
     if (inputValue != null) {
+      const startTime = new Date();
       try {
         result = await blockExecutor.execute(inputValue, executionContext);
+        const endTime = new Date();
+        const executionDurationMs = Math.round(
+          endTime.getTime() - startTime.getTime(),
+        );
+        executionContext.logger.logDebug(
+          `Execution duration: ${executionDurationMs} ms.`,
+        );
       } catch (unexpectedError) {
         executionContext.logger.logErrDiagnostic(
           `An unknown error occurred: ${
