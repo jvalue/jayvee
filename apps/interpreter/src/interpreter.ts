@@ -105,12 +105,35 @@ async function runPipeline(
 
   logPipelineOverview(pipeline, runtimeParameters, executionContext.logger);
 
-  const executionOrder: Array<{
-    block: BlockDefinition;
-    value: IOTypeImplementation | null;
-  }> = getBlocksInTopologicalSorting(pipeline).map((block) => {
-    return { block: block, value: NONE };
-  });
+  const startTime = new Date();
+
+  const executionOrder = getBlocksInTopologicalSorting(pipeline).map(
+    (block) => {
+      return { block: block, value: NONE };
+    },
+  );
+  const exitCode = await executeBlocks(executionContext, executionOrder);
+
+  const endTime = new Date();
+  const executionDurationMs = Math.round(
+    endTime.getTime() - startTime.getTime(),
+  );
+  executionContext.logger.logDebug(
+    `Execution duration: ${executionDurationMs} ms.`,
+  );
+
+  return exitCode;
+}
+
+type ExecutionOrderList = Array<{
+  block: BlockDefinition;
+  value: IOTypeImplementation | null;
+}>;
+
+async function executeBlocks(
+  executionContext: ExecutionContext,
+  executionOrder: ExecutionOrderList,
+): Promise<ExitCode> {
   for (const blockData of executionOrder) {
     const block = blockData.block;
     executionContext.enterNode(block);
