@@ -118,69 +118,87 @@ async function runPipeline(
   return exitCode;
 }
 
-type ExecutionOrderList = Array<{
+interface ExecutionOrderItem {
   block: BlockDefinition;
   value: IOTypeImplementation | null;
-}>;
+}
 
 async function executeBlocks(
   executionContext: ExecutionContext,
-  executionOrder: ExecutionOrderList,
+  executionOrder: ExecutionOrderItem[],
 ): Promise<ExitCode> {
   for (const blockData of executionOrder) {
     const block = blockData.block;
+
     executionContext.enterNode(block);
-
-    const blockExecutor = createBlockExecutor(block);
-    const parentData = collectParents(block).map((parent) =>
-      executionOrder.find((blockData) => parent === blockData.block),
+    const exitCode = await executeBlock(
+      blockData,
+      executionContext,
+      executionOrder,
     );
-    const inputValue =
-      parentData[0]?.value === undefined ? NONE : parentData[0]?.value;
+    executionContext.exitNode(block);
 
-    let result: R.Result<IOTypeImplementation | null>;
+    if (exitCode === ExitCode.FAILURE) {
+      return exitCode;
+    }
+  }
+  return ExitCode.SUCCESS;
+}
 
-    // Check, if parent emitted a value
-    if (inputValue != null) {
-      const startTime = new Date();
-      try {
-        result = await blockExecutor.execute(inputValue, executionContext);
-        logExecutionDuration(startTime, executionContext.logger);
-      } catch (unexpectedError) {
-        executionContext.logger.logErrDiagnostic(
-          `An unknown error occurred: ${
-            unexpectedError instanceof Error
-              ? unexpectedError.message
-              : JSON.stringify(unexpectedError)
-          }`,
-          { node: blockData.block, property: 'name' },
-        );
-        executionContext.exitNode(block);
-        return ExitCode.FAILURE;
-      }
+async function executeBlock(
+  blockData: ExecutionOrderItem,
+  executionContext: ExecutionContext,
+  executionOrder: ExecutionOrderItem[],
+) {
+  const block = blockData.block;
 
-      if (R.isErr(result)) {
-        executionContext.logger.logErrDiagnostic(
-          result.left.message,
-          result.left.diagnostic,
-        );
-        executionContext.exitNode(block);
-        return ExitCode.FAILURE;
-      }
+  const blockExecutor = createBlockExecutor(block);
+  const parentData = collectParents(block).map((parent) =>
+    executionOrder.find((blockData) => parent === blockData.block),
+  );
+  const inputValue =
+    parentData[0]?.value === undefined ? NONE : parentData[0]?.value;
 
-      blockData.value = result.right;
+  let result: R.Result<IOTypeImplementation | null>;
 
-      // If parent emitted no value, skip all downstream blocks
-    } else {
-      blockData.value = null;
-      executionContext.logger.logInfoDiagnostic(
-        `Skipped execution because parent block ${
-          parentData[0] ? parentData[0].block.name : 'NAME NOT FOUND'
-        } emitted no value.`,
+  // Check, if parent emitted a value
+  if (inputValue != null) {
+    const startTime = new Date();
+    try {
+      result = await blockExecutor.execute(inputValue, executionContext);
+      logExecutionDuration(startTime, executionContext.logger);
+    } catch (unexpectedError) {
+      executionContext.logger.logErrDiagnostic(
+        `An unknown error occurred: ${
+          unexpectedError instanceof Error
+            ? unexpectedError.message
+            : JSON.stringify(unexpectedError)
+        }`,
         { node: blockData.block, property: 'name' },
       );
+      return ExitCode.FAILURE;
     }
-    executionContext.exitNode(block);
+
+    if (R.isErr(result)) {
+      executionContext.logger.logErrDiagnostic(
+        result.left.message,
+        result.left.diagnostic,
+      );
+      return ExitCode.FAILURE;
+    }
+
+    // eslint-disable-next-line require-atomic-updates
+    blockData.value = result.right;
+
+    // If parent emitted no value, skip all downstream blocks
+  } else {
+    blockData.value = null;
+    executionContext.logger.logInfoDiagnostic(
+      `Skipped execution because parent block ${
+        parentData[0] ? parentData[0].block.name : 'NAME NOT FOUND'
+      } emitted no value.`,
+      { node: blockData.block, property: 'name' },
+    );
   }
   return ExitCode.SUCCESS;
 }
