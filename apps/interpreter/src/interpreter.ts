@@ -114,14 +114,7 @@ async function runPipeline(
   );
   const exitCode = await executeBlocks(executionContext, executionOrder);
 
-  const endTime = new Date();
-  const executionDurationMs = Math.round(
-    endTime.getTime() - startTime.getTime(),
-  );
-  executionContext.logger.logDebug(
-    `Execution duration: ${executionDurationMs} ms.`,
-  );
-
+  logExecutionDuration(startTime, executionContext.logger);
   return exitCode;
 }
 
@@ -152,13 +145,7 @@ async function executeBlocks(
       const startTime = new Date();
       try {
         result = await blockExecutor.execute(inputValue, executionContext);
-        const endTime = new Date();
-        const executionDurationMs = Math.round(
-          endTime.getTime() - startTime.getTime(),
-        );
-        executionContext.logger.logDebug(
-          `Execution duration: ${executionDurationMs} ms.`,
-        );
+        logExecutionDuration(startTime, executionContext.logger);
       } catch (unexpectedError) {
         executionContext.logger.logErrDiagnostic(
           `An unknown error occurred: ${
@@ -194,6 +181,14 @@ async function executeBlocks(
     executionContext.exitNode(block);
   }
   return ExitCode.SUCCESS;
+}
+
+export function logExecutionDuration(startTime: Date, logger: Logger): void {
+  const endTime = new Date();
+  const executionDurationMs = Math.round(
+    endTime.getTime() - startTime.getTime(),
+  );
+  logger.logDebug(`Execution duration: ${executionDurationMs} ms.`);
 }
 
 export function logPipelineOverview(
