@@ -155,6 +155,7 @@ async function executeBlocks(
           }`,
           { node: blockData.block, property: 'name' },
         );
+        executionContext.exitNode(block);
         return ExitCode.FAILURE;
       }
 
@@ -163,6 +164,7 @@ async function executeBlocks(
           result.left.message,
           result.left.diagnostic,
         );
+        executionContext.exitNode(block);
         return ExitCode.FAILURE;
       }
 
