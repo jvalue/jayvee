@@ -268,10 +268,10 @@ export class GtfsRTInterpreterExecutor
                 informedEntity.routeId,
               );
               alert['entity.alert.header_text'] = String(
-                entity.alert.headerText,
+                entity.alert.headerText?.translation,
               );
               alert['entity.alert.description_text'] = String(
-                entity.alert.descriptionText,
+                entity.alert.descriptionText?.translation,
               );
               rows.push(Object.values(alert) as string[]);
             }
