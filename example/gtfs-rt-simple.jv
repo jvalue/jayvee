@@ -37,7 +37,7 @@ pipeline GtfsRTSimplePipeline {
 	}
 
     block TripUpdateLoader oftype SQLiteLoader {
-		table: "trip_update";
+		table: "gtfs-rt-trip_update";
 		file: "./gtfs.sqlite";
 	}
 

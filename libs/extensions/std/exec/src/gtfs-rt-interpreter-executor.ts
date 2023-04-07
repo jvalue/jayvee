@@ -159,6 +159,8 @@ export class GtfsRTInterpreterExecutor
                 String(stopTimeUpdate.arrival?.time);
               tripUpdate['entity.trip_update.stop_time_update.departure.time'] =
                 String(stopTimeUpdate.departure?.time);
+
+              rows.push(Object.values(tripUpdate) as string[]);
             }
           } else {
             context.logger.logDebug(
