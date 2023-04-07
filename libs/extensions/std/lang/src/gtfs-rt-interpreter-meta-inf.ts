@@ -19,8 +19,22 @@ export class GtfsRTInterpreterMetaInformation extends BlockMetaInformation {
         entity: {
           type: PropertyValuetype.TEXT,
           docs: {
-            description:
-              'Entity to process from GTFS-RT-feed. Could be `vehiclePosition`, `tripUpdate` or alert.',
+            description: `Entity to process from GTFS-RT-feed (\`vehiclePosition\`, \`tripUpdate\` or \`alert\`). For example, parsing entity \`tripUpdate\` outputs an \`Sheet\` with header:
+            \`\`\`
+            [
+              "header.gtfs_realtime_version",
+              "header.timestamp",
+              "header.incrementality",
+              "entity.id",
+              "entity.trip_update.trip.trip_id",
+              "entity.trip_update.trip.route_id",
+              "entity.trip_update.stop_time_update.stop_sequence",
+              "entity.trip_update.stop_time_update.stop_id",
+              "entity.trip_update.stop_time_update.arrival.time",
+              "entity.trip_update.stop_time_update.departure.time"
+            ]
+            \`\`\`
+            `,
           },
         },
       },

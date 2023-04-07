@@ -81,15 +81,17 @@ export class GtfsRTInterpreterExecutor
     context: ExecutionContext,
   ): Promise<Either<Error, Sheet>> {
     return new Promise((resolve) => {
-      context.logger.logDebug(`Parsing raw data as TripUpdates"`);
-      const header: string[] = Object.keys({} as TripUpdates);
+      context.logger.logDebug(`Parsing raw gtfs-rt feed data as TripUpdates"`);
       const rows: string[][] = [];
-      rows.push(header);
+
+      // Add header
+      rows.push(Object.keys(new TripUpdate()));
+
       for (const entity of feedMessage.entity) {
         if (entity.tripUpdate) {
           if (entity.tripUpdate.stopTimeUpdate) {
-            for (const stop_time_update of entity.tripUpdate.stopTimeUpdate) {
-              const tripUpdate: TripUpdates = {
+            for (const stopTimeUpdate of entity.tripUpdate.stopTimeUpdate) {
+              const tripUpdate: TripUpdate = {
                 'header.gtfs_realtime_version':
                   feedMessage.header.gtfsRealtimeVersion,
                 'header.timestamp': String(feedMessage.header.timestamp),
@@ -104,38 +106,34 @@ export class GtfsRTInterpreterExecutor
                   entity.tripUpdate.trip.routeId,
                 ),
                 'entity.trip_update.stop_time_update.stop_sequence': String(
-                  stop_time_update.stopSequence,
+                  stopTimeUpdate.stopSequence,
                 ),
                 'entity.trip_update.stop_time_update.stop_id': String(
-                  stop_time_update.stopId,
+                  stopTimeUpdate.stopId,
                 ),
                 'entity.trip_update.stop_time_update.arrival.time': String(
-                  stop_time_update.arrival?.time,
+                  stopTimeUpdate.arrival?.time,
                 ),
                 'entity.trip_update.stop_time_update.departure.time': String(
-                  stop_time_update.departure?.time,
+                  stopTimeUpdate.departure?.time,
                 ),
               };
               rows.push(Object.values(tripUpdate) as string[]);
             }
           } else {
-            // TODO: Should we continue here or break?
-            resolve(
-              E.left(
-                new Error(
-                  'Error when parsing TripUpdates: Array stop_times_Update does not exist',
-                ),
-              ),
+            context.logger.logDebug(
+              `Parsing gtfs-rt feed data as TripUpdates: StopTimeUpdate of TripUpdate "${String(
+                entity.tripUpdate.trip.tripId,
+              )}" does not contain a single entry. Skipping this TripUpdate and continue with next one"`,
             );
+            continue;
           }
         } else {
           // TODO: Should we continue here or break?
-          resolve(
-            E.left(
-              new Error(
-                'Error when parsing TripUpdates: TripUpdates does not exist',
-              ),
-            ),
+          context.logger.logDebug(
+            `Parsing gtfs-rt feed data as TripUpdates: No Tripupdates found in feedmessage with timestamp "${String(
+              feedMessage.header.timestamp,
+            )}"`,
           );
         }
       }
@@ -144,16 +142,16 @@ export class GtfsRTInterpreterExecutor
   }
 }
 
-// This interface has to match with schema defined in downstream TableInterpreter
-interface TripUpdates {
-  'header.gtfs_realtime_version': string;
-  'header.timestamp': string;
-  'header.incrementality': string;
-  'entity.id': string;
-  'entity.trip_update.trip.trip_id': string;
-  'entity.trip_update.trip.route_id': string;
-  'entity.trip_update.stop_time_update.stop_sequence': string;
-  'entity.trip_update.stop_time_update.stop_id': string;
-  'entity.trip_update.stop_time_update.arrival.time': string;
-  'entity.trip_update.stop_time_update.departure.time': string;
+// This class has to match with schema defined in downstream TableInterpreter
+class TripUpdate {
+  'header.gtfs_realtime_version' = '';
+  'header.timestamp' = '';
+  'header.incrementality' = '';
+  'entity.id' = '';
+  'entity.trip_update.trip.trip_id' = '';
+  'entity.trip_update.trip.route_id' = '';
+  'entity.trip_update.stop_time_update.stop_sequence' = '';
+  'entity.trip_update.stop_time_update.stop_id' = '';
+  'entity.trip_update.stop_time_update.arrival.time' = '';
+  'entity.trip_update.stop_time_update.departure.time' = '';
 }
