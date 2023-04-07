@@ -26,29 +26,19 @@ pipeline GtfsRTSimplePipeline {
     block GtfsRTVehiclePositionInterpreter oftype GtfsRTInterpreter{
         entity: "vehicle";
     }
-    // 	Data about the realtime departure delays of a trip. At least one of the fields trip_update, vehicle, or alert must be provided - all these fields cannot be empty.
-    // Considers all required and conditional required fields of the gtfs-rt-schema
     block TripUpdateTableInterpreter oftype TableInterpreter {
 		header: true;
 		columns:[
-            // header
-			"header.gtfs_realtime_version" oftype text, // version of speed specification. Currently "2.0"
-			"header.timestamp" oftype text, // The moment where this dataset was generated on the server.
-            "header.incrementality" oftype text, // DIFFERENTIAL is unsupported. use FULL_DATASET only
-			
-            //entity
-            "entity.id" oftype text, // unique identifier for the entity within the feed update message
-			
-                //trip_update
-                //tripdescriptor
-                "entity.trip_update.trip.trip_id" oftype text, // The trip_id from the GTFS feed that this selector refers to. Whether trip_id is required depends on the type of trip
-                "entity.trip_update.trip.route_id" oftype text,
-
-                    //stop_time_update
-                    "entity.trip_update.stop_time_update.stop_sequence" oftype text, // Must be the same as in stop_times.txt in the corresponding GTFS feed. Either stop_sequence or stop_id must be provided within a StopTimeUpdate - both fields cannot be empty. stop_sequence is required for trips that visit the same stop_id more than once (e.g., a loop) to disambiguate which stop the prediction is for.
-                    "entity.trip_update.stop_time_update.stop_id" oftype text, // Must be the same as in stops.txt in the corresponding GTFS feed. Either stop_sequence or stop_id must be provided within a StopTimeUpdate - both fields cannot be empty.
-                    "entity.trip_update.stop_time_update.arrival.time" oftype text,  // If schedule_relationship is empty or SCHEDULED, either arrival or departure must be provided within a StopTimeUpdate - both fields cannot be empty. arrival and departure may both be empty when schedule_relationship is SKIPPED. If schedule_relationship is NO_DATA, arrival and departure must be empty.
-                    "entity.trip_update.stop_time_update.departure.time" oftype text, // If schedule_relationship is empty or SCHEDULED, either arrival or departure must be provided within a StopTimeUpdate - both fields cannot be empty. arrival and departure may both be empty when schedule_relationship is SKIPPED. If schedule_relationship is NO_DATA, arrival and departure must be empty.
+			"header.gtfs_realtime_version" oftype text, 
+			"header.timestamp" oftype text, 
+            "header.incrementality" oftype text, 
+            "entity.id" oftype text, 
+            "entity.trip_update.trip.trip_id" oftype text, 
+            "entity.trip_update.trip.route_id" oftype text,
+            "entity.trip_update.stop_time_update.stop_sequence" oftype text, 
+            "entity.trip_update.stop_time_update.stop_id" oftype text,
+            "entity.trip_update.stop_time_update.arrival.time" oftype text, 
+            "entity.trip_update.stop_time_update.departure.time" oftype text,
 		];
 	}
 
