@@ -20,7 +20,7 @@ import * as GtfsRealtimeBindings from 'gtfs-realtime-bindings';
 export class GtfsRTInterpreterExecutor
   implements BlockExecutor<IOType.FILE, IOType.SHEET>
 {
-  public static readonly type = ' GtfsRTInterpreter';
+  public static readonly type = 'GtfsRTInterpreter';
   public readonly inputType = IOType.FILE;
   public readonly outputType = IOType.SHEET;
 
