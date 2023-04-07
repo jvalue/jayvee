@@ -4,8 +4,8 @@
 
 import { strict as assert } from 'assert';
 
-import { getRegisteredBlockExecutors } from '@jvalue/execution';
-import { getRegisteredBlockMetaInformation } from '@jvalue/language-server';
+import { getRegisteredBlockExecutors } from '@jvalue/jayvee-execution';
+import { getRegisteredBlockMetaInformation } from '@jvalue/jayvee-language-server';
 
 import { useStdExtension } from './interpreter';
 

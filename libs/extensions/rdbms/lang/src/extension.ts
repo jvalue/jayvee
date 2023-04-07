@@ -6,7 +6,7 @@ import {
   BlockMetaInformation,
   ConstructorClass,
   JayveeLangExtension,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 
 import {
   PostgresLoaderMetaInformation,

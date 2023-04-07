@@ -13,8 +13,9 @@
   },
   "private": true,
   "dependencies": {
-    "@docusaurus/core": "2.1.0",
-    "@docusaurus/preset-classic": "2.1.0",
+    "@docusaurus/core": "2.4.0",
+    "@docusaurus/preset-classic": "2.4.0",
+    "@docusaurus/theme-mermaid": "2.4.0",
     "@mdx-js/react": "^1.6.22",
     "@types/mime-types": "^2.1.1",
     "assert": "^2.0.0",
@@ -45,7 +46,7 @@
   },
   "devDependencies": {
     "@babel/preset-react": "^7.14.5",
-    "@docusaurus/module-type-aliases": "2.1.0",
+    "@docusaurus/module-type-aliases": "2.4.0",
     "@jvalue/eslint-config-jvalue": "^1.2.0",
     "@nrwl/cli": "15.3.0",
     "@nrwl/esbuild": "15.3.0",

@@ -21,24 +21,24 @@ jobs:
         with:
           node-version: 'lts/*'
           always-auth: true
-          registry-url: 'https://npm.pkg.github.com'
+          registry-url: 'https://registry.npmjs.org'
       - run: npm ci
       - name: Publish language server
         run: npx nx run @jvalue/language-server:publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish interpreter
         run: npx nx run interpreter:publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish language server web worker
         run: npx nx run language-server-web-worker:publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish monaco editor
         run: npx nx run @jvalue/monaco-editor:publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Pack VS Code extension
         run: npx nx run vs-code-extension:pack
       - id: get_release

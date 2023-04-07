@@ -4,15 +4,15 @@
 
 import { strict as assert } from 'assert';
 
-import * as R from '@jvalue/execution';
+import * as R from '@jvalue/jayvee-execution';
 import {
   BlockExecutor,
   BlockExecutorClass,
   ExecutionContext,
   Sheet,
   implementsStatic,
-} from '@jvalue/execution';
-import { IOType, getCellIndex, isCellWrapper } from '@jvalue/language-server';
+} from '@jvalue/jayvee-execution';
+import { IOType, getCellIndex, isCellWrapper } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
 export class CellWriterExecutor

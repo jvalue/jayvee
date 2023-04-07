@@ -4,7 +4,7 @@
 
 import { TextDecoder } from 'util';
 
-import * as R from '@jvalue/execution';
+import * as R from '@jvalue/jayvee-execution';
 import {
   BinaryFile,
   BlockExecutor,
@@ -12,8 +12,8 @@ import {
   ExecutionContext,
   TextFile,
   implementsStatic,
-} from '@jvalue/execution';
-import { IOType } from '@jvalue/language-server';
+} from '@jvalue/jayvee-execution';
+import { IOType } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
 export class TextFileInterpreterExecutor

@@ -11,7 +11,7 @@ import {
   isCollectionLiteral,
   isColumnWrapper,
   validateTypedCollection,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 
 export class ColumnDeleterMetaInformation extends BlockMetaInformation {
   constructor() {

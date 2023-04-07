@@ -5,11 +5,11 @@
 import { writeFileSync } from 'fs';
 import { join } from 'path';
 
-import { StdLangExtension } from '@jvalue/extensions/std/lang';
+import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
 import {
   getRegisteredBlockMetaInformation,
   useExtension,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 
 import { UserDocGenerator } from './user-doc-generator';
 

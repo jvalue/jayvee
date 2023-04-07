@@ -10,7 +10,7 @@ import {
   PropertyAssignment,
   PropertyValuetype,
   isNumericLiteral,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 import { ValidationAcceptor } from 'langium';
 
 export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
@@ -34,6 +34,35 @@ export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
 
       // Output type:
       IOType.TEXT_FILE,
+
+      (propertyBody, accept) => {
+        const lineFromProperty = propertyBody.properties.find(
+          (p) => p.name === 'lineFrom',
+        );
+        const lineToProperty = propertyBody.properties.find(
+          (p) => p.name === 'lineTo',
+        );
+
+        if (lineFromProperty === undefined || lineToProperty === undefined) {
+          return;
+        }
+
+        assert(isNumericLiteral(lineFromProperty.value));
+        assert(isNumericLiteral(lineToProperty.value));
+
+        const lineFrom = lineFromProperty.value.value;
+        const lineTo = lineToProperty.value.value;
+
+        if (lineFrom > lineTo) {
+          [lineFromProperty, lineToProperty].forEach((property) => {
+            accept(
+              'error',
+              'The lower line number needs to be smaller or equal to the upper line number',
+              { node: property.value },
+            );
+          });
+        }
+      },
     );
     this.docs.description = 'Selects a range of lines from a `TextFile`.';
   }

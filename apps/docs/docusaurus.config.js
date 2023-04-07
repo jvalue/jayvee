@@ -19,6 +19,10 @@ const config = {
   favicon: 'img/jayvee.png',
   organizationName: 'jvalue', // Usually your GitHub org/user name.
   projectName: 'jayvee', // Usually your repo name.
+  themes: ['@docusaurus/theme-mermaid'],
+  markdown: {
+    mermaid: true,
+  },
 
   presets: [
     [

@@ -4,7 +4,7 @@
 
 import { strict as assert } from 'assert';
 
-import * as R from '@jvalue/execution';
+import * as R from '@jvalue/jayvee-execution';
 import {
   BlockExecutor,
   BlockExecutorClass,
@@ -15,14 +15,14 @@ import {
   Valuetype,
   createValuetype,
   implementsStatic,
-} from '@jvalue/execution';
+} from '@jvalue/jayvee-execution';
 import {
   CellIndex,
   IOType,
   ValuetypeAssignment,
   getValuetypeName,
   rowIndexToString,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 
 interface ColumnDefinitionEntry {
   sheetColumnIndex: number;

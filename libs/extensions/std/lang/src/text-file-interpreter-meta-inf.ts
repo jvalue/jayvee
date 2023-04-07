@@ -10,7 +10,7 @@ import {
   IOType,
   PropertyValuetype,
   isTextLiteral,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 
 export class TextFileInterpreterMetaInformation extends BlockMetaInformation {
   constructor() {

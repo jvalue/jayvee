@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { DiagnosticSeverity, Logger } from '@jvalue/execution';
+import { DiagnosticSeverity, Logger } from '@jvalue/jayvee-execution';
 import * as chalk from 'chalk';
 import { LangiumDocument } from 'langium';
 import { assertUnreachable } from 'langium/lib/utils/errors';

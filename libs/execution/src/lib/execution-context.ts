@@ -8,6 +8,7 @@ import {
   BlockDefinition,
   CellRangeWrapper,
   ConstraintDefinition,
+  NumericLiteral,
   PipelineDefinition,
   PropertyAssignment,
   TextLiteral,
@@ -15,11 +16,12 @@ import {
   getOrFailMetaInformation,
   isCellRangeLiteral,
   isCollectionLiteral,
+  isNumericLiteral,
   isPipelineDefinition,
   isRuntimeParameterLiteral,
   isTextLiteral,
   isValuetypeAssignmentLiteral,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 import { isReference } from 'langium';
 
 import { Logger } from './logger';
@@ -102,6 +104,16 @@ export class ExecutionContext {
     const propertyValue = this.getPropertyValue(propertyName);
     assert(Array.isArray(propertyValue));
     assert(propertyValue.every(isTextLiteral));
+
+    return propertyValue;
+  }
+
+  public getNumericCollectionPropertyValue(
+    propertyName: string,
+  ): NumericLiteral[] {
+    const propertyValue = this.getPropertyValue(propertyName);
+    assert(Array.isArray(propertyValue));
+    assert(propertyValue.every(isNumericLiteral));
 
     return propertyValue;
   }

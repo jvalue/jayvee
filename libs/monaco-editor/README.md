@@ -32,7 +32,7 @@ The following sample code spawns an instance of the monaco editor and runs the c
 language server in a separate Web Worker:
 
 ```tsx
-import { MonacoEditor } from '@jvalue/monaco-editor';
+import { MonacoEditor } from '@jvalue/jayvee-monaco';
 import React from 'react';
 
 function startJayveeWorker(): Worker {
@@ -114,7 +114,7 @@ and add the following dependency:
 
 ```
   "dependencies": {
-    "@jvalue/monaco-editor": "file:../../../jayvee/dist/libs/monaco-editor/jvalue-monaco-editor-0.0.0.tgz"
+    "@jvalue/jayvee-monaco": "file:../../../jayvee/dist/libs/monaco-editor/jvalue-monaco-editor-0.0.0.tgz"
   },
 ```
 
@@ -145,7 +145,7 @@ lib array:
 Now, create a new file `my-editor.tsx` where the actual editor will be contained. Add the following file content:
 
 ```tsx
-import { MonacoEditor } from '@jvalue/monaco-editor';
+import { MonacoEditor } from '@jvalue/jayvee-monaco';
 import React from 'react';
 
 const exampleCode = 'Add example code here';

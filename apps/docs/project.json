@@ -27,6 +27,13 @@
         "outputPath": "dist/apps/docs/generator",
         "main": "apps/docs/generator/src/main.ts",
         "tsConfig": "apps/docs/tsconfig.json"
+      },
+      "dependsOn": ["prepare-generator"]
+    },
+    "prepare-generator": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["nx run @jvalue/language-server:generate"]
       }
     },
     "generate": {

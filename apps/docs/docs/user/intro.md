@@ -4,4 +4,45 @@ sidebar_position: 1
 
 # Introduction to Jayvee
 
-tbd
+Jayvee is a domain-specific language (DSL) data engineering - the cleaning and preprocessing of data for later activities like data science or machine learning. You can use Jayvee to **model an ETL pipeline** and the command-line interpreter to **run the ETL pipeline** on your local machine. 
+
+## Installation
+
+Install the interpreter via `npm`. You will need a **nodejs version >= 17.0.0**.
+
+```bash
+npm install -g @jvalue/jayvee-interpreter
+```
+
+## Usage
+
+### Show help
+
+```console
+jv -h
+```
+
+### Run a `.jv` file
+
+```console
+jv <file>
+```
+
+With runtime parameters:
+
+```console
+jv -e <param>=<value> -e <param>=<value> ... <file>
+```
+
+## Examples
+
+You can find multiple examples [here](https://github.com/jvalue/jayvee/tree/main/example). Copy them to your local file system and execute them with the `jv` command on your command line (see [usage](#usage)).
+
+
+## VSCode Plugin
+
+To set up Jayvee locally in VS Code, you need to install the latest Jayvee VS Code extension.
+To install the most recent extension, go to our [latest release](https://github.com/jvalue/jayvee/releases/latest) 
+and download the `jayvee.vsix` file from the release assets.
+Next, go to [this page](https://code.visualstudio.com/docs/editor/extension-marketplace#_install-from-a-vsix) and 
+follow the instructions for installing the downloaded extension.

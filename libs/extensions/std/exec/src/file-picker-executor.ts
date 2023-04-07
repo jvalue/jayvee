@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as R from '@jvalue/execution';
+import * as R from '@jvalue/jayvee-execution';
 import {
   BinaryFile,
   BlockExecutor,
@@ -10,8 +10,8 @@ import {
   ExecutionContext,
   FileSystem,
   implementsStatic,
-} from '@jvalue/execution';
-import { IOType } from '@jvalue/language-server';
+} from '@jvalue/jayvee-execution';
+import { IOType } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
 export class FilePickerExecutor

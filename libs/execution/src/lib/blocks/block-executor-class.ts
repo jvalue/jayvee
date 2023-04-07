@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { ConstructorClass } from '@jvalue/language-server';
+import { ConstructorClass } from '@jvalue/jayvee-language-server';
 
 import { BlockExecutor } from './block-executor';
 

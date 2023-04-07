@@ -6,22 +6,13 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 # Jayvee
 
-## Projects overview
+Jayvee is a DSL to model and execute automated data pipelines, e.g., for data engineering. 
 
-| Name                                                              | Description                                                                                                                      |
-|-------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
-| [`language-server`](./libs/language-server)                       | Jayvee language definition and language server implementation                                                                    |
-| [`interpreter`](./apps/interpreter)                               | Command line tool for interpreting Jayvee files                                                                                  |
-| [`language-server-web-worker`](./apps/language-server-web-worker) | Ready-to-use Jayvee language server, bundled as a [Web Worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API) |
-| [`vs-code-extension`](./apps/vs-code-extension)                   | Visual Studio Code extension for editing Jayvee files                                                                            |
-| [`docs`](./apps/docs)                                             | Website for Jayvee user documentation                                                                                            |
-| [`monaco-editor`](./libs/monaco-editor)                           | React component for editing Jayvee files                                                                                         |
-| [`execution`](./libs/execution)                                   | Shared code for Jayvee extensions and the interpreter                                                                            |
-| [`extensions/std`](./libs/extensions/std)                         | Standard Jayvee extension consisting of the extensions below                                                                     |
-| [`extensions/rdbms`](./libs/extensions/rdbms)                     | Jayvee extension for relational databases                                                                                        |
-| [`extensions/tabular`](./libs/extensions/tabular)                 | Jayvee extension for tabular data                                                                                                |
+[![Official Docs](assets/docs-banner.png)](https://jvalue.github.io/jayvee)
 
-## Quick start
+
+
+## Development Quickstart
 
 1. Run `npm ci` to install the dependencies.
 2. Run `npm run generate` to generate TypeScript code from the Jayvee grammar definition.
@@ -33,31 +24,25 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 In case you run into problems, make sure to use the current LTS version of Node.js and npm.
 
-## Documentation
 
-**User documentation** and **developer documentation** can be found in our `docs` project.
-Start the documentation app locally and open the browser on the URL of the output:
-```bash
-npx nx serve docs
-```
+## Projects overview
 
-## Using Jayvee
+| Name                                                              | Description                                                                                                                      | NPM package                                |
+|-------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------| ------------------------------------------ |
+| [`language-server`](./libs/language-server)                       | Jayvee language definition and language server implementation                                                                    | [@jvalue/jayvee-language-server](https://www.npmjs.com/package/@jvalue/jayvee-language-server) |
+| [`interpreter`](./apps/interpreter)                               | Command line tool for interpreting Jayvee files                                                                                  | [@jvalue/jayvee-interpreter](https://www.npmjs.com/package/@jvalue/jayvee-interpreter) |
+| [`language-server-web-worker`](./apps/language-server-web-worker) | Ready-to-use Jayvee language server, bundled as a [Web Worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API) | [@jvalue/jayvee-language-server-web-worker](https://www.npmjs.com/package/@jvalue/jayvee-language-server-web-worker) |
+| [`vs-code-extension`](./apps/vs-code-extension)                   | Visual Studio Code extension for editing Jayvee files                                                                            | - |
+| [`docs`](./apps/docs)                                             | Website for Jayvee user documentation                                                                                            | - |
+| [`monaco-editor`](./libs/monaco-editor)                           | React component for editing Jayvee files                                                                                         | [@jvalue/jayvee-monaco](https://www.npmjs.com/package/@jvalue/jayvee-monaco) |
+| [`execution`](./libs/execution)                                   | Shared code for Jayvee extensions and the interpreter                                                                            | - |
+| [`extensions/std`](./libs/extensions/std)                         | Standard Jayvee extension consisting of the extensions below                                                                     | - |
+| [`extensions/rdbms`](./libs/extensions/rdbms)                     | Jayvee extension for relational databases                                                                                        | - |
+| [`extensions/tabular`](./libs/extensions/tabular)                 | Jayvee extension for tabular data                                                                                                | - |
 
-## Installing the interpreter
 
-For globally installing the latest version of the Jayvee interpreter,
-see [here](./apps/interpreter/README.md#global-installation).
 
-## VS Code extension
-
-To set up Jayvee locally in VS Code, you need to install the latest Jayvee VS Code extension.
-
-To install the most recent extension, go to our [latest release](https://github.com/jvalue/jayvee/releases/latest) 
-and download the `jayvee.vsix` file from the release assets.
-Next, go to [this page](https://code.visualstudio.com/docs/editor/extension-marketplace#_install-from-a-vsix) and 
-follow the instructions for installing the downloaded extension.
-
-## Developing Jayvee
+## Scripts
 
 ### Building all projects
 

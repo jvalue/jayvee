@@ -10,7 +10,7 @@ import {
   isCollectionLiteral,
   isValuetypeAssignmentLiteral,
   validateTypedCollection,
-} from '@jvalue/language-server';
+} from '@jvalue/jayvee-language-server';
 
 export class TableInterpreterMetaInformation extends BlockMetaInformation {
   constructor() {

@@ -8,18 +8,16 @@ import { ConstraintExecutor } from '../constraint-executor';
 import { ConstraintExecutorClass } from '../constraint-executor-class';
 
 @implementsStatic<ConstraintExecutorClass>()
-export class BlacklistConstraintExecutor implements ConstraintExecutor {
-  public static readonly type = 'BlacklistConstraint';
+export class AllowlistConstraintExecutor implements ConstraintExecutor {
+  public static readonly type = 'AllowlistConstraint';
 
   isValid(value: unknown, context: ExecutionContext): boolean {
     if (typeof value !== 'string') {
       return false;
     }
 
-    const blacklist = context.getTextCollectionPropertyValue('blacklist');
-    const blacklistValues = blacklist.map(
-      (blacklistElement) => blacklistElement.value,
-    );
-    return !blacklistValues.includes(value);
+    const allowlist = context.getTextCollectionPropertyValue('allowlist');
+    const allowlistValues = allowlist.map((e) => e.value);
+    return allowlistValues.includes(value);
   }
 }

@@ -1,6 +1,6 @@
 {
-  "name": "@jvalue/monaco-editor",
-  "version": "0.0.11",
+  "name": "@jvalue/jayvee-monaco",
+  "version": "0.0.12",
   "main": "./index.js",
   "bugs": {
     "url": "https://github.com/jvalue/jayvee/issues"
@@ -11,7 +11,7 @@
   },
   "homepage": "https://github.com/jvalue/jayvee",
   "publishConfig": {
-    "access": "restricted",
-    "registry": "https://npm.pkg.github.com"
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   }
 }

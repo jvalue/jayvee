@@ -4,7 +4,7 @@
 
 import { ValidationAcceptor } from 'langium';
 
-import { PropertyAssignment } from '../ast/generated/ast';
+import { PropertyAssignment, PropertyBody } from '../ast/generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { PropertyValuetype } from '../ast/model-util';
 
@@ -33,10 +33,14 @@ export abstract class MetaInformation {
   protected constructor(
     public readonly type: string,
     private readonly properties: Record<string, PropertySpecification>,
+    private readonly validation?: (
+      property: PropertyBody,
+      accept: ValidationAcceptor,
+    ) => void,
   ) {}
 
-  validate(properties: PropertyAssignment[], accept: ValidationAcceptor): void {
-    for (const property of properties) {
+  validate(propertyBody: PropertyBody, accept: ValidationAcceptor): void {
+    for (const property of propertyBody.properties) {
       const propertySpecification = this.getPropertySpecification(
         property.name,
       );
@@ -45,6 +49,10 @@ export abstract class MetaInformation {
         continue;
       }
       propertyValidationFn(property, accept);
+    }
+
+    if (this.validation !== undefined) {
+      this.validation(propertyBody, accept);
     }
   }
 
