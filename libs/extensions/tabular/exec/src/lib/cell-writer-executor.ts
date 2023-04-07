@@ -12,7 +12,11 @@ import {
   Sheet,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
-import { IOType, getCellIndex, isCellWrapper } from '@jvalue/jayvee-language-server';
+import {
+  IOType,
+  getCellIndex,
+  isCellWrapper,
+} from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
 export class CellWriterExecutor

@@ -25,7 +25,7 @@ pipeline GtfsRTSimplePipeline {
 			
                 //trip_update
                 //tripdescriptor
-                "entity.trip_update.trip.trip_id" oftype text,
+                "entity.trip_update.trip.trip_id" oftype text, // The trip_id from the GTFS feed that this selector refers to. Whether trip_id is required depends on the type of trip
                 "entity.trip_update.trip.route_id" oftype text,
 
                     //stop_time_update
