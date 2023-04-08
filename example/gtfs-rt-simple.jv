@@ -74,16 +74,19 @@ pipeline GtfsRTSimplePipeline {
     block TripUpdateLoader oftype SQLiteLoader {
 		table: "gtfs-rt-trip_update";
 		file: "./gtfs.sqlite";
+        dropTable: false;
 	}
 
     block VehicleLoader oftype SQLiteLoader {
 		table: "gtfs-rt-vehicle_position";
 		file: "./gtfs.sqlite";
+        dropTable: false;
 	}
 
     block AlertLoader oftype SQLiteLoader {
 		table: "gtfs-rt-alert";
 		file: "./gtfs.sqlite";
+        dropTable: false;
 	}
 
     GTFSRTTripUpdateFeedExtractor
