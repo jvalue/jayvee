@@ -30,7 +30,7 @@ export class SQLiteLoaderMetaInformation extends BlockMetaInformation {
           type: PropertyValuetype.BOOLEAN,
           docs: {
             description:
-              'Indicates, wether to drop existing Tables before load. ',
+              'Indicates, wether to drop existing Tables before load. Can be used for appendig data by executing pipelines periodically.',
           },
         },
       },
