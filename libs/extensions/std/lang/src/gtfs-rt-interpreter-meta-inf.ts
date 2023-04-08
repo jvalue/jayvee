@@ -79,5 +79,16 @@ export class GtfsRTInterpreterMetaInformation extends BlockMetaInformation {
     );
     this.docs.description =
       'Interprets an protobuf file (binary) of type `File` by decoding the file according to `gtfs-realtime.proto`. Outputs the extracted entity defined by `entity` as a `Sheet`';
+    this.docs.examples = [
+      {
+        code: blockExampleUsage,
+        description:
+          'A file is interpretet as an GTFS-RT file, which contains TripUpdates.',
+      },
+    ];
   }
 }
+
+const blockExampleUsage = `block GtfsRTTripUpdateInterpreter oftype GtfsRTInterpreter{
+  entity: "trip_update";
+}`;
