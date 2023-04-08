@@ -29,6 +29,7 @@ export class SQLiteLoaderExecutor
   ): Promise<R.Result<None>> {
     const file = context.getTextPropertyValue('file');
     const table = context.getTextPropertyValue('table');
+    const dropTable = context.getBooleanPropertyValue('dropTable');
 
     let db: sqlite3.Database | undefined;
 
@@ -36,10 +37,13 @@ export class SQLiteLoaderExecutor
       context.logger.logDebug(`Opening database file ${file}`);
       db = new sqlite3.Database(file);
 
-      context.logger.logDebug(
-        `Dropping previous table "${table}" if it exists`,
-      );
-      await this.runQuery(db, Table.generateDropTableStatement(table));
+      if (dropTable) {
+        context.logger.logDebug(
+          `Dropping previous table "${table}" if it exists`,
+        );
+        await this.runQuery(db, Table.generateDropTableStatement(table));
+      }
+
       context.logger.logDebug(`Creating table "${table}"`);
       await this.runQuery(db, input.generateCreateTableStatement(table));
       context.logger.logDebug(
