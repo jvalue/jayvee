@@ -151,6 +151,7 @@ export enum IOType {
   FILE_SYSTEM = 'FileSystem',
   SHEET = 'Sheet',
   TABLE = 'Table',
+  FILE_SYSTEM_NODE = 'FileSystemNode',
 }
 
 export enum PropertyValuetype {
