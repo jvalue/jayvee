@@ -1,9 +1,6 @@
 // SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
 //
 // SPDX-License-Identifier: AGPL-3.0-only
-
-import { BinaryFile } from '../binary-file';
-
 import { FileSystemFile } from './filesystem-file';
 import { FileSystemNode } from './filesystem-node';
 
@@ -32,35 +29,23 @@ export class FileSystemDirectory extends FileSystemNode {
   }
 
   find(path: string): FileSystemNode | undefined {
+    return this.children.find((child) => child.name === path);
+  }
+
+  findRecursive(path: string): FileSystemNode | undefined {
     if (path === '') {
       return this;
     }
 
-    // TODO: Add check for name in current name
-
     const [currentName, ...rest] = path.split('/');
     const child = this.children.find((child) => child.name === currentName);
-
-    if (!child) {
-      return undefined;
-    }
 
     if (child instanceof FileSystemFile) {
       return child;
     }
-    return (child as FileSystemDirectory).find(rest.join('/'));
-  }
 
-  getFile(name: string): FileSystemFile<BinaryFile> | undefined {
-    for (const child of this.children) {
-      if (child.name === name && child instanceof FileSystemFile) {
-        return child;
-      } else if (child instanceof FileSystemDirectory) {
-        const file = child.getFile(name);
-        if (file) {
-          return file;
-        }
-      }
+    if (child instanceof FileSystemDirectory) {
+      return child.findRecursive(rest.join('/'));
     }
     return undefined;
   }

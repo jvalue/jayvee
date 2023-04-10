@@ -4,8 +4,8 @@
 
 import { TextEncoder } from 'util';
 
-import { BinaryFile } from './binary-file';
-import { FileExtension, MimeType } from './file';
+import { FileExtension, MimeType } from './filesystem-file';
+import { BinaryFile } from './filesystem-file-binary';
 import { InMemoryFileSystem } from './filesystem-inmemory';
 
 describe('InMemoryFileSystem', () => {
