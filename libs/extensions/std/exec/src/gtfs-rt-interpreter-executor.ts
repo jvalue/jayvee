@@ -111,7 +111,13 @@ export class GtfsRTInterpreterExecutor
 
         // Entity invalid
         default:
-          resolve(E.left(new Error('Entity invalid in GTFS-RT-Feed. ')));
+          resolve(
+            E.left(
+              new Error(
+                `Entity should be either "trip_update", "alert" or "vehicle". Please check the argument "entity" of the GtfsRTInterpreterblock.`,
+              ),
+            ),
+          );
           break;
       }
     });
