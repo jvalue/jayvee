@@ -9,6 +9,7 @@ import { FileSystemNode } from './filesystem-node';
 export class InMemoryFileSystem extends FileSystem {
   private rootDirectory: FileSystemDirectory = new FileSystemDirectory('root');
 
+  // TODO: Refactor to getFile
   getFileOrDirectory(path: string): FileSystemNode | undefined {
     return this.rootDirectory.find(path);
   }
