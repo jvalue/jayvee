@@ -4,18 +4,53 @@
 
 import { IOType } from '@jvalue/jayvee-language-server';
 
-import { BinaryFile } from './binary-file';
 import { FileSystem } from './filesystem';
+import { FileSystemDirectory } from './filesystem-directory';
+import { BinaryFile } from './filesystem-file-binary';
 
 export class InMemoryFileSystem implements FileSystem {
   public readonly ioType = IOType.FILE_SYSTEM;
 
+  private rootDirectory: FileSystemDirectory = new FileSystemDirectory('root');
   private static PATH_SEPARATOR = '/';
   private static CURRENT_DIR = '.';
   private static PARENT_DIR = '..';
 
-  // Hierachical file system
-  private fileSystemIndex: Map<string, BinaryFile | FileSystem> = new Map();
+  getFile(path: string): BinaryFile | null {
+    const node = this.rootDirectory.findRecursive(
+      this.processPath(path).join('/'),
+    );
+    console.log(node);
+    if (node instanceof FileSystemDirectory) {
+      return null;
+    } else if (node instanceof BinaryFile) {
+      return node;
+    }
+    return null;
+  }
+
+  putFile(path: string, file: BinaryFile): FileSystem {
+    const processedParts = this.processPath(path);
+    let currentDir = this.rootDirectory;
+
+    // If we need to traverse
+    for (let i = 0; i < processedParts.length; i++) {
+      const part: string = processedParts[i] as string;
+
+      // Check, if directory already exists, if not create it
+      let childNode = currentDir.find(part);
+      if (!childNode) {
+        childNode = new FileSystemDirectory(part);
+        currentDir.add(childNode);
+      }
+      if (childNode instanceof FileSystemDirectory) {
+        currentDir = childNode;
+      }
+    }
+    // Safe the actual file
+    currentDir.add(file);
+    return this;
+  }
 
   private processPath(path: string): string[] {
     const parts = path
@@ -34,64 +69,5 @@ export class InMemoryFileSystem implements FileSystem {
       }
     }
     return processedParts;
-  }
-
-  getFile(filePath: string): BinaryFile | null {
-    const processedParts = this.processPath(filePath);
-
-    // If we have a minimum valid path
-    if (processedParts.length > 0) {
-      let currentFileSystemIndex = this.fileSystemIndex;
-
-      // Get the name of the requested file
-      const fileName = processedParts[processedParts.length - 1] as string;
-
-      // If we have a directory, we traverse it, if not (processedParts == 1) skip the travesal
-      for (let i = 0; i < processedParts.length - 1; i++) {
-        const childFileSystem = currentFileSystemIndex.get(
-          processedParts[i] as string,
-        ) as InMemoryFileSystem | undefined;
-
-        // If we dont find current path-part, stop methodcall
-        if (!childFileSystem) {
-          return null;
-        }
-        currentFileSystemIndex = childFileSystem.fileSystemIndex;
-      }
-
-      // If we are in the correct directory
-      const file = currentFileSystemIndex.get(fileName) as
-        | BinaryFile
-        | undefined;
-      return file === undefined ? null : file;
-    }
-    return null;
-  }
-
-  putFile(filePath: string, file: BinaryFile): FileSystem {
-    const processedParts = this.processPath(filePath);
-    let currentFileSystemIndex = this.fileSystemIndex;
-
-    // If we need to traverse
-    for (let i = 0; i < processedParts.length - 1; i++) {
-      const part: string = processedParts[i] as string;
-
-      // Check, if directory already exists, if not create it
-      let childFileSystemIndex = currentFileSystemIndex.get(part) as
-        | InMemoryFileSystem
-        | undefined;
-      if (!childFileSystemIndex) {
-        childFileSystemIndex = new InMemoryFileSystem();
-        currentFileSystemIndex.set(part, childFileSystemIndex);
-      }
-      currentFileSystemIndex = childFileSystemIndex.fileSystemIndex;
-    }
-
-    // Safe the actual file
-    currentFileSystemIndex.set(
-      processedParts[processedParts.length - 1] as string,
-      file,
-    );
-    return this;
   }
 }
