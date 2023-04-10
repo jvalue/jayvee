@@ -91,16 +91,16 @@ pipeline GtfsRTSimplePipeline {
 
     GTFSRTTripUpdateFeedExtractor
         ->GtfsRTTripUpdateInterpreter
-            ->TripUpdateTableInterpreter
-                ->TripUpdateLoader;
+        ->TripUpdateTableInterpreter
+        ->TripUpdateLoader;
     
     GTFSRTVehiclePositionFeedExtractor
         ->GtfsRTVehiclePositionInterpreter
-            ->VehiclePositionTableInterpreter
-                ->VehicleLoader;
+        ->VehiclePositionTableInterpreter
+        ->VehicleLoader;
     
     GTFSRTAlertFeedExtractor
         ->GtfsRTAlertInterpreter    
-            ->AlertTableInterpreter
-                ->AlertLoader;
+        ->AlertTableInterpreter
+        ->AlertLoader;
 }
