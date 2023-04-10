@@ -36,6 +36,8 @@ export class FileSystemDirectory extends FileSystemNode {
       return this;
     }
 
+    // TODO: Add check for name in current name
+
     const [currentName, ...rest] = path.split('/');
     const child = this.children.find((child) => child.name === currentName);
 
