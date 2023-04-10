@@ -15,15 +15,15 @@ pipeline GtfsRTSimplePipeline {
 		url: "https://proxy.transport.data.gouv.fr/resource/bibus-brest-gtfs-rt-alerts";
 	}
 
-    block GtfsRTTripUpdateInterpreter oftype GtfsRTInterpreter{
+    block GtfsRTTripUpdateInterpreter oftype GtfsRTInterpreter {
         entity: "trip_update";
     }
 
-    block GtfsRTAlertInterpreter oftype GtfsRTInterpreter{
+    block GtfsRTAlertInterpreter oftype GtfsRTInterpreter {
         entity: "alert";
     }
 
-    block GtfsRTVehiclePositionInterpreter oftype GtfsRTInterpreter{
+    block GtfsRTVehiclePositionInterpreter oftype GtfsRTInterpreter {
         entity: "vehicle";
     }
     block TripUpdateTableInterpreter oftype TableInterpreter {
@@ -74,30 +74,33 @@ pipeline GtfsRTSimplePipeline {
     block TripUpdateLoader oftype SQLiteLoader {
 		table: "gtfs-rt-trip_update";
 		file: "./gtfs.sqlite";
+        dropTable: false;
 	}
 
     block VehicleLoader oftype SQLiteLoader {
 		table: "gtfs-rt-vehicle_position";
 		file: "./gtfs.sqlite";
+        dropTable: false;
 	}
 
     block AlertLoader oftype SQLiteLoader {
 		table: "gtfs-rt-alert";
 		file: "./gtfs.sqlite";
+        dropTable: false;
 	}
 
     GTFSRTTripUpdateFeedExtractor
         ->GtfsRTTripUpdateInterpreter
-            ->TripUpdateTableInterpreter
-                ->TripUpdateLoader;
+        ->TripUpdateTableInterpreter
+        ->TripUpdateLoader;
     
     GTFSRTVehiclePositionFeedExtractor
         ->GtfsRTVehiclePositionInterpreter
-            ->VehiclePositionTableInterpreter
-                ->VehicleLoader;
+        ->VehiclePositionTableInterpreter
+        ->VehicleLoader;
     
     GTFSRTAlertFeedExtractor
         ->GtfsRTAlertInterpreter    
-            ->AlertTableInterpreter
-                ->AlertLoader;
+        ->AlertTableInterpreter
+        ->AlertLoader;
 }

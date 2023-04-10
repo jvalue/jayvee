@@ -26,6 +26,14 @@ export class SQLiteLoaderMetaInformation extends BlockMetaInformation {
               'The path to the SQLite file that will be created. Usual file extensions are `.sqlite` and `.db`.',
           },
         },
+        dropTable: {
+          type: PropertyValuetype.BOOLEAN,
+          defaultValue: true,
+          docs: {
+            description:
+              'Indicates, wether to drop existing Tables before load. Defaults to TRUE. Can be used for appendig data by executing pipelines periodically.',
+          },
+        },
       },
       IOType.TABLE,
       IOType.NONE,
