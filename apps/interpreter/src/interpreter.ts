@@ -127,6 +127,7 @@ async function executeBlocks(
   executionContext: ExecutionContext,
   executionOrder: ExecutionOrderItem[],
 ): Promise<ExitCode> {
+  let abortExecution = false;
   for (const blockData of executionOrder) {
     const block = blockData.block;
     const parentData = collectParents(block).map((parent) =>
@@ -136,40 +137,45 @@ async function executeBlocks(
       parentData[0]?.value === undefined ? NONE : parentData[0]?.value;
 
     executionContext.enterNode(block);
-    if (inputValue == null) {
-      executionContext.logger.logInfoDiagnostic(
-        `Skipped execution because parent block ${
-          parentData[0] ? parentData[0].block.name : 'NAME NOT FOUND'
-        } emitted no value.`,
-        { node: blockData.block, property: 'name' },
+
+    const executionResult = await executeBlock(
+      inputValue,
+      block,
+      executionContext,
+    );
+    if (R.isErr(executionResult)) {
+      abortExecution = true;
+      const diagnosticError = executionResult.left;
+      executionContext.logger.logErrDiagnostic(
+        diagnosticError.message,
+        diagnosticError.diagnostic,
       );
-      blockData.value = null;
     } else {
-      const executionResult = await executeBlock(
-        inputValue,
-        block,
-        executionContext,
-      );
-      if (R.isErr(executionResult)) {
-        const diagnosticError = executionResult.left;
-        executionContext.logger.logErrDiagnostic(
-          diagnosticError.message,
-          diagnosticError.diagnostic,
-        );
-        return ExitCode.FAILURE;
-      }
       blockData.value = executionResult.right;
     }
+
     executionContext.exitNode(block);
+
+    if (abortExecution) {
+      return ExitCode.FAILURE;
+    }
   }
   return ExitCode.SUCCESS;
 }
 
 async function executeBlock(
-  inputValue: IOTypeImplementation,
+  inputValue: IOTypeImplementation | null,
   block: BlockDefinition,
   executionContext: ExecutionContext,
 ): Promise<R.Result<IOTypeImplementation | null>> {
+  if (inputValue == null) {
+    executionContext.logger.logInfoDiagnostic(
+      `Skipped execution because parent block emitted no value.`,
+      { node: block, property: 'name' },
+    );
+    return R.ok(null);
+  }
+
   const blockExecutor = createBlockExecutor(block);
 
   const startTime = new Date();
