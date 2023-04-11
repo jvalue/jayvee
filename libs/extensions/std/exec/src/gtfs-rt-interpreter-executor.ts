@@ -164,10 +164,7 @@ export class GtfsRTInterpreterExecutor
             feedMessage.header.gtfsRealtimeVersion,
           'header.timestamp': feedMessage.header.timestamp?.toString() ?? '',
           'header.incrementality':
-            feedMessage.header.incrementality?.  context.logger.logDebug(
-              `Parsing gtfs-rt feed data as Alert: InformedEntity of Alert does not contain a single entry. Skipping this Alert and continue with next one"`,
-            );
-            continue;,
+            feedMessage.header.incrementality?.toString() ?? '',
           'entity.id': String(entity.id),
           'entity.vehicle_position.vehicle_descriptor.id':
             entity.vehicle.vehicle?.id?.toString() ?? '',
@@ -215,23 +212,23 @@ export class GtfsRTInterpreterExecutor
           );
           continue;
         }
-            for (const informedEntity of entity.alert.informedEntity) {
-              const row: Record<Alert, string> = {
-                'header.gtfs_realtime_version':
-                  feedMessage.header.gtfsRealtimeVersion,
-                'header.timestamp': feedMessage.header.timestamp?.toString() ?? '',
-                'header.incrementality': 
-                  feedMessage.header.incrementality?.toString() ?? '',
-                'entity.id': entity.id.toString(),
-                'entity.alert.informed_entity.route_id': 
-                  informedEntity.routeId?.toString() ?? '',
-                'entity.alert.header_text': 
-                  entity.alert.headerText?.translation?.toString() ?? '',
-                'entity.alert.description_text': 
-                  entity.alert.descriptionText?.translation?.toString() ?? '',
-              };
-              rows.push(Object.entries(row).map(([v]) => v));
-            }
+        for (const informedEntity of entity.alert.informedEntity) {
+          const row: Record<Alert, string> = {
+            'header.gtfs_realtime_version':
+              feedMessage.header.gtfsRealtimeVersion,
+            'header.timestamp': feedMessage.header.timestamp?.toString() ?? '',
+            'header.incrementality':
+              feedMessage.header.incrementality?.toString() ?? '',
+            'entity.id': entity.id.toString(),
+            'entity.alert.informed_entity.route_id':
+              informedEntity.routeId?.toString() ?? '',
+            'entity.alert.header_text':
+              entity.alert.headerText?.translation?.toString() ?? '',
+            'entity.alert.description_text':
+              entity.alert.descriptionText?.translation?.toString() ?? '',
+          };
+          rows.push(Object.entries(row).map(([v]) => v));
+        }
       }
       resolve(E.right(new Sheet(rows)));
     });
