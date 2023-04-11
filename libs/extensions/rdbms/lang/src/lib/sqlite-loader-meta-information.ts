@@ -31,7 +31,7 @@ export class SQLiteLoaderMetaInformation extends BlockMetaInformation {
           defaultValue: true,
           docs: {
             description:
-              'Indicates, wether to drop existing Tables before load. Defaults to TRUE. Can be used for appendig data by executing pipelines periodically.',
+              'Indicates, whether to drop the table before loading data into it. Can be used for appending data by executing pipelines periodically.',
           },
         },
       },
