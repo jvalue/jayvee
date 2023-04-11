@@ -223,11 +223,14 @@ export class GtfsRTInterpreterExecutor
             'entity.alert.informed_entity.route_id':
               informedEntity.routeId?.toString() ?? '',
             'entity.alert.header_text':
-              entity.alert.headerText?.translation?.toString() ?? '',
+              entity.alert.headerText?.translation?.shift()?.text.toString() ??
+              '',
             'entity.alert.description_text':
-              entity.alert.descriptionText?.translation?.toString() ?? '',
+              entity.alert.descriptionText?.translation
+                ?.shift()
+                ?.text.toString() ?? '',
           };
-          rows.push(Object.entries(row).map(([v]) => v));
+          rows.push(Object.values(row));
         }
       }
       resolve(E.right(new Sheet(rows)));
