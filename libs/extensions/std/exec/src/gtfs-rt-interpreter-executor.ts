@@ -69,7 +69,7 @@ export class GtfsRTInterpreterExecutor
       default:
         return E.left(
           new Error(
-            `Entity should be either "trip_update", "alert" or "vehicle". Please check the argument "entity" of the GtfsRTInterpreterblock.`,
+            `Entity ${entityType} not allowed for block GtfsRTInterpreterblock, expected "trip_update", "alert" or "vehicle".`,
           ),
         );
     }
