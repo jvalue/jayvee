@@ -46,3 +46,8 @@ To install the most recent extension, go to our [latest release](https://github.
 and download the `jayvee.vsix` file from the release assets.
 Next, go to [this page](https://code.visualstudio.com/docs/editor/extension-marketplace#_install-from-a-vsix) and 
 follow the instructions for installing the downloaded extension.
+
+## Troubleshooting
+
+1. Error `structuredClone is not defined`
+    * Please make sure you use node version 17+.
