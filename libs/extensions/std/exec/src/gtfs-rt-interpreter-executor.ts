@@ -24,45 +24,6 @@ export class GtfsRTInterpreterExecutor
   public readonly inputType = IOType.FILE;
   public readonly outputType = IOType.SHEET;
 
-  // Defines Output-Sheet for entity TripUpdate --> columns in downstream TableInterpreter have to match with either one of these definitions
-  private TripUpdate = class TripUpdate {
-    'header.gtfs_realtime_version' = '';
-    'header.timestamp' = '';
-    'header.incrementality' = '';
-    'entity.id' = '';
-    'entity.trip_update.trip.trip_id' = '';
-    'entity.trip_update.trip.route_id' = '';
-    'entity.trip_update.stop_time_update.stop_sequence' = '';
-    'entity.trip_update.stop_time_update.stop_id' = '';
-    'entity.trip_update.stop_time_update.arrival.time' = '';
-    'entity.trip_update.stop_time_update.departure.time' = '';
-  };
-
-  // Defines Output-Sheet for entity VehiclePosition --> columns in downstream TableInterpreter have to match with either one of these definitions
-  private VehiclePosition = class VehiclePosition {
-    'header.gtfs_realtime_version' = '';
-    'header.timestamp' = '';
-    'header.incrementality' = '';
-    'entity.id' = '';
-    'entity.vehicle_position.vehicle_descriptor.id' = '';
-    'entity.vehicle_position.trip.trip_id' = '';
-    'entity.vehicle_position.trip.route_id' = '';
-    'entity.vehicle_position.position.latitude' = '';
-    'entity.vehicle_position.position.longitude' = '';
-    'entity.vehicle_position.timestamp' = '';
-  };
-
-  // Defines Output-Sheet for entity Alert --> columns in downstream TableInterpreter have to match with either one of these definitions
-  private Alert = class Alert {
-    'header.gtfs_realtime_version' = '';
-    'header.timestamp' = '';
-    'header.incrementality' = '';
-    'entity.id' = '';
-    'entity.alert.informed_entity.route_id' = '';
-    'entity.alert.header_text' = '';
-    'entity.alert.description_text' = '';
-  };
-
   async execute(
     inputFile: BinaryFile,
     context: ExecutionContext,
@@ -131,39 +92,41 @@ export class GtfsRTInterpreterExecutor
       context.logger.logDebug(`Parsing raw gtfs-rt feed data as TripUpdate"`);
       const rows: string[][] = [];
 
-      // Add header
-      rows.push(Object.keys(new this.TripUpdate()));
+      // Add Header
+      rows.push([...tripUpdateHeader]);
 
       for (const entity of feedMessage.entity) {
         if (entity.tripUpdate) {
           if (entity.tripUpdate.stopTimeUpdate) {
             for (const stopTimeUpdate of entity.tripUpdate.stopTimeUpdate) {
-              const tripUpdate = new this.TripUpdate();
-              tripUpdate['header.gtfs_realtime_version'] =
-                feedMessage.header.gtfsRealtimeVersion;
-              tripUpdate['header.timestamp'] = String(
-                feedMessage.header.timestamp,
-              );
-              tripUpdate['header.incrementality'] = String(
-                feedMessage.header.incrementality,
-              );
-              tripUpdate['entity.id'] = String(entity.id);
-              tripUpdate['entity.trip_update.trip.trip_id'] = String(
-                entity.tripUpdate.trip.tripId,
-              );
-              tripUpdate['entity.trip_update.trip.route_id'] = String(
-                entity.tripUpdate.trip.routeId,
-              );
-              tripUpdate['entity.trip_update.stop_time_update.stop_sequence'] =
-                String(stopTimeUpdate.stopSequence);
-              tripUpdate['entity.trip_update.stop_time_update.stop_id'] =
-                String(stopTimeUpdate.stopId);
-              tripUpdate['entity.trip_update.stop_time_update.arrival.time'] =
-                String(stopTimeUpdate.arrival?.time);
-              tripUpdate['entity.trip_update.stop_time_update.departure.time'] =
-                String(stopTimeUpdate.departure?.time);
-
-              rows.push(Object.values(tripUpdate) as string[]);
+              const row: Record<TripUpdate, string> = {
+                'header.gtfs_realtime_version':
+                  feedMessage.header.gtfsRealtimeVersion,
+                'header.timestamp': String(feedMessage.header.timestamp),
+                'header.incrementality': String(
+                  feedMessage.header.incrementality,
+                ),
+                'entity.id': String(entity.id),
+                'entity.trip_update.trip.trip_id': String(
+                  entity.tripUpdate.trip.tripId,
+                ),
+                'entity.trip_update.trip.route_id': String(
+                  entity.tripUpdate.trip.routeId,
+                ),
+                'entity.trip_update.stop_time_update.stop_sequence': String(
+                  stopTimeUpdate.stopSequence,
+                ),
+                'entity.trip_update.stop_time_update.stop_id': String(
+                  stopTimeUpdate.stopId,
+                ),
+                'entity.trip_update.stop_time_update.arrival.time': String(
+                  stopTimeUpdate.arrival?.time,
+                ),
+                'entity.trip_update.stop_time_update.departure.time': String(
+                  stopTimeUpdate.departure?.time,
+                ),
+              };
+              rows.push(Object.entries(row).map(([v]) => v));
             }
           } else {
             context.logger.logDebug(
@@ -199,37 +162,37 @@ export class GtfsRTInterpreterExecutor
       const rows: string[][] = [];
 
       // Add header
-      rows.push(Object.keys(new this.VehiclePosition()));
+      rows.push([...vehiclePositionHeader]);
 
       for (const entity of feedMessage.entity) {
         if (entity.vehicle) {
-          const vehiclePosition = new this.VehiclePosition();
-          vehiclePosition['header.gtfs_realtime_version'] =
-            feedMessage.header.gtfsRealtimeVersion;
-          vehiclePosition['header.timestamp'] = String(
-            feedMessage.header.timestamp,
-          );
-          vehiclePosition['header.incrementality'] = String(
-            feedMessage.header.incrementality,
-          );
-          vehiclePosition['entity.id'] = String(entity.id);
-          vehiclePosition['entity.vehicle_position.vehicle_descriptor.id'] =
-            String(entity.vehicle.vehicle?.id);
-          vehiclePosition['entity.vehicle_position.trip.trip_id'] = String(
-            entity.vehicle.trip?.tripId,
-          );
-          vehiclePosition['entity.vehicle_position.trip.route_id'] = String(
-            entity.vehicle.trip?.routeId,
-          );
-          vehiclePosition['entity.vehicle_position.position.latitude'] = String(
-            entity.vehicle.position?.latitude,
-          );
-          vehiclePosition['entity.vehicle_position.position.longitude'] =
-            String(entity.vehicle.position?.longitude);
-          vehiclePosition['entity.vehicle_position.timestamp'] = String(
-            entity.vehicle.timestamp,
-          );
-          rows.push(Object.values(vehiclePosition) as string[]);
+          const row: Record<VehiclePosition, string> = {
+            'header.gtfs_realtime_version':
+              feedMessage.header.gtfsRealtimeVersion,
+            'header.timestamp': String(feedMessage.header.timestamp),
+            'header.incrementality': String(feedMessage.header.incrementality),
+            'entity.id': String(entity.id),
+            'entity.vehicle_position.vehicle_descriptor.id': String(
+              entity.vehicle.vehicle?.id,
+            ),
+            'entity.vehicle_position.trip.trip_id': String(
+              entity.vehicle.trip?.tripId,
+            ),
+            'entity.vehicle_position.trip.route_id': String(
+              entity.vehicle.trip?.routeId,
+            ),
+            'entity.vehicle_position.position.latitude': String(
+              entity.vehicle.position?.latitude,
+            ),
+            'entity.vehicle_position.position.longitude': String(
+              entity.vehicle.position?.longitude,
+            ),
+            'entity.vehicle_position.timestamp': String(
+              entity.vehicle.timestamp,
+            ),
+          };
+
+          rows.push(Object.entries(row).map(([v]) => v));
 
           // Case: No VehiclePositions found -> return sheet just with header
         } else {
@@ -253,30 +216,32 @@ export class GtfsRTInterpreterExecutor
       const rows: string[][] = [];
 
       // Add header
-      rows.push(Object.keys(new this.Alert()));
+      rows.push([...alertHeader]);
 
       for (const entity of feedMessage.entity) {
         if (entity.alert) {
           if (entity.alert.informedEntity) {
             for (const informedEntity of entity.alert.informedEntity) {
-              const alert = new this.Alert();
-              alert['header.gtfs_realtime_version'] =
-                feedMessage.header.gtfsRealtimeVersion;
-              alert['header.timestamp'] = String(feedMessage.header.timestamp);
-              alert['header.incrementality'] = String(
-                feedMessage.header.incrementality,
-              );
-              alert['entity.id'] = String(entity.id);
-              alert['entity.alert.informed_entity.route_id'] = String(
-                informedEntity.routeId,
-              );
-              alert['entity.alert.header_text'] = String(
-                entity.alert.headerText?.translation,
-              );
-              alert['entity.alert.description_text'] = String(
-                entity.alert.descriptionText?.translation,
-              );
-              rows.push(Object.values(alert) as string[]);
+              const row: Record<Alert, string> = {
+                'header.gtfs_realtime_version':
+                  feedMessage.header.gtfsRealtimeVersion,
+                'header.timestamp': String(feedMessage.header.timestamp),
+                'header.incrementality': String(
+                  feedMessage.header.incrementality,
+                ),
+                'entity.id': entity.id.toString(),
+                'entity.alert.informed_entity.route_id': String(
+                  informedEntity.routeId,
+                ),
+                'entity.alert.header_text': String(
+                  entity.alert.headerText?.translation,
+                ),
+                'entity.alert.description_text': String(
+                  entity.alert.descriptionText?.translation,
+                ),
+              };
+
+              rows.push(Object.entries(row).map(([v]) => v));
             }
           } else {
             context.logger.logDebug(
@@ -298,3 +263,42 @@ export class GtfsRTInterpreterExecutor
     });
   }
 }
+
+const tripUpdateHeader = [
+  'header.gtfs_realtime_version',
+  'header.timestamp',
+  'header.incrementality',
+  'entity.id',
+  'entity.trip_update.trip.trip_id',
+  'entity.trip_update.trip.route_id',
+  'entity.trip_update.stop_time_update.stop_sequence',
+  'entity.trip_update.stop_time_update.stop_id',
+  'entity.trip_update.stop_time_update.arrival.time',
+  'entity.trip_update.stop_time_update.departure.time',
+] as const;
+type TripUpdate = typeof tripUpdateHeader[number];
+
+const vehiclePositionHeader = [
+  'header.gtfs_realtime_version',
+  'header.timestamp',
+  'header.incrementality',
+  'entity.id',
+  'entity.vehicle_position.vehicle_descriptor.id',
+  'entity.vehicle_position.trip.trip_id',
+  'entity.vehicle_position.trip.route_id',
+  'entity.vehicle_position.position.latitude',
+  'entity.vehicle_position.position.longitude',
+  'entity.vehicle_position.timestamp',
+] as const;
+type VehiclePosition = typeof vehiclePositionHeader[number];
+
+const alertHeader = [
+  'header.gtfs_realtime_version',
+  'header.timestamp',
+  'header.incrementality',
+  'entity.id',
+  'entity.alert.informed_entity.route_id',
+  'entity.alert.header_text',
+  'entity.alert.description_text',
+] as const;
+type Alert = typeof alertHeader[number];
