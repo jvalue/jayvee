@@ -43,7 +43,7 @@ jobs:
         run: npx nx workspace-lint
 
       - name: Lint
-        run: npx nx affected --target=lint --parallel=3
+        run: npx nx affected --target=lint --parallel=3 --maxWarnings=0
 
       - name: Test
         run: npx nx affected --target=test --parallel=3 --base=remotes/origin/main --head=HEAD --ci
