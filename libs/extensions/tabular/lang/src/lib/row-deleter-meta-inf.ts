@@ -84,6 +84,6 @@ export class RowDeleterMetaInformation extends BlockMetaInformation {
   }
 }
 
-const blockExample = `block SecondRowDeleter oftype ColumnDeleter {
+const blockExample = `block SecondRowDeleter oftype RowDeleter {
   delete: [row 2];
 }`;
