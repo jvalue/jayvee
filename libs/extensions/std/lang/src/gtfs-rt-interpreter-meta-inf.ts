@@ -1,12 +1,16 @@
 // SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
 //
 // SPDX-License-Identifier: AGPL-3.0-only
+import { strict as assert } from 'assert';
 
 import {
   BlockMetaInformation,
   IOType,
+  PropertyAssignment,
   PropertyValuetype,
+  isTextLiteral,
 } from '@jvalue/jayvee-language-server';
+import { ValidationAcceptor } from 'langium';
 
 export class GtfsRTInterpreterMetaInformation extends BlockMetaInformation {
   constructor() {
@@ -18,6 +22,7 @@ export class GtfsRTInterpreterMetaInformation extends BlockMetaInformation {
       {
         entity: {
           type: PropertyValuetype.TEXT,
+          validation: isGtfsRTEntity,
           docs: {
             description: `Entity to process from GTFS-RT-feed (\`trip_update\`, \`alert\` or \`vehicle\`).
             We currently support following Output-Sheets:
@@ -83,7 +88,7 @@ export class GtfsRTInterpreterMetaInformation extends BlockMetaInformation {
       {
         code: blockExampleUsage,
         description:
-          'A file is interpretet as an GTFS-RT file, which contains TripUpdates.',
+          'A file is interpretet as an GTFS-RT file, which contains trip_updates.',
       },
     ];
   }
@@ -92,3 +97,17 @@ export class GtfsRTInterpreterMetaInformation extends BlockMetaInformation {
 const blockExampleUsage = `block GtfsRTTripUpdateInterpreter oftype GtfsRTInterpreter{
   entity: "trip_update";
 }`;
+
+function isGtfsRTEntity(
+  property: PropertyAssignment,
+  accept: ValidationAcceptor,
+) {
+  const propertyValue = property.value;
+  assert(isTextLiteral(propertyValue));
+
+  if (!['trip_update', 'alert', 'vehicle'].includes(propertyValue.value)) {
+    accept('error', `Entity must be "trip_update", "alert" or "vehicle"`, {
+      node: propertyValue,
+    });
+  }
+}
