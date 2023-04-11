@@ -51,37 +51,28 @@ export class GtfsRTInterpreterExecutor
   }
 
   private async parseFeedMessage(
-    entity_type: string,
+    entityType: string,
     feedMessage: GtfsRealtimeBindings.transit_realtime.FeedMessage,
     context: ExecutionContext,
   ): Promise<Either<Error, Sheet>> {
-    return new Promise((resolve) => {
-      switch (entity_type) {
-        case 'trip_update':
-          // Extract the trip updates from thee feed message
-          resolve(this.parseTripUpdates(feedMessage, context));
-          break;
-        case 'alert':
-          // Extract the alerts from thee feed message
-          resolve(this.parseAlerts(feedMessage, context));
-          break;
-        case 'vehicle':
-          // Extract vehicle positions from thee feed message
-          resolve(this.parseVehiclePositions(feedMessage, context));
-          break;
-
-        // Entity invalid
-        default:
-          resolve(
-            E.left(
-              new Error(
-                `Entity should be either "trip_update", "alert" or "vehicle". Please check the argument "entity" of the GtfsRTInterpreterblock.`,
-              ),
-            ),
-          );
-          break;
-      }
-    });
+    switch (entityType) {
+      case 'trip_update':
+        // Extract the trip updates from thee feed message
+        return this.parseTripUpdates(feedMessage, context);
+      case 'alert':
+        // Extract the alerts from thee feed message
+        return this.parseAlerts(feedMessage, context);
+      case 'vehicle':
+        // Extract vehicle positions from thee feed message
+        return this.parseVehiclePositions(feedMessage, context);
+      // Entity invalid
+      default:
+        return E.left(
+          new Error(
+            `Entity should be either "trip_update", "alert" or "vehicle". Please check the argument "entity" of the GtfsRTInterpreterblock.`,
+          ),
+        );
+    }
   }
 
   private parseTripUpdates(
@@ -96,54 +87,48 @@ export class GtfsRTInterpreterExecutor
       rows.push([...tripUpdateHeader]);
 
       for (const entity of feedMessage.entity) {
-        if (entity.tripUpdate) {
-          if (entity.tripUpdate.stopTimeUpdate) {
-            for (const stopTimeUpdate of entity.tripUpdate.stopTimeUpdate) {
-              const row: Record<TripUpdate, string> = {
-                'header.gtfs_realtime_version':
-                  feedMessage.header.gtfsRealtimeVersion,
-                'header.timestamp': String(feedMessage.header.timestamp),
-                'header.incrementality': String(
-                  feedMessage.header.incrementality,
-                ),
-                'entity.id': String(entity.id),
-                'entity.trip_update.trip.trip_id': String(
-                  entity.tripUpdate.trip.tripId,
-                ),
-                'entity.trip_update.trip.route_id': String(
-                  entity.tripUpdate.trip.routeId,
-                ),
-                'entity.trip_update.stop_time_update.stop_sequence': String(
-                  stopTimeUpdate.stopSequence,
-                ),
-                'entity.trip_update.stop_time_update.stop_id': String(
-                  stopTimeUpdate.stopId,
-                ),
-                'entity.trip_update.stop_time_update.arrival.time': String(
-                  stopTimeUpdate.arrival?.time,
-                ),
-                'entity.trip_update.stop_time_update.departure.time': String(
-                  stopTimeUpdate.departure?.time,
-                ),
-              };
-              rows.push(Object.entries(row).map(([v]) => v));
-            }
-          } else {
-            context.logger.logDebug(
-              `Parsing gtfs-rt feed data as TripUpdates: StopTimeUpdate of TripUpdate "${String(
-                entity.tripUpdate.trip.tripId,
-              )}" does not contain a single entry. Skipping this TripUpdate and continue with next one"`,
-            );
-            continue;
-          }
-
-          // Case: No TripUpdates found -> return sheet just with header
-        } else {
+        // Case: No TripUpdates found -> return sheet just with header
+        if (!entity.tripUpdate) {
           context.logger.logDebug(
             `Parsing gtfs-rt feed data as TripUpdates: No Tripupdates found in feedmessage with timestamp "${String(
               feedMessage.header.timestamp,
             )}"`,
           );
+          break;
+        }
+
+        // Case: No stopTimeUpdate found -> continue with next TripUpdate
+        if (!entity.tripUpdate.stopTimeUpdate) {
+          context.logger.logDebug(
+            `Parsing gtfs-rt feed data as TripUpdates: StopTimeUpdate of TripUpdate "${String(
+              entity.tripUpdate.trip.tripId,
+            )}" does not contain a single entry. Skipping this TripUpdate and continue with next one"`,
+          );
+          continue;
+        }
+
+        for (const stopTimeUpdate of entity.tripUpdate.stopTimeUpdate) {
+          const row: Record<TripUpdate, string> = {
+            'header.gtfs_realtime_version':
+              feedMessage.header.gtfsRealtimeVersion,
+            'header.timestamp': feedMessage.header.timestamp?.toString() ?? '',
+            'header.incrementality':
+              feedMessage.header.incrementality?.toString() ?? '',
+            'entity.id': entity.id,
+            'entity.trip_update.trip.trip_id':
+              entity.tripUpdate.trip.tripId?.toString() ?? '',
+            'entity.trip_update.trip.route_id':
+              entity.tripUpdate.trip.routeId?.toString() ?? '',
+            'entity.trip_update.stop_time_update.stop_sequence':
+              stopTimeUpdate.stopSequence?.toString() ?? '',
+            'entity.trip_update.stop_time_update.stop_id':
+              stopTimeUpdate.stopId?.toString() ?? '',
+            'entity.trip_update.stop_time_update.arrival.time':
+              stopTimeUpdate.arrival?.time?.toString() ?? '',
+            'entity.trip_update.stop_time_update.departure.time':
+              stopTimeUpdate.departure?.time?.toString() ?? '',
+          };
+          rows.push(Object.values(row));
         }
       }
       resolve(E.right(new Sheet(rows)));
@@ -165,43 +150,39 @@ export class GtfsRTInterpreterExecutor
       rows.push([...vehiclePositionHeader]);
 
       for (const entity of feedMessage.entity) {
-        if (entity.vehicle) {
-          const row: Record<VehiclePosition, string> = {
-            'header.gtfs_realtime_version':
-              feedMessage.header.gtfsRealtimeVersion,
-            'header.timestamp': String(feedMessage.header.timestamp),
-            'header.incrementality': String(feedMessage.header.incrementality),
-            'entity.id': String(entity.id),
-            'entity.vehicle_position.vehicle_descriptor.id': String(
-              entity.vehicle.vehicle?.id,
-            ),
-            'entity.vehicle_position.trip.trip_id': String(
-              entity.vehicle.trip?.tripId,
-            ),
-            'entity.vehicle_position.trip.route_id': String(
-              entity.vehicle.trip?.routeId,
-            ),
-            'entity.vehicle_position.position.latitude': String(
-              entity.vehicle.position?.latitude,
-            ),
-            'entity.vehicle_position.position.longitude': String(
-              entity.vehicle.position?.longitude,
-            ),
-            'entity.vehicle_position.timestamp': String(
-              entity.vehicle.timestamp,
-            ),
-          };
-
-          rows.push(Object.entries(row).map(([v]) => v));
-
-          // Case: No VehiclePositions found -> return sheet just with header
-        } else {
+        // Case: No VehiclePositions found -> return sheet just with header
+        if (!entity.vehicle) {
           context.logger.logDebug(
             `Parsing gtfs-rt feed data as VehiclePosition: No VehiclePositions found in feedmessage with timestamp "${String(
               feedMessage.header.timestamp,
             )}"`,
           );
+          break;
         }
+        const row: Record<VehiclePosition, string> = {
+          'header.gtfs_realtime_version':
+            feedMessage.header.gtfsRealtimeVersion,
+          'header.timestamp': feedMessage.header.timestamp?.toString() ?? '',
+          'header.incrementality':
+            feedMessage.header.incrementality?.  context.logger.logDebug(
+              `Parsing gtfs-rt feed data as Alert: InformedEntity of Alert does not contain a single entry. Skipping this Alert and continue with next one"`,
+            );
+            continue;,
+          'entity.id': String(entity.id),
+          'entity.vehicle_position.vehicle_descriptor.id':
+            entity.vehicle.vehicle?.id?.toString() ?? '',
+          'entity.vehicle_position.trip.trip_id':
+            entity.vehicle.trip?.tripId?.toString() ?? '',
+          'entity.vehicle_position.trip.route_id':
+            entity.vehicle.trip?.routeId?.toString() ?? '',
+          'entity.vehicle_position.position.latitude':
+            entity.vehicle.position?.latitude.toString() ?? '',
+          'entity.vehicle_position.position.longitude':
+            entity.vehicle.position?.longitude.toString() ?? '',
+          'entity.vehicle_position.timestamp':
+            entity.vehicle.timestamp?.toString() ?? '',
+        };
+        rows.push(Object.values(row));
       }
       resolve(E.right(new Sheet(rows)));
     });
@@ -219,45 +200,38 @@ export class GtfsRTInterpreterExecutor
       rows.push([...alertHeader]);
 
       for (const entity of feedMessage.entity) {
-        if (entity.alert) {
-          if (entity.alert.informedEntity) {
-            for (const informedEntity of entity.alert.informedEntity) {
-              const row: Record<Alert, string> = {
-                'header.gtfs_realtime_version':
-                  feedMessage.header.gtfsRealtimeVersion,
-                'header.timestamp': String(feedMessage.header.timestamp),
-                'header.incrementality': String(
-                  feedMessage.header.incrementality,
-                ),
-                'entity.id': entity.id.toString(),
-                'entity.alert.informed_entity.route_id': String(
-                  informedEntity.routeId,
-                ),
-                'entity.alert.header_text': String(
-                  entity.alert.headerText?.translation,
-                ),
-                'entity.alert.description_text': String(
-                  entity.alert.descriptionText?.translation,
-                ),
-              };
-
-              rows.push(Object.entries(row).map(([v]) => v));
-            }
-          } else {
-            context.logger.logDebug(
-              `Parsing gtfs-rt feed data as Alert: InformedEntity of Alert does not contain a single entry. Skipping this Alert and continue with next one"`,
-            );
-            continue;
-          }
-
-          // Case: No Alerts found -> return sheet just with header
-        } else {
+        // Case: No Alerts found -> return sheet just with header
+        if (!entity.alert) {
           context.logger.logDebug(
             `Parsing gtfs-rt feed data as Alert: No Alerts found in feedmessage with timestamp "${String(
               feedMessage.header.timestamp,
             )}"`,
           );
+          break;
         }
+        if (!entity.alert.informedEntity) {
+          context.logger.logDebug(
+            `Parsing gtfs-rt feed data as Alert: InformedEntity of Alert does not contain a single entry. Skipping this Alert and continue with next one"`,
+          );
+          continue;
+        }
+            for (const informedEntity of entity.alert.informedEntity) {
+              const row: Record<Alert, string> = {
+                'header.gtfs_realtime_version':
+                  feedMessage.header.gtfsRealtimeVersion,
+                'header.timestamp': feedMessage.header.timestamp?.toString() ?? '',
+                'header.incrementality': 
+                  feedMessage.header.incrementality?.toString() ?? '',
+                'entity.id': entity.id.toString(),
+                'entity.alert.informed_entity.route_id': 
+                  informedEntity.routeId?.toString() ?? '',
+                'entity.alert.header_text': 
+                  entity.alert.headerText?.translation?.toString() ?? '',
+                'entity.alert.description_text': 
+                  entity.alert.descriptionText?.translation?.toString() ?? '',
+              };
+              rows.push(Object.entries(row).map(([v]) => v));
+            }
       }
       resolve(E.right(new Sheet(rows)));
     });
