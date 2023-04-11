@@ -129,78 +129,67 @@ async function executeBlocks(
 ): Promise<ExitCode> {
   for (const blockData of executionOrder) {
     const block = blockData.block;
+    const parentData = collectParents(block).map((parent) =>
+      executionOrder.find((blockData) => parent === blockData.block),
+    );
+    const inputValue =
+      parentData[0]?.value === undefined ? NONE : parentData[0]?.value;
 
     executionContext.enterNode(block);
-    const exitCode = await executeBlock(
-      blockData,
-      executionContext,
-      executionOrder,
-    );
-    executionContext.exitNode(block);
-
-    if (exitCode === ExitCode.FAILURE) {
-      return exitCode;
+    if (inputValue == null) {
+      executionContext.logger.logInfoDiagnostic(
+        `Skipped execution because parent block ${
+          parentData[0] ? parentData[0].block.name : 'NAME NOT FOUND'
+        } emitted no value.`,
+        { node: blockData.block, property: 'name' },
+      );
+      blockData.value = null;
+    } else {
+      const executionResult = await executeBlock(
+        inputValue,
+        block,
+        executionContext,
+      );
+      if (R.isErr(executionResult)) {
+        const diagnosticError = executionResult.left;
+        executionContext.logger.logErrDiagnostic(
+          diagnosticError.message,
+          diagnosticError.diagnostic,
+        );
+        return ExitCode.FAILURE;
+      }
+      blockData.value = executionResult.right;
     }
+    executionContext.exitNode(block);
   }
   return ExitCode.SUCCESS;
 }
 
 async function executeBlock(
-  blockData: ExecutionOrderItem,
+  inputValue: IOTypeImplementation,
+  block: BlockDefinition,
   executionContext: ExecutionContext,
-  executionOrder: ExecutionOrderItem[],
-) {
-  const block = blockData.block;
-
+): Promise<R.Result<IOTypeImplementation | null>> {
   const blockExecutor = createBlockExecutor(block);
-  const parentData = collectParents(block).map((parent) =>
-    executionOrder.find((blockData) => parent === blockData.block),
-  );
-  const inputValue =
-    parentData[0]?.value === undefined ? NONE : parentData[0]?.value;
+
+  const startTime = new Date();
 
   let result: R.Result<IOTypeImplementation | null>;
-
-  // Check, if parent emitted a value
-  if (inputValue != null) {
-    const startTime = new Date();
-    try {
-      result = await blockExecutor.execute(inputValue, executionContext);
-      logExecutionDuration(startTime, executionContext.logger);
-    } catch (unexpectedError) {
-      executionContext.logger.logErrDiagnostic(
-        `An unknown error occurred: ${
-          unexpectedError instanceof Error
-            ? unexpectedError.message
-            : JSON.stringify(unexpectedError)
-        }`,
-        { node: blockData.block, property: 'name' },
-      );
-      return ExitCode.FAILURE;
-    }
-
-    if (R.isErr(result)) {
-      executionContext.logger.logErrDiagnostic(
-        result.left.message,
-        result.left.diagnostic,
-      );
-      return ExitCode.FAILURE;
-    }
-
-    // eslint-disable-next-line require-atomic-updates
-    blockData.value = result.right;
-
-    // If parent emitted no value, skip all downstream blocks
-  } else {
-    blockData.value = null;
-    executionContext.logger.logInfoDiagnostic(
-      `Skipped execution because parent block ${
-        parentData[0] ? parentData[0].block.name : 'NAME NOT FOUND'
-      } emitted no value.`,
-      { node: blockData.block, property: 'name' },
-    );
+  try {
+    result = await blockExecutor.execute(inputValue, executionContext);
+  } catch (unexpectedError) {
+    return R.err({
+      message: `An unknown error occurred: ${
+        unexpectedError instanceof Error
+          ? unexpectedError.message
+          : JSON.stringify(unexpectedError)
+      }`,
+      diagnostic: { node: block, property: 'name' },
+    });
   }
-  return ExitCode.SUCCESS;
+  logExecutionDuration(startTime, executionContext.logger);
+
+  return result;
 }
 
 export function logExecutionDuration(startTime: Date, logger: Logger): void {
