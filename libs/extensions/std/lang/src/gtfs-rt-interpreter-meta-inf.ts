@@ -88,7 +88,7 @@ export class GtfsRTInterpreterMetaInformation extends BlockMetaInformation {
       {
         code: blockExampleUsage,
         description:
-          'A file is interpretet as an GTFS-RT file, which contains trip_updates.',
+          'A file is interpretet as an GTFS-RT file, which contains TripUpdate.',
       },
     ];
   }
