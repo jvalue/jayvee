@@ -4,6 +4,7 @@
 
 import {
   BlockMetaInformation,
+  ConstraintMetaInformation,
   ExampleDoc,
   IOType,
   JayveeBlockTypeDocGenerator,
@@ -19,6 +20,28 @@ export class UserDocGenerator implements JayveeBlockTypeDocGenerator {
       .ioTypes(metaInf.inputType, metaInf.outputType)
       .description(metaInf.docs.description)
       .examples(metaInf.docs.examples);
+
+    builder.propertiesHeading();
+    Object.entries(metaInf.getPropertySpecifications()).forEach(
+      ([key, property]) => {
+        builder
+          .propertyHeading(key, 3)
+          .propertySpec(property)
+          .description(property.docs?.description, 4)
+          .validation(property.docs?.validation, 4)
+          .examples(property.docs?.examples, 4);
+      },
+    );
+
+    return builder.build();
+  }
+
+  generateConstraintTypeDoc(metaInf: ConstraintMetaInformation): string {
+    const builder = new UserDocMarkdownBuilder()
+      .blockTypeHeading(metaInf.type)
+      .generationComment();
+    // .description(metaInf.docs.description)
+    // .examples(metaInf.docs.examples);
 
     builder.propertiesHeading();
     Object.entries(metaInf.getPropertySpecifications()).forEach(
