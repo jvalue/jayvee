@@ -8,6 +8,8 @@ import { join } from 'path';
 import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
 import {
   getRegisteredBlockMetaInformation,
+  getRegisteredConstraintMetaInformation,
+  registerConstraints,
   useExtension,
 } from '@jvalue/jayvee-language-server';
 
@@ -17,6 +19,11 @@ useExtension(new StdLangExtension());
 
 function main(): void {
   const rootPath = join(__dirname, '..', '..', '..', '..');
+  generateBlockTypeDocs(rootPath);
+  generateConstraintTypeDocs(rootPath);
+}
+
+function generateBlockTypeDocs(rootPath: string): void {
   const docsPath = join(
     rootPath,
     'apps',
@@ -29,6 +36,30 @@ function main(): void {
   for (const metaInf of metaInfs) {
     const userDocBuilder = new UserDocGenerator();
     const blockTypeDoc = userDocBuilder.generateBlockTypeDoc(metaInf);
+
+    const fileName = `${metaInf.type}.md`;
+    writeFileSync(join(docsPath, fileName), blockTypeDoc, {
+      flag: 'w',
+    });
+    console.info(`Generated file ${fileName}`);
+  }
+}
+
+function generateConstraintTypeDocs(rootPath: string): void {
+  const docsPath = join(
+    rootPath,
+    'apps',
+    'docs',
+    'docs',
+    'user',
+    'constraint-types',
+  );
+  registerConstraints();
+  const metaInfs = getRegisteredConstraintMetaInformation();
+
+  for (const metaInf of metaInfs) {
+    const userDocBuilder = new UserDocGenerator();
+    const blockTypeDoc = userDocBuilder.generateConstraintTypeDoc(metaInf);
 
     const fileName = `${metaInf.type}.md`;
     writeFileSync(join(docsPath, fileName), blockTypeDoc, {
