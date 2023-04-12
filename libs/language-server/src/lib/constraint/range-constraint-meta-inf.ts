@@ -96,5 +96,26 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
         }
       },
     );
+    super.docs = {
+      description:
+        'Limits the range of a number value with an upper and/or lower boundary. Only values within the given range are valid.',
+      examples: [
+        {
+          description: 'An integer scale between 1 and 100.',
+          code: `constraint HundertScale oftype RangeConstraint {
+  lowerBound: 1;
+  upperBound: 100;		
+}`,
+        },
+        {
+          description: 'A decimal scale between 0 (excluded) and 100.',
+          code: `constraint HundertScale oftype RangeConstraint {
+  lowerBound: 1;
+  lowerBoundInclusive: false;
+  upperBound: 100;		
+}`,
+        },
+      ],
+    };
   }
 }
