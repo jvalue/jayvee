@@ -39,9 +39,10 @@ export class UserDocGenerator implements JayveeBlockTypeDocGenerator {
   generateConstraintTypeDoc(metaInf: ConstraintMetaInformation): string {
     const builder = new UserDocMarkdownBuilder()
       .blockTypeHeading(metaInf.type)
-      .generationComment();
-    // .description(metaInf.docs.description)
-    // .examples(metaInf.docs.examples);
+      .generationComment()
+      .compatibleValueTypes(metaInf.compatiblePrimitiveValuetypes)
+      .description(metaInf.docs.description)
+      .examples(metaInf.docs.examples);
 
     builder.propertiesHeading();
     Object.entries(metaInf.getPropertySpecifications()).forEach(
@@ -102,6 +103,13 @@ class UserDocMarkdownBuilder {
       .newLine()
       .line(`Output type: \`${outputType}\``)
       .newLine();
+    return this;
+  }
+
+  compatibleValueTypes(types: string[]): UserDocMarkdownBuilder {
+    this.markdownBuilder.line(`Compatible ValueTypes:`);
+    this.markdownBuilder.line(types.map((type) => `\`${type}\``).join(', '));
+    this.markdownBuilder.newLine();
     return this;
   }
 
