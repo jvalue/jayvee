@@ -16,5 +16,18 @@ export class RegexConstraintMetaInformation extends ConstraintMetaInformation {
       },
       ['text'],
     );
+    super.docs = {
+      description:
+        'Limits the values complying to a regex. Only values that comply with the regex are valid.',
+      examples: [
+        {
+          description:
+            'Text that complies with the IFOPT (Identification of Fixed Objects in Public Transport) format.',
+          code: `constraint IFOPT_Format oftype RegexConstraint {
+  regex: /[a-z]{2}:\\d+:\\d+(:\\d+)?/;
+}`,
+        },
+      ],
+    };
   }
 }

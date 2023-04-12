@@ -39,5 +39,17 @@ export class DenylistConstraintMetaInformation extends ConstraintMetaInformation
       },
       ['text'],
     );
+    super.docs = {
+      description:
+        'Defines a set of forbidden values. All values in the list are invalid.',
+      examples: [
+        {
+          code: `constraint NotGreaterThanXL oftype DenylistConstraint {
+  denylist: ["XXL", "XXXL", "5XL"];
+}`,
+          description: 'Denies all T-shirt sizes above XL.',
+        },
+      ],
+    };
   }
 }
