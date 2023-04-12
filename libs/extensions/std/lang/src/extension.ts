@@ -12,6 +12,7 @@ import {
 
 import { ArchiveInterpreterMetaInformation } from './archive-interpreter-meta-inf';
 import { FilePickerMetaInformation } from './file-picker-meta-inf';
+import { GtfsRTInterpreterMetaInformation } from './gtfs-rt-interpreter-meta-inf';
 import { HttpExtractorMetaInformation } from './http-extractor-meta-inf';
 import { TextFileInterpreterMetaInformation } from './text-file-interpreter-meta-inf';
 import { TextLineDeleterMetaInformation } from './text-line-deleter-meta-inf';
@@ -32,6 +33,7 @@ export class StdLangExtension implements JayveeLangExtension {
       TextLineDeleterMetaInformation,
       ArchiveInterpreterMetaInformation,
       FilePickerMetaInformation,
+      GtfsRTInterpreterMetaInformation,
     ];
   }
 }

@@ -3,7 +3,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
-import { createJayveeServices, useExtension } from '@jvalue/jayvee-language-server';
+import {
+  createJayveeServices,
+  useExtension,
+} from '@jvalue/jayvee-language-server';
 import { EmptyFileSystem, startLanguageServer } from 'langium';
 import {
   BrowserMessageReader,

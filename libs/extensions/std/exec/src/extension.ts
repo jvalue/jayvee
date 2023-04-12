@@ -11,6 +11,7 @@ import { TabularExecExtension } from '@jvalue/jayvee-extensions/tabular/exec';
 
 import { ArchiveInterpreterExecutor } from './archive-interpreter-executor';
 import { FilePickerExecutor } from './file-picker-executor';
+import { GtfsRTInterpreterExecutor } from './gtfs-rt-interpreter-executor';
 import { HttpExtractorExecutor } from './http-extractor-executor';
 import { TextFileInterpreterExecutor } from './text-file-interpreter-executor';
 import { TextLineDeleterExecutor } from './text-line-deleter-executor';
@@ -31,6 +32,7 @@ export class StdExecExtension implements JayveeExecExtension {
       TextLineDeleterExecutor,
       ArchiveInterpreterExecutor,
       FilePickerExecutor,
+      GtfsRTInterpreterExecutor,
     ];
   }
 }

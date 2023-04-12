@@ -2,7 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { BlockExecutorClass, JayveeExecExtension } from '@jvalue/jayvee-execution';
+import {
+  BlockExecutorClass,
+  JayveeExecExtension,
+} from '@jvalue/jayvee-execution';
 
 import { CellRangeSelectorExecutor } from './lib/cell-range-selector-executor';
 import { CellWriterExecutor } from './lib/cell-writer-executor';

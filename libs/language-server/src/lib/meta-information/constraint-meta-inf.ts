@@ -7,9 +7,15 @@ import { ValidationAcceptor } from 'langium';
 import { PrimitiveValuetypeKeyword, PropertyBody } from '../ast/generated/ast';
 
 // eslint-disable-next-line import/no-cycle
-import { MetaInformation, PropertySpecification } from './meta-inf';
+import { ExampleDoc, MetaInformation, PropertySpecification } from './meta-inf';
+
+interface ConstraintDocs {
+  description?: string;
+  examples?: ExampleDoc[];
+}
 
 export abstract class ConstraintMetaInformation extends MetaInformation {
+  docs: ConstraintDocs = {};
   protected constructor(
     constraintType: string,
     properties: Record<string, PropertySpecification>,

@@ -105,64 +105,105 @@ async function runPipeline(
 
   logPipelineOverview(pipeline, runtimeParameters, executionContext.logger);
 
-  const executionOrder: Array<{
-    block: BlockDefinition;
-    value: IOTypeImplementation | null;
-  }> = getBlocksInTopologicalSorting(pipeline).map((block) => {
-    return { block: block, value: NONE };
-  });
+  const startTime = new Date();
+
+  const executionOrder = getBlocksInTopologicalSorting(pipeline).map(
+    (block) => {
+      return { block: block, value: NONE };
+    },
+  );
+  const exitCode = await executeBlocks(executionContext, executionOrder);
+
+  logExecutionDuration(startTime, executionContext.logger);
+  return exitCode;
+}
+
+interface ExecutionOrderItem {
+  block: BlockDefinition;
+  value: IOTypeImplementation | null;
+}
+
+async function executeBlocks(
+  executionContext: ExecutionContext,
+  executionOrder: ExecutionOrderItem[],
+): Promise<ExitCode> {
+  let abortExecution = false;
   for (const blockData of executionOrder) {
     const block = blockData.block;
-    executionContext.enterNode(block);
-
-    const blockExecutor = createBlockExecutor(block);
     const parentData = collectParents(block).map((parent) =>
       executionOrder.find((blockData) => parent === blockData.block),
     );
     const inputValue =
       parentData[0]?.value === undefined ? NONE : parentData[0]?.value;
 
-    let result: R.Result<IOTypeImplementation | null>;
+    executionContext.enterNode(block);
 
-    // Check, if parent emitted a value
-    if (inputValue != null) {
-      try {
-        result = await blockExecutor.execute(inputValue, executionContext);
-      } catch (unexpectedError) {
-        executionContext.logger.logErrDiagnostic(
-          `An unknown error occurred: ${
-            unexpectedError instanceof Error
-              ? unexpectedError.message
-              : JSON.stringify(unexpectedError)
-          }`,
-          { node: blockData.block, property: 'name' },
-        );
-        return ExitCode.FAILURE;
-      }
-
-      if (R.isErr(result)) {
-        executionContext.logger.logErrDiagnostic(
-          result.left.message,
-          result.left.diagnostic,
-        );
-        return ExitCode.FAILURE;
-      }
-
-      blockData.value = result.right;
-
-      // If parent emitted no value, skip all downstream blocks
-    } else {
-      blockData.value = null;
-      executionContext.logger.logInfoDiagnostic(
-        `Skipped execution because parent block ${
-          parentData[0] ? parentData[0].block.name : 'NAME NOT FOUND'
-        } emitted no value.`,
-        { node: blockData.block, property: 'name' },
+    const executionResult = await executeBlock(
+      inputValue,
+      block,
+      executionContext,
+    );
+    if (R.isErr(executionResult)) {
+      abortExecution = true;
+      const diagnosticError = executionResult.left;
+      executionContext.logger.logErrDiagnostic(
+        diagnosticError.message,
+        diagnosticError.diagnostic,
       );
+    } else {
+      blockData.value = executionResult.right;
     }
+
     executionContext.exitNode(block);
+
+    if (abortExecution) {
+      return ExitCode.FAILURE;
+    }
   }
   return ExitCode.SUCCESS;
+}
+
+async function executeBlock(
+  inputValue: IOTypeImplementation | null,
+  block: BlockDefinition,
+  executionContext: ExecutionContext,
+): Promise<R.Result<IOTypeImplementation | null>> {
+  if (inputValue == null) {
+    executionContext.logger.logInfoDiagnostic(
+      `Skipped execution because parent block emitted no value.`,
+      { node: block, property: 'name' },
+    );
+    return R.ok(null);
+  }
+
+  const blockExecutor = createBlockExecutor(block);
+
+  const startTime = new Date();
+
+  let result: R.Result<IOTypeImplementation | null>;
+  try {
+    result = await blockExecutor.execute(inputValue, executionContext);
+  } catch (unexpectedError) {
+    return R.err({
+      message: `An unknown error occurred: ${
+        unexpectedError instanceof Error
+          ? unexpectedError.message
+          : JSON.stringify(unexpectedError)
+      }`,
+      diagnostic: { node: block, property: 'name' },
+    });
+  }
+  logExecutionDuration(startTime, executionContext.logger);
+
+  return result;
+}
+
+export function logExecutionDuration(startTime: Date, logger: Logger): void {
+  const endTime = new Date();
+  const executionDurationMs = Math.round(
+    endTime.getTime() - startTime.getTime(),
+  );
+  logger.logDebug(`Execution duration: ${executionDurationMs} ms.`);
 }
 
 export function logPipelineOverview(

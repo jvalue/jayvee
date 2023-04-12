@@ -4,6 +4,7 @@
 
 import {
   BlockMetaInformation,
+  ConstraintMetaInformation,
   ExampleDoc,
   IOType,
   JayveeBlockTypeDocGenerator,
@@ -17,6 +18,29 @@ export class UserDocGenerator implements JayveeBlockTypeDocGenerator {
       .blockTypeHeading(metaInf.type)
       .generationComment()
       .ioTypes(metaInf.inputType, metaInf.outputType)
+      .description(metaInf.docs.description)
+      .examples(metaInf.docs.examples);
+
+    builder.propertiesHeading();
+    Object.entries(metaInf.getPropertySpecifications()).forEach(
+      ([key, property]) => {
+        builder
+          .propertyHeading(key, 3)
+          .propertySpec(property)
+          .description(property.docs?.description, 4)
+          .validation(property.docs?.validation, 4)
+          .examples(property.docs?.examples, 4);
+      },
+    );
+
+    return builder.build();
+  }
+
+  generateConstraintTypeDoc(metaInf: ConstraintMetaInformation): string {
+    const builder = new UserDocMarkdownBuilder()
+      .blockTypeHeading(metaInf.type)
+      .generationComment()
+      .compatibleValueTypes(metaInf.compatiblePrimitiveValuetypes)
       .description(metaInf.docs.description)
       .examples(metaInf.docs.examples);
 
@@ -79,6 +103,13 @@ class UserDocMarkdownBuilder {
       .newLine()
       .line(`Output type: \`${outputType}\``)
       .newLine();
+    return this;
+  }
+
+  compatibleValueTypes(types: string[]): UserDocMarkdownBuilder {
+    this.markdownBuilder.line(`Compatible ValueTypes:`);
+    this.markdownBuilder.line(types.map((type) => `\`${type}\``).join(', '));
+    this.markdownBuilder.newLine();
     return this;
   }
 
