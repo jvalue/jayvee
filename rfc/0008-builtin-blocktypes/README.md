@@ -4,12 +4,12 @@ SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
 SPDX-License-Identifier: AGPL-3.0-only
 -->
 
-# RFC 0008: Builtin block types
+# RFC 0008: Builtin blocktypes
 
 |             |                      |
 |-------------|----------------------|
 | Feature Tag | `builtin-blocktypes` |
-| Status      | `DRAFT`              | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED -->
+| Status      | `DISCUSSION`              | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED -->
 | Responsible | `@felix-oq`          |
 <!-- 
   Status Overview:
@@ -21,13 +21,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 ## Summary
 
-TODO
+Blocktypes that are built into the language are declared syntactically by denoting IO types and their properties.
+This change does not change the semantics, but it can serve as a foundation for composite block types in an upcoming RFC.
 
 ## Motivation
 
-Block types only exist implicitly.
-Support declaration of blocktypes that are built into the language, so users can look up IO types and properties.
-No semantic changes but can serve as a foundation for composite block types.
+Currently, all blocktypes only exist implicitly in the language.
+To make their definition more explicit, we should support the declaration of builtin blocktypes (i.e. blocktypes that are built into the language).
+This allows users to look up IO types and properties without having to open the documentation pages.
 
 ## Explanation
 
@@ -37,11 +38,13 @@ No semantic changes but can serve as a foundation for composite block types.
   - If omitted, a blocktype has no input or output
 - `property` keyword to define a property with a name and a type
   - Optionally, a default value can be assigned
-- Adds new keywords for existing types:
+- Adds new keywords for existing property types:
   - Valuetypes: `regex`, `cellrange` / `row` / `column` / `cell`, `valuetype-assignment`
   - Typed collections: `collection<type>`
     - Nested collections are not supported for now
   - IO types: `File`, `FileSystem`, `TextFile`, `Sheet`, `Table`
+
+See the following section for concrete code examples.
 
 ### Syntax for current block types
 
@@ -171,9 +174,7 @@ builtin blocktype PostgresLoader {
 
 ## Drawbacks
 
-- Does not include validation semantics
-- Does not include a standard for documenting blocktypes in the code
-- Adds valuetypes for properties that cannot be assigned to table columns 
+- Adds valuetype keywords for properties, but these types cannot be assigned to table columns 
 
 ## Alternatives
 
@@ -183,10 +184,16 @@ builtin blocktype PostgresLoader {
 
 ## Possible Future Changes/Enhancements
 
+- Usage of valuetypes for typing properties
+  - Constraints can then be used to validate property values
+  - Properties can be considered inputs of a block, so property values can be provided dynamically by pipes
+- Include validation semantics beyond valuetypes
+- Introduce a standard for documenting blocktypes in the code
+- Possibility to declare multiple named inputs and outputs for blocktypes
 - Can serve as a foundation for composite blocktypes, e.g.:
 
 ```jayvee
-composite blocktype HttpFileLoader {
+composite blocktype HttpFileExtractor {
     property url oftype text;
 
     output oftype TextFile;
@@ -203,7 +210,3 @@ composite blocktype HttpFileLoader {
     Interpreter -> output;
 }
 ```
-
-- Usage of valuetypes for typing properties
-  - Constraints can then be used to validate property values
-  - Properties can be considered inputs of a block, so property values can be provided by pipes
