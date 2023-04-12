@@ -25,7 +25,7 @@ export class GtfsRTInterpreterMetaInformation extends BlockMetaInformation {
           validation: isGtfsRTEntity,
           docs: {
             description: `Entity to process from GTFS-RT-feed (\`trip_update\`, \`alert\` or \`vehicle\`).
-            We currently support following Output-Sheets, each are an equivalent to the flattened Element Index defined in https://developers.google.com/transit/gtfs-realtime/reference#element-index (just required fields are included)):
+            We currently support following Output-Sheets, each are an equivalent to the flattened Element Index defined in <https://developers.google.com/transit/gtfs-realtime/reference#element-index> (just required fields are included)):
 
             Entity TripUpdate:
             \`\`\`
