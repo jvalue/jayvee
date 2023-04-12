@@ -14,19 +14,19 @@ import { IOTypeImplementation } from './io-type-implementation';
  */
 export interface FileSystem extends IOTypeImplementation<IOType.FILE_SYSTEM> {
   /**
-   * Retrieves a node from the file system. Depends on the implementation of the file system a node could be File or Directory.
-   * @function getNode
-   * @param {string} path - The path to the node.
-   * @returns {FileSystemNode | undefined} - The node or null if the node does not exist.
+   * Retrieves a file from the file system.
+   * @function getFile
+   * @param {string} path - The path to the file
+   * @returns {FileSystemFile<unknown> | null} - The file or null if the node does not exist.
    */
   getFile(path: string): FileSystemFile<unknown> | null;
 
   /**
-   * Saves a file to the file system.  Depends on the implementation of the file system a node could be File or Directory.
+   * Saves a file to the file system.
    * @function putNode
    * @param {string} path - The path to the node.
    * @param {FileSystemNode} node - The node to save.
-   * @returns {FileSystem}
+   * @returns {FileSystem | null} - The directory or null if the file failed to insert
    */
   putFile(path: string, file: BinaryFile): FileSystem | null;
 }
