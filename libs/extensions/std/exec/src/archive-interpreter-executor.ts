@@ -69,8 +69,7 @@ export class ArchiveInterpreterExecutor
           const content = await archivedObject.async('arraybuffer');
           // Ext incl. leading dot
           const extName = path.extname(archivedObject.name);
-          // Filename without ext and dot
-          const fileName = path.basename(archivedObject.name, extName);
+          const fileName = path.basename(archivedObject.name);
           const mimeType =
             inferMimeTypeFromContentTypeString(extName) ||
             MimeType.APPLICATION_OCTET_STREAM;

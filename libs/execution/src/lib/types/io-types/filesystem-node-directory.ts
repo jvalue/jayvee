@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
 //
 // SPDX-License-Identifier: AGPL-3.0-only
-import { FileSystemFile } from './filesystem-file';
 import { FileSystemNode } from './filesystem-node';
+import { FileSystemFile } from './filesystem-node-file';
 
 export class FileSystemDirectory extends FileSystemNode {
   private children: FileSystemNode[] = [];
@@ -21,31 +21,31 @@ export class FileSystemDirectory extends FileSystemNode {
     this.children.push(fileSystemNode);
   }
 
-  remove(fileSystemNode: FileSystemNode) {
+  remove(fileSystemNode: FileSystemNode): FileSystemNode {
     const index = this.children.indexOf(fileSystemNode);
     if (index !== -1) {
       this.children.splice(index, 1);
     }
+    return this;
   }
 
-  find(path: string): FileSystemNode | undefined {
-    return this.children.find((child) => child.name === path);
+  findFile(fileName: string): FileSystemNode | undefined {
+    for (const child of this.children) {
+      if (child instanceof FileSystemFile && child.name === fileName) {
+        return child;
+      } else if (child instanceof FileSystemDirectory) {
+        const file = child.findFile(fileName);
+        return file ?? undefined;
+      }
+    }
+    return undefined;
   }
 
-  findRecursive(path: string): FileSystemNode | undefined {
-    if (path === '') {
-      return this;
-    }
-
-    const [currentName, ...rest] = path.split('/');
-    const child = this.children.find((child) => child.name === currentName);
-
-    if (child instanceof FileSystemFile) {
-      return child;
-    }
-
-    if (child instanceof FileSystemDirectory) {
-      return child.findRecursive(rest.join('/'));
+  getChildNode(childName: string): FileSystemNode | undefined {
+    for (const child of this.children) {
+      if (child.name.toLowerCase() === childName) {
+        return child;
+      }
     }
     return undefined;
   }

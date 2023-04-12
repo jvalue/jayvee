@@ -26,8 +26,9 @@ export class FilePickerExecutor
     fileSystem: FileSystem,
     context: ExecutionContext,
   ): Promise<R.Result<BinaryFile | null>> {
-    const file = fileSystem.getFile(context.getTextPropertyValue('path'));
-    console.log(file);
+    const file = fileSystem.getFile(
+      context.getTextPropertyValue('path'),
+    ) as BinaryFile;
     return R.ok(file);
   }
 }

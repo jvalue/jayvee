@@ -5,8 +5,9 @@
 import { IOType } from '@jvalue/jayvee-language-server';
 
 import { FileSystem } from './filesystem';
-import { FileSystemDirectory } from './filesystem-directory';
-import { BinaryFile } from './filesystem-file-binary';
+import { FileSystemDirectory } from './filesystem-node-directory';
+import { FileSystemFile } from './filesystem-node-file';
+import { BinaryFile } from './filesystem-node-file-binary';
 
 export class InMemoryFileSystem implements FileSystem {
   public readonly ioType = IOType.FILE_SYSTEM;
@@ -16,40 +17,65 @@ export class InMemoryFileSystem implements FileSystem {
   private static CURRENT_DIR = '.';
   private static PARENT_DIR = '..';
 
-  getFile(path: string): BinaryFile | null {
-    const node = this.rootDirectory.findRecursive(
-      this.processPath(path).join('/'),
-    );
-    console.log(node);
-    if (node instanceof FileSystemDirectory) {
-      return null;
-    } else if (node instanceof BinaryFile) {
-      return node;
+  getFile(path: string): FileSystemFile<unknown> | null {
+    const processedParts = this.processPath(path);
+    let currentDir = this.rootDirectory;
+
+    // Loop until we reach the last part of processedParts
+    for (let i = 0; i < processedParts.length - 1; i++) {
+      const part = processedParts[i];
+
+      // If part exists
+      if (part != null) {
+        const childNode = currentDir.getChildNode(part);
+        if (childNode instanceof FileSystemDirectory) {
+          currentDir = childNode;
+        } else {
+          return null;
+        }
+      }
+    }
+    // If file exists, return
+    const child = currentDir.getChildNode(processedParts.pop() ?? '');
+    if (child !== undefined && child instanceof FileSystemFile) {
+      return child;
     }
     return null;
   }
 
-  putFile(path: string, file: BinaryFile): FileSystem {
+  putFile(path: string, file: BinaryFile): FileSystem | null {
     const processedParts = this.processPath(path);
     let currentDir = this.rootDirectory;
 
-    // If we need to traverse
-    for (let i = 0; i < processedParts.length; i++) {
-      const part: string = processedParts[i] as string;
+    // Loop until we reach the last part of processedParts
+    for (let i = 0; i < processedParts.length - 1; i++) {
+      const part = processedParts[i];
 
-      // Check, if directory already exists, if not create it
-      let childNode = currentDir.find(part);
-      if (!childNode) {
-        childNode = new FileSystemDirectory(part);
-        currentDir.add(childNode);
-      }
-      if (childNode instanceof FileSystemDirectory) {
-        currentDir = childNode;
+      // If part exists
+      if (part != null) {
+        let childNode = currentDir.getChildNode(part);
+
+        // If dir exists --> traverse
+        if (childNode && childNode instanceof FileSystemDirectory) {
+          currentDir = childNode;
+        } else if (childNode && childNode instanceof FileSystemFile) {
+          return null;
+
+          // If dir NOT exists --> create new
+        } else {
+          childNode = new FileSystemDirectory(part);
+          currentDir.add(childNode);
+          currentDir = childNode as FileSystemDirectory;
+        }
       }
     }
-    // Safe the actual file
-    currentDir.add(file);
-    return this;
+
+    // If Nodename is not already there --> put file to dir
+    const child = currentDir.getChildNode(processedParts.pop() ?? '');
+    if (child instanceof FileSystemDirectory || child === undefined) {
+      currentDir.add(file);
+    }
+    return null;
   }
 
   private processPath(path: string): string[] {

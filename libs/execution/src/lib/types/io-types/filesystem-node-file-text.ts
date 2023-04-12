@@ -4,14 +4,14 @@
 
 import { IOType } from '@jvalue/jayvee-language-server';
 
-import { FileSystemFile } from './filesystem-file';
+import { FileSystemFile } from './filesystem-node-file';
 import { IOTypeImplementation } from './io-type-implementation';
 
-export class BinaryFile
-  extends FileSystemFile<ArrayBuffer>
-  implements IOTypeImplementation<IOType.FILE>
+export class TextFile
+  extends FileSystemFile<string[]>
+  implements IOTypeImplementation<IOType.TEXT_FILE>
 {
-  public readonly ioType = IOType.FILE;
+  public readonly ioType = IOType.TEXT_FILE;
 
   override getNodeSize(): number {
     throw new Error('Method not implemented.');

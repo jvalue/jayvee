@@ -149,6 +149,7 @@ export enum IOType {
   FILE = 'File',
   TEXT_FILE = 'TextFile',
   FILE_SYSTEM = 'FileSystem',
+  FILE_NODE = 'FileSystemNode',
   SHEET = 'Sheet',
   TABLE = 'Table',
 }

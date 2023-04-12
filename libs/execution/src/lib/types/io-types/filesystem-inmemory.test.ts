@@ -4,9 +4,9 @@
 
 import { TextEncoder } from 'util';
 
-import { FileExtension, MimeType } from './filesystem-file';
-import { BinaryFile } from './filesystem-file-binary';
 import { InMemoryFileSystem } from './filesystem-inmemory';
+import { FileExtension, MimeType } from './filesystem-node-file';
+import { BinaryFile } from './filesystem-node-file-binary';
 
 describe('InMemoryFileSystem', () => {
   let fileSystem: InMemoryFileSystem;
@@ -19,7 +19,7 @@ describe('InMemoryFileSystem', () => {
     expect(fileSystem.getFile('file1.txt')).toBe(null);
   });
 
-  it('should return the file if it exists', () => {
+  it('should return the file if it exists with easy path', () => {
     const file = new BinaryFile(
       'file1.txt',
       FileExtension.ZIP,
@@ -29,6 +29,18 @@ describe('InMemoryFileSystem', () => {
 
     fileSystem.putFile('file1.txt', file);
     expect(fileSystem.getFile('file1.txt')).toBe(file);
+  });
+
+  it('should return the file if it exists with complex path', () => {
+    const file = new BinaryFile(
+      'file1.txt',
+      FileExtension.ZIP,
+      MimeType.APPLICATION_OCTET_STREAM,
+      new TextEncoder().encode('Test content'),
+    );
+
+    fileSystem.putFile('///asdfasdf/a/file1.txt', file);
+    expect(fileSystem.getFile('asdfasdf///a/file1.txt')).toBe(file);
   });
 
   it('should return null if directory does not exist', () => {
