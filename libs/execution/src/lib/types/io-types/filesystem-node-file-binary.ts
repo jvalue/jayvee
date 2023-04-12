@@ -14,6 +14,6 @@ export class BinaryFile
   public readonly ioType = IOType.FILE;
 
   override getNodeSize(): number {
-    throw new Error('Method not implemented.');
+    return this.content.byteLength;
   }
 }

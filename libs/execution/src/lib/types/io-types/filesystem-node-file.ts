@@ -7,7 +7,7 @@ import { FileSystemNode } from './filesystem-node';
 export abstract class FileSystemFile<T> extends FileSystemNode {
   constructor(
     /**
-     * The name of the file, without the extension.
+     * The name of the file with extension
      * @property {string} name
      */
     public override readonly name: string,

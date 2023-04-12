@@ -14,6 +14,6 @@ export class TextFile
   public readonly ioType = IOType.TEXT_FILE;
 
   override getNodeSize(): number {
-    throw new Error('Method not implemented.');
+    return this.content.length;
   }
 }
