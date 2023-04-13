@@ -11,10 +11,13 @@ import { getMetaInformation } from '../meta-information/meta-inf-registry';
 
 import {
   BlockDefinition,
+  BooleanExpression,
   PipelineDefinition,
   PrimitiveValuetypeKeywordLiteral,
   PropertyValueLiteral,
   ValuetypeDefinitionReference,
+  isBinaryExpression,
+  isBooleanExpression,
   isBooleanLiteral,
   isCellRangeLiteral,
   isCollectionLiteral,
@@ -22,6 +25,7 @@ import {
   isNumericLiteral,
   isRegexLiteral,
   isTextLiteral,
+  isUnaryExpression,
   isValuetypeAssignmentLiteral,
   isValuetypeDefinitionReference,
 } from './generated/ast';
@@ -197,8 +201,11 @@ export function inferTypesFromValue(
     }
     return [PropertyValuetype.DECIMAL];
   }
-  if (isBooleanLiteral(value)) {
+  if (isBooleanExpression(value)) {
     return [PropertyValuetype.BOOLEAN];
+  }
+  if (isCollectionLiteral(value)) {
+    return [PropertyValuetype.COLLECTION];
   }
   if (isCellRangeLiteral(value)) {
     return [PropertyValuetype.CELL_RANGE];
@@ -209,13 +216,62 @@ export function inferTypesFromValue(
   if (isValuetypeAssignmentLiteral(value)) {
     return [PropertyValuetype.VALUETYPE_ASSIGNMENT];
   }
-  if (isCollectionLiteral(value)) {
-    return [PropertyValuetype.COLLECTION];
-  }
   if (isConstraintReferenceLiteral(value)) {
     return [PropertyValuetype.CONSTRAINT];
   }
+
   assertUnreachable(value);
+}
+
+export function evaluateExpression(expression: BooleanExpression): boolean {
+  if (isBooleanLiteral(expression)) {
+    return expression.value;
+  }
+  if (isUnaryExpression(expression)) {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    assert(expression.operator === '!');
+    return !evaluateExpression(expression.expression);
+  }
+  if (isBinaryExpression(expression)) {
+    const operator = expression.operator;
+    switch (operator) {
+      case '==': {
+        const leftValue = evaluateExpression(expression.left);
+        const rightValue = evaluateExpression(expression.right);
+        return leftValue === rightValue;
+      }
+      case '!=': {
+        const leftValue = evaluateExpression(expression.left);
+        const rightValue = evaluateExpression(expression.right);
+        return leftValue !== rightValue;
+      }
+      case 'xor': {
+        const leftValue = evaluateExpression(expression.left);
+        const rightValue = evaluateExpression(expression.right);
+        return (leftValue && !rightValue) || (!leftValue && rightValue);
+      }
+      case 'and': {
+        const leftValue = evaluateExpression(expression.left);
+        if (!leftValue) {
+          return false;
+        }
+        const rightValue = evaluateExpression(expression.right);
+        return rightValue;
+      }
+      case 'or': {
+        const leftValue = evaluateExpression(expression.left);
+        if (leftValue) {
+          return true;
+        }
+        const rightValue = evaluateExpression(expression.right);
+        return rightValue;
+      }
+      default:
+        assertUnreachable(operator);
+    }
+    return false;
+  }
+  assertUnreachable(expression);
 }
 
 export function getValuetypeName(

@@ -6,6 +6,7 @@ import 'terminal';
 import 'valuetype';
 import 'cellrange';
 import 'constraint';
+import 'expression';
 
 PropertyBody:
   '{' (properties+=PropertyAssignment)* '}';
@@ -22,14 +23,11 @@ PropertyValueLiteral:
 AtomicLiteral:
   TextLiteral
   | NumericLiteral
-  | BooleanLiteral
-  | CellRangeLiteral
+  | BooleanExpression
   | RegexLiteral
+  | CellRangeLiteral
   | ValuetypeAssignmentLiteral
   | ConstraintReferenceLiteral;
-
-CollectionLiteral:
-  '[' (values+=(AtomicLiteral) (',' values+=(AtomicLiteral))*)? ','? ']';
 
 TextLiteral:
   value=STRING;
@@ -37,8 +35,8 @@ TextLiteral:
 NumericLiteral:
   value=(INTEGER | NUMBER);
 
-BooleanLiteral:
-  value=(TRUE | FALSE);
+CollectionLiteral:
+  '[' (values+=(AtomicLiteral) (',' values+=(AtomicLiteral))*)? ','? ']';
 
 RegexLiteral:
   value=REGEX;

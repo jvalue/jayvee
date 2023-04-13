@@ -4,7 +4,11 @@
 
 import { strict as assert } from 'assert';
 
-import { isBooleanLiteral, isNumericLiteral } from '../ast';
+import {
+  evaluateExpression,
+  isBooleanExpression,
+  isNumericLiteral,
+} from '../ast';
 import { PropertyValuetype } from '../ast/model-util';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 
@@ -66,8 +70,10 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
           );
           let lowerBoundInclusive = true;
           if (lowerBoundInclusiveProperty !== undefined) {
-            assert(isBooleanLiteral(lowerBoundInclusiveProperty.value));
-            lowerBoundInclusive = lowerBoundInclusiveProperty.value.value;
+            assert(isBooleanExpression(lowerBoundInclusiveProperty.value));
+            lowerBoundInclusive = evaluateExpression(
+              lowerBoundInclusiveProperty.value,
+            );
           }
 
           const upperBoundInclusiveProperty = propertyBody.properties.find(
@@ -75,8 +81,10 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
           );
           let upperBoundInclusive = true;
           if (upperBoundInclusiveProperty !== undefined) {
-            assert(isBooleanLiteral(upperBoundInclusiveProperty.value));
-            upperBoundInclusive = upperBoundInclusiveProperty.value.value;
+            assert(isBooleanExpression(upperBoundInclusiveProperty.value));
+            upperBoundInclusive = evaluateExpression(
+              upperBoundInclusiveProperty.value,
+            );
           }
 
           const errorMessage =

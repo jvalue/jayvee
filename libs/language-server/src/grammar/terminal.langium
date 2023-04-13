@@ -5,8 +5,6 @@
 // The order of the terminals matters here, it implicitly defines the prioritization for the lexer.
 // For more details, see https://langium.org/docs/grammar-language/#terminal-rules
 
-terminal TRUE returns boolean: /true/;
-terminal FALSE returns boolean: /false/;
 terminal CELL_REFERENCE: /([A-Z]+|\*)([0-9]+|\*)/;
 terminal ID: /[_a-zA-Z][\w_]*/;
 

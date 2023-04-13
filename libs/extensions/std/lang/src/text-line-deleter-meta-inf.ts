@@ -26,23 +26,18 @@ export class TextLineDeleterMetaInformation extends BlockMetaInformation {
 
             const { validItems, invalidItems } = validateTypedCollection(
               propertyValue,
-              isNumericLiteral,
+              PropertyValuetype.INTEGER,
             );
 
-            const invalidTypeErrorMessage =
-              'Only integers are allowed in this collection';
             invalidItems.forEach((invalidValue) =>
-              accept('error', invalidTypeErrorMessage, {
+              accept('error', 'Only integers are allowed in this collection', {
                 node: invalidValue,
               }),
             );
 
+            assert(validItems.every(isNumericLiteral));
+
             for (const numericLiteral of validItems) {
-              if (!Number.isInteger(numericLiteral.value)) {
-                accept('error', invalidTypeErrorMessage, {
-                  node: numericLiteral,
-                });
-              }
               if (numericLiteral.value <= 0) {
                 accept('error', `Line numbers need to be greater than zero`, {
                   node: numericLiteral,

@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { validateTypedCollection } from '../ast/collection-util';
-import { isCollectionLiteral, isTextLiteral } from '../ast/generated/ast';
+import { isCollectionLiteral } from '../ast/generated/ast';
 import { PropertyValuetype } from '../ast/model-util';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 
@@ -22,7 +22,7 @@ export class DenylistConstraintMetaInformation extends ConstraintMetaInformation
 
             const { invalidItems } = validateTypedCollection(
               propertyValue,
-              isTextLiteral,
+              PropertyValuetype.TEXT,
             );
 
             invalidItems.forEach((invalidValue) =>

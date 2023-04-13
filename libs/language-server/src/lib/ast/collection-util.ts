@@ -2,45 +2,25 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { AstNode } from 'langium';
+import { AtomicLiteral, CollectionLiteral } from './generated/ast';
+import { PropertyValuetype, inferTypesFromValue } from './model-util';
 
-import {
-  AtomicLiteral,
-  CollectionLiteral,
-  isCollectionLiteral,
-} from './generated/ast';
-import { AstTypeGuard } from './model-util';
-
-export function isTypedCollection<G extends AstTypeGuard<AtomicLiteral>>(
-  collection: AstNode,
-  collectionItemTypeGuard: G,
-): collection is CollectionLiteral {
-  if (!isCollectionLiteral(collection)) {
-    return false;
-  }
-
-  return (
-    validateTypedCollection(collection, collectionItemTypeGuard).invalidItems
-      .length === 0
-  );
-}
-
-export interface TypedCollectionValidation<T> {
-  validItems: T[];
+export interface TypedCollectionValidation {
+  validItems: AtomicLiteral[];
   invalidItems: AtomicLiteral[];
 }
 
-export function validateTypedCollection<T extends AtomicLiteral>(
+export function validateTypedCollection(
   collection: CollectionLiteral,
-  collectionItemTypeGuard: AstTypeGuard<T>,
-): TypedCollectionValidation<T> {
-  const validItems: T[] = collection.values.filter(collectionItemTypeGuard);
-  const invalidItems = collection.values.filter(
-    (item) => !collectionItemTypeGuard(item),
+  desiredType: PropertyValuetype,
+): TypedCollectionValidation {
+  const validItems = collection.values.filter((i) =>
+    inferTypesFromValue(i).includes(desiredType),
   );
+  const invalidItems = collection.values.filter((i) => !validItems.includes(i));
 
   return {
-    validItems: validItems,
-    invalidItems: invalidItems,
+    validItems,
+    invalidItems,
   };
 }
