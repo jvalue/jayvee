@@ -44,10 +44,10 @@ export class DenylistConstraintMetaInformation extends ConstraintMetaInformation
         'Defines a set of forbidden values. All values in the list are invalid.',
       examples: [
         {
-          code: `constraint NotGreaterThanXL oftype DenylistConstraint {
-  denylist: ["XXL", "XXXL", "5XL"];
+          code: `constraint NoPrimaryColors oftype DenylistConstraint {
+  denylist: ["red", "blue", "yellow"];
 }`,
-          description: 'Denies all T-shirt sizes above XL.',
+          description: 'Denies all primary colors.',
         },
       ],
     };
