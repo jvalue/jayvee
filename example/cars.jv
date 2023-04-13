@@ -33,7 +33,7 @@ pipeline CarsPipeline {
 
 	block NameHeaderWriter oftype CellWriter {
 		at: cell A1;
-		write: "name";
+		write: ["name"];
 	}
 
 	pipe {

@@ -138,6 +138,37 @@ export class CellRangeWrapper<N extends CellRangeLiteral = CellRangeLiteral>
     return cellRange.cellFrom !== undefined && cellRange.cellTo !== undefined;
   }
 
+  isOneDimensional(): boolean {
+    return (
+      this.from.columnIndex === this.to.columnIndex ||
+      this.from.rowIndex === this.to.rowIndex
+    );
+  }
+
+  numberOfCells(): number {
+    const numberOfRows = this.getNumberOfRows();
+    const numberOfColumns = this.getNumberOfColumns();
+
+    return numberOfRows * numberOfColumns;
+  }
+
+  private getNumberOfRows(): number {
+    if (this.from.rowIndex === LAST_INDEX && this.to.rowIndex === LAST_INDEX) {
+      return 1;
+    }
+    return this.to.rowIndex - this.from.rowIndex + 1;
+  }
+
+  private getNumberOfColumns(): number {
+    if (
+      this.from.columnIndex === LAST_INDEX &&
+      this.to.columnIndex === LAST_INDEX
+    ) {
+      return 1;
+    }
+    return this.to.columnIndex - this.from.columnIndex + 1;
+  }
+
   isInBounds(bounds: CellIndexBounds): boolean {
     return this.from.isInBounds(bounds) && this.to.isInBounds(bounds);
   }

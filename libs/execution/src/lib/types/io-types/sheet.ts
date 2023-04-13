@@ -5,14 +5,13 @@
 import { strict as assert } from 'assert';
 
 import {
+  CellIndex,
   CellIndexBounds,
   CellRangeLiteral,
   CellRangeWrapper,
-  CellWrapper,
   ColumnWrapper,
   IOType,
   RowWrapper,
-  getCellIndex,
   getColumnIndex,
   getRowIndex,
 } from '@jvalue/jayvee-language-server';
@@ -77,15 +76,11 @@ export class Sheet implements IOTypeImplementation<IOType.SHEET> {
     this.numberOfColumns--;
   }
 
-  writeCell(cell: CellWrapper, content: string): void {
-    assert(this.isInBounds(cell));
-
-    cell = this.resolveRelativeIndexes(cell);
-
-    const cellIndex = getCellIndex(cell);
+  writeCell(absoluteCell: CellIndex, content: string): void {
+    assert(absoluteCell.isInBounds(this.getBounds()));
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.data[cellIndex.rowIndex]![cellIndex.columnIndex] = content;
+    this.data[absoluteCell.rowIndex]![absoluteCell.columnIndex] = content;
   }
 
   selectRange(range: CellRangeWrapper): void {
@@ -120,6 +115,26 @@ export class Sheet implements IOTypeImplementation<IOType.SHEET> {
       return range.resolveRelativeIndexes(bounds);
     }
     return range;
+  }
+
+  enumerateCellIndexes(range: CellRangeWrapper): CellIndex[] {
+    const resolvedRange = this.resolveRelativeIndexes(range);
+
+    const result: CellIndex[] = [];
+    for (
+      let row = resolvedRange.from.rowIndex;
+      row <= resolvedRange.to.rowIndex;
+      ++row
+    ) {
+      for (
+        let column = resolvedRange.from.columnIndex;
+        column <= resolvedRange.to.columnIndex;
+        ++column
+      ) {
+        result.push(new CellIndex(column, row));
+      }
+    }
+    return result;
   }
 
   private getBounds(): CellIndexBounds {

@@ -25,7 +25,7 @@ pipeline GasReservePipeline {
 
 	block DateHeaderWriter oftype CellWriter {
 		at: cell A1;
-		write: "Datum";
+		write: ["Datum"];
 	}
 
 	block GasReserveTableInterpreter oftype TableInterpreter {
