@@ -37,7 +37,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "regenerator-runtime": "0.13.7",
-    "sqlite3": "^5.1.2",
+    "sqlite3": "^5.1.5",
     "tslib": "^2.3.0",
     "vscode-languageclient": "^8.0.2",
     "vscode-languageserver": "^8.0.2",
