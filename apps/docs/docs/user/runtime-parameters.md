@@ -1,5 +1,5 @@
 ---
-sidebar_position: 4
+sidebar_position: 5
 ---
 
 # Runtime Parameters
@@ -25,20 +25,3 @@ Use the CLI flag `-e` to to define them as key-value pairs of identifier and val
 ```console
 jv -e <param>=<value> -e <param>=<value> ... <file>
 ```
-
-
-## JV Hub
-
-In the [JV Hub](https://JV.com), this mechanism is used to leave the configuration to the JV infrastructure for using hosted the data sinks.
-
-
-### Data Sinks / Loader Blocks
-
-| Identifier | Description |
-| --- | --- |
-| `HUB_DB_HOST` | Database IP address populated by the JV infrastructure |
-| `HUB_DB_PORT` | Database port address populated by the JV infrastructure |
-| `HUB_DB_USERNAME` | Username for the database populated by the JV infrastructure |
-| `HUB_DB_PASSWORD` | Password for the database populated by the JV infrastructure |
-| `HUB_DB_DATABASE` | Database name populated by the JV infrastructure |
-| `HUB_DB_TABLE` | Table name populated by the JV infrastructure |
