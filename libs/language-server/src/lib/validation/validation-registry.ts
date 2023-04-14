@@ -47,5 +47,8 @@ export class JayveeValidationRegistry extends ValidationRegistry {
 
     const valuetypeValidator = services.validation.ValuetypeValidator;
     this.register(valuetypeValidator.checks, valuetypeValidator);
+
+    const expressionValidator = services.validation.ExpressionValidator;
+    this.register(expressionValidator.checks, expressionValidator);
   }
 }

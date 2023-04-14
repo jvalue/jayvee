@@ -26,6 +26,7 @@ import { BlockValidator } from './validation/validators/block-validator';
 import { CellRangeSelectionValidator } from './validation/validators/cell-range-selection-validator';
 import { ColumnExpressionValidator } from './validation/validators/column-expression-validator';
 import { ConstraintValidator } from './validation/validators/constraint-validator';
+import { ExpressionValidator } from './validation/validators/expression-validator';
 import { JayveeModelValidator } from './validation/validators/model-validator';
 import { PipeValidator } from './validation/validators/pipe-validator';
 import { PipelineDefinitionValidator } from './validation/validators/pipeline-validator';
@@ -48,6 +49,7 @@ export interface JayveeAddedServices {
     ConstraintValidator: ConstraintValidator;
     RegexValueValidator: RegexValueValidator;
     ValuetypeValidator: ValuetypeValidator;
+    ExpressionValidator: ExpressionValidator;
   };
 }
 
@@ -81,6 +83,7 @@ export const JayveeModule: Module<
     ConstraintValidator: () => new ConstraintValidator(),
     RegexValueValidator: () => new RegexValueValidator(),
     ValuetypeValidator: () => new ValuetypeValidator(),
+    ExpressionValidator: () => new ExpressionValidator(),
   },
   lsp: {
     CompletionProvider: (services: LangiumServices) =>
