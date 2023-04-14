@@ -23,7 +23,12 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
             examples: [
               {
                 code: 'write: ["Name"]',
-                description: 'Write the value "Name" into the cell',
+                description: 'Write the value "Name" into the cell.',
+              },
+              {
+                code: 'write: ["Name1", "Name2"]',
+                description:
+                  'Write the value "Name1" into the first cell and "Name2 into the second.',
               },
             ],
           },
@@ -50,8 +55,12 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
             description: 'The cells to write into.',
             examples: [
               {
+                code: 'at: cell A1',
+                description: 'Write into cell A1.',
+              },
+              {
                 code: 'at: range A1:A3',
-                description: 'Write into cells A1, A2 and A3',
+                description: 'Write into cells A1, A2 and A3.',
               },
             ],
             validation: 'Needs to be a one-dimensional range of cells.',
@@ -100,14 +109,22 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
       'Writes textual values into cells of a `Sheet`. The number of text values needs to match the number of cells to write into.';
     this.docs.examples = [
       {
-        code: blockExample,
+        code: blockExampleSingleCell,
+        description: 'Write the value "Name" into cell `A1`.',
+      },
+      {
+        code: blockExampleCellRange,
         description: 'Write the values "Name", "Age" into cells `A1` and `A2`.',
       },
     ];
   }
 }
 
-const blockExample = `block NameHeaderWriter oftype CellWriter {
+const blockExampleSingleCell = `block NameHeaderWriter oftype CellWriter {
+  at: cell A1;
+  write: ["Name"];
+}`;
+const blockExampleCellRange = `block HeaderSequenceWriter oftype CellWriter {
   at: range A1:A2;
   write: ["Name", "Age"];
 }`;
