@@ -229,7 +229,7 @@ export function evaluateExpression(expression: BooleanExpression): boolean {
   }
   if (isUnaryExpression(expression)) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    assert(expression.operator === '!');
+    assert(expression.operator === 'not');
     return !evaluateExpression(expression.expression);
   }
   if (isBinaryExpression(expression)) {
