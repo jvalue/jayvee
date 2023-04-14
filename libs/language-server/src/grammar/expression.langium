@@ -27,7 +27,7 @@ PrimaryExpression infers BooleanExpression:
   | BooleanLiteral;
 
 UnaryExpression:
-  operator='!' expression=PrimaryExpression;
+  operator='not' expression=PrimaryExpression;
 
 BooleanLiteral:
   value?='true' | 'false';
