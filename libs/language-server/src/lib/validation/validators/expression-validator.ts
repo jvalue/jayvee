@@ -35,6 +35,7 @@ export class ExpressionValidator implements JayveeValidator {
     const evaluatedExpression = evaluateExpression(expression);
     accept(
       'info',
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       `The expression can be simplified to ${evaluatedExpression}`,
       { node: expression },
     );
