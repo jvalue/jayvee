@@ -228,13 +228,18 @@ export function evaluateExpression(expression: BooleanExpression): boolean {
     return expression.value;
   }
   if (isUnaryExpression(expression)) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    assert(expression.operator === 'not');
-    return !evaluateExpression(expression.expression);
+    const unaryOperator = expression.operator;
+    switch (unaryOperator) {
+      case 'not': {
+        return !evaluateExpression(expression.expression);
+      }
+      default:
+        assertUnreachable(unaryOperator);
+    }
   }
   if (isBinaryExpression(expression)) {
-    const operator = expression.operator;
-    switch (operator) {
+    const binaryOperator = expression.operator;
+    switch (binaryOperator) {
       case '==': {
         const leftValue = evaluateExpression(expression.left);
         const rightValue = evaluateExpression(expression.right);
@@ -267,9 +272,8 @@ export function evaluateExpression(expression: BooleanExpression): boolean {
         return rightValue;
       }
       default:
-        assertUnreachable(operator);
+        assertUnreachable(binaryOperator);
     }
-    return false;
   }
   assertUnreachable(expression);
 }
