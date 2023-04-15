@@ -7,7 +7,6 @@ import { IOType } from '@jvalue/jayvee-language-server';
 import { FileSystem } from './filesystem';
 import { FileSystemDirectory } from './filesystem-node-directory';
 import { FileSystemFile } from './filesystem-node-file';
-import { BinaryFile } from './filesystem-node-file-binary';
 
 export class InMemoryFileSystem implements FileSystem {
   public readonly ioType = IOType.FILE_SYSTEM;
@@ -24,58 +23,58 @@ export class InMemoryFileSystem implements FileSystem {
     // Loop until we reach the last part of processedParts
     for (let i = 0; i < processedParts.length - 1; i++) {
       const part = processedParts[i];
-
-      // If part exists
-      if (part != null) {
-        const childNode = currentDir.getChildNode(part);
-        if (childNode instanceof FileSystemDirectory) {
-          currentDir = childNode;
-        } else {
-          return null;
-        }
+      if (part == null) {
+        return null;
       }
+      const childNode = currentDir.getChild(part);
+      if (!(childNode instanceof FileSystemDirectory)) {
+        return null;
+      }
+      currentDir = childNode;
     }
-    // If file exists, return
-    const child = currentDir.getChildNode(processedParts.pop() ?? '');
-    if (child !== undefined && child instanceof FileSystemFile) {
-      return child;
+    const fileName = processedParts[processedParts.length - 1];
+    if (fileName == null) {
+      return null;
+    }
+
+    const childNode = currentDir.getChild(fileName);
+    if (childNode instanceof FileSystemFile) {
+      return childNode;
     }
     return null;
   }
 
-  putFile(path: string, file: BinaryFile): FileSystem | null {
+  putFile(path: string, file: FileSystemFile<unknown>): FileSystem | null {
     const processedParts = this.processPath(path);
     let currentDir = this.rootDirectory;
 
-    // Loop until we reach the last part of processedParts
     for (let i = 0; i < processedParts.length - 1; i++) {
       const part = processedParts[i];
+      if (part == null) {
+        return null;
+      }
 
-      // If part exists
-      if (part != null) {
-        let childNode = currentDir.getChildNode(part);
-
-        // If dir exists --> traverse
-        if (childNode && childNode instanceof FileSystemDirectory) {
-          currentDir = childNode;
-        } else if (childNode && childNode instanceof FileSystemFile) {
-          return null;
-
-          // If dir NOT exists --> create new
-        } else {
-          childNode = new FileSystemDirectory(part);
-          currentDir.add(childNode);
-          currentDir = childNode as FileSystemDirectory;
-        }
+      const childNode = currentDir.getChild(part);
+      if (!childNode) {
+        const newChildNode = new FileSystemDirectory(part);
+        currentDir.addChild(newChildNode);
+        currentDir = newChildNode;
+      } else if (!(childNode instanceof FileSystemDirectory)) {
+        return null;
+      } else {
+        currentDir = childNode;
       }
     }
 
-    // If Nodename is not already there --> put file to dir
-    const child = currentDir.getChildNode(processedParts.pop() ?? '');
-    if (child instanceof FileSystemDirectory || child === undefined) {
-      currentDir.add(file);
+    const fileName = processedParts[processedParts.length - 1];
+    if (fileName == null || fileName !== file.name) {
+      return null;
     }
-    return null;
+
+    if (currentDir.addChild(file) == null) {
+      return null;
+    }
+    return this;
   }
 
   private processPath(path: string): string[] {

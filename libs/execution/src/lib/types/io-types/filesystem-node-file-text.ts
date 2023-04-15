@@ -12,8 +12,4 @@ export class TextFile
   implements IOTypeImplementation<IOType.TEXT_FILE>
 {
   public readonly ioType = IOType.TEXT_FILE;
-
-  override getNodeSize(): number {
-    return this.content.length;
-  }
 }

@@ -5,7 +5,6 @@
 import { IOType } from '@jvalue/jayvee-language-server';
 
 import { FileSystemFile } from './filesystem-node-file';
-import { BinaryFile } from './filesystem-node-file-binary';
 import { IOTypeImplementation } from './io-type-implementation';
 
 /**
@@ -25,8 +24,8 @@ export interface FileSystem extends IOTypeImplementation<IOType.FILE_SYSTEM> {
    * Saves a file to the file system.
    * @function putNode
    * @param {string} path - The path to the node.
-   * @param {FileSystemNode} node - The node to save.
-   * @returns {FileSystem | null} - The directory or null if the file failed to insert
+   * @param {BinaryFile} file - The file to save.
+   * @returns {FileSystem | null} - The FileSystem where file was inserted or null if the file failed to insert
    */
-  putFile(path: string, file: BinaryFile): FileSystem | null;
+  putFile(path: string, file: FileSystemFile<unknown>): FileSystem | null;
 }

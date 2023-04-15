@@ -4,6 +4,4 @@
 
 export abstract class FileSystemNode {
   constructor(public name: string) {}
-
-  abstract getNodeSize(): number;
 }

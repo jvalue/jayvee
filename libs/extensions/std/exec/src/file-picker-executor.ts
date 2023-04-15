@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import assert = require('assert');
+
 import * as R from '@jvalue/jayvee-execution';
 import {
   BinaryFile,
@@ -26,9 +28,8 @@ export class FilePickerExecutor
     fileSystem: FileSystem,
     context: ExecutionContext,
   ): Promise<R.Result<BinaryFile | null>> {
-    const file = fileSystem.getFile(
-      context.getTextPropertyValue('path'),
-    ) as BinaryFile;
+    const file = fileSystem.getFile(context.getTextPropertyValue('path'));
+    assert(file instanceof BinaryFile);
     return R.ok(file);
   }
 }

@@ -12,8 +12,4 @@ export class BinaryFile
   implements IOTypeImplementation<IOType.FILE>
 {
   public readonly ioType = IOType.FILE;
-
-  override getNodeSize(): number {
-    return this.content.byteLength;
-  }
 }
