@@ -79,7 +79,6 @@ export class InMemoryFileSystem implements FileSystem {
 
   private processPath(path: string): string[] {
     const parts = path
-      .toLowerCase()
       .split(InMemoryFileSystem.PATH_SEPARATOR)
       .filter((p) => p !== ''); // Process paths like "folder1//folder1" to "folder1/folder2"
     const processedParts: string[] = [];
@@ -88,7 +87,7 @@ export class InMemoryFileSystem implements FileSystem {
         continue; // Skip current dirs in path
       }
       if (part === InMemoryFileSystem.PARENT_DIR) {
-        processedParts.pop(); // Go level up in folder hierarchy if ..
+        processedParts.pop(); // Go level up in folder hierarchy, max level up is root dir
       } else {
         processedParts.push(part);
       }

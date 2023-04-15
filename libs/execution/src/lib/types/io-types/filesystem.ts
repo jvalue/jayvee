@@ -23,8 +23,8 @@ export interface FileSystem extends IOTypeImplementation<IOType.FILE_SYSTEM> {
   /**
    * Saves a file to the file system.
    * @function putNode
-   * @param {string} path - The path to the node.
-   * @param {BinaryFile} file - The file to save.
+   * @param {string} path - The path to the file.
+   * @param { FileSystemFile<unknown>} file - The file to save.
    * @returns {FileSystem | null} - The FileSystem where file was inserted or null if the file failed to insert
    */
   putFile(path: string, file: FileSystemFile<unknown>): FileSystem | null;
