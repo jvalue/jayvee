@@ -82,7 +82,12 @@ export class ArchiveInterpreterExecutor
             mimeType,
             content,
           );
-          root.putFile(relPath, file);
+          if (root.putFile(relPath, file) == null) {
+            return R.err({
+              message: `File with name ${file.name} and path ${relPath} failed to insert`,
+              diagnostic: { node: context.getCurrentNode(), property: 'name' },
+            });
+          }
         }
       }
       return R.ok(root);

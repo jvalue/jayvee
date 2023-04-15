@@ -16,6 +16,12 @@ export class InMemoryFileSystem implements FileSystem {
   private static CURRENT_DIR = '.';
   private static PARENT_DIR = '..';
 
+  /**
+   * Retrieves a file from the file system. Relative path indicators (./) are removed from path, parent directory indicators (../) are resolved to up to root
+   * @function getFile
+   * @param {string} path - The path to the file
+   * @returns {FileSystemFile<unknown> | null} - The file or null if the node does not exist.
+   */
   getFile(path: string): FileSystemFile<unknown> | null {
     const processedParts = this.processPath(path);
     let currentDir = this.rootDirectory;
@@ -47,6 +53,13 @@ export class InMemoryFileSystem implements FileSystem {
     return null;
   }
 
+  /**
+   * Saves a file to the file system. Relative path indicators (./) are removed from path, parent directory indicators (../) are resolved to up to root
+   * @function putNode
+   * @param {string} path - The path to the file.
+   * @param { FileSystemFile<unknown>} file - The file to save.
+   * @returns {FileSystem | null} - The FileSystem where file was inserted or null if the file failed to insert
+   */
   putFile(path: string, file: FileSystemFile<unknown>): FileSystem | null {
     const processedParts = this.processPath(path);
     let currentDir = this.rootDirectory;
