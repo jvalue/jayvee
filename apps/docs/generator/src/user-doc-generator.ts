@@ -116,13 +116,6 @@ class UserDocMarkdownBuilder {
     return this;
   }
 
-  compatibleValueTypes(types: string[]): UserDocMarkdownBuilder {
-    this.markdownBuilder.line(`Compatible ValueTypes:`);
-    this.markdownBuilder.line(types.map((type) => `\`${type}\``).join(', '));
-    this.markdownBuilder.newLine();
-    return this;
-  }
-
   description(text?: string, depth = 2): UserDocMarkdownBuilder {
     if (text === undefined) {
       return this;
