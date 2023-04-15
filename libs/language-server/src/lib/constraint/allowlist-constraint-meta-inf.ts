@@ -39,5 +39,18 @@ export class AllowlistConstraintMetaInformation extends ConstraintMetaInformatio
       },
       ['text'],
     );
+    super.docs = {
+      description:
+        'Limits the values to a defined a set of allowed values. Only values in the list are valid.',
+      examples: [
+        {
+          code: `constraint TimeUnitString oftype AllowlistConstraint {
+  allowlist: ["ms", "s", "min", "h", "d", "m", "y"];
+}`,
+          description:
+            'Only allows the common abbreviations for millisecond, second, minute, etc..',
+        },
+      ],
+    };
   }
 }

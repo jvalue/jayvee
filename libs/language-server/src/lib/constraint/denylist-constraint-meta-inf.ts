@@ -39,5 +39,17 @@ export class DenylistConstraintMetaInformation extends ConstraintMetaInformation
       },
       ['text'],
     );
+    super.docs = {
+      description:
+        'Defines a set of forbidden values. All values in the list are considered invalid.',
+      examples: [
+        {
+          code: `constraint NoPrimaryColors oftype DenylistConstraint {
+  denylist: ["red", "blue", "yellow"];
+}`,
+          description: 'Denies all primary colors.',
+        },
+      ],
+    };
   }
 }
