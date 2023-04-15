@@ -33,7 +33,7 @@ export class InMemoryFileSystem implements FileSystem {
       currentDir = childNode;
     }
 
-    //Get filename from path and check if this exists
+    // Get filename from path and check if this exists
     const fileName = processedParts[processedParts.length - 1];
     if (fileName == null) {
       return null;
@@ -70,7 +70,7 @@ export class InMemoryFileSystem implements FileSystem {
       }
     }
 
-    //Get filename from path and check if this exists and matches with file's name
+    // Get filename from path and check if this exists and matches with file's name
     const fileName = processedParts[processedParts.length - 1];
     if (fileName == null || fileName !== file.name) {
       return null;
