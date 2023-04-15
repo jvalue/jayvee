@@ -13,7 +13,7 @@ import { IOTypeImplementation } from './io-type-implementation';
  */
 export interface FileSystem extends IOTypeImplementation<IOType.FILE_SYSTEM> {
   /**
-   * Retrieves a file from the file system.
+   * Retrieves a file from the file system. Depending on the implementation relative Paths (./) and parent directories (../) are treated differntly.
    * @function getFile
    * @param {string} path - The path to the file
    * @returns {FileSystemFile<unknown> | null} - The file or null if the node does not exist.
@@ -21,7 +21,7 @@ export interface FileSystem extends IOTypeImplementation<IOType.FILE_SYSTEM> {
   getFile(path: string): FileSystemFile<unknown> | null;
 
   /**
-   * Saves a file to the file system.
+   * Saves a file to the file system. Depending on the implementation relative Paths (./) and parent directories (../) are treated differntly.
    * @function putNode
    * @param {string} path - The path to the file.
    * @param { FileSystemFile<unknown>} file - The file to save.

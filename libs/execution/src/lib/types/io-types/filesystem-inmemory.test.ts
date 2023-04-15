@@ -101,16 +101,4 @@ describe('InMemoryFileSystem', () => {
     expect(fileSystem.putFile('folder1/file1.txt', file1)).toBe(null);
     expect(fileSystem.getFile('folder1/file1.txt')).toBe(null);
   });
-
-  it('should felix', () => {
-    const file1 = new BinaryFile(
-      'file1.txt',
-      FileExtension.ZIP,
-      MimeType.APPLICATION_OCTET_STREAM,
-      new TextEncoder().encode('Test content'),
-    );
-
-    expect(fileSystem.putFile('../folder1/file1.txt', file1)).toBe(null);
-    expect(fileSystem.getFile('./folder1/file1.txt')).toBe(null);
-  });
 });

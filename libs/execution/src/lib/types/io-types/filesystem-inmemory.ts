@@ -20,7 +20,7 @@ export class InMemoryFileSystem implements FileSystem {
     const processedParts = this.processPath(path);
     let currentDir = this.rootDirectory;
 
-    // Loop until we reach the last part of processedParts
+    // Traverse through dirs until we reach final dir which contains possibly the file
     for (let i = 0; i < processedParts.length - 1; i++) {
       const part = processedParts[i];
       if (part == null) {
@@ -32,11 +32,14 @@ export class InMemoryFileSystem implements FileSystem {
       }
       currentDir = childNode;
     }
+
+    //Get filename from path and check if this exists
     const fileName = processedParts[processedParts.length - 1];
     if (fileName == null) {
       return null;
     }
 
+    // Get file via filename if it exists
     const childNode = currentDir.getChild(fileName);
     if (childNode instanceof FileSystemFile) {
       return childNode;
@@ -48,6 +51,7 @@ export class InMemoryFileSystem implements FileSystem {
     const processedParts = this.processPath(path);
     let currentDir = this.rootDirectory;
 
+    // Traverse through dirs, create new one as needed during travesal
     for (let i = 0; i < processedParts.length - 1; i++) {
       const part = processedParts[i];
       if (part == null) {
@@ -66,11 +70,13 @@ export class InMemoryFileSystem implements FileSystem {
       }
     }
 
+    //Get filename from path and check if this exists and matches with file's name
     const fileName = processedParts[processedParts.length - 1];
     if (fileName == null || fileName !== file.name) {
       return null;
     }
 
+    // Add file
     if (currentDir.addChild(file) == null) {
       return null;
     }
