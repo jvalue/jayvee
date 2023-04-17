@@ -90,7 +90,8 @@ export class InMemoryFileSystem implements FileSystem {
     }
 
     // Add file
-    if (currentDir.addChild(file) == null) {
+   const addedFile = currentDir.addChild(file);
+   if (addedFile == null) {
       return null;
     }
     return this;
