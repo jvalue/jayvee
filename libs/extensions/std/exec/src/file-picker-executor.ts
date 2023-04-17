@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import assert = require('assert');
+import {strict as assert} from 'assert';
 
 import * as R from '@jvalue/jayvee-execution';
 import {
