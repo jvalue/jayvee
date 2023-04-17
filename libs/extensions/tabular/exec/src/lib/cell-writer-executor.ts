@@ -12,11 +12,7 @@ import {
   Sheet,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
-import {
-  IOType,
-  getCellIndex,
-  isCellWrapper,
-} from '@jvalue/jayvee-language-server';
+import { IOType } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
 export class CellWriterExecutor
@@ -31,25 +27,47 @@ export class CellWriterExecutor
     inputSheet: Sheet,
     context: ExecutionContext,
   ): Promise<R.Result<Sheet>> {
-    const relativeCell = context.getCellRangePropertyValue('at');
-    const content = context.getTextPropertyValue('write');
+    const relativeCellRange = context.getCellRangePropertyValue('at');
+    const textValues = context.getTextCollectionPropertyValue('write');
 
-    assert(isCellWrapper(relativeCell));
+    assert(relativeCellRange.isOneDimensional());
 
-    const absoluteCell = inputSheet.resolveRelativeIndexes(relativeCell);
-    if (!inputSheet.isInBounds(absoluteCell)) {
+    const absoluteCellRange =
+      inputSheet.resolveRelativeIndexes(relativeCellRange);
+    if (!inputSheet.isInBounds(absoluteCellRange)) {
       return R.err({
-        message: 'The specified cell does not exist in the sheet',
-        diagnostic: { node: absoluteCell.astNode },
+        message: 'Some specified cells do not exist in the sheet',
+        diagnostic: { node: absoluteCellRange.astNode },
       });
     }
 
-    context.logger.logDebug(
-      `Writing "${content}" at cell ${getCellIndex(absoluteCell).toString()}`,
-    );
+    const cellIndexesToWrite =
+      inputSheet.enumerateCellIndexes(relativeCellRange);
+
+    if (textValues.length !== cellIndexesToWrite.length) {
+      context.logger.logWarnDiagnostic(
+        `The number of values to write (${textValues.length}) does not match the number of cells (${cellIndexesToWrite.length})`,
+        { node: relativeCellRange.astNode },
+      );
+    }
 
     const resultingSheet = inputSheet.clone();
-    resultingSheet.writeCell(absoluteCell, content);
+    for (
+      let i = 0;
+      i < Math.min(textValues.length, cellIndexesToWrite.length);
+      ++i
+    ) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const cellIndex = cellIndexesToWrite[i]!;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const textValue = textValues[i]!.value;
+
+      context.logger.logDebug(
+        `Writing "${textValue}" at cell ${cellIndex.toString()}`,
+      );
+
+      resultingSheet.writeCell(cellIndex, textValue);
+    }
 
     return R.ok(resultingSheet);
   }
