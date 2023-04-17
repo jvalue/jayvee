@@ -82,12 +82,8 @@ export class ArchiveInterpreterExecutor
             mimeType,
             content,
           );
-          if (root.putFile(relPath, file) == null) {
-            return R.err({
-              message: `File with name ${file.name} and path ${relPath} failed to insert`,
-              diagnostic: { node: context.getCurrentNode(), property: 'name' },
-            });
-          }
+          const addedFile = root.putFile(relPath, file);
+          assert(addedFile != null);
         }
       }
       return R.ok(root);
