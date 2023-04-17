@@ -2,8 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
+
 import {
   ConstraintDefinition,
+  PropertyValuetype,
   ValuetypeDefinition,
   isConstraintReferenceLiteral,
   validateTypedCollection,
@@ -63,8 +66,10 @@ export class AtomicValuetype<T extends PrimitiveType>
     const constraintCollection = this.astNode.constraints;
     const constraintReferences = validateTypedCollection(
       constraintCollection,
-      isConstraintReferenceLiteral,
+      PropertyValuetype.CONSTRAINT,
     ).validItems;
+
+    assert(constraintReferences.every(isConstraintReferenceLiteral));
 
     const constraints = constraintReferences.map(
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
