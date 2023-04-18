@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
+
 import {
   BlockMetaInformation,
   IOType,
@@ -46,7 +48,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
 
             const { validItems, invalidItems } = validateTypedCollection(
               propertyValue,
-              isValuetypeAssignmentLiteral,
+              PropertyValuetype.VALUETYPE_ASSIGNMENT,
             );
 
             invalidItems.forEach((invalidValue) =>
@@ -58,6 +60,8 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
                 },
               ),
             );
+
+            assert(validItems.every(isValuetypeAssignmentLiteral));
 
             const valuetypeAssignments = validItems.map(
               (assignment) => assignment.value,

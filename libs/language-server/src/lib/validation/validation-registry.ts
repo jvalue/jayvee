@@ -4,7 +4,20 @@
 
 import { ValidationRegistry } from 'langium';
 
+import { JayveeAstType } from '../ast';
 import type { JayveeServices } from '../jayvee-module';
+
+import { validateBlockDefinition } from './checks/block-definition';
+import { validateColumnLiteral } from './checks/column-literal';
+import { validateConstraintDefinition } from './checks/constraint-definition';
+import { validateExpression } from './checks/expression';
+import { validateJayveeModel } from './checks/jayvee-model';
+import { validatePipeDefinition } from './checks/pipe-definition';
+import { validatePipelineDefinition } from './checks/pipeline-definition';
+import { validatePropertyBody } from './checks/property-body';
+import { validateRangeLiteral } from './checks/range-literal';
+import { validateRegexLiteral } from './checks/regex-literal';
+import { validateValuetypeDefinition } from './checks/valuetype-definition';
 
 /**
  * Registry for validation checks.
@@ -12,40 +25,18 @@ import type { JayveeServices } from '../jayvee-module';
 export class JayveeValidationRegistry extends ValidationRegistry {
   constructor(services: JayveeServices) {
     super(services);
-
-    const modelValidator = services.validation.JayveeModelValidator;
-    this.register(modelValidator.checks, modelValidator);
-
-    const pipelineValidator = services.validation.PipelineDefinitionValidator;
-    this.register(pipelineValidator.checks, pipelineValidator);
-
-    const pipeValidator = services.validation.PipeValidator;
-    this.register(pipeValidator.checks, pipeValidator);
-
-    const blockValidator = services.validation.BlockValidator;
-    this.register(blockValidator.checks, blockValidator);
-
-    const propertyBodyValidator = services.validation.PropertyBodyValidator;
-    this.register(propertyBodyValidator.checks, propertyBodyValidator);
-
-    const cellRangeSelectionValidator =
-      services.validation.CellRangeSelectionValidator;
-    this.register(
-      cellRangeSelectionValidator.checks,
-      cellRangeSelectionValidator,
-    );
-
-    const columnExpressionValidator =
-      services.validation.ColumnExpressionValidator;
-    this.register(columnExpressionValidator.checks, columnExpressionValidator);
-
-    const regexValueValidator = services.validation.RegexValueValidator;
-    this.register(regexValueValidator.checks, regexValueValidator);
-
-    const constraintValidator = services.validation.ConstraintValidator;
-    this.register(constraintValidator.checks, constraintValidator);
-
-    const valuetypeValidator = services.validation.ValuetypeValidator;
-    this.register(valuetypeValidator.checks, valuetypeValidator);
+    this.register<JayveeAstType>({
+      BlockDefinition: validateBlockDefinition,
+      ColumnLiteral: validateColumnLiteral,
+      ConstraintDefinition: validateConstraintDefinition,
+      BooleanExpression: validateExpression,
+      JayveeModel: validateJayveeModel,
+      PipeDefinition: validatePipeDefinition,
+      PipelineDefinition: validatePipelineDefinition,
+      PropertyBody: validatePropertyBody,
+      RangeLiteral: validateRangeLiteral,
+      RegexLiteral: validateRegexLiteral,
+      ValuetypeDefinition: validateValuetypeDefinition,
+    });
   }
 }

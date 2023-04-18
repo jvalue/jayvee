@@ -13,7 +13,9 @@ import {
   PropertyAssignment,
   TextLiteral,
   ValuetypeAssignment,
+  evaluateExpression,
   getOrFailMetaInformation,
+  isBooleanExpression,
   isCellRangeLiteral,
   isCollectionLiteral,
   isNumericLiteral,
@@ -171,6 +173,9 @@ export class ExecutionContext {
     }
     if (isCellRangeLiteral(propertyValue)) {
       return propertyValue;
+    }
+    if (isBooleanExpression(propertyValue)) {
+      return evaluateExpression(propertyValue);
     }
     const value = propertyValue.value;
     if (isReference(value)) {

@@ -17,9 +17,7 @@ import { Registry } from '../util/registry';
 
 // eslint-disable-next-line import/no-cycle
 import { BlockMetaInformation } from './block-meta-inf';
-// eslint-disable-next-line import/no-cycle
 import { ConstraintMetaInformation } from './constraint-meta-inf';
-// eslint-disable-next-line import/no-cycle
 import { MetaInformation } from './meta-inf';
 
 export const metaInformationRegistry = new Registry<MetaInformation>();

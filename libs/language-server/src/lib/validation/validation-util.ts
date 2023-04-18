@@ -2,14 +2,24 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { AstNode } from 'langium';
+import { AstNode, ValidationAcceptor } from 'langium';
 
 export type NamedAstNode = AstNode & { name: string };
 
-export function generateNonUniqueNameErrorMessage(node: NamedAstNode) {
-  return `The ${node.$type.toLowerCase()} name "${
-    node.name
-  }" needs to be unique.`;
+export function checkUniqueNames(
+  nodes: NamedAstNode[],
+  accept: ValidationAcceptor,
+): void {
+  getNodesWithNonUniqueNames(nodes).forEach((node) => {
+    accept(
+      'error',
+      `The ${node.$type.toLowerCase()} name "${node.name}" needs to be unique.`,
+      {
+        node,
+        property: 'name',
+      },
+    );
+  });
 }
 
 export function getNodesWithNonUniqueNames<N extends NamedAstNode>(

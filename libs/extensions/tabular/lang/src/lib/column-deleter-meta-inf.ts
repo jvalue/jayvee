@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
+
 import {
   BlockMetaInformation,
   CellRangeWrapper,
@@ -28,7 +30,7 @@ export class ColumnDeleterMetaInformation extends BlockMetaInformation {
 
             const { validItems, invalidItems } = validateTypedCollection(
               propertyValue,
-              isCellRangeLiteral,
+              PropertyValuetype.CELL_RANGE,
             );
 
             invalidItems.forEach((invalidValue) =>
@@ -40,6 +42,8 @@ export class ColumnDeleterMetaInformation extends BlockMetaInformation {
                 },
               ),
             );
+
+            assert(validItems.every(isCellRangeLiteral));
 
             for (const collectionValue of validItems) {
               if (!CellRangeWrapper.canBeWrapped(collectionValue)) {

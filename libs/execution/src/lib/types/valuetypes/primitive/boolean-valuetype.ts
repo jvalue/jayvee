@@ -9,7 +9,6 @@ import { PrimitiveValuetypeKeywordLiteral } from '@jvalue/jayvee-language-server
 // eslint-disable-next-line import/no-cycle
 import { ValuetypeVisitor } from '../visitors/valuetype-visitor';
 
-// eslint-disable-next-line import/no-cycle
 import { PrimitiveValuetype } from './primitive-valuetype';
 
 export class BooleanValuetype implements PrimitiveValuetype<boolean> {
