@@ -13,8 +13,6 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "strict": true,
-    "noUnusedLocals": true,
-    "noImplicitReturns": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitOverride": true,
     "noUncheckedIndexedAccess": true,

@@ -29,12 +29,12 @@ import {
   State,
 } from 'monaco-languageclient';
 import React from 'react';
+import getMessageServiceOverride from 'vscode/service-override/messages';
+import { StandaloneServices } from 'vscode/services';
 import {
   BrowserMessageReader,
   BrowserMessageWriter,
 } from 'vscode-languageserver-protocol/browser.js';
-import getMessageServiceOverride from 'vscode/service-override/messages';
-import { StandaloneServices } from 'vscode/services';
 
 import JayveeMonarchConfig from './jayvee.monarch';
 

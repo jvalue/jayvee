@@ -8,7 +8,6 @@ import { PropertyBody } from '../ast/generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { IOType } from '../ast/model-util';
 
-// eslint-disable-next-line import/no-cycle
 import { ExampleDoc, MetaInformation, PropertySpecification } from './meta-inf';
 
 interface BlockDocs {
