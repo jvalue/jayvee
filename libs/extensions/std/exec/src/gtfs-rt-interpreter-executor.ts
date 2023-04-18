@@ -250,7 +250,7 @@ const tripUpdateHeader = [
   'entity.trip_update.stop_time_update.arrival.time',
   'entity.trip_update.stop_time_update.departure.time',
 ] as const;
-type TripUpdate = typeof tripUpdateHeader[number];
+type TripUpdate = (typeof tripUpdateHeader)[number];
 
 const vehiclePositionHeader = [
   'header.gtfs_realtime_version',
@@ -264,7 +264,7 @@ const vehiclePositionHeader = [
   'entity.vehicle_position.position.longitude',
   'entity.vehicle_position.timestamp',
 ] as const;
-type VehiclePosition = typeof vehiclePositionHeader[number];
+type VehiclePosition = (typeof vehiclePositionHeader)[number];
 
 const alertHeader = [
   'header.gtfs_realtime_version',
@@ -275,4 +275,4 @@ const alertHeader = [
   'entity.alert.header_text',
   'entity.alert.description_text',
 ] as const;
-type Alert = typeof alertHeader[number];
+type Alert = (typeof alertHeader)[number];
