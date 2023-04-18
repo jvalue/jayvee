@@ -23,7 +23,6 @@ export class InMemoryFileSystem implements FileSystem {
    * @returns {FileSystemFile<unknown> | null} - The file or null if the node does not exist.
    */
   getFile(path: string): FileSystemFile<unknown> | null {
-    // TODO: check if path startwith /
     const processedParts = this.processPath(path);
     if (processedParts != null) {
       const node = this.rootDirectory.getNode('/' + processedParts.join('/'));
@@ -35,14 +34,13 @@ export class InMemoryFileSystem implements FileSystem {
   }
 
   /**
-   * Saves a file to the file system. Relative path indicators (./) are removed from path, parent directory indicators (../) are resolved to up to root
+   * Saves a file to the file system.
    * @function putNode
    * @param {string} path - The absolute path to the file starting with "/..."
    * @param { FileSystemFile<unknown>} file - The file to save.
    * @returns {FileSystem | null} - The FileSystem where file was inserted or null if the file failed to insert
    */
   putFile(path: string, file: FileSystemFile<unknown>): FileSystem | null {
-    // TODO: check if path startwith /
     const processedParts = this.processPath(path);
     if (processedParts != null) {
       const node = this.rootDirectory.putNode(
@@ -57,6 +55,9 @@ export class InMemoryFileSystem implements FileSystem {
   }
 
   private processPath(path: string): string[] | null {
+    if (!path.startsWith('/')) {
+      return null;
+    }
     const parts = path
       .split(InMemoryFileSystem.PATH_SEPARATOR)
       .filter((p) => p !== ''); // Process paths like "folder1//folder1" to "folder1/folder2"
