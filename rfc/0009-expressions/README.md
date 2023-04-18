@@ -21,7 +21,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 ## Summary
 
-This RFC introduces a simple expression language for numeric and boolean values.
+This RFC introduces a simple expression language for numeric, boolean, and text values.
 
 ## Motivation
 
@@ -34,22 +34,27 @@ For future features (like value transformations), we also need boolean expressio
 ### Operators
 
 The following operators are in descending order by their precedence:
-- `()` for grouping a sub-expression
+- `()` parentheses for grouping a sub-expression
 - unary operators (see below)
 - binary operators (see below)
 
+When operators of similar precedence don't determine the order, we evaluate from left to right.
+
 #### Unary Prefix Operatory
-Binary prefix operators follow the pattern `op a`. Brackets can be used for grouping larger sub-expressions.
+Binary prefix operators follow the pattern `<operator> <operand>`. Parentheses can be used for grouping larger sub-expressions.
+The following operators share the same precedence:
 - `floor`, `ceil`, `round` for conversion of decimal numbers to integers.
+- `sqrt` for calculating the square root on numbers.
 - `not` for unary inversion of boolean values
 
 #### Binary Operators
-Binary infix operators follow the infix pattern `a op b`.
+Binary infix operators follow the infix pattern `<left-operand> <operator> <right-operand>`.
+The following operators are in descending order by their precedence:
 - `pow`, `root` for power and root calculation. E.g., `2 pow 3` is 2³, `5 root 2` is `sqrt(5).
 - `*`, `/`, `%` for multiplication, division, and remainder
 - `+`, `-` for addition and subtraction
 - `<`, `<=`, `>`, `>=` for relational operators comparing numbers
-- `==`, `!=` for equality operators comparing numbers and booleans
+- `==`, `!=` for equality operators comparing numbers, booleans, and texts
 - `and` for a logical AND on booleans
 - `xor` for a logical XOR on booleans
 - `or` for a logical OR on booleans
@@ -58,25 +63,28 @@ Binary infix operators follow the infix pattern `a op b`.
 ### Handling of booleans
 
 The expression resolving of boolean does follow the common pattern. 
-When operators of similar precedence don't determine the order, we evaluate from left to right.
 
 
 ### Handling of numbers
 
-Division and remainder operators **always** produce `decimal` values. To convert to an integer value, the operators `floor`, `ceil`, `round` have to be used.
+Division operator and multiplication/addition/subtraction with at least one decimal operand  **always** produce `decimal` values. To convert to an integer value, the operators `floor`, `ceil`, `round` have to be used.
 
-Division by zero should produce an `INVALID` value in the future. For now, it will just throw an error. 
+Division by zero throws an error.
 
-### Interplay of booleans and numbers
+### Handling of texts
 
-We infer the datatype based on the operator. The resulting value type of each operator unambiguous. 
+We currently only support equality check on text values
 
-The operands `==` and `!=` are the only ones that allow operands of different types. Other operators are unambiguous. Comparing the equality of two operands of different value types always resolves to `false`.  
+
+### Interplay of different primitive value types
+
+We infer the primitive value type based on the operator. The resulting value type of each operator is unambiguous. 
+
+The operands `==` and `!=` are the only ones that allow operands of different value types. Other operators are unambiguous. Comparing the equality of two operands of different value types always resolves to `false`.  
 
 
 ## Drawbacks
 
-- No strings supported yet.
 - Some operators are functions in other languages which might be unintuitive.
 - Always converting to decimals on division might lead to misleading results if the programmer is not aware.
 
@@ -86,9 +94,12 @@ The operands `==` and `!=` are the only ones that allow operands of different ty
 - Automatically convert to integer values based on some criteria.
 - Make `pow` and `root` prefix operators, e.g., `root(5, 2)`.
 - Require grouping brackets on unary operators.
-- Equality check could automatically convert value types into each other if possible.
 
 ## Possible Future Changes/Enhancements
 
 - Incorporate operators for `text` values (append, split, get length, ...).
 - Access input data (e.g., sheet cells) to implement value transformations (#213).
+- Division by zero produces an INVALID value.
+- Division and multiplication/addition/subtraction with at least one decimal operand might statically evaluate to an integer if no variables are used and the result has no decimals.
+- Boolean expressions could be used to describe custom constraints.
+- Depending on future design decisions, value transformations may relate more to value representation concepts (e.g., value readers and writers) rather than blocks.
