@@ -15,7 +15,7 @@ export class FileSystemDirectory extends FileSystemNode {
     if (firstPart !== this.name) {
       return null;
     }
-    if (firstPart === this.name && rest.length === 0) {
+    if (rest.length === 0) {
       return this;
     }
     for (const child of this.children) {
@@ -32,7 +32,7 @@ export class FileSystemDirectory extends FileSystemNode {
     if (firstPart !== this.name) {
       return null;
     }
-    if (this.name === firstPart && rest.length === 1) {
+    if (rest.length === 1) {
       const children = this.children.filter(
         (child) => child instanceof FileSystemFile && child.name === rest[0],
       );
@@ -42,7 +42,6 @@ export class FileSystemDirectory extends FileSystemNode {
       }
       return null;
     }
-
     const children = this.children.filter(
       (child) => child instanceof FileSystemDirectory && child.name === rest[0],
     );
@@ -51,11 +50,8 @@ export class FileSystemDirectory extends FileSystemNode {
       this.addChild(newdir);
       return newdir.putNode(rest.join('/'), node);
     }
-
     for (const child of this.children) {
       const f = child.putNode(rest.join('/'), node);
-      console.log(f);
-
       if (f) {
         return f;
       }
