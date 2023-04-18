@@ -30,6 +30,7 @@ export abstract class FileSystemFile<T> extends FileSystemNode {
     super(name);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   addChild(fileSystemNode: FileSystemNode): FileSystemNode | null {
     return null;
   }
@@ -42,6 +43,7 @@ export abstract class FileSystemFile<T> extends FileSystemNode {
     return null;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   override putNode(path: string): FileSystemNode | null {
     return null;
   }
