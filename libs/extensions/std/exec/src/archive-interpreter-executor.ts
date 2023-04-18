@@ -24,6 +24,7 @@ import {
   inferFileExtensionFromFileExtensionString,
   inferMimeTypeFromContentTypeString,
 } from './file-util';
+import assert = require('assert');
 
 @implementsStatic<BlockExecutorClass>()
 export class ArchiveInterpreterExecutor

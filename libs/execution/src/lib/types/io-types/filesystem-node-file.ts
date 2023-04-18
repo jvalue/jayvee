@@ -29,6 +29,22 @@ export abstract class FileSystemFile<T> extends FileSystemNode {
   ) {
     super(name);
   }
+
+  addChild(fileSystemNode: FileSystemNode): FileSystemNode | null {
+    return null;
+  }
+
+  override getNode(path: string): FileSystemNode | null {
+    const [firstPart, ...rest] = path.split('/');
+    if (firstPart === this.name && rest.length === 0) {
+      return this;
+    }
+    return null;
+  }
+
+  override putNode(path: string): FileSystemNode | null {
+    return null;
+  }
 }
 /**
  * An enumeration of common file extensions. New extensions for Files need to be registered here.

@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 import { FileSystemNode } from './filesystem-node';
+import { FileSystemFile } from './filesystem-node-file';
 
 export class FileSystemDirectory extends FileSystemNode {
   private children: FileSystemNode[] = [];
@@ -9,27 +10,61 @@ export class FileSystemDirectory extends FileSystemNode {
     super(name);
   }
 
-  addChild(fileSystemNode: FileSystemNode): FileSystemNode | null {
-    if (this.childNodeAlreadyExists(fileSystemNode)) {
+  override getNode(path: string): FileSystemNode | null {
+    const [firstPart, ...rest] = path.split('/');
+    if (firstPart !== this.name) {
       return null;
     }
-    this.children.push(fileSystemNode);
-    return fileSystemNode;
-  }
-
-  getChild(childName: string): FileSystemNode | null {
+    if (firstPart === this.name && rest.length === 0) {
+      return this;
+    }
     for (const child of this.children) {
-      if (child.name === childName) {
-        return child;
+      const f = child.getNode(rest.join('/'));
+      if (f) {
+        return f;
       }
     }
     return null;
   }
 
-  private childNodeAlreadyExists(fileSystemNode: FileSystemNode): boolean {
-    const childsWithSameName = this.children.filter(
-      (child) => child.name === fileSystemNode.name,
+  override putNode(path: string, node: FileSystemNode): FileSystemNode | null {
+    const [firstPart, ...rest] = path.split('/');
+    if (firstPart !== this.name) {
+      return null;
+    }
+    if (this.name === firstPart && rest.length === 1) {
+      const children = this.children.filter(
+        (child) => child instanceof FileSystemFile && child.name === rest[0],
+      );
+      if (children.length === 0 && node.name === rest[0]) {
+        this.addChild(node);
+        return node;
+      }
+      return null;
+    }
+
+    const children = this.children.filter(
+      (child) => child instanceof FileSystemDirectory && child.name === rest[0],
     );
-    return childsWithSameName.length > 0;
+    if (children.length === 0 && rest[0] != null) {
+      const newdir = new FileSystemDirectory(rest[0]);
+      this.addChild(newdir);
+      return newdir.putNode(rest.join('/'), node);
+    }
+
+    for (const child of this.children) {
+      const f = child.putNode(rest.join('/'), node);
+      console.log(f);
+
+      if (f) {
+        return f;
+      }
+    }
+    return null;
+  }
+
+  override addChild(fileSystemNode: FileSystemNode): FileSystemNode | null {
+    this.children.push(fileSystemNode);
+    return fileSystemNode;
   }
 }

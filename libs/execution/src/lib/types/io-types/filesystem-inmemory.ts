@@ -11,44 +11,25 @@ import { FileSystemFile } from './filesystem-node-file';
 export class InMemoryFileSystem implements FileSystem {
   public readonly ioType = IOType.FILE_SYSTEM;
 
-  private rootDirectory: FileSystemDirectory = new FileSystemDirectory('root');
+  private rootDirectory: FileSystemDirectory = new FileSystemDirectory('');
   private static PATH_SEPARATOR = '/';
   private static CURRENT_DIR = '.';
   private static PARENT_DIR = '..';
 
   /**
-   * Retrieves a file from the file system. Relative path indicators (./) are removed from path, parent directory indicators (../) are resolved to up to root
+   * Retrieves a file from the file system. Parent directory indicators (../) are resolved to up to root
    * @function getFile
-   * @param {string} path - The path to the file
+   * @param {string} path - The absolute path to the file starting with "/..."
    * @returns {FileSystemFile<unknown> | null} - The file or null if the node does not exist.
    */
   getFile(path: string): FileSystemFile<unknown> | null {
+    // TODO: check if path startwith /
     const processedParts = this.processPath(path);
-    let currentDir = this.rootDirectory;
-
-    // Traverse through dirs until we reach final dir which contains possibly the file
-    for (let i = 0; i < processedParts.length - 1; i++) {
-      const part = processedParts[i];
-      if (part == null) {
-        return null;
+    if (processedParts != null) {
+      const node = this.rootDirectory.getNode('/' + processedParts.join('/'));
+      if (node instanceof FileSystemFile) {
+        return node;
       }
-      const childNode = currentDir.getChild(part);
-      if (!(childNode instanceof FileSystemDirectory)) {
-        return null;
-      }
-      currentDir = childNode;
-    }
-
-    // Get filename from path and check if this exists
-    const fileName = processedParts[processedParts.length - 1];
-    if (fileName == null) {
-      return null;
-    }
-
-    // Get file via filename if it exists
-    const childNode = currentDir.getChild(fileName);
-    if (childNode instanceof FileSystemFile) {
-      return childNode;
     }
     return null;
   }
@@ -56,48 +37,26 @@ export class InMemoryFileSystem implements FileSystem {
   /**
    * Saves a file to the file system. Relative path indicators (./) are removed from path, parent directory indicators (../) are resolved to up to root
    * @function putNode
-   * @param {string} path - The path to the file.
+   * @param {string} path - The absolute path to the file starting with "/..."
    * @param { FileSystemFile<unknown>} file - The file to save.
    * @returns {FileSystem | null} - The FileSystem where file was inserted or null if the file failed to insert
    */
   putFile(path: string, file: FileSystemFile<unknown>): FileSystem | null {
+    // TODO: check if path startwith /
     const processedParts = this.processPath(path);
-    let currentDir = this.rootDirectory;
-
-    // Traverse through dirs, create new one as needed during travesal
-    for (let i = 0; i < processedParts.length - 1; i++) {
-      const part = processedParts[i];
-      if (part == null) {
-        return null;
-      }
-
-      const childNode = currentDir.getChild(part);
-      if (!childNode) {
-        const newChildNode = new FileSystemDirectory(part);
-        currentDir.addChild(newChildNode);
-        currentDir = newChildNode;
-      } else if (!(childNode instanceof FileSystemDirectory)) {
-        return null;
-      } else {
-        currentDir = childNode;
+    if (processedParts != null) {
+      const node = this.rootDirectory.putNode(
+        '/' + processedParts.join('/'),
+        file,
+      );
+      if (node instanceof FileSystemFile) {
+        return this;
       }
     }
-
-    // Get filename from path and check if this exists and matches with file's name
-    const fileName = processedParts[processedParts.length - 1];
-    if (fileName == null || fileName !== file.name) {
-      return null;
-    }
-
-    // Add file
-   const addedFile = currentDir.addChild(file);
-   if (addedFile == null) {
-      return null;
-    }
-    return this;
+    return null;
   }
 
-  private processPath(path: string): string[] {
+  private processPath(path: string): string[] | null {
     const parts = path
       .split(InMemoryFileSystem.PATH_SEPARATOR)
       .filter((p) => p !== ''); // Process paths like "folder1//folder1" to "folder1/folder2"
@@ -107,7 +66,11 @@ export class InMemoryFileSystem implements FileSystem {
         continue; // Skip current dirs in path
       }
       if (part === InMemoryFileSystem.PARENT_DIR) {
-        processedParts.pop(); // Go level up in folder hierarchy, max level up is root dir
+        const poppedPath = processedParts.pop(); // Go level up in folder hierarchy, max level up is root dir
+        // If Path ascend beyond root, error
+        if (poppedPath === undefined) {
+          return null;
+        }
       } else {
         processedParts.push(part);
       }
