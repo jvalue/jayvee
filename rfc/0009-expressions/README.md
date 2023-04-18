@@ -71,6 +71,8 @@ Division operator and multiplication/addition/subtraction with at least one deci
 
 Division by zero throws an error.
 
+Comparison of different number types (e.g., integers and decimals) is solved by converting first to the less restrictive value type (in the example, to decimals). A warning is logged in these cases.
+
 ### Handling of texts
 
 We currently only support equality check on text values
@@ -80,7 +82,7 @@ We currently only support equality check on text values
 
 We infer the primitive value type based on the operator. The resulting value type of each operator is unambiguous. 
 
-The operands `==` and `!=` are the only ones that allow operands of different value types. Other operators are unambiguous. Comparing the equality of two operands of different value types always resolves to `false`.  
+The operands `==` and `!=` are the only ones that allow operands of different value types. Other operators are unambiguous. Comparing the equality of two operands of different value types throws an error, unless they are different types of numbers that can be converted to the less restrictive type (e.g., integers are converted to decimals when compared).  
 
 
 ## Drawbacks
