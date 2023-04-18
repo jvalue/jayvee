@@ -8,9 +8,9 @@ import {
   IOType,
   PropertyAssignment,
   PropertyValuetype,
+  ValidationContext,
   isTextLiteral,
 } from '@jvalue/jayvee-language-server';
-import { ValidationAcceptor } from 'langium';
 
 export class GtfsRTInterpreterMetaInformation extends BlockMetaInformation {
   constructor() {
@@ -100,14 +100,18 @@ const blockExampleUsage = `block GtfsRTTripUpdateInterpreter oftype GtfsRTInterp
 
 function isGtfsRTEntity(
   property: PropertyAssignment,
-  accept: ValidationAcceptor,
+  context: ValidationContext,
 ) {
   const propertyValue = property.value;
   assert(isTextLiteral(propertyValue));
 
   if (!['trip_update', 'alert', 'vehicle'].includes(propertyValue.value)) {
-    accept('error', `Entity must be "trip_update", "alert" or "vehicle"`, {
-      node: propertyValue,
-    });
+    context.accept(
+      'error',
+      `Entity must be "trip_update", "alert" or "vehicle"`,
+      {
+        node: propertyValue,
+      },
+    );
   }
 }

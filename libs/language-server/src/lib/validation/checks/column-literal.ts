@@ -6,20 +6,19 @@
  * See the FAQ section of README.md for an explanation why the following eslint rule is disabled for this file.
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
-import { ValidationAcceptor } from 'langium';
-
 import { ColumnLiteral } from '../../ast/generated/ast';
+import { ValidationContext } from '../validation-context';
 
 export function validateColumnLiteral(
   column: ColumnLiteral,
-  accept: ValidationAcceptor,
+  context: ValidationContext,
 ): void {
-  checkColumnIdSyntax(column, accept);
+  checkColumnIdSyntax(column, context);
 }
 
 function checkColumnIdSyntax(
   column: ColumnLiteral,
-  accept: ValidationAcceptor,
+  context: ValidationContext,
 ): void {
   if (column.columnId === undefined) {
     return;
@@ -27,7 +26,7 @@ function checkColumnIdSyntax(
 
   const columnIdRegex = /^([A-Z]+|\*)$/;
   if (!columnIdRegex.test(column.columnId)) {
-    accept(
+    context.accept(
       'error',
       'Columns need to be denoted via capital letters or the * character',
       {

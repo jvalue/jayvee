@@ -6,7 +6,6 @@
  * See the FAQ section of README.md for an explanation why the following ESLint rule is disabled for this file.
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
-import { ValidationAcceptor } from 'langium';
 
 import {
   PropertyBody,
@@ -16,30 +15,44 @@ import {
 } from '../../ast';
 import { MetaInformation } from '../../meta-information/meta-inf';
 import { getMetaInformation } from '../../meta-information/meta-inf-registry';
+import { ValidationContext } from '../validation-context';
 import { checkUniqueNames } from '../validation-util';
 
 export function validatePropertyBody(
   propertyBody: PropertyBody,
-  accept: ValidationAcceptor,
+  context: ValidationContext,
 ): void {
-  checkPropertyNames(propertyBody, accept);
-  checkUniqueNames(propertyBody.properties, accept);
-  checkPropertyTyping(propertyBody, accept);
-  checkPropertyCompleteness(propertyBody, accept);
-  checkCustomPropertyValidation(propertyBody, accept);
-}
+  checkUniqueNames(propertyBody.properties, context);
 
-function checkPropertyNames(
-  propertyBody: PropertyBody,
-  accept: ValidationAcceptor,
-): void {
   const metaInf = inferMetaInformation(propertyBody);
   if (metaInf === undefined) {
     return;
   }
+  checkPropertyNames(propertyBody, metaInf, context);
+  checkPropertyTyping(propertyBody, metaInf, context);
+  checkPropertyCompleteness(propertyBody, metaInf, context);
+  if (context.hasErrorOccurred()) {
+    return;
+  }
+
+  checkCustomPropertyValidation(propertyBody, metaInf, context);
+}
+
+function inferMetaInformation(
+  propertyBody: PropertyBody,
+): MetaInformation | undefined {
+  const type = propertyBody.$container.type;
+  return getMetaInformation(type);
+}
+
+function checkPropertyNames(
+  propertyBody: PropertyBody,
+  metaInf: MetaInformation,
+  context: ValidationContext,
+): void {
   for (const property of propertyBody.properties) {
     if (!metaInf.hasPropertySpecification(property.name)) {
-      accept('error', `Invalid property name "${property.name}".`, {
+      context.accept('error', `Invalid property name "${property.name}".`, {
         node: property,
         property: 'name',
       });
@@ -49,13 +62,9 @@ function checkPropertyNames(
 
 function checkPropertyTyping(
   propertyBody: PropertyBody,
-  accept: ValidationAcceptor,
+  metaInf: MetaInformation,
+  context: ValidationContext,
 ): void {
-  const metaInf = inferMetaInformation(propertyBody);
-  if (metaInf === undefined) {
-    return;
-  }
-
   for (const property of propertyBody.properties) {
     const propertySpec = metaInf.getPropertySpecification(property.name);
     if (propertySpec === undefined) {
@@ -70,7 +79,7 @@ function checkPropertyTyping(
 
     if (isRuntimeParameterLiteral(propertyValue)) {
       if (!runtimeParameterAllowedForType(propertyType)) {
-        accept(
+        context.accept(
           'error',
           `Runtime parameters are not allowed for properties of type ${propertyType}`,
           {
@@ -82,10 +91,14 @@ function checkPropertyTyping(
     } else {
       const matchingPropertyTypes = inferTypesFromValue(propertyValue);
       if (!matchingPropertyTypes.includes(propertyType)) {
-        accept('error', `The value needs to be of type ${propertyType}`, {
-          node: property,
-          property: 'value',
-        });
+        context.accept(
+          'error',
+          `The value needs to be of type ${propertyType}`,
+          {
+            node: property,
+            property: 'value',
+          },
+        );
       }
     }
   }
@@ -93,13 +106,9 @@ function checkPropertyTyping(
 
 function checkPropertyCompleteness(
   propertyBody: PropertyBody,
-  accept: ValidationAcceptor,
+  metaInf: MetaInformation,
+  context: ValidationContext,
 ): void {
-  const metaInf = inferMetaInformation(propertyBody);
-  if (metaInf === undefined) {
-    return;
-  }
-
   const presentPropertyNames = propertyBody.properties.map(
     (property) => property.name,
   );
@@ -109,7 +118,7 @@ function checkPropertyCompleteness(
   );
 
   if (missingRequiredPropertyNames.length > 0) {
-    accept(
+    context.accept(
       'error',
       `The following required properties are missing: ${missingRequiredPropertyNames
         .map((name) => `"${name}"`)
@@ -124,18 +133,8 @@ function checkPropertyCompleteness(
 
 function checkCustomPropertyValidation(
   propertyBody: PropertyBody,
-  accept: ValidationAcceptor,
+  metaInf: MetaInformation,
+  context: ValidationContext,
 ): void {
-  const metaInf = inferMetaInformation(propertyBody);
-  if (metaInf === undefined) {
-    return;
-  }
-  metaInf.validate(propertyBody, accept);
-}
-
-function inferMetaInformation(
-  propertyBody: PropertyBody,
-): MetaInformation | undefined {
-  const type = propertyBody.$container.type;
-  return getMetaInformation(type);
+  metaInf.validate(propertyBody, context);
 }

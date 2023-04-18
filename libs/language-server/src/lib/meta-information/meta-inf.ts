@@ -2,18 +2,17 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { ValidationAcceptor } from 'langium';
-
 import { PropertyAssignment, PropertyBody } from '../ast/generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { PropertyValuetype } from '../ast/model-util';
+import { ValidationContext } from '../validation/validation-context';
 
 export interface PropertySpecification {
   type: PropertyValuetype;
   defaultValue?: unknown;
   validation?: (
     property: PropertyAssignment,
-    accept: ValidationAcceptor,
+    context: ValidationContext,
   ) => void;
   docs?: PropertyDocs;
 }
@@ -35,11 +34,11 @@ export abstract class MetaInformation {
     private readonly properties: Record<string, PropertySpecification>,
     private readonly validation?: (
       property: PropertyBody,
-      accept: ValidationAcceptor,
+      context: ValidationContext,
     ) => void,
   ) {}
 
-  validate(propertyBody: PropertyBody, accept: ValidationAcceptor): void {
+  validate(propertyBody: PropertyBody, context: ValidationContext): void {
     for (const property of propertyBody.properties) {
       const propertySpecification = this.getPropertySpecification(
         property.name,
@@ -48,11 +47,11 @@ export abstract class MetaInformation {
       if (propertyValidationFn === undefined) {
         continue;
       }
-      propertyValidationFn(property, accept);
+      propertyValidationFn(property, context);
     }
 
     if (this.validation !== undefined) {
-      this.validation(propertyBody, accept);
+      this.validation(propertyBody, context);
     }
   }
 

@@ -6,21 +6,21 @@
  * See the FAQ section of README.md for an explanation why the following eslint rule is disabled for this file.
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
-import { ValidationAcceptor } from 'langium';
 
 import { RangeLiteral } from '../../ast/generated/ast';
 import { CellRangeWrapper } from '../../ast/wrappers/cell-range-wrapper';
+import { ValidationContext } from '../validation-context';
 
 export function validateRangeLiteral(
   range: RangeLiteral,
-  accept: ValidationAcceptor,
+  context: ValidationContext,
 ): void {
-  checkRangeLimits(range, accept);
+  checkRangeLimits(range, context);
 }
 
 function checkRangeLimits(
   range: RangeLiteral,
-  accept: ValidationAcceptor,
+  context: ValidationContext,
 ): void {
   if (range.cellFrom === undefined || range.cellTo === undefined) {
     return;
@@ -30,7 +30,7 @@ function checkRangeLimits(
     semanticCellRange.from.columnIndex > semanticCellRange.to.columnIndex ||
     semanticCellRange.from.rowIndex > semanticCellRange.to.rowIndex
   ) {
-    accept(
+    context.accept(
       'error',
       `Cell ranges need to be spanned from top-left to bottom-right`,
       {

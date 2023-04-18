@@ -22,7 +22,7 @@ export class ColumnDeleterMetaInformation extends BlockMetaInformation {
       {
         delete: {
           type: PropertyValuetype.COLLECTION,
-          validation: (property, accept) => {
+          validation: (property, context) => {
             const propertyValue = property.value;
             if (!isCollectionLiteral(propertyValue)) {
               return;
@@ -34,7 +34,7 @@ export class ColumnDeleterMetaInformation extends BlockMetaInformation {
             );
 
             invalidItems.forEach((invalidValue) =>
-              accept(
+              context.accept(
                 'error',
                 'Only cell ranges are allowed in this collection',
                 {
@@ -51,9 +51,13 @@ export class ColumnDeleterMetaInformation extends BlockMetaInformation {
               }
               const semanticCellRange = new CellRangeWrapper(collectionValue);
               if (!isColumnWrapper(semanticCellRange)) {
-                accept('error', 'An entire column needs to be selected', {
-                  node: semanticCellRange.astNode,
-                });
+                context.accept(
+                  'error',
+                  'An entire column needs to be selected',
+                  {
+                    node: semanticCellRange.astNode,
+                  },
+                );
               }
             }
           },

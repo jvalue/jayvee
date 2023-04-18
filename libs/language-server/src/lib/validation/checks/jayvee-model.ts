@@ -2,14 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { ValidationAcceptor } from 'langium';
-
 import { JayveeModel } from '../../ast/generated/ast';
+import { ValidationContext } from '../validation-context';
 import { checkUniqueNames } from '../validation-util';
 
 export function validateJayveeModel(
   model: JayveeModel,
-  accept: ValidationAcceptor,
+  context: ValidationContext,
 ): void {
-  checkUniqueNames(model.pipelines, accept);
+  checkUniqueNames(model.pipelines, context);
 }
