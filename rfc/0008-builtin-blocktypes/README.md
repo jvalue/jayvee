@@ -21,14 +21,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 ## Summary
 
-Blocktypes that are built into the language are declared syntactically by denoting IO types and their properties.
-This change does not change the semantics, but it can serve as a foundation for composite block types in an upcoming RFC.
+Blocktypes that are built into the language are declared syntactically by denoting their inputs, outputs and properties.
+This change does not alter any semantics, but it can serve as a foundation for composite block types in an upcoming RFC.
 
 ## Motivation
 
 Currently, all blocktypes only exist implicitly in the language.
 To make their definition more explicit, we should support the declaration of builtin blocktypes (i.e. blocktypes that are built into the language).
-This allows users to look up IO types and properties without having to open the documentation pages.
+This allows users to look up inputs, outputs and properties without having to look at the documentation.
 
 ## Explanation
 
@@ -174,7 +174,7 @@ builtin blocktype PostgresLoader {
 
 ## Drawbacks
 
-- Adds valuetype keywords for properties, but these types cannot be assigned to table columns 
+- Adds valuetype keywords for properties, but these types cannot be assigned to table columns (e.g. `regex`)
 
 ## Alternatives
 
@@ -184,10 +184,10 @@ builtin blocktype PostgresLoader {
 
 ## Possible Future Changes/Enhancements
 
-- Usage of valuetypes for typing properties
-  - Constraints can then be used to validate property values
-  - Properties can be considered inputs of a block, so property values can be provided dynamically by pipes
-- Include validation semantics beyond valuetypes
+- Usage of custom valuetypes for typing properties
+  - Constraints could then be used to validate property values
+  - Properties could be considered inputs of a block, so property values can be provided dynamically by pipes
+- Include semantics for validating property values beyond valuetypes
 - Introduce a standard for documenting blocktypes in the code
 - Possibility to declare multiple named inputs and outputs for blocktypes
 - Can serve as a foundation for composite blocktypes, e.g.:
