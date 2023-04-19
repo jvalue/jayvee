@@ -7,8 +7,10 @@ import { Hover } from 'vscode-languageserver-protocol';
 
 import {
   BlockTypeLiteral,
+  ConstraintTypeLiteral,
   PropertyAssignment,
   isBlockTypeLiteral,
+  isConstraintTypeLiteral,
   isPropertyAssignment,
 } from '../ast';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
@@ -21,6 +23,9 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
     let doc = undefined;
     if (isBlockTypeLiteral(astNode)) {
       doc = this.getBlockTypeMarkdownDoc(astNode);
+    }
+    if (isConstraintTypeLiteral(astNode)) {
+      doc = this.getConstraintTypeMarkdownDoc(astNode);
     }
     if (isPropertyAssignment(astNode)) {
       doc = this.getPropertyMarkdownDoc(astNode);
@@ -48,6 +53,18 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
 
     const lspDocBuilder = new LspDocGenerator();
     return lspDocBuilder.generateBlockTypeDoc(blockMetaInf);
+  }
+
+  private getConstraintTypeMarkdownDoc(
+    constraintType: ConstraintTypeLiteral,
+  ): string | undefined {
+    const constraintMetaInf = getMetaInformation(constraintType);
+    if (constraintMetaInf === undefined) {
+      return;
+    }
+
+    const lspDocBuilder = new LspDocGenerator();
+    return lspDocBuilder.generateConstraintTypeDoc(constraintMetaInf);
   }
 
   private getPropertyMarkdownDoc(
