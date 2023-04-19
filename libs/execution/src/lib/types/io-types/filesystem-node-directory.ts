@@ -43,7 +43,7 @@ export class FileSystemDirectory extends FileSystemNode {
     // Base case: We just have on path part left (is the filename)
     if (rest.length === 1) {
       if (
-        !this.nodeHasAlreadyChildFileyWithSameName(rest) &&
+        !this.nodeHasAlreadyChildFileWithSameName(rest) &&
         node.name === rest[0]
       ) {
         this.addChild(node);
@@ -83,7 +83,7 @@ export class FileSystemDirectory extends FileSystemNode {
     );
     return children.length !== 0;
   }
-  nodeHasAlreadyChildFileyWithSameName(rest: string[]) {
+  nodeHasAlreadyChildFileWithSameName(rest: string[]) {
     const children = this.children.filter(
       (child) => child instanceof FileSystemFile && child.name === rest[0],
     );
