@@ -12,12 +12,17 @@ export class FileSystemDirectory extends FileSystemNode {
 
   override getNode(pathParts: string[]): FileSystemNode | null {
     const [firstPart, ...rest] = pathParts;
+    // Base case: We called a wrong node
     if (firstPart !== this.name) {
       return null;
     }
+
+    // Base case: We found the right node
     if (rest.length === 0) {
       return this;
     }
+
+    // Recursion case: Traverse child nodes
     for (const child of this.children) {
       const f = child.getNode(rest);
       if (f) {
@@ -35,24 +40,29 @@ export class FileSystemDirectory extends FileSystemNode {
     if (firstPart !== this.name) {
       return null;
     }
+    // Base case: We just have on path part left (is the filename)
     if (rest.length === 1) {
-      const children = this.children.filter(
-        (child) => child instanceof FileSystemFile && child.name === rest[0],
-      );
-      if (children.length === 0 && node.name === rest[0]) {
+      if (
+        !this.nodeHasAlreadyChildFileyWithSameName(rest) &&
+        node.name === rest[0]
+      ) {
         this.addChild(node);
         return node;
       }
       return null;
     }
-    const children = this.children.filter(
-      (child) => child instanceof FileSystemDirectory && child.name === rest[0],
-    );
-    if (children.length === 0 && rest[0] != null) {
+
+    // Case: We need to add directory, because it does not exist
+    if (
+      !this.nodeHasAlreadyChildDirectoryWithSameName(rest) &&
+      rest[0] != null
+    ) {
       const newdir = new FileSystemDirectory(rest[0]);
       this.addChild(newdir);
       return newdir.putNode(rest, node);
     }
+
+    // Recursion case: Traverse child nodes
     for (const child of this.children) {
       const f = child.putNode(rest, node);
       if (f) {
@@ -65,5 +75,18 @@ export class FileSystemDirectory extends FileSystemNode {
   addChild(fileSystemNode: FileSystemNode): FileSystemNode | null {
     this.children.push(fileSystemNode);
     return fileSystemNode;
+  }
+
+  nodeHasAlreadyChildDirectoryWithSameName(rest: string[]) {
+    const children = this.children.filter(
+      (child) => child instanceof FileSystemDirectory && child.name === rest[0],
+    );
+    return children.length !== 0;
+  }
+  nodeHasAlreadyChildFileyWithSameName(rest: string[]) {
+    const children = this.children.filter(
+      (child) => child instanceof FileSystemFile && child.name === rest[0],
+    );
+    return children.length !== 0;
   }
 }
