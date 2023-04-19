@@ -10,8 +10,8 @@ export class FileSystemDirectory extends FileSystemNode {
     super(name);
   }
 
-  override getNode(path: string): FileSystemNode | null {
-    const [firstPart, ...rest] = path.split('/');
+  override getNode(pathParts: string[]): FileSystemNode | null {
+    const [firstPart, ...rest] = pathParts;
     if (firstPart !== this.name) {
       return null;
     }
@@ -19,7 +19,7 @@ export class FileSystemDirectory extends FileSystemNode {
       return this;
     }
     for (const child of this.children) {
-      const f = child.getNode(rest.join('/'));
+      const f = child.getNode(rest);
       if (f) {
         return f;
       }
@@ -27,8 +27,11 @@ export class FileSystemDirectory extends FileSystemNode {
     return null;
   }
 
-  override putNode(path: string, node: FileSystemNode): FileSystemNode | null {
-    const [firstPart, ...rest] = path.split('/');
+  override putNode(
+    pathParts: string[],
+    node: FileSystemNode,
+  ): FileSystemNode | null {
+    const [firstPart, ...rest] = pathParts;
     if (firstPart !== this.name) {
       return null;
     }
@@ -48,10 +51,10 @@ export class FileSystemDirectory extends FileSystemNode {
     if (children.length === 0 && rest[0] != null) {
       const newdir = new FileSystemDirectory(rest[0]);
       this.addChild(newdir);
-      return newdir.putNode(rest.join('/'), node);
+      return newdir.putNode(rest, node);
     }
     for (const child of this.children) {
-      const f = child.putNode(rest.join('/'), node);
+      const f = child.putNode(rest, node);
       if (f) {
         return f;
       }

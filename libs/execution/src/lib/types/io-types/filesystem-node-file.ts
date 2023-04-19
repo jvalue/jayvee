@@ -30,8 +30,8 @@ export abstract class FileSystemFile<T> extends FileSystemNode {
     super(name);
   }
 
-  override getNode(path: string): FileSystemNode | null {
-    const [firstPart, ...rest] = path.split('/');
+  override getNode(pathParts: string[]): FileSystemNode | null {
+    const [firstPart, ...rest] = pathParts;
     if (firstPart === this.name && rest.length === 0) {
       return this;
     }
@@ -39,7 +39,7 @@ export abstract class FileSystemFile<T> extends FileSystemNode {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  override putNode(path: string): FileSystemNode | null {
+  override putNode(path: string[]): FileSystemNode | null {
     return null;
   }
 }

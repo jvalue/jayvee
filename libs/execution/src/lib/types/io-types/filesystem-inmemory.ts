@@ -25,7 +25,7 @@ export class InMemoryFileSystem implements FileSystem {
   getFile(path: string): FileSystemFile<unknown> | null {
     const processedParts = this.processPath(path);
     if (processedParts != null) {
-      const node = this.rootDirectory.getNode('/' + processedParts.join('/'));
+      const node = this.rootDirectory.getNode(processedParts);
       if (node instanceof FileSystemFile) {
         return node;
       }
@@ -43,10 +43,7 @@ export class InMemoryFileSystem implements FileSystem {
   putFile(path: string, file: FileSystemFile<unknown>): FileSystem | null {
     const processedParts = this.processPath(path);
     if (processedParts != null) {
-      const node = this.rootDirectory.putNode(
-        '/' + processedParts.join('/'),
-        file,
-      );
+      const node = this.rootDirectory.putNode(processedParts, file);
       if (node instanceof FileSystemFile) {
         return this;
       }
@@ -76,6 +73,6 @@ export class InMemoryFileSystem implements FileSystem {
         processedParts.push(part);
       }
     }
-    return processedParts;
+    return ['', ...processedParts];
   }
 }

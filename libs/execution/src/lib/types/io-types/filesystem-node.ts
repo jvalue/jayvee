@@ -4,6 +4,9 @@
 
 export abstract class FileSystemNode {
   constructor(public name: string) {}
-  abstract getNode(path: string): FileSystemNode | null;
-  abstract putNode(path: string, node: FileSystemNode): FileSystemNode | null;
+  abstract getNode(pathParts: string[]): FileSystemNode | null;
+  abstract putNode(
+    pathParts: string[],
+    node: FileSystemNode,
+  ): FileSystemNode | null;
 }

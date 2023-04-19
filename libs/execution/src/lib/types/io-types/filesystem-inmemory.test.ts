@@ -36,7 +36,7 @@ describe('InMemoryFileSystem', () => {
       MimeType.TEXT_PLAIN,
       ['test'],
     );
-    expect(fileSystem.putFile('invalid/path', file)).toBeNull();
+    expect(fileSystem.putFile('/invalid/path', file)).toBeNull();
   });
 
   it('should return file if found using directory manually', () => {
@@ -52,7 +52,7 @@ describe('InMemoryFileSystem', () => {
     dir2.addChild(file);
     dir1.addChild(dir2);
     root.addChild(dir1);
-    const f = root.getNode('/dir1/dir2/textfile');
+    const f = root.getNode('/dir1/dir2/textfile'.split('/'));
     expect(f).toBe(file);
   });
 
@@ -65,7 +65,7 @@ describe('InMemoryFileSystem', () => {
       ['test'],
     );
 
-    expect(root.putNode('/dir1/dir2/textfile', file)).toBe(file);
-    expect(root.getNode('/dir1/dir2/textfile')).toBe(file);
+    expect(root.putNode('/dir1/dir2/textfile'.split('/'), file)).toBe(file);
+    expect(root.getNode('/dir1/dir2/textfile'.split('/'))).toBe(file);
   });
 });
