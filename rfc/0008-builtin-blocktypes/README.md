@@ -39,10 +39,10 @@ This allows users to look up inputs, outputs and properties without having to lo
 - `property` keyword to define a property with a name and a type
   - Optionally, a default value can be assigned
 - Adds new keywords for existing property types:
-  - Valuetypes: `regex`, `cellrange` / `row` / `column` / `cell`, `valuetype-assignment`
+  - Valuetypes: `regex`, `cellrange` / `row` / `column` / `cell`, `valuetypeAssignment`
   - Typed collections: `collection<type>`
     - Nested collections are not supported for now
-  - IO types: `File`, `FileSystem`, `TextFile`, `Sheet`, `Table`
+  - IO types: `file`, `fileSystem`, `textFile`, `sheet`, `table`
 
 See the following section for concrete code examples.
 
@@ -55,112 +55,112 @@ See the following section for concrete code examples.
 builtin blocktype HttpExtractor {
     property url oftype text;
 
-    output oftype File;
+    output oftype file;
 }
 
 builtin blocktype ArchiveInterpreter {
-    input oftype File;
+    input oftype file;
 
     property archiveType oftype text;
 
-    output oftype FileSystem;
+    output oftype fileSystem;
 }
 
 builtin blocktype FilePicker {
-    input oftype FileSystem;
+    input oftype fileSystem;
 
     property path oftype text;
 
-    output oftype File;
+    output oftype file;
 }
 
 builtin blocktype TextFileInterpreter {
-    input oftype File;
+    input oftype file;
 
     property encoding oftype text;
     property lineBreak oftype regex;
 
-    output oftype TextFile;
+    output oftype textFile;
 }
 
 builtin blocktype TextLineDeleter {
-    input oftype TextFile;
+    input oftype textFile;
 
     property lines oftype collection<integer>;
 
-    output oftype TextFile;
+    output oftype textFile;
 }
 
 builtin blocktype TextRangeSelector {
-    input oftype TextFile;
+    input oftype textFile;
 
     property lineFrom oftype integer;
     property lineTo oftype integer;
 
-    output oftype TextFile;
+    output oftype textFile;
 }
 
 builtin blocktype CSVInterpreter {
-    input oftype TextFile;
+    input oftype textFile;
 
     property delimiter oftype text: ",";
     property enclosing oftype text: "";
     property enclosingEscape oftype text: "";
 
-    output oftype Sheet;
+    output oftype sheet;
 }
 
 builtin blocktype CellRangeSelector {
-    input oftype Sheet;
+    input oftype sheet;
 
     property select oftype cellrange;
 
-    output oftype Sheet;
+    output oftype sheet;
 }
 
 builtin blocktype CellWriter {
-    input oftype Sheet;
+    input oftype sheet;
 
     property write oftype text;
     property at oftype cell;
 
-    output oftype Sheet;
+    output oftype sheet;
 }
 
 builtin blocktype ColumnDeleter {
-    input oftype Sheet;
+    input oftype sheet;
 
     property delete oftype collection<column>;
 
-    output oftype Sheet;
+    output oftype sheet;
 }
 
 builtin blocktype RowDeleter {
-    input oftype Sheet;
+    input oftype sheet;
 
     property delete oftype collection<row>;
 
-    output oftype Sheet;
+    output oftype sheet;
 }
 
 builtin blocktype TableInterpreter {
-input oftype Sheet;
+    input oftype sheet;
 
     property header oftype boolean;
-    property columns oftype collection<valuetype-assignment>;
+    property columns oftype collection<valuetypeAssignment>;
 
-    output oftype Table;
+    output oftype table;
 }
 
 builtin blocktype SQLiteLoader {
-    input oftype Table;
+    input oftype table;
 
     property table oftype text;
     property file oftype text;
 }
 
 builtin blocktype PostgresLoader {
-    input oftype Table;
+    input oftype table;
 
     property host oftype text;
     property port oftype integer;
@@ -196,7 +196,7 @@ builtin blocktype PostgresLoader {
 composite blocktype HttpFileExtractor {
     property url oftype text;
 
-    output oftype TextFile;
+    output oftype textFile;
 
     block Extractor oftype HttpExtractor {
         url: url;
