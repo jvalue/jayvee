@@ -6,27 +6,31 @@
  * See the FAQ section of README.md for an explanation why the following ESLint rule is disabled for this file.
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
-import { ValidationAcceptor } from 'langium';
 
 import { ConstraintDefinition } from '../../ast';
 import { getMetaInformation } from '../../meta-information/meta-inf-registry';
+import { ValidationContext } from '../validation-context';
 
 export function validateConstraintDefinition(
   constraint: ConstraintDefinition,
-  accept: ValidationAcceptor,
+  context: ValidationContext,
 ): void {
-  checkConstraintType(constraint, accept);
+  checkConstraintType(constraint, context);
 }
 
 function checkConstraintType(
   constraint: ConstraintDefinition,
-  accept: ValidationAcceptor,
+  context: ValidationContext,
 ): void {
   const metaInf = getMetaInformation(constraint.type);
   if (metaInf === undefined) {
-    accept('error', `Unknown constraint type '${constraint.type.name ?? ''}'`, {
-      node: constraint,
-      property: 'type',
-    });
+    context.accept(
+      'error',
+      `Unknown constraint type '${constraint.type.name ?? ''}'`,
+      {
+        node: constraint,
+        property: 'type',
+      },
+    );
   }
 }

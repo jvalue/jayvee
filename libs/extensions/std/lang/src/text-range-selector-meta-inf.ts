@@ -9,9 +9,9 @@ import {
   IOType,
   PropertyAssignment,
   PropertyValuetype,
+  ValidationContext,
   isNumericLiteral,
 } from '@jvalue/jayvee-language-server';
-import { ValidationAcceptor } from 'langium';
 
 export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
   constructor() {
@@ -35,7 +35,7 @@ export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
       // Output type:
       IOType.TEXT_FILE,
 
-      (propertyBody, accept) => {
+      (propertyBody, context) => {
         const lineFromProperty = propertyBody.properties.find(
           (p) => p.name === 'lineFrom',
         );
@@ -55,7 +55,7 @@ export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
 
         if (lineFrom > lineTo) {
           [lineFromProperty, lineToProperty].forEach((property) => {
-            accept(
+            context.accept(
               'error',
               'The lower line number needs to be smaller or equal to the upper line number',
               { node: property.value },
@@ -70,13 +70,13 @@ export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
 
 function greaterThanZeroValidation(
   property: PropertyAssignment,
-  accept: ValidationAcceptor,
+  context: ValidationContext,
 ) {
   const propertyValue = property.value;
   assert(isNumericLiteral(propertyValue));
 
   if (propertyValue.value <= 0) {
-    accept('error', `Line numbers need to be greater than zero`, {
+    context.accept('error', `Line numbers need to be greater than zero`, {
       node: propertyValue,
     });
   }

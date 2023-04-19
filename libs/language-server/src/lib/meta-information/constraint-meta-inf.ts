@@ -2,9 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { ValidationAcceptor } from 'langium';
-
 import { PrimitiveValuetypeKeyword, PropertyBody } from '../ast/generated/ast';
+import { ValidationContext } from '../validation/validation-context';
 
 // eslint-disable-next-line import/no-cycle
 import { ExampleDoc, MetaInformation, PropertySpecification } from './meta-inf';
@@ -20,7 +19,7 @@ export abstract class ConstraintMetaInformation extends MetaInformation {
     constraintType: string,
     properties: Record<string, PropertySpecification>,
     public readonly compatiblePrimitiveValuetypes: PrimitiveValuetypeKeyword[],
-    validation?: (property: PropertyBody, accept: ValidationAcceptor) => void,
+    validation?: (property: PropertyBody, context: ValidationContext) => void,
   ) {
     super(constraintType, properties, validation);
   }

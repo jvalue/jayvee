@@ -4,11 +4,10 @@
 
 import { strict as assert } from 'assert';
 
-import { ValidationAcceptor } from 'langium';
-
 import { PropertyAssignment, isNumericLiteral } from '../ast';
 import { PropertyValuetype } from '../ast/model-util';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
+import { ValidationContext } from '../validation/validation-context';
 
 export class LengthConstraintMetaInformation extends ConstraintMetaInformation {
   constructor() {
@@ -27,7 +26,7 @@ export class LengthConstraintMetaInformation extends ConstraintMetaInformation {
         },
       },
       ['text'],
-      (propertyBody, accept) => {
+      (propertyBody, context) => {
         const minLengthProperty = propertyBody.properties.find(
           (p) => p.name === 'minLength',
         );
@@ -50,7 +49,7 @@ export class LengthConstraintMetaInformation extends ConstraintMetaInformation {
 
         if (minLength > maxLength) {
           [minLengthProperty, maxLengthProperty].forEach((property) => {
-            accept(
+            context.accept(
               'error',
               'The minimum length needs to be smaller or equal to the maximum length',
               { node: property.value },
@@ -77,14 +76,18 @@ export class LengthConstraintMetaInformation extends ConstraintMetaInformation {
 
 function nonNegativeValidation(
   property: PropertyAssignment,
-  accept: ValidationAcceptor,
+  context: ValidationContext,
 ) {
   const propertyValue = property.value;
   assert(isNumericLiteral(propertyValue));
 
   if (propertyValue.value < 0) {
-    accept('error', `Bounds for length need to be equal or greater than zero`, {
-      node: propertyValue,
-    });
+    context.accept(
+      'error',
+      `Bounds for length need to be equal or greater than zero`,
+      {
+        node: propertyValue,
+      },
+    );
   }
 }

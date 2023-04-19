@@ -20,7 +20,7 @@ export class TextLineDeleterMetaInformation extends BlockMetaInformation {
       {
         lines: {
           type: PropertyValuetype.COLLECTION,
-          validation: (property, accept) => {
+          validation: (property, context) => {
             const propertyValue = property.value;
             assert(isCollectionLiteral(propertyValue));
 
@@ -30,18 +30,26 @@ export class TextLineDeleterMetaInformation extends BlockMetaInformation {
             );
 
             invalidItems.forEach((invalidValue) =>
-              accept('error', 'Only integers are allowed in this collection', {
-                node: invalidValue,
-              }),
+              context.accept(
+                'error',
+                'Only integers are allowed in this collection',
+                {
+                  node: invalidValue,
+                },
+              ),
             );
 
             assert(validItems.every(isNumericLiteral));
 
             for (const numericLiteral of validItems) {
               if (numericLiteral.value <= 0) {
-                accept('error', `Line numbers need to be greater than zero`, {
-                  node: numericLiteral,
-                });
+                context.accept(
+                  'error',
+                  `Line numbers need to be greater than zero`,
+                  {
+                    node: numericLiteral,
+                  },
+                );
               }
             }
           },

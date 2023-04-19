@@ -9,6 +9,7 @@ import {
   PropertyValuetype,
   isCellRangeLiteral,
   isCollectionLiteral,
+  validateTypedCollection,
 } from '@jvalue/jayvee-language-server';
 
 export class CellWriterMetaInformation extends BlockMetaInformation {
@@ -35,7 +36,7 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
         },
         at: {
           type: PropertyValuetype.CELL_RANGE,
-          validation: (property, accept) => {
+          validation: (property, context) => {
             const propertyValue = property.value;
             if (!isCellRangeLiteral(propertyValue)) {
               return;
@@ -46,9 +47,13 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
             }
             const semanticCellRange = new CellRangeWrapper(propertyValue);
             if (!semanticCellRange.isOneDimensional()) {
-              accept('error', 'The cell range needs to be one-dimensional', {
-                node: semanticCellRange.astNode,
-              });
+              context.accept(
+                'error',
+                'The cell range needs to be one-dimensional',
+                {
+                  node: semanticCellRange.astNode,
+                },
+              );
             }
           },
           docs: {
@@ -69,7 +74,7 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
       },
       IOType.SHEET,
       IOType.SHEET,
-      (propertyBody, accept) => {
+      (propertyBody, context) => {
         const writeProperty = propertyBody.properties.find(
           (p) => p.name === 'write',
         );
@@ -82,6 +87,24 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
         if (!isCollectionLiteral(writeProperty.value)) {
           return;
         }
+        const { invalidItems } = validateTypedCollection(
+          writeProperty.value,
+          PropertyValuetype.TEXT,
+        );
+
+        invalidItems.forEach((invalidValue) =>
+          context.accept(
+            'error',
+            'Only text values are allowed in this collection',
+            {
+              node: invalidValue,
+            },
+          ),
+        );
+        if (invalidItems.length > 0) {
+          return;
+        }
+
         if (!isCellRangeLiteral(atProperty.value)) {
           return;
         }
@@ -96,7 +119,7 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
 
         if (numberOfCells !== numberOfValuesToWrite) {
           [writeProperty, atProperty].forEach((propertyNode) => {
-            accept(
+            context.accept(
               'warning',
               `The number of values to write (${numberOfValuesToWrite}) does not match the number of cells (${numberOfCells})`,
               { node: propertyNode.value },
