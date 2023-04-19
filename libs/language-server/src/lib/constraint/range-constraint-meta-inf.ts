@@ -35,7 +35,7 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
         },
       },
       ['integer', 'decimal'],
-      (propertyBody, accept) => {
+      (propertyBody, context) => {
         const lowerBoundProperty = propertyBody.properties.find(
           (p) => p.name === 'lowerBound',
         );
@@ -58,7 +58,7 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
 
         if (lowerBound > upperBound) {
           [lowerBoundProperty, upperBoundProperty].forEach((property) => {
-            accept(
+            context.accept(
               'error',
               'The lower bound needs to be smaller or equal to the upper bound',
               { node: property.value },
@@ -90,13 +90,13 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
           const errorMessage =
             'Lower and upper bounds need to be inclusive if they are identical';
           if (!lowerBoundInclusive) {
-            accept('error', errorMessage, {
+            context.accept('error', errorMessage, {
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               node: lowerBoundInclusiveProperty!.value,
             });
           }
           if (!upperBoundInclusive) {
-            accept('error', errorMessage, {
+            context.accept('error', errorMessage, {
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               node: upperBoundInclusiveProperty!.value,
             });

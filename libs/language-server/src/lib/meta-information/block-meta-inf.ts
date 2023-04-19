@@ -2,11 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { ValidationAcceptor } from 'langium';
-
 import { PropertyBody } from '../ast/generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { IOType } from '../ast/model-util';
+import { ValidationContext } from '../validation/validation-context';
 
 import { ExampleDoc, MetaInformation, PropertySpecification } from './meta-inf';
 
@@ -23,7 +22,7 @@ export abstract class BlockMetaInformation extends MetaInformation {
     properties: Record<string, PropertySpecification>,
     public readonly inputType: IOType,
     public readonly outputType: IOType,
-    validation?: (property: PropertyBody, accept: ValidationAcceptor) => void,
+    validation?: (property: PropertyBody, context: ValidationContext) => void,
   ) {
     super(blockType, properties, validation);
   }

@@ -2,16 +2,18 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { AstNode, ValidationAcceptor } from 'langium';
+import { AstNode } from 'langium';
+
+import { ValidationContext } from './validation-context';
 
 export type NamedAstNode = AstNode & { name: string };
 
 export function checkUniqueNames(
   nodes: NamedAstNode[],
-  accept: ValidationAcceptor,
+  context: ValidationContext,
 ): void {
   getNodesWithNonUniqueNames(nodes).forEach((node) => {
-    accept(
+    context.accept(
       'error',
       `The ${node.$type.toLowerCase()} name "${node.name}" needs to be unique.`,
       {

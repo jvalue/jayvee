@@ -6,7 +6,6 @@
  * See the FAQ section of README.md for an explanation why the following ESLint rule is disabled for this file.
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
-import { ValidationAcceptor } from 'langium';
 
 import {
   PropertyValuetype,
@@ -15,33 +14,38 @@ import {
   isConstraintReferenceLiteral,
 } from '../../ast';
 import { getMetaInformation } from '../../meta-information/meta-inf-registry';
+import { ValidationContext } from '../validation-context';
 
 export function validateValuetypeDefinition(
   valuetype: ValuetypeDefinition,
-  accept: ValidationAcceptor,
+  context: ValidationContext,
 ): void {
-  checkConstraintsCollectionValues(valuetype, accept);
-  checkConstraintsMatchPrimitiveValuetype(valuetype, accept);
+  checkConstraintsCollectionValues(valuetype, context);
+  checkConstraintsMatchPrimitiveValuetype(valuetype, context);
 }
 
 function checkConstraintsCollectionValues(
   valuetype: ValuetypeDefinition,
-  accept: ValidationAcceptor,
+  context: ValidationContext,
 ): void {
   const constraints = valuetype.constraints;
   constraints.values.forEach((collectionValue) => {
     const types = inferTypesFromValue(collectionValue);
     if (!types.includes(PropertyValuetype.CONSTRAINT)) {
-      accept('error', 'Only constraints are allowed in this collection', {
-        node: collectionValue,
-      });
+      context.accept(
+        'error',
+        'Only constraints are allowed in this collection',
+        {
+          node: collectionValue,
+        },
+      );
     }
   });
 }
 
 function checkConstraintsMatchPrimitiveValuetype(
   valuetype: ValuetypeDefinition,
-  accept: ValidationAcceptor,
+  context: ValidationContext,
 ): void {
   if (valuetype.type === undefined) {
     return;
@@ -66,7 +70,7 @@ function checkConstraintsMatchPrimitiveValuetype(
     if (
       !metaInf.compatiblePrimitiveValuetypes.includes(valuetype.type.keyword)
     ) {
-      accept(
+      context.accept(
         'error',
         `Only constraints for type "${valuetype.type.keyword}" are allowed in this collection`,
         {

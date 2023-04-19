@@ -2,22 +2,21 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { ValidationAcceptor } from 'langium';
-
 import { PipeDefinition } from '../../ast/generated/ast';
 import { createSemanticPipes } from '../../ast/wrappers/pipe-wrapper';
 import { getMetaInformation } from '../../meta-information/meta-inf-registry';
+import { ValidationContext } from '../validation-context';
 
 export function validatePipeDefinition(
   pipe: PipeDefinition,
-  accept: ValidationAcceptor,
+  context: ValidationContext,
 ): void {
-  checkBlockCompatibility(pipe, accept);
+  checkBlockCompatibility(pipe, context);
 }
 
 function checkBlockCompatibility(
   pipe: PipeDefinition,
-  accept: ValidationAcceptor,
+  context: ValidationContext,
 ): void {
   const semanticPipes = createSemanticPipes(pipe);
   for (const semanticPipe of semanticPipes) {
@@ -33,8 +32,8 @@ function checkBlockCompatibility(
     if (fromBlockMetaInf.hasOutput() && toBlockMetaInf.hasInput()) {
       if (!fromBlockMetaInf.canBeConnectedTo(toBlockMetaInf)) {
         const errorMessage = `The output type "${fromBlockMetaInf.outputType}" of ${fromBlockMetaInf.type} is incompatible with the input type "${toBlockMetaInf.inputType}" of ${toBlockMetaInf.type}`;
-        accept('error', errorMessage, semanticPipe.getFromDiagnostic());
-        accept('error', errorMessage, semanticPipe.getToDiagnostic());
+        context.accept('error', errorMessage, semanticPipe.getFromDiagnostic());
+        context.accept('error', errorMessage, semanticPipe.getToDiagnostic());
       }
     }
   }

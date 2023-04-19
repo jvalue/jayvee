@@ -14,7 +14,7 @@ export class AllowlistConstraintMetaInformation extends ConstraintMetaInformatio
       {
         allowlist: {
           type: PropertyValuetype.COLLECTION,
-          validation: (property, accept) => {
+          validation: (property, context) => {
             const propertyValue = property.value;
             if (!isCollectionLiteral(propertyValue)) {
               return;
@@ -26,7 +26,7 @@ export class AllowlistConstraintMetaInformation extends ConstraintMetaInformatio
             );
 
             invalidItems.forEach((invalidValue) =>
-              accept(
+              context.accept(
                 'error',
                 'Only text values are allowed in this collection',
                 {
