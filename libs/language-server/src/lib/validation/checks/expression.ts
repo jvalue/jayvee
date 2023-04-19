@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { ValidationAcceptor } from 'langium';
-
 import {
   BooleanExpression,
   isBooleanExpression,
@@ -14,17 +12,18 @@ import {
   evaluateExpression,
   inferTypesFromValue,
 } from '../../ast/model-util';
+import { ValidationContext } from '../validation-context';
 
 export function validateExpression(
   expression: BooleanExpression,
-  accept: ValidationAcceptor,
+  context: ValidationContext,
 ): void {
-  checkSimplification(expression, accept);
+  checkSimplification(expression, context);
 }
 
 function checkSimplification(
   expression: BooleanExpression,
-  accept: ValidationAcceptor,
+  context: ValidationContext,
 ): void {
   if (isBooleanLiteral(expression)) {
     return;
@@ -37,7 +36,7 @@ function checkSimplification(
   }
 
   const evaluatedExpression = evaluateExpression(expression);
-  accept(
+  context.accept(
     'info',
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     `The expression can be simplified to ${evaluatedExpression}`,

@@ -2,30 +2,29 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { ValidationAcceptor } from 'langium';
-
 import { RegexLiteral } from '../../ast';
+import { ValidationContext } from '../validation-context';
 
 export function validateRegexLiteral(
   regex: RegexLiteral,
-  accept: ValidationAcceptor,
+  context: ValidationContext,
 ): void {
-  checkRegexParsability(regex, accept);
+  checkRegexParsability(regex, context);
 }
 
 function checkRegexParsability(
   regex: RegexLiteral,
-  accept: ValidationAcceptor,
+  context: ValidationContext,
 ): void {
   try {
     new RegExp(regex.value);
   } catch (error) {
     if (error instanceof SyntaxError) {
-      accept('error', `A parsing error occurred: ${error.message}`, {
+      context.accept('error', `A parsing error occurred: ${error.message}`, {
         node: regex,
       });
     } else {
-      accept(
+      context.accept(
         'error',
         `An unknown parsing error occurred: ${JSON.stringify(error)}.`,
         {

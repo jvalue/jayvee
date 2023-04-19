@@ -23,16 +23,20 @@ export class TextFileInterpreterMetaInformation extends BlockMetaInformation {
           docs: {
             description: 'The encoding used for decoding the file contents.',
           },
-          validation: (property, accept) => {
+          validation: (property, context) => {
             const propertyValue = property.value;
             assert(isTextLiteral(propertyValue));
 
             try {
               new TextDecoder(propertyValue.value);
             } catch (error) {
-              accept('error', `Unknown encoding "${propertyValue.value}"`, {
-                node: propertyValue,
-              });
+              context.accept(
+                'error',
+                `Unknown encoding "${propertyValue.value}"`,
+                {
+                  node: propertyValue,
+                },
+              );
             }
           },
         },

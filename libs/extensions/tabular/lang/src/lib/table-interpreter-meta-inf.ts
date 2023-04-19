@@ -40,7 +40,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
         },
         columns: {
           type: PropertyValuetype.COLLECTION,
-          validation: (property, accept) => {
+          validation: (property, context) => {
             const propertyValue = property.value;
             if (!isCollectionLiteral(propertyValue)) {
               return;
@@ -52,7 +52,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
             );
 
             invalidItems.forEach((invalidValue) =>
-              accept(
+              context.accept(
                 'error',
                 'Only type assignments are allowed in this collection',
                 {
@@ -68,7 +68,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
             );
             getNodesWithNonUniqueNames(valuetypeAssignments).forEach(
               (valuetypeAssignment) => {
-                accept(
+                context.accept(
                   'error',
                   `The column name "${valuetypeAssignment.name}" needs to be unique.`,
                   {

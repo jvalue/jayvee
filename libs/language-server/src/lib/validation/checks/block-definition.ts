@@ -6,7 +6,7 @@
  * See the FAQ section of README.md for an explanation why the following ESLint rule is disabled for this file.
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
-import { ValidationAcceptor, assertUnreachable } from 'langium';
+import { assertUnreachable } from 'langium';
 
 import {
   BlockDefinition,
@@ -14,27 +14,35 @@ import {
   collectOutgoingPipes,
 } from '../../ast';
 import { PipeWrapper } from '../../ast/wrappers/pipe-wrapper';
-import { getMetaInformation } from '../../meta-information/meta-inf-registry';
+import {
+  getMetaInformation,
+  getOrFailMetaInformation,
+} from '../../meta-information/meta-inf-registry';
+import { ValidationContext } from '../validation-context';
 
 export function validateBlockDefinition(
   block: BlockDefinition,
-  accept: ValidationAcceptor,
+  context: ValidationContext,
 ): void {
-  checkBlockType(block, accept);
-  checkPipesOfBlock(block, 'input', accept);
-  checkPipesOfBlock(block, 'output', accept);
+  checkBlockType(block, context);
+  if (context.hasErrorOccurred()) {
+    return;
+  }
+
+  checkPipesOfBlock(block, 'input', context);
+  checkPipesOfBlock(block, 'output', context);
 }
 
 function checkBlockType(
   block: BlockDefinition,
-  accept: ValidationAcceptor,
+  context: ValidationContext,
 ): void {
   if (block.type === undefined) {
     return;
   }
   const metaInf = getMetaInformation(block.type);
   if (metaInf === undefined) {
-    accept('error', `Unknown block type '${block?.type?.name ?? ''}'`, {
+    context.accept('error', `Unknown block type '${block?.type?.name ?? ''}'`, {
       node: block,
       property: 'type',
     });
@@ -44,12 +52,9 @@ function checkBlockType(
 function checkPipesOfBlock(
   block: BlockDefinition,
   whatToCheck: 'input' | 'output',
-  accept: ValidationAcceptor,
+  context: ValidationContext,
 ): void {
-  const blockMetaInf = getMetaInformation(block.type);
-  if (blockMetaInf === undefined) {
-    return;
-  }
+  const blockMetaInf = getOrFailMetaInformation(block.type);
 
   let pipes: PipeWrapper[];
   switch (whatToCheck) {
@@ -71,7 +76,7 @@ function checkPipesOfBlock(
     (whatToCheck === 'output' && !blockMetaInf.hasOutput())
   ) {
     for (const pipe of pipes) {
-      accept(
+      context.accept(
         'error',
         `Blocks of type ${blockMetaInf.type} do not have an ${whatToCheck}`,
         whatToCheck === 'input'
@@ -81,14 +86,14 @@ function checkPipesOfBlock(
     }
   } else if (pipes.length > 1 && whatToCheck === 'input') {
     for (const pipe of pipes) {
-      accept(
+      context.accept(
         'error',
         `At most one pipe can be connected to the ${whatToCheck} of a ${blockMetaInf.type}`,
         pipe.getToDiagnostic(),
       );
     }
   } else if (pipes.length === 0) {
-    accept(
+    context.accept(
       'warning',
       `A pipe should be connected to the ${whatToCheck} of this block`,
       {
