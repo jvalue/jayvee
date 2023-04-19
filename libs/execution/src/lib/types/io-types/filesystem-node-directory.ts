@@ -59,7 +59,7 @@ export class FileSystemDirectory extends FileSystemNode {
     return null;
   }
 
-  override addChild(fileSystemNode: FileSystemNode): FileSystemNode | null {
+  addChild(fileSystemNode: FileSystemNode): FileSystemNode | null {
     this.children.push(fileSystemNode);
     return fileSystemNode;
   }
