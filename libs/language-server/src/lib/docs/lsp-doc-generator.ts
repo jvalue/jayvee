@@ -2,19 +2,31 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { BlockMetaInformation } from '../meta-information';
+import {
+  BlockMetaInformation,
+  ConstraintMetaInformation,
+} from '../meta-information';
 import { MetaInformation } from '../meta-information/meta-inf';
 
 import {
   JayveeBlockTypeDocGenerator,
+  JayveeConstraintTypeDocGenerator,
   JayveePropertyDocGenerator,
 } from './jayvee-doc-generator';
 import { MarkdownBuilder } from './markdown-builder';
 
 export class LspDocGenerator
-  implements JayveeBlockTypeDocGenerator, JayveePropertyDocGenerator
+  implements
+    JayveeBlockTypeDocGenerator,
+    JayveeConstraintTypeDocGenerator,
+    JayveePropertyDocGenerator
 {
   generateBlockTypeDoc(metaInf: BlockMetaInformation): string {
+    const markdownBuilder = new MarkdownBuilder();
+    return markdownBuilder.line(metaInf.docs.description).build();
+  }
+
+  generateConstraintTypeDoc(metaInf: ConstraintMetaInformation): string {
     const markdownBuilder = new MarkdownBuilder();
     return markdownBuilder.line(metaInf.docs.description).build();
   }
