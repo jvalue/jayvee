@@ -21,7 +21,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 ## Summary
 
-This RFC presents an alternative representation of value type constraints. It would displace the current solution.
+This RFC presents an alternative representation of value type constraints. It replaces the current solution.
 
 ## Motivation
 
@@ -90,10 +90,10 @@ constraint IFOPT_Format on text = value matches /[a-z]{2}:\d+:\d+(:\d+)?(:\d+)?/
 ```
 
 ### Hidden Enhancements
-* Expressions allow parameters (keyword `on`).
-* length of string parameters is accessible by `value.length`.
-* Assignment operator `=` instead of `:` because the latter looks weird.
-* String operator `matches` is introduced.
+* Expressions allow parameters (keyword `value`).
+* The length of string parameters is accessible by `value.length`.
+* The assignment operator `=` instead of `:` because the latter looks off in that context.
+* The binary string operator `matches` is introduced.
 
 ### Usage in ValueTypes
 In ValueTypes, these constraints can be added like before by name. Combining constraints on non-matching value types leads to an error at runtime in the IDE hints.
@@ -103,7 +103,7 @@ valuetype GasFillLevel oftype number {
 }
 ```
 
-Alternatively, constraints can be defined inline with the caveat that they are not reusable elsewhere. Value then uses the type of the ValueType.
+Alternatively, constraints can be defined inline with the caveat that they are not reusable elsewhere. Value then adheres to the type of the ValueType.
 ```
 valuetype GasFillLevel oftype number {
     constraints: [ value >= 0 and value <= 100 ];
@@ -120,11 +120,13 @@ valuetype GasFillLevel oftype number {
 ## Alternatives
 
 - Syntax to define parameter in constraint could be different, e.g., `constraint MyConstraint = (number) => <expression>`.
-
+- Allow if/else statements in a more imperative way rather than packing everything into one expression.
+- Put the expression into a `{}`-wrapped scope for consistency (probably together with if/else statements, looks more like a method).
 
 
 
 ## Possible Future Changes/Enhancements
 - Allow renaming of `value` to a custom parameter name, e.g., `for text as x`.
+- add `in` operator for collections for syntactic sugar.
+- Allow users to define own `ConstraintTypes` that allow the current syntax again.
 
-<!-- TODO: (optional) Point out what changes or enhancements you see in the future to the proposed concepts. -->
