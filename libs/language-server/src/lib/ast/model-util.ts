@@ -8,20 +8,25 @@ import { AstNode, assertUnreachable } from 'langium';
 
 // eslint-disable-next-line import/no-cycle
 import { getMetaInformation } from '../meta-information/meta-inf-registry';
+// eslint-disable-next-line import/no-cycle
+import { ValidationContext } from '../validation';
 
 import {
+  BinaryExpression,
   BlockDefinition,
-  BooleanExpression,
+  Expression,
   PipelineDefinition,
   PrimitiveValuetypeKeywordLiteral,
   PropertyValueLiteral,
+  UnaryExpression,
   ValuetypeDefinitionReference,
   isBinaryExpression,
-  isBooleanExpression,
   isBooleanLiteral,
   isCellRangeLiteral,
   isCollectionLiteral,
   isConstraintReferenceLiteral,
+  isExpression,
+  isExpressionLiteral,
   isNumericLiteral,
   isRegexLiteral,
   isTextLiteral,
@@ -189,49 +194,241 @@ export function runtimeParameterAllowedForType(
   }
 }
 
-export function inferTypesFromValue(
+export function isNumericType(type: PropertyValuetype): boolean {
+  return (
+    type === PropertyValuetype.INTEGER || type === PropertyValuetype.DECIMAL
+  );
+}
+
+export function inferTypeFromValue(
   value: PropertyValueLiteral,
-): PropertyValuetype[] {
-  if (isTextLiteral(value)) {
-    return [PropertyValuetype.TEXT];
-  }
-  if (isNumericLiteral(value)) {
-    if (Number.isInteger(value.value)) {
-      return [PropertyValuetype.INTEGER, PropertyValuetype.DECIMAL];
-    }
-    return [PropertyValuetype.DECIMAL];
-  }
-  if (isBooleanExpression(value)) {
-    return [PropertyValuetype.BOOLEAN];
-  }
+  context?: ValidationContext,
+): PropertyValuetype | undefined {
   if (isCollectionLiteral(value)) {
-    return [PropertyValuetype.COLLECTION];
+    return PropertyValuetype.COLLECTION;
   }
   if (isCellRangeLiteral(value)) {
-    return [PropertyValuetype.CELL_RANGE];
+    return PropertyValuetype.CELL_RANGE;
   }
   if (isRegexLiteral(value)) {
-    return [PropertyValuetype.REGEX];
+    return PropertyValuetype.REGEX;
   }
   if (isValuetypeAssignmentLiteral(value)) {
-    return [PropertyValuetype.VALUETYPE_ASSIGNMENT];
+    return PropertyValuetype.VALUETYPE_ASSIGNMENT;
   }
   if (isConstraintReferenceLiteral(value)) {
-    return [PropertyValuetype.CONSTRAINT];
+    return PropertyValuetype.CONSTRAINT;
   }
-
+  if (isExpression(value)) {
+    return inferTypeFromExpression(value, context);
+  }
   assertUnreachable(value);
 }
 
-export function evaluateExpression(expression: BooleanExpression): boolean {
+function inferTypeFromExpression(
+  expression: Expression,
+  context: ValidationContext | undefined,
+): PropertyValuetype | undefined {
+  if (isTextLiteral(expression)) {
+    return PropertyValuetype.TEXT;
+  }
   if (isBooleanLiteral(expression)) {
+    return PropertyValuetype.BOOLEAN;
+  }
+  if (isNumericLiteral(expression)) {
+    if (Number.isInteger(expression.value)) {
+      return PropertyValuetype.INTEGER;
+    }
+    return PropertyValuetype.DECIMAL;
+  }
+  if (isUnaryExpression(expression)) {
+    const unaryOperator = expression.operator;
+    switch (unaryOperator) {
+      case 'not':
+        return inferTypeFromUnaryLogicalExpression(expression, context);
+      default:
+        assertUnreachable(unaryOperator);
+    }
+  }
+  if (isBinaryExpression(expression)) {
+    const binaryOperator = expression.operator;
+    switch (binaryOperator) {
+      case '==':
+      case '!=':
+        return inferTypeFromBinaryEqualityExpression(expression, context);
+      case '<':
+      case '<=':
+      case '>':
+      case '>=':
+        return inferTypeFromBinaryRelationalExpression(expression, context);
+      case 'xor':
+      case 'and':
+      case 'or':
+        return inferTypeFromBinaryLogicalExpression(expression, context);
+      default:
+        assertUnreachable(binaryOperator);
+    }
+  }
+  assertUnreachable(expression);
+}
+
+function inferTypeFromUnaryLogicalExpression(
+  expression: UnaryExpression,
+  context: ValidationContext | undefined,
+): PropertyValuetype | undefined {
+  const innerType = inferTypeFromExpression(expression.expression, context);
+  if (innerType === undefined) {
+    return undefined;
+  }
+  if (innerType !== PropertyValuetype.BOOLEAN) {
+    context?.accept(
+      'error',
+      `The operand needs to be of type ${PropertyValuetype.BOOLEAN} but is of type ${innerType}`,
+      {
+        node: expression.expression,
+      },
+    );
+    return undefined;
+  }
+  return PropertyValuetype.BOOLEAN;
+}
+
+function inferTypeFromBinaryEqualityExpression(
+  expression: BinaryExpression,
+  context: ValidationContext | undefined,
+): PropertyValuetype | undefined {
+  assert(expression.operator === '==' || expression.operator === '!=');
+
+  const leftType = inferTypeFromExpression(expression.left, context);
+  const rightType = inferTypeFromExpression(expression.right, context);
+  if (leftType === undefined || rightType === undefined) {
+    return undefined;
+  }
+  if (leftType !== rightType) {
+    if (isNumericType(leftType) && isNumericType(rightType)) {
+      context?.accept(
+        'warning',
+        `The operands are of different numeric types (left: ${leftType}, right: ${rightType})`,
+        {
+          node: expression,
+        },
+      );
+    } else {
+      context?.accept(
+        'error',
+        `The types of the operands need to be equal but they differ (left: ${leftType}, right: ${rightType})`,
+        { node: expression },
+      );
+      return undefined;
+    }
+  }
+
+  return PropertyValuetype.BOOLEAN;
+}
+
+function inferTypeFromBinaryRelationalExpression(
+  expression: BinaryExpression,
+  context: ValidationContext | undefined,
+): PropertyValuetype | undefined {
+  assert(
+    expression.operator === '<' ||
+      expression.operator === '<=' ||
+      expression.operator === '>' ||
+      expression.operator === '>=',
+  );
+
+  const leftType = inferTypeFromExpression(expression.left, context);
+  const rightType = inferTypeFromExpression(expression.right, context);
+  if (leftType === undefined || rightType === undefined) {
+    return undefined;
+  }
+  if (!isNumericType(leftType)) {
+    context?.accept(
+      'error',
+      `The operand needs to be of type ${PropertyValuetype.DECIMAL} or ${PropertyValuetype.INTEGER} but is of type ${leftType}`,
+      {
+        node: expression.left,
+      },
+    );
+    return undefined;
+  }
+  if (!isNumericType(rightType)) {
+    context?.accept(
+      'error',
+      `The operand needs to be of type ${PropertyValuetype.DECIMAL} or ${PropertyValuetype.INTEGER} but is of type ${rightType}`,
+      {
+        node: expression.right,
+      },
+    );
+    return undefined;
+  }
+  if (leftType !== rightType) {
+    context?.accept(
+      'warning',
+      `The operands are of different numeric types (left: ${leftType}, right: ${rightType})`,
+      {
+        node: expression,
+      },
+    );
+  }
+  return PropertyValuetype.BOOLEAN;
+}
+
+function inferTypeFromBinaryLogicalExpression(
+  expression: BinaryExpression,
+  context: ValidationContext | undefined,
+): PropertyValuetype | undefined {
+  assert(
+    expression.operator === 'xor' ||
+      expression.operator === 'and' ||
+      expression.operator === 'or',
+  );
+
+  const leftType = inferTypeFromExpression(expression.left, context);
+  const rightType = inferTypeFromExpression(expression.right, context);
+  if (leftType === undefined || rightType === undefined) {
+    return undefined;
+  }
+  if (
+    leftType !== PropertyValuetype.BOOLEAN ||
+    rightType !== PropertyValuetype.BOOLEAN
+  ) {
+    if (leftType !== PropertyValuetype.BOOLEAN) {
+      context?.accept(
+        'error',
+        `The operand needs to be of type ${PropertyValuetype.BOOLEAN} but is of type ${leftType}`,
+        {
+          node: expression.left,
+        },
+      );
+    }
+    if (rightType !== PropertyValuetype.BOOLEAN) {
+      context?.accept(
+        'error',
+        `The operand needs to be of type ${PropertyValuetype.BOOLEAN} but is of type ${rightType}`,
+        {
+          node: expression.right,
+        },
+      );
+    }
+    return undefined;
+  }
+  return PropertyValuetype.BOOLEAN;
+}
+
+export function evaluateExpression(
+  expression: Expression,
+): boolean | number | string {
+  if (isExpressionLiteral(expression)) {
     return expression.value;
   }
   if (isUnaryExpression(expression)) {
     const unaryOperator = expression.operator;
     switch (unaryOperator) {
       case 'not': {
-        return !evaluateExpression(expression.expression);
+        const innerValue = evaluateExpression(expression.expression);
+        assert(typeof innerValue === 'boolean');
+        return !innerValue;
       }
       default:
         assertUnreachable(unaryOperator);
@@ -243,32 +440,68 @@ export function evaluateExpression(expression: BooleanExpression): boolean {
       case '==': {
         const leftValue = evaluateExpression(expression.left);
         const rightValue = evaluateExpression(expression.right);
+        assert(typeof leftValue === typeof rightValue);
         return leftValue === rightValue;
       }
       case '!=': {
         const leftValue = evaluateExpression(expression.left);
         const rightValue = evaluateExpression(expression.right);
+        assert(typeof leftValue === typeof rightValue);
         return leftValue !== rightValue;
+      }
+      case '<': {
+        const leftValue = evaluateExpression(expression.left);
+        assert(typeof leftValue === 'number');
+        const rightValue = evaluateExpression(expression.right);
+        assert(typeof rightValue === 'number');
+        return leftValue < rightValue;
+      }
+      case '<=': {
+        const leftValue = evaluateExpression(expression.left);
+        assert(typeof leftValue === 'number');
+        const rightValue = evaluateExpression(expression.right);
+        assert(typeof rightValue === 'number');
+        return leftValue <= rightValue;
+      }
+      case '>': {
+        const leftValue = evaluateExpression(expression.left);
+        assert(typeof leftValue === 'number');
+        const rightValue = evaluateExpression(expression.right);
+        assert(typeof rightValue === 'number');
+        return leftValue > rightValue;
+      }
+      case '>=': {
+        const leftValue = evaluateExpression(expression.left);
+        assert(typeof leftValue === 'number');
+        const rightValue = evaluateExpression(expression.right);
+        assert(typeof rightValue === 'number');
+        return leftValue >= rightValue;
       }
       case 'xor': {
         const leftValue = evaluateExpression(expression.left);
+        assert(typeof leftValue === 'boolean');
         const rightValue = evaluateExpression(expression.right);
+        assert(typeof rightValue === 'boolean');
         return (leftValue && !rightValue) || (!leftValue && rightValue);
       }
       case 'and': {
         const leftValue = evaluateExpression(expression.left);
+        assert(typeof leftValue === 'boolean');
         if (!leftValue) {
           return false;
         }
         const rightValue = evaluateExpression(expression.right);
+        assert(typeof rightValue === 'boolean');
         return rightValue;
       }
       case 'or': {
         const leftValue = evaluateExpression(expression.left);
+        assert(typeof leftValue === 'boolean');
         if (leftValue) {
           return true;
         }
         const rightValue = evaluateExpression(expression.right);
+        assert(typeof rightValue === 'boolean');
         return rightValue;
       }
       default:

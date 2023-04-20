@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { RegexLiteral } from '../../ast';
+import { RegexLiteral } from '../../ast/generated/ast';
 import { ValidationContext } from '../validation-context';
 
 export function validateRegexLiteral(

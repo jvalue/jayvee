@@ -15,9 +15,9 @@ import {
   ValuetypeAssignment,
   evaluateExpression,
   getOrFailMetaInformation,
-  isBooleanExpression,
   isCellRangeLiteral,
   isCollectionLiteral,
+  isExpression,
   isNumericLiteral,
   isPipelineDefinition,
   isRuntimeParameterLiteral,
@@ -174,7 +174,7 @@ export class ExecutionContext {
     if (isCellRangeLiteral(propertyValue)) {
       return propertyValue;
     }
-    if (isBooleanExpression(propertyValue)) {
+    if (isExpression(propertyValue)) {
       return evaluateExpression(propertyValue);
     }
     const value = propertyValue.value;

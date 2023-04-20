@@ -4,30 +4,44 @@
 
 import 'terminal'
 
-BooleanExpression:
+Expression:
   OrExpression;
 
 // The nesting of the following rules implies the precedence of the operators:
 
-OrExpression infers BooleanExpression:
+OrExpression infers Expression:
   AndExpression ({infer BinaryExpression.left=current} operator='or' right=AndExpression)*;
 
-AndExpression infers BooleanExpression:
+AndExpression infers Expression:
   XorExpression ({infer BinaryExpression.left=current} operator='and' right=XorExpression)*;
 
-XorExpression infers BooleanExpression:
-  EqualityExpression ({infer BinaryExpression.left=current} operator='xor' right=EqualityExpression)*;
+XorExpression infers Expression:
+  RelationalExpression ({infer BinaryExpression.left=current} operator='xor' right=RelationalExpression)*;
 
-EqualityExpression infers BooleanExpression:
+RelationalExpression infers Expression:
+  EqualityExpression ({infer BinaryExpression.left=current} operator=('<' | '<=' | '>' | '>=') right=EqualityExpression)*;
+
+EqualityExpression infers Expression:
   PrimaryExpression ({infer BinaryExpression.left=current} operator=('==' | '!=') right=PrimaryExpression)*;
 
-PrimaryExpression infers BooleanExpression:
-  '(' BooleanExpression ')'
+PrimaryExpression infers Expression:
+  '(' Expression ')'
   | UnaryExpression
-  | BooleanLiteral;
+  | ExpressionLiteral;
 
 UnaryExpression:
   operator='not' expression=PrimaryExpression;
+
+ExpressionLiteral:
+  TextLiteral
+  | NumericLiteral
+  | BooleanLiteral;
+
+TextLiteral:
+  value=STRING;
+
+NumericLiteral:
+  value=(INTEGER | SIGNED_INTEGER | DECIMAL | SIGNED_DECIMAL);
 
 BooleanLiteral:
   value?='true' | 'false';

@@ -7,5 +7,6 @@ export * from './generated/grammar';
 export * from './generated/module';
 
 export * from './wrappers';
+// eslint-disable-next-line import/no-cycle
 export * from './model-util';
 export * from './collection-util';

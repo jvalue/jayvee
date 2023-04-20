@@ -6,7 +6,8 @@ import { strict as assert } from 'assert';
 
 import {
   evaluateExpression,
-  isBooleanExpression,
+  inferTypeFromValue,
+  isExpression,
   isNumericLiteral,
 } from '../ast';
 import { PropertyValuetype } from '../ast/model-util';
@@ -70,10 +71,17 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
           );
           let lowerBoundInclusive = true;
           if (lowerBoundInclusiveProperty !== undefined) {
-            assert(isBooleanExpression(lowerBoundInclusiveProperty.value));
-            lowerBoundInclusive = evaluateExpression(
+            assert(isExpression(lowerBoundInclusiveProperty.value));
+            assert(
+              inferTypeFromValue(lowerBoundInclusiveProperty.value) ===
+                PropertyValuetype.BOOLEAN,
+            );
+
+            const expressionValue = evaluateExpression(
               lowerBoundInclusiveProperty.value,
             );
+            assert(typeof expressionValue === 'boolean');
+            lowerBoundInclusive = expressionValue;
           }
 
           const upperBoundInclusiveProperty = propertyBody.properties.find(
@@ -81,10 +89,16 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
           );
           let upperBoundInclusive = true;
           if (upperBoundInclusiveProperty !== undefined) {
-            assert(isBooleanExpression(upperBoundInclusiveProperty.value));
-            upperBoundInclusive = evaluateExpression(
+            assert(isExpression(upperBoundInclusiveProperty.value));
+            assert(
+              inferTypeFromValue(upperBoundInclusiveProperty.value) ===
+                PropertyValuetype.BOOLEAN,
+            );
+            const expressionValue = evaluateExpression(
               upperBoundInclusiveProperty.value,
             );
+            assert(typeof expressionValue === 'boolean');
+            upperBoundInclusive = expressionValue;
           }
 
           const errorMessage =

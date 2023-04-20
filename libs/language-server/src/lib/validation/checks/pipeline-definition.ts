@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { PipelineDefinition } from '../../ast/generated/ast';
+// eslint-disable-next-line import/no-cycle
 import { collectStartingBlocks } from '../../ast/model-util';
 import { ValidationContext } from '../validation-context';
 import { checkUniqueNames } from '../validation-util';

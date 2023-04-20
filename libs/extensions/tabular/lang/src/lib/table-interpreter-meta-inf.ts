@@ -48,7 +48,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
 
             const { validItems, invalidItems } = validateTypedCollection(
               propertyValue,
-              PropertyValuetype.VALUETYPE_ASSIGNMENT,
+              [PropertyValuetype.VALUETYPE_ASSIGNMENT],
             );
 
             invalidItems.forEach((invalidValue) =>
