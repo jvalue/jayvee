@@ -33,7 +33,7 @@ TextLiteral:
   value=STRING;
 
 NumericLiteral:
-  value=(INTEGER | NUMBER);
+  value=(INTEGER | SIGNED_INTEGER | DECIMAL | SIGNED_DECIMAL);
 
 CollectionLiteral:
   '[' (values+=(AtomicLiteral) (',' values+=(AtomicLiteral))*)? ','? ']';
