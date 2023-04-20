@@ -128,11 +128,46 @@ composite mapper CelsiusTemperatureReader from text to decimal {
 
 ### Usage of Mappers
 
-TBD.
+#### TableInterpreter
 
-### Parsing / Casts
+The `TableInterpreter` block uses a Mapper from `text` to the desired value type instead.
 
-TBD.
+Example:
+```
+block GasReserveTableInterpreter oftype TableInterpreter {
+  header: true;
+  columns: [
+      "Datum" with TextMapper,
+      "Kritisch" with NumberToBooleanMapper,
+      "Angespannt" with NumberToBooleanMapper,
+      "Stabil" with NumberToBooleanMapper,
+      "Speicherstand IST" with PercentageMapper,
+      "gesetzliche Ziele" with PercentageMapper
+    ];
+}
+```
+
+#### MapperBlock
+
+There is a newly introduced `MapperBlock` block type that applies the mapper to a set of cells in a `Sheet`.
+
+Example:
+```
+block NumberToBooleanBlock oftype MapperBlock {
+  cells: range A3:A17;
+  mapper: NumberToBooleanMapper;
+}
+```
+
+### Parsing
+
+Transformation expression allow parsing with the keyword `as`. On failure, an error is thrown.
+
+Example:
+```
+value as decimal // parses to decimal
+```
+
 
 
 
