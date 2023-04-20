@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
+  DeepPartial,
   DefaultSharedModuleContext,
   LangiumServices,
   LangiumSharedServices,
@@ -17,6 +18,7 @@ import {
   JayveeGeneratedModule,
   JayveeGeneratedSharedModule,
 } from './ast/generated/module';
+import { JayveeWorkspaceManager } from './builtin-library/jayvee-workspace-manager';
 import { JayveeCompletionProvider } from './completion/jayvee-completion-provider';
 import { registerConstraints } from './constraint/constraint-registry';
 import { JayveeHoverProvider } from './hover/jayvee-hover-provider';
@@ -34,6 +36,8 @@ export interface JayveeAddedServices {}
  * of custom service classes.
  */
 export type JayveeServices = LangiumServices & JayveeAddedServices;
+
+export type JayveeSharedServices = LangiumSharedServices;
 
 /**
  * Dependency injection module that overrides Langium default services and contributes the
@@ -55,6 +59,15 @@ export const JayveeModule: Module<
       new JayveeCompletionProvider(services),
     HoverProvider: (services: LangiumServices) =>
       new JayveeHoverProvider(services),
+  },
+};
+
+export const JayveeSharedModule: Module<
+  JayveeSharedServices,
+  DeepPartial<LangiumSharedServices>
+> = {
+  workspace: {
+    WorkspaceManager: (services) => new JayveeWorkspaceManager(services),
   },
 };
 
@@ -80,6 +93,7 @@ export function createJayveeServices(context: DefaultSharedModuleContext): {
   const shared = inject(
     createDefaultSharedModule(context),
     JayveeGeneratedSharedModule,
+    JayveeSharedModule,
   );
   const Jayvee = inject(
     createDefaultModule({ shared }),
