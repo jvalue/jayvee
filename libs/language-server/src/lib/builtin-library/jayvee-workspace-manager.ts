@@ -28,12 +28,12 @@ export class JayveeWorkspaceManager extends DefaultWorkspaceManager {
     folders: WorkspaceFolder[],
     collector: (document: LangiumDocument) => void,
   ): Promise<void> {
+    await super.loadAdditionalDocuments(folders, collector);
     collector(
       this.documentFactory.fromString(
         STANDARD_LIBRARY_SOURCECODE,
         URI.parse(`builtin:///${STANDARD_LIBRARY_FILENAME}`),
       ),
     );
-    return Promise.resolve();
   }
 }

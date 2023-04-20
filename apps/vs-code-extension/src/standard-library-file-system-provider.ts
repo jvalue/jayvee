@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { TextEncoder } from 'util';
+
 import { STANDARD_LIBRARY_SOURCECODE } from '@jvalue/jayvee-language-server';
 import {
   EventEmitter,
@@ -39,7 +41,7 @@ export class StandardLibraryFileSystemProvider implements FileSystemProvider {
     return {
       ctime: date,
       mtime: date,
-      size: STANDARD_LIBRARY_SOURCECODE.length,
+      size: new TextEncoder().encode(STANDARD_LIBRARY_SOURCECODE).length,
       type: FileType.File,
     };
   }
