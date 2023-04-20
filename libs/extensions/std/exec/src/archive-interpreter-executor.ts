@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
 import * as path from 'path';
 
 import * as R from '@jvalue/jayvee-execution';
@@ -69,8 +70,7 @@ export class ArchiveInterpreterExecutor
           const content = await archivedObject.async('arraybuffer');
           // Ext incl. leading dot
           const extName = path.extname(archivedObject.name);
-          // Filename without ext and dot
-          const fileName = path.basename(archivedObject.name, extName);
+          const fileName = path.basename(archivedObject.name);
           const mimeType =
             inferMimeTypeFromContentTypeString(extName) ||
             MimeType.APPLICATION_OCTET_STREAM;
@@ -83,7 +83,8 @@ export class ArchiveInterpreterExecutor
             mimeType,
             content,
           );
-          root.putFile(relPath, file);
+          const addedFile = root.putFile(relPath, file);
+          assert(addedFile != null);
         }
       }
       return R.ok(root);

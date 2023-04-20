@@ -4,7 +4,7 @@
 
 import { IOType } from '@jvalue/jayvee-language-server';
 
-import { BinaryFile } from './binary-file';
+import { FileSystemFile } from './filesystem-node-file';
 import { IOTypeImplementation } from './io-type-implementation';
 
 /**
@@ -15,17 +15,17 @@ export interface FileSystem extends IOTypeImplementation<IOType.FILE_SYSTEM> {
   /**
    * Retrieves a file from the file system.
    * @function getFile
-   * @param {string} filePath - The file path.
-   * @returns {File} - The file or null if the file does not exist.
+   * @param {string} path - The absolute path to the file starting with "/..."
+   * @returns {FileSystemFile<unknown> | null} - The file or null if the node does not exist.
    */
-  getFile(filePath: string): BinaryFile | null;
+  getFile(path: string): FileSystemFile<unknown> | null;
 
   /**
    * Saves a file to the file system.
    * @function putFile
-   * @param {string} filePath - The file path.
-   * @param {File} file - The file to save.
-   * @returns {FileSystem}
+   * @param {string} path - The absolute path to the file starting with "/..."
+   * @param { FileSystemFile<unknown>} file - The file to save.
+   * @returns {FileSystem | null} - The FileSystem where file was inserted or null if the file failed to insert
    */
-  putFile(filePath: string, file: BinaryFile): FileSystem;
+  putFile(path: string, file: FileSystemFile<unknown>): FileSystem | null;
 }

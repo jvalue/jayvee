@@ -2,11 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { TextEncoder } from 'util';
-
-import { BinaryFile } from './binary-file';
-import { FileExtension, MimeType } from './file';
 import { InMemoryFileSystem } from './filesystem-inmemory';
+import { FileSystemDirectory } from './filesystem-node-directory';
+import { FileExtension, MimeType } from './filesystem-node-file';
+import { TextFile } from './filesystem-node-file-text';
 
 describe('InMemoryFileSystem', () => {
   let fileSystem: InMemoryFileSystem;
@@ -15,56 +14,58 @@ describe('InMemoryFileSystem', () => {
     fileSystem = new InMemoryFileSystem();
   });
 
-  it('should return null if file is not found', () => {
-    expect(fileSystem.getFile('file1.txt')).toBe(null);
+  it('returns null when the file does not exist', () => {
+    expect(fileSystem.getFile('/non-existent-file')).toBeNull();
   });
 
-  it('should return the file if it exists', () => {
-    const file = new BinaryFile(
-      'file1.txt',
-      FileExtension.ZIP,
-      MimeType.APPLICATION_OCTET_STREAM,
-      new TextEncoder().encode('Test content'),
+  it('returns the file when it exists', () => {
+    const file = new TextFile(
+      'existing-file',
+      FileExtension.TXT,
+      MimeType.TEXT_PLAIN,
+      ['test'],
     );
-
-    fileSystem.putFile('file1.txt', file);
-    expect(fileSystem.getFile('file1.txt')).toBe(file);
+    fileSystem.putFile('/existing-file', file);
+    expect(fileSystem.getFile('/existing-file')).toEqual(file);
   });
 
-  it('should return null if directory does not exist', () => {
-    const file = new BinaryFile(
-      'file1.txt',
-      FileExtension.ZIP,
-      MimeType.APPLICATION_OCTET_STREAM,
-      new TextEncoder().encode('Test content'),
+  it('returns null when the path is invalid', () => {
+    const file = new TextFile(
+      'existing-file',
+      FileExtension.TXT,
+      MimeType.TEXT_PLAIN,
+      ['test'],
     );
-
-    fileSystem.putFile('folder1/file1.txt', file);
-    expect(fileSystem.getFile('folder2/file1.txt')).toBe(null);
+    expect(fileSystem.putFile('/invalid/path', file)).toBeNull();
   });
 
-  it('should handle relative paths correctly', () => {
-    const file = new BinaryFile(
-      'file1.txt',
-      FileExtension.ZIP,
-      MimeType.APPLICATION_OCTET_STREAM,
-      new TextEncoder().encode('Test content'),
+  it('should return file if found using directory manually', () => {
+    const root = new FileSystemDirectory('');
+    const dir1 = new FileSystemDirectory('dir1');
+    const dir2 = new FileSystemDirectory('dir2');
+    const file = new TextFile(
+      'textfile',
+      FileExtension.TXT,
+      MimeType.TEXT_PLAIN,
+      ['test'],
     );
-
-    fileSystem.putFile('folder1/file1.txt', file);
-    expect(fileSystem.getFile('./folder1/file1.txt')).toBe(file);
-    expect(fileSystem.getFile('folder1/../folder1/file1.txt')).toBe(file);
+    dir2.addChild(file);
+    dir1.addChild(dir2);
+    root.addChild(dir1);
+    const f = root.getNode('/dir1/dir2/textfile'.split('/'));
+    expect(f).toBe(file);
   });
 
-  it('should handle path case sensitivity correctly', () => {
-    const file = new BinaryFile(
-      'file1.txt',
-      FileExtension.ZIP,
-      MimeType.APPLICATION_OCTET_STREAM,
-      new TextEncoder().encode('Test content'),
+  it('should return file if putted using directory manually', () => {
+    const root = new FileSystemDirectory('');
+    const file = new TextFile(
+      'textfile',
+      FileExtension.TXT,
+      MimeType.TEXT_PLAIN,
+      ['test'],
     );
 
-    fileSystem.putFile('folder1/file1.txt', file);
-    expect(fileSystem.getFile('Folder1/File1.txt')).toBe(file);
+    expect(root.putNode('/dir1/dir2/textfile'.split('/'), file)).toBe(file);
+    expect(root.getNode('/dir1/dir2/textfile'.split('/'))).toBe(file);
   });
 });

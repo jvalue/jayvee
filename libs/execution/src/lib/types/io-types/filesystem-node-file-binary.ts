@@ -4,11 +4,11 @@
 
 import { IOType } from '@jvalue/jayvee-language-server';
 
-import { File } from './file';
+import { FileSystemFile } from './filesystem-node-file';
 import { IOTypeImplementation } from './io-type-implementation';
 
 export class BinaryFile
-  extends File<ArrayBuffer>
+  extends FileSystemFile<ArrayBuffer>
   implements IOTypeImplementation<IOType.FILE>
 {
   public readonly ioType = IOType.FILE;
