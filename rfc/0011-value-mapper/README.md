@@ -130,7 +130,7 @@ composite mapper CelsiusTemperatureReader from text to decimal {
 
 #### TableInterpreter
 
-The `TableInterpreter` block uses a Mapper from `text` to the desired value type instead.
+The `TableInterpreter` block uses a Mapper from `text` to the desired value type with the `with` keyword. Parsing can still be used as currently (`as` keyword)
 
 Example:
 ```
@@ -139,7 +139,7 @@ block GasReserveTableInterpreter oftype TableInterpreter {
   columns: [
       "Datum" with TextMapper,
       "Kritisch" with NumberToBooleanMapper,
-      "Angespannt" with NumberToBooleanMapper,
+      "Angespannt" as text,
       "Stabil" with NumberToBooleanMapper,
       "Speicherstand IST" with PercentageMapper,
       "gesetzliche Ziele" with PercentageMapper
@@ -185,3 +185,47 @@ value as decimal // parses to decimal
 - Builtin mappers/writers for SI units / SI units as first-citizen concept in ValueTypes.
 - Automatic reversion of mappings (bidirectional mappers) where possible, e.g., for simple calculations.
 - A `replacer` might simplify or even enable further scenarios.  
+
+
+### Use mappings in transformers
+
+Use multiple input / output parameters in a more general transformer concept to have a more flexible but complex construct.
+
+```
+transformer CelsiusToKelvin {
+  input tempCelsius oftype decimal;
+  output tempKelvin oftype decimal;
+
+  tempKelvin = tempCelsius + 273.15; // simple calculation does not need a mapping
+}
+
+// reads "23.4" and "$" into a compound value type
+transformer CelsiusToKelvin {
+  input amountRaw oftype text;
+  input currencyRaw oftype text;
+  output balance oftype Balance; // compound type with fields "amount" and "currency"
+
+  balance.amount = amountRaw as decimal;    // simple parsing does not need a mapping
+  balance.currency = mapping on currencyRaw { // mapping
+    /^(EUR|€)$/ => "EUR";
+    /^(USD|$)$/ => "USD";
+  };
+}
+
+// separates "Example-Street 32a" to "Example-Street" and "32a"
+transformer StreetAndNumberSeparator {
+  input addressRaw oftype text;
+  output street oftype text;
+  output houseNumber oftype text;
+
+  street = mapping on addressRaw {
+    /^(.*) (.*)$/ => group 1 as text;
+  }
+  houseNumber = mapping on addressRaw {
+    /^(.*) (.*)$/ => group 2 as text;
+  }
+}
+```
+
+Mappings could just be one tool among many in this regard and be encapsulated in the `transformer` concept.
+
