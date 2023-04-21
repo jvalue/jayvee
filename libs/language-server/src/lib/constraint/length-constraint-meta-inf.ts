@@ -4,7 +4,13 @@
 
 import { strict as assert } from 'assert';
 
-import { PropertyAssignment, isNumericLiteral } from '../ast';
+import {
+  PropertyAssignment,
+  evaluateExpression,
+  inferTypeFromValue,
+  isExpression,
+  isNumericType,
+} from '../ast';
 import { PropertyValuetype } from '../ast/model-util';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 import { ValidationContext } from '../validation/validation-context';
@@ -41,11 +47,19 @@ export class LengthConstraintMetaInformation extends ConstraintMetaInformation {
           return;
         }
 
-        assert(isNumericLiteral(minLengthProperty.value));
-        assert(isNumericLiteral(maxLengthProperty.value));
+        assert(isExpression(minLengthProperty.value));
+        assert(isExpression(maxLengthProperty.value));
+        if (
+          !isNumericType(inferTypeFromValue(minLengthProperty.value)) ||
+          !isNumericType(inferTypeFromValue(maxLengthProperty.value))
+        ) {
+          return;
+        }
 
-        const minLength = minLengthProperty.value.value;
-        const maxLength = maxLengthProperty.value.value;
+        const minLength = evaluateExpression(minLengthProperty.value);
+        assert(typeof minLength === 'number');
+        const maxLength = evaluateExpression(maxLengthProperty.value);
+        assert(typeof maxLength === 'number');
 
         if (minLength > maxLength) {
           [minLengthProperty, maxLengthProperty].forEach((property) => {
@@ -79,9 +93,11 @@ function nonNegativeValidation(
   context: ValidationContext,
 ) {
   const propertyValue = property.value;
-  assert(isNumericLiteral(propertyValue));
+  assert(isExpression(propertyValue));
+  const value = evaluateExpression(propertyValue);
+  assert(typeof value === 'number');
 
-  if (propertyValue.value < 0) {
+  if (value < 0) {
     context.accept(
       'error',
       `Bounds for length need to be equal or greater than zero`,

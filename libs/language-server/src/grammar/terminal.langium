@@ -8,9 +8,7 @@
 terminal CELL_REFERENCE: /([A-Z]+|\*)([0-9]+|\*)/;
 terminal ID: /[_a-zA-Z][\w_]*/;
 
-terminal SIGNED_DECIMAL returns number: ('+' | '-') DECIMAL;
 terminal DECIMAL returns number: INTEGER '.' INTEGER;
-terminal SIGNED_INTEGER returns number: ('+' | '-') INTEGER;
 terminal INTEGER returns number: /[0-9]+/;
 
 terminal STRING: /"[^"]*"|'[^']*'/;

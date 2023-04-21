@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
+
 import * as R from '@jvalue/jayvee-execution';
 import {
   BlockExecutor,
@@ -10,7 +12,7 @@ import {
   TextFile,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
-import { IOType } from '@jvalue/jayvee-language-server';
+import { IOType, evaluateExpression } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
 export class TextLineDeleterExecutor
@@ -25,20 +27,26 @@ export class TextLineDeleterExecutor
     file: TextFile,
     context: ExecutionContext,
   ): Promise<R.Result<TextFile>> {
-    const lines = context.getNumericCollectionPropertyValue('lines');
+    const lineExpressions =
+      context.getExpressionCollectionPropertyValue('lines');
+    const lineEntries = lineExpressions.map((expression) => {
+      const value = evaluateExpression(expression);
+      assert(typeof value === 'number');
+      return { lineNumber: value, astNode: expression };
+    });
     const numberOfLines = file.content.length;
 
-    for (const line of lines) {
-      const lineNumber = line.value;
+    for (const lineEntry of lineEntries) {
+      const lineNumber = lineEntry.lineNumber;
       if (lineNumber > numberOfLines) {
         return R.err({
           message: `Line ${lineNumber} does not exist in the text file, only ${file.content.length} line(s) are present`,
-          diagnostic: { node: line },
+          diagnostic: { node: lineEntry.astNode },
         });
       }
     }
 
-    const distinctLines = new Set(lines.map((l) => l.value));
+    const distinctLines = new Set(lineEntries.map((e) => e.lineNumber));
     const sortedLines = [...distinctLines].sort((a, b) => a - b);
 
     context.logger.logDebug(`Deleting line(s) ${sortedLines.join(', ')}`);

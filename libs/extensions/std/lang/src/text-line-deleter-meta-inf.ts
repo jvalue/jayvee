@@ -8,8 +8,9 @@ import {
   BlockMetaInformation,
   IOType,
   PropertyValuetype,
+  evaluateExpression,
   isCollectionLiteral,
-  isNumericLiteral,
+  isExpression,
   validateTypedCollection,
 } from '@jvalue/jayvee-language-server';
 
@@ -39,15 +40,18 @@ export class TextLineDeleterMetaInformation extends BlockMetaInformation {
               ),
             );
 
-            assert(validItems.every(isNumericLiteral));
+            assert(validItems.every(isExpression));
 
-            for (const numericLiteral of validItems) {
-              if (numericLiteral.value <= 0) {
+            for (const expression of validItems) {
+              const value = evaluateExpression(expression);
+              assert(typeof value === 'number');
+
+              if (value <= 0) {
                 context.accept(
                   'error',
                   `Line numbers need to be greater than zero`,
                   {
-                    node: numericLiteral,
+                    node: expression,
                   },
                 );
               }

@@ -16,13 +16,22 @@ AndExpression infers Expression:
   XorExpression ({infer BinaryExpression.left=current} operator='and' right=XorExpression)*;
 
 XorExpression infers Expression:
-  RelationalExpression ({infer BinaryExpression.left=current} operator='xor' right=RelationalExpression)*;
-
-RelationalExpression infers Expression:
-  EqualityExpression ({infer BinaryExpression.left=current} operator=('<' | '<=' | '>' | '>=') right=EqualityExpression)*;
+  EqualityExpression ({infer BinaryExpression.left=current} operator='xor' right=EqualityExpression)*;
 
 EqualityExpression infers Expression:
-  PrimaryExpression ({infer BinaryExpression.left=current} operator=('==' | '!=') right=PrimaryExpression)*;
+  RelationalExpression ({infer BinaryExpression.left=current} operator=('==' | '!=') right=RelationalExpression)*;
+
+RelationalExpression infers Expression:
+  AdditiveExpression ({infer BinaryExpression.left=current} operator=('<' | '<=' | '>' | '>=') right=AdditiveExpression)*;
+
+AdditiveExpression infers Expression:
+  MultiplicativeExpression ({infer BinaryExpression.left=current} operator=('+' | '-') right=MultiplicativeExpression)*;
+
+MultiplicativeExpression infers Expression:
+  ExponentialExpression ({infer BinaryExpression.left=current} operator=('*' | '/' | '%') right=ExponentialExpression)*;
+
+ExponentialExpression infers Expression:
+  PrimaryExpression ({infer BinaryExpression.left=current} operator=('pow' | 'root') right=PrimaryExpression)*;
 
 PrimaryExpression infers Expression:
   '(' Expression ')'
@@ -30,7 +39,7 @@ PrimaryExpression infers Expression:
   | ExpressionLiteral;
 
 UnaryExpression:
-  operator='not' expression=PrimaryExpression;
+  operator=('not' | '+' | '-' | 'sqrt' | 'floor' | 'ceil' | 'round') expression=PrimaryExpression;
 
 ExpressionLiteral:
   TextLiteral
@@ -41,7 +50,7 @@ TextLiteral:
   value=STRING;
 
 NumericLiteral:
-  value=(INTEGER | SIGNED_INTEGER | DECIMAL | SIGNED_DECIMAL);
+  value=(INTEGER | DECIMAL);
 
 BooleanLiteral:
   value?='true' | 'false';

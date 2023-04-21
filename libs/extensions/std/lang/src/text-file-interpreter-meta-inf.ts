@@ -9,7 +9,8 @@ import {
   BlockMetaInformation,
   IOType,
   PropertyValuetype,
-  isTextLiteral,
+  evaluateExpression,
+  isExpression,
 } from '@jvalue/jayvee-language-server';
 
 export class TextFileInterpreterMetaInformation extends BlockMetaInformation {
@@ -25,18 +26,16 @@ export class TextFileInterpreterMetaInformation extends BlockMetaInformation {
           },
           validation: (property, context) => {
             const propertyValue = property.value;
-            assert(isTextLiteral(propertyValue));
+            assert(isExpression(propertyValue));
+            const encodingValue = evaluateExpression(propertyValue);
+            assert(typeof encodingValue === 'string');
 
             try {
-              new TextDecoder(propertyValue.value);
+              new TextDecoder(encodingValue);
             } catch (error) {
-              context.accept(
-                'error',
-                `Unknown encoding "${propertyValue.value}"`,
-                {
-                  node: propertyValue,
-                },
-              );
+              context.accept('error', `Unknown encoding "${encodingValue}"`, {
+                node: propertyValue,
+              });
             }
           },
         },

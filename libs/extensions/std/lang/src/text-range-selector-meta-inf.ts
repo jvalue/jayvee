@@ -10,7 +10,8 @@ import {
   PropertyAssignment,
   PropertyValuetype,
   ValidationContext,
-  isNumericLiteral,
+  evaluateExpression,
+  isExpression,
 } from '@jvalue/jayvee-language-server';
 
 export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
@@ -47,11 +48,13 @@ export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
           return;
         }
 
-        assert(isNumericLiteral(lineFromProperty.value));
-        assert(isNumericLiteral(lineToProperty.value));
+        assert(isExpression(lineFromProperty.value));
+        assert(isExpression(lineToProperty.value));
 
-        const lineFrom = lineFromProperty.value.value;
-        const lineTo = lineToProperty.value.value;
+        const lineFrom = evaluateExpression(lineFromProperty.value);
+        assert(typeof lineFrom === 'number');
+        const lineTo = evaluateExpression(lineToProperty.value);
+        assert(typeof lineTo === 'number');
 
         if (lineFrom > lineTo) {
           [lineFromProperty, lineToProperty].forEach((property) => {
@@ -73,9 +76,12 @@ function greaterThanZeroValidation(
   context: ValidationContext,
 ) {
   const propertyValue = property.value;
-  assert(isNumericLiteral(propertyValue));
+  assert(isExpression(propertyValue));
 
-  if (propertyValue.value <= 0) {
+  const value = evaluateExpression(propertyValue);
+  assert(typeof value === 'number');
+
+  if (value <= 0) {
     context.accept('error', `Line numbers need to be greater than zero`, {
       node: propertyValue,
     });

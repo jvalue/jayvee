@@ -9,7 +9,8 @@ import {
   PropertyAssignment,
   PropertyValuetype,
   ValidationContext,
-  isTextLiteral,
+  evaluateExpression,
+  isExpression,
 } from '@jvalue/jayvee-language-server';
 
 export class GtfsRTInterpreterMetaInformation extends BlockMetaInformation {
@@ -103,9 +104,11 @@ function isGtfsRTEntity(
   context: ValidationContext,
 ) {
   const propertyValue = property.value;
-  assert(isTextLiteral(propertyValue));
+  assert(isExpression(propertyValue));
+  const entityValue = evaluateExpression(propertyValue);
+  assert(typeof entityValue === 'string');
 
-  if (!['trip_update', 'alert', 'vehicle'].includes(propertyValue.value)) {
+  if (!['trip_update', 'alert', 'vehicle'].includes(entityValue)) {
     context.accept(
       'error',
       `Entity must be "trip_update", "alert" or "vehicle"`,
