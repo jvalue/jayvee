@@ -77,13 +77,13 @@ export class FileSystemDirectory extends FileSystemNode {
     return fileSystemNode;
   }
 
-  nodeHasAlreadyChildDirectoryWithSameName(rest: string[]) {
+  private nodeHasAlreadyChildDirectoryWithSameName(rest: string[]) {
     const children = this.children.filter(
       (child) => child instanceof FileSystemDirectory && child.name === rest[0],
     );
     return children.length !== 0;
   }
-  nodeHasAlreadyChildFileWithSameName(rest: string[]) {
+  private nodeHasAlreadyChildFileWithSameName(rest: string[]) {
     const children = this.children.filter(
       (child) => child instanceof FileSystemFile && child.name === rest[0],
     );
