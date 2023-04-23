@@ -52,7 +52,7 @@ export class InMemoryFileSystem implements FileSystem {
   }
 
   private processPath(path: string): string[] | null {
-    if (!path.startsWith('/')) {
+    if (!path.startsWith(InMemoryFileSystem.PATH_SEPARATOR)) {
       return null;
     }
     const parts = path

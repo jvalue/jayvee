@@ -12,12 +12,12 @@ export class FileSystemDirectory extends FileSystemNode {
 
   override getNode(pathParts: string[]): FileSystemNode | null {
     const [firstPart, ...rest] = pathParts;
-    // Base case: We called a wrong node
+    // Base case: Called a wrong noce
     if (firstPart !== this.name) {
       return null;
     }
 
-    // Base case: We found the right node
+    // Base case: Called the right node
     if (rest.length === 0) {
       return this;
     }
@@ -40,7 +40,7 @@ export class FileSystemDirectory extends FileSystemNode {
     if (firstPart !== this.name) {
       return null;
     }
-    // Base case: We just have on path part left (is the filename)
+    // Base case: One path part left (which is the filename)
     if (rest.length === 1) {
       if (
         !this.nodeHasAlreadyChildFileWithSameName(rest) &&
