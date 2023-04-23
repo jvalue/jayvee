@@ -83,7 +83,7 @@ export class ArchiveInterpreterExecutor
             mimeType,
             content,
           );
-          const addedFile = root.putFile(relPath, file);
+          const addedFile = root.putFile('/' + relPath, file);
           assert(addedFile != null);
         }
       }
