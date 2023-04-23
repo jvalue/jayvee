@@ -12,10 +12,13 @@ import {
   TransportKind,
 } from 'vscode-languageclient/node';
 
+import { StandardLibraryFileSystemProvider } from './standard-library-file-system-provider';
+
 let client: LanguageClient;
 
 // This function is called when the extension is activated.
 export function activate(context: vscode.ExtensionContext): void {
+  StandardLibraryFileSystemProvider.register(context);
   client = startLanguageClient(context);
 }
 
