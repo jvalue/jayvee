@@ -51,6 +51,10 @@ export class InMemoryFileSystem implements FileSystem {
     return null;
   }
 
+  getPathSeparator(): string {
+    return InMemoryFileSystem.PATH_SEPARATOR;
+  }
+
   private processPath(path: string): string[] | null {
     if (!path.startsWith(InMemoryFileSystem.PATH_SEPARATOR)) {
       return null;

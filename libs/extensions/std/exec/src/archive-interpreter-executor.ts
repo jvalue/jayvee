@@ -61,7 +61,7 @@ export class ArchiveInterpreterExecutor
     context.logger.logDebug(`Loading zip file from binary content`);
     try {
       const jszip = JSZip();
-      const root = new InMemoryFileSystem();
+      const fs = new InMemoryFileSystem();
       const archivedObjects = await jszip.loadAsync(archiveFile.content);
       for (const [relPath, archivedObject] of Object.entries(
         archivedObjects.files,
@@ -83,11 +83,11 @@ export class ArchiveInterpreterExecutor
             mimeType,
             content,
           );
-          const addedFile = root.putFile('/' + relPath, file);
+          const addedFile = fs.putFile(fs.getPathSeparator() + relPath, file);
           assert(addedFile != null);
         }
       }
-      return R.ok(root);
+      return R.ok(fs);
     } catch (error: unknown) {
       return R.err({
         message: `Unexpected Error ${
