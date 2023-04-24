@@ -91,21 +91,21 @@ constraint IFOPT_Format on text = value matches /[a-z]{2}:\d+:\d+(:\d+)?(:\d+)?/
 
 ### Hidden Enhancements
 * Expressions allow parameters (keyword `value`).
-* The length of string parameters is accessible by `value.length`.
+* The length of text parameters is accessible by `value.length`. Evaluates to an integer (zero or positive).
 * The assignment operator `=` instead of `:` because the latter looks off in that context.
-* The binary string operator `matches` is introduced.
+* The binary operator `matches` is introduced which evaluates to a boolean value. The usage is `<text> matches <regex>`.
 
 ### Usage in ValueTypes
-In ValueTypes, these constraints can be added like before by name. Combining constraints on non-matching value types leads to an error at runtime in the IDE hints.
+In ValueTypes, these constraints can be added like before by name. Combining constraints on non-matching value types leads to a diagnostic error at compile-time (by the language server).
 ```
-valuetype GasFillLevel oftype number {
+valuetype GasFillLevel oftype decimal {
     constraints: [ GasFillLevelRange ];
 }
 ```
 
-Alternatively, constraints can be defined inline with the caveat that they are not reusable elsewhere. Value then adheres to the type of the ValueType.
+Alternatively, constraints can be defined inline with the caveat that they are not reusable elsewhere. Then the value, that the `value` keyword refers to, adheres to the type of the enclosing ValueType.
 ```
-valuetype GasFillLevel oftype number {
+valuetype GasFillLevel oftype decimal {
     constraints: [ value >= 0 and value <= 100 ];
 }
 ```
