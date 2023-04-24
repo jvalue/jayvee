@@ -4,8 +4,9 @@
 
 import { strict as assert } from 'assert';
 
-import { evaluateExpression, inferTypeFromValue, isExpression } from '../ast';
-import { PropertyValuetype } from '../ast/model-util';
+import { evaluateExpression } from '../ast/expressions/evaluation';
+import { isExpression } from '../ast/generated/ast';
+import { PropertyValuetype, inferTypeFromValue } from '../ast/model-util';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 
 export class RangeConstraintMetaInformation extends ConstraintMetaInformation {

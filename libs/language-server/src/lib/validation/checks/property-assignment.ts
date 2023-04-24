@@ -7,6 +7,9 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
+// eslint-disable-next-line import/no-cycle
+import { evaluateExpression } from '../../ast/expressions/evaluation';
+import { EvaluationStrategy } from '../../ast/expressions/operator-registry';
 import {
   Expression,
   PropertyAssignment,
@@ -14,11 +17,8 @@ import {
   isExpressionLiteral,
   isRuntimeParameterLiteral,
 } from '../../ast/generated/ast';
-// eslint-disable-next-line import/no-cycle
 import {
-  EvaluationStrategy,
   PropertyValuetype,
-  evaluateExpression,
   inferTypeFromValue,
   runtimeParameterAllowedForType,
 } from '../../ast/model-util';
@@ -97,7 +97,7 @@ function checkPropertyValueTyping(
           property: 'value',
         },
       );
-    } else if (matchingPropertyType === propertyType) {
+    } else {
       if (isExpression(propertyValue)) {
         checkExpressionSimplification(propertyValue, context);
       }

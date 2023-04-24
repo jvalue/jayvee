@@ -4,14 +4,13 @@
 
 import { strict as assert } from 'assert';
 
+import { evaluateExpression } from '../ast/expressions/evaluation';
+import { PropertyAssignment, isExpression } from '../ast/generated/ast';
 import {
-  PropertyAssignment,
-  evaluateExpression,
+  PropertyValuetype,
   inferTypeFromValue,
-  isExpression,
   isNumericType,
-} from '../ast';
-import { PropertyValuetype } from '../ast/model-util';
+} from '../ast/model-util';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 import { ValidationContext } from '../validation/validation-context';
 
