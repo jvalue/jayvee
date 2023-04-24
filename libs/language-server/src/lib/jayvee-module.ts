@@ -64,7 +64,7 @@ export const JayveeModule: Module<
 
 export const JayveeSharedModule: Module<
   JayveeSharedServices,
-  DeepPartial<LangiumSharedServices>
+  DeepPartial<JayveeSharedServices>
 > = {
   workspace: {
     WorkspaceManager: (services) => new JayveeWorkspaceManager(services),
