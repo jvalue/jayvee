@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { TextEncoder } from 'util';
-
 import { STANDARD_LIBRARY_SOURCECODE } from '@jvalue/jayvee-language-server';
 import {
   EventEmitter,
@@ -18,6 +16,8 @@ import {
 } from 'vscode';
 
 export class StandardLibraryFileSystemProvider implements FileSystemProvider {
+  private readonly stdLibraryBuffer = Buffer.from(STANDARD_LIBRARY_SOURCECODE);
+
   // The following class members only serve to satisfy the interface:
   private readonly didChangeFile = new EventEmitter<FileChangeEvent[]>();
   onDidChangeFile = this.didChangeFile.event;
@@ -41,7 +41,7 @@ export class StandardLibraryFileSystemProvider implements FileSystemProvider {
     return {
       ctime: date,
       mtime: date,
-      size: new TextEncoder().encode(STANDARD_LIBRARY_SOURCECODE).length,
+      size: this.stdLibraryBuffer.length,
       type: FileType.File,
     };
   }
@@ -50,7 +50,7 @@ export class StandardLibraryFileSystemProvider implements FileSystemProvider {
   readFile(uri: Uri): Uint8Array {
     // We could return different libraries based on the URI
     // We have only one, so we always return the same
-    return new Uint8Array(Buffer.from(STANDARD_LIBRARY_SOURCECODE));
+    return new Uint8Array(this.stdLibraryBuffer);
   }
 
   watch() {
