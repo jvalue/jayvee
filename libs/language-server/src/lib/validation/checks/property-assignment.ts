@@ -16,6 +16,7 @@ import {
 } from '../../ast/generated/ast';
 // eslint-disable-next-line import/no-cycle
 import {
+  EvaluationStrategy,
   PropertyValuetype,
   evaluateExpression,
   inferTypeFromValue,
@@ -112,11 +113,17 @@ function checkExpressionSimplification(
     return;
   }
 
-  const evaluatedExpression = evaluateExpression(expression);
-  context.accept(
-    'info',
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    `The expression can be simplified to ${evaluatedExpression}`,
-    { node: expression },
+  const evaluatedExpression = evaluateExpression(
+    expression,
+    EvaluationStrategy.EXHAUSTIVE,
+    context,
   );
+  if (evaluatedExpression !== undefined) {
+    context.accept(
+      'info',
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      `The expression can be simplified to ${evaluatedExpression}`,
+      { node: expression },
+    );
+  }
 }

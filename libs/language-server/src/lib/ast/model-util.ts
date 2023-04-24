@@ -619,53 +619,68 @@ function inferTypeFromBinaryLogicalExpression(
   return PropertyValuetype.BOOLEAN;
 }
 
+export enum EvaluationStrategy {
+  EXHAUSTIVE,
+  LAZY,
+}
+
 export function evaluateExpression(
   expression: Expression,
-): boolean | number | string {
+  strategy: EvaluationStrategy = EvaluationStrategy.LAZY,
+  context: ValidationContext | undefined = undefined,
+): boolean | number | string | undefined {
   if (isExpressionLiteral(expression)) {
     return expression.value;
   }
   if (isUnaryExpression(expression)) {
+    const innerValue = evaluateExpression(
+      expression.expression,
+      strategy,
+      context,
+    );
+    if (innerValue === undefined) {
+      return undefined;
+    }
+
     const unaryOperator = expression.operator;
     switch (unaryOperator) {
       case 'not': {
-        const innerValue = evaluateExpression(expression.expression);
         assert(typeof innerValue === 'boolean');
         return !innerValue;
       }
       case '+': {
-        const innerValue = evaluateExpression(expression.expression);
         assert(typeof innerValue === 'number');
         return innerValue;
       }
       case '-': {
-        const innerValue = evaluateExpression(expression.expression);
         assert(typeof innerValue === 'number');
         return -innerValue;
       }
       case 'sqrt': {
-        const innerValue = evaluateExpression(expression.expression);
         assert(typeof innerValue === 'number');
 
         const resultingValue = Math.sqrt(innerValue);
 
-        // TODO improve error handling:
-        assert(isFinite(resultingValue));
-
+        if (!isFinite(resultingValue)) {
+          assert(innerValue < 0);
+          context?.accept(
+            'error',
+            'Arithmetic error: square root of negative number',
+            { node: expression },
+          );
+          return undefined;
+        }
         return resultingValue;
       }
       case 'floor': {
-        const innerValue = evaluateExpression(expression.expression);
         assert(typeof innerValue === 'number');
         return Math.floor(innerValue);
       }
       case 'ceil': {
-        const innerValue = evaluateExpression(expression.expression);
         assert(typeof innerValue === 'number');
         return Math.ceil(innerValue);
       }
       case 'round': {
-        const innerValue = evaluateExpression(expression.expression);
         assert(typeof innerValue === 'number');
         return Math.round(innerValue);
       }
@@ -675,144 +690,275 @@ export function evaluateExpression(
   }
   if (isBinaryExpression(expression)) {
     const binaryOperator = expression.operator;
+    const leftValue = evaluateExpression(expression.left, strategy, context);
+    if (leftValue === undefined && strategy === EvaluationStrategy.LAZY) {
+      return undefined;
+    }
     switch (binaryOperator) {
       case 'pow': {
-        const leftValue = evaluateExpression(expression.left);
         assert(typeof leftValue === 'number');
-        const rightValue = evaluateExpression(expression.right);
+        const rightValue = evaluateExpression(
+          expression.right,
+          strategy,
+          context,
+        );
+        if (rightValue === undefined) {
+          return undefined;
+        }
         assert(typeof rightValue === 'number');
 
         const resultingValue = leftValue ** rightValue;
 
-        // TODO improve error handling:
-        assert(isFinite(resultingValue));
+        if (!isFinite(resultingValue)) {
+          assert(leftValue === 0 && rightValue < 0);
+          context?.accept(
+            'error',
+            'Arithmetic error: zero raised to a negative number',
+            { node: expression },
+          );
+          return undefined;
+        }
 
         return resultingValue;
       }
       case 'root': {
-        const leftValue = evaluateExpression(expression.left);
         assert(typeof leftValue === 'number');
-        const rightValue = evaluateExpression(expression.right);
+        const rightValue = evaluateExpression(
+          expression.right,
+          strategy,
+          context,
+        );
+        if (rightValue === undefined) {
+          return undefined;
+        }
         assert(typeof rightValue === 'number');
 
         const resultingValue = leftValue ** (1 / rightValue);
 
-        // TODO improve error handling:
-        assert(isFinite(resultingValue));
+        if (!isFinite(resultingValue)) {
+          if (leftValue === 0 && rightValue < 0) {
+            context?.accept(
+              'error',
+              'Arithmetic error: root of zero with negative degree',
+              { node: expression },
+            );
+          } else if (rightValue === 0) {
+            context?.accept('error', 'Arithmetic error: root of degree zero', {
+              node: expression,
+            });
+          } else {
+            assert(false);
+          }
+          return undefined;
+        }
 
         return resultingValue;
       }
       case '*': {
-        const leftValue = evaluateExpression(expression.left);
         assert(typeof leftValue === 'number');
-        const rightValue = evaluateExpression(expression.right);
+        const rightValue = evaluateExpression(
+          expression.right,
+          strategy,
+          context,
+        );
+        if (rightValue === undefined) {
+          return undefined;
+        }
         assert(typeof rightValue === 'number');
         return leftValue * rightValue;
       }
       case '/': {
-        const leftValue = evaluateExpression(expression.left);
         assert(typeof leftValue === 'number');
-        const rightValue = evaluateExpression(expression.right);
+        const rightValue = evaluateExpression(
+          expression.right,
+          strategy,
+          context,
+        );
+        if (rightValue === undefined) {
+          return undefined;
+        }
         assert(typeof rightValue === 'number');
 
         const resultingValue = leftValue / rightValue;
 
-        // TODO improve error handling:
-        assert(isFinite(resultingValue));
+        if (!isFinite(resultingValue)) {
+          assert(rightValue === 0);
+          context?.accept('error', 'Arithmetic error: division by zero', {
+            node: expression,
+          });
+          return undefined;
+        }
 
         return resultingValue;
       }
       case '%': {
-        const leftValue = evaluateExpression(expression.left);
         assert(typeof leftValue === 'number');
-        const rightValue = evaluateExpression(expression.right);
+        const rightValue = evaluateExpression(
+          expression.right,
+          strategy,
+          context,
+        );
+        if (rightValue === undefined) {
+          return undefined;
+        }
         assert(typeof rightValue === 'number');
 
         const resultingValue = leftValue % rightValue;
 
-        // TODO improve error handling:
-        assert(isFinite(resultingValue));
+        if (!isFinite(resultingValue)) {
+          assert(rightValue === 0);
+          context?.accept('error', 'Arithmetic error: modulo by zero', {
+            node: expression,
+          });
+          return undefined;
+        }
 
         return resultingValue;
       }
       case '+': {
-        const leftValue = evaluateExpression(expression.left);
         assert(typeof leftValue === 'number');
-        const rightValue = evaluateExpression(expression.right);
+        const rightValue = evaluateExpression(
+          expression.right,
+          strategy,
+          context,
+        );
+        if (rightValue === undefined) {
+          return undefined;
+        }
         assert(typeof rightValue === 'number');
         return leftValue + rightValue;
       }
       case '-': {
-        const leftValue = evaluateExpression(expression.left);
         assert(typeof leftValue === 'number');
-        const rightValue = evaluateExpression(expression.right);
+        const rightValue = evaluateExpression(
+          expression.right,
+          strategy,
+          context,
+        );
+        if (rightValue === undefined) {
+          return undefined;
+        }
         assert(typeof rightValue === 'number');
         return leftValue - rightValue;
       }
       case '<': {
-        const leftValue = evaluateExpression(expression.left);
         assert(typeof leftValue === 'number');
-        const rightValue = evaluateExpression(expression.right);
+        const rightValue = evaluateExpression(
+          expression.right,
+          strategy,
+          context,
+        );
+        if (rightValue === undefined) {
+          return undefined;
+        }
         assert(typeof rightValue === 'number');
         return leftValue < rightValue;
       }
       case '<=': {
-        const leftValue = evaluateExpression(expression.left);
         assert(typeof leftValue === 'number');
-        const rightValue = evaluateExpression(expression.right);
+        const rightValue = evaluateExpression(
+          expression.right,
+          strategy,
+          context,
+        );
+        if (rightValue === undefined) {
+          return undefined;
+        }
         assert(typeof rightValue === 'number');
         return leftValue <= rightValue;
       }
       case '>': {
-        const leftValue = evaluateExpression(expression.left);
         assert(typeof leftValue === 'number');
-        const rightValue = evaluateExpression(expression.right);
+        const rightValue = evaluateExpression(
+          expression.right,
+          strategy,
+          context,
+        );
+        if (rightValue === undefined) {
+          return undefined;
+        }
         assert(typeof rightValue === 'number');
         return leftValue > rightValue;
       }
       case '>=': {
-        const leftValue = evaluateExpression(expression.left);
         assert(typeof leftValue === 'number');
-        const rightValue = evaluateExpression(expression.right);
+        const rightValue = evaluateExpression(
+          expression.right,
+          strategy,
+          context,
+        );
+        if (rightValue === undefined) {
+          return undefined;
+        }
         assert(typeof rightValue === 'number');
         return leftValue >= rightValue;
       }
       case '==': {
-        const leftValue = evaluateExpression(expression.left);
-        const rightValue = evaluateExpression(expression.right);
+        const rightValue = evaluateExpression(
+          expression.right,
+          strategy,
+          context,
+        );
+        if (rightValue === undefined) {
+          return undefined;
+        }
         assert(typeof leftValue === typeof rightValue);
         return leftValue === rightValue;
       }
       case '!=': {
-        const leftValue = evaluateExpression(expression.left);
-        const rightValue = evaluateExpression(expression.right);
+        const rightValue = evaluateExpression(
+          expression.right,
+          strategy,
+          context,
+        );
+        if (rightValue === undefined) {
+          return undefined;
+        }
         assert(typeof leftValue === typeof rightValue);
         return leftValue !== rightValue;
       }
       case 'xor': {
-        const leftValue = evaluateExpression(expression.left);
         assert(typeof leftValue === 'boolean');
-        const rightValue = evaluateExpression(expression.right);
+        const rightValue = evaluateExpression(
+          expression.right,
+          strategy,
+          context,
+        );
+        if (rightValue === undefined) {
+          return undefined;
+        }
         assert(typeof rightValue === 'boolean');
         return (leftValue && !rightValue) || (!leftValue && rightValue);
       }
       case 'and': {
-        const leftValue = evaluateExpression(expression.left);
         assert(typeof leftValue === 'boolean');
-        if (!leftValue) {
+        if (!leftValue && strategy === EvaluationStrategy.LAZY) {
           return false;
         }
-        const rightValue = evaluateExpression(expression.right);
+        const rightValue = evaluateExpression(
+          expression.right,
+          strategy,
+          context,
+        );
+        if (rightValue === undefined) {
+          return undefined;
+        }
         assert(typeof rightValue === 'boolean');
         return rightValue;
       }
       case 'or': {
-        const leftValue = evaluateExpression(expression.left);
         assert(typeof leftValue === 'boolean');
-        if (leftValue) {
+        if (leftValue && strategy === EvaluationStrategy.LAZY) {
           return true;
         }
-        const rightValue = evaluateExpression(expression.right);
+        const rightValue = evaluateExpression(
+          expression.right,
+          strategy,
+          context,
+        );
+        if (rightValue === undefined) {
+          return undefined;
+        }
         assert(typeof rightValue === 'boolean');
         return rightValue;
       }
