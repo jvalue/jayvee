@@ -8,8 +8,11 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "langium generate -f libs/language-server/langium-config.json"
-        ]
+          "langium generate -f libs/language-server/langium-config.json",
+          // Workaround until https://github.com/langium/langium/issues/740 is resolved:
+          "node tools/scripts/fix-monarch-grammar-escape.mjs"
+        ],
+        "parallel": false
       }
     },
     "build": {
