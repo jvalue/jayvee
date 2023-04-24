@@ -12,7 +12,7 @@ export class FileSystemDirectory extends FileSystemNode {
 
   override getNode(pathParts: string[]): FileSystemNode | null {
     const [firstPart, ...rest] = pathParts;
-    // Base case: Called a wrong noce
+    // Base case: Called a wrong node
     if (firstPart !== this.name) {
       return null;
     }
