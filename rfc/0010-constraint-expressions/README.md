@@ -42,7 +42,7 @@ Instead of using this block-like syntax, we can use expressions to define constr
 
 The general syntax looks like this: 
 ```
-constraint <name> on <primitive value type> = <expression with parameter value, evaluating to boolean>
+constraint <name> on <primitive value type>: <expression with parameter value, evaluating to boolean>
 ```
 
 ### Examples
@@ -52,7 +52,7 @@ The following subsections will go over the existing constraints and showcase the
 #### AllowlistConstraint
 
 ```
-constraint TimeUnitString on text = 
+constraint TimeUnitString on text:
   value =="ms" or 
   value == "s" or 
   value == "min" or 
@@ -64,11 +64,11 @@ constraint TimeUnitString on text =
 
 #### DenylistConstraint
 ```
-constraint NoPrimaryColors on text = 
+constraint NoPrimaryColors on text:
   not (value == "red" or value == "blue" or value == "yellow");
 
 // alternative
-constraint NoPrimaryColors on text = 
+constraint NoPrimaryColors on text:
   value != "red" and 
   value != "blue" and 
   value != "yellow";
@@ -76,17 +76,20 @@ constraint NoPrimaryColors on text =
 
 #### LengthConstraint
 ```
-constraint JavaStringLength on text = value.length  >= 0 and value.length  <= maxLength;
+constraint JavaStringLength on text:
+  value.length  >= 0 and value.length  <= maxLength;
 ```
 
 #### RangeConstraint
 ```
-constraint HundredScale on decimal = value > 1 and value <= 100; 
+constraint HundredScale on decimal:
+  value > 1 and value <= 100; 
 ```
 
 #### RegexConstraint
 ```
-constraint IFOPT_Format on text = value matches /[a-z]{2}:\d+:\d+(:\d+)?(:\d+)?/;
+constraint IFOPT_Format on text:
+  value matches /[a-z]{2}:\d+:\d+(:\d+)?(:\d+)?/;
 ```
 
 ### Hidden Enhancements
@@ -119,7 +122,7 @@ valuetype GasFillLevel oftype decimal {
 
 ## Alternatives
 
-- Syntax to define parameter in constraint could be different, e.g., `constraint MyConstraint = (number) => <expression>`.
+- Syntax to define parameter in constraint could be different, e.g., `constraint MyConstraint: (number) => <expression>`.
 - Allow if/else statements in a more imperative way rather than packing everything into one expression.
 - Put the expression into a `{}`-wrapped scope for consistency (probably together with if/else statements, looks more like a method).
 
