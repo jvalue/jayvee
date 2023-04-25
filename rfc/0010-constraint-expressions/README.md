@@ -117,19 +117,17 @@ valuetype GasFillLevel oftype decimal {
 ## Drawbacks
 
 - Inconsistency of constraint definition via `=` and property initialization via `:`.
-- Future constraints have to be expressible by a boolean expression.
-- Users now have to be able to write expressions instead of just supplying property values.
 
 ## Alternatives
 
 - Syntax to define parameter in constraint could be different, e.g., `constraint MyConstraint: (number) => <expression>`.
-- Allow if/else statements in a more imperative way rather than packing everything into one expression.
 - Put the expression into a `{}`-wrapped scope for consistency (probably together with if/else statements, looks more like a method).
 
 
 
 ## Possible Future Changes/Enhancements
+- Allow if/else statements in a more imperative way rather than packing everything into one expression.
 - Allow renaming of `value` to a custom parameter name, e.g., `for text as x`.
 - add `in` operator for collections for syntactic sugar.
-- Allow users to define own `ConstraintTypes` that allow the current syntax again.
+
 
