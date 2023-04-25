@@ -18,6 +18,7 @@ import {
 // eslint-disable-next-line import/no-cycle
 import { PropertyValuetype } from '../model-util';
 
+// eslint-disable-next-line import/no-cycle
 import {
   binaryOperatorRegistry,
   unaryOperatorRegistry,
@@ -73,4 +74,13 @@ function inferTypeFromExpressionLiteral(
     return PropertyValuetype.DECIMAL;
   }
   assertUnreachable(expression);
+}
+
+export function generateUnexpectedTypeMessage(
+  expectedTypes: PropertyValuetype | PropertyValuetype[],
+  actualType: PropertyValuetype,
+) {
+  return `The operand needs to be of type ${
+    Array.isArray(expectedTypes) ? expectedTypes.join(' or ') : expectedTypes
+  } but is of type ${actualType}`;
 }

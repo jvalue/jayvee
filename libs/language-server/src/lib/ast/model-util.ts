@@ -187,6 +187,10 @@ export function runtimeParameterAllowedForType(
   }
 }
 
+export const numericTypes = [
+  PropertyValuetype.INTEGER,
+  PropertyValuetype.DECIMAL,
+];
 export function isNumericType(
   type: PropertyValuetype | undefined,
 ): type is PropertyValuetype.INTEGER | PropertyValuetype.DECIMAL {

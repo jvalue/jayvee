@@ -14,6 +14,7 @@ import {
   EvaluationStrategy,
   UnaryTypeInferenceFunction,
 } from '../operator-registry';
+import { generateUnexpectedTypeMessage } from '../type-inference';
 
 export const inferUnaryIntegerConversionExpressionType: UnaryTypeInferenceFunction =
   (
@@ -29,7 +30,7 @@ export const inferUnaryIntegerConversionExpressionType: UnaryTypeInferenceFuncti
     if (!isNumericType(innerType)) {
       context?.accept(
         'error',
-        `The operand needs to be of type ${PropertyValuetype.DECIMAL} but is of type ${innerType}`,
+        generateUnexpectedTypeMessage(PropertyValuetype.DECIMAL, innerType),
         {
           node: expression.expression,
         },

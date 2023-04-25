@@ -7,13 +7,18 @@ import { strict as assert } from 'assert';
 import { ValidationContext } from '../../../validation/validation-context';
 import { BinaryExpression } from '../../generated/ast';
 // eslint-disable-next-line import/no-cycle
-import { PropertyValuetype, isNumericType } from '../../model-util';
+import {
+  PropertyValuetype,
+  isNumericType,
+  numericTypes,
+} from '../../model-util';
 import { evaluateExpression } from '../evaluation';
 import {
   BinaryTypeInferenceFunction,
   EvaluationFunction,
   EvaluationStrategy,
 } from '../operator-registry';
+import { generateUnexpectedTypeMessage } from '../type-inference';
 
 export const inferBinaryExponentialExpressionType: BinaryTypeInferenceFunction =
   (
@@ -27,7 +32,7 @@ export const inferBinaryExponentialExpressionType: BinaryTypeInferenceFunction =
       if (!isNumericType(leftType)) {
         context?.accept(
           'error',
-          `The operand needs to be of type ${PropertyValuetype.DECIMAL} or ${PropertyValuetype.INTEGER} but is of type ${leftType}`,
+          generateUnexpectedTypeMessage(numericTypes, leftType),
           {
             node: expression.left,
           },
@@ -36,7 +41,7 @@ export const inferBinaryExponentialExpressionType: BinaryTypeInferenceFunction =
       if (!isNumericType(rightType)) {
         context?.accept(
           'error',
-          `The operand needs to be of type ${PropertyValuetype.DECIMAL} or ${PropertyValuetype.INTEGER} but is of type ${rightType}`,
+          generateUnexpectedTypeMessage(numericTypes, rightType),
           {
             node: expression.right,
           },

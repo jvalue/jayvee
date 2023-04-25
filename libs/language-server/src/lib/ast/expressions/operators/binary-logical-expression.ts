@@ -14,6 +14,7 @@ import {
   EvaluationFunction,
   EvaluationStrategy,
 } from '../operator-registry';
+import { generateUnexpectedTypeMessage } from '../type-inference';
 
 export const inferBinaryLogicalExpressionType: BinaryTypeInferenceFunction = (
   leftType: PropertyValuetype,
@@ -34,7 +35,7 @@ export const inferBinaryLogicalExpressionType: BinaryTypeInferenceFunction = (
     if (leftType !== PropertyValuetype.BOOLEAN) {
       context?.accept(
         'error',
-        `The operand needs to be of type ${PropertyValuetype.BOOLEAN} but is of type ${leftType}`,
+        generateUnexpectedTypeMessage(PropertyValuetype.BOOLEAN, leftType),
         {
           node: expression.left,
         },
@@ -43,7 +44,7 @@ export const inferBinaryLogicalExpressionType: BinaryTypeInferenceFunction = (
     if (rightType !== PropertyValuetype.BOOLEAN) {
       context?.accept(
         'error',
-        `The operand needs to be of type ${PropertyValuetype.BOOLEAN} but is of type ${rightType}`,
+        generateUnexpectedTypeMessage(PropertyValuetype.BOOLEAN, leftType),
         {
           node: expression.right,
         },

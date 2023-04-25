@@ -14,6 +14,7 @@ import {
   EvaluationStrategy,
   UnaryTypeInferenceFunction,
 } from '../operator-registry';
+import { generateUnexpectedTypeMessage } from '../type-inference';
 
 export const inferUnaryNotExpressionType: UnaryTypeInferenceFunction = (
   innerType: PropertyValuetype,
@@ -24,7 +25,7 @@ export const inferUnaryNotExpressionType: UnaryTypeInferenceFunction = (
   if (innerType !== PropertyValuetype.BOOLEAN) {
     context?.accept(
       'error',
-      `The operand needs to be of type ${PropertyValuetype.BOOLEAN} but is of type ${innerType}`,
+      generateUnexpectedTypeMessage(PropertyValuetype.BOOLEAN, innerType),
       {
         node: expression.expression,
       },

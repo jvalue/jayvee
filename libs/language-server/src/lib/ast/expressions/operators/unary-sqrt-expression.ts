@@ -7,13 +7,18 @@ import { strict as assert } from 'assert';
 import { ValidationContext } from '../../../validation/validation-context';
 import { UnaryExpression } from '../../generated/ast';
 // eslint-disable-next-line import/no-cycle
-import { PropertyValuetype, isNumericType } from '../../model-util';
+import {
+  PropertyValuetype,
+  isNumericType,
+  numericTypes,
+} from '../../model-util';
 import { evaluateExpression } from '../evaluation';
 import {
   EvaluationFunction,
   EvaluationStrategy,
   UnaryTypeInferenceFunction,
 } from '../operator-registry';
+import { generateUnexpectedTypeMessage } from '../type-inference';
 
 export const inferUnarySqrtExpressionType: UnaryTypeInferenceFunction = (
   innerType: PropertyValuetype,
@@ -24,7 +29,7 @@ export const inferUnarySqrtExpressionType: UnaryTypeInferenceFunction = (
   if (!isNumericType(innerType)) {
     context?.accept(
       'error',
-      `The operand needs to be of type ${PropertyValuetype.INTEGER} or ${PropertyValuetype.DECIMAL} but is of type ${innerType}`,
+      generateUnexpectedTypeMessage(numericTypes, innerType),
       {
         node: expression.expression,
       },
