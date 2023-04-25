@@ -93,9 +93,9 @@ constraint IFOPT_Format on text:
 ```
 
 ### Hidden Enhancements
+This RFC introduces / relies of some features that are not implemented yet:
 * Expressions allow parameters (keyword `value`).
 * The length of text parameters is accessible by `value.length`. Evaluates to an integer (zero or positive).
-* The assignment operator `=` instead of `:` because the latter looks off in that context.
 * The binary operator `matches` is introduced which evaluates to a boolean value. The usage is `<text> matches <regex>`.
 
 ### Usage in ValueTypes
@@ -115,8 +115,7 @@ valuetype GasFillLevel oftype decimal {
 
 
 ## Drawbacks
-
-- Inconsistency of constraint definition via `=` and property initialization via `:`.
+- Requires the features in the "Hidden Enhancements" section in order to match the current functionality.
 
 ## Alternatives
 
