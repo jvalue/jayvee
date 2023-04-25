@@ -21,7 +21,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 ## Summary
 
-This RFC presents an alternative representation of value type constraints. It replaces the current solution.
+This RFC presents an alternative representation of value type constraints using expressions. It replaces the current ConstraintTypes (but not the existing ConstraintType mechanism itself that will us allow to add more complex domain-specific constraints that are not expressible by expressions).
 
 ## Motivation
 
