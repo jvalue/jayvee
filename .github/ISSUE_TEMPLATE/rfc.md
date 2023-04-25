@@ -1,6 +1,6 @@
 ---
 name: RFC
-about: Use this template to track RFC creations.
+about: Use this template to track RFCs that should be created.
 title: "[RFC] <title>"
 labels: rfc
 assignees: ''
