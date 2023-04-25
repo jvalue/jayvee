@@ -50,7 +50,8 @@ The output value is assigned (`:`) to an expression to produces the output value
 transformer CelsiusToKelvin {
   input tempCelsius oftype decimal;
   output tempKelvin oftype decimal;
-  tempKelvin: tempCelsius + 273.15; // simple calculation does not need a mapping
+
+  tempKelvin: tempCelsius + 273.15; // simple calculation
 }
 ```
 
@@ -62,14 +63,14 @@ transformer AddressComposer {
   input houseNumber oftype text;
   output address oftype text;
 
-  address: streetName + " " + houseNumber; // assumption: "+" is string appending
+  address: streetName + " " + houseNumber; // assumption: "+" is string appending (separate RFC)
 }
 ```
 
 
 ### Example 3: Multiple outputs
 ```
-// "MyStreet" and "7b" => "MyStreet 7b"
+// 456 => (ones:6, tens:5, hundreds:4)
 transformer DigitSeparator {
   input number oftype integer;
   output ones oftype integer;
@@ -77,8 +78,8 @@ transformer DigitSeparator {
   output hundreds oftype integer;
 
   ones: number % 10;
-  tens: floor (((number % 100) - ones) / 10);
-  hundreds: floor (((number % 1000) - tens) / 100);
+  tens: floor (number / 10) % 10;
+  hundreds: floor (number / 100);
 }
 ```
 
@@ -100,6 +101,9 @@ block GasReserveTableInterpreter oftype TableInterpreter {
     ];
 }
 ```
+
+This version only works with transformers that have exactly one input and exactly one output. We might need to come up with a different mechanism to allow other transformers (requires future RFCs).
+
 
 ### Usage 2: TableTransformerBlock
 There is a newly introduced `TableTransformerBlock` block type that applies the mapper to a column in a `table`.
@@ -134,13 +138,13 @@ block GermanToBooleanBlock oftype SheetTransformerBlock {
 
 - use other keyword, e.g., `vtrans`, `mapper`, ...
 - shorten `input` and `output` keywords to `in` and `out`
-- offer no TransformerBlock or similar for sheets, only operate on tables
+- Transformers cannot work on sheets
 - design nicer syntax for multiple inputs and outputs via names instead of relying on the index
 - refactor TableInterpreter completely to also allow transformers with multiple in and outputs
 
 ## Possible Future Changes/Enhancements
 
-- We could introduce a syntax that allows chaining transformers.
+- We could introduce a pipe-like syntax that allows chaining transformers.
 
 ### Variables in Transformers
 Storing interim results can improve coding experience.
@@ -170,7 +174,8 @@ transformer AddressComposer {
 
 ### Mappers
 
-A mapping expression might enable easier string matching.
+A mapping expression might enable easier string matching. They are syntactic sugar for if-elseif cascades.
+
 ```
 // reads "23.4" and "$" into a compound value type
 transformer CelsiusToKelvin {
