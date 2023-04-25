@@ -36,21 +36,21 @@ transformer <name> {
   input <inputName> oftype <valuetype>; // potentially many
   output <outputName> oftype <valuetype>; // for now: exactly one
 
-  <outputName> = <expression producing output valuetype>;
+  <outputName>: <expression producing output valuetype>;
 }
 ```
 
 A transformer can map none, one, or multiple inputs to at least one output with their types.
 See future enhancements for multiple outputs.
 
-The output value is assigned (`=`) to an expression to produces the output values.
+The output value is assigned (`:`) to an expression to produces the output values.
 
 ### Example 1: Simple numeric transformation
 ```
 transformer CelsiusToKelvin {
   input tempCelsius oftype decimal;
   output tempKelvin oftype decimal;
-  tempKelvin = tempCelsius + 273.15; // simple calculation does not need a mapping
+  tempKelvin: tempCelsius + 273.15; // simple calculation does not need a mapping
 }
 ```
 
@@ -62,7 +62,7 @@ transformer AddressComposer {
   input houseNumber oftype text;
   output address oftype text;
 
-  address = streetName + " " + houseNumber; // assumption: "+" is string appending
+  address: streetName + " " + houseNumber; // assumption: "+" is string appending
 }
 ```
 
@@ -76,9 +76,9 @@ transformer DigitSeparator {
   output tens oftype integer;
   output hundreds oftype integer;
 
-  ones = number % 10;
-  tens = floor (((number % 100) - ones) / 10);
-  hundreds = floor (((number % 1000) - tens) / 100);
+  ones: number % 10;
+  tens: floor (((number % 100) - ones) / 10);
+  hundreds: floor (((number % 1000) - tens) / 100);
 }
 ```
 
@@ -147,7 +147,7 @@ Storing interim results can improve coding experience.
 ```
 transformer <name> {
   // inputs and outputs
-  var <varBane> oftype <valuetype> = <expression producing valuetype>; // alternative: infer type automatically 
+  var <varBane> oftype <valuetype>: <expression producing valuetype>; // alternative: infer type automatically 
   // use variable to compute outputs
 }
 ```
@@ -163,8 +163,8 @@ transformer AddressComposer {
   output address oftype Address; // has properties "streetName" oftype StreetName and "houseNumber" oftype HouseNumber 
 
   // "." notation to write on property of composite value type
-  address.streetName = streetName using StreetNameReader; // StreetNameReader is other transformation text -> StreetName
-  address.houseNumber = houseNumber using HouseNumberReader; // HouseNumberReader is other transformation text -> HouseNumber
+  address.streetName: streetName using StreetNameReader; // StreetNameReader is other transformation text -> StreetName
+  address.houseNumber: houseNumber using HouseNumberReader; // HouseNumberReader is other transformation text -> HouseNumber
 }
 ```
 
@@ -177,8 +177,8 @@ transformer CelsiusToKelvin {
   input amountRaw oftype text;
   input currencyRaw oftype text;
   output balance oftype Balance; // compound type with fields "amount" and "currency"
-  balance.amount = amountRaw as decimal;    // simple parsing does not need a mapping
-  balance.currency = mapping on currencyRaw { // mapping
+  balance.amount: amountRaw as decimal;    // simple parsing does not need a mapping
+  balance.currency: mapping on currencyRaw { // mapping
     /^(EUR|€)$/ => "EUR";
     /^(USD|$)$/ => "USD";
   };
