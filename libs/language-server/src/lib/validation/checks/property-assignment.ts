@@ -8,8 +8,10 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
 // eslint-disable-next-line import/no-cycle
-import { evaluateExpression } from '../../ast/expressions/evaluation';
-import { EvaluationStrategy } from '../../ast/expressions/operator-registry';
+import {
+  EvaluationStrategy,
+  evaluateExpression,
+} from '../../ast/expressions/evaluation';
 import {
   Expression,
   PropertyAssignment,

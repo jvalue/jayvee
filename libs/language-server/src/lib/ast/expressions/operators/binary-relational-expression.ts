@@ -12,12 +12,7 @@ import {
   isNumericType,
   numericTypes,
 } from '../../model-util';
-import { evaluateExpression } from '../evaluation';
-import {
-  BinaryTypeInferenceFunction,
-  EvaluationFunction,
-  EvaluationStrategy,
-} from '../operator-registry';
+import { BinaryTypeInferenceFunction } from '../operator-registry';
 import { generateUnexpectedTypeMessage } from '../type-inference';
 
 export const inferBinaryRelationalExpressionType: BinaryTypeInferenceFunction =
@@ -66,95 +61,3 @@ export const inferBinaryRelationalExpressionType: BinaryTypeInferenceFunction =
     }
     return PropertyValuetype.BOOLEAN;
   };
-
-export const evaluateBinaryLessThanExpression: EvaluationFunction<
-  BinaryExpression
-> = (
-  expression: BinaryExpression,
-  strategy: EvaluationStrategy,
-  context: ValidationContext | undefined,
-): boolean | number | string | undefined => {
-  assert(expression.operator === '<');
-  const leftValue = evaluateExpression(expression.left, strategy, context);
-  if (strategy === EvaluationStrategy.LAZY && leftValue === undefined) {
-    return undefined;
-  }
-  const rightValue = evaluateExpression(expression.right, strategy, context);
-  if (leftValue === undefined || rightValue === undefined) {
-    return undefined;
-  }
-
-  assert(typeof leftValue === 'number');
-  assert(typeof rightValue === 'number');
-
-  return leftValue < rightValue;
-};
-
-export const evaluateBinaryLessEqualExpression: EvaluationFunction<
-  BinaryExpression
-> = (
-  expression: BinaryExpression,
-  strategy: EvaluationStrategy,
-  context: ValidationContext | undefined,
-): boolean | number | string | undefined => {
-  assert(expression.operator === '<=');
-  const leftValue = evaluateExpression(expression.left, strategy, context);
-  if (strategy === EvaluationStrategy.LAZY && leftValue === undefined) {
-    return undefined;
-  }
-  const rightValue = evaluateExpression(expression.right, strategy, context);
-  if (leftValue === undefined || rightValue === undefined) {
-    return undefined;
-  }
-
-  assert(typeof leftValue === 'number');
-  assert(typeof rightValue === 'number');
-
-  return leftValue <= rightValue;
-};
-
-export const evaluateBinaryGreaterThanExpression: EvaluationFunction<
-  BinaryExpression
-> = (
-  expression: BinaryExpression,
-  strategy: EvaluationStrategy,
-  context: ValidationContext | undefined,
-): boolean | number | string | undefined => {
-  assert(expression.operator === '<=');
-  const leftValue = evaluateExpression(expression.left, strategy, context);
-  if (strategy === EvaluationStrategy.LAZY && leftValue === undefined) {
-    return undefined;
-  }
-  const rightValue = evaluateExpression(expression.right, strategy, context);
-  if (leftValue === undefined || rightValue === undefined) {
-    return undefined;
-  }
-
-  assert(typeof leftValue === 'number');
-  assert(typeof rightValue === 'number');
-
-  return leftValue > rightValue;
-};
-
-export const evaluateBinaryGreaterEqualExpression: EvaluationFunction<
-  BinaryExpression
-> = (
-  expression: BinaryExpression,
-  strategy: EvaluationStrategy,
-  context: ValidationContext | undefined,
-): boolean | number | string | undefined => {
-  assert(expression.operator === '>=');
-  const leftValue = evaluateExpression(expression.left, strategy, context);
-  if (strategy === EvaluationStrategy.LAZY && leftValue === undefined) {
-    return undefined;
-  }
-  const rightValue = evaluateExpression(expression.right, strategy, context);
-  if (leftValue === undefined || rightValue === undefined) {
-    return undefined;
-  }
-
-  assert(typeof leftValue === 'number');
-  assert(typeof rightValue === 'number');
-
-  return leftValue >= rightValue;
-};

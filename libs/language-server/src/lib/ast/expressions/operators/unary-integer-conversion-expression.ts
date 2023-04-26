@@ -8,12 +8,7 @@ import { ValidationContext } from '../../../validation/validation-context';
 import { UnaryExpression } from '../../generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { PropertyValuetype, isNumericType } from '../../model-util';
-import { evaluateExpression } from '../evaluation';
-import {
-  EvaluationFunction,
-  EvaluationStrategy,
-  UnaryTypeInferenceFunction,
-} from '../operator-registry';
+import { UnaryTypeInferenceFunction } from '../operator-registry';
 import { generateUnexpectedTypeMessage } from '../type-inference';
 
 export const inferUnaryIntegerConversionExpressionType: UnaryTypeInferenceFunction =
@@ -48,63 +43,3 @@ export const inferUnaryIntegerConversionExpressionType: UnaryTypeInferenceFuncti
     }
     return PropertyValuetype.INTEGER;
   };
-
-export const evaluateUnaryFloorExpression: EvaluationFunction<
-  UnaryExpression
-> = (
-  expression: UnaryExpression,
-  strategy: EvaluationStrategy,
-  context: ValidationContext | undefined,
-): boolean | number | string | undefined => {
-  assert(expression.operator === 'floor');
-  const innerValue = evaluateExpression(
-    expression.expression,
-    strategy,
-    context,
-  );
-  if (innerValue === undefined) {
-    return undefined;
-  }
-  assert(typeof innerValue === 'number');
-  return Math.floor(innerValue);
-};
-
-export const evaluateUnaryCeilExpression: EvaluationFunction<
-  UnaryExpression
-> = (
-  expression: UnaryExpression,
-  strategy: EvaluationStrategy,
-  context: ValidationContext | undefined,
-): boolean | number | string | undefined => {
-  assert(expression.operator === 'ceil');
-  const innerValue = evaluateExpression(
-    expression.expression,
-    strategy,
-    context,
-  );
-  if (innerValue === undefined) {
-    return undefined;
-  }
-  assert(typeof innerValue === 'number');
-  return Math.ceil(innerValue);
-};
-
-export const evaluateUnaryRoundExpression: EvaluationFunction<
-  UnaryExpression
-> = (
-  expression: UnaryExpression,
-  strategy: EvaluationStrategy,
-  context: ValidationContext | undefined,
-): boolean | number | string | undefined => {
-  assert(expression.operator === 'round');
-  const innerValue = evaluateExpression(
-    expression.expression,
-    strategy,
-    context,
-  );
-  if (innerValue === undefined) {
-    return undefined;
-  }
-  assert(typeof innerValue === 'number');
-  return Math.round(innerValue);
-};

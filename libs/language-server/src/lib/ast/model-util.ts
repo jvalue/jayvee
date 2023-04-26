@@ -14,10 +14,12 @@ import { ValidationContext } from '../validation';
 // eslint-disable-next-line import/no-cycle
 import { inferExpressionType } from './expressions/type-inference';
 import {
+  BinaryExpression,
   BlockDefinition,
   PipelineDefinition,
   PrimitiveValuetypeKeywordLiteral,
   PropertyValueLiteral,
+  UnaryExpression,
   ValuetypeDefinitionReference,
   isCellRangeLiteral,
   isCollectionLiteral,
@@ -186,6 +188,9 @@ export function runtimeParameterAllowedForType(
       assertUnreachable(type);
   }
 }
+
+export type UnaryExpressionOperator = UnaryExpression['operator'];
+export type BinaryExpressionOperator = BinaryExpression['operator'];
 
 export const numericTypes = [
   PropertyValuetype.INTEGER,

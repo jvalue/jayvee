@@ -12,12 +12,7 @@ import {
   isNumericType,
   numericTypes,
 } from '../../model-util';
-import { evaluateExpression } from '../evaluation';
-import {
-  EvaluationFunction,
-  EvaluationStrategy,
-  UnaryTypeInferenceFunction,
-} from '../operator-registry';
+import { UnaryTypeInferenceFunction } from '../operator-registry';
 import { generateUnexpectedTypeMessage } from '../type-inference';
 
 export const inferUnarySignExpressionType: UnaryTypeInferenceFunction = (
@@ -37,44 +32,4 @@ export const inferUnarySignExpressionType: UnaryTypeInferenceFunction = (
     return undefined;
   }
   return innerType;
-};
-
-export const evaluateUnaryPlusExpression: EvaluationFunction<
-  UnaryExpression
-> = (
-  expression: UnaryExpression,
-  strategy: EvaluationStrategy,
-  context: ValidationContext | undefined,
-): boolean | number | string | undefined => {
-  assert(expression.operator === '+');
-  const innerValue = evaluateExpression(
-    expression.expression,
-    strategy,
-    context,
-  );
-  if (innerValue === undefined) {
-    return undefined;
-  }
-  assert(typeof innerValue === 'number');
-  return innerValue;
-};
-
-export const evaluateUnaryMinusExpression: EvaluationFunction<
-  UnaryExpression
-> = (
-  expression: UnaryExpression,
-  strategy: EvaluationStrategy,
-  context: ValidationContext | undefined,
-): boolean | number | string | undefined => {
-  assert(expression.operator === '-');
-  const innerValue = evaluateExpression(
-    expression.expression,
-    strategy,
-    context,
-  );
-  if (innerValue === undefined) {
-    return undefined;
-  }
-  assert(typeof innerValue === 'number');
-  return -innerValue;
 };

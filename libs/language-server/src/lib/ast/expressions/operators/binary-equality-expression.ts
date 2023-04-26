@@ -8,12 +8,7 @@ import { ValidationContext } from '../../../validation/validation-context';
 import { BinaryExpression } from '../../generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { PropertyValuetype, isNumericType } from '../../model-util';
-import { evaluateExpression } from '../evaluation';
-import {
-  BinaryTypeInferenceFunction,
-  EvaluationFunction,
-  EvaluationStrategy,
-} from '../operator-registry';
+import { BinaryTypeInferenceFunction } from '../operator-registry';
 
 export const inferBinaryEqualityExpressionType: BinaryTypeInferenceFunction = (
   leftType: PropertyValuetype,
@@ -43,46 +38,4 @@ export const inferBinaryEqualityExpressionType: BinaryTypeInferenceFunction = (
   }
 
   return PropertyValuetype.BOOLEAN;
-};
-
-export const evaluateBinaryEqualityExpression: EvaluationFunction<
-  BinaryExpression
-> = (
-  expression: BinaryExpression,
-  strategy: EvaluationStrategy,
-  context: ValidationContext | undefined,
-): boolean | number | string | undefined => {
-  assert(expression.operator === '==');
-  const leftValue = evaluateExpression(expression.left, strategy, context);
-  if (strategy === EvaluationStrategy.LAZY && leftValue === undefined) {
-    return undefined;
-  }
-  const rightValue = evaluateExpression(expression.right, strategy, context);
-  if (leftValue === undefined || rightValue === undefined) {
-    return undefined;
-  }
-
-  assert(typeof leftValue === typeof rightValue);
-  return leftValue === rightValue;
-};
-
-export const evaluateBinaryInequalityExpression: EvaluationFunction<
-  BinaryExpression
-> = (
-  expression: BinaryExpression,
-  strategy: EvaluationStrategy,
-  context: ValidationContext | undefined,
-): boolean | number | string | undefined => {
-  assert(expression.operator === '!=');
-  const leftValue = evaluateExpression(expression.left, strategy, context);
-  if (strategy === EvaluationStrategy.LAZY && leftValue === undefined) {
-    return undefined;
-  }
-  const rightValue = evaluateExpression(expression.right, strategy, context);
-  if (leftValue === undefined || rightValue === undefined) {
-    return undefined;
-  }
-
-  assert(typeof leftValue === typeof rightValue);
-  return leftValue !== rightValue;
 };

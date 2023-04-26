@@ -12,12 +12,7 @@ import {
   isNumericType,
   numericTypes,
 } from '../../model-util';
-import { evaluateExpression } from '../evaluation';
-import {
-  EvaluationFunction,
-  EvaluationStrategy,
-  UnaryTypeInferenceFunction,
-} from '../operator-registry';
+import { UnaryTypeInferenceFunction } from '../operator-registry';
 import { generateUnexpectedTypeMessage } from '../type-inference';
 
 export const inferUnarySqrtExpressionType: UnaryTypeInferenceFunction = (
@@ -37,36 +32,4 @@ export const inferUnarySqrtExpressionType: UnaryTypeInferenceFunction = (
     return undefined;
   }
   return PropertyValuetype.DECIMAL;
-};
-
-export const evaluateUnarySqrtExpression: EvaluationFunction<
-  UnaryExpression
-> = (
-  expression: UnaryExpression,
-  strategy: EvaluationStrategy,
-  context: ValidationContext | undefined,
-): boolean | number | string | undefined => {
-  assert(expression.operator === 'sqrt');
-  const innerValue = evaluateExpression(
-    expression.expression,
-    strategy,
-    context,
-  );
-  if (innerValue === undefined) {
-    return undefined;
-  }
-  assert(typeof innerValue === 'number');
-
-  const resultingValue = Math.sqrt(innerValue);
-
-  if (!isFinite(resultingValue)) {
-    assert(innerValue < 0);
-    context?.accept(
-      'error',
-      'Arithmetic error: square root of negative number',
-      { node: expression },
-    );
-    return undefined;
-  }
-  return resultingValue;
 };

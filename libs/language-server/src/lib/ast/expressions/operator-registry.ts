@@ -10,61 +10,46 @@ import {
   Expression,
   UnaryExpression,
 } from '../generated/ast';
-import { PropertyValuetype } from '../model-util';
+import {
+  BinaryExpressionOperator,
+  PropertyValuetype,
+  UnaryExpressionOperator,
+} from '../model-util';
 
-import {
-  evaluateBinaryAdditionExpression,
-  evaluateBinaryDivisionExpression,
-  evaluateBinaryModuloExpression,
-  evaluateBinaryMultiplicationExpression,
-  evaluateBinarySubtractionExpression,
-  inferBinaryArithmeticExpressionType,
-} from './operators/binary-arithmetic-expression';
-import {
-  evaluateBinaryEqualityExpression,
-  evaluateBinaryInequalityExpression,
-  inferBinaryEqualityExpressionType,
-} from './operators/binary-equality-expression';
-import {
-  evaluateBinaryPowExpression,
-  evaluateBinaryRootExpression,
-  inferBinaryExponentialExpressionType,
-} from './operators/binary-exponential-expression';
-import {
-  evaluateBinaryAndExpression,
-  evaluateBinaryOrExpression,
-  evaluateBinaryXorExpression,
-  inferBinaryLogicalExpressionType,
-} from './operators/binary-logical-expression';
-import {
-  evaluateBinaryGreaterEqualExpression,
-  evaluateBinaryGreaterThanExpression,
-  evaluateBinaryLessEqualExpression,
-  evaluateBinaryLessThanExpression,
-  inferBinaryRelationalExpressionType,
-} from './operators/binary-relational-expression';
-import {
-  evaluateUnaryCeilExpression,
-  evaluateUnaryFloorExpression,
-  evaluateUnaryRoundExpression,
-  inferUnaryIntegerConversionExpressionType,
-} from './operators/unary-integer-conversion-expression';
-import {
-  evaluateUnaryNotExpression,
-  inferUnaryNotExpressionType,
-} from './operators/unary-not-expression';
-import {
-  evaluateUnaryMinusExpression,
-  evaluateUnaryPlusExpression,
-  inferUnarySignExpressionType,
-} from './operators/unary-sign-expression';
-import {
-  evaluateUnarySqrtExpression,
-  inferUnarySqrtExpressionType,
-} from './operators/unary-sqrt-expression';
-
-export type UnaryExpressionOperator = UnaryExpression['operator'];
-export type BinaryExpressionOperator = BinaryExpression['operator'];
+import { EvaluationStrategy } from './evaluation';
+import { AdditionOperatorEvaluator } from './evaluators/addition-operator-evaluator';
+import { AndOperatorEvaluator } from './evaluators/and-operator-evaluator';
+import { CeilOperatorEvaluator } from './evaluators/ceil-operator-evaluator';
+import { DivisionOperatorEvaluator } from './evaluators/division-operator-evaluator';
+import { EqualityOperatorEvaluator } from './evaluators/equality-operator-evaluator';
+import { FloorOperatorEvaluator } from './evaluators/floor-operator-evaluator';
+import { GreaterEqualOperatorEvaluator } from './evaluators/greater-equal-operator-evaluator';
+import { GreaterThanOperatorEvaluator } from './evaluators/greater-than-operator-evaluator';
+import { InequalityOperatorEvaluator } from './evaluators/inequality-operator-evaluator';
+import { LessEqualOperatorEvaluator } from './evaluators/less-equal-operator-evaluator';
+import { LessThanOperatorEvaluator } from './evaluators/less-than-operator-evaluator';
+import { MinusOperatorEvaluator } from './evaluators/minus-operator-evaluator';
+import { ModuloOperatorEvaluator } from './evaluators/modulo-operator-evaluator';
+import { MultiplicationOperatorEvaluator } from './evaluators/multiplication-operator-evaluator';
+import { NotOperatorEvaluator } from './evaluators/not-operator-evaluator';
+import { OrOperatorEvaluator } from './evaluators/or-operator-evaluator';
+import { PlusOperatorEvaluator } from './evaluators/plus-operator-evaluator';
+import { PowOperatorEvaluator } from './evaluators/pow-operator-evaluator';
+import { RootOperatorEvaluator } from './evaluators/root-operator-evaluator';
+import { RoundOperatorEvaluator } from './evaluators/round-operator-evaluator';
+import { SqrtOperatorEvaluator } from './evaluators/sqrt-operator-evaluator';
+import { SubtractionOperatorEvaluator } from './evaluators/subtraction-operator-evaluator';
+import { XorOperatorEvaluator } from './evaluators/xor-operator-evaluator';
+import { OperatorEvaluator } from './operator-evaluator';
+import { inferBinaryArithmeticExpressionType } from './operators/binary-arithmetic-expression';
+import { inferBinaryEqualityExpressionType } from './operators/binary-equality-expression';
+import { inferBinaryExponentialExpressionType } from './operators/binary-exponential-expression';
+import { inferBinaryLogicalExpressionType } from './operators/binary-logical-expression';
+import { inferBinaryRelationalExpressionType } from './operators/binary-relational-expression';
+import { inferUnaryIntegerConversionExpressionType } from './operators/unary-integer-conversion-expression';
+import { inferUnaryNotExpressionType } from './operators/unary-not-expression';
+import { inferUnarySignExpressionType } from './operators/unary-sign-expression';
+import { inferUnarySqrtExpressionType } from './operators/unary-sqrt-expression';
 
 export type UnaryTypeInferenceFunction = (
   innerType: PropertyValuetype,
@@ -79,11 +64,6 @@ export type BinaryTypeInferenceFunction = (
   context: ValidationContext | undefined,
 ) => PropertyValuetype | undefined;
 
-export enum EvaluationStrategy {
-  EXHAUSTIVE,
-  LAZY,
-}
-
 export type EvaluationFunction<T extends Expression> = (
   expression: T,
   strategy: EvaluationStrategy,
@@ -92,7 +72,7 @@ export type EvaluationFunction<T extends Expression> = (
 
 export interface UnaryOperatorEntry {
   typeInference: UnaryTypeInferenceFunction;
-  evaluation: EvaluationFunction<UnaryExpression>;
+  evaluation: OperatorEvaluator<UnaryExpression>;
 }
 
 export const unaryOperatorRegistry: Record<
@@ -101,37 +81,37 @@ export const unaryOperatorRegistry: Record<
 > = {
   not: {
     typeInference: inferUnaryNotExpressionType,
-    evaluation: evaluateUnaryNotExpression,
+    evaluation: new NotOperatorEvaluator(),
   },
   '+': {
     typeInference: inferUnarySignExpressionType,
-    evaluation: evaluateUnaryPlusExpression,
+    evaluation: new PlusOperatorEvaluator(),
   },
   '-': {
     typeInference: inferUnarySignExpressionType,
-    evaluation: evaluateUnaryMinusExpression,
+    evaluation: new MinusOperatorEvaluator(),
   },
   sqrt: {
     typeInference: inferUnarySqrtExpressionType,
-    evaluation: evaluateUnarySqrtExpression,
+    evaluation: new SqrtOperatorEvaluator(),
   },
   floor: {
     typeInference: inferUnaryIntegerConversionExpressionType,
-    evaluation: evaluateUnaryFloorExpression,
+    evaluation: new FloorOperatorEvaluator(),
   },
   ceil: {
     typeInference: inferUnaryIntegerConversionExpressionType,
-    evaluation: evaluateUnaryCeilExpression,
+    evaluation: new CeilOperatorEvaluator(),
   },
   round: {
     typeInference: inferUnaryIntegerConversionExpressionType,
-    evaluation: evaluateUnaryRoundExpression,
+    evaluation: new RoundOperatorEvaluator(),
   },
 };
 
 export interface BinaryOperatorEntry {
   typeInference: BinaryTypeInferenceFunction;
-  evaluation: EvaluationFunction<BinaryExpression>;
+  evaluation: OperatorEvaluator<BinaryExpression>;
 }
 
 export const binaryOperatorRegistry: Record<
@@ -140,66 +120,66 @@ export const binaryOperatorRegistry: Record<
 > = {
   pow: {
     typeInference: inferBinaryExponentialExpressionType,
-    evaluation: evaluateBinaryPowExpression,
+    evaluation: new PowOperatorEvaluator(),
   },
   root: {
     typeInference: inferBinaryExponentialExpressionType,
-    evaluation: evaluateBinaryRootExpression,
+    evaluation: new RootOperatorEvaluator(),
   },
   '*': {
     typeInference: inferBinaryArithmeticExpressionType,
-    evaluation: evaluateBinaryMultiplicationExpression,
+    evaluation: new MultiplicationOperatorEvaluator(),
   },
   '/': {
     typeInference: inferBinaryArithmeticExpressionType,
-    evaluation: evaluateBinaryDivisionExpression,
+    evaluation: new DivisionOperatorEvaluator(),
   },
   '%': {
     typeInference: inferBinaryArithmeticExpressionType,
-    evaluation: evaluateBinaryModuloExpression,
+    evaluation: new ModuloOperatorEvaluator(),
   },
   '+': {
     typeInference: inferBinaryArithmeticExpressionType,
-    evaluation: evaluateBinaryAdditionExpression,
+    evaluation: new AdditionOperatorEvaluator(),
   },
   '-': {
     typeInference: inferBinaryArithmeticExpressionType,
-    evaluation: evaluateBinarySubtractionExpression,
+    evaluation: new SubtractionOperatorEvaluator(),
   },
   '<': {
     typeInference: inferBinaryRelationalExpressionType,
-    evaluation: evaluateBinaryLessThanExpression,
+    evaluation: new LessThanOperatorEvaluator(),
   },
   '<=': {
     typeInference: inferBinaryRelationalExpressionType,
-    evaluation: evaluateBinaryLessEqualExpression,
+    evaluation: new LessEqualOperatorEvaluator(),
   },
   '>': {
     typeInference: inferBinaryRelationalExpressionType,
-    evaluation: evaluateBinaryGreaterThanExpression,
+    evaluation: new GreaterThanOperatorEvaluator(),
   },
   '>=': {
     typeInference: inferBinaryRelationalExpressionType,
-    evaluation: evaluateBinaryGreaterEqualExpression,
+    evaluation: new GreaterEqualOperatorEvaluator(),
   },
   '==': {
     typeInference: inferBinaryEqualityExpressionType,
-    evaluation: evaluateBinaryEqualityExpression,
+    evaluation: new EqualityOperatorEvaluator(),
   },
   '!=': {
     typeInference: inferBinaryEqualityExpressionType,
-    evaluation: evaluateBinaryInequalityExpression,
+    evaluation: new InequalityOperatorEvaluator(),
   },
   xor: {
     typeInference: inferBinaryLogicalExpressionType,
-    evaluation: evaluateBinaryXorExpression,
+    evaluation: new XorOperatorEvaluator(),
   },
   and: {
     typeInference: inferBinaryLogicalExpressionType,
-    evaluation: evaluateBinaryAndExpression,
+    evaluation: new AndOperatorEvaluator(),
   },
   or: {
     typeInference: inferBinaryLogicalExpressionType,
-    evaluation: evaluateBinaryOrExpression,
+    evaluation: new OrOperatorEvaluator(),
   },
 };
