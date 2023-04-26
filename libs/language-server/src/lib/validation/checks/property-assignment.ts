@@ -79,30 +79,32 @@ function checkPropertyValueTyping(
         },
       );
     }
-  } else {
-    const matchingPropertyType = inferTypeFromValue(propertyValue, context);
-    if (matchingPropertyType !== undefined) {
-      if (
-        matchingPropertyType !== propertyType &&
-        !(
-          matchingPropertyType === PropertyValuetype.INTEGER &&
-          propertyType === PropertyValuetype.DECIMAL
-        )
-      ) {
-        context.accept(
-          'error',
-          `The value needs to be of type ${propertyType} but is of type ${matchingPropertyType}`,
-          {
-            node: property,
-            property: 'value',
-          },
-        );
-      } else {
-        if (isExpression(propertyValue)) {
-          checkExpressionSimplification(propertyValue, context);
-        }
-      }
-    }
+    return;
+  }
+  const inferredType = inferTypeFromValue(propertyValue, context);
+  if (inferredType === undefined) {
+    return;
+  }
+
+  const valueIsAssignableToProperty =
+    inferredType === propertyType ||
+    (inferredType === PropertyValuetype.INTEGER &&
+      propertyType === PropertyValuetype.DECIMAL);
+
+  if (!valueIsAssignableToProperty) {
+    context.accept(
+      'error',
+      `The value needs to be of type ${propertyType} but is of type ${inferredType}`,
+      {
+        node: property,
+        property: 'value',
+      },
+    );
+    return;
+  }
+
+  if (isExpression(propertyValue)) {
+    checkExpressionSimplification(propertyValue, context);
   }
 }
 

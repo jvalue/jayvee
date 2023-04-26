@@ -35,25 +35,25 @@ export const inferBinaryArithmeticExpressionType: BinaryTypeInferenceFunction =
         expression.operator === '%',
     );
 
+    if (!isNumericType(leftType)) {
+      context?.accept(
+        'error',
+        generateUnexpectedTypeMessage(numericTypes, leftType),
+        {
+          node: expression.left,
+        },
+      );
+    }
+    if (!isNumericType(rightType)) {
+      context?.accept(
+        'error',
+        generateUnexpectedTypeMessage(numericTypes, rightType),
+        {
+          node: expression.right,
+        },
+      );
+    }
     if (!isNumericType(leftType) || !isNumericType(rightType)) {
-      if (!isNumericType(leftType)) {
-        context?.accept(
-          'error',
-          generateUnexpectedTypeMessage(numericTypes, leftType),
-          {
-            node: expression.left,
-          },
-        );
-      }
-      if (!isNumericType(rightType)) {
-        context?.accept(
-          'error',
-          generateUnexpectedTypeMessage(numericTypes, rightType),
-          {
-            node: expression.right,
-          },
-        );
-      }
       return undefined;
     }
     if (
@@ -75,7 +75,7 @@ export const evaluateBinaryMultiplicationExpression: EvaluationFunction<
 ): boolean | number | string | undefined => {
   assert(expression.operator === '*');
   const leftValue = evaluateExpression(expression.left, strategy, context);
-  if (leftValue === undefined && strategy === EvaluationStrategy.LAZY) {
+  if (strategy === EvaluationStrategy.LAZY && leftValue === undefined) {
     return undefined;
   }
   const rightValue = evaluateExpression(expression.right, strategy, context);
@@ -98,7 +98,7 @@ export const evaluateBinaryDivisionExpression: EvaluationFunction<
 ): boolean | number | string | undefined => {
   assert(expression.operator === '/');
   const leftValue = evaluateExpression(expression.left, strategy, context);
-  if (leftValue === undefined && strategy === EvaluationStrategy.LAZY) {
+  if (strategy === EvaluationStrategy.LAZY && leftValue === undefined) {
     return undefined;
   }
   const rightValue = evaluateExpression(expression.right, strategy, context);
@@ -131,7 +131,7 @@ export const evaluateBinaryModuloExpression: EvaluationFunction<
 ): boolean | number | string | undefined => {
   assert(expression.operator === '%');
   const leftValue = evaluateExpression(expression.left, strategy, context);
-  if (leftValue === undefined && strategy === EvaluationStrategy.LAZY) {
+  if (strategy === EvaluationStrategy.LAZY && leftValue === undefined) {
     return undefined;
   }
   const rightValue = evaluateExpression(expression.right, strategy, context);
@@ -164,7 +164,7 @@ export const evaluateBinaryAdditionExpression: EvaluationFunction<
 ): boolean | number | string | undefined => {
   assert(expression.operator === '+');
   const leftValue = evaluateExpression(expression.left, strategy, context);
-  if (leftValue === undefined && strategy === EvaluationStrategy.LAZY) {
+  if (strategy === EvaluationStrategy.LAZY && leftValue === undefined) {
     return undefined;
   }
   const rightValue = evaluateExpression(expression.right, strategy, context);
@@ -187,7 +187,7 @@ export const evaluateBinarySubtractionExpression: EvaluationFunction<
 ): boolean | number | string | undefined => {
   assert(expression.operator === '-');
   const leftValue = evaluateExpression(expression.left, strategy, context);
-  if (leftValue === undefined && strategy === EvaluationStrategy.LAZY) {
+  if (strategy === EvaluationStrategy.LAZY && leftValue === undefined) {
     return undefined;
   }
   const rightValue = evaluateExpression(expression.right, strategy, context);

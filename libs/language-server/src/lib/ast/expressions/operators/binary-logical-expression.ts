@@ -28,28 +28,28 @@ export const inferBinaryLogicalExpressionType: BinaryTypeInferenceFunction = (
       expression.operator === 'or',
   );
 
+  if (leftType !== PropertyValuetype.BOOLEAN) {
+    context?.accept(
+      'error',
+      generateUnexpectedTypeMessage(PropertyValuetype.BOOLEAN, leftType),
+      {
+        node: expression.left,
+      },
+    );
+  }
+  if (rightType !== PropertyValuetype.BOOLEAN) {
+    context?.accept(
+      'error',
+      generateUnexpectedTypeMessage(PropertyValuetype.BOOLEAN, leftType),
+      {
+        node: expression.right,
+      },
+    );
+  }
   if (
     leftType !== PropertyValuetype.BOOLEAN ||
     rightType !== PropertyValuetype.BOOLEAN
   ) {
-    if (leftType !== PropertyValuetype.BOOLEAN) {
-      context?.accept(
-        'error',
-        generateUnexpectedTypeMessage(PropertyValuetype.BOOLEAN, leftType),
-        {
-          node: expression.left,
-        },
-      );
-    }
-    if (rightType !== PropertyValuetype.BOOLEAN) {
-      context?.accept(
-        'error',
-        generateUnexpectedTypeMessage(PropertyValuetype.BOOLEAN, leftType),
-        {
-          node: expression.right,
-        },
-      );
-    }
     return undefined;
   }
   return PropertyValuetype.BOOLEAN;
@@ -64,7 +64,7 @@ export const evaluateBinaryXorExpression: EvaluationFunction<
 ): boolean | number | string | undefined => {
   assert(expression.operator === 'xor');
   const leftValue = evaluateExpression(expression.left, strategy, context);
-  if (leftValue === undefined && strategy === EvaluationStrategy.LAZY) {
+  if (strategy === EvaluationStrategy.LAZY && leftValue === undefined) {
     return undefined;
   }
   const rightValue = evaluateExpression(expression.right, strategy, context);
@@ -86,10 +86,10 @@ export const evaluateBinaryAndExpression: EvaluationFunction<
 ): boolean | number | string | undefined => {
   assert(expression.operator === 'and');
   const leftValue = evaluateExpression(expression.left, strategy, context);
-  if (leftValue === undefined && strategy === EvaluationStrategy.LAZY) {
+  if (strategy === EvaluationStrategy.LAZY && leftValue === undefined) {
     return undefined;
   }
-  if (leftValue === false && strategy === EvaluationStrategy.LAZY) {
+  if (strategy === EvaluationStrategy.LAZY && leftValue === false) {
     return false;
   }
   const rightValue = evaluateExpression(expression.right, strategy, context);
@@ -111,11 +111,11 @@ export const evaluateBinaryOrExpression: EvaluationFunction<
 ): boolean | number | string | undefined => {
   assert(expression.operator === 'or');
   const leftValue = evaluateExpression(expression.left, strategy, context);
-  if (leftValue === undefined && strategy === EvaluationStrategy.LAZY) {
+  if (strategy === EvaluationStrategy.LAZY && leftValue === undefined) {
     return undefined;
   }
 
-  if (leftValue === true && strategy === EvaluationStrategy.LAZY) {
+  if (strategy === EvaluationStrategy.LAZY && leftValue === true) {
     return true;
   }
   const rightValue = evaluateExpression(expression.right, strategy, context);

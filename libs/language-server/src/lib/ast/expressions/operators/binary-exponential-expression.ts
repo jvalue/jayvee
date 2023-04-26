@@ -28,25 +28,26 @@ export const inferBinaryExponentialExpressionType: BinaryTypeInferenceFunction =
     context: ValidationContext | undefined,
   ): PropertyValuetype | undefined => {
     assert(expression.operator === 'pow' || expression.operator === 'root');
+
+    if (!isNumericType(leftType)) {
+      context?.accept(
+        'error',
+        generateUnexpectedTypeMessage(numericTypes, leftType),
+        {
+          node: expression.left,
+        },
+      );
+    }
+    if (!isNumericType(rightType)) {
+      context?.accept(
+        'error',
+        generateUnexpectedTypeMessage(numericTypes, rightType),
+        {
+          node: expression.right,
+        },
+      );
+    }
     if (!isNumericType(leftType) || !isNumericType(rightType)) {
-      if (!isNumericType(leftType)) {
-        context?.accept(
-          'error',
-          generateUnexpectedTypeMessage(numericTypes, leftType),
-          {
-            node: expression.left,
-          },
-        );
-      }
-      if (!isNumericType(rightType)) {
-        context?.accept(
-          'error',
-          generateUnexpectedTypeMessage(numericTypes, rightType),
-          {
-            node: expression.right,
-          },
-        );
-      }
       return undefined;
     }
     return PropertyValuetype.DECIMAL;
@@ -61,7 +62,7 @@ export const evaluateBinaryPowExpression: EvaluationFunction<
 ): boolean | number | string | undefined => {
   assert(expression.operator === 'pow');
   const leftValue = evaluateExpression(expression.left, strategy, context);
-  if (leftValue === undefined && strategy === EvaluationStrategy.LAZY) {
+  if (strategy === EvaluationStrategy.LAZY && leftValue === undefined) {
     return undefined;
   }
   const rightValue = evaluateExpression(expression.right, strategy, context);
@@ -101,7 +102,7 @@ export const evaluateBinaryRootExpression: EvaluationFunction<
 ): boolean | number | string | undefined => {
   assert(expression.operator === 'root');
   const leftValue = evaluateExpression(expression.left, strategy, context);
-  if (leftValue === undefined && strategy === EvaluationStrategy.LAZY) {
+  if (strategy === EvaluationStrategy.LAZY && leftValue === undefined) {
     return undefined;
   }
   const rightValue = evaluateExpression(expression.right, strategy, context);

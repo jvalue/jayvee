@@ -54,7 +54,7 @@ export const evaluateBinaryEqualityExpression: EvaluationFunction<
 ): boolean | number | string | undefined => {
   assert(expression.operator === '==');
   const leftValue = evaluateExpression(expression.left, strategy, context);
-  if (leftValue === undefined && strategy === EvaluationStrategy.LAZY) {
+  if (strategy === EvaluationStrategy.LAZY && leftValue === undefined) {
     return undefined;
   }
   const rightValue = evaluateExpression(expression.right, strategy, context);
@@ -75,7 +75,7 @@ export const evaluateBinaryInequalityExpression: EvaluationFunction<
 ): boolean | number | string | undefined => {
   assert(expression.operator === '!=');
   const leftValue = evaluateExpression(expression.left, strategy, context);
-  if (leftValue === undefined && strategy === EvaluationStrategy.LAZY) {
+  if (strategy === EvaluationStrategy.LAZY && leftValue === undefined) {
     return undefined;
   }
   const rightValue = evaluateExpression(expression.right, strategy, context);
