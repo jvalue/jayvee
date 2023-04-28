@@ -202,9 +202,7 @@ export function isNumericType(
   if (type === undefined) {
     return false;
   }
-  return (
-    type === PropertyValuetype.INTEGER || type === PropertyValuetype.DECIMAL
-  );
+  return numericTypes.includes(type);
 }
 
 export function inferTypeFromValue(
