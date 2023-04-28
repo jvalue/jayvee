@@ -5,7 +5,7 @@
 // The order of the terminals matters here, it implicitly defines the prioritization for the lexer.
 // For more details, see https://langium.org/docs/grammar-language/#terminal-rules
 
-terminal CELL_REFERENCE: /([A-Z]+|\*)([0-9]+|\*)/;
+terminal CELL_REFERENCE: /[A-Z]+/ INTEGER;
 terminal ID: /[_a-zA-Z][\w_]*/;
 
 terminal DECIMAL returns number: INTEGER '.' INTEGER;

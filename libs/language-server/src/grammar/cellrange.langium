@@ -11,13 +11,22 @@ CellRangeLiteral:
   | CellLiteral;
 
 RangeLiteral:
-  'range' cellFrom=CELL_REFERENCE ':' cellTo=CELL_REFERENCE;
+  'range' cellFrom=(CELL_REFERENCE | CellReference) ':' cellTo=(CELL_REFERENCE | CellReference);
 
 ColumnLiteral:
-  'column' columnId=(ID | '*');
+  'column' columnId=ColumnId;
 
 RowLiteral:
-  'row' rowId=(INTEGER | '*');
+  'row' rowId=RowId;
 
 CellLiteral:
-  'cell' cellId=CELL_REFERENCE;
+  'cell' cellId=(CELL_REFERENCE | CellReference);
+
+CellReference:
+  columnId=ColumnId rowId=RowId;
+
+ColumnId:
+  value=(ID | '*');
+
+RowId:
+  value=(INTEGER | '*');
