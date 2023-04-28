@@ -155,7 +155,7 @@ export class TableInterpreterExecutor
       if (!columnEntry.valuetype.isValid(value, context)) {
         const cellIndex = new CellIndex(sheetColumnIndex, sheetRowIndex);
         context.logger.logDebug(
-          `The value at cell ${cellIndex.toString()} does not match the type ${getValuetypeName(
+          `Invalid value at cell ${cellIndex.toString()}: "${value}" does not match the type ${getValuetypeName(
             columnEntry.astNode.type,
           )}`,
         );
