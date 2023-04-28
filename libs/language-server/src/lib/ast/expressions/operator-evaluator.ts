@@ -12,31 +12,12 @@ import {
   UnaryExpressionOperator,
 } from '../model-util';
 
-import { EvaluationStrategy, evaluateExpression } from './evaluation';
-
-export type OperandValue = boolean | number | string;
-
-export type OperandValueTypeguard<T extends OperandValue> = (
-  value: OperandValue,
-) => value is T;
-
-export const OPERAND_VALUE_TYPEGUARD: OperandValueTypeguard<OperandValue> = (
-  value: OperandValue,
-): value is OperandValue => {
-  return true;
-};
-
-export const NUMBER_TYPEGUARD: OperandValueTypeguard<number> = (
-  value: OperandValue,
-): value is number => {
-  return typeof value === 'number';
-};
-
-export const BOOLEAN_TYPEGUARD: OperandValueTypeguard<boolean> = (
-  value: OperandValue,
-): value is boolean => {
-  return typeof value === 'boolean';
-};
+import {
+  EvaluationStrategy,
+  OperandValue,
+  OperandValueTypeguard,
+  evaluateExpression,
+} from './evaluation';
 
 export interface OperatorEvaluator<
   E extends UnaryExpression | BinaryExpression,

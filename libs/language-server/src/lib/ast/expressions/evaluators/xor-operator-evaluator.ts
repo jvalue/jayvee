@@ -3,10 +3,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 // eslint-disable-next-line import/no-cycle
-import {
-  BOOLEAN_TYPEGUARD,
-  DefaultBinaryOperatorEvaluator,
-} from '../operator-evaluator';
+import { DefaultBinaryOperatorEvaluator } from '../operator-evaluator';
+import { BOOLEAN_TYPEGUARD } from '../typeguards';
 
 export class XorOperatorEvaluator extends DefaultBinaryOperatorEvaluator<
   boolean,

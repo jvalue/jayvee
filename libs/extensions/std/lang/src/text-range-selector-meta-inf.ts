@@ -2,16 +2,14 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'assert';
-
 import {
   BlockMetaInformation,
   IOType,
+  NUMBER_TYPEGUARD,
   PropertyAssignment,
   PropertyValuetype,
   ValidationContext,
-  evaluateExpression,
-  isExpression,
+  evaluatePropertyValueExpression,
 } from '@jvalue/jayvee-language-server';
 
 export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
@@ -48,13 +46,14 @@ export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
           return;
         }
 
-        assert(isExpression(lineFromProperty.value));
-        assert(isExpression(lineToProperty.value));
-
-        const lineFrom = evaluateExpression(lineFromProperty.value);
-        assert(typeof lineFrom === 'number');
-        const lineTo = evaluateExpression(lineToProperty.value);
-        assert(typeof lineTo === 'number');
+        const lineFrom = evaluatePropertyValueExpression(
+          lineFromProperty.value,
+          NUMBER_TYPEGUARD,
+        );
+        const lineTo = evaluatePropertyValueExpression(
+          lineToProperty.value,
+          NUMBER_TYPEGUARD,
+        );
 
         if (lineFrom > lineTo) {
           [lineFromProperty, lineToProperty].forEach((property) => {
@@ -76,10 +75,11 @@ function greaterThanZeroValidation(
   context: ValidationContext,
 ) {
   const propertyValue = property.value;
-  assert(isExpression(propertyValue));
 
-  const value = evaluateExpression(propertyValue);
-  assert(typeof value === 'number');
+  const value = evaluatePropertyValueExpression(
+    propertyValue,
+    NUMBER_TYPEGUARD,
+  );
 
   if (value <= 0) {
     context.accept('error', `Line numbers need to be greater than zero`, {

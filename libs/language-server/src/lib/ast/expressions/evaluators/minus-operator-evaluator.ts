@@ -3,10 +3,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 // eslint-disable-next-line import/no-cycle
-import {
-  DefaultUnaryOperatorEvaluator,
-  NUMBER_TYPEGUARD,
-} from '../operator-evaluator';
+import { DefaultUnaryOperatorEvaluator } from '../operator-evaluator';
+import { NUMBER_TYPEGUARD } from '../typeguards';
 
 export class MinusOperatorEvaluator extends DefaultUnaryOperatorEvaluator<
   number,

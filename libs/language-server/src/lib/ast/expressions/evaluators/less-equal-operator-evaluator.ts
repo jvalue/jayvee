@@ -3,10 +3,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 // eslint-disable-next-line import/no-cycle
-import {
-  DefaultBinaryOperatorEvaluator,
-  NUMBER_TYPEGUARD,
-} from '../operator-evaluator';
+import { DefaultBinaryOperatorEvaluator } from '../operator-evaluator';
+import { NUMBER_TYPEGUARD } from '../typeguards';
 
 export class LessEqualOperatorEvaluator extends DefaultBinaryOperatorEvaluator<
   number,

@@ -7,10 +7,8 @@ import { strict as assert } from 'assert';
 import { ValidationContext } from '../../../validation/validation-context';
 import { UnaryExpression } from '../../generated/ast';
 // eslint-disable-next-line import/no-cycle
-import {
-  DefaultUnaryOperatorEvaluator,
-  NUMBER_TYPEGUARD,
-} from '../operator-evaluator';
+import { DefaultUnaryOperatorEvaluator } from '../operator-evaluator';
+import { NUMBER_TYPEGUARD } from '../typeguards';
 
 export class SqrtOperatorEvaluator extends DefaultUnaryOperatorEvaluator<
   number,

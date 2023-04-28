@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'assert';
-
 import * as R from '@jvalue/jayvee-execution';
 import {
   BlockExecutor,
@@ -12,7 +10,11 @@ import {
   TextFile,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
-import { IOType, evaluateExpression } from '@jvalue/jayvee-language-server';
+import {
+  IOType,
+  NUMBER_TYPEGUARD,
+  evaluatePropertyValueExpression,
+} from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
 export class TextLineDeleterExecutor
@@ -30,8 +32,10 @@ export class TextLineDeleterExecutor
     const lineExpressions =
       context.getExpressionCollectionPropertyValue('lines');
     const lineEntries = lineExpressions.map((expression) => {
-      const value = evaluateExpression(expression);
-      assert(typeof value === 'number');
+      const value = evaluatePropertyValueExpression(
+        expression,
+        NUMBER_TYPEGUARD,
+      );
       return { lineNumber: value, astNode: expression };
     });
     const numberOfLines = file.content.length;

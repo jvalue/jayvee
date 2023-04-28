@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { AtomicLiteral, CollectionLiteral } from './generated/ast';
-// eslint-disable-next-line import/no-cycle
 import { PropertyValuetype, inferTypeFromValue } from './model-util';
 
 export interface TypedCollectionValidation {

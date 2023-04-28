@@ -2,15 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'assert';
-
-import { evaluateExpression } from '../ast/expressions/evaluation';
-import { PropertyAssignment, isExpression } from '../ast/generated/ast';
-import {
-  PropertyValuetype,
-  inferTypeFromValue,
-  isNumericType,
-} from '../ast/model-util';
+import { evaluatePropertyValueExpression } from '../ast/expressions/evaluation';
+import { NUMBER_TYPEGUARD } from '../ast/expressions/typeguards';
+import { PropertyAssignment } from '../ast/generated/ast';
+import { PropertyValuetype } from '../ast/model-util';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 import { ValidationContext } from '../validation/validation-context';
 
@@ -46,19 +41,14 @@ export class LengthConstraintMetaInformation extends ConstraintMetaInformation {
           return;
         }
 
-        assert(isExpression(minLengthProperty.value));
-        assert(isExpression(maxLengthProperty.value));
-        if (
-          !isNumericType(inferTypeFromValue(minLengthProperty.value)) ||
-          !isNumericType(inferTypeFromValue(maxLengthProperty.value))
-        ) {
-          return;
-        }
-
-        const minLength = evaluateExpression(minLengthProperty.value);
-        assert(typeof minLength === 'number');
-        const maxLength = evaluateExpression(maxLengthProperty.value);
-        assert(typeof maxLength === 'number');
+        const minLength = evaluatePropertyValueExpression(
+          minLengthProperty.value,
+          NUMBER_TYPEGUARD,
+        );
+        const maxLength = evaluatePropertyValueExpression(
+          maxLengthProperty.value,
+          NUMBER_TYPEGUARD,
+        );
 
         if (minLength > maxLength) {
           [minLengthProperty, maxLengthProperty].forEach((property) => {
@@ -92,9 +82,10 @@ function nonNegativeValidation(
   context: ValidationContext,
 ) {
   const propertyValue = property.value;
-  assert(isExpression(propertyValue));
-  const value = evaluateExpression(propertyValue);
-  assert(typeof value === 'number');
+  const value = evaluatePropertyValueExpression(
+    propertyValue,
+    NUMBER_TYPEGUARD,
+  );
 
   if (value < 0) {
     context.accept(

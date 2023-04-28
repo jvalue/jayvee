@@ -7,8 +7,9 @@ import { strict as assert } from 'assert';
 import {
   BlockMetaInformation,
   IOType,
+  NUMBER_TYPEGUARD,
   PropertyValuetype,
-  evaluateExpression,
+  evaluatePropertyValueExpression,
   isCollectionLiteral,
   isExpression,
   validateTypedCollection,
@@ -43,8 +44,10 @@ export class TextLineDeleterMetaInformation extends BlockMetaInformation {
             assert(validItems.every(isExpression));
 
             for (const expression of validItems) {
-              const value = evaluateExpression(expression);
-              assert(typeof value === 'number');
+              const value = evaluatePropertyValueExpression(
+                expression,
+                NUMBER_TYPEGUARD,
+              );
 
               if (value <= 0) {
                 context.accept(

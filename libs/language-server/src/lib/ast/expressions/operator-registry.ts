@@ -5,18 +5,13 @@
 /* eslint-disable import/no-cycle */
 
 import { ValidationContext } from '../../validation/validation-context';
-import {
-  BinaryExpression,
-  Expression,
-  UnaryExpression,
-} from '../generated/ast';
+import { BinaryExpression, UnaryExpression } from '../generated/ast';
 import {
   BinaryExpressionOperator,
   PropertyValuetype,
   UnaryExpressionOperator,
 } from '../model-util';
 
-import { EvaluationStrategy } from './evaluation';
 import { AdditionOperatorEvaluator } from './evaluators/addition-operator-evaluator';
 import { AndOperatorEvaluator } from './evaluators/and-operator-evaluator';
 import { CeilOperatorEvaluator } from './evaluators/ceil-operator-evaluator';
@@ -63,12 +58,6 @@ export type BinaryTypeInferenceFunction = (
   expression: BinaryExpression,
   context: ValidationContext | undefined,
 ) => PropertyValuetype | undefined;
-
-export type EvaluationFunction<T extends Expression> = (
-  expression: T,
-  strategy: EvaluationStrategy,
-  context: ValidationContext | undefined,
-) => boolean | number | string | undefined;
 
 export interface UnaryOperatorEntry {
   typeInference: UnaryTypeInferenceFunction;

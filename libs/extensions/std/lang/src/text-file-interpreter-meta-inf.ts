@@ -2,15 +2,14 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'assert';
 import { TextDecoder } from 'util';
 
 import {
   BlockMetaInformation,
   IOType,
   PropertyValuetype,
-  evaluateExpression,
-  isExpression,
+  STRING_TYPEGUARD,
+  evaluatePropertyValueExpression,
 } from '@jvalue/jayvee-language-server';
 
 export class TextFileInterpreterMetaInformation extends BlockMetaInformation {
@@ -26,9 +25,10 @@ export class TextFileInterpreterMetaInformation extends BlockMetaInformation {
           },
           validation: (property, context) => {
             const propertyValue = property.value;
-            assert(isExpression(propertyValue));
-            const encodingValue = evaluateExpression(propertyValue);
-            assert(typeof encodingValue === 'string');
+            const encodingValue = evaluatePropertyValueExpression(
+              propertyValue,
+              STRING_TYPEGUARD,
+            );
 
             try {
               new TextDecoder(encodingValue);

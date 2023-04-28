@@ -2,11 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'assert';
-
-import { evaluateExpression } from '../ast/expressions/evaluation';
-import { isExpression } from '../ast/generated/ast';
-import { PropertyValuetype, inferTypeFromValue } from '../ast/model-util';
+import { evaluatePropertyValueExpression } from '../ast/expressions/evaluation';
+import {
+  BOOLEAN_TYPEGUARD,
+  NUMBER_TYPEGUARD,
+} from '../ast/expressions/typeguards';
+import { PropertyValuetype } from '../ast/model-util';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 
 export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
@@ -47,13 +48,14 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
           return;
         }
 
-        assert(isExpression(lowerBoundProperty.value));
-        assert(isExpression(upperBoundProperty.value));
-
-        const lowerBound = evaluateExpression(lowerBoundProperty.value);
-        assert(typeof lowerBound === 'number');
-        const upperBound = evaluateExpression(upperBoundProperty.value);
-        assert(typeof upperBound === 'number');
+        const lowerBound = evaluatePropertyValueExpression(
+          lowerBoundProperty.value,
+          NUMBER_TYPEGUARD,
+        );
+        const upperBound = evaluatePropertyValueExpression(
+          upperBoundProperty.value,
+          NUMBER_TYPEGUARD,
+        );
 
         if (lowerBound > upperBound) {
           [lowerBoundProperty, upperBoundProperty].forEach((property) => {
@@ -69,16 +71,10 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
           );
           let lowerBoundInclusive = true;
           if (lowerBoundInclusiveProperty !== undefined) {
-            assert(isExpression(lowerBoundInclusiveProperty.value));
-            assert(
-              inferTypeFromValue(lowerBoundInclusiveProperty.value) ===
-                PropertyValuetype.BOOLEAN,
-            );
-
-            const expressionValue = evaluateExpression(
+            const expressionValue = evaluatePropertyValueExpression(
               lowerBoundInclusiveProperty.value,
+              BOOLEAN_TYPEGUARD,
             );
-            assert(typeof expressionValue === 'boolean');
             lowerBoundInclusive = expressionValue;
           }
 
@@ -87,11 +83,10 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
           );
           let upperBoundInclusive = true;
           if (upperBoundInclusiveProperty !== undefined) {
-            assert(isExpression(upperBoundInclusiveProperty.value));
-            const expressionValue = evaluateExpression(
+            const expressionValue = evaluatePropertyValueExpression(
               upperBoundInclusiveProperty.value,
+              BOOLEAN_TYPEGUARD,
             );
-            assert(typeof expressionValue === 'boolean');
             upperBoundInclusive = expressionValue;
           }
 

@@ -5,10 +5,8 @@
 import { ValidationContext } from '../../../validation/validation-context';
 import { BinaryExpression } from '../../generated/ast';
 // eslint-disable-next-line import/no-cycle
-import {
-  DefaultBinaryOperatorEvaluator,
-  NUMBER_TYPEGUARD,
-} from '../operator-evaluator';
+import { DefaultBinaryOperatorEvaluator } from '../operator-evaluator';
+import { NUMBER_TYPEGUARD } from '../typeguards';
 
 export class RootOperatorEvaluator extends DefaultBinaryOperatorEvaluator<
   number,
