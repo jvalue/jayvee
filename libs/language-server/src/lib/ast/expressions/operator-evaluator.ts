@@ -43,6 +43,9 @@ export interface OperatorEvaluator<
 > {
   readonly operator: E['operator'];
 
+  /**
+   * @return the value the expression evaluates to or `undefined` if the evaluation failed.
+   */
   evaluate(
     expression: E,
     strategy: EvaluationStrategy,
