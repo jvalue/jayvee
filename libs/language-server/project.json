@@ -45,7 +45,8 @@
       "dependsOn": ["build"],
       "options": {
         "commands": [
-          "node tools/scripts/relax-peer-dependency-versions.mjs @jvalue/language-server"
+          "node tools/scripts/relax-peer-dependency-versions.mjs language-server",
+          "node tools/scripts/add-package-json-version.mjs language-server"
         ]
       }
     },
@@ -54,7 +55,7 @@
       "dependsOn": ["pre-publish"],
       "options": {
         "commands": [
-          "node tools/scripts/publish.mjs @jvalue/language-server"
+          "node tools/scripts/publish.mjs language-server"
         ]
       }
     },
@@ -63,7 +64,7 @@
       "dependsOn": ["pre-publish"],
       "options": {
         "commands": [
-          "node tools/scripts/pack.mjs @jvalue/language-server"
+          "node tools/scripts/pack.mjs language-server"
         ]
       }
     }
