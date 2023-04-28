@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { AtomicLiteral, CollectionLiteral } from './generated/ast';
-import { PropertyValuetype, inferTypesFromValue } from './model-util';
+import { PropertyValuetype, inferTypeFromValue } from './model-util';
 
 export interface TypedCollectionValidation {
   validItems: AtomicLiteral[];
@@ -12,12 +12,15 @@ export interface TypedCollectionValidation {
 
 export function validateTypedCollection(
   collection: CollectionLiteral,
-  desiredType: PropertyValuetype,
+  desiredTypes: PropertyValuetype[],
 ): TypedCollectionValidation {
-  const validItems = collection.values.filter((i) =>
-    inferTypesFromValue(i).includes(desiredType),
+  const validItems = collection.values.filter((value) => {
+    const valueType = inferTypeFromValue(value);
+    return valueType !== undefined && desiredTypes.includes(valueType);
+  });
+  const invalidItems = collection.values.filter(
+    (value) => !validItems.includes(value),
   );
-  const invalidItems = collection.values.filter((i) => !validItems.includes(i));
 
   return {
     validItems,

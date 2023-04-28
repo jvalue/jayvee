@@ -20,10 +20,9 @@ export class AllowlistConstraintMetaInformation extends ConstraintMetaInformatio
               return;
             }
 
-            const { invalidItems } = validateTypedCollection(
-              propertyValue,
+            const { invalidItems } = validateTypedCollection(propertyValue, [
               PropertyValuetype.TEXT,
-            );
+            ]);
 
             invalidItems.forEach((invalidValue) =>
               context.accept(

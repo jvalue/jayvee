@@ -1,0 +1,31 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+import { strict as assert } from 'assert';
+
+import { ValidationContext } from '../../../validation/validation-context';
+import { UnaryExpression } from '../../generated/ast';
+// eslint-disable-next-line import/no-cycle
+import { PropertyValuetype } from '../../model-util';
+import { UnaryTypeInferenceFunction } from '../operator-registry';
+import { generateUnexpectedTypeMessage } from '../type-inference';
+
+export const inferUnaryNotExpressionType: UnaryTypeInferenceFunction = (
+  innerType: PropertyValuetype,
+  expression: UnaryExpression,
+  context: ValidationContext | undefined,
+): PropertyValuetype | undefined => {
+  assert(expression.operator === 'not');
+  if (innerType !== PropertyValuetype.BOOLEAN) {
+    context?.accept(
+      'error',
+      generateUnexpectedTypeMessage(PropertyValuetype.BOOLEAN, innerType),
+      {
+        node: expression.expression,
+      },
+    );
+    return undefined;
+  }
+  return PropertyValuetype.BOOLEAN;
+};

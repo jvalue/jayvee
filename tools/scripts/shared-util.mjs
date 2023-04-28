@@ -36,6 +36,29 @@ export function getOutputPath(projectName) {
     return outputPath;
 }
 
+export function getSourcePath(projectName) {
+    invariant(
+        projectName,
+        `No project name was provided.`,
+    );
+
+    const graph = readCachedProjectGraph();
+    const project = graph.nodes[projectName];
+
+    invariant(
+        project,
+        `Could not find project "${projectName}" in the workspace. Is the project.json configured correctly?`,
+    );
+
+    const sourcePath = project.data?.sourceRoot;
+    invariant(
+        sourcePath,
+        `Could not find "sourceRoot" of project "${projectName}". Is project.json configured correctly?`,
+    );
+
+    return sourcePath;
+}
+
 export function parsePackageJson() {
     return JSON.parse(readFileSync(`package.json`).toString());
 }

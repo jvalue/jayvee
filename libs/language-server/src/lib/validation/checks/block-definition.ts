@@ -8,11 +8,12 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import { assertUnreachable } from 'langium';
 
+import { BlockDefinition } from '../../ast/generated/ast';
+// eslint-disable-next-line import/no-cycle
 import {
-  BlockDefinition,
   collectIngoingPipes,
   collectOutgoingPipes,
-} from '../../ast';
+} from '../../ast/model-util';
 import { PipeWrapper } from '../../ast/wrappers/pipe-wrapper';
 import {
   getMetaInformation,

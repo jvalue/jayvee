@@ -8,24 +8,24 @@ import { AstNode, assertUnreachable } from 'langium';
 
 // eslint-disable-next-line import/no-cycle
 import { getMetaInformation } from '../meta-information/meta-inf-registry';
+// eslint-disable-next-line import/no-cycle
+import { ValidationContext } from '../validation';
 
+// eslint-disable-next-line import/no-cycle
+import { inferExpressionType } from './expressions/type-inference';
 import {
+  BinaryExpression,
   BlockDefinition,
-  BooleanExpression,
   PipelineDefinition,
   PrimitiveValuetypeKeywordLiteral,
   PropertyValueLiteral,
+  UnaryExpression,
   ValuetypeDefinitionReference,
-  isBinaryExpression,
-  isBooleanExpression,
-  isBooleanLiteral,
   isCellRangeLiteral,
   isCollectionLiteral,
   isConstraintReferenceLiteral,
-  isNumericLiteral,
+  isExpression,
   isRegexLiteral,
-  isTextLiteral,
-  isUnaryExpression,
   isValuetypeAssignmentLiteral,
   isValuetypeDefinitionReference,
 } from './generated/ast';
@@ -189,93 +189,45 @@ export function runtimeParameterAllowedForType(
   }
 }
 
-export function inferTypesFromValue(
-  value: PropertyValueLiteral,
-): PropertyValuetype[] {
-  if (isTextLiteral(value)) {
-    return [PropertyValuetype.TEXT];
-  }
-  if (isNumericLiteral(value)) {
-    if (Number.isInteger(value.value)) {
-      return [PropertyValuetype.INTEGER, PropertyValuetype.DECIMAL];
-    }
-    return [PropertyValuetype.DECIMAL];
-  }
-  if (isBooleanExpression(value)) {
-    return [PropertyValuetype.BOOLEAN];
-  }
-  if (isCollectionLiteral(value)) {
-    return [PropertyValuetype.COLLECTION];
-  }
-  if (isCellRangeLiteral(value)) {
-    return [PropertyValuetype.CELL_RANGE];
-  }
-  if (isRegexLiteral(value)) {
-    return [PropertyValuetype.REGEX];
-  }
-  if (isValuetypeAssignmentLiteral(value)) {
-    return [PropertyValuetype.VALUETYPE_ASSIGNMENT];
-  }
-  if (isConstraintReferenceLiteral(value)) {
-    return [PropertyValuetype.CONSTRAINT];
-  }
+export type UnaryExpressionOperator = UnaryExpression['operator'];
+export type BinaryExpressionOperator = BinaryExpression['operator'];
 
-  assertUnreachable(value);
+export const numericTypes = [
+  PropertyValuetype.INTEGER,
+  PropertyValuetype.DECIMAL,
+];
+export function isNumericType(
+  type: PropertyValuetype | undefined,
+): type is PropertyValuetype.INTEGER | PropertyValuetype.DECIMAL {
+  if (type === undefined) {
+    return false;
+  }
+  return numericTypes.includes(type);
 }
 
-export function evaluateExpression(expression: BooleanExpression): boolean {
-  if (isBooleanLiteral(expression)) {
-    return expression.value;
+export function inferTypeFromValue(
+  value: PropertyValueLiteral,
+  context?: ValidationContext,
+): PropertyValuetype | undefined {
+  if (isCollectionLiteral(value)) {
+    return PropertyValuetype.COLLECTION;
   }
-  if (isUnaryExpression(expression)) {
-    const unaryOperator = expression.operator;
-    switch (unaryOperator) {
-      case 'not': {
-        return !evaluateExpression(expression.expression);
-      }
-      default:
-        assertUnreachable(unaryOperator);
-    }
+  if (isCellRangeLiteral(value)) {
+    return PropertyValuetype.CELL_RANGE;
   }
-  if (isBinaryExpression(expression)) {
-    const binaryOperator = expression.operator;
-    switch (binaryOperator) {
-      case '==': {
-        const leftValue = evaluateExpression(expression.left);
-        const rightValue = evaluateExpression(expression.right);
-        return leftValue === rightValue;
-      }
-      case '!=': {
-        const leftValue = evaluateExpression(expression.left);
-        const rightValue = evaluateExpression(expression.right);
-        return leftValue !== rightValue;
-      }
-      case 'xor': {
-        const leftValue = evaluateExpression(expression.left);
-        const rightValue = evaluateExpression(expression.right);
-        return (leftValue && !rightValue) || (!leftValue && rightValue);
-      }
-      case 'and': {
-        const leftValue = evaluateExpression(expression.left);
-        if (!leftValue) {
-          return false;
-        }
-        const rightValue = evaluateExpression(expression.right);
-        return rightValue;
-      }
-      case 'or': {
-        const leftValue = evaluateExpression(expression.left);
-        if (leftValue) {
-          return true;
-        }
-        const rightValue = evaluateExpression(expression.right);
-        return rightValue;
-      }
-      default:
-        assertUnreachable(binaryOperator);
-    }
+  if (isRegexLiteral(value)) {
+    return PropertyValuetype.REGEX;
   }
-  assertUnreachable(expression);
+  if (isValuetypeAssignmentLiteral(value)) {
+    return PropertyValuetype.VALUETYPE_ASSIGNMENT;
+  }
+  if (isConstraintReferenceLiteral(value)) {
+    return PropertyValuetype.CONSTRAINT;
+  }
+  if (isExpression(value)) {
+    return inferExpressionType(value, context);
+  }
+  assertUnreachable(value);
 }
 
 export function getValuetypeName(

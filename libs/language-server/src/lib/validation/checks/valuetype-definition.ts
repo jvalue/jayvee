@@ -8,11 +8,11 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
 import {
-  PropertyValuetype,
   ValuetypeDefinition,
-  inferTypesFromValue,
   isConstraintReferenceLiteral,
-} from '../../ast';
+} from '../../ast/generated/ast';
+// eslint-disable-next-line import/no-cycle
+import { PropertyValuetype, inferTypeFromValue } from '../../ast/model-util';
 import { getMetaInformation } from '../../meta-information/meta-inf-registry';
 import { ValidationContext } from '../validation-context';
 
@@ -30,8 +30,8 @@ function checkConstraintsCollectionValues(
 ): void {
   const constraints = valuetype.constraints;
   constraints.values.forEach((collectionValue) => {
-    const types = inferTypesFromValue(collectionValue);
-    if (!types.includes(PropertyValuetype.CONSTRAINT)) {
+    const type = inferTypeFromValue(collectionValue);
+    if (type !== PropertyValuetype.CONSTRAINT) {
       context.accept(
         'error',
         'Only constraints are allowed in this collection',
