@@ -128,6 +128,11 @@ export abstract class DefaultBinaryOperatorEvaluator<
   }
 }
 
+/**
+ * This class serves as a base for boolean operators that support short-circuit evaluation.
+ * Short-circuit evaluation means that the right operand is not evaluated
+ * if the resulting value can be determined by solely evaluating the left operand.
+ */
 export abstract class BooleanShortCircuitOperatorEvaluator
   implements OperatorEvaluator<BinaryExpression>
 {
