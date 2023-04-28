@@ -1,15 +1,15 @@
 // SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
 //
 // SPDX-License-Identifier: AGPL-3.0-only
-import { strict as assert } from 'assert';
 
 import {
   BlockMetaInformation,
   IOType,
   PropertyAssignment,
   PropertyValuetype,
+  STRING_TYPEGUARD,
   ValidationContext,
-  isTextLiteral,
+  evaluatePropertyValueExpression,
 } from '@jvalue/jayvee-language-server';
 
 export class GtfsRTInterpreterMetaInformation extends BlockMetaInformation {
@@ -103,9 +103,12 @@ function isGtfsRTEntity(
   context: ValidationContext,
 ) {
   const propertyValue = property.value;
-  assert(isTextLiteral(propertyValue));
+  const entityValue = evaluatePropertyValueExpression(
+    propertyValue,
+    STRING_TYPEGUARD,
+  );
 
-  if (!['trip_update', 'alert', 'vehicle'].includes(propertyValue.value)) {
+  if (!['trip_update', 'alert', 'vehicle'].includes(entityValue)) {
     context.accept(
       'error',
       `Entity must be "trip_update", "alert" or "vehicle"`,

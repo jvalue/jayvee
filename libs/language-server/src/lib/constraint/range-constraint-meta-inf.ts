@@ -2,13 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'assert';
-
+import { evaluatePropertyValueExpression } from '../ast/expressions/evaluation';
 import {
-  evaluateExpression,
-  isBooleanExpression,
-  isNumericLiteral,
-} from '../ast';
+  BOOLEAN_TYPEGUARD,
+  NUMBER_TYPEGUARD,
+} from '../ast/expressions/typeguards';
 import { PropertyValuetype } from '../ast/model-util';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 
@@ -50,11 +48,14 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
           return;
         }
 
-        assert(isNumericLiteral(lowerBoundProperty.value));
-        assert(isNumericLiteral(upperBoundProperty.value));
-
-        const lowerBound = lowerBoundProperty.value.value;
-        const upperBound = upperBoundProperty.value.value;
+        const lowerBound = evaluatePropertyValueExpression(
+          lowerBoundProperty.value,
+          NUMBER_TYPEGUARD,
+        );
+        const upperBound = evaluatePropertyValueExpression(
+          upperBoundProperty.value,
+          NUMBER_TYPEGUARD,
+        );
 
         if (lowerBound > upperBound) {
           [lowerBoundProperty, upperBoundProperty].forEach((property) => {
@@ -70,10 +71,11 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
           );
           let lowerBoundInclusive = true;
           if (lowerBoundInclusiveProperty !== undefined) {
-            assert(isBooleanExpression(lowerBoundInclusiveProperty.value));
-            lowerBoundInclusive = evaluateExpression(
+            const expressionValue = evaluatePropertyValueExpression(
               lowerBoundInclusiveProperty.value,
+              BOOLEAN_TYPEGUARD,
             );
+            lowerBoundInclusive = expressionValue;
           }
 
           const upperBoundInclusiveProperty = propertyBody.properties.find(
@@ -81,10 +83,11 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
           );
           let upperBoundInclusive = true;
           if (upperBoundInclusiveProperty !== undefined) {
-            assert(isBooleanExpression(upperBoundInclusiveProperty.value));
-            upperBoundInclusive = evaluateExpression(
+            const expressionValue = evaluatePropertyValueExpression(
               upperBoundInclusiveProperty.value,
+              BOOLEAN_TYPEGUARD,
             );
+            upperBoundInclusive = expressionValue;
           }
 
           const errorMessage =

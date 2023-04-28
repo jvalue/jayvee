@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'assert';
-
-import { PropertyAssignment, isNumericLiteral } from '../ast';
+import { evaluatePropertyValueExpression } from '../ast/expressions/evaluation';
+import { NUMBER_TYPEGUARD } from '../ast/expressions/typeguards';
+import { PropertyAssignment } from '../ast/generated/ast';
 import { PropertyValuetype } from '../ast/model-util';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 import { ValidationContext } from '../validation/validation-context';
@@ -41,11 +41,14 @@ export class LengthConstraintMetaInformation extends ConstraintMetaInformation {
           return;
         }
 
-        assert(isNumericLiteral(minLengthProperty.value));
-        assert(isNumericLiteral(maxLengthProperty.value));
-
-        const minLength = minLengthProperty.value.value;
-        const maxLength = maxLengthProperty.value.value;
+        const minLength = evaluatePropertyValueExpression(
+          minLengthProperty.value,
+          NUMBER_TYPEGUARD,
+        );
+        const maxLength = evaluatePropertyValueExpression(
+          maxLengthProperty.value,
+          NUMBER_TYPEGUARD,
+        );
 
         if (minLength > maxLength) {
           [minLengthProperty, maxLengthProperty].forEach((property) => {
@@ -79,9 +82,12 @@ function nonNegativeValidation(
   context: ValidationContext,
 ) {
   const propertyValue = property.value;
-  assert(isNumericLiteral(propertyValue));
+  const value = evaluatePropertyValueExpression(
+    propertyValue,
+    NUMBER_TYPEGUARD,
+  );
 
-  if (propertyValue.value < 0) {
+  if (value < 0) {
     context.accept(
       'error',
       `Bounds for length need to be equal or greater than zero`,

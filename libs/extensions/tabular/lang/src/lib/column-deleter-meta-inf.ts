@@ -30,7 +30,7 @@ export class ColumnDeleterMetaInformation extends BlockMetaInformation {
 
             const { validItems, invalidItems } = validateTypedCollection(
               propertyValue,
-              PropertyValuetype.CELL_RANGE,
+              [PropertyValuetype.CELL_RANGE],
             );
 
             invalidItems.forEach((invalidValue) =>

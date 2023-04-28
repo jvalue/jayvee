@@ -64,10 +64,9 @@ export class AtomicValuetype<T extends PrimitiveType>
 
   private getConstraints(): ConstraintDefinition[] {
     const constraintCollection = this.astNode.constraints;
-    const constraintReferences = validateTypedCollection(
-      constraintCollection,
+    const constraintReferences = validateTypedCollection(constraintCollection, [
       PropertyValuetype.CONSTRAINT,
-    ).validItems;
+    ]).validItems;
 
     assert(constraintReferences.every(isConstraintReferenceLiteral));
 
