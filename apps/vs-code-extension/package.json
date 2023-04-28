@@ -2,7 +2,6 @@
   "name": "jayvee",
   "displayName": "Jayvee",
   "description": "Support for the Jayvee language",
-  "version": "0.0.12",
   "engines": {
     "vscode": "^1.56.0"
   },
