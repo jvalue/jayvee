@@ -6,32 +6,32 @@
  * See the FAQ section of README.md for an explanation why the following eslint rule is disabled for this file.
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
-import { ColumnLiteral } from '../../ast/generated/ast';
+import { ColumnId } from '../../ast/generated/ast';
 import { ValidationContext } from '../validation-context';
 
-export function validateColumnLiteral(
-  column: ColumnLiteral,
+export function validateColumnId(
+  columnId: ColumnId,
   context: ValidationContext,
 ): void {
-  checkColumnIdSyntax(column, context);
+  checkColumnIdSyntax(columnId, context);
 }
 
 function checkColumnIdSyntax(
-  column: ColumnLiteral,
+  columnId: ColumnId,
   context: ValidationContext,
 ): void {
-  if (column.columnId === undefined) {
+  if (columnId.value === undefined || columnId.value === '*') {
     return;
   }
 
-  const columnIdRegex = /^([A-Z]+|\*)$/;
-  if (!columnIdRegex.test(column.columnId)) {
+  const columnIdRegex = /^[A-Z]+$/;
+  if (!columnIdRegex.test(columnId.value)) {
     context.accept(
       'error',
       'Columns need to be denoted via capital letters or the * character',
       {
-        node: column,
-        property: 'columnId',
+        node: columnId,
+        property: 'value',
       },
     );
   }

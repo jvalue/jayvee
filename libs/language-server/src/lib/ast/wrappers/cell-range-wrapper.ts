@@ -4,13 +4,19 @@
 
 import { strict as assert } from 'assert';
 
+import { assertUnreachable } from 'langium';
+
 import {
   CellLiteral,
   CellRangeLiteral,
+  CellReference,
+  ColumnId,
   ColumnLiteral,
   RangeLiteral,
+  RowId,
   RowLiteral,
   isCellLiteral,
+  isCellReference,
   isColumnLiteral,
   isRangeLiteral,
   isRowLiteral,
@@ -106,36 +112,42 @@ export class CellRangeWrapper<N extends CellRangeLiteral = CellRangeLiteral>
       this.from = indexes.from;
       this.to = indexes.to;
     } else if (isCellLiteral(cellRange)) {
-      const cellIndex = parseCellId(cellRange.cellId);
+      const cellIndex = parseCellReference(cellRange.cellId);
       this.from = cellIndex;
       this.to = cellIndex;
     } else if (isColumnLiteral(cellRange)) {
-      const columnIndex = parseColumnId(cellRange.columnId);
+      const columnIndex = parseColumnId(cellRange.columnId.value);
       this.from = new CellIndex(columnIndex, 0);
       this.to = new CellIndex(columnIndex, LAST_INDEX);
     } else if (isRowLiteral(cellRange)) {
-      const rowIndex = parseRowId(cellRange.rowId);
+      const rowIndex = parseRowId(cellRange.rowId.value);
       this.from = new CellIndex(0, rowIndex);
       this.to = new CellIndex(LAST_INDEX, rowIndex);
     } else {
-      this.from = parseCellId(cellRange.cellFrom);
-      this.to = parseCellId(cellRange.cellTo);
+      this.from = parseCellReference(cellRange.cellFrom);
+      this.to = parseCellReference(cellRange.cellTo);
     }
   }
 
   static canBeWrapped(cellRange: CellRangeLiteral): boolean {
     if (isCellLiteral(cellRange)) {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      return cellRange.cellId !== undefined;
+      return isCompleteCellReference(cellRange?.cellId);
     } else if (isColumnLiteral(cellRange)) {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      return cellRange.columnId !== undefined;
+      return isCompleteColumnId(cellRange?.columnId);
     } else if (isRowLiteral(cellRange)) {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      return cellRange.rowId !== undefined;
+      return isCompleteRowId(cellRange?.rowId);
+    } else if (isRangeLiteral(cellRange)) {
+      return (
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        isCompleteCellReference(cellRange?.cellFrom) &&
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        isCompleteCellReference(cellRange?.cellTo)
+      );
     }
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    return cellRange.cellFrom !== undefined && cellRange.cellTo !== undefined;
+    assertUnreachable(cellRange);
   }
 
   isOneDimensional(): boolean {
@@ -259,37 +271,76 @@ export function getCellIndex(cell: CellWrapper): CellIndex {
   return cell.from;
 }
 
-const CELL_INDEX_REGEX = /([A-Z]+|\*)([0-9]+|\*)/;
+function isCompleteCellReference(
+  cellReference: string | CellReference | undefined,
+): boolean {
+  if (isCellReference(cellReference)) {
+    return (
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      isCompleteColumnId(cellReference?.columnId) &&
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      isCompleteRowId(cellReference?.rowId)
+    );
+  }
+  return cellReference !== undefined;
+}
 
-function parseCellId(cellId: string): CellIndex {
-  const matches = CELL_INDEX_REGEX.exec(cellId) || [];
-  const columnId = matches[1];
-  const rowId = matches[2];
+function isCompleteColumnId(columnId: ColumnId | undefined) {
+  return columnId?.value !== undefined;
+}
 
-  assert(
-    columnId !== undefined && rowId !== undefined,
-    `Cell IDs are expected to match the regular expression ${CELL_INDEX_REGEX.toString()}`,
-  );
+function isCompleteRowId(rowId: RowId | undefined) {
+  return rowId?.value !== undefined;
+}
+
+function parseCellReference(cellReference: string | CellReference): CellIndex {
+  let columnId: string | '*';
+  let rowId: number | '*';
+  if (typeof cellReference === 'string') {
+    const parseResult = parseStringCellReference(cellReference);
+    columnId = parseResult.columnId;
+    rowId = parseResult.rowId;
+  } else {
+    columnId = cellReference.columnId.value;
+    rowId = cellReference.rowId.value;
+  }
 
   const columnIndex = parseColumnId(columnId);
   const rowIndex = parseRowId(rowId);
-
   return new CellIndex(columnIndex, rowIndex);
 }
 
-function parseColumnId(columnId: string): number {
+const CELL_REFERENCE_REGEX = /([A-Z]+)([0-9]+)/;
+
+function parseStringCellReference(cellReference: string): {
+  columnId: string;
+  rowId: number;
+} {
+  const matches = CELL_REFERENCE_REGEX.exec(cellReference) || [];
+  const columnIdMatch = matches[1];
+  const rowIdMatch = matches[2];
+
+  assert(
+    columnIdMatch !== undefined && rowIdMatch !== undefined,
+    `Cell IDs are expected to match the regular expression ${CELL_REFERENCE_REGEX.toString()}`,
+  );
+
+  return {
+    columnId: columnIdMatch,
+    rowId: Number.parseInt(rowIdMatch, 10),
+  };
+}
+
+function parseColumnId(columnId: string | '*'): number {
   if (columnId === '*') {
     return LAST_INDEX;
   }
   return columnCharactersAsIndex(columnId);
 }
 
-function parseRowId(rowId: string | number): number {
-  if (typeof rowId === 'string') {
-    if (rowId === '*') {
-      return LAST_INDEX;
-    }
-    return Number.parseInt(rowId, 10) - 1;
+function parseRowId(rowId: number | '*'): number {
+  if (rowId === '*') {
+    return LAST_INDEX;
   }
   return rowId - 1;
 }
