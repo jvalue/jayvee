@@ -77,10 +77,13 @@ Invalid values in the value table are assigned to `null`. As an implication, all
 In the future, we might add more meta columns in this manner to the meta table.
 
 #### Meta Table Linked
-An additional table is created with the naming convention `<value table name>_META`. In this table, there are columns that mirror the structure of the original table. For each column in the value table, we introduce three meta columns:
-- `<value column name>_isValid`, flag whether the value in the value column is valid or not, 
-- `<value column name>_details`, text for describing how the invalid value emerged,
-- `<value column name>_lastValidValue`, the last valid value before turning invalid. 
+There is an additional global table `VALUES_META`. In this table, there are columns describing meta information of values. 
+- `id`, used for linking in the value tables,
+- `isValid`, flag whether the value in the value column is valid or not, 
+- `details`, text for describing how the invalid value emerged,
+- `lastValidValue`, the last valid value before turning invalid. 
+
+The actual tables have an additional column per value column with the naming scheme `>value column name>_META` that uses the `id` of the `VALUES_META` table as foreign key.
 
 Invalid values in the value table are assigned to `null`. As an implication, all value columns must be `nullable`.
 
@@ -93,7 +96,7 @@ This resembles the current configuration.
 
 
 ## Drawbacks
-- The `"meta-column"` configuration of the `SQLiteLoaderSQLiteLoader` is not really extensible for further meta data.
+- The `"meta-column"` configuration of the `SQLiteLoader` is not really extensible for further meta data.
 
 ## Alternatives
 - Don't introduce a concept for invalid values at all.
@@ -103,5 +106,5 @@ This resembles the current configuration.
 
 ## Possible Future Changes/Enhancements
 - Allowing to calculate the mean of a column or its median would allow using those values in the `InvalidTableCellReplacer` blocks.
-- Explicitly type value types that cannot be invalid, e.g., because a `InvalidTableCellReplacer` or `InvalidTableRowFilter` is executed.
+- Add an "invalid value safety" feature to the type system (similar to "null safety"). E.g., introduce a `?` operator that turns a type into one that can hold `INVALID` or the other way around a `!` operator that enforces valid values.
 - Offer client libraries that offer convenience functionality on the table structures (e.g., an isValid method).
