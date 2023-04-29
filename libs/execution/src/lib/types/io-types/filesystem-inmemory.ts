@@ -51,12 +51,16 @@ export class InMemoryFileSystem implements FileSystem {
     return null;
   }
 
+  static getPathSeparator(): string {
+    return InMemoryFileSystem.PATH_SEPARATOR;
+  }
+
   private processPath(path: string): string[] | null {
-    if (!path.startsWith('/')) {
+    if (!path.startsWith(InMemoryFileSystem.getPathSeparator())) {
       return null;
     }
     const parts = path
-      .split(InMemoryFileSystem.PATH_SEPARATOR)
+      .split(InMemoryFileSystem.getPathSeparator())
       .filter((p) => p !== ''); // Process paths like "folder1//folder1" to "folder1/folder2"
     const processedParts: string[] = [];
     for (const part of parts) {
@@ -73,6 +77,7 @@ export class InMemoryFileSystem implements FileSystem {
         processedParts.push(part);
       }
     }
+    // Add path part for root to processedParts and return
     return ['', ...processedParts];
   }
 }

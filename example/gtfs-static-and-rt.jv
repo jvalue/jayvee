@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pipeline GtfsPipeline {
+pipeline GtfsStaticAndRealtimePipeline {
 
 	block GTFSExtractor oftype HttpExtractor {
 		url: "https://ratpdev-mosaic-prod-bucket-raw.s3-eu-west-1.amazonaws.com/11/exports/1/gtfs.zip";
