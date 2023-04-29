@@ -77,6 +77,7 @@ export class InMemoryFileSystem implements FileSystem {
         processedParts.push(part);
       }
     }
+    // Add path part for root to processedParts and return
     return ['', ...processedParts];
   }
 }
