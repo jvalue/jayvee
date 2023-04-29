@@ -83,7 +83,10 @@ export class ArchiveInterpreterExecutor
             mimeType,
             content,
           );
-          const addedFile = fs.putFile(fs.getPathSeparator() + relPath, file);
+          const addedFile = fs.putFile(
+            InMemoryFileSystem.getPathSeparator() + relPath,
+            file,
+          );
           assert(addedFile != null);
         }
       }

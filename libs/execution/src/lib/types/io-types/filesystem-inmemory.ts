@@ -51,16 +51,16 @@ export class InMemoryFileSystem implements FileSystem {
     return null;
   }
 
-  getPathSeparator(): string {
+  static getPathSeparator(): string {
     return InMemoryFileSystem.PATH_SEPARATOR;
   }
 
   private processPath(path: string): string[] | null {
-    if (!path.startsWith(InMemoryFileSystem.PATH_SEPARATOR)) {
+    if (!path.startsWith(InMemoryFileSystem.getPathSeparator())) {
       return null;
     }
     const parts = path
-      .split(InMemoryFileSystem.PATH_SEPARATOR)
+      .split(InMemoryFileSystem.getPathSeparator())
       .filter((p) => p !== ''); // Process paths like "folder1//folder1" to "folder1/folder2"
     const processedParts: string[] = [];
     for (const part of parts) {
