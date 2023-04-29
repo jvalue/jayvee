@@ -1,6 +1,5 @@
 {
   "name": "@jvalue/jayvee-monaco",
-  "version": "0.0.12",
   "main": "./index.js",
   "bugs": {
     "url": "https://github.com/jvalue/jayvee/issues"

@@ -1,5 +1,6 @@
 {
   "name": "jayvee",
+  "version": "0.0.14",
   "scripts": {
     "nx": "nx",
     "format": "nx format:write",
@@ -82,7 +83,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "jest": "28.1.1",
     "jest-environment-jsdom": "28.1.1",
-    "langium-cli": "^1.0.0",
+    "langium-cli": "^1.1.0",
     "nx": "15.3.0",
     "prettier": "^2.8.7",
     "react-test-renderer": "18.2.0",

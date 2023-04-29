@@ -8,20 +8,17 @@ import {
   BlockDefinition,
   CellRangeWrapper,
   ConstraintDefinition,
-  NumericLiteral,
+  Expression,
   PipelineDefinition,
   PropertyAssignment,
-  TextLiteral,
   ValuetypeAssignment,
   evaluateExpression,
   getOrFailMetaInformation,
-  isBooleanExpression,
   isCellRangeLiteral,
   isCollectionLiteral,
-  isNumericLiteral,
+  isExpression,
   isPipelineDefinition,
   isRuntimeParameterLiteral,
-  isTextLiteral,
   isValuetypeAssignmentLiteral,
 } from '@jvalue/jayvee-language-server';
 import { isReference } from 'langium';
@@ -102,20 +99,12 @@ export class ExecutionContext {
     return new CellRangeWrapper(propertyValue);
   }
 
-  public getTextCollectionPropertyValue(propertyName: string): TextLiteral[] {
-    const propertyValue = this.getPropertyValue(propertyName);
-    assert(Array.isArray(propertyValue));
-    assert(propertyValue.every(isTextLiteral));
-
-    return propertyValue;
-  }
-
-  public getNumericCollectionPropertyValue(
+  public getExpressionCollectionPropertyValue(
     propertyName: string,
-  ): NumericLiteral[] {
+  ): Expression[] {
     const propertyValue = this.getPropertyValue(propertyName);
     assert(Array.isArray(propertyValue));
-    assert(propertyValue.every(isNumericLiteral));
+    assert(propertyValue.every(isExpression));
 
     return propertyValue;
   }
@@ -174,7 +163,7 @@ export class ExecutionContext {
     if (isCellRangeLiteral(propertyValue)) {
       return propertyValue;
     }
-    if (isBooleanExpression(propertyValue)) {
+    if (isExpression(propertyValue)) {
       return evaluateExpression(propertyValue);
     }
     const value = propertyValue.value;

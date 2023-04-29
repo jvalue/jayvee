@@ -12,7 +12,7 @@ import {
   Sheet,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
-import { IOType } from '@jvalue/jayvee-language-server';
+import { IOType, evaluateExpression } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
 export class CellWriterExecutor
@@ -28,7 +28,13 @@ export class CellWriterExecutor
     context: ExecutionContext,
   ): Promise<R.Result<Sheet>> {
     const relativeCellRange = context.getCellRangePropertyValue('at');
-    const textValues = context.getTextCollectionPropertyValue('write');
+    const writeCollection =
+      context.getExpressionCollectionPropertyValue('write');
+    const writeValues = writeCollection.map((expression) => {
+      const value = evaluateExpression(expression);
+      assert(typeof value === 'string');
+      return value;
+    });
 
     assert(relativeCellRange.isOneDimensional());
 
@@ -44,9 +50,9 @@ export class CellWriterExecutor
     const cellIndexesToWrite =
       inputSheet.enumerateCellIndexes(relativeCellRange);
 
-    if (textValues.length !== cellIndexesToWrite.length) {
+    if (writeValues.length !== cellIndexesToWrite.length) {
       context.logger.logWarnDiagnostic(
-        `The number of values to write (${textValues.length}) does not match the number of cells (${cellIndexesToWrite.length})`,
+        `The number of values to write (${writeValues.length}) does not match the number of cells (${cellIndexesToWrite.length})`,
         { node: relativeCellRange.astNode },
       );
     }
@@ -54,19 +60,19 @@ export class CellWriterExecutor
     const resultingSheet = inputSheet.clone();
     for (
       let i = 0;
-      i < Math.min(textValues.length, cellIndexesToWrite.length);
+      i < Math.min(writeValues.length, cellIndexesToWrite.length);
       ++i
     ) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const cellIndex = cellIndexesToWrite[i]!;
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const textValue = textValues[i]!.value;
+      const writeValue = writeValues[i]!;
 
       context.logger.logDebug(
-        `Writing "${textValue}" at cell ${cellIndex.toString()}`,
+        `Writing "${writeValue}" at cell ${cellIndex.toString()}`,
       );
 
-      resultingSheet.writeCell(cellIndex, textValue);
+      resultingSheet.writeCell(cellIndex, writeValue);
     }
 
     return R.ok(resultingSheet);

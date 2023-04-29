@@ -49,6 +49,7 @@
           "node tools/scripts/delete-dependencies.mjs vs-code-extension",
           // Add an empty license file, so vsce does not complain during packaging
           "touch dist/apps/vs-code-extension/LICENSE",
+          "node tools/scripts/add-package-json-version.mjs vs-code-extension",
           "cd dist/apps/vs-code-extension && npx vsce package --out jayvee.vsix"
         ],
         "parallel": false

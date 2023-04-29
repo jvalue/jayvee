@@ -1,8 +1,4 @@
 {
   "name": "@jvalue/jayvee-extensions/std/exec",
-  "version": "0.0.1",
-  "type": "commonjs",
-  "devDependencies": {
-    "@types/mime-types": "^2.1.1"
-  }
+  "type": "commonjs"
 }

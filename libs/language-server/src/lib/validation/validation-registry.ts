@@ -13,10 +13,10 @@ import {
 import { JayveeAstType } from '../ast/generated/ast';
 import type { JayveeServices } from '../jayvee-module';
 
+// eslint-disable-next-line import/no-cycle
 import { validateBlockDefinition } from './checks/block-definition';
-import { validateColumnLiteral } from './checks/column-literal';
+import { validateColumnId } from './checks/column-id';
 import { validateConstraintDefinition } from './checks/constraint-definition';
-import { validateExpression } from './checks/expression';
 import { validateJayveeModel } from './checks/jayvee-model';
 import { validatePipeDefinition } from './checks/pipe-definition';
 import { validatePipelineDefinition } from './checks/pipeline-definition';
@@ -35,9 +35,8 @@ export class JayveeValidationRegistry extends ValidationRegistry {
 
     this.register<JayveeAstType>({
       BlockDefinition: wrapCheck(validateBlockDefinition),
-      ColumnLiteral: wrapCheck(validateColumnLiteral),
+      ColumnId: wrapCheck(validateColumnId),
       ConstraintDefinition: wrapCheck(validateConstraintDefinition),
-      BooleanExpression: wrapCheck(validateExpression),
       JayveeModel: wrapCheck(validateJayveeModel),
       PipeDefinition: wrapCheck(validatePipeDefinition),
       PipelineDefinition: wrapCheck(validatePipelineDefinition),

@@ -43,7 +43,8 @@
       "dependsOn": ["build"],
       "options": {
         "commands": [
-          "node tools/scripts/interpreter/prepend-shebang.mjs interpreter main.js"
+          "node tools/scripts/interpreter/prepend-shebang.mjs interpreter main.js",
+          "node tools/scripts/add-package-json-version.mjs interpreter"
         ]
       }
     },
@@ -70,7 +71,7 @@
       "dependsOn": ["pack"],
       "options": {
         "commands": [
-          "npm i -g dist/apps/interpreter/jvalue-interpreter-*.tgz"
+          "npm i -g dist/apps/interpreter/jvalue-jayvee-interpreter-*.tgz"
         ]
       }
     }

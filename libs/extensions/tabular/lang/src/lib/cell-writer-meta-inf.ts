@@ -87,10 +87,9 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
         if (!isCollectionLiteral(writeProperty.value)) {
           return;
         }
-        const { invalidItems } = validateTypedCollection(
-          writeProperty.value,
+        const { invalidItems } = validateTypedCollection(writeProperty.value, [
           PropertyValuetype.TEXT,
-        );
+        ]);
 
         invalidItems.forEach((invalidValue) =>
           context.accept(

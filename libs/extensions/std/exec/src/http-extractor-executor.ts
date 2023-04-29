@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import * as http from 'http';
 import * as https from 'https';
 import * as path from 'path';
 
@@ -23,6 +24,8 @@ import {
   inferFileExtensionFromFileExtensionString,
   inferMimeTypeFromContentTypeString,
 } from './file-util';
+
+type HttpGetFunction = typeof http.get;
 
 @implementsStatic<BlockExecutorClass>()
 export class HttpExtractorExecutor
@@ -52,8 +55,14 @@ export class HttpExtractorExecutor
     context: ExecutionContext,
   ): Promise<R.Result<BinaryFile>> {
     context.logger.logDebug(`Fetching raw data from ${url}`);
+    let httpGetFunction: HttpGetFunction;
+    if (url.startsWith('https')) {
+      httpGetFunction = https.get;
+    } else {
+      httpGetFunction = http.get;
+    }
     return new Promise((resolve) => {
-      https.get(url, (response) => {
+      httpGetFunction(url, (response) => {
         const responseCode = response.statusCode;
 
         // Catch errors
