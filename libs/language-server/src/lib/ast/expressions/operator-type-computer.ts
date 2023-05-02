@@ -8,6 +8,13 @@ import { BinaryExpression, UnaryExpression } from '../generated/ast';
 import { PropertyValuetype } from '../model-util';
 
 export interface UnaryOperatorTypeComputer {
+  /**
+   * Computes the type of a unary operator by the type of its operand.
+   * @param operandType the type of the operand
+   * @param expression the expression to use for diagnostics
+   * @param context the validation context to use for diagnostics
+   * @returns the resulting type of the operator or `undefined` if the type could not be inferred
+   */
   computeType(
     operandType: PropertyValuetype,
     expression: UnaryExpression,
@@ -63,6 +70,14 @@ function generateUnexpectedTypeMessage(
 }
 
 export interface BinaryOperatorTypeComputer {
+  /**
+   * Computes the type of a binary operator by the type of its operands.
+   * @param leftType the type of the left operand
+   * @param rightType the type of the right operand
+   * @param expression the expression to use for diagnostics
+   * @param context the validation context to use for diagnostics
+   * @returns the resulting type of the operator or `undefined` if the type could not be inferred
+   */
   computeType(
     leftType: PropertyValuetype,
     rightType: PropertyValuetype,
