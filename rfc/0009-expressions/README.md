@@ -9,7 +9,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 | | |
 |---|---|
 | Feature Tag | `Simple Expressions` | 
-| Status | `DRAFT` | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED -->
+| Status | `ACCEPTED` | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED -->
 | Responsible | `georg-schwarz` | <!-- TODO: assign yourself as main driver of this RFC -->
 <!-- 
   Status Overview:
@@ -40,7 +40,7 @@ The following operators are in descending order by their precedence:
 
 When operators of similar precedence don't determine the order, we evaluate from left to right.
 
-#### Unary Prefix Operatory
+#### Unary Prefix Operator
 Binary prefix operators follow the pattern `<operator> <operand>`. Parentheses can be used for grouping larger sub-expressions.
 The following operators share the same precedence:
 - `floor`, `ceil`, `round` for conversion of decimal numbers to integers.
@@ -71,7 +71,7 @@ Division operator and multiplication/addition/subtraction with at least one deci
 
 Division by zero throws an error.
 
-Comparison of different number types (e.g., integers and decimals) is solved by converting first to the less restrictive value type (in the example, to decimals). A warning is logged in these cases.
+Comparison of different number types (e.g., integers and decimals) is solved by converting first to the less restrictive value type (in the example, to decimals).
 
 ### Handling of texts
 
