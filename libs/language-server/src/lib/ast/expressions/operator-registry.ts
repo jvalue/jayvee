@@ -4,11 +4,9 @@
 
 /* eslint-disable import/no-cycle */
 
-import { ValidationContext } from '../../validation/validation-context';
 import { BinaryExpression, UnaryExpression } from '../generated/ast';
 import {
   BinaryExpressionOperator,
-  PropertyValuetype,
   UnaryExpressionOperator,
 } from '../model-util';
 
@@ -36,31 +34,23 @@ import { SqrtOperatorEvaluator } from './evaluators/sqrt-operator-evaluator';
 import { SubtractionOperatorEvaluator } from './evaluators/subtraction-operator-evaluator';
 import { XorOperatorEvaluator } from './evaluators/xor-operator-evaluator';
 import { OperatorEvaluator } from './operator-evaluator';
-import { inferBinaryArithmeticExpressionType } from './operators/binary-arithmetic-expression';
-import { inferBinaryEqualityExpressionType } from './operators/binary-equality-expression';
-import { inferBinaryExponentialExpressionType } from './operators/binary-exponential-expression';
-import { inferBinaryLogicalExpressionType } from './operators/binary-logical-expression';
-import { inferBinaryRelationalExpressionType } from './operators/binary-relational-expression';
-import { inferUnaryIntegerConversionExpressionType } from './operators/unary-integer-conversion-expression';
-import { inferUnaryNotExpressionType } from './operators/unary-not-expression';
-import { inferUnarySignExpressionType } from './operators/unary-sign-expression';
-import { inferUnarySqrtExpressionType } from './operators/unary-sqrt-expression';
-
-export type UnaryTypeInferenceFunction = (
-  innerType: PropertyValuetype,
-  expression: UnaryExpression,
-  context: ValidationContext | undefined,
-) => PropertyValuetype | undefined;
-
-export type BinaryTypeInferenceFunction = (
-  leftType: PropertyValuetype,
-  rightType: PropertyValuetype,
-  expression: BinaryExpression,
-  context: ValidationContext | undefined,
-) => PropertyValuetype | undefined;
+import {
+  BinaryOperatorTypeComputer,
+  UnaryOperatorTypeComputer,
+} from './operator-type-computer';
+import { BasicArithmeticOperatorTypeComputer } from './type-computers/basic-arithmetic-operator-type-computer';
+import { DivisionOperatorTypeComputer } from './type-computers/division-operator-type-computer';
+import { EqualityOperatorTypeComputer } from './type-computers/equality-operator-type-computer';
+import { ExponentialOperatorTypeComputer } from './type-computers/exponential-operator-type-computer';
+import { IntegerConversionOperatorTypeComputer } from './type-computers/integer-conversion-operator-type-computer';
+import { LogicalOperatorTypeComputer } from './type-computers/logical-operator-type-computer';
+import { NotOperatorTypeComputer } from './type-computers/not-operator-type-computer';
+import { RelationalOperatorTypeComputer } from './type-computers/relational-operator-type-computer';
+import { SignOperatorTypeComputer } from './type-computers/sign-operator-type-computer';
+import { SqrtOperatorTypeComputer } from './type-computers/sqrt-operator-type-computer';
 
 export interface UnaryOperatorEntry {
-  typeInference: UnaryTypeInferenceFunction;
+  typeInference: UnaryOperatorTypeComputer;
   evaluation: OperatorEvaluator<UnaryExpression>;
 }
 
@@ -69,37 +59,37 @@ export const unaryOperatorRegistry: Record<
   UnaryOperatorEntry
 > = {
   not: {
-    typeInference: inferUnaryNotExpressionType,
+    typeInference: new NotOperatorTypeComputer(),
     evaluation: new NotOperatorEvaluator(),
   },
   '+': {
-    typeInference: inferUnarySignExpressionType,
+    typeInference: new SignOperatorTypeComputer(),
     evaluation: new PlusOperatorEvaluator(),
   },
   '-': {
-    typeInference: inferUnarySignExpressionType,
+    typeInference: new SignOperatorTypeComputer(),
     evaluation: new MinusOperatorEvaluator(),
   },
   sqrt: {
-    typeInference: inferUnarySqrtExpressionType,
+    typeInference: new SqrtOperatorTypeComputer(),
     evaluation: new SqrtOperatorEvaluator(),
   },
   floor: {
-    typeInference: inferUnaryIntegerConversionExpressionType,
+    typeInference: new IntegerConversionOperatorTypeComputer(),
     evaluation: new FloorOperatorEvaluator(),
   },
   ceil: {
-    typeInference: inferUnaryIntegerConversionExpressionType,
+    typeInference: new IntegerConversionOperatorTypeComputer(),
     evaluation: new CeilOperatorEvaluator(),
   },
   round: {
-    typeInference: inferUnaryIntegerConversionExpressionType,
+    typeInference: new IntegerConversionOperatorTypeComputer(),
     evaluation: new RoundOperatorEvaluator(),
   },
 };
 
 export interface BinaryOperatorEntry {
-  typeInference: BinaryTypeInferenceFunction;
+  typeInference: BinaryOperatorTypeComputer;
   evaluation: OperatorEvaluator<BinaryExpression>;
 }
 
@@ -108,67 +98,67 @@ export const binaryOperatorRegistry: Record<
   BinaryOperatorEntry
 > = {
   pow: {
-    typeInference: inferBinaryExponentialExpressionType,
+    typeInference: new ExponentialOperatorTypeComputer(),
     evaluation: new PowOperatorEvaluator(),
   },
   root: {
-    typeInference: inferBinaryExponentialExpressionType,
+    typeInference: new ExponentialOperatorTypeComputer(),
     evaluation: new RootOperatorEvaluator(),
   },
   '*': {
-    typeInference: inferBinaryArithmeticExpressionType,
+    typeInference: new BasicArithmeticOperatorTypeComputer(),
     evaluation: new MultiplicationOperatorEvaluator(),
   },
   '/': {
-    typeInference: inferBinaryArithmeticExpressionType,
+    typeInference: new DivisionOperatorTypeComputer(),
     evaluation: new DivisionOperatorEvaluator(),
   },
   '%': {
-    typeInference: inferBinaryArithmeticExpressionType,
+    typeInference: new DivisionOperatorTypeComputer(),
     evaluation: new ModuloOperatorEvaluator(),
   },
   '+': {
-    typeInference: inferBinaryArithmeticExpressionType,
+    typeInference: new BasicArithmeticOperatorTypeComputer(),
     evaluation: new AdditionOperatorEvaluator(),
   },
   '-': {
-    typeInference: inferBinaryArithmeticExpressionType,
+    typeInference: new BasicArithmeticOperatorTypeComputer(),
     evaluation: new SubtractionOperatorEvaluator(),
   },
   '<': {
-    typeInference: inferBinaryRelationalExpressionType,
+    typeInference: new RelationalOperatorTypeComputer(),
     evaluation: new LessThanOperatorEvaluator(),
   },
   '<=': {
-    typeInference: inferBinaryRelationalExpressionType,
+    typeInference: new RelationalOperatorTypeComputer(),
     evaluation: new LessEqualOperatorEvaluator(),
   },
   '>': {
-    typeInference: inferBinaryRelationalExpressionType,
+    typeInference: new RelationalOperatorTypeComputer(),
     evaluation: new GreaterThanOperatorEvaluator(),
   },
   '>=': {
-    typeInference: inferBinaryRelationalExpressionType,
+    typeInference: new RelationalOperatorTypeComputer(),
     evaluation: new GreaterEqualOperatorEvaluator(),
   },
   '==': {
-    typeInference: inferBinaryEqualityExpressionType,
+    typeInference: new EqualityOperatorTypeComputer(),
     evaluation: new EqualityOperatorEvaluator(),
   },
   '!=': {
-    typeInference: inferBinaryEqualityExpressionType,
+    typeInference: new EqualityOperatorTypeComputer(),
     evaluation: new InequalityOperatorEvaluator(),
   },
   xor: {
-    typeInference: inferBinaryLogicalExpressionType,
+    typeInference: new LogicalOperatorTypeComputer(),
     evaluation: new XorOperatorEvaluator(),
   },
   and: {
-    typeInference: inferBinaryLogicalExpressionType,
+    typeInference: new LogicalOperatorTypeComputer(),
     evaluation: new AndOperatorEvaluator(),
   },
   or: {
-    typeInference: inferBinaryLogicalExpressionType,
+    typeInference: new LogicalOperatorTypeComputer(),
     evaluation: new OrOperatorEvaluator(),
   },
 };
