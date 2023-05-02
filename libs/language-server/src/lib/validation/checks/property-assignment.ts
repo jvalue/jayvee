@@ -12,6 +12,7 @@ import {
   EvaluationStrategy,
   evaluateExpression,
 } from '../../ast/expressions/evaluation';
+import { convertsImplicitlyTo } from '../../ast/expressions/operator-type-computer';
 import {
   Expression,
   PropertyAssignment,
@@ -20,7 +21,6 @@ import {
   isRuntimeParameterLiteral,
 } from '../../ast/generated/ast';
 import {
-  PropertyValuetype,
   inferTypeFromValue,
   runtimeParameterAllowedForType,
 } from '../../ast/model-util';
@@ -88,12 +88,7 @@ function checkPropertyValueTyping(
     return;
   }
 
-  const valueIsAssignableToProperty =
-    inferredType === propertyType ||
-    (inferredType === PropertyValuetype.INTEGER &&
-      propertyType === PropertyValuetype.DECIMAL);
-
-  if (!valueIsAssignableToProperty) {
+  if (!convertsImplicitlyTo(inferredType, propertyType)) {
     context.accept(
       'error',
       `The value needs to be of type ${propertyType} but is of type ${inferredType}`,
