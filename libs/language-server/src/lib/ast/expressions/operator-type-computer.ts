@@ -50,25 +50,6 @@ export abstract class DefaultUnaryOperatorTypeComputer
   ): PropertyValuetype;
 }
 
-export function convertsImplicitlyTo(
-  from: PropertyValuetype,
-  to: PropertyValuetype,
-) {
-  return (
-    from === to ||
-    (from === PropertyValuetype.INTEGER && to === PropertyValuetype.DECIMAL)
-  );
-}
-
-function generateUnexpectedTypeMessage(
-  expectedTypes: PropertyValuetype | PropertyValuetype[],
-  actualType: PropertyValuetype,
-) {
-  return `The operand needs to be of type ${
-    Array.isArray(expectedTypes) ? expectedTypes.join(' or ') : expectedTypes
-  } but is of type ${actualType}`;
-}
-
 export interface BinaryOperatorTypeComputer {
   /**
    * Computes the type of a binary operator by the type of its operands.
@@ -143,4 +124,23 @@ export abstract class DefaultBinaryOperatorTypeComputer
     leftOperandType: PropertyValuetype,
     rightOperandType: PropertyValuetype,
   ): PropertyValuetype;
+}
+
+export function convertsImplicitlyTo(
+  from: PropertyValuetype,
+  to: PropertyValuetype,
+) {
+  return (
+    from === to ||
+    (from === PropertyValuetype.INTEGER && to === PropertyValuetype.DECIMAL)
+  );
+}
+
+function generateUnexpectedTypeMessage(
+  expectedTypes: PropertyValuetype | PropertyValuetype[],
+  actualType: PropertyValuetype,
+) {
+  return `The operand needs to be of type ${
+    Array.isArray(expectedTypes) ? expectedTypes.join(' or ') : expectedTypes
+  } but is of type ${actualType}`;
 }
