@@ -41,5 +41,6 @@
     "type": "git",
     "url": "https://github.com/jvalue/jayvee.git"
   },
-  "homepage": "https://github.com/jvalue/jayvee"
+  "homepage": "https://github.com/jvalue/jayvee",
+  "version": "0.0.0"
 }
