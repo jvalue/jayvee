@@ -4,12 +4,12 @@ SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
 SPDX-License-Identifier: AGPL-3.0-only
 -->
 
-# RFC 0000: Value Transformer
+# RFC 0011: Value Transformer
 
 | | |
 |---|---|
 | Feature Tag | `value-transformer` |
-| Status | `DRAFT` | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED -->
+| Status | `DISCUSSION` | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED -->
 | Responsible | `georg-schwarz` |
 <!-- 
   Status Overview:
@@ -172,7 +172,7 @@ transformer AddressComposer {
 }
 ```
 
-### Mappers
+### MatchOn
 
 A mapping expression might enable easier string matching. They are syntactic sugar for if-elseif cascades.
 
@@ -183,7 +183,7 @@ transformer CelsiusToKelvin {
   input currencyRaw oftype text;
   output balance oftype Balance; // compound type with fields "amount" and "currency"
   balance.amount: amountRaw as decimal;    // simple parsing does not need a mapping
-  balance.currency: mapping on currencyRaw { // mapping
+  balance.currency: matchOn currencyRaw { // matching
     /^(EUR|€)$/ => "EUR";
     /^(USD|$)$/ => "USD";
   };
