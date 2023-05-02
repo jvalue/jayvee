@@ -18,7 +18,6 @@ import {
 // eslint-disable-next-line import/no-cycle
 import { PropertyValuetype } from '../model-util';
 
-// eslint-disable-next-line import/no-cycle
 import {
   binaryOperatorRegistry,
   unaryOperatorRegistry,
@@ -41,8 +40,8 @@ export function inferExpressionType(
     }
 
     const operator = expression.operator;
-    const typeInferenceFn = unaryOperatorRegistry[operator].typeInference;
-    return typeInferenceFn(innerType, expression, context);
+    const typeComputer = unaryOperatorRegistry[operator].typeInference;
+    return typeComputer.computeType(innerType, expression, context);
   }
   if (isBinaryExpression(expression)) {
     const leftType = inferExpressionType(expression.left, context);
@@ -52,8 +51,8 @@ export function inferExpressionType(
     }
 
     const operator = expression.operator;
-    const typeInferenceFn = binaryOperatorRegistry[operator].typeInference;
-    return typeInferenceFn(leftType, rightType, expression, context);
+    const typeComputer = binaryOperatorRegistry[operator].typeInference;
+    return typeComputer.computeType(leftType, rightType, expression, context);
   }
   assertUnreachable(expression);
 }
