@@ -8,7 +8,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 | | |
 |---|---|
 | Feature Tag | `invalid values` |
-| Status | `DRAFT` | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED -->
+| Status | `DISCUSSION` | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED -->
 | Responsible | `georg-schwarz` | 
 <!-- 
   Status Overview:
