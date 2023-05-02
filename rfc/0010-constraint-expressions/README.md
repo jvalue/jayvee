@@ -4,12 +4,12 @@ SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
 SPDX-License-Identifier: AGPL-3.0-only
 -->
 
-# RFC 0000: Constraints as Expressions
+# RFC 0010: Constraints as Expressions
 
 | | |
 |---|---|
 | Feature Tag | `constraints-as-expressions` | 
-| Status | `DRAFT` | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED -->
+| Status | `DISCUSSION` | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED -->
 | Responsible | `georg-schwarz` | 
 <!-- 
   Status Overview:
