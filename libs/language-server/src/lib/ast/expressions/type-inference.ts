@@ -65,9 +65,12 @@ export function inferExpressionType(
   assertUnreachable(expression);
 }
 
+/**
+ * @returns the resolved @see PropertyValuetype or undefined (e.g. if variable is not defined)
+ */
 function inferTypeFromExpressionLiteral(
   expression: ExpressionLiteral,
-): Valuetype {
+): Valuetype | undefined {
   if (isTextLiteral(expression)) {
     return PrimitiveValuetypes.Text;
   }
@@ -96,7 +99,7 @@ function inferTypeFromExpressionLiteral(
     return PrimitiveValuetypes.Collection;
   }
   if (isVariableLiteral(expression)) {
-    return PrimitiveValuetypes.Text; // TODO
+    return undefined; // TODO: infer real type from variable definition if given
   }
   assertUnreachable(expression);
 }
