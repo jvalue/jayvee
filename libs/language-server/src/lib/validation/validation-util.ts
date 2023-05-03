@@ -11,11 +11,14 @@ export type NamedAstNode = AstNode & { name: string };
 export function checkUniqueNames(
   nodes: NamedAstNode[],
   context: ValidationContext,
+  nodeName?: string,
 ): void {
   getNodesWithNonUniqueNames(nodes).forEach((node) => {
     context.accept(
       'error',
-      `The ${node.$type.toLowerCase()} name "${node.name}" needs to be unique.`,
+      `The ${nodeName ?? node.$type.toLowerCase()} name "${
+        node.name
+      }" needs to be unique.`,
       {
         node,
         property: 'name',
