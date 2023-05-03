@@ -6,6 +6,7 @@ import './cellrange'
 import './constraint'
 import './valuetype'
 import './terminal'
+import './transformer'
 
 Expression:
   OrExpression;
@@ -52,7 +53,8 @@ ExpressionLiteral:
   | CellRangeLiteral
   | ValuetypeAssignmentLiteral
   | ConstraintReferenceLiteral
-  | CollectionLiteral;
+  | CollectionLiteral
+  | VariableLiteral;
 
 TextLiteral:
   value=STRING;
@@ -68,3 +70,6 @@ RegexLiteral:
 
 CollectionLiteral:
   '[' (values+=(Expression) (',' values+=(Expression))*)? ','? ']';
+
+VariableLiteral:
+  value=([TransformerPortDefinition]);

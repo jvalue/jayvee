@@ -20,6 +20,7 @@ import {
   isTextLiteral,
   isUnaryExpression,
   isValuetypeAssignmentLiteral,
+  isVariableLiteral,
 } from '../generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-valuetypes';
@@ -93,6 +94,9 @@ function inferTypeFromExpressionLiteral(
   }
   if (isCollectionLiteral(expression)) {
     return PrimitiveValuetypes.Collection;
+  }
+  if (isVariableLiteral(expression)) {
+    return PrimitiveValuetypes.Text; // TODO
   }
   assertUnreachable(expression);
 }

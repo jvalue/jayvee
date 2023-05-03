@@ -12,6 +12,7 @@ import {
   ConstraintDefinition,
   Expression,
   ExpressionLiteral,
+  TransformerPortDefinition,
   ValuetypeAssignment,
   isBinaryExpression,
   isCellRangeLiteral,
@@ -19,10 +20,11 @@ import {
   isExpressionLiteral,
   isRegexLiteral,
   isUnaryExpression,
+  isVariableLiteral,
 } from '../generated/ast';
-// eslint-disable-next-line import/no-cycle
-import { CellRangeWrapper } from '../wrappers';
+import { CellRangeWrapper } from '../wrappers/cell-range-wrapper';
 
+// eslint-disable-next-line import/no-cycle
 import {
   binaryOperatorRegistry,
   unaryOperatorRegistry,
@@ -41,7 +43,8 @@ export type OperandValue =
   | CellRangeWrapper
   | ConstraintDefinition
   | ValuetypeAssignment
-  | CollectionLiteral;
+  | CollectionLiteral
+  | TransformerPortDefinition;
 export type OperandValueTypeguard<T extends OperandValue> = (
   value: OperandValue,
 ) => value is T;
@@ -62,6 +65,9 @@ export function evaluateExpression(
   context: ValidationContext | undefined = undefined,
 ): OperandValue | undefined {
   if (isExpressionLiteral(expression)) {
+    if (isVariableLiteral(expression)) {
+      return undefined; // TODO
+    }
     return evaluateExpressionLiteral(expression);
   }
   if (isUnaryExpression(expression)) {
