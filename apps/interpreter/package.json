@@ -18,5 +18,5 @@
     "access": "public",
     "registry": "https://registry.npmjs.org"
   },
-  "version": "will be overridden by the root version, the presence of this version field is required by the interpreter"
+  "version": "$REPLACE_WITH_PROGRAM_VERSION_IN_PREPUBLISH_STEP"
 }
