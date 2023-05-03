@@ -70,5 +70,6 @@
         ]
       }
     }
-  }
+  },
+  "implicitDependencies": ["language-server"]
 }
