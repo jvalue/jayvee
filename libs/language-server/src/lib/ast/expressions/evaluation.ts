@@ -11,25 +11,24 @@ import {
   CollectionLiteral,
   ConstraintDefinition,
   Expression,
-  ExpressionLiteral,
   RuntimeParameterLiteral,
   TransformerPortDefinition,
+  ValueLiteral,
   ValuetypeAssignment,
   VariableLiteral,
   isBinaryExpression,
-  isBooleanLiteral,
   isCellRangeLiteral,
   isCollectionLiteral,
   isExpression,
   isExpressionLiteral,
-  isNumericLiteral,
   isRegexLiteral,
   isRuntimeParameterLiteral,
-  isTextLiteral,
   isUnaryExpression,
+  isValueLiteral,
   isVariableLiteral,
 } from '../generated/ast';
 import { CellRangeWrapper } from '../wrappers/cell-range-wrapper';
+import { type Valuetype } from '../wrappers/value-type';
 
 // eslint-disable-next-line import/no-cycle
 import {
@@ -99,7 +98,7 @@ export type OperandValueTypeguard<T extends OperandValue> = (
 ) => value is T;
 
 export function evaluatePropertyValueExpression<T extends OperandValue>(
-  propertyValue: PropertyValueLiteral | RuntimeParameterLiteral,
+  propertyValue: Valuetype | RuntimeParameterLiteral,
   evaluationContext: EvaluationContext,
   typeguard: OperandValueTypeguard<T>,
 ): T {
@@ -119,15 +118,10 @@ export function evaluateExpression(
   if (isExpressionLiteral(expression)) {
     if (isVariableLiteral(expression)) {
       return evaluationContext.getValueFor(expression);
-    } else if (
-      // TODO: aggregate these types of literals to a "ConstantLiteral" or "ValueLiteral"
-      isBooleanLiteral(expression) ||
-      isNumericLiteral(expression) ||
-      isTextLiteral(expression)
-    ) {
-      return expression.value;
+    } else if (isValueLiteral(expression)) {
+      return evaluateValueLiteral(expression);
     }
-    return evaluateExpressionLiteral(expression);
+    assertUnreachable(expression);
   }
   if (isUnaryExpression(expression)) {
     const operator = expression.operator;
@@ -142,8 +136,8 @@ export function evaluateExpression(
   assertUnreachable(expression);
 }
 
-function evaluateExpressionLiteral(
-  expression: ExpressionLiteral,
+function evaluateValueLiteral(
+  expression: ValueLiteral,
 ): OperandValue | undefined {
   if (isCollectionLiteral(expression)) {
     return expression;

@@ -46,6 +46,10 @@ UnaryExpression:
   operator=('not' | '+' | '-' | 'sqrt' | 'floor' | 'ceil' | 'round') expression=PrimaryExpression;
 
 ExpressionLiteral:
+  ValueLiteral
+  | VariableLiteral;
+
+ValueLiteral:
   TextLiteral
   | NumericLiteral
   | BooleanLiteral
