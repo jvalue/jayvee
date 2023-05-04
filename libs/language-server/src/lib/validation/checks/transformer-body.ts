@@ -2,7 +2,26 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { TransformerBody } from '../../ast/generated/ast';
+/**
+ * See the FAQ section of README.md for an explanation why the following ESLint rule is disabled for this file.
+ */
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
+
+import { assertUnreachable } from 'langium';
+
+import {
+  Expression,
+  TransformerBody,
+  TransformerPortDefinition,
+  VariableLiteral,
+  isBinaryExpression,
+  isExpressionLiteral,
+  isPrimitiveValuetypeKeywordLiteral,
+  isUnaryExpression,
+  isValueLiteral,
+  isValuetypeDefinitionReference,
+  isVariableLiteral,
+} from '../../ast/generated/ast';
 import { ValidationContext } from '../validation-context';
 import { checkUniqueNames } from '../validation-util';
 
@@ -18,6 +37,8 @@ export function validateTransformerBody(
 
   checkSingleInput(transformerBody, context);
   checkSingleOutput(transformerBody, context);
+
+  checkAreInputsUsed(transformerBody, context);
 
   for (const property of transformerBody.outputAssignments) {
     validateTransformerOutputAssignment(property, context);
@@ -35,7 +56,6 @@ function checkUniqueOutputAssignments(
 
   for (const definedOutputPort of definedOutputPorts) {
     const usedInAssignments = assignedOutputPorts.filter(
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       (x) => x.outPortName?.ref?.name === definedOutputPort.name,
     );
 
@@ -62,9 +82,7 @@ function checkSingleInput(
   transformerBody: TransformerBody,
   context: ValidationContext,
 ): void {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const inputs = transformerBody.ports?.filter((x) => x.kind === 'from');
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (inputs === undefined) {
     return undefined;
   }
@@ -83,9 +101,7 @@ function checkSingleOutput(
   transformerBody: TransformerBody,
   context: ValidationContext,
 ): void {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const outputs = transformerBody.ports?.filter((x) => x.kind === 'to');
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (outputs === undefined) {
     return undefined;
   }
@@ -98,4 +114,80 @@ function checkSingleOutput(
       });
     });
   }
+}
+
+function checkAreInputsUsed(
+  transformerBody: TransformerBody,
+  context: ValidationContext,
+): void {
+  const inputs = transformerBody.ports?.filter((x) => x.kind === 'from');
+  const outputAssignments = transformerBody?.outputAssignments;
+  if (inputs === undefined || outputAssignments === undefined) {
+    return undefined;
+  }
+
+  const referencedVariables: VariableLiteral[] = [];
+  outputAssignments.forEach((outputAssignment) => {
+    referencedVariables.push(
+      ...getReferencedVariables(outputAssignment?.expression),
+    );
+  });
+
+  const referecedVariableNames = referencedVariables.map(
+    (x) => x.value?.ref?.name,
+  );
+  inputs.forEach((input) => {
+    if (input.name === undefined) {
+      return;
+    }
+
+    if (!referecedVariableNames.includes(input.name)) {
+      if (isOutputPortComplete(input)) {
+        context.accept('warning', 'This input port is never used', {
+          node: input,
+        });
+      }
+    }
+  });
+}
+
+function isOutputPortComplete(
+  portDefinition: TransformerPortDefinition,
+): boolean {
+  const valueType = portDefinition?.valueType;
+  if (valueType === undefined) {
+    return false;
+  }
+
+  if (isPrimitiveValuetypeKeywordLiteral(valueType)) {
+    return valueType?.keyword !== undefined;
+  } else if (isValuetypeDefinitionReference(valueType)) {
+    return valueType?.reference?.ref?.name !== undefined;
+  }
+  return assertUnreachable(valueType);
+}
+
+function getReferencedVariables(
+  expression: Expression | undefined,
+): VariableLiteral[] {
+  if (expression === undefined) {
+    return [];
+  }
+
+  if (isExpressionLiteral(expression)) {
+    if (isVariableLiteral(expression)) {
+      return [expression];
+    } else if (isValueLiteral(expression)) {
+      return [];
+    }
+    assertUnreachable(expression);
+  } else if (isBinaryExpression(expression)) {
+    return [
+      ...getReferencedVariables(expression.left),
+      ...getReferencedVariables(expression.right),
+    ];
+  } else if (isUnaryExpression(expression)) {
+    return getReferencedVariables(expression.expression);
+  }
+  assertUnreachable(expression);
 }
