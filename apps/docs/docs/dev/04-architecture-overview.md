@@ -30,4 +30,4 @@ end
 
 ## Jayvee Extensions
 
-Lastly, there are Jayvee extensions for adding additional features to the language. See [here](./04-jayvee-extensions.md) for more details. You will notice that extensions also follow the separation described above.
+Lastly, there are Jayvee extensions for adding additional features to the language. See [here](./05-jayvee-extensions.md) for more details. You will notice that extensions also follow the separation described above.
