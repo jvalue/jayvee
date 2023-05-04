@@ -27,8 +27,11 @@ function checkConstraintsCollectionValues(
   valuetype: ValuetypeDefinition,
   validationContext: ValidationContext,
 ): void {
-  const constraints = valuetype.constraints;
-  constraints.values.forEach((collectionValue) => {
+  const constraintValues = valuetype?.constraints?.values;
+  if (constraintValues === undefined) {
+    return;
+  }
+  constraintValues.forEach((collectionValue) => {
     const type = inferExpressionType(collectionValue, validationContext);
     if (type !== PrimitiveValuetypes.Constraint) {
       validationContext.accept(
@@ -50,11 +53,11 @@ function checkConstraintsMatchPrimitiveValuetype(
     return;
   }
 
-  const constraintReferences = valuetype?.constraints?.values.filter(
-    isConstraintReferenceLiteral,
-  );
+  const constraintReferences =
+    valuetype?.constraints?.values?.filter(isConstraintReferenceLiteral) ?? [];
+
   for (const constraintReference of constraintReferences) {
-    const constraint = constraintReference?.value.ref;
+    const constraint = constraintReference?.value?.ref;
     const constraintType = constraint?.type;
 
     if (constraintType === undefined) {
