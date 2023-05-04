@@ -6,15 +6,22 @@ import { TransformerBody } from '../../ast/generated/ast';
 import { ValidationContext } from '../validation-context';
 import { checkUniqueNames } from '../validation-util';
 
+// eslint-disable-next-line import/no-cycle
+import { validateTransformerOutputAssignment } from './transformer-output-assigment';
+
 export function validateTransformerBody(
   transformerBody: TransformerBody,
   context: ValidationContext,
 ): void {
   checkUniqueNames(transformerBody.ports, context, 'transformer port');
   checkUniqueOutputAssignments(transformerBody, context);
+
+  for (const property of transformerBody.outputAssignments) {
+    validateTransformerOutputAssignment(property, context);
+  }
 }
 
-export function checkUniqueOutputAssignments(
+function checkUniqueOutputAssignments(
   transformerBody: TransformerBody,
   context: ValidationContext,
 ): void {

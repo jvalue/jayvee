@@ -23,6 +23,7 @@ import {
   isVariableLiteral,
 } from '../generated/ast';
 // eslint-disable-next-line import/no-cycle
+import { inferBasePropertyValuetype } from '../model-util';
 import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-valuetypes';
 import { type Valuetype } from '../wrappers/value-type/valuetype';
 
@@ -99,7 +100,12 @@ function inferTypeFromExpressionLiteral(
     return PrimitiveValuetypes.Collection;
   }
   if (isVariableLiteral(expression)) {
-    return undefined; // TODO: infer real type from variable definition if given
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const variableValueType = expression?.value?.ref?.valueType;
+    if (variableValueType === undefined) {
+      return undefined;
+    }
+    return inferBasePropertyValuetype(variableValueType);
   }
   assertUnreachable(expression);
 }

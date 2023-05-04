@@ -16,8 +16,10 @@ import {
   PrimitiveValuetypeKeywordLiteral,
   UnaryExpression,
   ValuetypeDefinitionReference,
+  isPrimitiveValuetypeKeywordLiteral,
   isValuetypeDefinitionReference,
 } from './generated/ast';
+import { PrimitiveValuetype, PrimitiveValuetypes } from './wrappers';
 import { PipeWrapper, createSemanticPipes } from './wrappers/pipe-wrapper';
 
 export function collectStartingBlocks(
@@ -156,6 +158,44 @@ export function getValuetypeName(
     return valuetype.reference.$refText;
   }
   return valuetype.keyword;
+}
+
+export function inferBasePropertyValuetype(
+  valuetype: PrimitiveValuetypeKeywordLiteral | ValuetypeDefinitionReference,
+): PrimitiveValuetype | undefined {
+  let keyword: PrimitiveValuetypeKeywordLiteral | undefined;
+  if (isValuetypeDefinitionReference(valuetype)) {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    keyword = valuetype?.reference?.ref?.type;
+  } else if (isPrimitiveValuetypeKeywordLiteral(valuetype)) {
+    keyword = valuetype;
+  } else {
+    assertUnreachable(valuetype);
+  }
+
+  if (keyword === undefined) {
+    return keyword;
+  }
+
+  return inferPropertyValuetypeFromKeyword(keyword);
+}
+
+export function inferPropertyValuetypeFromKeyword(
+  valuetype: PrimitiveValuetypeKeywordLiteral,
+): PrimitiveValuetype {
+  const keyword = valuetype.keyword;
+  switch (keyword) {
+    case 'boolean':
+      return PrimitiveValuetypes.Boolean;
+    case 'decimal':
+      return PrimitiveValuetypes.Decimal;
+    case 'integer':
+      return PrimitiveValuetypes.Integer;
+    case 'text':
+      return PrimitiveValuetypes.Text;
+    default:
+      assertUnreachable(keyword);
+  }
 }
 
 export type AstTypeGuard<T extends AstNode = AstNode> = (
