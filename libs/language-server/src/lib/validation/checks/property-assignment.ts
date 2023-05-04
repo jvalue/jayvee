@@ -9,6 +9,7 @@
 
 import { inferExpressionType } from '../../ast';
 import {
+  EvaluationContext,
   EvaluationStrategy,
   evaluateExpression,
 } from '../../ast/expressions/evaluation';
@@ -110,6 +111,7 @@ function checkExpressionSimplification(
 
   const evaluatedExpression = evaluateExpression(
     expression,
+    new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
     EvaluationStrategy.EXHAUSTIVE,
     context,
   );

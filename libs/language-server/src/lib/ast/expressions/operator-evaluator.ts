@@ -13,6 +13,7 @@ import {
 } from '../model-util';
 
 import {
+  EvaluationContext,
   EvaluationStrategy,
   OperandValue,
   OperandValueTypeguard,
@@ -29,8 +30,9 @@ export interface OperatorEvaluator<
    */
   evaluate(
     expression: E,
+    evaluationContext: EvaluationContext,
     strategy: EvaluationStrategy,
-    context: ValidationContext | undefined,
+    validationContext: ValidationContext | undefined,
   ): OperandValue | undefined;
 }
 
@@ -52,14 +54,16 @@ export abstract class DefaultUnaryOperatorEvaluator<
 
   evaluate(
     expression: UnaryExpression,
+    evaluationContext: EvaluationContext,
     strategy: EvaluationStrategy,
-    context: ValidationContext | undefined,
+    validationContext: ValidationContext | undefined,
   ): T | undefined {
     assert(expression.operator === this.operator);
     const operandValue = evaluateExpression(
       expression.expression,
+      evaluationContext,
       strategy,
-      context,
+      validationContext,
     );
     if (operandValue === undefined) {
       return undefined;
@@ -67,7 +71,7 @@ export abstract class DefaultUnaryOperatorEvaluator<
 
     assert(this.operandValueTypeguard(operandValue));
 
-    return this.doEvaluate(operandValue, expression, context);
+    return this.doEvaluate(operandValue, expression, validationContext);
   }
 }
 
@@ -92,15 +96,26 @@ export abstract class DefaultBinaryOperatorEvaluator<
 
   evaluate(
     expression: BinaryExpression,
+    evaluationContext: EvaluationContext,
     strategy: EvaluationStrategy,
-    context: ValidationContext | undefined,
+    validationContext: ValidationContext | undefined,
   ): T | undefined {
     assert(expression.operator === this.operator);
-    const leftValue = evaluateExpression(expression.left, strategy, context);
+    const leftValue = evaluateExpression(
+      expression.left,
+      evaluationContext,
+      strategy,
+      validationContext,
+    );
     if (strategy === EvaluationStrategy.LAZY && leftValue === undefined) {
       return undefined;
     }
-    const rightValue = evaluateExpression(expression.right, strategy, context);
+    const rightValue = evaluateExpression(
+      expression.right,
+      evaluationContext,
+      strategy,
+      validationContext,
+    );
     if (leftValue === undefined || rightValue === undefined) {
       return undefined;
     }
@@ -108,7 +123,12 @@ export abstract class DefaultBinaryOperatorEvaluator<
     assert(this.leftValueTypeguard(leftValue));
     assert(this.rightValueTypeguard(rightValue));
 
-    return this.doEvaluate(leftValue, rightValue, expression, context);
+    return this.doEvaluate(
+      leftValue,
+      rightValue,
+      expression,
+      validationContext,
+    );
   }
 }
 
@@ -132,11 +152,17 @@ export abstract class BooleanShortCircuitOperatorEvaluator
 
   evaluate(
     expression: BinaryExpression,
+    evaluationContext: EvaluationContext,
     strategy: EvaluationStrategy,
-    context: ValidationContext | undefined,
+    validationContext: ValidationContext | undefined,
   ): boolean | undefined {
     assert(expression.operator === this.operator);
-    const leftValue = evaluateExpression(expression.left, strategy, context);
+    const leftValue = evaluateExpression(
+      expression.left,
+      evaluationContext,
+      strategy,
+      validationContext,
+    );
     assert(leftValue === undefined || typeof leftValue === 'boolean');
     if (strategy === EvaluationStrategy.LAZY) {
       if (leftValue === undefined) {
@@ -147,7 +173,12 @@ export abstract class BooleanShortCircuitOperatorEvaluator
       }
     }
 
-    const rightValue = evaluateExpression(expression.right, strategy, context);
+    const rightValue = evaluateExpression(
+      expression.right,
+      evaluationContext,
+      strategy,
+      validationContext,
+    );
     if (leftValue === undefined || rightValue === undefined) {
       return undefined;
     }

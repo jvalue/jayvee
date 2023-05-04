@@ -22,7 +22,7 @@ export class DenylistConstraintExecutor implements ConstraintExecutor {
 
     const denylist = context.getExpressionCollectionPropertyValue('denylist');
     const denylistValues = denylist.map((expression) => {
-      const value = evaluateExpression(expression);
+      const value = evaluateExpression(expression, context.evaluationContext);
       assert(typeof value === 'string');
       return value;
     });

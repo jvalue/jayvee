@@ -6,6 +6,7 @@ import { strict as assert } from 'assert';
 
 import {
   BlockMetaInformation,
+  EvaluationContext,
   IOType,
   NUMBER_TYPEGUARD,
   PrimitiveValuetypes,
@@ -47,6 +48,7 @@ export class TextLineDeleterMetaInformation extends BlockMetaInformation {
             for (const expression of validItems) {
               const value = evaluatePropertyValueExpression(
                 expression,
+                new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
                 NUMBER_TYPEGUARD,
               );
 

@@ -12,13 +12,20 @@ import {
   ConstraintDefinition,
   Expression,
   ExpressionLiteral,
+  RuntimeParameterLiteral,
   TransformerPortDefinition,
   ValuetypeAssignment,
+  VariableLiteral,
   isBinaryExpression,
+  isBooleanLiteral,
   isCellRangeLiteral,
   isCollectionLiteral,
+  isExpression,
   isExpressionLiteral,
+  isNumericLiteral,
   isRegexLiteral,
+  isRuntimeParameterLiteral,
+  isTextLiteral,
   isUnaryExpression,
   isVariableLiteral,
 } from '../generated/ast';
@@ -45,15 +52,59 @@ export type OperandValue =
   | ValuetypeAssignment
   | CollectionLiteral
   | TransformerPortDefinition;
+export class EvaluationContext {
+  constructor(
+    public runtimeParameterValues: Map<string, OperandValue> = new Map(),
+    public variableValues: Map<string, OperandValue> = new Map(),
+  ) {}
+
+  getValueFor(literal: VariableLiteral | RuntimeParameterLiteral) {
+    if (isVariableLiteral(literal)) {
+      return this.getValueForVariable(literal);
+    } else if (isRuntimeParameterLiteral(literal)) {
+      return this.getValueForRuntimeParameter(literal);
+    }
+    assertUnreachable(literal);
+  }
+
+  getValueForVariable(
+    variableLiteral: VariableLiteral,
+  ): OperandValue | undefined {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const key = variableLiteral?.value?.$refText;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (key === undefined) {
+      return undefined;
+    }
+
+    return this.variableValues.get(key);
+  }
+
+  getValueForRuntimeParameter(
+    parameterLiteral: RuntimeParameterLiteral,
+  ): OperandValue | undefined {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const key = parameterLiteral?.name;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (key === undefined) {
+      return undefined;
+    }
+
+    return this.runtimeParameterValues.get(key);
+  }
+}
+
 export type OperandValueTypeguard<T extends OperandValue> = (
   value: OperandValue,
 ) => value is T;
 
 export function evaluatePropertyValueExpression<T extends OperandValue>(
-  propertyValue: Expression,
+  propertyValue: PropertyValueLiteral | RuntimeParameterLiteral,
+  evaluationContext: EvaluationContext,
   typeguard: OperandValueTypeguard<T>,
 ): T {
-  const resultingValue = evaluateExpression(propertyValue);
+  assert(isExpression(propertyValue));
+  const resultingValue = evaluateExpression(propertyValue, evaluationContext);
   assert(resultingValue !== undefined);
   assert(typeguard(resultingValue));
   return resultingValue;
@@ -61,24 +112,32 @@ export function evaluatePropertyValueExpression<T extends OperandValue>(
 
 export function evaluateExpression(
   expression: Expression,
+  evaluationContext: EvaluationContext,
   strategy: EvaluationStrategy = EvaluationStrategy.LAZY,
   context: ValidationContext | undefined = undefined,
 ): OperandValue | undefined {
   if (isExpressionLiteral(expression)) {
     if (isVariableLiteral(expression)) {
-      return undefined; // TODO
+      return evaluationContext.getValueFor(expression);
+    } else if (
+      // TODO: aggregate these types of literals to a "ConstantLiteral" or "ValueLiteral"
+      isBooleanLiteral(expression) ||
+      isNumericLiteral(expression) ||
+      isTextLiteral(expression)
+    ) {
+      return expression.value;
     }
     return evaluateExpressionLiteral(expression);
   }
   if (isUnaryExpression(expression)) {
     const operator = expression.operator;
     const evaluator = unaryOperatorRegistry[operator].evaluation;
-    return evaluator.evaluate(expression, strategy, context);
+    return evaluator.evaluate(expression, evaluationContext, strategy, context);
   }
   if (isBinaryExpression(expression)) {
     const operator = expression.operator;
     const evaluator = binaryOperatorRegistry[operator].evaluation;
-    return evaluator.evaluate(expression, strategy, context);
+    return evaluator.evaluate(expression, evaluationContext, strategy, context);
   }
   assertUnreachable(expression);
 }

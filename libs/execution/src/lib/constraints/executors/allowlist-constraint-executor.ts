@@ -22,7 +22,7 @@ export class AllowlistConstraintExecutor implements ConstraintExecutor {
 
     const allowlist = context.getExpressionCollectionPropertyValue('allowlist');
     const allowlistValues = allowlist.map((expression) => {
-      const value = evaluateExpression(expression);
+      const value = evaluateExpression(expression, context.evaluationContext);
       assert(typeof value === 'string');
       return value;
     });

@@ -9,6 +9,7 @@
 
 // eslint-disable-next-line import/no-cycle
 import {
+  EvaluationContext,
   EvaluationStrategy,
   evaluateExpression,
 } from '../../ast/expressions/evaluation';
@@ -80,6 +81,7 @@ function checkExpressionSimplification(
 
   const evaluatedExpression = evaluateExpression(
     expression,
+    new EvaluationContext(), // TODO
     EvaluationStrategy.EXHAUSTIVE,
     context,
   );

@@ -4,6 +4,7 @@
 
 import {
   BlockMetaInformation,
+  EvaluationContext,
   IOType,
   PrimitiveValuetypes,
   PropertyAssignment,
@@ -112,6 +113,7 @@ function isGtfsRTEntity(
 
   const entityValue = evaluatePropertyValueExpression(
     propertyValue,
+    new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
     STRING_TYPEGUARD,
   );
 

@@ -34,6 +34,7 @@ export class TextLineDeleterExecutor
     const lineEntries = lineExpressions.map((expression) => {
       const value = evaluatePropertyValueExpression(
         expression,
+        context.evaluationContext,
         NUMBER_TYPEGUARD,
       );
       return { lineNumber: value, astNode: expression };

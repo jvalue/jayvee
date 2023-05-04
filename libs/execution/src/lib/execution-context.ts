@@ -8,6 +8,7 @@ import {
   BlockDefinition,
   CellRangeWrapper,
   ConstraintDefinition,
+  EvaluationContext,
   Expression,
   PipelineDefinition,
   PropertyAssignment,
@@ -32,7 +33,7 @@ export class ExecutionContext {
   constructor(
     public readonly pipeline: PipelineDefinition,
     public readonly logger: Logger,
-    public readonly runtimeParameters: Map<string, string | number | boolean>,
+    public readonly evaluationContext: EvaluationContext,
   ) {
     logger.setLoggingContext(pipeline.name);
   }
@@ -168,13 +169,13 @@ export class ExecutionContext {
     const propertyValue = property.value;
 
     if (isRuntimeParameterLiteral(propertyValue)) {
-      return this.runtimeParameters.get(propertyValue.name);
+      return this.evaluationContext.getValueForRuntimeParameter(propertyValue);
     }
     if (isCollectionLiteral(propertyValue)) {
       return propertyValue.values;
     }
     if (isExpression(propertyValue)) {
-      return evaluateExpression(propertyValue);
+      return evaluateExpression(propertyValue, this.evaluationContext);
     }
     assertUnreachable(propertyValue);
   }

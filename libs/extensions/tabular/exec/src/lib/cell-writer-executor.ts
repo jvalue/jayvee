@@ -31,7 +31,7 @@ export class CellWriterExecutor
     const writeCollection =
       context.getExpressionCollectionPropertyValue('write');
     const writeValues = writeCollection.map((expression) => {
-      const value = evaluateExpression(expression);
+      const value = evaluateExpression(expression, context.evaluationContext);
       assert(typeof value === 'string');
       return value;
     });
