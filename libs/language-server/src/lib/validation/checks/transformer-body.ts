@@ -16,6 +16,9 @@ export function validateTransformerBody(
   checkUniqueNames(transformerBody.ports, context, 'transformer port');
   checkUniqueOutputAssignments(transformerBody, context);
 
+  checkSingleInput(transformerBody, context);
+  checkSingleOutput(transformerBody, context);
+
   for (const property of transformerBody.outputAssignments) {
     validateTransformerOutputAssignment(property, context);
   }
@@ -52,5 +55,47 @@ function checkUniqueOutputAssignments(
         });
       });
     }
+  }
+}
+
+function checkSingleInput(
+  transformerBody: TransformerBody,
+  context: ValidationContext,
+): void {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const inputs = transformerBody.ports?.filter((x) => x.kind === 'from');
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (inputs === undefined) {
+    return undefined;
+  }
+
+  if (inputs.length > 1) {
+    inputs.forEach((input) => {
+      context.accept('error', 'More than one input port is defined', {
+        node: input,
+        property: 'kind',
+      });
+    });
+  }
+}
+
+function checkSingleOutput(
+  transformerBody: TransformerBody,
+  context: ValidationContext,
+): void {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const outputs = transformerBody.ports?.filter((x) => x.kind === 'to');
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (outputs === undefined) {
+    return undefined;
+  }
+
+  if (outputs.length > 1) {
+    outputs.forEach((input) => {
+      context.accept('error', 'More than one outport port is defined', {
+        node: input,
+        property: 'kind',
+      });
+    });
   }
 }
