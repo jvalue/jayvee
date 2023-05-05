@@ -13,14 +13,14 @@ import {
   IsValidVisitor,
   Sheet,
   Table,
-  Valuetype,
-  createValuetype,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import {
   CellIndex,
   IOType,
+  Valuetype,
   ValuetypeAssignment,
+  createValuetype,
   getValuetypeName,
   rowIndexToString,
 } from '@jvalue/jayvee-language-server';

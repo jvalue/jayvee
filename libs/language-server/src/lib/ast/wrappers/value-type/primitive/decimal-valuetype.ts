@@ -4,19 +4,18 @@
 
 import { strict as assert } from 'assert';
 
-import { PrimitiveValuetypeKeywordLiteral } from '@jvalue/jayvee-language-server';
-
+import { PrimitiveValuetypeKeywordLiteral } from '../../../generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { ValuetypeVisitor } from '../visitors/valuetype-visitor';
 
 import { PrimitiveValuetype } from './primitive-valuetype';
 
-export class IntegerValuetype implements PrimitiveValuetype {
+export class DecimalValuetype implements PrimitiveValuetype {
   constructor(public readonly astNode: PrimitiveValuetypeKeywordLiteral) {
-    assert(astNode.keyword === 'integer');
+    assert(astNode.keyword === 'decimal');
   }
 
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
-    return visitor.visitInteger(this);
+    return visitor.visitDecimal(this);
   }
 }

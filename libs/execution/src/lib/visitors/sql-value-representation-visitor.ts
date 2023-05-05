@@ -8,10 +8,10 @@ import {
   DecimalValuetype,
   IntegerValuetype,
   TextValuetype,
-} from '../types/valuetypes';
-// eslint-disable-next-line import/no-cycle
+  ValuetypeVisitor,
+} from '@jvalue/jayvee-language-server';
+
 import { StandardRepresentationResolver } from '../types/valuetypes/standard-representation';
-import { ValuetypeVisitor } from '../types/valuetypes/visitors/valuetype-visitor';
 
 export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
   (value: unknown) => string
