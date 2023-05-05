@@ -13,27 +13,18 @@ import {
 } from '@jvalue/jayvee-language-server';
 
 // eslint-disable-next-line import/no-cycle
-import {
-  PrimitiveType,
-  PrimitiveValuetype,
-} from './primitive/primitive-valuetype';
+import { PrimitiveValuetype } from './primitive/primitive-valuetype';
 import { Valuetype } from './valuetype';
 import { ValuetypeVisitor } from './visitors/valuetype-visitor';
 
-export class AtomicValuetype<T extends PrimitiveType>
-  implements Valuetype<ValuetypeDefinition, T>
-{
+export class AtomicValuetype implements Valuetype<ValuetypeDefinition> {
   constructor(
     public readonly astNode: ValuetypeDefinition,
-    public readonly primitiveValuetype: PrimitiveValuetype<T>,
+    public readonly primitiveValuetype: PrimitiveValuetype,
   ) {}
 
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
     return this.primitiveValuetype.acceptVisitor(visitor);
-  }
-
-  getStandardRepresentation(value: unknown): T {
-    return this.primitiveValuetype.getStandardRepresentation(value);
   }
 
   getConstraints(): ConstraintDefinition[] {

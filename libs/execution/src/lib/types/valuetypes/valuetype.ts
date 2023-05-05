@@ -16,12 +16,8 @@ export type ValuetypeAstNode =
   | PrimitiveValuetypeKeywordLiteral
   | ValuetypeDefinition;
 
-export interface Valuetype<
-  N extends ValuetypeAstNode = ValuetypeAstNode,
-  T = unknown,
-> extends VisitableValuetype,
+export interface Valuetype<N extends ValuetypeAstNode = ValuetypeAstNode>
+  extends VisitableValuetype,
     AstNodeWrapper<N> {
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R;
-
-  getStandardRepresentation(value: unknown): T;
 }

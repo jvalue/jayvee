@@ -9,5 +9,4 @@ import { Valuetype } from '../valuetype';
 
 export type PrimitiveType = string | number | boolean;
 
-export type PrimitiveValuetype<T extends PrimitiveType = PrimitiveType> =
-  Valuetype<PrimitiveValuetypeKeywordLiteral, T>;
+export type PrimitiveValuetype = Valuetype<PrimitiveValuetypeKeywordLiteral>;

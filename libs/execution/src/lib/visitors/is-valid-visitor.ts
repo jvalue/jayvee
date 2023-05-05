@@ -4,7 +4,7 @@
 
 import { createConstraintExecutor } from '../constraints/constraint-executor-registry';
 import { ExecutionContext } from '../execution-context';
-import { AtomicValuetype, PrimitiveType } from '../types';
+import { AtomicValuetype } from '../types';
 import { ValuetypeVisitor } from '../types/valuetypes/visitors/valuetype-visitor';
 
 export class IsValidVisitor extends ValuetypeVisitor<boolean> {
@@ -55,9 +55,7 @@ export class IsValidVisitor extends ValuetypeVisitor<boolean> {
     return typeof this.value === 'string';
   }
 
-  override visitAtomicValuetype<T extends PrimitiveType>(
-    valuetype: AtomicValuetype<T>,
-  ): boolean {
+  override visitAtomicValuetype(valuetype: AtomicValuetype): boolean {
     if (!valuetype.primitiveValuetype.acceptVisitor(this)) {
       return false;
     }

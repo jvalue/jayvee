@@ -11,31 +11,12 @@ import { ValuetypeVisitor } from '../visitors/valuetype-visitor';
 
 import { PrimitiveValuetype } from './primitive-valuetype';
 
-export class DecimalValuetype implements PrimitiveValuetype<number> {
-  private readonly COMMA_SEPARATOR_REGEX = /^[+-]?([0-9]*[,])?[0-9]+$/;
+export class DecimalValuetype implements PrimitiveValuetype {
   constructor(public readonly astNode: PrimitiveValuetypeKeywordLiteral) {
     assert(astNode.keyword === 'decimal');
   }
 
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
     return visitor.visitDecimal(this);
-  }
-
-  getStandardRepresentation(value: unknown): number {
-    if (typeof value === 'number') {
-      return value;
-    }
-    if (typeof value === 'string') {
-      let stringValue: string = value;
-      if (this.COMMA_SEPARATOR_REGEX.test(stringValue)) {
-        stringValue = stringValue.replace(',', '.');
-      }
-      return Number.parseFloat(stringValue);
-    }
-
-    throw new Error(
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      `Invalid value: ${value} for type ${this.astNode.keyword}`,
-    );
   }
 }
