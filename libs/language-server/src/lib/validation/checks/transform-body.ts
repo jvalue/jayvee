@@ -10,8 +10,8 @@
 import { assertUnreachable } from 'langium';
 
 import {
-  TransformerBody,
-  TransformerPortDefinition,
+  TransformBody,
+  TransformPortDefinition,
   VariableLiteral,
   isPrimitiveValuetypeKeywordLiteral,
   isValuetypeDefinitionReference,
@@ -22,34 +22,32 @@ import { checkUniqueNames } from '../validation-util';
 // eslint-disable-next-line import/no-cycle
 import {
   getReferencedVariables,
-  validateTransformerOutputAssignment,
-} from './transformer-output-assigment';
+  validateTransformOutputAssignment,
+} from './transform-output-assigment';
 
-export function validateTransformerBody(
-  transformerBody: TransformerBody,
+export function validateTransformBody(
+  transformBody: TransformBody,
   context: ValidationContext,
 ): void {
-  checkUniqueNames(transformerBody.ports, context, 'transformer port');
-  checkUniqueOutputAssignments(transformerBody, context);
+  checkUniqueNames(transformBody.ports, context, 'transform port');
+  checkUniqueOutputAssignments(transformBody, context);
 
-  checkSingleInput(transformerBody, context);
-  checkSingleOutput(transformerBody, context);
+  checkSingleInput(transformBody, context);
+  checkSingleOutput(transformBody, context);
 
-  checkAreInputsUsed(transformerBody, context);
+  checkAreInputsUsed(transformBody, context);
 
-  for (const property of transformerBody.outputAssignments) {
-    validateTransformerOutputAssignment(property, context);
+  for (const property of transformBody.outputAssignments) {
+    validateTransformOutputAssignment(property, context);
   }
 }
 
 function checkUniqueOutputAssignments(
-  transformerBody: TransformerBody,
+  transformBody: TransformBody,
   context: ValidationContext,
 ): void {
-  const assignedOutputPorts = transformerBody.outputAssignments;
-  const definedOutputPorts = transformerBody.ports.filter(
-    (x) => x.kind === 'to',
-  );
+  const assignedOutputPorts = transformBody.outputAssignments;
+  const definedOutputPorts = transformBody.ports.filter((x) => x.kind === 'to');
 
   for (const definedOutputPort of definedOutputPorts) {
     const usedInAssignments = assignedOutputPorts.filter(
@@ -76,10 +74,10 @@ function checkUniqueOutputAssignments(
 }
 
 function checkSingleInput(
-  transformerBody: TransformerBody,
+  transformBody: TransformBody,
   context: ValidationContext,
 ): void {
-  const inputs = transformerBody.ports?.filter((x) => x.kind === 'from');
+  const inputs = transformBody.ports?.filter((x) => x.kind === 'from');
   if (inputs === undefined) {
     return undefined;
   }
@@ -95,10 +93,10 @@ function checkSingleInput(
 }
 
 function checkSingleOutput(
-  transformerBody: TransformerBody,
+  transformBody: TransformBody,
   context: ValidationContext,
 ): void {
-  const outputs = transformerBody.ports?.filter((x) => x.kind === 'to');
+  const outputs = transformBody.ports?.filter((x) => x.kind === 'to');
   if (outputs === undefined) {
     return undefined;
   }
@@ -114,11 +112,11 @@ function checkSingleOutput(
 }
 
 function checkAreInputsUsed(
-  transformerBody: TransformerBody,
+  transformBody: TransformBody,
   context: ValidationContext,
 ): void {
-  const inputs = transformerBody.ports?.filter((x) => x.kind === 'from');
-  const outputAssignments = transformerBody?.outputAssignments;
+  const inputs = transformBody.ports?.filter((x) => x.kind === 'from');
+  const outputAssignments = transformBody?.outputAssignments;
   if (inputs === undefined || outputAssignments === undefined) {
     return undefined;
   }
@@ -149,7 +147,7 @@ function checkAreInputsUsed(
 }
 
 function isOutputPortComplete(
-  portDefinition: TransformerPortDefinition,
+  portDefinition: TransformPortDefinition,
 ): boolean {
   const valueType = portDefinition?.valueType;
   if (valueType === undefined) {

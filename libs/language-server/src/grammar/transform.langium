@@ -6,14 +6,14 @@ import 'terminal'
 import 'valuetype'
 import 'expression'
 
-TransformerDefinition:
-  'transformer' name=ID body=TransformerBody;
+TransformDefinition:
+  'transform' name=ID body=TransformBody;
 
-TransformerBody:
-  '{' (ports+=TransformerPortDefinition)* (outputAssignments+=TransformerOutputAssignment)* '}';
+TransformBody:
+  '{' (ports+=TransformPortDefinition)* (outputAssignments+=TransformOutputAssignment)* '}';
 
-TransformerPortDefinition:
+TransformPortDefinition:
   kind=('from' | 'to') name=ID 'oftype' valueType=(PrimitiveValuetypeKeywordLiteral | ValuetypeDefinitionReference) ';'; 
  
-TransformerOutputAssignment:
-  outPortName=[TransformerPortDefinition] ':' expression=Expression ';';
+TransformOutputAssignment:
+  outPortName=[TransformPortDefinition] ':' expression=Expression ';';

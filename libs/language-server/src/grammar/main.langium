@@ -8,14 +8,14 @@ import './terminal'
 import './property'
 import './valuetype'
 import './constraint'
-import './transformer'
+import './transform'
 
 entry JayveeModel:
   (
     pipelines+=PipelineDefinition
     | valuetypes+=ValuetypeDefinition
     | constraints+=ConstraintDefinition
-    | transformers+=TransformerDefinition
+    | transforms+=TransformDefinition
   )*;
 
 PipelineDefinition:
@@ -25,7 +25,7 @@ PipelineDefinition:
       | pipes+=PipeDefinition
       | valuetypes+=ValuetypeDefinition
       | constraints+=ConstraintDefinition
-      | transformers+=TransformerDefinition
+      | transforms+=TransformDefinition
     )*
   '}';
 

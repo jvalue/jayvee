@@ -19,7 +19,7 @@ import { convertsImplicitlyTo } from '../../ast/expressions/operator-type-comput
 import { inferExpressionType } from '../../ast/expressions/type-inference';
 import {
   Expression,
-  TransformerOutputAssignment,
+  TransformOutputAssignment,
   VariableLiteral,
   isBinaryExpression,
   isExpression,
@@ -31,8 +31,8 @@ import {
 import { inferBasePropertyValuetype } from '../../ast/model-util';
 import { ValidationContext } from '../validation-context';
 
-export function validateTransformerOutputAssignment(
-  outputAssignment: TransformerOutputAssignment,
+export function validateTransformOutputAssignment(
+  outputAssignment: TransformOutputAssignment,
   context: ValidationContext,
 ): void {
   checkOutputValueTyping(outputAssignment, context);
@@ -40,7 +40,7 @@ export function validateTransformerOutputAssignment(
 }
 
 function checkOutputValueTyping(
-  outputAssignment: TransformerOutputAssignment,
+  outputAssignment: TransformOutputAssignment,
   context: ValidationContext,
 ): void {
   const assignmentExpression = outputAssignment?.expression;
@@ -80,7 +80,7 @@ function checkOutputValueTyping(
 }
 
 function checkOutputNotInAssignmentExpression(
-  outputAssignment: TransformerOutputAssignment,
+  outputAssignment: TransformOutputAssignment,
   context: ValidationContext,
 ): void {
   const variables = getReferencedVariables(outputAssignment?.expression);

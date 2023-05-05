@@ -9,6 +9,7 @@ import { validateTypedCollection } from '../../expressions/type-inference';
 import {
   ConstraintDefinition,
   ValuetypeDefinition,
+  isConstraintDefinition,
   isReferenceLiteral,
 } from '../../generated/ast';
 import { AstNodeWrapper } from '../ast-node-wrapper';
@@ -42,7 +43,7 @@ export class AtomicValuetype
 
     assert(constraintReferences.every(isReferenceLiteral));
 
-    const constraints = references.map(
+    const constraints = constraintReferences.map(
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       (constraintReference) => constraintReference.value.ref!,
     );

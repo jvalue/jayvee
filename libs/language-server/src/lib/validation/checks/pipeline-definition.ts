@@ -13,7 +13,7 @@ export function validatePipelineDefinition(
 ): void {
   checkStartingBlocks(pipeline, context);
   checkUniqueNames(pipeline.blocks, context);
-  checkUniqueNames(pipeline.transformers, context);
+  checkUniqueNames(pipeline.transforms, context);
   checkUniqueNames(pipeline.valuetypes, context);
   checkUniqueNames(pipeline.constraints, context);
 }
