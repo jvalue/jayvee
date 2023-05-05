@@ -2,10 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import {
+  AtomicValuetype,
+  ValuetypeVisitor,
+} from '@jvalue/jayvee-language-server';
+
 import { createConstraintExecutor } from '../constraints/constraint-executor-registry';
 import { ExecutionContext } from '../execution-context';
-import { AtomicValuetype } from '../types';
-import { ValuetypeVisitor } from '../types/valuetypes/visitors/valuetype-visitor';
 
 export class IsValidVisitor extends ValuetypeVisitor<boolean> {
   private readonly BOOLEAN_STRING_REPRESENTATIONS = [

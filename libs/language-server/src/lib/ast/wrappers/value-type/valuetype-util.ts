@@ -2,12 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { assertUnreachable } from 'langium/lib/utils/errors';
+
 import {
   PrimitiveValuetypeKeywordLiteral,
   ValuetypeDefinitionReference,
   isValuetypeDefinitionReference,
-} from '@jvalue/jayvee-language-server';
-import { assertUnreachable } from 'langium/lib/utils/errors';
+} from '../../generated/ast';
 
 import { AtomicValuetype } from './atomic-valuetype';
 import { BooleanValuetype } from './primitive/boolean-valuetype';

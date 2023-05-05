@@ -4,13 +4,13 @@
 
 import { strict as assert } from 'assert';
 
+import { validateTypedCollection } from '../../collection-util';
 import {
   ConstraintDefinition,
-  PropertyValuetype,
   ValuetypeDefinition,
   isConstraintReferenceLiteral,
-  validateTypedCollection,
-} from '@jvalue/jayvee-language-server';
+} from '../../generated/ast';
+import { PropertyValuetype } from '../../model-util';
 
 // eslint-disable-next-line import/no-cycle
 import { PrimitiveValuetype } from './primitive/primitive-valuetype';

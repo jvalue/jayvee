@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line import/no-cycle
 import {
   AtomicValuetype,
   BooleanValuetype,
@@ -11,7 +10,7 @@ import {
   PrimitiveType,
   TextValuetype,
   Valuetype,
-} from '..';
+} from '@jvalue/jayvee-language-server';
 
 export class StandardRepresentationResolver {
   private readonly DECIMAL_COMMA_SEPARATOR_REGEX = /^[+-]?([0-9]*[,])?[0-9]+$/;

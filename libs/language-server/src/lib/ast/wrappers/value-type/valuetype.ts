@@ -3,10 +3,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  AstNodeWrapper,
   PrimitiveValuetypeKeywordLiteral,
   ValuetypeDefinition,
-} from '@jvalue/jayvee-language-server';
+} from '../../generated/ast';
+import { AstNodeWrapper } from '../ast-node-wrapper';
 
 // eslint-disable-next-line import/no-cycle
 import { ValuetypeVisitor } from './visitors/valuetype-visitor';

@@ -4,10 +4,12 @@
 
 /* eslint-disable import/no-cycle */
 import { AtomicValuetype } from '../atomic-valuetype';
-import { BooleanValuetype } from '../primitive/boolean-valuetype';
-import { DecimalValuetype } from '../primitive/decimal-valuetype';
-import { IntegerValuetype } from '../primitive/integer-valuetype';
-import { TextValuetype } from '../primitive/text-valuetype';
+import {
+  BooleanValuetype,
+  DecimalValuetype,
+  IntegerValuetype,
+  TextValuetype,
+} from '../primitive';
 
 export abstract class ValuetypeVisitor<R = unknown> {
   abstract visitBoolean(valuetype: BooleanValuetype): R;

@@ -2,8 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { PrimitiveValuetypeKeywordLiteral } from '@jvalue/jayvee-language-server';
-
+import { PrimitiveValuetypeKeywordLiteral } from '../../../generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { Valuetype } from '../valuetype';
 
