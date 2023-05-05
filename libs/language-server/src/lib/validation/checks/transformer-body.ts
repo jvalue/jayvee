@@ -10,23 +10,20 @@
 import { assertUnreachable } from 'langium';
 
 import {
-  Expression,
   TransformerBody,
   TransformerPortDefinition,
   VariableLiteral,
-  isBinaryExpression,
-  isExpressionLiteral,
   isPrimitiveValuetypeKeywordLiteral,
-  isUnaryExpression,
-  isValueLiteral,
   isValuetypeDefinitionReference,
-  isVariableLiteral,
 } from '../../ast/generated/ast';
 import { ValidationContext } from '../validation-context';
 import { checkUniqueNames } from '../validation-util';
 
 // eslint-disable-next-line import/no-cycle
-import { validateTransformerOutputAssignment } from './transformer-output-assigment';
+import {
+  getReferencedVariables,
+  validateTransformerOutputAssignment,
+} from './transformer-output-assigment';
 
 export function validateTransformerBody(
   transformerBody: TransformerBody,
@@ -165,29 +162,4 @@ function isOutputPortComplete(
     return valueType?.reference?.ref?.name !== undefined;
   }
   return assertUnreachable(valueType);
-}
-
-function getReferencedVariables(
-  expression: Expression | undefined,
-): VariableLiteral[] {
-  if (expression === undefined) {
-    return [];
-  }
-
-  if (isExpressionLiteral(expression)) {
-    if (isVariableLiteral(expression)) {
-      return [expression];
-    } else if (isValueLiteral(expression)) {
-      return [];
-    }
-    assertUnreachable(expression);
-  } else if (isBinaryExpression(expression)) {
-    return [
-      ...getReferencedVariables(expression.left),
-      ...getReferencedVariables(expression.right),
-    ];
-  } else if (isUnaryExpression(expression)) {
-    return getReferencedVariables(expression.expression);
-  }
-  assertUnreachable(expression);
 }

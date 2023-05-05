@@ -7,6 +7,8 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
+import { assertUnreachable } from 'langium';
+
 // eslint-disable-next-line import/no-cycle
 import {
   EvaluationContext,
@@ -18,17 +20,23 @@ import { inferExpressionType } from '../../ast/expressions/type-inference';
 import {
   Expression,
   TransformerOutputAssignment,
+  VariableLiteral,
+  isBinaryExpression,
   isExpression,
   isExpressionLiteral,
+  isUnaryExpression,
+  isValueLiteral,
+  isVariableLiteral,
 } from '../../ast/generated/ast';
 import { inferBasePropertyValuetype } from '../../ast/model-util';
 import { ValidationContext } from '../validation-context';
 
 export function validateTransformerOutputAssignment(
-  port: TransformerOutputAssignment,
+  outputAssignment: TransformerOutputAssignment,
   context: ValidationContext,
 ): void {
-  checkOutputValueTyping(port, context);
+  checkOutputValueTyping(outputAssignment, context);
+  checkOutputNotInAssignmentExpression(outputAssignment, context);
 }
 
 function checkOutputValueTyping(
@@ -71,6 +79,26 @@ function checkOutputValueTyping(
   }
 }
 
+function checkOutputNotInAssignmentExpression(
+  outputAssignment: TransformerOutputAssignment,
+  context: ValidationContext,
+): void {
+  const variables = getReferencedVariables(outputAssignment?.expression);
+  const usedOutputPorts = variables.filter((x) => x.value.ref?.kind === 'to');
+
+  usedOutputPorts.forEach((outputPort) => {
+    if (outputPort.value.ref?.kind === 'to') {
+      context.accept(
+        'error',
+        'Output ports are not allowed in this expression',
+        {
+          node: outputPort,
+        },
+      );
+    }
+  });
+}
+
 function checkExpressionSimplification(
   expression: Expression,
   context: ValidationContext,
@@ -93,4 +121,29 @@ function checkExpressionSimplification(
       { node: expression },
     );
   }
+}
+
+export function getReferencedVariables(
+  expression: Expression | undefined,
+): VariableLiteral[] {
+  if (expression === undefined) {
+    return [];
+  }
+
+  if (isExpressionLiteral(expression)) {
+    if (isVariableLiteral(expression)) {
+      return [expression];
+    } else if (isValueLiteral(expression)) {
+      return [];
+    }
+    assertUnreachable(expression);
+  } else if (isBinaryExpression(expression)) {
+    return [
+      ...getReferencedVariables(expression.left),
+      ...getReferencedVariables(expression.right),
+    ];
+  } else if (isUnaryExpression(expression)) {
+    return getReferencedVariables(expression.expression);
+  }
+  assertUnreachable(expression);
 }
