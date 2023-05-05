@@ -9,6 +9,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 | Feature Tag | `mobility-extension` | 
 | Status | `ACCEPTED` | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED -->
 | Responsible | `@schlingling` |
+| Implemented via | [#123](https://github.com/jvalue/jayvee/issues/123) |
 
 Disclaimer: This RFC is part of my master-thesis "Archiving open transport data using the JValue tooling ecosystem" supervised by @rhazn.
 
