@@ -11,26 +11,12 @@ import { ValuetypeVisitor } from '../visitors/valuetype-visitor';
 
 import { PrimitiveValuetype } from './primitive-valuetype';
 
-export class TextValuetype implements PrimitiveValuetype<string> {
+export class TextValuetype implements PrimitiveValuetype {
   constructor(public readonly astNode: PrimitiveValuetypeKeywordLiteral) {
     assert(astNode.keyword === 'text');
   }
 
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
     return visitor.visitText(this);
-  }
-
-  getStandardRepresentation(value: unknown): string {
-    if (typeof value === 'number') {
-      return value.toString();
-    }
-    if (typeof value === 'string') {
-      return value;
-    }
-
-    throw new Error(
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      `Invalid value: ${value} for type ${this.astNode.keyword}`,
-    );
   }
 }

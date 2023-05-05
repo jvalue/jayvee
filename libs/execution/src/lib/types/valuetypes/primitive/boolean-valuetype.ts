@@ -11,31 +11,12 @@ import { ValuetypeVisitor } from '../visitors/valuetype-visitor';
 
 import { PrimitiveValuetype } from './primitive-valuetype';
 
-export class BooleanValuetype implements PrimitiveValuetype<boolean> {
+export class BooleanValuetype implements PrimitiveValuetype {
   constructor(public readonly astNode: PrimitiveValuetypeKeywordLiteral) {
     assert(astNode.keyword === 'boolean');
   }
 
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
     return visitor.visitBoolean(this);
-  }
-
-  getStandardRepresentation(value: unknown): boolean {
-    if (typeof value === 'boolean') {
-      return value;
-    }
-    if (typeof value === 'string') {
-      switch (value.toLowerCase()) {
-        case 'true':
-          return true;
-        default:
-          return false;
-      }
-    }
-
-    throw new Error(
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      `Invalid value: ${value} for type ${this.astNode.keyword}`,
-    );
   }
 }

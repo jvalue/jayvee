@@ -7,9 +7,10 @@ import {
   BooleanValuetype,
   DecimalValuetype,
   IntegerValuetype,
-  PrimitiveType,
   TextValuetype,
 } from '../types/valuetypes';
+// eslint-disable-next-line import/no-cycle
+import { StandardRepresentationResolver } from '../types/valuetypes/standard-representation';
 import { ValuetypeVisitor } from '../types/valuetypes/visitors/valuetype-visitor';
 
 export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
@@ -17,34 +18,45 @@ export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
 > {
   visitBoolean(valuetype: BooleanValuetype): (value: unknown) => string {
     return (value: unknown) => {
-      return valuetype.getStandardRepresentation(value)
-        ? String.raw`'true'`
-        : String.raw`'false'`;
+      const standardRepresentation = new StandardRepresentationResolver(
+        value,
+      ).fromBooleanValuetype(valuetype);
+      return standardRepresentation ? String.raw`'true'` : String.raw`'false'`;
     };
   }
+
   visitDecimal(valuetype: DecimalValuetype): (value: unknown) => string {
     return (value: unknown) => {
-      return valuetype.getStandardRepresentation(value).toString();
+      const standardRepresentation = new StandardRepresentationResolver(
+        value,
+      ).fromDecimalValuetype(valuetype);
+      return standardRepresentation.toString();
     };
   }
+
   visitInteger(valuetype: IntegerValuetype): (value: unknown) => string {
     return (value: unknown) => {
-      return valuetype.getStandardRepresentation(value).toString();
+      const standardRepresentation = new StandardRepresentationResolver(
+        value,
+      ).fromIntegerValuetype(valuetype);
+      return standardRepresentation.toString();
     };
   }
+
   visitText(valuetype: TextValuetype): (value: unknown) => string {
     return (value: unknown) => {
-      const standardValueRepresentation =
-        valuetype.getStandardRepresentation(value);
+      const standardRepresentation = new StandardRepresentationResolver(
+        value,
+      ).fromTextValuetype(valuetype);
       const escapedValueRepresentation = escapeSingleQuotes(
-        standardValueRepresentation,
+        standardRepresentation,
       );
       return `'${escapedValueRepresentation}'`;
     };
   }
 
-  override visitAtomicValuetype<T extends PrimitiveType>(
-    valuetype: AtomicValuetype<T>,
+  override visitAtomicValuetype(
+    valuetype: AtomicValuetype,
   ): (value: unknown) => string {
     return valuetype.primitiveValuetype.acceptVisitor(this);
   }

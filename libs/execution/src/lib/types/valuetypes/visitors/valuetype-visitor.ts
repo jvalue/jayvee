@@ -4,7 +4,6 @@
 
 /* eslint-disable import/no-cycle */
 import { AtomicValuetype } from '../atomic-valuetype';
-import { PrimitiveType } from '../primitive';
 import { BooleanValuetype } from '../primitive/boolean-valuetype';
 import { DecimalValuetype } from '../primitive/decimal-valuetype';
 import { IntegerValuetype } from '../primitive/integer-valuetype';
@@ -15,7 +14,5 @@ export abstract class ValuetypeVisitor<R = unknown> {
   abstract visitDecimal(valuetype: DecimalValuetype): R;
   abstract visitInteger(valuetype: IntegerValuetype): R;
   abstract visitText(valuetype: TextValuetype): R;
-  abstract visitAtomicValuetype<T extends PrimitiveType>(
-    valuetype: AtomicValuetype<T>,
-  ): R;
+  abstract visitAtomicValuetype(valuetype: AtomicValuetype): R;
 }
