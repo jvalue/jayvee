@@ -16,14 +16,6 @@ export class IntegerValuetype implements PrimitiveValuetype<number> {
     assert(astNode.keyword === 'integer');
   }
 
-  isValid(value: unknown): boolean {
-    if (typeof value === 'string') {
-      return /^[+-]?[0-9]+$/.test(value);
-    }
-
-    return Number.isInteger(value);
-  }
-
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
     return visitor.visitInteger(this);
   }

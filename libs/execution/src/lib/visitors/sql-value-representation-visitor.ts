@@ -3,9 +3,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
+  AtomicValuetype,
   BooleanValuetype,
   DecimalValuetype,
   IntegerValuetype,
+  PrimitiveType,
   TextValuetype,
 } from '../types/valuetypes';
 import { ValuetypeVisitor } from '../types/valuetypes/visitors/valuetype-visitor';
@@ -39,6 +41,12 @@ export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
       );
       return `'${escapedValueRepresentation}'`;
     };
+  }
+
+  override visitAtomicValuetype<T extends PrimitiveType>(
+    valuetype: AtomicValuetype<T>,
+  ): (value: unknown) => string {
+    return valuetype.primitiveValuetype.acceptVisitor(this);
   }
 }
 
