@@ -8,8 +8,6 @@ import {
   ValuetypeDefinition,
 } from '@jvalue/jayvee-language-server';
 
-import { ExecutionContext } from '../../execution-context';
-
 // eslint-disable-next-line import/no-cycle
 import { ValuetypeVisitor } from './visitors/valuetype-visitor';
 import { VisitableValuetype } from './visitors/visitable-valuetype';
@@ -24,8 +22,6 @@ export interface Valuetype<
 > extends VisitableValuetype,
     AstNodeWrapper<N> {
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R;
-
-  isValid(value: unknown, context: ExecutionContext): boolean;
 
   getStandardRepresentation(value: unknown): T;
 }

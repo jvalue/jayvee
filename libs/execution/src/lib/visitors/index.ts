@@ -4,3 +4,4 @@
 
 export * from './sql-column-type-visitor';
 export * from './sql-value-representation-visitor';
+export * from './is-valid-visitor';

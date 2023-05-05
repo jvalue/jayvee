@@ -12,22 +12,9 @@ import { ValuetypeVisitor } from '../visitors/valuetype-visitor';
 import { PrimitiveValuetype } from './primitive-valuetype';
 
 export class DecimalValuetype implements PrimitiveValuetype<number> {
-  private readonly DOT_SEPARATOR_REGEX = /^[+-]?([0-9]*[.])?[0-9]+$/;
   private readonly COMMA_SEPARATOR_REGEX = /^[+-]?([0-9]*[,])?[0-9]+$/;
-
   constructor(public readonly astNode: PrimitiveValuetypeKeywordLiteral) {
     assert(astNode.keyword === 'decimal');
-  }
-
-  isValid(value: unknown): boolean {
-    if (typeof value === 'string') {
-      return (
-        this.DOT_SEPARATOR_REGEX.test(value) ||
-        this.COMMA_SEPARATOR_REGEX.test(value)
-      );
-    }
-
-    return !Number.isNaN(value);
   }
 
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {

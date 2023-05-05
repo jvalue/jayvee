@@ -16,10 +16,6 @@ export class TextValuetype implements PrimitiveValuetype<string> {
     assert(astNode.keyword === 'text');
   }
 
-  isValid(value: unknown): boolean {
-    return typeof value === 'string';
-  }
-
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
     return visitor.visitText(this);
   }

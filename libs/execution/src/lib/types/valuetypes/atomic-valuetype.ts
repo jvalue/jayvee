@@ -12,9 +12,7 @@ import {
   validateTypedCollection,
 } from '@jvalue/jayvee-language-server';
 
-import { createConstraintExecutor } from '../../constraints/constraint-executor-registry';
-import { ExecutionContext } from '../../execution-context';
-
+// eslint-disable-next-line import/no-cycle
 import {
   PrimitiveType,
   PrimitiveValuetype,
@@ -27,42 +25,18 @@ export class AtomicValuetype<T extends PrimitiveType>
 {
   constructor(
     public readonly astNode: ValuetypeDefinition,
-    private readonly primitiveValuetype: PrimitiveValuetype<T>,
+    public readonly primitiveValuetype: PrimitiveValuetype<T>,
   ) {}
 
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
     return this.primitiveValuetype.acceptVisitor(visitor);
   }
 
-  isValid(value: unknown, context: ExecutionContext): boolean {
-    if (!this.primitiveValuetype.isValid(value, context)) {
-      return false;
-    }
-
-    const constraints = this.getConstraints();
-    for (const constraint of constraints) {
-      const constraintExecutor = createConstraintExecutor(constraint);
-
-      context.enterNode(constraint);
-      const valueFulfilledConstraint = constraintExecutor.isValid(
-        value,
-        context,
-      );
-      context.exitNode(constraint);
-
-      if (!valueFulfilledConstraint) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
   getStandardRepresentation(value: unknown): T {
     return this.primitiveValuetype.getStandardRepresentation(value);
   }
 
-  private getConstraints(): ConstraintDefinition[] {
+  getConstraints(): ConstraintDefinition[] {
     const constraintCollection = this.astNode.constraints;
     const constraintReferences = validateTypedCollection(constraintCollection, [
       PropertyValuetype.CONSTRAINT,

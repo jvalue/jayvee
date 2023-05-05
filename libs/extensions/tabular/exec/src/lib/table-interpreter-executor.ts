@@ -10,6 +10,7 @@ import {
   BlockExecutorClass,
   ColumnInformation,
   ExecutionContext,
+  IsValidVisitor,
   Sheet,
   Table,
   Valuetype,
@@ -152,7 +153,9 @@ export class TableInterpreterExecutor
       const sheetColumnIndex = columnEntry.sheetColumnIndex;
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const value = sheetRow[sheetColumnIndex]!;
-      if (!columnEntry.valuetype.isValid(value, context)) {
+      if (
+        !columnEntry.valuetype.acceptVisitor(new IsValidVisitor(value, context))
+      ) {
         const cellIndex = new CellIndex(sheetColumnIndex, sheetRowIndex);
         context.logger.logDebug(
           `Invalid value at cell ${cellIndex.toString()}: "${value}" does not match the type ${getValuetypeName(
