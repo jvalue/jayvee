@@ -9,7 +9,7 @@ import { validateTypedCollection } from '../../expressions/type-inference';
 import {
   ConstraintDefinition,
   ValuetypeDefinition,
-  isConstraintReferenceLiteral,
+  isReferenceLiteral,
 } from '../../generated/ast';
 import { AstNodeWrapper } from '../ast-node-wrapper';
 
@@ -40,13 +40,14 @@ export class AtomicValuetype
       undefined,
     ).validItems;
 
-    assert(constraintReferences.every(isConstraintReferenceLiteral));
+    assert(constraintReferences.every(isReferenceLiteral));
 
-    const constraints = constraintReferences.map(
+    const constraints = references.map(
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       (constraintReference) => constraintReference.value.ref!,
     );
 
+    assert(constraints.every(isConstraintDefinition));
     return constraints;
   }
 
