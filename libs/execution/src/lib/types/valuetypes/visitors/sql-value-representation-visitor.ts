@@ -90,6 +90,12 @@ export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
       'No visit implementation given for collections. Cannot be the type of a column.',
     );
   }
+
+  override visitTransform(): (value: unknown) => string {
+    throw new Error(
+      'No visit implementation given for transforms. Cannot be the type of a column.',
+    );
+  }
 }
 
 function escapeSingleQuotes(value: string): string {

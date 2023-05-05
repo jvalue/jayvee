@@ -19,6 +19,7 @@ import {
   IntegerValuetype,
   RegexValuetype,
   TextValuetype,
+  TransformValuetype,
   ValuetypeAssignmentValuetype,
 } from './primitive';
 
@@ -96,6 +97,7 @@ export abstract class ValuetypeVisitor<R = unknown> {
   abstract visitConstraint(valuetype: ConstraintValuetype): R;
   abstract visitValuetypeAssignment(valuetype: ValuetypeAssignmentValuetype): R;
   abstract visitCollection(valuetype: CollectionValuetype): R;
+  abstract visitTransform(valuetype: TransformValuetype): R;
 
   abstract visitAtomicValuetype(valuetype: AtomicValuetype): R;
 }

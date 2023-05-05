@@ -11,5 +11,3 @@ ConstraintDefinition:
 ConstraintTypeLiteral:
   name=ID;
 
-ConstraintReferenceLiteral:
-  value=[ConstraintDefinition];

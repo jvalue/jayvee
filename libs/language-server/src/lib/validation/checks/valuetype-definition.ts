@@ -10,7 +10,8 @@
 import { PrimitiveValuetypes, inferExpressionType } from '../../ast';
 import {
   ValuetypeDefinition,
-  isConstraintReferenceLiteral,
+  isConstraintDefinition,
+  isReferenceLiteral,
 } from '../../ast/generated/ast';
 import { getMetaInformation } from '../../meta-information/meta-inf-registry';
 import { ValidationContext } from '../validation-context';
@@ -53,12 +54,18 @@ function checkConstraintsMatchPrimitiveValuetype(
     return;
   }
 
-  const constraintReferences =
-    valuetype?.constraints?.values?.filter(isConstraintReferenceLiteral) ?? [];
+  const references =
+    valuetype?.constraints?.values?.filter(isReferenceLiteral) ?? [];
 
-  for (const constraintReference of constraintReferences) {
-    const constraint = constraintReference?.value?.ref;
-    const constraintType = constraint?.type;
+  for (const reference of references) {
+    const resolvedRef = reference?.value?.ref;
+    if (resolvedRef === undefined) {
+      continue;
+    }
+    if (!isConstraintDefinition(resolvedRef)) {
+      continue;
+    }
+    const constraintType = resolvedRef?.type;
 
     if (constraintType === undefined) {
       continue;
@@ -76,7 +83,7 @@ function checkConstraintsMatchPrimitiveValuetype(
         'error',
         `Only constraints for type "${valuetype.type.keyword}" are allowed in this collection`,
         {
-          node: constraintReference,
+          node: reference,
         },
       );
     }

@@ -11,6 +11,7 @@ import { Decimal, DecimalValuetype } from './decimal-valuetype';
 import { Integer, IntegerValuetype } from './integer-valuetype';
 import { Regex, RegexValuetype } from './regex-valuetype';
 import { Text, TextValuetype } from './text-valuetype';
+import { Transform, TransformValuetype } from './transform-valuetype';
 import {
   ValuetypeAssignment,
   ValuetypeAssignmentValuetype,
@@ -26,6 +27,7 @@ export const PrimitiveValuetypes: {
   Constraint: ConstraintValuetype;
   ValuetypeAssignment: ValuetypeAssignmentValuetype;
   Collection: CollectionValuetype;
+  Transform: TransformValuetype;
 } = {
   Boolean: Boolean,
   Decimal: Decimal,
@@ -38,4 +40,5 @@ export const PrimitiveValuetypes: {
   ValuetypeAssignment: ValuetypeAssignment,
 
   Collection: Collection,
+  Transform: Transform,
 };

@@ -19,8 +19,12 @@ import {
   isPrimitiveValuetypeKeywordLiteral,
   isValuetypeDefinitionReference,
 } from './generated/ast';
-import { PrimitiveValuetype, PrimitiveValuetypes } from './wrappers';
 import { PipeWrapper, createSemanticPipes } from './wrappers/pipe-wrapper';
+// eslint-disable-next-line import/no-cycle
+import {
+  PrimitiveValuetype,
+  PrimitiveValuetypes,
+} from './wrappers/value-type/primitive';
 
 export function collectStartingBlocks(
   pipeline: PipelineDefinition,

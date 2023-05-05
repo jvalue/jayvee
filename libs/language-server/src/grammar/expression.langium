@@ -77,3 +77,6 @@ CollectionLiteral:
 
 VariableLiteral:
   value=([TransformerPortDefinition]);
+
+ConstraintReferenceLiteral:
+  value=[ConstraintDefinition];
