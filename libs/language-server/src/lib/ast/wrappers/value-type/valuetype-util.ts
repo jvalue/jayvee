@@ -39,13 +39,13 @@ function createPrimitiveValuetype(
 ): PrimitiveValuetype {
   switch (keywordLiteral.keyword) {
     case 'text':
-      return new TextValuetype(keywordLiteral);
+      return new TextValuetype();
     case 'decimal':
-      return new DecimalValuetype(keywordLiteral);
+      return new DecimalValuetype();
     case 'integer':
-      return new IntegerValuetype(keywordLiteral);
+      return new IntegerValuetype();
     case 'boolean':
-      return new BooleanValuetype(keywordLiteral);
+      return new BooleanValuetype();
     default:
       assertUnreachable(keywordLiteral.keyword);
   }

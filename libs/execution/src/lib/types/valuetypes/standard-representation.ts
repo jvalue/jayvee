@@ -19,20 +19,20 @@ export class StandardRepresentationResolver {
 
   fromValuetype(valuetype: Valuetype): PrimitiveType {
     if (valuetype instanceof BooleanValuetype) {
-      return this.fromBooleanValuetype(valuetype);
+      return this.fromBooleanValuetype();
     } else if (valuetype instanceof DecimalValuetype) {
-      return this.fromDecimalValuetype(valuetype);
+      return this.fromDecimalValuetype();
     } else if (valuetype instanceof IntegerValuetype) {
-      return this.fromIntegerValuetype(valuetype);
+      return this.fromIntegerValuetype();
     } else if (valuetype instanceof TextValuetype) {
-      return this.fromTextValuetype(valuetype);
+      return this.fromTextValuetype();
     } else if (valuetype instanceof AtomicValuetype) {
       return this.fromAtomicValuetype(valuetype);
     }
     throw Error('Parsing from unsupported value type');
   }
 
-  fromBooleanValuetype(valuetype: BooleanValuetype): boolean {
+  fromBooleanValuetype(): boolean {
     if (typeof this.value === 'boolean') {
       return this.value;
     }
@@ -47,11 +47,11 @@ export class StandardRepresentationResolver {
 
     throw new Error(
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      `Invalid value: ${this.value} for type ${valuetype.astNode.keyword}`,
+      `Invalid value: ${this.value} for type boolean`,
     );
   }
 
-  fromDecimalValuetype(valuetype: DecimalValuetype): number {
+  fromDecimalValuetype(): number {
     if (typeof this.value === 'number') {
       return this.value;
     }
@@ -65,11 +65,11 @@ export class StandardRepresentationResolver {
 
     throw new Error(
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      `Invalid value: ${this.value} for type ${valuetype.astNode.keyword}`,
+      `Invalid value: ${this.value} for type decimal`,
     );
   }
 
-  fromIntegerValuetype(valuetype: IntegerValuetype): number {
+  fromIntegerValuetype(): number {
     if (typeof this.value === 'number') {
       return this.value;
     }
@@ -79,11 +79,11 @@ export class StandardRepresentationResolver {
 
     throw new Error(
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      `Invalid value: ${this.value} for type ${valuetype.astNode.keyword}`,
+      `Invalid value: ${this.value} for type integer`,
     );
   }
 
-  fromTextValuetype(valuetype: TextValuetype): string {
+  fromTextValuetype(): string {
     if (typeof this.value === 'number') {
       return this.value.toString();
     }
@@ -93,11 +93,17 @@ export class StandardRepresentationResolver {
 
     throw new Error(
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      `Invalid value: ${this.value} for type ${valuetype.astNode.keyword}`,
+      `Invalid value: ${this.value} for type text`,
     );
   }
 
   fromAtomicValuetype(valuetype: AtomicValuetype): PrimitiveType {
-    return this.fromValuetype(valuetype.primitiveValuetype);
+    const supertype = valuetype.getSupertype();
+    if (supertype === undefined) {
+      throw new Error(
+        `Valuetype ${valuetype.astNode.name} has no transitive primitive supertype!`,
+      );
+    }
+    return this.fromValuetype(supertype);
   }
 }

@@ -4,10 +4,6 @@
 
 import {
   AtomicValuetype,
-  BooleanValuetype,
-  DecimalValuetype,
-  IntegerValuetype,
-  TextValuetype,
   ValuetypeVisitor,
 } from '@jvalue/jayvee-language-server';
 
@@ -16,38 +12,38 @@ import { StandardRepresentationResolver } from '../standard-representation';
 export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
   (value: unknown) => string
 > {
-  visitBoolean(valuetype: BooleanValuetype): (value: unknown) => string {
+  visitBoolean(): (value: unknown) => string {
     return (value: unknown) => {
       const standardRepresentation = new StandardRepresentationResolver(
         value,
-      ).fromBooleanValuetype(valuetype);
+      ).fromBooleanValuetype();
       return standardRepresentation ? String.raw`'true'` : String.raw`'false'`;
     };
   }
 
-  visitDecimal(valuetype: DecimalValuetype): (value: unknown) => string {
+  visitDecimal(): (value: unknown) => string {
     return (value: unknown) => {
       const standardRepresentation = new StandardRepresentationResolver(
         value,
-      ).fromDecimalValuetype(valuetype);
+      ).fromDecimalValuetype();
       return standardRepresentation.toString();
     };
   }
 
-  visitInteger(valuetype: IntegerValuetype): (value: unknown) => string {
+  visitInteger(): (value: unknown) => string {
     return (value: unknown) => {
       const standardRepresentation = new StandardRepresentationResolver(
         value,
-      ).fromIntegerValuetype(valuetype);
+      ).fromIntegerValuetype();
       return standardRepresentation.toString();
     };
   }
 
-  visitText(valuetype: TextValuetype): (value: unknown) => string {
+  visitText(): (value: unknown) => string {
     return (value: unknown) => {
       const standardRepresentation = new StandardRepresentationResolver(
         value,
-      ).fromTextValuetype(valuetype);
+      ).fromTextValuetype();
       const escapedValueRepresentation = escapeSingleQuotes(
         standardRepresentation,
       );
@@ -58,7 +54,7 @@ export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
   override visitAtomicValuetype(
     valuetype: AtomicValuetype,
   ): (value: unknown) => string {
-    return valuetype.primitiveValuetype.acceptVisitor(this);
+    return valuetype.acceptVisitor(this);
   }
 }
 
