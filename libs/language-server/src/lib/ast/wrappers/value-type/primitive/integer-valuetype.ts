@@ -6,7 +6,7 @@ import { strict as assert } from 'assert';
 
 import { PrimitiveValuetypeKeywordLiteral } from '../../../generated/ast';
 // eslint-disable-next-line import/no-cycle
-import { ValuetypeVisitor } from '../visitors/valuetype-visitor';
+import { ValuetypeVisitor } from '../valuetype';
 
 import { PrimitiveValuetype } from './primitive-valuetype';
 
