@@ -4,11 +4,8 @@
 
 import {
   AtomicValuetype,
-  BooleanValuetype,
-  DecimalValuetype,
-  IntegerValuetype,
+  Primitive,
   PrimitiveType,
-  TextValuetype,
   Valuetype,
 } from '@jvalue/jayvee-language-server';
 
@@ -18,13 +15,13 @@ export class StandardRepresentationResolver {
   constructor(private value: unknown) {}
 
   fromValuetype(valuetype: Valuetype): PrimitiveType {
-    if (valuetype instanceof BooleanValuetype) {
+    if (valuetype === Primitive.Boolean) {
       return this.fromBooleanValuetype();
-    } else if (valuetype instanceof DecimalValuetype) {
+    } else if (valuetype === Primitive.Decimal) {
       return this.fromDecimalValuetype();
-    } else if (valuetype instanceof IntegerValuetype) {
+    } else if (valuetype === Primitive.Integer) {
       return this.fromIntegerValuetype();
-    } else if (valuetype instanceof TextValuetype) {
+    } else if (valuetype === Primitive.Text) {
       return this.fromTextValuetype();
     } else if (valuetype instanceof AtomicValuetype) {
       return this.fromAtomicValuetype(valuetype);

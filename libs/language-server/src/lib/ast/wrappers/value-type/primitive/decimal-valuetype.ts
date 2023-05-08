@@ -5,13 +5,13 @@
 // eslint-disable-next-line import/no-cycle
 import { Valuetype } from '../valuetype';
 
-import { IntegerValuetype } from './integer-valuetype';
+import { Integer } from './integer-valuetype';
 import { PrimitiveValuetype } from './primitive-valuetype';
 
-export class DecimalValuetype extends PrimitiveValuetype {
+class DecimalValuetype extends PrimitiveValuetype {
   override isConvertibleTo(target: Valuetype): boolean {
-    return (
-      target instanceof DecimalValuetype || target instanceof IntegerValuetype
-    );
+    return target === this || target === Integer;
   }
 }
+
+export const Decimal = new DecimalValuetype();
