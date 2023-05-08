@@ -3,8 +3,21 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 // eslint-disable-next-line import/no-cycle
-export * from './boolean-valuetype';
-export * from './decimal-valuetype';
-export * from './integer-valuetype';
+import { Boolean } from './boolean-valuetype';
+import { Decimal } from './decimal-valuetype';
+import { Integer } from './integer-valuetype';
+import { PrimitiveValuetype } from './primitive-valuetype';
+import { Text } from './text-valuetype';
+
 export * from './primitive-valuetype';
-export * from './text-valuetype';
+export const Primitive: {
+  Boolean: PrimitiveValuetype;
+  Decimal: PrimitiveValuetype;
+  Integer: PrimitiveValuetype;
+  Text: PrimitiveValuetype;
+} = {
+  Boolean: Boolean,
+  Decimal: Decimal,
+  Integer: Integer,
+  Text: Text,
+};

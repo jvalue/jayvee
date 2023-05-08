@@ -12,11 +12,8 @@ import {
 
 // eslint-disable-next-line import/no-cycle
 import { AtomicValuetype } from './atomic-valuetype';
-import { BooleanValuetype } from './primitive/boolean-valuetype';
-import { DecimalValuetype } from './primitive/decimal-valuetype';
-import { IntegerValuetype } from './primitive/integer-valuetype';
+import { Primitive } from './primitive';
 import { PrimitiveValuetype } from './primitive/primitive-valuetype';
-import { TextValuetype } from './primitive/text-valuetype';
 import { Valuetype } from './valuetype';
 
 export function createValuetype(
@@ -39,13 +36,13 @@ function createPrimitiveValuetype(
 ): PrimitiveValuetype {
   switch (keywordLiteral.keyword) {
     case 'text':
-      return new TextValuetype();
+      return Primitive.Text;
     case 'decimal':
-      return new DecimalValuetype();
+      return Primitive.Decimal;
     case 'integer':
-      return new IntegerValuetype();
+      return Primitive.Integer;
     case 'boolean':
-      return new BooleanValuetype();
+      return Primitive.Boolean;
     default:
       assertUnreachable(keywordLiteral.keyword);
   }

@@ -7,8 +7,10 @@ import { Valuetype } from '../valuetype';
 
 import { PrimitiveValuetype } from './primitive-valuetype';
 
-export class BooleanValuetype extends PrimitiveValuetype {
+class BooleanValuetype extends PrimitiveValuetype {
   override isConvertibleTo(target: Valuetype): boolean {
-    return target instanceof BooleanValuetype;
+    return target === this;
   }
 }
+
+export const Boolean = new BooleanValuetype();

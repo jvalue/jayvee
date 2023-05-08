@@ -7,8 +7,10 @@ import { Valuetype } from '../valuetype';
 
 import { PrimitiveValuetype } from './primitive-valuetype';
 
-export class TextValuetype extends PrimitiveValuetype {
+class TextValuetype extends PrimitiveValuetype {
   override isConvertibleTo(target: Valuetype): boolean {
-    return target instanceof TextValuetype;
+    return target === this;
   }
 }
+
+export const Text = new TextValuetype();

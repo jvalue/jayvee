@@ -10,12 +10,7 @@ import {
 // eslint-disable-next-line import/no-cycle
 import { AtomicValuetype } from './atomic-valuetype';
 // eslint-disable-next-line import/no-cycle
-import {
-  BooleanValuetype,
-  DecimalValuetype,
-  IntegerValuetype,
-  TextValuetype,
-} from './primitive';
+import { PrimitiveValuetype } from './primitive';
 
 export type ValuetypeAstNode =
   | PrimitiveValuetypeKeywordLiteral
@@ -74,9 +69,9 @@ export abstract class AbstractValuetype implements Valuetype {
 }
 
 export abstract class ValuetypeVisitor<R = unknown> {
-  abstract visitBoolean(valuetype: BooleanValuetype): R;
-  abstract visitDecimal(valuetype: DecimalValuetype): R;
-  abstract visitInteger(valuetype: IntegerValuetype): R;
-  abstract visitText(valuetype: TextValuetype): R;
+  abstract visitBoolean(valuetype: PrimitiveValuetype): R;
+  abstract visitDecimal(valuetype: PrimitiveValuetype): R;
+  abstract visitInteger(valuetype: PrimitiveValuetype): R;
+  abstract visitText(valuetype: PrimitiveValuetype): R;
   abstract visitAtomicValuetype(valuetype: AtomicValuetype): R;
 }
