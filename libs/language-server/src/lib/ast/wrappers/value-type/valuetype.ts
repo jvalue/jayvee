@@ -9,15 +9,33 @@ import {
 import { AstNodeWrapper } from '../ast-node-wrapper';
 
 // eslint-disable-next-line import/no-cycle
-import { ValuetypeVisitor } from './visitors/valuetype-visitor';
-import { VisitableValuetype } from './visitors/visitable-valuetype';
+import { AtomicValuetype } from './atomic-valuetype';
+// eslint-disable-next-line import/no-cycle
+import {
+  BooleanValuetype,
+  DecimalValuetype,
+  IntegerValuetype,
+  TextValuetype,
+} from './primitive';
 
 export type ValuetypeAstNode =
   | PrimitiveValuetypeKeywordLiteral
   | ValuetypeDefinition;
 
+export interface VisitableValuetype {
+  acceptVisitor(visitor: ValuetypeVisitor): void;
+}
+
 export interface Valuetype<N extends ValuetypeAstNode = ValuetypeAstNode>
   extends VisitableValuetype,
     AstNodeWrapper<N> {
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R;
+}
+
+export abstract class ValuetypeVisitor<R = unknown> {
+  abstract visitBoolean(valuetype: BooleanValuetype): R;
+  abstract visitDecimal(valuetype: DecimalValuetype): R;
+  abstract visitInteger(valuetype: IntegerValuetype): R;
+  abstract visitText(valuetype: TextValuetype): R;
+  abstract visitAtomicValuetype(valuetype: AtomicValuetype): R;
 }

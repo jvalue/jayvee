@@ -14,8 +14,7 @@ import { PropertyValuetype } from '../../model-util';
 
 // eslint-disable-next-line import/no-cycle
 import { PrimitiveValuetype } from './primitive/primitive-valuetype';
-import { Valuetype } from './valuetype';
-import { ValuetypeVisitor } from './visitors/valuetype-visitor';
+import { Valuetype, ValuetypeVisitor } from './valuetype';
 
 export class AtomicValuetype implements Valuetype<ValuetypeDefinition> {
   constructor(
