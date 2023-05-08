@@ -4,8 +4,8 @@
 
 import { IOType, Valuetype } from '@jvalue/jayvee-language-server';
 
-import { SQLColumnTypeVisitor } from '../../visitors/sql-column-type-visitor';
-import { SQLValueRepresentationVisitor } from '../../visitors/sql-value-representation-visitor';
+import { SQLColumnTypeVisitor } from '../valuetypes/visitors/sql-column-type-visitor';
+import { SQLValueRepresentationVisitor } from '../valuetypes/visitors/sql-value-representation-visitor';
 
 import { IOTypeImplementation } from './io-type-implementation';
 
