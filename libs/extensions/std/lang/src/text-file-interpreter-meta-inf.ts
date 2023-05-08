@@ -41,7 +41,7 @@ export class TextFileInterpreterMetaInformation extends BlockMetaInformation {
         },
         lineBreak: {
           type: PropertyValuetype.REGEX,
-          defaultValue: '\r?\n',
+          defaultValue: /\r?\n/,
           docs: {
             description: 'The regex for identifying line breaks.',
           },

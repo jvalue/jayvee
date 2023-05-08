@@ -2,8 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+// eslint-disable-next-line import/no-cycle
+import { inferTypeFromValue } from './expressions/type-inference';
 import { AtomicLiteral, CollectionLiteral } from './generated/ast';
-import { PropertyValuetype, inferTypeFromValue } from './model-util';
+import { PropertyValuetype } from './model-util';
 
 export interface TypedCollectionValidation {
   validItems: AtomicLiteral[];

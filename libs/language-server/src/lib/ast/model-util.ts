@@ -8,25 +8,14 @@ import { AstNode, assertUnreachable } from 'langium';
 
 // eslint-disable-next-line import/no-cycle
 import { getMetaInformation } from '../meta-information/meta-inf-registry';
-// eslint-disable-next-line import/no-cycle
-import { ValidationContext } from '../validation';
 
-// eslint-disable-next-line import/no-cycle
-import { inferExpressionType } from './expressions/type-inference';
 import {
   BinaryExpression,
   BlockDefinition,
   PipelineDefinition,
   PrimitiveValuetypeKeywordLiteral,
-  PropertyValueLiteral,
   UnaryExpression,
   ValuetypeDefinitionReference,
-  isCellRangeLiteral,
-  isCollectionLiteral,
-  isConstraintReferenceLiteral,
-  isExpression,
-  isRegexLiteral,
-  isValuetypeAssignmentLiteral,
   isValuetypeDefinitionReference,
 } from './generated/ast';
 import { PipeWrapper, createSemanticPipes } from './wrappers/pipe-wrapper';
@@ -203,31 +192,6 @@ export function isNumericType(
     return false;
   }
   return numericTypes.includes(type);
-}
-
-export function inferTypeFromValue(
-  value: PropertyValueLiteral,
-  context?: ValidationContext,
-): PropertyValuetype | undefined {
-  if (isCollectionLiteral(value)) {
-    return PropertyValuetype.COLLECTION;
-  }
-  if (isCellRangeLiteral(value)) {
-    return PropertyValuetype.CELL_RANGE;
-  }
-  if (isRegexLiteral(value)) {
-    return PropertyValuetype.REGEX;
-  }
-  if (isValuetypeAssignmentLiteral(value)) {
-    return PropertyValuetype.VALUETYPE_ASSIGNMENT;
-  }
-  if (isConstraintReferenceLiteral(value)) {
-    return PropertyValuetype.CONSTRAINT;
-  }
-  if (isExpression(value)) {
-    return inferExpressionType(value, context);
-  }
-  assertUnreachable(value);
 }
 
 export function getValuetypeName(

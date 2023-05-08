@@ -9,7 +9,6 @@
 import { assertUnreachable } from 'langium';
 
 import { BlockDefinition } from '../../ast/generated/ast';
-// eslint-disable-next-line import/no-cycle
 import {
   collectIngoingPipes,
   collectOutgoingPipes,

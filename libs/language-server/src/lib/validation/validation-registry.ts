@@ -13,7 +13,6 @@ import {
 import { JayveeAstType } from '../ast/generated/ast';
 import type { JayveeServices } from '../jayvee-module';
 
-// eslint-disable-next-line import/no-cycle
 import { validateBlockDefinition } from './checks/block-definition';
 import { validateColumnId } from './checks/column-id';
 import { validateConstraintDefinition } from './checks/constraint-definition';

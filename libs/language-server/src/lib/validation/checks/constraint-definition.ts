@@ -8,7 +8,6 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
 import { ConstraintDefinition } from '../../ast/generated/ast';
-// eslint-disable-next-line import/no-cycle
 import { getMetaInformation } from '../../meta-information/meta-inf-registry';
 import { ValidationContext } from '../validation-context';
 

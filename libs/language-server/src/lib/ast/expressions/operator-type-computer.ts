@@ -4,7 +4,6 @@
 
 import { ValidationContext } from '../../validation/validation-context';
 import { BinaryExpression, UnaryExpression } from '../generated/ast';
-// eslint-disable-next-line import/no-cycle
 import { PropertyValuetype } from '../model-util';
 
 export interface UnaryOperatorTypeComputer {
