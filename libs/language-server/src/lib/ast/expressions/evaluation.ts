@@ -4,20 +4,26 @@
 
 import { strict as assert } from 'assert';
 
-import { assertUnreachable } from 'langium';
+import { assertUnreachable, isReference } from 'langium';
 
 import { ValidationContext } from '../../validation/validation-context';
 import {
+  ConstraintDefinition,
   Expression,
+  ExpressionLiteral,
   PropertyValueLiteral,
   RuntimeParameterLiteral,
+  ValuetypeAssignment,
   isBinaryExpression,
+  isCellRangeLiteral,
   isExpression,
   isExpressionLiteral,
+  isRegexLiteral,
   isUnaryExpression,
 } from '../generated/ast';
-
 // eslint-disable-next-line import/no-cycle
+import { CellRangeWrapper } from '../wrappers';
+
 import {
   binaryOperatorRegistry,
   unaryOperatorRegistry,
@@ -28,7 +34,14 @@ export enum EvaluationStrategy {
   LAZY,
 }
 
-export type OperandValue = boolean | number | string;
+export type OperandValue =
+  | boolean
+  | number
+  | string
+  | RegExp
+  | CellRangeWrapper
+  | ConstraintDefinition
+  | ValuetypeAssignment;
 export type OperandValueTypeguard<T extends OperandValue> = (
   value: OperandValue,
 ) => value is T;
@@ -50,7 +63,7 @@ export function evaluateExpression(
   context: ValidationContext | undefined = undefined,
 ): OperandValue | undefined {
   if (isExpressionLiteral(expression)) {
-    return expression.value;
+    return evaluateExpressionLiteral(expression);
   }
   if (isUnaryExpression(expression)) {
     const operator = expression.operator;
@@ -63,4 +76,27 @@ export function evaluateExpression(
     return evaluator.evaluate(expression, strategy, context);
   }
   assertUnreachable(expression);
+}
+
+function evaluateExpressionLiteral(
+  expression: ExpressionLiteral,
+): OperandValue | undefined {
+  if (isCellRangeLiteral(expression)) {
+    if (!CellRangeWrapper.canBeWrapped(expression)) {
+      return undefined;
+    }
+    return new CellRangeWrapper(expression);
+  }
+  if (isRegexLiteral(expression)) {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    return new RegExp(expression?.value);
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (isReference(expression?.value)) {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    return expression?.value?.ref;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  return expression?.value;
 }

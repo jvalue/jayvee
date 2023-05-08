@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { PropertyBody } from '../../ast/generated/ast';
-// eslint-disable-next-line import/no-cycle
 import { MetaInformation } from '../../meta-information/meta-inf';
 import { getMetaInformation } from '../../meta-information/meta-inf-registry';
 import { ValidationContext } from '../validation-context';

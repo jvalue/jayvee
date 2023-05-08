@@ -6,12 +6,12 @@ import { strict as assert } from 'assert';
 
 import { ValidationContext } from '../../validation/validation-context';
 import { BinaryExpression, UnaryExpression } from '../generated/ast';
-// eslint-disable-next-line import/no-cycle
 import {
   BinaryExpressionOperator,
   UnaryExpressionOperator,
 } from '../model-util';
 
+// eslint-disable-next-line import/no-cycle
 import {
   EvaluationStrategy,
   OperandValue,

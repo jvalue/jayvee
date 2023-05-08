@@ -21,14 +21,7 @@ PropertyValueLiteral:
   AtomicLiteral | CollectionLiteral;
 
 AtomicLiteral:
-  Expression
-  | RegexLiteral
-  | CellRangeLiteral
-  | ValuetypeAssignmentLiteral
-  | ConstraintReferenceLiteral;
+  Expression;
 
 CollectionLiteral:
   '[' (values+=(AtomicLiteral) (',' values+=(AtomicLiteral))*)? ','? ']';
-
-RegexLiteral:
-  value=REGEX;

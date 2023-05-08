@@ -7,12 +7,12 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-// eslint-disable-next-line import/no-cycle
 import {
   EvaluationStrategy,
   evaluateExpression,
 } from '../../ast/expressions/evaluation';
 import { convertsImplicitlyTo } from '../../ast/expressions/operator-type-computer';
+import { inferTypeFromValue } from '../../ast/expressions/type-inference';
 import {
   Expression,
   PropertyAssignment,
@@ -20,10 +20,7 @@ import {
   isExpressionLiteral,
   isRuntimeParameterLiteral,
 } from '../../ast/generated/ast';
-import {
-  inferTypeFromValue,
-  runtimeParameterAllowedForType,
-} from '../../ast/model-util';
+import { runtimeParameterAllowedForType } from '../../ast/model-util';
 import {
   MetaInformation,
   PropertySpecification,

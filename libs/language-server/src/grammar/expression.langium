@@ -2,6 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import './cellrange'
+import './constraint'
+import './valuetype'
 import 'terminal'
 
 Expression:
@@ -44,7 +47,11 @@ UnaryExpression:
 ExpressionLiteral:
   TextLiteral
   | NumericLiteral
-  | BooleanLiteral;
+  | BooleanLiteral
+  | RegexLiteral
+  | CellRangeLiteral
+  | ValuetypeAssignmentLiteral
+  | ConstraintReferenceLiteral;
 
 TextLiteral:
   value=STRING;
@@ -54,3 +61,6 @@ NumericLiteral:
 
 BooleanLiteral:
   value?='true' | 'false';
+
+RegexLiteral:
+  value=REGEX;

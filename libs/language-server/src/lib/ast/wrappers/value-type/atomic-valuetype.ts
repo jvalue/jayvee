@@ -4,6 +4,7 @@
 
 import { strict as assert } from 'assert';
 
+// eslint-disable-next-line import/no-cycle
 import { validateTypedCollection } from '../../collection-util';
 import {
   ConstraintDefinition,

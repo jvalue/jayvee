@@ -6,7 +6,6 @@ import { strict as assert } from 'assert';
 
 import { ValidationContext } from '../../../validation/validation-context';
 import { BinaryExpression } from '../../generated/ast';
-// eslint-disable-next-line import/no-cycle
 import { PropertyValuetype } from '../../model-util';
 import {
   BinaryOperatorTypeComputer,
@@ -16,6 +15,13 @@ import {
 export class EqualityOperatorTypeComputer
   implements BinaryOperatorTypeComputer
 {
+  private readonly ALLOWED_OPERAND_TYPES = [
+    PropertyValuetype.BOOLEAN,
+    PropertyValuetype.TEXT,
+    PropertyValuetype.INTEGER,
+    PropertyValuetype.DECIMAL,
+  ];
+
   computeType(
     leftOperandType: PropertyValuetype,
     rightOperandType: PropertyValuetype,
@@ -23,6 +29,32 @@ export class EqualityOperatorTypeComputer
     context: ValidationContext | undefined,
   ): PropertyValuetype | undefined {
     assert(expression.operator === '==');
+
+    const isLeftOperandTypeValid =
+      this.ALLOWED_OPERAND_TYPES.includes(leftOperandType);
+    const isRightOperandTypeValid =
+      this.ALLOWED_OPERAND_TYPES.includes(rightOperandType);
+    if (!isLeftOperandTypeValid || !isRightOperandTypeValid) {
+      if (!isLeftOperandTypeValid) {
+        context?.accept(
+          'error',
+          `Operator does not support type ${leftOperandType}`,
+          {
+            node: expression.left,
+          },
+        );
+      }
+      if (!isRightOperandTypeValid) {
+        context?.accept(
+          'error',
+          `Operator does not support type ${leftOperandType}`,
+          {
+            node: expression.right,
+          },
+        );
+      }
+      return undefined;
+    }
 
     if (
       !convertsImplicitlyTo(leftOperandType, rightOperandType) &&

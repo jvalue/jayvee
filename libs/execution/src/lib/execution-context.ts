@@ -14,14 +14,13 @@ import {
   ValuetypeAssignment,
   evaluateExpression,
   getOrFailMetaInformation,
-  isCellRangeLiteral,
   isCollectionLiteral,
   isExpression,
   isPipelineDefinition,
   isRuntimeParameterLiteral,
-  isValuetypeAssignmentLiteral,
+  isValuetypeAssignment,
 } from '@jvalue/jayvee-language-server';
-import { isReference } from 'langium';
+import { assertUnreachable } from 'langium';
 
 import { Logger } from './logger';
 
@@ -87,16 +86,17 @@ export class ExecutionContext {
 
   public getRegexPropertyValue(propertyName: string): RegExp {
     const propertyValue = this.getPropertyValue(propertyName);
-    assert(typeof propertyValue === 'string');
+    assert(propertyValue instanceof RegExp);
 
-    return new RegExp(propertyValue);
+    return propertyValue;
   }
 
   public getCellRangePropertyValue(propertyName: string): CellRangeWrapper {
     const propertyValue = this.getPropertyValue(propertyName);
-    assert(isCellRangeLiteral(propertyValue));
+    assert(propertyValue instanceof CellRangeWrapper);
 
-    return new CellRangeWrapper(propertyValue);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return propertyValue;
   }
 
   public getExpressionCollectionPropertyValue(
@@ -114,9 +114,18 @@ export class ExecutionContext {
   ): CellRangeWrapper[] {
     const propertyValue = this.getPropertyValue(propertyName);
     assert(Array.isArray(propertyValue));
-    assert(propertyValue.every(isCellRangeLiteral));
+    assert(propertyValue.every(isExpression));
 
-    return propertyValue.map((cellRange) => new CellRangeWrapper(cellRange));
+    const evaluatedExpressions = propertyValue.map((x) =>
+      evaluateExpression(x),
+    );
+    assert(
+      evaluatedExpressions.every(
+        (x): x is CellRangeWrapper => x instanceof CellRangeWrapper,
+      ),
+    );
+
+    return evaluatedExpressions;
   }
 
   public getValuetypeAssignmentCollectionPropertyValue(
@@ -124,9 +133,13 @@ export class ExecutionContext {
   ): ValuetypeAssignment[] {
     const propertyValue = this.getPropertyValue(propertyName);
     assert(Array.isArray(propertyValue));
-    assert(propertyValue.every(isValuetypeAssignmentLiteral));
+    assert(propertyValue.every(isExpression));
 
-    return propertyValue.map((assignment) => assignment.value);
+    const evaluatedExpressions = propertyValue.map((x) =>
+      evaluateExpression(x),
+    );
+    assert(evaluatedExpressions.every(isValuetypeAssignment));
+    return evaluatedExpressions;
   }
 
   public getProperty(propertyName: string): PropertyAssignment | undefined {
@@ -160,20 +173,10 @@ export class ExecutionContext {
     if (isCollectionLiteral(propertyValue)) {
       return propertyValue.values;
     }
-    if (isCellRangeLiteral(propertyValue)) {
-      return propertyValue;
-    }
     if (isExpression(propertyValue)) {
       return evaluateExpression(propertyValue);
     }
-    const value = propertyValue.value;
-    if (isReference(value)) {
-      const reference = value.ref;
-      assert(reference !== undefined);
-
-      return reference;
-    }
-    return value;
+    assertUnreachable(propertyValue);
   }
 
   private getDefaultPropertyValue(propertyName: string): unknown {

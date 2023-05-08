@@ -7,12 +7,12 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
+import { inferTypeFromValue } from '../../ast/expressions/type-inference';
 import {
   ValuetypeDefinition,
   isConstraintReferenceLiteral,
 } from '../../ast/generated/ast';
-// eslint-disable-next-line import/no-cycle
-import { PropertyValuetype, inferTypeFromValue } from '../../ast/model-util';
+import { PropertyValuetype } from '../../ast/model-util';
 import { getMetaInformation } from '../../meta-information/meta-inf-registry';
 import { ValidationContext } from '../validation-context';
 

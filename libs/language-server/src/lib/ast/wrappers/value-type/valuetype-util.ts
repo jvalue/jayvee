@@ -10,6 +10,7 @@ import {
   isValuetypeDefinitionReference,
 } from '../../generated/ast';
 
+// eslint-disable-next-line import/no-cycle
 import { AtomicValuetype } from './atomic-valuetype';
 import { BooleanValuetype } from './primitive/boolean-valuetype';
 import { DecimalValuetype } from './primitive/decimal-valuetype';
