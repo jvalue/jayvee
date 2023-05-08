@@ -7,8 +7,8 @@ import {
   ValuetypeVisitor,
 } from '@jvalue/jayvee-language-server';
 
-import { createConstraintExecutor } from '../constraints/constraint-executor-registry';
-import { ExecutionContext } from '../execution-context';
+import { createConstraintExecutor } from '../../../constraints/constraint-executor-registry';
+import { ExecutionContext } from '../../../execution-context';
 
 export class IsValidVisitor extends ValuetypeVisitor<boolean> {
   private readonly BOOLEAN_STRING_REPRESENTATIONS = [

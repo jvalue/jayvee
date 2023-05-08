@@ -11,7 +11,7 @@ import {
   ValuetypeVisitor,
 } from '@jvalue/jayvee-language-server';
 
-import { StandardRepresentationResolver } from '../types/valuetypes/standard-representation';
+import { StandardRepresentationResolver } from '../standard-representation';
 
 export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
   (value: unknown) => string
