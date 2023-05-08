@@ -55,7 +55,7 @@ export class IsValidVisitor extends ValuetypeVisitor<boolean> {
   }
 
   override visitAtomicValuetype(valuetype: AtomicValuetype): boolean {
-    if (!valuetype.primitiveValuetype.acceptVisitor(this)) {
+    if (!valuetype.acceptVisitor(this)) {
       return false;
     }
 

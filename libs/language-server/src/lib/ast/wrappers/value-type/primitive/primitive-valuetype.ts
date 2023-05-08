@@ -2,10 +2,17 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { PrimitiveValuetypeKeywordLiteral } from '../../../generated/ast';
 // eslint-disable-next-line import/no-cycle
-import { Valuetype } from '../valuetype';
+import { AbstractValuetype, ValuetypeVisitor } from '../valuetype';
 
 export type PrimitiveType = string | number | boolean;
 
-export type PrimitiveValuetype = Valuetype<PrimitiveValuetypeKeywordLiteral>;
+export abstract class PrimitiveValuetype extends AbstractValuetype {
+  constructor() {
+    super(undefined);
+  }
+
+  acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
+    return visitor.visitText(this);
+  }
+}

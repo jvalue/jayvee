@@ -12,19 +12,25 @@ import {
   isConstraintReferenceLiteral,
 } from '../../generated/ast';
 import { PropertyValuetype } from '../../model-util';
+import { AstNodeWrapper } from '../ast-node-wrapper';
 
 // eslint-disable-next-line import/no-cycle
-import { PrimitiveValuetype } from './primitive/primitive-valuetype';
-import { Valuetype, ValuetypeVisitor } from './valuetype';
+import { AbstractValuetype, Valuetype, ValuetypeVisitor } from './valuetype';
 
-export class AtomicValuetype implements Valuetype<ValuetypeDefinition> {
+export class AtomicValuetype
+  extends AbstractValuetype
+  implements AstNodeWrapper<ValuetypeDefinition>
+{
   constructor(
     public readonly astNode: ValuetypeDefinition,
-    public readonly primitiveValuetype: PrimitiveValuetype,
-  ) {}
+    supertype: Valuetype,
+  ) {
+    super(supertype);
+  }
 
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
-    return this.primitiveValuetype.acceptVisitor(visitor);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return this.supertype!.acceptVisitor(visitor);
   }
 
   getConstraints(): ConstraintDefinition[] {
@@ -41,5 +47,10 @@ export class AtomicValuetype implements Valuetype<ValuetypeDefinition> {
     );
 
     return constraints;
+  }
+
+  override isConvertibleTo(target: Valuetype): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return this.supertype!.isConvertibleTo(target);
   }
 }
