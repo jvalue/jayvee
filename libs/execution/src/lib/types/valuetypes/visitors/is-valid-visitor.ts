@@ -9,17 +9,13 @@ import {
 
 import { createConstraintExecutor } from '../../../constraints/constraint-executor-registry';
 import { ExecutionContext } from '../../../execution-context';
+import {
+  BOOLEAN_STRING_REPRESENTATIONS,
+  DECIMAL_COMMA_SEPARATOR_REGEX,
+  DECIMAL_DOT_SEPARATOR_REGEX,
+} from '../constants';
 
 export class IsValidVisitor extends ValuetypeVisitor<boolean> {
-  private readonly BOOLEAN_STRING_REPRESENTATIONS = [
-    'true',
-    'True',
-    'false',
-    'False',
-  ];
-  private readonly DECIMAL_DOT_SEPARATOR_REGEX = /^[+-]?([0-9]*[.])?[0-9]+$/;
-  private readonly DECIMAL_COMMA_SEPARATOR_REGEX = /^[+-]?([0-9]*[,])?[0-9]+$/;
-
   constructor(private value: unknown, private context: ExecutionContext) {
     super();
   }
@@ -29,7 +25,7 @@ export class IsValidVisitor extends ValuetypeVisitor<boolean> {
       return true;
     }
     if (typeof this.value === 'string') {
-      return this.BOOLEAN_STRING_REPRESENTATIONS.includes(this.value);
+      return BOOLEAN_STRING_REPRESENTATIONS.includes(this.value);
     }
 
     return false;
@@ -38,8 +34,8 @@ export class IsValidVisitor extends ValuetypeVisitor<boolean> {
   override visitDecimal(): boolean {
     if (typeof this.value === 'string') {
       return (
-        this.DECIMAL_DOT_SEPARATOR_REGEX.test(this.value) ||
-        this.DECIMAL_COMMA_SEPARATOR_REGEX.test(this.value)
+        DECIMAL_DOT_SEPARATOR_REGEX.test(this.value) ||
+        DECIMAL_COMMA_SEPARATOR_REGEX.test(this.value)
       );
     }
 

@@ -12,9 +12,9 @@ import {
   Valuetype,
 } from '@jvalue/jayvee-language-server';
 
-export class StandardRepresentationResolver {
-  private readonly DECIMAL_COMMA_SEPARATOR_REGEX = /^[+-]?([0-9]*[,])?[0-9]+$/;
+import { DECIMAL_COMMA_SEPARATOR_REGEX } from './constants';
 
+export class StandardRepresentationResolver {
   constructor(private value: unknown) {}
 
   fromValuetype(valuetype: Valuetype): PrimitiveType {
@@ -57,7 +57,7 @@ export class StandardRepresentationResolver {
     }
     if (typeof this.value === 'string') {
       let stringValue: string = this.value;
-      if (this.DECIMAL_COMMA_SEPARATOR_REGEX.test(stringValue)) {
+      if (DECIMAL_COMMA_SEPARATOR_REGEX.test(stringValue)) {
         stringValue = stringValue.replace(',', '.');
       }
       return Number.parseFloat(stringValue);
