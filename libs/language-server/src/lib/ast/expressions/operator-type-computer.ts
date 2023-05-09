@@ -121,13 +121,9 @@ export abstract class DefaultBinaryOperatorTypeComputer
   ): Valuetype;
 }
 
-function generateUnexpectedTypeMessage(
-  expectedTypes: Valuetype | Valuetype[],
+export function generateUnexpectedTypeMessage(
+  expectedType: Valuetype,
   actualType: Valuetype,
 ) {
-  return `The operand needs to be of type ${
-    Array.isArray(expectedTypes)
-      ? expectedTypes.map((x) => x.getName()).join(' or ')
-      : expectedTypes.getName()
-  } but is of type ${actualType.getName()}`;
+  return `The operand needs to be of type ${expectedType.getName()} but is of type ${actualType.getName()}`;
 }
