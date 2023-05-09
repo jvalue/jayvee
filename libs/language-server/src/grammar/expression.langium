@@ -51,7 +51,8 @@ ExpressionLiteral:
   | RegexLiteral
   | CellRangeLiteral
   | ValuetypeAssignmentLiteral
-  | ConstraintReferenceLiteral;
+  | ConstraintReferenceLiteral
+  | CollectionLiteral;
 
 TextLiteral:
   value=STRING;
@@ -64,3 +65,6 @@ BooleanLiteral:
 
 RegexLiteral:
   value=REGEX;
+
+CollectionLiteral:
+  '[' (values+=(Expression) (',' values+=(Expression))*)? ','? ']';

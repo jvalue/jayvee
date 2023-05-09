@@ -7,8 +7,7 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { PrimitiveValuetypes } from '../../ast';
-import { inferTypeFromValue } from '../../ast/expressions/type-inference';
+import { PrimitiveValuetypes, inferExpressionType } from '../../ast';
 import {
   ValuetypeDefinition,
   isConstraintReferenceLiteral,
@@ -26,13 +25,13 @@ export function validateValuetypeDefinition(
 
 function checkConstraintsCollectionValues(
   valuetype: ValuetypeDefinition,
-  context: ValidationContext,
+  validationContext: ValidationContext,
 ): void {
   const constraints = valuetype.constraints;
   constraints.values.forEach((collectionValue) => {
-    const type = inferTypeFromValue(collectionValue);
+    const type = inferExpressionType(collectionValue, validationContext);
     if (type !== PrimitiveValuetypes.Constraint) {
-      context.accept(
+      validationContext.accept(
         'error',
         'Only constraints are allowed in this collection',
         {
