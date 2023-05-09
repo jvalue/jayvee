@@ -4,4 +4,4 @@
 
 // eslint-disable-next-line import/no-cycle
 export * from './primitive-valuetype';
-export * from './facade';
+export * from './primitive-valuetypes';

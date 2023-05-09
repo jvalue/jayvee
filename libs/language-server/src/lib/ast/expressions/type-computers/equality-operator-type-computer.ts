@@ -6,7 +6,7 @@ import { ValidationContext } from '../../../validation/validation-context';
 import { BinaryExpression } from '../../generated/ast';
 import { type Valuetype } from '../../wrappers/value-type';
 // eslint-disable-next-line import/no-cycle
-import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/facade';
+import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/primitive-valuetypes';
 import { BinaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class EqualityOperatorTypeComputer

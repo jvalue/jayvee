@@ -22,7 +22,7 @@ import {
   isValuetypeAssignmentLiteral,
 } from '../generated/ast';
 // eslint-disable-next-line import/no-cycle
-import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/facade';
+import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-valuetypes';
 import { type Valuetype } from '../wrappers/value-type/valuetype';
 
 import {
