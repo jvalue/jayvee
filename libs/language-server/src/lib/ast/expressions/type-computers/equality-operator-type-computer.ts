@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'assert';
-
 import { ValidationContext } from '../../../validation/validation-context';
 import { BinaryExpression } from '../../generated/ast';
 import { type Valuetype } from '../../wrappers/value-type';
@@ -27,8 +25,6 @@ export class EqualityOperatorTypeComputer
     expression: BinaryExpression,
     context: ValidationContext | undefined,
   ): Valuetype | undefined {
-    assert(expression.operator === '==');
-
     const isLeftOperandTypeValid =
       this.ALLOWED_OPERAND_TYPES.includes(leftOperandType);
     const isRightOperandTypeValid =
