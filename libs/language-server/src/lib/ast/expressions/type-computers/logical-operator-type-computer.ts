@@ -2,15 +2,17 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { PropertyValuetype } from '../../model-util';
+import { type Valuetype } from '../../wrappers/value-type';
+// eslint-disable-next-line import/no-cycle
+import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/facade';
 import { DefaultBinaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class LogicalOperatorTypeComputer extends DefaultBinaryOperatorTypeComputer {
   constructor() {
-    super(PropertyValuetype.BOOLEAN, PropertyValuetype.BOOLEAN);
+    super(PrimitiveValuetypes.Boolean, PrimitiveValuetypes.Boolean);
   }
 
-  protected override doComputeType(): PropertyValuetype {
-    return PropertyValuetype.BOOLEAN;
+  protected override doComputeType(): Valuetype {
+    return PrimitiveValuetypes.Boolean;
   }
 }

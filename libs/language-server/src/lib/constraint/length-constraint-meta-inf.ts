@@ -5,7 +5,7 @@
 import { evaluatePropertyValueExpression } from '../ast/expressions/evaluation';
 import { NUMBER_TYPEGUARD } from '../ast/expressions/typeguards';
 import { PropertyAssignment } from '../ast/generated/ast';
-import { PropertyValuetype } from '../ast/model-util';
+import { PrimitiveValuetypes } from '../ast/wrappers/value-type';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 import { ValidationContext } from '../validation/validation-context';
 
@@ -15,12 +15,12 @@ export class LengthConstraintMetaInformation extends ConstraintMetaInformation {
       'LengthConstraint',
       {
         minLength: {
-          type: PropertyValuetype.INTEGER,
+          type: PrimitiveValuetypes.Integer,
           defaultValue: 0,
           validation: nonNegativeValidation,
         },
         maxLength: {
-          type: PropertyValuetype.INTEGER,
+          type: PrimitiveValuetypes.Integer,
           defaultValue: Number.POSITIVE_INFINITY,
           validation: nonNegativeValidation,
         },

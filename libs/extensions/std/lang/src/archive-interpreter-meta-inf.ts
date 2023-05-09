@@ -5,7 +5,7 @@
 import {
   BlockMetaInformation,
   IOType,
-  PropertyValuetype,
+  PrimitiveValuetypes,
 } from '@jvalue/jayvee-language-server';
 
 export class ArchiveInterpreterMetaInformation extends BlockMetaInformation {
@@ -17,7 +17,7 @@ export class ArchiveInterpreterMetaInformation extends BlockMetaInformation {
       // Property definitions:
       {
         archiveType: {
-          type: PropertyValuetype.TEXT,
+          type: PrimitiveValuetypes.Text,
           docs: {
             description: 'The archive type to be interpreted, e.g., `"zip"`.',
           },

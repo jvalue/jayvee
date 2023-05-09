@@ -155,7 +155,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       const completionValueItem: CompletionValueItem = {
         label: propertyName,
         labelDetails: {
-          detail: ` ${propertySpec.type}`,
+          detail: ` ${propertySpec.type.getName()}`,
         },
         kind: CompletionItemKind.Field,
         detail: `(${kind} property)`,

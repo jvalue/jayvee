@@ -6,8 +6,8 @@ import {
   BlockMetaInformation,
   IOType,
   NUMBER_TYPEGUARD,
+  PrimitiveValuetypes,
   PropertyAssignment,
-  PropertyValuetype,
   ValidationContext,
   evaluatePropertyValueExpression,
 } from '@jvalue/jayvee-language-server';
@@ -18,12 +18,12 @@ export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
       'TextRangeSelector',
       {
         lineFrom: {
-          type: PropertyValuetype.INTEGER,
+          type: PrimitiveValuetypes.Integer,
           defaultValue: 1,
           validation: greaterThanZeroValidation,
         },
         lineTo: {
-          type: PropertyValuetype.INTEGER,
+          type: PrimitiveValuetypes.Integer,
           defaultValue: Number.POSITIVE_INFINITY,
           validation: greaterThanZeroValidation,
         },

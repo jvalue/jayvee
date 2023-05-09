@@ -6,6 +6,8 @@ import { assertUnreachable } from 'langium';
 
 import { ValidationContext } from '../../validation/validation-context';
 import {
+  AtomicLiteral,
+  CollectionLiteral,
   Expression,
   ExpressionLiteral,
   PropertyValueLiteral,
@@ -22,9 +24,10 @@ import {
   isUnaryExpression,
   isValuetypeAssignmentLiteral,
 } from '../generated/ast';
-import { PropertyValuetype } from '../model-util';
-
 // eslint-disable-next-line import/no-cycle
+import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/facade';
+import { type Valuetype } from '../wrappers/value-type/valuetype';
+
 import {
   binaryOperatorRegistry,
   unaryOperatorRegistry,
@@ -33,7 +36,7 @@ import {
 export function inferExpressionType(
   expression: Expression | undefined,
   context: ValidationContext | undefined,
-): PropertyValuetype | undefined {
+): Valuetype | undefined {
   if (expression === undefined) {
     return undefined;
   }
@@ -66,52 +69,73 @@ export function inferExpressionType(
 
 function inferTypeFromExpressionLiteral(
   expression: ExpressionLiteral,
-): PropertyValuetype {
+): Valuetype {
   if (isTextLiteral(expression)) {
-    return PropertyValuetype.TEXT;
+    return PrimitiveValuetypes.Text;
   }
   if (isBooleanLiteral(expression)) {
-    return PropertyValuetype.BOOLEAN;
+    return PrimitiveValuetypes.Boolean;
   }
   if (isNumericLiteral(expression)) {
     if (Number.isInteger(expression.value)) {
-      return PropertyValuetype.INTEGER;
+      return PrimitiveValuetypes.Integer;
     }
-    return PropertyValuetype.DECIMAL;
+    return PrimitiveValuetypes.Decimal;
   }
   if (isCellRangeLiteral(expression)) {
-    return PropertyValuetype.CELL_RANGE;
+    return PrimitiveValuetypes.CellRange;
   }
   if (isConstraintReferenceLiteral(expression)) {
-    return PropertyValuetype.CONSTRAINT;
+    return PrimitiveValuetypes.Constraint;
   }
   if (isRegexLiteral(expression)) {
-    return PropertyValuetype.REGEX;
+    return PrimitiveValuetypes.Regex;
   }
   if (isValuetypeAssignmentLiteral(expression)) {
-    return PropertyValuetype.VALUETYPE_ASSIGNMENT;
+    return PrimitiveValuetypes.ValuetypeAssignment;
   }
   assertUnreachable(expression);
 }
 
 export function generateUnexpectedTypeMessage(
-  expectedTypes: PropertyValuetype | PropertyValuetype[],
-  actualType: PropertyValuetype,
+  expectedType: Valuetype,
+  actualType: Valuetype,
 ) {
-  return `The operand needs to be of type ${
-    Array.isArray(expectedTypes) ? expectedTypes.join(' or ') : expectedTypes
-  } but is of type ${actualType}`;
+  return `The operand needs to be of type ${expectedType.getName()} but is of type ${actualType.getName()}`;
 }
 
 export function inferTypeFromValue(
   value: PropertyValueLiteral,
   context?: ValidationContext,
-): PropertyValuetype | undefined {
+): Valuetype | undefined {
   if (isCollectionLiteral(value)) {
-    return PropertyValuetype.COLLECTION;
+    return PrimitiveValuetypes.Collection;
   }
   if (isExpression(value)) {
     return inferExpressionType(value, context);
   }
   assertUnreachable(value);
+}
+
+export interface TypedCollectionValidation {
+  validItems: AtomicLiteral[];
+  invalidItems: AtomicLiteral[];
+}
+
+export function validateTypedCollection(
+  collection: CollectionLiteral,
+  desiredTypes: Valuetype[],
+): TypedCollectionValidation {
+  const validItems = collection.values.filter((value) => {
+    const valueType = inferTypeFromValue(value);
+    return valueType !== undefined && desiredTypes.includes(valueType);
+  });
+  const invalidItems = collection.values.filter(
+    (value) => !validItems.includes(value),
+  );
+
+  return {
+    validItems,
+    invalidItems,
+  };
 }

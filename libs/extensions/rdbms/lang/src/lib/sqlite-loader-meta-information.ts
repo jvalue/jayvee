@@ -5,7 +5,7 @@
 import {
   BlockMetaInformation,
   IOType,
-  PropertyValuetype,
+  PrimitiveValuetypes,
 } from '@jvalue/jayvee-language-server';
 
 export class SQLiteLoaderMetaInformation extends BlockMetaInformation {
@@ -14,20 +14,20 @@ export class SQLiteLoaderMetaInformation extends BlockMetaInformation {
       'SQLiteLoader',
       {
         table: {
-          type: PropertyValuetype.TEXT,
+          type: PrimitiveValuetypes.Text,
           docs: {
             description: 'The name of the table to write into.',
           },
         },
         file: {
-          type: PropertyValuetype.TEXT,
+          type: PrimitiveValuetypes.Text,
           docs: {
             description:
               'The path to the SQLite file that will be created. Usual file extensions are `.sqlite` and `.db`.',
           },
         },
         dropTable: {
-          type: PropertyValuetype.BOOLEAN,
+          type: PrimitiveValuetypes.Boolean,
           defaultValue: true,
           docs: {
             description:

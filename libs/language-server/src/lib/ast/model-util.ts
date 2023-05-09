@@ -146,53 +146,8 @@ export enum IOType {
   TABLE = 'Table',
 }
 
-export enum PropertyValuetype {
-  TEXT = 'text',
-  INTEGER = 'integer',
-  DECIMAL = 'decimal',
-  BOOLEAN = 'boolean',
-  CELL_RANGE = 'cell-range',
-  REGEX = 'regex',
-  COLLECTION = 'collection',
-  VALUETYPE_ASSIGNMENT = 'valuetype-assignment',
-  CONSTRAINT = 'constraint',
-}
-
-export function runtimeParameterAllowedForType(
-  type: PropertyValuetype,
-): boolean {
-  switch (type) {
-    case PropertyValuetype.CELL_RANGE:
-    case PropertyValuetype.REGEX:
-    case PropertyValuetype.VALUETYPE_ASSIGNMENT:
-    case PropertyValuetype.COLLECTION:
-    case PropertyValuetype.CONSTRAINT:
-      return false;
-    case PropertyValuetype.TEXT:
-    case PropertyValuetype.INTEGER:
-    case PropertyValuetype.DECIMAL:
-    case PropertyValuetype.BOOLEAN:
-      return true;
-    default:
-      assertUnreachable(type);
-  }
-}
-
 export type UnaryExpressionOperator = UnaryExpression['operator'];
 export type BinaryExpressionOperator = BinaryExpression['operator'];
-
-export const numericTypes = [
-  PropertyValuetype.INTEGER,
-  PropertyValuetype.DECIMAL,
-];
-export function isNumericType(
-  type: PropertyValuetype | undefined,
-): type is PropertyValuetype.INTEGER | PropertyValuetype.DECIMAL {
-  if (type === undefined) {
-    return false;
-  }
-  return numericTypes.includes(type);
-}
 
 export function getValuetypeName(
   valuetype: PrimitiveValuetypeKeywordLiteral | ValuetypeDefinitionReference,

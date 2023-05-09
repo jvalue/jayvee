@@ -5,16 +5,15 @@
 import { strict as assert } from 'assert';
 
 // eslint-disable-next-line import/no-cycle
-import { validateTypedCollection } from '../../collection-util';
+import { validateTypedCollection } from '../../expressions/type-inference';
 import {
   ConstraintDefinition,
   ValuetypeDefinition,
   isConstraintReferenceLiteral,
 } from '../../generated/ast';
-import { PropertyValuetype } from '../../model-util';
 import { AstNodeWrapper } from '../ast-node-wrapper';
 
-// eslint-disable-next-line import/no-cycle
+import { PrimitiveValuetypes } from './primitive';
 import { AbstractValuetype, Valuetype, ValuetypeVisitor } from './valuetype';
 
 export class AtomicValuetype
@@ -36,7 +35,7 @@ export class AtomicValuetype
   getConstraints(): ConstraintDefinition[] {
     const constraintCollection = this.astNode.constraints;
     const constraintReferences = validateTypedCollection(constraintCollection, [
-      PropertyValuetype.CONSTRAINT,
+      PrimitiveValuetypes.Constraint,
     ]).validItems;
 
     assert(constraintReferences.every(isConstraintReferenceLiteral));
@@ -52,5 +51,15 @@ export class AtomicValuetype
   override isConvertibleTo(target: Valuetype): boolean {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return this.supertype!.isConvertibleTo(target);
+  }
+
+  override isAllowedAsRuntimeParameter(): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return this.supertype!.isAllowedAsRuntimeParameter();
+  }
+
+  override getName(): string {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    return this.astNode.name ?? '';
   }
 }

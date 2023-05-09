@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { PropertyValuetype } from '../ast/model-util';
+import { PrimitiveValuetypes } from '../ast';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 
 export class RegexConstraintMetaInformation extends ConstraintMetaInformation {
@@ -11,7 +11,7 @@ export class RegexConstraintMetaInformation extends ConstraintMetaInformation {
       'RegexConstraint',
       {
         regex: {
-          type: PropertyValuetype.REGEX,
+          type: PrimitiveValuetypes.Regex,
         },
       },
       ['text'],

@@ -3,36 +3,35 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  PropertyValuetype,
+  PrimitiveValuetypes,
   RuntimeParameterLiteral,
-  runtimeParameterAllowedForType,
 } from '@jvalue/jayvee-language-server';
 
 import { parseParameterAsMatchingType } from './runtime-parameter-util';
 
 describe('runtime parameter utils', () => {
   describe('parameter parsing', () => {
-    Object.keys(PropertyValuetype).forEach((propertyValuetypeKey) => {
-      const propertyValuetype =
-        PropertyValuetype[
-          propertyValuetypeKey as keyof typeof PropertyValuetype
+    Object.keys(PrimitiveValuetypes).forEach((primitiveValueTypeKey) => {
+      const primitiveValuetype =
+        PrimitiveValuetypes[
+          primitiveValueTypeKey as keyof typeof PrimitiveValuetypes
         ];
 
       const parseParameterFn = () => {
         parseParameterAsMatchingType(
           '',
-          propertyValuetype,
+          primitiveValuetype,
           // Don't care about the diagnostics:
           {} as RuntimeParameterLiteral,
         );
       };
 
-      if (runtimeParameterAllowedForType(propertyValuetype)) {
-        it(`should not throw error on allowed type ${propertyValuetype}`, () => {
+      if (primitiveValuetype.isAllowedAsRuntimeParameter()) {
+        it(`should not throw error on allowed type ${primitiveValuetype.getName()}`, () => {
           expect(parseParameterFn).not.toThrowError();
         });
       } else {
-        it(`should throw error on forbidden type ${propertyValuetype}`, () => {
+        it(`should throw error on forbidden type ${primitiveValuetype.getName()}`, () => {
           expect(parseParameterFn).toThrowError();
         });
       }

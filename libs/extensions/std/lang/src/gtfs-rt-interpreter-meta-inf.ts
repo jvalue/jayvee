@@ -5,8 +5,8 @@
 import {
   BlockMetaInformation,
   IOType,
+  PrimitiveValuetypes,
   PropertyAssignment,
-  PropertyValuetype,
   STRING_TYPEGUARD,
   ValidationContext,
   evaluatePropertyValueExpression,
@@ -21,7 +21,7 @@ export class GtfsRTInterpreterMetaInformation extends BlockMetaInformation {
       // Attribute definitions:
       {
         entity: {
-          type: PropertyValuetype.TEXT,
+          type: PrimitiveValuetypes.Text,
           validation: isGtfsRTEntity,
           docs: {
             description: `Entity to process from GTFS-RT-feed (\`trip_update\`, \`alert\` or \`vehicle\`).

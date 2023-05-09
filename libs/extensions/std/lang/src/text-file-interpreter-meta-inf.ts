@@ -7,7 +7,7 @@ import { TextDecoder } from 'util';
 import {
   BlockMetaInformation,
   IOType,
-  PropertyValuetype,
+  PrimitiveValuetypes,
   STRING_TYPEGUARD,
   evaluatePropertyValueExpression,
 } from '@jvalue/jayvee-language-server';
@@ -18,7 +18,7 @@ export class TextFileInterpreterMetaInformation extends BlockMetaInformation {
       'TextFileInterpreter',
       {
         encoding: {
-          type: PropertyValuetype.TEXT,
+          type: PrimitiveValuetypes.Text,
           defaultValue: 'utf-8',
           docs: {
             description: 'The encoding used for decoding the file contents.',
@@ -40,7 +40,7 @@ export class TextFileInterpreterMetaInformation extends BlockMetaInformation {
           },
         },
         lineBreak: {
-          type: PropertyValuetype.REGEX,
+          type: PrimitiveValuetypes.Regex,
           defaultValue: /\r?\n/,
           docs: {
             description: 'The regex for identifying line breaks.',

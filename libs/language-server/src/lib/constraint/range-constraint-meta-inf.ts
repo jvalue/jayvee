@@ -7,7 +7,7 @@ import {
   BOOLEAN_TYPEGUARD,
   NUMBER_TYPEGUARD,
 } from '../ast/expressions/typeguards';
-import { PropertyValuetype } from '../ast/model-util';
+import { PrimitiveValuetypes } from '../ast/wrappers/value-type';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 
 export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
@@ -16,19 +16,19 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
       'RangeConstraint',
       {
         lowerBound: {
-          type: PropertyValuetype.DECIMAL,
+          type: PrimitiveValuetypes.Decimal,
           defaultValue: Number.NEGATIVE_INFINITY,
         },
         lowerBoundInclusive: {
-          type: PropertyValuetype.BOOLEAN,
+          type: PrimitiveValuetypes.Boolean,
           defaultValue: true,
         },
         upperBound: {
-          type: PropertyValuetype.DECIMAL,
+          type: PrimitiveValuetypes.Decimal,
           defaultValue: Number.POSITIVE_INFINITY,
         },
         upperBoundInclusive: {
-          type: PropertyValuetype.BOOLEAN,
+          type: PrimitiveValuetypes.Boolean,
           defaultValue: true,
         },
       },

@@ -6,7 +6,7 @@ import {
   BlockMetaInformation,
   CellRangeWrapper,
   IOType,
-  PropertyValuetype,
+  PrimitiveValuetypes,
   isCellRangeLiteral,
   isCollectionLiteral,
   validateTypedCollection,
@@ -18,7 +18,7 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
       'CellWriter',
       {
         write: {
-          type: PropertyValuetype.COLLECTION,
+          type: PrimitiveValuetypes.Collection,
           docs: {
             description: 'The values to write.',
             examples: [
@@ -35,7 +35,7 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
           },
         },
         at: {
-          type: PropertyValuetype.CELL_RANGE,
+          type: PrimitiveValuetypes.CellRange,
           validation: (property, context) => {
             const propertyValue = property.value;
             if (!isCellRangeLiteral(propertyValue)) {
@@ -88,7 +88,7 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
           return;
         }
         const { invalidItems } = validateTypedCollection(writeProperty.value, [
-          PropertyValuetype.TEXT,
+          PrimitiveValuetypes.Text,
         ]);
 
         invalidItems.forEach((invalidValue) =>
