@@ -1,5 +1,5 @@
 ---
-title: Working with the grammar
+title: The Jayvee grammar
 ---
 
 The grammar of Jayvee describes the syntax and structure of the language.
@@ -10,9 +10,13 @@ Such grammar files are easily identifiable via their `.langium` file extension.
 The grammar is used to generate TypeScript interfaces that represent the Abstract Syntax Tree (AST) and different, semantically equivalent files to define syntax highlighting for different applications.
 For instance, a [TextMate](https://macromates.com/manual/en/language_grammars) file is generated for the syntax highlighting in the Jayvee VS Code extension whereas a [Monarch](https://microsoft.github.io/monaco-editor/monarch.html) file is generated for the syntax highlighting in the Monaco editor.
 
-Whenever the grammar is changed and the code generation is run during development, it is advisory to close and reopen the IDE, so the changes are noticed and the file indexing is updated.
-
 For further information on the grammar language of Langium, visit the corresponding [Langium documentation](https://langium.org/docs/grammar-language/).
+
+## Working with the grammar
+
+To run the code generation, either use `npm run generate` for solely the code generation or `npm run build` for an entire build.
+
+Whenever the grammar is changed and the code generation is run during development, it is advisory to **close and reopen the IDE**, so the changes are noticed and the file indexing is updated.
 
 ## How to rename AST nodes
 
@@ -26,3 +30,4 @@ The following steps explain how to rename an AST node, so the change is reflecte
 - Use the rename feature by the IDE to perform the renaming from `A` to `B` and from `isA` to `isB`
 - Open the grammar and locate the `A` rule
 - Use the rename feature by the Langium VS Code extension to perform the renaming from `A` to `B`
+- Run `npm run generate`
