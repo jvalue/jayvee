@@ -4,7 +4,7 @@
 
 import {
   AtomicValuetype,
-  Primitive,
+  PrimitiveValuetypes,
   PrimitiveType,
   Valuetype,
 } from '@jvalue/jayvee-language-server';
@@ -15,13 +15,13 @@ export class StandardRepresentationResolver {
   constructor(private value: unknown) {}
 
   fromValuetype(valuetype: Valuetype): PrimitiveType {
-    if (valuetype === Primitive.Boolean) {
+    if (valuetype === PrimitiveValuetypes.Boolean) {
       return this.fromBooleanValuetype();
-    } else if (valuetype === Primitive.Decimal) {
+    } else if (valuetype === PrimitiveValuetypes.Decimal) {
       return this.fromDecimalValuetype();
-    } else if (valuetype === Primitive.Integer) {
+    } else if (valuetype === PrimitiveValuetypes.Integer) {
       return this.fromIntegerValuetype();
-    } else if (valuetype === Primitive.Text) {
+    } else if (valuetype === PrimitiveValuetypes.Text) {
       return this.fromTextValuetype();
     } else if (valuetype instanceof AtomicValuetype) {
       return this.fromAtomicValuetype(valuetype);
