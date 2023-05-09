@@ -4,6 +4,7 @@
 
 import {
   AtomicValuetype,
+  Valuetype,
   ValuetypeVisitor,
 } from '@jvalue/jayvee-language-server';
 
@@ -12,38 +13,38 @@ import { StandardRepresentationResolver } from '../standard-representation';
 export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
   (value: unknown) => string
 > {
-  visitBoolean(): (value: unknown) => string {
+  visitBoolean(valuetype: Valuetype): (value: unknown) => string {
     return (value: unknown) => {
       const standardRepresentation = new StandardRepresentationResolver(
         value,
-      ).fromBooleanValuetype();
+      ).fromBooleanValuetype(valuetype);
       return standardRepresentation ? String.raw`'true'` : String.raw`'false'`;
     };
   }
 
-  visitDecimal(): (value: unknown) => string {
+  visitDecimal(valuetype: Valuetype): (value: unknown) => string {
     return (value: unknown) => {
       const standardRepresentation = new StandardRepresentationResolver(
         value,
-      ).fromDecimalValuetype();
+      ).fromDecimalValuetype(valuetype);
       return standardRepresentation.toString();
     };
   }
 
-  visitInteger(): (value: unknown) => string {
+  visitInteger(valuetype: Valuetype): (value: unknown) => string {
     return (value: unknown) => {
       const standardRepresentation = new StandardRepresentationResolver(
         value,
-      ).fromIntegerValuetype();
+      ).fromIntegerValuetype(valuetype);
       return standardRepresentation.toString();
     };
   }
 
-  visitText(): (value: unknown) => string {
+  visitText(valuetype: Valuetype): (value: unknown) => string {
     return (value: unknown) => {
       const standardRepresentation = new StandardRepresentationResolver(
         value,
-      ).fromTextValuetype();
+      ).fromTextValuetype(valuetype);
       const escapedValueRepresentation = escapeSingleQuotes(
         standardRepresentation,
       );
@@ -59,31 +60,31 @@ export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
 
   override visitRegex(): (value: unknown) => string {
     throw new Error(
-      'No visitor given for regex. Cannot be the type of a column.',
+      'No visit implementation given for regex. Cannot be the type of a column.',
     );
   }
 
   override visitCellRange(): (value: unknown) => string {
     throw new Error(
-      'No visitor given for cell ranges. Cannot be the type of a column.',
+      'No visit implementation given for cell ranges. Cannot be the type of a column.',
     );
   }
 
   override visitConstraint(): (value: unknown) => string {
     throw new Error(
-      'No visitor given for constraints. Cannot be the type of a column.',
+      'No visit implementation given for constraints. Cannot be the type of a column.',
     );
   }
 
   override visitValuetypeAssignment(): (value: unknown) => string {
     throw new Error(
-      'No visitor given for valuetype assignments. Cannot be the type of a column.',
+      'No visit implementation given for valuetype assignments. Cannot be the type of a column.',
     );
   }
 
   override visitCollection(): (value: unknown) => string {
     throw new Error(
-      'No visitor given for collections. Cannot be the type of a column.',
+      'No visit implementation given for collections. Cannot be the type of a column.',
     );
   }
 }

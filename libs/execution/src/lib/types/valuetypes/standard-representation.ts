@@ -2,9 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
+
 import {
   AtomicValuetype,
   PrimitiveType,
+  PrimitiveValuetype,
   PrimitiveValuetypes,
   Valuetype,
 } from '@jvalue/jayvee-language-server';
@@ -16,20 +19,21 @@ export class StandardRepresentationResolver {
 
   fromValuetype(valuetype: Valuetype): PrimitiveType {
     if (valuetype === PrimitiveValuetypes.Boolean) {
-      return this.fromBooleanValuetype();
+      return this.fromBooleanValuetype(valuetype);
     } else if (valuetype === PrimitiveValuetypes.Decimal) {
-      return this.fromDecimalValuetype();
+      return this.fromDecimalValuetype(valuetype);
     } else if (valuetype === PrimitiveValuetypes.Integer) {
-      return this.fromIntegerValuetype();
+      return this.fromIntegerValuetype(valuetype);
     } else if (valuetype === PrimitiveValuetypes.Text) {
-      return this.fromTextValuetype();
+      return this.fromTextValuetype(valuetype);
     } else if (valuetype instanceof AtomicValuetype) {
       return this.fromAtomicValuetype(valuetype);
     }
     throw Error('Parsing from unsupported value type');
   }
 
-  fromBooleanValuetype(): boolean {
+  fromBooleanValuetype(valuetype: PrimitiveValuetype): boolean {
+    assert(valuetype === PrimitiveValuetypes.Boolean);
     if (typeof this.value === 'boolean') {
       return this.value;
     }
@@ -44,11 +48,12 @@ export class StandardRepresentationResolver {
 
     throw new Error(
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      `Invalid value: ${this.value} for type boolean`,
+      `Invalid value: ${this.value} for type ${valuetype.getName()}`,
     );
   }
 
-  fromDecimalValuetype(): number {
+  fromDecimalValuetype(valuetype: PrimitiveValuetype): number {
+    assert(valuetype === PrimitiveValuetypes.Decimal);
     if (typeof this.value === 'number') {
       return this.value;
     }
@@ -62,11 +67,12 @@ export class StandardRepresentationResolver {
 
     throw new Error(
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      `Invalid value: ${this.value} for type decimal`,
+      `Invalid value: ${this.value} for type ${valuetype.getName()}`,
     );
   }
 
-  fromIntegerValuetype(): number {
+  fromIntegerValuetype(valuetype: PrimitiveValuetype): number {
+    assert(valuetype === PrimitiveValuetypes.Integer);
     if (typeof this.value === 'number') {
       return this.value;
     }
@@ -76,11 +82,12 @@ export class StandardRepresentationResolver {
 
     throw new Error(
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      `Invalid value: ${this.value} for type integer`,
+      `Invalid value: ${this.value} for type ${valuetype.getName()}`,
     );
   }
 
-  fromTextValuetype(): string {
+  fromTextValuetype(valuetype: PrimitiveValuetype): string {
+    assert(valuetype === PrimitiveValuetypes.Text);
     if (typeof this.value === 'number') {
       return this.value.toString();
     }
@@ -90,17 +97,14 @@ export class StandardRepresentationResolver {
 
     throw new Error(
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      `Invalid value: ${this.value} for type text`,
+      `Invalid value: ${this.value} for type ${valuetype.getName()}`,
     );
   }
 
   fromAtomicValuetype(valuetype: AtomicValuetype): PrimitiveType {
     const supertype = valuetype.getSupertype();
-    if (supertype === undefined) {
-      throw new Error(
-        `Valuetype ${valuetype.astNode.name} has no transitive primitive supertype!`,
-      );
-    }
+    assert(supertype !== undefined);
+
     return this.fromValuetype(supertype);
   }
 }

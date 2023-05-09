@@ -80,31 +80,31 @@ export class IsValidVisitor extends ValuetypeVisitor<boolean> {
 
   override visitRegex(): boolean {
     throw new Error(
-      'No visitor given for regex. Cannot be the type of a column.',
+      'No visit implementation given for regex. Cannot be the type of a column.',
     );
   }
 
   override visitCellRange(): boolean {
     throw new Error(
-      'No visitor given for cell ranges. Cannot be the type of a column.',
+      'No visit implementation given for cell ranges. Cannot be the type of a column.',
     );
   }
 
   override visitConstraint(): boolean {
     throw new Error(
-      'No visitor given for constraints. Cannot be the type of a column.',
+      'No visit implementation given for constraints. Cannot be the type of a column.',
     );
   }
 
   override visitValuetypeAssignment(): boolean {
     throw new Error(
-      'No visitor given for valuetype assignments. Cannot be the type of a column.',
+      'No visit implementation given for valuetype assignments. Cannot be the type of a column.',
     );
   }
 
   override visitCollection(): boolean {
     throw new Error(
-      'No visitor given for collections. Cannot be the type of a column.',
+      'No visit implementation given for collections. Cannot be the type of a column.',
     );
   }
 }
