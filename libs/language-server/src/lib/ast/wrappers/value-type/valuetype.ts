@@ -73,5 +73,12 @@ export abstract class ValuetypeVisitor<R = unknown> {
   abstract visitDecimal(valuetype: PrimitiveValuetype): R;
   abstract visitInteger(valuetype: PrimitiveValuetype): R;
   abstract visitText(valuetype: PrimitiveValuetype): R;
+
+  abstract visitCellRange(valuetype: PrimitiveValuetype): R;
+  abstract visitRegex(valuetype: PrimitiveValuetype): R;
+  abstract visitConstraint(valuetype: PrimitiveValuetype): R;
+  abstract visitValuetypeAssignment(valuetype: PrimitiveValuetype): R;
+  abstract visitCollection(valuetype: PrimitiveValuetype): R;
+
   abstract visitAtomicValuetype(valuetype: AtomicValuetype): R;
 }

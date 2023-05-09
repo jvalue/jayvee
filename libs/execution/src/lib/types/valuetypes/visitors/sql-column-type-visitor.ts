@@ -27,4 +27,34 @@ export class SQLColumnTypeVisitor extends ValuetypeVisitor<string> {
   override visitAtomicValuetype(valuetype: AtomicValuetype): string {
     return valuetype.acceptVisitor(this);
   }
+
+  override visitRegex(): string {
+    throw new Error(
+      'No visitor given for regex. Cannot be the type of a column.',
+    );
+  }
+
+  override visitCellRange(): string {
+    throw new Error(
+      'No visitor given for cell ranges. Cannot be the type of a column.',
+    );
+  }
+
+  override visitConstraint(): string {
+    throw new Error(
+      'No visitor given for constraints. Cannot be the type of a column.',
+    );
+  }
+
+  override visitValuetypeAssignment(): string {
+    throw new Error(
+      'No visitor given for valuetype assignments. Cannot be the type of a column.',
+    );
+  }
+
+  override visitCollection(): string {
+    throw new Error(
+      'No visitor given for collections. Cannot be the type of a column.',
+    );
+  }
 }

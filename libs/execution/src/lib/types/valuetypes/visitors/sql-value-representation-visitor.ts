@@ -56,6 +56,36 @@ export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
   ): (value: unknown) => string {
     return valuetype.acceptVisitor(this);
   }
+
+  override visitRegex(): (value: unknown) => string {
+    throw new Error(
+      'No visitor given for regex. Cannot be the type of a column.',
+    );
+  }
+
+  override visitCellRange(): (value: unknown) => string {
+    throw new Error(
+      'No visitor given for cell ranges. Cannot be the type of a column.',
+    );
+  }
+
+  override visitConstraint(): (value: unknown) => string {
+    throw new Error(
+      'No visitor given for constraints. Cannot be the type of a column.',
+    );
+  }
+
+  override visitValuetypeAssignment(): (value: unknown) => string {
+    throw new Error(
+      'No visitor given for valuetype assignments. Cannot be the type of a column.',
+    );
+  }
+
+  override visitCollection(): (value: unknown) => string {
+    throw new Error(
+      'No visitor given for collections. Cannot be the type of a column.',
+    );
+  }
 }
 
 function escapeSingleQuotes(value: string): string {
