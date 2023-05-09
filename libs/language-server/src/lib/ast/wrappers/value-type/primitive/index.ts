@@ -10,7 +10,7 @@ import { PrimitiveValuetype } from './primitive-valuetype';
 import { Text } from './text-valuetype';
 
 export * from './primitive-valuetype';
-export const Primitive: {
+export const PrimitiveValuetypes: {
   Boolean: PrimitiveValuetype;
   Decimal: PrimitiveValuetype;
   Integer: PrimitiveValuetype;
