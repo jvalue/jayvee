@@ -6,12 +6,11 @@ import { PrimitiveValuetypeKeyword } from '../../../generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { Valuetype, ValuetypeVisitor } from '../valuetype';
 
-import { Integer } from './integer-valuetype';
 import { PrimitiveValuetype } from './primitive-valuetype';
 
 class DecimalValuetype extends PrimitiveValuetype {
   override isConvertibleTo(target: Valuetype): boolean {
-    return target === this || target === Integer;
+    return target === this;
   }
 
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
