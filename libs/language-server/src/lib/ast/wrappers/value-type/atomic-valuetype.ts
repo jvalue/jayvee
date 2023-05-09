@@ -28,8 +28,8 @@ export class AtomicValuetype
   }
 
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return this.supertype!.acceptVisitor(visitor);
+    assert(this.supertype !== undefined);
+    return this.supertype.acceptVisitor(visitor);
   }
 
   getConstraints(): ConstraintDefinition[] {
@@ -51,13 +51,13 @@ export class AtomicValuetype
   }
 
   override isConvertibleTo(target: Valuetype): boolean {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return this.supertype!.isConvertibleTo(target);
+    assert(this.supertype !== undefined);
+    return this.supertype.isConvertibleTo(target);
   }
 
   override isAllowedAsRuntimeParameter(): boolean {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return this.supertype!.isAllowedAsRuntimeParameter();
+    assert(this.supertype !== undefined);
+    return this.supertype.isAllowedAsRuntimeParameter();
   }
 
   override getName(): string {

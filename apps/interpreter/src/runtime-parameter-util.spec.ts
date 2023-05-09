@@ -11,12 +11,7 @@ import { parseParameterAsMatchingType } from './runtime-parameter-util';
 
 describe('runtime parameter utils', () => {
   describe('parameter parsing', () => {
-    Object.keys(PrimitiveValuetypes).forEach((primitiveValueTypeKey) => {
-      const primitiveValuetype =
-        PrimitiveValuetypes[
-          primitiveValueTypeKey as keyof typeof PrimitiveValuetypes
-        ];
-
+    Object.values(PrimitiveValuetypes).forEach((primitiveValuetype) => {
       const parseParameterFn = () => {
         parseParameterAsMatchingType(
           '',

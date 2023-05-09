@@ -91,7 +91,10 @@ function evaluateExpressionLiteral(
   }
   if (isRegexLiteral(expression)) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    return new RegExp(expression?.value);
+    if (expression?.value === undefined) {
+      return undefined;
+    }
+    return new RegExp(expression.value);
   }
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (isReference(expression?.value)) {
