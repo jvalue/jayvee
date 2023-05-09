@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import 'terminal';
-import 'expression';
+import './terminal';
+import './expression';
 
 PropertyBody:
   '{' (properties+=PropertyAssignment)* '}';
