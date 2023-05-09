@@ -97,13 +97,6 @@ function inferTypeFromExpressionLiteral(
   assertUnreachable(expression);
 }
 
-export function generateUnexpectedTypeMessage(
-  expectedType: Valuetype,
-  actualType: Valuetype,
-) {
-  return `The operand needs to be of type ${expectedType.getName()} but is of type ${actualType.getName()}`;
-}
-
 export interface TypedCollectionValidation {
   validItems: Expression[];
   invalidItems: Expression[];
