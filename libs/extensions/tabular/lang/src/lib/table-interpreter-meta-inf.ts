@@ -7,7 +7,7 @@ import { strict as assert } from 'assert';
 import {
   BlockMetaInformation,
   IOType,
-  PropertyValuetype,
+  PrimitiveValuetypes,
   getNodesWithNonUniqueNames,
   isCollectionLiteral,
   isValuetypeAssignmentLiteral,
@@ -20,7 +20,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
       'TableInterpreter',
       {
         header: {
-          type: PropertyValuetype.BOOLEAN,
+          type: PrimitiveValuetypes.Boolean,
           docs: {
             description:
               'Whether the first row should be interpreted as header row.',
@@ -39,7 +39,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
           },
         },
         columns: {
-          type: PropertyValuetype.COLLECTION,
+          type: PrimitiveValuetypes.Collection,
           validation: (property, context) => {
             const propertyValue = property.value;
             if (!isCollectionLiteral(propertyValue)) {
@@ -48,7 +48,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
 
             const { validItems, invalidItems } = validateTypedCollection(
               propertyValue,
-              [PropertyValuetype.VALUETYPE_ASSIGNMENT],
+              [PrimitiveValuetypes.ValuetypeAssignment],
             );
 
             invalidItems.forEach((invalidValue) =>

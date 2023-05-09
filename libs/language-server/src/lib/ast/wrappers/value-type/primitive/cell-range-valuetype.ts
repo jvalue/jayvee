@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+// eslint-disable-next-line import/no-cycle
 import { Valuetype, ValuetypeVisitor } from '../valuetype';
 
 import { PrimitiveValuetype } from './primitive-valuetype';
@@ -13,6 +14,14 @@ class CellRangeValuetype extends PrimitiveValuetype {
 
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
     return visitor.visitCellRange(this);
+  }
+
+  override isAllowedAsRuntimeParameter(): boolean {
+    return false;
+  }
+
+  override getName(): 'cellRange' {
+    return 'cellRange';
   }
 }
 

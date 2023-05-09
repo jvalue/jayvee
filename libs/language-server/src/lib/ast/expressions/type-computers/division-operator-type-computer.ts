@@ -2,15 +2,17 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { PropertyValuetype } from '../../model-util';
+import { type Valuetype } from '../../wrappers/value-type';
+// eslint-disable-next-line import/no-cycle
+import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/facade';
 import { DefaultBinaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class DivisionOperatorTypeComputer extends DefaultBinaryOperatorTypeComputer {
   constructor() {
-    super(PropertyValuetype.DECIMAL, PropertyValuetype.DECIMAL);
+    super(PrimitiveValuetypes.Decimal, PrimitiveValuetypes.Decimal);
   }
 
-  override doComputeType(): PropertyValuetype {
-    return PropertyValuetype.DECIMAL;
+  override doComputeType(): Valuetype {
+    return PrimitiveValuetypes.Decimal;
   }
 }

@@ -5,7 +5,7 @@
 import {
   BlockMetaInformation,
   IOType,
-  PropertyValuetype,
+  PrimitiveValuetypes,
 } from '@jvalue/jayvee-language-server';
 
 export class CellRangeSelectorMetaInformation extends BlockMetaInformation {
@@ -14,7 +14,7 @@ export class CellRangeSelectorMetaInformation extends BlockMetaInformation {
       'CellRangeSelector',
       {
         select: {
-          type: PropertyValuetype.CELL_RANGE,
+          type: PrimitiveValuetypes.CellRange,
           docs: {
             description: 'The cell range to select.',
             examples: [

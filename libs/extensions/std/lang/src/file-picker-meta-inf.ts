@@ -5,7 +5,7 @@
 import {
   BlockMetaInformation,
   IOType,
-  PropertyValuetype,
+  PrimitiveValuetypes,
 } from '@jvalue/jayvee-language-server';
 
 export class FilePickerMetaInformation extends BlockMetaInformation {
@@ -17,7 +17,7 @@ export class FilePickerMetaInformation extends BlockMetaInformation {
       // Property definitions:
       {
         path: {
-          type: PropertyValuetype.TEXT,
+          type: PrimitiveValuetypes.Text,
           docs: {
             description: 'The path of the file to get',
           },

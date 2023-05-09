@@ -2,24 +2,26 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { PropertyValuetype } from '../../model-util';
+import { type Valuetype } from '../../wrappers/value-type';
+// eslint-disable-next-line import/no-cycle
+import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/facade';
 import { DefaultBinaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class BasicArithmeticOperatorTypeComputer extends DefaultBinaryOperatorTypeComputer {
   constructor() {
-    super(PropertyValuetype.DECIMAL, PropertyValuetype.DECIMAL);
+    super(PrimitiveValuetypes.Decimal, PrimitiveValuetypes.Decimal);
   }
 
   override doComputeType(
-    leftOperandType: PropertyValuetype,
-    rightOperandType: PropertyValuetype,
-  ): PropertyValuetype {
+    leftOperandType: Valuetype,
+    rightOperandType: Valuetype,
+  ): Valuetype {
     if (
-      leftOperandType === PropertyValuetype.INTEGER &&
-      rightOperandType === PropertyValuetype.INTEGER
+      leftOperandType === PrimitiveValuetypes.Integer &&
+      rightOperandType === PrimitiveValuetypes.Integer
     ) {
-      return PropertyValuetype.INTEGER;
+      return PrimitiveValuetypes.Integer;
     }
-    return PropertyValuetype.DECIMAL;
+    return PrimitiveValuetypes.Decimal;
   }
 }

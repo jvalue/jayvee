@@ -8,7 +8,7 @@ import {
   BlockMetaInformation,
   IOType,
   NUMBER_TYPEGUARD,
-  PropertyValuetype,
+  PrimitiveValuetypes,
   evaluatePropertyValueExpression,
   isCollectionLiteral,
   isExpression,
@@ -21,14 +21,14 @@ export class TextLineDeleterMetaInformation extends BlockMetaInformation {
       'TextLineDeleter',
       {
         lines: {
-          type: PropertyValuetype.COLLECTION,
+          type: PrimitiveValuetypes.Collection,
           validation: (property, context) => {
             const propertyValue = property.value;
             assert(isCollectionLiteral(propertyValue));
 
             const { validItems, invalidItems } = validateTypedCollection(
               propertyValue,
-              [PropertyValuetype.INTEGER],
+              [PrimitiveValuetypes.Integer],
             );
 
             invalidItems.forEach((invalidValue) =>

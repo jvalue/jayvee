@@ -43,6 +43,9 @@ export interface Valuetype extends VisitableValuetype {
    * Atomic value types inherit (@see isSubtypeOf) the conversion behavior of their primitive value type.
    */
   isConvertibleTo(target: Valuetype): boolean;
+
+  isAllowedAsRuntimeParameter(): boolean;
+  getName(): string;
 }
 
 export abstract class AbstractValuetype implements Valuetype {
@@ -65,7 +68,11 @@ export abstract class AbstractValuetype implements Valuetype {
     return this.supertype;
   }
 
+  abstract isAllowedAsRuntimeParameter(): boolean;
+
   abstract isConvertibleTo(target: Valuetype): boolean;
+
+  abstract getName(): string;
 }
 
 export abstract class ValuetypeVisitor<R = unknown> {

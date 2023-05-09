@@ -4,11 +4,11 @@
 
 import { PropertyAssignment, PropertyBody } from '../ast/generated/ast';
 // eslint-disable-next-line import/no-cycle
-import { PropertyValuetype } from '../ast/model-util';
+import { Valuetype } from '../ast/wrappers/value-type';
 import { ValidationContext } from '../validation/validation-context';
 
 export interface PropertySpecification {
-  type: PropertyValuetype;
+  type: Valuetype;
   defaultValue?: unknown;
   validation?: (
     property: PropertyAssignment,

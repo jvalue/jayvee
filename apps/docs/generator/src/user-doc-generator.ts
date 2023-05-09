@@ -90,7 +90,7 @@ class UserDocMarkdownBuilder {
   }
 
   propertySpec(propertySpec: PropertySpecification): UserDocMarkdownBuilder {
-    this.markdownBuilder.line(`Type \`${propertySpec.type}\``);
+    this.markdownBuilder.line(`Type \`${propertySpec.type.getName()}\``);
     if (propertySpec.defaultValue !== undefined) {
       this.markdownBuilder
         .newLine()

@@ -5,7 +5,7 @@
 import {
   BlockMetaInformation,
   IOType,
-  PropertyValuetype,
+  PrimitiveValuetypes,
 } from '@jvalue/jayvee-language-server';
 
 export class HttpExtractorMetaInformation extends BlockMetaInformation {
@@ -17,7 +17,7 @@ export class HttpExtractorMetaInformation extends BlockMetaInformation {
       // Property definitions:
       {
         url: {
-          type: PropertyValuetype.TEXT,
+          type: PrimitiveValuetypes.Text,
           docs: {
             description: 'The URL to the file in the web to extract.',
             examples: [

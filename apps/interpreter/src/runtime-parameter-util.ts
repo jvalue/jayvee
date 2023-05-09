@@ -10,11 +10,11 @@ import {
   BlockTypeLiteral,
   ConstraintTypeLiteral,
   JayveeModel,
-  PropertyValuetype,
+  PrimitiveValuetypes,
   RuntimeParameterLiteral,
+  Valuetype,
   getOrFailMetaInformation,
   isRuntimeParameterLiteral,
-  runtimeParameterAllowedForType,
 } from '@jvalue/jayvee-language-server';
 import { streamAst } from 'langium';
 
@@ -107,18 +107,18 @@ const FALSE = 'false';
  */
 export function parseParameterAsMatchingType(
   value: string,
-  type: PropertyValuetype,
+  type: Valuetype,
   astNode: RuntimeParameterLiteral,
 ): R.Result<string | number | boolean> {
   assert(
-    runtimeParameterAllowedForType(type),
-    `Runtime parameters of type ${type} are not allowed`,
+    type.isAllowedAsRuntimeParameter(),
+    `Runtime parameters of type ${type.getName()} are not allowed`,
   );
 
   switch (type) {
-    case PropertyValuetype.TEXT:
+    case PrimitiveValuetypes.Text:
       return R.ok(value);
-    case PropertyValuetype.INTEGER:
+    case PrimitiveValuetypes.Integer:
       if (!/^[+-]?[1-9][0-9]*$/.test(value)) {
         return R.err({
           message: `Runtime parameter ${astNode.name} has value "${value}" which is not of type integer.`,
@@ -126,7 +126,7 @@ export function parseParameterAsMatchingType(
         });
       }
       return R.ok(Number.parseInt(value, 10));
-    case PropertyValuetype.DECIMAL:
+    case PrimitiveValuetypes.Decimal:
       if (!/^[+-]?[0-9]+(\.[0-9]+)?$/.test(value)) {
         return R.err({
           message: `Runtime parameter ${astNode.name} has value "${value}" which is not of type decimal.`,
@@ -134,7 +134,7 @@ export function parseParameterAsMatchingType(
         });
       }
       return R.ok(Number.parseFloat(value));
-    case PropertyValuetype.BOOLEAN:
+    case PrimitiveValuetypes.Boolean:
       if (value === TRUE) {
         return R.ok(true);
       }
@@ -147,7 +147,7 @@ export function parseParameterAsMatchingType(
       });
     default:
       throw new Error(
-        `Unable to parse runtime parameters of type ${type}, please provide an implementation.`,
+        `Unable to parse runtime parameters of type ${type.getName()}, please provide an implementation.`,
       );
   }
 }

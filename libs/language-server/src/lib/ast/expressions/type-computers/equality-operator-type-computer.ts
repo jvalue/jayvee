@@ -6,7 +6,9 @@ import { strict as assert } from 'assert';
 
 import { ValidationContext } from '../../../validation/validation-context';
 import { BinaryExpression } from '../../generated/ast';
-import { PropertyValuetype } from '../../model-util';
+import { type Valuetype } from '../../wrappers/value-type';
+// eslint-disable-next-line import/no-cycle
+import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/facade';
 import {
   BinaryOperatorTypeComputer,
   convertsImplicitlyTo,
@@ -16,18 +18,18 @@ export class EqualityOperatorTypeComputer
   implements BinaryOperatorTypeComputer
 {
   private readonly ALLOWED_OPERAND_TYPES = [
-    PropertyValuetype.BOOLEAN,
-    PropertyValuetype.TEXT,
-    PropertyValuetype.INTEGER,
-    PropertyValuetype.DECIMAL,
+    PrimitiveValuetypes.Boolean,
+    PrimitiveValuetypes.Text,
+    PrimitiveValuetypes.Integer,
+    PrimitiveValuetypes.Decimal,
   ];
 
   computeType(
-    leftOperandType: PropertyValuetype,
-    rightOperandType: PropertyValuetype,
+    leftOperandType: Valuetype,
+    rightOperandType: Valuetype,
     expression: BinaryExpression,
     context: ValidationContext | undefined,
-  ): PropertyValuetype | undefined {
+  ): Valuetype | undefined {
     assert(expression.operator === '==');
 
     const isLeftOperandTypeValid =
@@ -38,7 +40,7 @@ export class EqualityOperatorTypeComputer
       if (!isLeftOperandTypeValid) {
         context?.accept(
           'error',
-          `Operator does not support type ${leftOperandType}`,
+          `Operator does not support type ${leftOperandType.getName()}`,
           {
             node: expression.left,
           },
@@ -47,7 +49,7 @@ export class EqualityOperatorTypeComputer
       if (!isRightOperandTypeValid) {
         context?.accept(
           'error',
-          `Operator does not support type ${leftOperandType}`,
+          `Operator does not support type ${leftOperandType.getName()}`,
           {
             node: expression.right,
           },
@@ -62,12 +64,12 @@ export class EqualityOperatorTypeComputer
     ) {
       context?.accept(
         'error',
-        `The types of the operands need to be equal but they differ (left: ${leftOperandType}, right: ${rightOperandType})`,
+        `The types of the operands need to be equal but they differ (left: ${leftOperandType.getName()}, right: ${rightOperandType.getName()})`,
         { node: expression },
       );
       return undefined;
     }
 
-    return PropertyValuetype.BOOLEAN;
+    return PrimitiveValuetypes.Boolean;
   }
 }

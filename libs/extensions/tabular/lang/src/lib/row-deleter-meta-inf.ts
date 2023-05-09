@@ -8,7 +8,7 @@ import {
   BlockMetaInformation,
   CellRangeWrapper,
   IOType,
-  PropertyValuetype,
+  PrimitiveValuetypes,
   isCellRangeLiteral,
   isCollectionLiteral,
   isRowWrapper,
@@ -21,7 +21,7 @@ export class RowDeleterMetaInformation extends BlockMetaInformation {
       'RowDeleter',
       {
         delete: {
-          type: PropertyValuetype.COLLECTION,
+          type: PrimitiveValuetypes.Collection,
           validation: (property, context) => {
             const propertyValue = property.value;
             if (!isCollectionLiteral(propertyValue)) {
@@ -30,7 +30,7 @@ export class RowDeleterMetaInformation extends BlockMetaInformation {
 
             const { validItems, invalidItems } = validateTypedCollection(
               propertyValue,
-              [PropertyValuetype.CELL_RANGE],
+              [PrimitiveValuetypes.CellRange],
             );
 
             invalidItems.forEach((invalidValue) =>

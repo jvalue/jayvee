@@ -20,7 +20,6 @@ import {
   isExpressionLiteral,
   isRuntimeParameterLiteral,
 } from '../../ast/generated/ast';
-import { runtimeParameterAllowedForType } from '../../ast/model-util';
 import {
   MetaInformation,
   PropertySpecification,
@@ -68,10 +67,10 @@ function checkPropertyValueTyping(
   const propertyValue = property.value;
 
   if (isRuntimeParameterLiteral(propertyValue)) {
-    if (!runtimeParameterAllowedForType(propertyType)) {
+    if (!propertyType.isAllowedAsRuntimeParameter()) {
       context.accept(
         'error',
-        `Runtime parameters are not allowed for properties of type ${propertyType}`,
+        `Runtime parameters are not allowed for properties of type ${propertyType.getName()}`,
         {
           node: property,
           property: 'name',
@@ -88,7 +87,7 @@ function checkPropertyValueTyping(
   if (!convertsImplicitlyTo(inferredType, propertyType)) {
     context.accept(
       'error',
-      `The value needs to be of type ${propertyType} but is of type ${inferredType}`,
+      `The value needs to be of type ${propertyType.getName()} but is of type ${inferredType.getName()}`,
       {
         node: property,
         property: 'value',

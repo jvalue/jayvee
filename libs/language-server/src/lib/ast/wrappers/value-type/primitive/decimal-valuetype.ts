@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { PrimitiveValuetypeKeyword } from '../../../generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { Valuetype, ValuetypeVisitor } from '../valuetype';
 
@@ -15,6 +16,14 @@ class DecimalValuetype extends PrimitiveValuetype {
 
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
     return visitor.visitDecimal(this);
+  }
+
+  override isAllowedAsRuntimeParameter(): boolean {
+    return true;
+  }
+
+  override getName(): PrimitiveValuetypeKeyword {
+    return 'decimal';
   }
 }
 

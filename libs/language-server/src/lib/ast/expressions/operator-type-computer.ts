@@ -4,7 +4,7 @@
 
 import { ValidationContext } from '../../validation/validation-context';
 import { BinaryExpression, UnaryExpression } from '../generated/ast';
-import { PropertyValuetype } from '../model-util';
+import { type Valuetype } from '../wrappers/value-type/valuetype';
 
 export interface UnaryOperatorTypeComputer {
   /**
@@ -15,22 +15,22 @@ export interface UnaryOperatorTypeComputer {
    * @returns the resulting type of the operator or `undefined` if the type could not be inferred
    */
   computeType(
-    operandType: PropertyValuetype,
+    operandType: Valuetype,
     expression: UnaryExpression,
     context: ValidationContext | undefined,
-  ): PropertyValuetype | undefined;
+  ): Valuetype | undefined;
 }
 
 export abstract class DefaultUnaryOperatorTypeComputer
   implements UnaryOperatorTypeComputer
 {
-  constructor(protected readonly expectedOperandType: PropertyValuetype) {}
+  constructor(protected readonly expectedOperandType: Valuetype) {}
 
   computeType(
-    operandType: PropertyValuetype,
+    operandType: Valuetype,
     expression: UnaryExpression,
     context: ValidationContext | undefined,
-  ): PropertyValuetype | undefined {
+  ): Valuetype | undefined {
     if (!convertsImplicitlyTo(operandType, this.expectedOperandType)) {
       context?.accept(
         'error',
@@ -44,9 +44,7 @@ export abstract class DefaultUnaryOperatorTypeComputer
     return this.doComputeType(operandType);
   }
 
-  protected abstract doComputeType(
-    operandType: PropertyValuetype,
-  ): PropertyValuetype;
+  protected abstract doComputeType(operandType: Valuetype): Valuetype;
 }
 
 export interface BinaryOperatorTypeComputer {
@@ -59,27 +57,27 @@ export interface BinaryOperatorTypeComputer {
    * @returns the resulting type of the operator or `undefined` if the type could not be inferred
    */
   computeType(
-    leftType: PropertyValuetype,
-    rightType: PropertyValuetype,
+    leftType: Valuetype,
+    rightType: Valuetype,
     expression: BinaryExpression,
     context: ValidationContext | undefined,
-  ): PropertyValuetype | undefined;
+  ): Valuetype | undefined;
 }
 
 export abstract class DefaultBinaryOperatorTypeComputer
   implements BinaryOperatorTypeComputer
 {
   constructor(
-    protected readonly expectedLeftOperandType: PropertyValuetype,
-    protected readonly expectedRightOperandType: PropertyValuetype,
+    protected readonly expectedLeftOperandType: Valuetype,
+    protected readonly expectedRightOperandType: Valuetype,
   ) {}
 
   computeType(
-    leftOperandType: PropertyValuetype,
-    rightOperandType: PropertyValuetype,
+    leftOperandType: Valuetype,
+    rightOperandType: Valuetype,
     expression: BinaryExpression,
     context: ValidationContext | undefined,
-  ): PropertyValuetype | undefined {
+  ): Valuetype | undefined {
     let typeErrorOccurred = false;
 
     if (!convertsImplicitlyTo(leftOperandType, this.expectedLeftOperandType)) {
@@ -120,26 +118,22 @@ export abstract class DefaultBinaryOperatorTypeComputer
   }
 
   protected abstract doComputeType(
-    leftOperandType: PropertyValuetype,
-    rightOperandType: PropertyValuetype,
-  ): PropertyValuetype;
+    leftOperandType: Valuetype,
+    rightOperandType: Valuetype,
+  ): Valuetype;
 }
 
-export function convertsImplicitlyTo(
-  from: PropertyValuetype,
-  to: PropertyValuetype,
-) {
-  return (
-    from === to ||
-    (from === PropertyValuetype.INTEGER && to === PropertyValuetype.DECIMAL)
-  );
+export function convertsImplicitlyTo(from: Valuetype, to: Valuetype) {
+  return from.isConvertibleTo(to);
 }
 
 function generateUnexpectedTypeMessage(
-  expectedTypes: PropertyValuetype | PropertyValuetype[],
-  actualType: PropertyValuetype,
+  expectedTypes: Valuetype | Valuetype[],
+  actualType: Valuetype,
 ) {
   return `The operand needs to be of type ${
-    Array.isArray(expectedTypes) ? expectedTypes.join(' or ') : expectedTypes
-  } but is of type ${actualType}`;
+    Array.isArray(expectedTypes)
+      ? expectedTypes.map((x) => x.getName()).join(' or ')
+      : expectedTypes.getName()
+  } but is of type ${actualType.getName()}`;
 }
