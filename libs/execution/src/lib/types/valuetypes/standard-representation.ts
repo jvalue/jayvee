@@ -4,8 +4,8 @@
 
 import {
   AtomicValuetype,
-  PrimitiveValuetypes,
   PrimitiveType,
+  PrimitiveValuetypes,
   Valuetype,
 } from '@jvalue/jayvee-language-server';
 
