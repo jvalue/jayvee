@@ -3,25 +3,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import 'terminal';
-import 'valuetype';
-import 'cellrange';
-import 'constraint';
 import 'expression';
 
 PropertyBody:
   '{' (properties+=PropertyAssignment)* '}';
 
 PropertyAssignment:
-  name=ID ':' value=(PropertyValueLiteral | RuntimeParameterLiteral) ';';
+  name=ID ':' value=(Expression | RuntimeParameterLiteral) ';';
 
 RuntimeParameterLiteral:
   'requires' name=ID;
-
-PropertyValueLiteral:
-  AtomicLiteral | CollectionLiteral;
-
-AtomicLiteral:
-  Expression;
-
-CollectionLiteral:
-  '[' (values+=(AtomicLiteral) (',' values+=(AtomicLiteral))*)? ','? ']';

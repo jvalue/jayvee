@@ -6,17 +6,14 @@ import { assertUnreachable } from 'langium';
 
 import { ValidationContext } from '../../validation/validation-context';
 import {
-  AtomicLiteral,
   CollectionLiteral,
   Expression,
   ExpressionLiteral,
-  PropertyValueLiteral,
   isBinaryExpression,
   isBooleanLiteral,
   isCellRangeLiteral,
   isCollectionLiteral,
   isConstraintReferenceLiteral,
-  isExpression,
   isExpressionLiteral,
   isNumericLiteral,
   isRegexLiteral,
@@ -94,6 +91,9 @@ function inferTypeFromExpressionLiteral(
   if (isValuetypeAssignmentLiteral(expression)) {
     return PrimitiveValuetypes.ValuetypeAssignment;
   }
+  if (isCollectionLiteral(expression)) {
+    return PrimitiveValuetypes.Collection;
+  }
   assertUnreachable(expression);
 }
 
@@ -104,30 +104,18 @@ export function generateUnexpectedTypeMessage(
   return `The operand needs to be of type ${expectedType.getName()} but is of type ${actualType.getName()}`;
 }
 
-export function inferTypeFromValue(
-  value: PropertyValueLiteral,
-  context?: ValidationContext,
-): Valuetype | undefined {
-  if (isCollectionLiteral(value)) {
-    return PrimitiveValuetypes.Collection;
-  }
-  if (isExpression(value)) {
-    return inferExpressionType(value, context);
-  }
-  assertUnreachable(value);
-}
-
 export interface TypedCollectionValidation {
-  validItems: AtomicLiteral[];
-  invalidItems: AtomicLiteral[];
+  validItems: Expression[];
+  invalidItems: Expression[];
 }
 
 export function validateTypedCollection(
   collection: CollectionLiteral,
   desiredTypes: Valuetype[],
+  validationContext: ValidationContext | undefined,
 ): TypedCollectionValidation {
   const validItems = collection.values.filter((value) => {
-    const valueType = inferTypeFromValue(value);
+    const valueType = inferExpressionType(value, validationContext);
     return valueType !== undefined && desiredTypes.includes(valueType);
   });
   const invalidItems = collection.values.filter(

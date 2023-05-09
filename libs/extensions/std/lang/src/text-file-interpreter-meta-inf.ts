@@ -10,6 +10,7 @@ import {
   PrimitiveValuetypes,
   STRING_TYPEGUARD,
   evaluatePropertyValueExpression,
+  isRuntimeParameterLiteral,
 } from '@jvalue/jayvee-language-server';
 
 export class TextFileInterpreterMetaInformation extends BlockMetaInformation {
@@ -25,6 +26,11 @@ export class TextFileInterpreterMetaInformation extends BlockMetaInformation {
           },
           validation: (property, context) => {
             const propertyValue = property.value;
+            if (isRuntimeParameterLiteral(propertyValue)) {
+              // We currently ignore runtime parameters during validation.
+              return;
+            }
+
             const encodingValue = evaluatePropertyValueExpression(
               propertyValue,
               STRING_TYPEGUARD,

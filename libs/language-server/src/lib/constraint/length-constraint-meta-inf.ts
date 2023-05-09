@@ -4,7 +4,10 @@
 
 import { evaluatePropertyValueExpression } from '../ast/expressions/evaluation';
 import { NUMBER_TYPEGUARD } from '../ast/expressions/typeguards';
-import { PropertyAssignment } from '../ast/generated/ast';
+import {
+  PropertyAssignment,
+  isRuntimeParameterLiteral,
+} from '../ast/generated/ast';
 import { PrimitiveValuetypes } from '../ast/wrappers/value-type';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 import { ValidationContext } from '../validation/validation-context';
@@ -40,7 +43,13 @@ export class LengthConstraintMetaInformation extends ConstraintMetaInformation {
         ) {
           return;
         }
-
+        if (
+          isRuntimeParameterLiteral(minLengthProperty.value) ||
+          isRuntimeParameterLiteral(maxLengthProperty.value)
+        ) {
+          // We currently ignore runtime parameters during validation.
+          return;
+        }
         const minLength = evaluatePropertyValueExpression(
           minLengthProperty.value,
           NUMBER_TYPEGUARD,
@@ -82,6 +91,12 @@ function nonNegativeValidation(
   context: ValidationContext,
 ) {
   const propertyValue = property.value;
+
+  if (isRuntimeParameterLiteral(propertyValue)) {
+    // We currently ignore runtime parameters during validation.
+    return;
+  }
+
   const value = evaluatePropertyValueExpression(
     propertyValue,
     NUMBER_TYPEGUARD,

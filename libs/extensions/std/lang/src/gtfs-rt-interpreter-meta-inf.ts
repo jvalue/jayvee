@@ -10,6 +10,7 @@ import {
   STRING_TYPEGUARD,
   ValidationContext,
   evaluatePropertyValueExpression,
+  isRuntimeParameterLiteral,
 } from '@jvalue/jayvee-language-server';
 
 export class GtfsRTInterpreterMetaInformation extends BlockMetaInformation {
@@ -103,6 +104,12 @@ function isGtfsRTEntity(
   context: ValidationContext,
 ) {
   const propertyValue = property.value;
+
+  if (isRuntimeParameterLiteral(propertyValue)) {
+    // We currently ignore runtime parameters during validation.
+    return;
+  }
+
   const entityValue = evaluatePropertyValueExpression(
     propertyValue,
     STRING_TYPEGUARD,

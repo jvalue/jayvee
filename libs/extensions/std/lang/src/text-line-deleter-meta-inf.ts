@@ -29,6 +29,7 @@ export class TextLineDeleterMetaInformation extends BlockMetaInformation {
             const { validItems, invalidItems } = validateTypedCollection(
               propertyValue,
               [PrimitiveValuetypes.Integer],
+              context,
             );
 
             invalidItems.forEach((invalidValue) =>

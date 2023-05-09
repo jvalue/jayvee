@@ -7,11 +7,11 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
+import { inferExpressionType } from '../../ast';
 import {
   EvaluationStrategy,
   evaluateExpression,
 } from '../../ast/expressions/evaluation';
-import { inferTypeFromValue } from '../../ast/expressions/type-inference';
 import {
   Expression,
   PropertyAssignment,
@@ -78,7 +78,7 @@ function checkPropertyValueTyping(
     }
     return;
   }
-  const inferredType = inferTypeFromValue(propertyValue, context);
+  const inferredType = inferExpressionType(propertyValue, context);
   if (inferredType === undefined) {
     return;
   }

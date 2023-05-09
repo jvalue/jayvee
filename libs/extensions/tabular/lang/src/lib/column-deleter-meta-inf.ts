@@ -31,6 +31,7 @@ export class ColumnDeleterMetaInformation extends BlockMetaInformation {
             const { validItems, invalidItems } = validateTypedCollection(
               propertyValue,
               [PrimitiveValuetypes.CellRange],
+              context,
             );
 
             invalidItems.forEach((invalidValue) =>

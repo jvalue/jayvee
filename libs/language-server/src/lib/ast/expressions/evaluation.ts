@@ -8,15 +8,14 @@ import { assertUnreachable, isReference } from 'langium';
 
 import { ValidationContext } from '../../validation/validation-context';
 import {
+  CollectionLiteral,
   ConstraintDefinition,
   Expression,
   ExpressionLiteral,
-  PropertyValueLiteral,
-  RuntimeParameterLiteral,
   ValuetypeAssignment,
   isBinaryExpression,
   isCellRangeLiteral,
-  isExpression,
+  isCollectionLiteral,
   isExpressionLiteral,
   isRegexLiteral,
   isUnaryExpression,
@@ -41,16 +40,16 @@ export type OperandValue =
   | RegExp
   | CellRangeWrapper
   | ConstraintDefinition
-  | ValuetypeAssignment;
+  | ValuetypeAssignment
+  | CollectionLiteral;
 export type OperandValueTypeguard<T extends OperandValue> = (
   value: OperandValue,
 ) => value is T;
 
 export function evaluatePropertyValueExpression<T extends OperandValue>(
-  propertyValue: PropertyValueLiteral | RuntimeParameterLiteral,
+  propertyValue: Expression,
   typeguard: OperandValueTypeguard<T>,
 ): T {
-  assert(isExpression(propertyValue));
   const resultingValue = evaluateExpression(propertyValue);
   assert(resultingValue !== undefined);
   assert(typeguard(resultingValue));
@@ -81,6 +80,9 @@ export function evaluateExpression(
 function evaluateExpressionLiteral(
   expression: ExpressionLiteral,
 ): OperandValue | undefined {
+  if (isCollectionLiteral(expression)) {
+    return expression;
+  }
   if (isCellRangeLiteral(expression)) {
     if (!CellRangeWrapper.canBeWrapped(expression)) {
       return undefined;

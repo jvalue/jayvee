@@ -10,6 +10,7 @@ import {
   PropertyAssignment,
   ValidationContext,
   evaluatePropertyValueExpression,
+  isRuntimeParameterLiteral,
 } from '@jvalue/jayvee-language-server';
 
 export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
@@ -46,6 +47,14 @@ export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
           return;
         }
 
+        if (
+          isRuntimeParameterLiteral(lineFromProperty.value) ||
+          isRuntimeParameterLiteral(lineToProperty.value)
+        ) {
+          // We currently ignore runtime parameters during validation.
+          return;
+        }
+
         const lineFrom = evaluatePropertyValueExpression(
           lineFromProperty.value,
           NUMBER_TYPEGUARD,
@@ -76,6 +85,10 @@ function greaterThanZeroValidation(
 ) {
   const propertyValue = property.value;
 
+  if (isRuntimeParameterLiteral(propertyValue)) {
+    // We currently ignore runtime parameters during validation.
+    return;
+  }
   const value = evaluatePropertyValueExpression(
     propertyValue,
     NUMBER_TYPEGUARD,

@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { isRuntimeParameterLiteral } from '../ast';
 import { evaluatePropertyValueExpression } from '../ast/expressions/evaluation';
 import {
   BOOLEAN_TYPEGUARD,
@@ -48,6 +49,14 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
           return;
         }
 
+        if (
+          isRuntimeParameterLiteral(lowerBoundProperty.value) ||
+          isRuntimeParameterLiteral(upperBoundProperty.value)
+        ) {
+          // We currently ignore runtime parameters during validation.
+          return;
+        }
+
         const lowerBound = evaluatePropertyValueExpression(
           lowerBoundProperty.value,
           NUMBER_TYPEGUARD,
@@ -65,12 +74,23 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
               { node: property.value },
             );
           });
-        } else if (lowerBound === upperBound) {
-          const lowerBoundInclusiveProperty = propertyBody.properties.find(
-            (p) => p.name === 'lowerBoundInclusive',
-          );
+          return;
+        }
+
+        const lowerBoundInclusiveProperty = propertyBody.properties.find(
+          (p) => p.name === 'lowerBoundInclusive',
+        );
+        const upperBoundInclusiveProperty = propertyBody.properties.find(
+          (p) => p.name === 'upperBoundInclusive',
+        );
+
+        if (lowerBound === upperBound) {
           let lowerBoundInclusive = true;
           if (lowerBoundInclusiveProperty !== undefined) {
+            if (isRuntimeParameterLiteral(lowerBoundInclusiveProperty.value)) {
+              // We currently ignore runtime parameters during validation.
+              return;
+            }
             const expressionValue = evaluatePropertyValueExpression(
               lowerBoundInclusiveProperty.value,
               BOOLEAN_TYPEGUARD,
@@ -78,11 +98,12 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
             lowerBoundInclusive = expressionValue;
           }
 
-          const upperBoundInclusiveProperty = propertyBody.properties.find(
-            (p) => p.name === 'upperBoundInclusive',
-          );
           let upperBoundInclusive = true;
           if (upperBoundInclusiveProperty !== undefined) {
+            if (isRuntimeParameterLiteral(upperBoundInclusiveProperty.value)) {
+              // We currently ignore runtime parameters during validation.
+              return;
+            }
             const expressionValue = evaluatePropertyValueExpression(
               upperBoundInclusiveProperty.value,
               BOOLEAN_TYPEGUARD,

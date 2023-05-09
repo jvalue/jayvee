@@ -20,9 +20,11 @@ export class DenylistConstraintMetaInformation extends ConstraintMetaInformation
               return;
             }
 
-            const { invalidItems } = validateTypedCollection(propertyValue, [
-              PrimitiveValuetypes.Text,
-            ]);
+            const { invalidItems } = validateTypedCollection(
+              propertyValue,
+              [PrimitiveValuetypes.Text],
+              context,
+            );
 
             invalidItems.forEach((invalidValue) =>
               context.accept(
