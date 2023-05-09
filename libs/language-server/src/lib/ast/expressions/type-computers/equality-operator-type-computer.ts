@@ -9,10 +9,7 @@ import { BinaryExpression } from '../../generated/ast';
 import { type Valuetype } from '../../wrappers/value-type';
 // eslint-disable-next-line import/no-cycle
 import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/facade';
-import {
-  BinaryOperatorTypeComputer,
-  convertsImplicitlyTo,
-} from '../operator-type-computer';
+import { BinaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class EqualityOperatorTypeComputer
   implements BinaryOperatorTypeComputer
@@ -59,8 +56,8 @@ export class EqualityOperatorTypeComputer
     }
 
     if (
-      !convertsImplicitlyTo(leftOperandType, rightOperandType) &&
-      !convertsImplicitlyTo(rightOperandType, leftOperandType)
+      !leftOperandType.isConvertibleTo(rightOperandType) &&
+      !rightOperandType.isConvertibleTo(leftOperandType)
     ) {
       context?.accept(
         'error',

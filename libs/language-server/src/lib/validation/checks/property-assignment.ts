@@ -11,7 +11,6 @@ import {
   EvaluationStrategy,
   evaluateExpression,
 } from '../../ast/expressions/evaluation';
-import { convertsImplicitlyTo } from '../../ast/expressions/operator-type-computer';
 import { inferTypeFromValue } from '../../ast/expressions/type-inference';
 import {
   Expression,
@@ -84,7 +83,7 @@ function checkPropertyValueTyping(
     return;
   }
 
-  if (!convertsImplicitlyTo(inferredType, propertyType)) {
+  if (!inferredType.isConvertibleTo(propertyType)) {
     context.accept(
       'error',
       `The value needs to be of type ${propertyType.getName()} but is of type ${inferredType.getName()}`,

@@ -31,7 +31,7 @@ export abstract class DefaultUnaryOperatorTypeComputer
     expression: UnaryExpression,
     context: ValidationContext | undefined,
   ): Valuetype | undefined {
-    if (!convertsImplicitlyTo(operandType, this.expectedOperandType)) {
+    if (!operandType.isConvertibleTo(this.expectedOperandType)) {
       context?.accept(
         'error',
         generateUnexpectedTypeMessage(this.expectedOperandType, operandType),
@@ -80,7 +80,7 @@ export abstract class DefaultBinaryOperatorTypeComputer
   ): Valuetype | undefined {
     let typeErrorOccurred = false;
 
-    if (!convertsImplicitlyTo(leftOperandType, this.expectedLeftOperandType)) {
+    if (!leftOperandType.isConvertibleTo(this.expectedLeftOperandType)) {
       context?.accept(
         'error',
         generateUnexpectedTypeMessage(
@@ -94,9 +94,7 @@ export abstract class DefaultBinaryOperatorTypeComputer
       typeErrorOccurred = true;
     }
 
-    if (
-      !convertsImplicitlyTo(rightOperandType, this.expectedRightOperandType)
-    ) {
+    if (!rightOperandType.isConvertibleTo(this.expectedRightOperandType)) {
       context?.accept(
         'error',
         generateUnexpectedTypeMessage(
@@ -121,10 +119,6 @@ export abstract class DefaultBinaryOperatorTypeComputer
     leftOperandType: Valuetype,
     rightOperandType: Valuetype,
   ): Valuetype;
-}
-
-export function convertsImplicitlyTo(from: Valuetype, to: Valuetype) {
-  return from.isConvertibleTo(to);
 }
 
 function generateUnexpectedTypeMessage(
