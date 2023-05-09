@@ -5,7 +5,7 @@
 import './cellrange'
 import './constraint'
 import './valuetype'
-import 'terminal'
+import './terminal'
 
 Expression:
   OrExpression;

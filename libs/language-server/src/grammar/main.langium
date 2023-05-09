@@ -4,10 +4,10 @@
 
 grammar Jayvee
 
-import 'terminal'
-import 'property'
-import 'valuetype'
-import 'constraint'
+import './terminal'
+import './property'
+import './valuetype'
+import './constraint'
 
 entry JayveeModel:
   (

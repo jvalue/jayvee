@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import 'property'
-import 'terminal'
+import './property'
+import './terminal'
 
 ConstraintDefinition:
   'constraint' name=ID 'oftype' type=ConstraintTypeLiteral body=PropertyBody;
