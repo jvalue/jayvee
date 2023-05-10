@@ -9,13 +9,11 @@
 
 import { assertUnreachable } from 'langium';
 
-// eslint-disable-next-line import/no-cycle
 import {
   EvaluationContext,
   EvaluationStrategy,
   evaluateExpression,
 } from '../../ast/expressions/evaluation';
-import { convertsImplicitlyTo } from '../../ast/expressions/operator-type-computer';
 import { inferExpressionType } from '../../ast/expressions/type-inference';
 import {
   Expression,
@@ -63,10 +61,10 @@ function checkOutputValueTyping(
     return;
   }
 
-  if (!convertsImplicitlyTo(inferredType, expectedType)) {
+  if (!inferredType.isConvertibleTo(expectedType)) {
     context.accept(
       'error',
-      `The value needs to be of type ${expectedType} but is of type ${inferredType}`,
+      `The value needs to be of type ${expectedType.getName()} but is of type ${inferredType.getName()}`,
       {
         node: assignmentExpression,
       },

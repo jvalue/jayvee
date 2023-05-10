@@ -13,7 +13,7 @@ class TransformValuetypeImpl extends PrimitiveValuetype {
   }
 
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
-    return visitor.visitTransformer(this);
+    return visitor.visitTransform(this);
   }
 
   override isAllowedAsRuntimeParameter(): boolean {

@@ -4,7 +4,7 @@
 
 import { strict as assert } from 'assert';
 
-import { assertUnreachable, isReference } from 'langium';
+import { assertUnreachable } from 'langium';
 
 import { ValidationContext } from '../../validation/validation-context';
 import {
@@ -12,23 +12,26 @@ import {
   ConstraintDefinition,
   Expression,
   RuntimeParameterLiteral,
-  TransformerPortDefinition,
+  TransformDefinition,
+  TransformPortDefinition,
   ValueLiteral,
   ValuetypeAssignment,
   VariableLiteral,
   isBinaryExpression,
   isCellRangeLiteral,
   isCollectionLiteral,
+  isConstraintDefinition,
   isExpression,
   isExpressionLiteral,
+  isReferenceLiteral,
   isRegexLiteral,
   isRuntimeParameterLiteral,
+  isTransformDefinition,
   isUnaryExpression,
   isValueLiteral,
   isVariableLiteral,
 } from '../generated/ast';
 import { CellRangeWrapper } from '../wrappers/cell-range-wrapper';
-import { type Valuetype } from '../wrappers/value-type';
 
 // eslint-disable-next-line import/no-cycle
 import {
@@ -50,14 +53,17 @@ export type OperandValue =
   | ConstraintDefinition
   | ValuetypeAssignment
   | CollectionLiteral
-  | TransformerPortDefinition;
+  | TransformDefinition
+  | TransformPortDefinition;
 export class EvaluationContext {
   constructor(
     public runtimeParameterValues: Map<string, OperandValue> = new Map(),
     public variableValues: Map<string, OperandValue> = new Map(),
   ) {}
 
-  getValueFor(literal: VariableLiteral | RuntimeParameterLiteral) {
+  getValueFor(
+    literal: VariableLiteral | RuntimeParameterLiteral,
+  ): OperandValue | undefined {
     if (isVariableLiteral(literal)) {
       return this.getValueForVariable(literal);
     } else if (isRuntimeParameterLiteral(literal)) {
@@ -98,7 +104,7 @@ export type OperandValueTypeguard<T extends OperandValue> = (
 ) => value is T;
 
 export function evaluatePropertyValueExpression<T extends OperandValue>(
-  propertyValue: Valuetype | RuntimeParameterLiteral,
+  propertyValue: Expression | RuntimeParameterLiteral,
   evaluationContext: EvaluationContext,
   typeguard: OperandValueTypeguard<T>,
 ): T {
@@ -155,10 +161,21 @@ function evaluateValueLiteral(
     }
     return new RegExp(expression.value);
   }
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (isReference(expression?.value)) {
+
+  if (isReferenceLiteral(expression)) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    return expression?.value?.ref;
+    const dereferenced = expression?.value?.ref;
+    if (dereferenced === undefined) {
+      return undefined;
+    }
+
+    if (isConstraintDefinition(dereferenced)) {
+      return dereferenced;
+    }
+    if (isTransformDefinition(dereferenced)) {
+      return dereferenced;
+    }
+    assertUnreachable(dereferenced);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

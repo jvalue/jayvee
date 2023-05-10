@@ -55,10 +55,9 @@ ValueLiteral:
   | BooleanLiteral
   | RegexLiteral
   | CellRangeLiteral
+  | ReferenceLiteral
   | ValuetypeAssignmentLiteral
-  | CollectionLiteral
-  | VariableLiteral
-  | ReferenceLiteral;
+  | CollectionLiteral;
 
 TextLiteral:
   value=STRING;
@@ -77,9 +76,6 @@ CollectionLiteral:
 
 VariableLiteral:
   value=([TransformPortDefinition]);
-
-ConstraintReferenceLiteral:
-  value=[ConstraintDefinition];
 
 ReferenceLiteral:
   value=[Referencable];

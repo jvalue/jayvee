@@ -19,7 +19,6 @@ import {
 import { ValidationContext } from '../validation-context';
 import { checkUniqueNames } from '../validation-util';
 
-// eslint-disable-next-line import/no-cycle
 import {
   getReferencedVariables,
   validateTransformOutputAssignment,

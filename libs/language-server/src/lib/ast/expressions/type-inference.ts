@@ -9,15 +9,18 @@ import {
   CollectionLiteral,
   Expression,
   ExpressionLiteral,
+  ReferenceLiteral,
   isBinaryExpression,
   isBooleanLiteral,
   isCellRangeLiteral,
   isCollectionLiteral,
-  isConstraintReferenceLiteral,
+  isConstraintDefinition,
   isExpressionLiteral,
   isNumericLiteral,
+  isReferenceLiteral,
   isRegexLiteral,
   isTextLiteral,
+  isTransformDefinition,
   isUnaryExpression,
   isValuetypeAssignmentLiteral,
   isVariableLiteral,
@@ -87,9 +90,6 @@ function inferTypeFromExpressionLiteral(
   if (isCellRangeLiteral(expression)) {
     return PrimitiveValuetypes.CellRange;
   }
-  if (isConstraintReferenceLiteral(expression)) {
-    return PrimitiveValuetypes.Constraint;
-  }
   if (isRegexLiteral(expression)) {
     return PrimitiveValuetypes.Regex;
   }
@@ -107,7 +107,28 @@ function inferTypeFromExpressionLiteral(
     }
     return inferBasePropertyValuetype(variableValueType);
   }
+  if (isReferenceLiteral(expression)) {
+    return inferTypeFromReferenceLiteral(expression);
+  }
   assertUnreachable(expression);
+}
+
+function inferTypeFromReferenceLiteral(
+  expression: ReferenceLiteral,
+): Valuetype | undefined {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const referenced = expression?.value?.ref;
+  if (referenced === undefined) {
+    return undefined;
+  }
+
+  if (isConstraintDefinition(referenced)) {
+    return PrimitiveValuetypes.Constraint;
+  }
+  if (isTransformDefinition(referenced)) {
+    return PrimitiveValuetypes.Transform;
+  }
+  assertUnreachable(referenced);
 }
 
 export interface TypedCollectionValidation {
