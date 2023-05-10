@@ -31,6 +31,23 @@ For just a single line, place this comment above that particular line:
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 ```
 
+<details>
+
+<summary>Full example</summary>
+
+Consider an exemplary AST node `A` with a property `x` of type `string`. To access that property safely:
+
+```typescript
+import { A } from './ast'
+
+const astNode: A;
+
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+const property: string | undefined = astNode?.x;
+```
+
+</details>
+
 ## Usage of `assertUnreachable`
 
 Most times, it is beneficial to make case distinctions exhaustive, especially when working with AST nodes, properties with a [union literal type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) or enums.
