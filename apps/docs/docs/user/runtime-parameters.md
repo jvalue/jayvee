@@ -10,7 +10,7 @@ Property values in Jayvee can be assigned to `values` or left open for later con
 
 Runtime parameters are indicated by the `requires` keyword, followed by the identifier of the parameter. Example
 
-```javascript
+```jayvee
 block CarsLoader oftype SQLiteLoader {
   table: "Cars";
   file: requires CARS_SQLITE_FILE;
