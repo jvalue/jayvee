@@ -12,14 +12,14 @@ pipeline CarsPipeline {
 		constraints: []; 
 	}
 
-	transformer MyTransformer {
+	transform MyTransformer {
 		from input oftype integer;
 		to output oftype XY;
 
 		output: 1 + 1;
 	}
 
-	transformer MyTransformer2 {
+	transform MyTransformer2 {
 		from input oftype integer;
 		to output oftype integer;
 
@@ -27,7 +27,7 @@ pipeline CarsPipeline {
 		output: input + output;
 	}
 
-	transformer MyTransformer3 {
+	transform MyTransformer3 {
 		from input oftype integer;
 		from input oftype integer;
 		to output oftype integer;
