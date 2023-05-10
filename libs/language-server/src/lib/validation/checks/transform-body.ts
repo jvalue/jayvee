@@ -12,15 +12,15 @@ import { assertUnreachable } from 'langium';
 import {
   TransformBody,
   TransformPortDefinition,
-  VariableLiteral,
   isPrimitiveValuetypeKeywordLiteral,
+  isTransformPortDefinition,
   isValuetypeDefinitionReference,
 } from '../../ast/generated/ast';
 import { ValidationContext } from '../validation-context';
 import { checkUniqueNames } from '../validation-util';
 
 import {
-  getReferencedVariables,
+  getReferenceLiterals,
   validateTransformOutputAssignment,
 } from './transform-output-assigment';
 
@@ -102,7 +102,7 @@ function checkSingleOutput(
 
   if (outputs.length > 1) {
     outputs.forEach((input) => {
-      context.accept('error', 'More than one outport port is defined', {
+      context.accept('error', 'More than one output port is defined', {
         node: input,
         property: 'kind',
       });
@@ -120,22 +120,26 @@ function checkAreInputsUsed(
     return undefined;
   }
 
-  const referencedVariables: VariableLiteral[] = [];
+  const referencedPorts: TransformPortDefinition[] = [];
   outputAssignments.forEach((outputAssignment) => {
-    referencedVariables.push(
-      ...getReferencedVariables(outputAssignment?.expression),
+    const referenceLiterals = getReferenceLiterals(
+      outputAssignment?.expression,
+    );
+
+    referencedPorts.push(
+      ...referenceLiterals
+        .map((x) => x?.value?.ref)
+        .filter(isTransformPortDefinition),
     );
   });
 
-  const referecedVariableNames = referencedVariables.map(
-    (x) => x.value?.ref?.name,
-  );
+  const referencedPortNames = referencedPorts.map((x) => x?.name);
   inputs.forEach((input) => {
     if (input.name === undefined) {
       return;
     }
 
-    if (!referecedVariableNames.includes(input.name)) {
+    if (!referencedPortNames.includes(input.name)) {
       if (isOutputPortComplete(input)) {
         context.accept('warning', 'This input port is never used', {
           node: input,

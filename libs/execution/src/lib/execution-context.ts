@@ -118,7 +118,7 @@ export class ExecutionContext {
     assert(propertyValue.every(isExpression));
 
     const evaluatedExpressions = propertyValue.map((x) =>
-      evaluateExpression(x),
+      evaluateExpression(x, this.evaluationContext),
     );
     assert(
       evaluatedExpressions.every(
@@ -137,7 +137,7 @@ export class ExecutionContext {
     assert(propertyValue.every(isExpression));
 
     const evaluatedExpressions = propertyValue.map((x) =>
-      evaluateExpression(x),
+      evaluateExpression(x, this.evaluationContext),
     );
     assert(evaluatedExpressions.every(isValuetypeAssignment));
     return evaluatedExpressions;

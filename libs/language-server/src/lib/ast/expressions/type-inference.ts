@@ -21,9 +21,9 @@ import {
   isRegexLiteral,
   isTextLiteral,
   isTransformDefinition,
+  isTransformPortDefinition,
   isUnaryExpression,
   isValuetypeAssignmentLiteral,
-  isVariableLiteral,
 } from '../generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { inferBasePropertyValuetype } from '../model-util';
@@ -99,14 +99,6 @@ function inferTypeFromExpressionLiteral(
   if (isCollectionLiteral(expression)) {
     return PrimitiveValuetypes.Collection;
   }
-  if (isVariableLiteral(expression)) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const variableValueType = expression?.value?.ref?.valueType;
-    if (variableValueType === undefined) {
-      return undefined;
-    }
-    return inferBasePropertyValuetype(variableValueType);
-  }
   if (isReferenceLiteral(expression)) {
     return inferTypeFromReferenceLiteral(expression);
   }
@@ -127,6 +119,15 @@ function inferTypeFromReferenceLiteral(
   }
   if (isTransformDefinition(referenced)) {
     return PrimitiveValuetypes.Transform;
+  }
+  if (isTransformPortDefinition(referenced)) {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const valueType = referenced?.valueType;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (valueType === undefined) {
+      return undefined;
+    }
+    return inferBasePropertyValuetype(valueType);
   }
   assertUnreachable(referenced);
 }

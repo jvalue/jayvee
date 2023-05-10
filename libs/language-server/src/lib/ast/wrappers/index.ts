@@ -6,5 +6,4 @@ export * from './util';
 
 export * from './ast-node-wrapper';
 export * from './cell-range-wrapper';
-// eslint-disable-next-line import/no-cycle
 export * from './value-type';

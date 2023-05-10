@@ -17,14 +17,14 @@ import {
 import { inferExpressionType } from '../../ast/expressions/type-inference';
 import {
   Expression,
+  ReferenceLiteral,
   TransformOutputAssignment,
-  VariableLiteral,
   isBinaryExpression,
   isExpression,
   isExpressionLiteral,
+  isReferenceLiteral,
+  isTransformPortDefinition,
   isUnaryExpression,
-  isValueLiteral,
-  isVariableLiteral,
 } from '../../ast/generated/ast';
 import { inferBasePropertyValuetype } from '../../ast/model-util';
 import { ValidationContext } from '../validation-context';
@@ -81,16 +81,19 @@ function checkOutputNotInAssignmentExpression(
   outputAssignment: TransformOutputAssignment,
   context: ValidationContext,
 ): void {
-  const variables = getReferencedVariables(outputAssignment?.expression);
-  const usedOutputPorts = variables.filter((x) => x.value.ref?.kind === 'to');
+  const referenceLiterals = getReferenceLiterals(outputAssignment?.expression);
 
-  usedOutputPorts.forEach((outputPort) => {
-    if (outputPort.value.ref?.kind === 'to') {
+  referenceLiterals.forEach((referenceLiteral) => {
+    const referenced = referenceLiteral?.value?.ref;
+    if (!isTransformPortDefinition(referenced)) {
+      return;
+    }
+    if (referenced?.kind === 'to') {
       context.accept(
         'error',
         'Output ports are not allowed in this expression',
         {
-          node: outputPort,
+          node: referenceLiteral,
         },
       );
     }
@@ -121,27 +124,25 @@ function checkExpressionSimplification(
   }
 }
 
-export function getReferencedVariables(
+export function getReferenceLiterals(
   expression: Expression | undefined,
-): VariableLiteral[] {
+): ReferenceLiteral[] {
   if (expression === undefined) {
     return [];
   }
 
   if (isExpressionLiteral(expression)) {
-    if (isVariableLiteral(expression)) {
+    if (isReferenceLiteral(expression)) {
       return [expression];
-    } else if (isValueLiteral(expression)) {
-      return [];
     }
-    assertUnreachable(expression);
+    return [];
   } else if (isBinaryExpression(expression)) {
     return [
-      ...getReferencedVariables(expression.left),
-      ...getReferencedVariables(expression.right),
+      ...getReferenceLiterals(expression.left),
+      ...getReferenceLiterals(expression.right),
     ];
   } else if (isUnaryExpression(expression)) {
-    return getReferencedVariables(expression.expression);
+    return getReferenceLiterals(expression.expression);
   }
   assertUnreachable(expression);
 }

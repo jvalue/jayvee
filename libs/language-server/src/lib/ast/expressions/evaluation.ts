@@ -11,12 +11,12 @@ import {
   CollectionLiteral,
   ConstraintDefinition,
   Expression,
+  ReferenceLiteral,
   RuntimeParameterLiteral,
   TransformDefinition,
   TransformPortDefinition,
   ValueLiteral,
   ValuetypeAssignment,
-  VariableLiteral,
   isBinaryExpression,
   isCellRangeLiteral,
   isCollectionLiteral,
@@ -27,9 +27,9 @@ import {
   isRegexLiteral,
   isRuntimeParameterLiteral,
   isTransformDefinition,
+  isTransformPortDefinition,
   isUnaryExpression,
   isValueLiteral,
-  isVariableLiteral,
 } from '../generated/ast';
 import { CellRangeWrapper } from '../wrappers/cell-range-wrapper';
 
@@ -62,27 +62,35 @@ export class EvaluationContext {
   ) {}
 
   getValueFor(
-    literal: VariableLiteral | RuntimeParameterLiteral,
+    literal: ReferenceLiteral | RuntimeParameterLiteral,
   ): OperandValue | undefined {
-    if (isVariableLiteral(literal)) {
-      return this.getValueForVariable(literal);
+    if (isReferenceLiteral(literal)) {
+      return this.getValueForReference(literal);
     } else if (isRuntimeParameterLiteral(literal)) {
       return this.getValueForRuntimeParameter(literal);
     }
     assertUnreachable(literal);
   }
 
-  getValueForVariable(
-    variableLiteral: VariableLiteral,
+  getValueForReference(
+    referenceLiteral: ReferenceLiteral,
   ): OperandValue | undefined {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const key = variableLiteral?.value?.$refText;
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (key === undefined) {
+    const dereferenced = referenceLiteral?.value?.ref;
+    if (dereferenced === undefined) {
       return undefined;
     }
 
-    return this.variableValues.get(key);
+    if (isConstraintDefinition(dereferenced)) {
+      return dereferenced;
+    }
+    if (isTransformDefinition(dereferenced)) {
+      return dereferenced;
+    }
+    if (isTransformPortDefinition(dereferenced)) {
+      return this.variableValues.get(dereferenced.name);
+    }
+    assertUnreachable(dereferenced);
   }
 
   getValueForRuntimeParameter(
@@ -122,7 +130,7 @@ export function evaluateExpression(
   context: ValidationContext | undefined = undefined,
 ): OperandValue | undefined {
   if (isExpressionLiteral(expression)) {
-    if (isVariableLiteral(expression)) {
+    if (isReferenceLiteral(expression)) {
       return evaluationContext.getValueFor(expression);
     } else if (isValueLiteral(expression)) {
       return evaluateValueLiteral(expression);
@@ -161,23 +169,6 @@ function evaluateValueLiteral(
     }
     return new RegExp(expression.value);
   }
-
-  if (isReferenceLiteral(expression)) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const dereferenced = expression?.value?.ref;
-    if (dereferenced === undefined) {
-      return undefined;
-    }
-
-    if (isConstraintDefinition(dereferenced)) {
-      return dereferenced;
-    }
-    if (isTransformDefinition(dereferenced)) {
-      return dereferenced;
-    }
-    assertUnreachable(dereferenced);
-  }
-
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   return expression?.value;
 }
