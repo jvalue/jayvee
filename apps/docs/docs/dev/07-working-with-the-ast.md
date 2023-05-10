@@ -91,8 +91,40 @@ if (isB(astNode)) {
 
 ## Usage of `assert` for expressing runtime expectations
 
-TBD
+During development, it may occur that a certain condition is expected to **be always true** at runtime.
+For example, an AST node being of a certain type or a property being defined.
+The type system of TypeScript is not always able to infer such facts, so developers may have to express these expectations explicitly in their code.
+Examples are [type assertions](https://www.typescriptlang.org/docs/handbook/advanced-types.html) or the [non-null assertion operator](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-0.html#non-null-assertion-operator).
+Their usage may be problematic in case the condition does not always hold, e.g. due to a bug in the program or a wrong expectation by the programmer.
+In such cases, it is hard to locate the origin and debug the program because such operations are erased in the compiled JavaScript code.
+
+To avoid these issues, it is recommended to express such expectations as boolean expressions that are actually validated at runtime.
+This can be easily achieved by using the `assert` function.
+It evaluates a given boolean expression and throws an `AssertionError` in case it evaluates to `false`.
+After calling `assert`, the type system of TypeScript assumes the condition to be `true` and afterwards narrows types accordingly.
+
+Here is an example of how to use it in practice:
+
+```typescript
+// Import the `assert` function like this:
+import { strict as assert } from 'assert';
+
+import { A, B, isB } from './ast';
+
+const astNode: A;
+assert(isB(astNode));
+// Here `astNode` has type `B`
+
+const referenced = astNode?.reference?.ref;
+assert(referenced !== undefined);
+// Here `referred` is not `undefined`
+```
 
 ## AST wrapper classes
 
-TBD
+The generated interfaces for AST nodes in `ast.ts` are only meant to represent the AST structurally, they don't define any behavior.
+Also, in case of syntactic sugar, there may be different kinds of AST nodes representing the same semantic language concept (e.g. single pipes with a verbose syntax or chained pipes). 
+
+To cope with this problem, there is the concept of an `AstNodeWrapper`.
+An AST node wrapper is capable of wrapping AST nodes that represent the same semantic language concept and adding behavior to them via custom methods.
+To get an impression on how this can be done in practice, please have a look at the [`PipeWrapper` class](https://github.com/jvalue/jayvee/blob/main/libs/language-server/src/lib/ast/wrappers/pipe-wrapper.ts) and the [`AstNodeWrapper` interface](https://github.com/jvalue/jayvee/blob/main/libs/language-server/src/lib/ast/wrappers/ast-node-wrapper.ts).
