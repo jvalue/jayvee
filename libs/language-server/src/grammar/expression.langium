@@ -47,7 +47,7 @@ UnaryExpression:
 
 ExpressionLiteral:
   ValueLiteral
-  | VariableLiteral;
+  | ReferenceLiteral;
 
 ValueLiteral:
   TextLiteral
@@ -55,7 +55,6 @@ ValueLiteral:
   | BooleanLiteral
   | RegexLiteral
   | CellRangeLiteral
-  | ReferenceLiteral
   | ValuetypeAssignmentLiteral
   | CollectionLiteral;
 
@@ -74,12 +73,10 @@ RegexLiteral:
 CollectionLiteral:
   '[' (values+=(Expression) (',' values+=(Expression))*)? ','? ']';
 
-VariableLiteral:
-  value=([TransformPortDefinition]);
-
 ReferenceLiteral:
   value=[Referencable];
 
 Referencable:
   ConstraintDefinition
-  | TransformDefinition;
+  | TransformDefinition
+  | TransformPortDefinition;
