@@ -144,7 +144,7 @@ class UserDocMarkdownBuilder {
     for (const [index, example] of examples.entries()) {
       this.markdownBuilder
         .heading(`Example ${index + 1}`, depth)
-        .code(example.code)
+        .code(example.code, 'jayvee')
         .line(example.description)
         .newLine();
     }
