@@ -140,7 +140,7 @@ In `libs/extensions/<extension-name>/lang/src/lib/my-extractor-meta-inf.ts`:
 import {
   BlockMetaInformation,
   IOType,
-  PropertyValuetype,
+  PrimitiveValuetypes,
 } from '@jvalue/jayvee-language-server';
 
 export class MyExtractorMetaInformation extends BlockMetaInformation {
@@ -152,10 +152,10 @@ export class MyExtractorMetaInformation extends BlockMetaInformation {
       // Property definitions:
       {
         url: {
-          type: PropertyValuetype.TEXT,
+          type: PrimitiveValuetypes.Text,
         },
         limit: {
-          type: PropertyValuetype.INTEGER,
+          type: PrimitiveValuetypes.Integer,
           defaultValue: 10,
         },
       },
