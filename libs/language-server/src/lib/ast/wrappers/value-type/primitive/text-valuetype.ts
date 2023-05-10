@@ -8,7 +8,7 @@ import { Valuetype, ValuetypeVisitor } from '../valuetype';
 
 import { PrimitiveValuetype } from './primitive-valuetype';
 
-class TextValuetype extends PrimitiveValuetype {
+class TextValuetypeImpl extends PrimitiveValuetype {
   override isConvertibleTo(target: Valuetype): boolean {
     return target === this;
   }
@@ -26,4 +26,12 @@ class TextValuetype extends PrimitiveValuetype {
   }
 }
 
-export const Text = new TextValuetype();
+// Only export instance to enforce singleton
+export const Text = new TextValuetypeImpl();
+
+// Only export type to allow narrowing down in visitors
+export type TextValuetype = InstanceType<typeof TextValuetypeImpl>;
+
+export function isTextValuetype(v: unknown): v is TextValuetype {
+  return v === Text;
+}

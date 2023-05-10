@@ -65,3 +65,7 @@ export class AtomicValuetype
     return this.astNode.name ?? '';
   }
 }
+
+export function isAtomicValuetype(v: unknown): v is AtomicValuetype {
+  return v instanceof AtomicValuetype;
+}

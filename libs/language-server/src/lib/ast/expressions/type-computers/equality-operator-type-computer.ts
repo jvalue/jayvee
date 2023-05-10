@@ -12,7 +12,7 @@ import { BinaryOperatorTypeComputer } from '../operator-type-computer';
 export class EqualityOperatorTypeComputer
   implements BinaryOperatorTypeComputer
 {
-  private readonly ALLOWED_OPERAND_TYPES = [
+  private readonly ALLOWED_OPERAND_TYPES: Valuetype[] = [
     PrimitiveValuetypes.Boolean,
     PrimitiveValuetypes.Text,
     PrimitiveValuetypes.Integer,

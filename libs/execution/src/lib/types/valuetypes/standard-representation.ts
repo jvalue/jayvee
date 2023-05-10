@@ -6,10 +6,15 @@ import { strict as assert } from 'assert';
 
 import {
   AtomicValuetype,
+  BooleanValuetype,
   PrimitiveType,
   PrimitiveValuetype,
-  PrimitiveValuetypes,
   Valuetype,
+  isAtomicValuetype,
+  isBooleanValuetype,
+  isDecimalValuetype,
+  isIntegerValuetype,
+  isTextValuetype,
 } from '@jvalue/jayvee-language-server';
 
 import { DECIMAL_COMMA_SEPARATOR_REGEX } from './constants';
@@ -18,22 +23,21 @@ export class StandardRepresentationResolver {
   constructor(private value: unknown) {}
 
   fromValuetype(valuetype: Valuetype): PrimitiveType {
-    if (valuetype === PrimitiveValuetypes.Boolean) {
+    if (isBooleanValuetype(valuetype)) {
       return this.fromBooleanValuetype(valuetype);
-    } else if (valuetype === PrimitiveValuetypes.Decimal) {
+    } else if (isDecimalValuetype(valuetype)) {
       return this.fromDecimalValuetype(valuetype);
-    } else if (valuetype === PrimitiveValuetypes.Integer) {
+    } else if (isIntegerValuetype(valuetype)) {
       return this.fromIntegerValuetype(valuetype);
-    } else if (valuetype === PrimitiveValuetypes.Text) {
+    } else if (isTextValuetype(valuetype)) {
       return this.fromTextValuetype(valuetype);
-    } else if (valuetype instanceof AtomicValuetype) {
+    } else if (isAtomicValuetype(valuetype)) {
       return this.fromAtomicValuetype(valuetype);
     }
     throw Error('Parsing from unsupported value type');
   }
 
-  fromBooleanValuetype(valuetype: PrimitiveValuetype): boolean {
-    assert(valuetype === PrimitiveValuetypes.Boolean);
+  fromBooleanValuetype(valuetype: BooleanValuetype): boolean {
     if (typeof this.value === 'boolean') {
       return this.value;
     }
@@ -53,7 +57,6 @@ export class StandardRepresentationResolver {
   }
 
   fromDecimalValuetype(valuetype: PrimitiveValuetype): number {
-    assert(valuetype === PrimitiveValuetypes.Decimal);
     if (typeof this.value === 'number') {
       return this.value;
     }
@@ -72,7 +75,6 @@ export class StandardRepresentationResolver {
   }
 
   fromIntegerValuetype(valuetype: PrimitiveValuetype): number {
-    assert(valuetype === PrimitiveValuetypes.Integer);
     if (typeof this.value === 'number') {
       return this.value;
     }
@@ -87,7 +89,6 @@ export class StandardRepresentationResolver {
   }
 
   fromTextValuetype(valuetype: PrimitiveValuetype): string {
-    assert(valuetype === PrimitiveValuetypes.Text);
     if (typeof this.value === 'number') {
       return this.value.toString();
     }

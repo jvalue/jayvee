@@ -7,7 +7,7 @@ import { Valuetype, ValuetypeVisitor } from '../valuetype';
 
 import { PrimitiveValuetype } from './primitive-valuetype';
 
-class ValuetypeAssignmentValuetype extends PrimitiveValuetype {
+class ValuetypeAssignmentValuetypeImpl extends PrimitiveValuetype {
   override isConvertibleTo(target: Valuetype): boolean {
     return target === this;
   }
@@ -25,4 +25,16 @@ class ValuetypeAssignmentValuetype extends PrimitiveValuetype {
   }
 }
 
-export const ValuetypeAssignment = new ValuetypeAssignmentValuetype();
+// Only export instance to enforce singleton
+export const ValuetypeAssignment = new ValuetypeAssignmentValuetypeImpl();
+
+// Only export type to allow narrowing down in visitors
+export type ValuetypeAssignmentValuetype = InstanceType<
+  typeof ValuetypeAssignmentValuetypeImpl
+>;
+
+export function isValuetypeAssignmentValuetype(
+  v: unknown,
+): v is ValuetypeAssignmentValuetype {
+  return v === ValuetypeAssignment;
+}

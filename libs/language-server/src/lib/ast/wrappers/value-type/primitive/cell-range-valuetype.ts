@@ -7,7 +7,7 @@ import { Valuetype, ValuetypeVisitor } from '../valuetype';
 
 import { PrimitiveValuetype } from './primitive-valuetype';
 
-class CellRangeValuetype extends PrimitiveValuetype {
+class CellRangeValuetypeImpl extends PrimitiveValuetype {
   override isConvertibleTo(target: Valuetype): boolean {
     return target === this;
   }
@@ -25,4 +25,12 @@ class CellRangeValuetype extends PrimitiveValuetype {
   }
 }
 
-export const CellRange = new CellRangeValuetype();
+// Only export instance to enforce singleton
+export const CellRange = new CellRangeValuetypeImpl();
+
+// Only export type to allow narrowing down in visitors
+export type CellRangeValuetype = InstanceType<typeof CellRangeValuetypeImpl>;
+
+export function isCellRangeValuetype(v: unknown): v is CellRangeValuetype {
+  return v === CellRange;
+}
