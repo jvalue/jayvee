@@ -7,7 +7,7 @@ import { Valuetype, ValuetypeVisitor } from '../valuetype';
 
 import { PrimitiveValuetype } from './primitive-valuetype';
 
-class CollectionValuetype extends PrimitiveValuetype {
+class CollectionValuetypeImpl extends PrimitiveValuetype {
   override isConvertibleTo(target: Valuetype): boolean {
     return target === this;
   }
@@ -25,4 +25,12 @@ class CollectionValuetype extends PrimitiveValuetype {
   }
 }
 
-export const Collection = new CollectionValuetype();
+// Only export instance to enforce singleton
+export const Collection = new CollectionValuetypeImpl();
+
+// Only export type to allow narrowing down in visitors
+export type CollectionValuetype = InstanceType<typeof CollectionValuetypeImpl>;
+
+export function isCollectionValuetype(v: unknown): v is CollectionValuetype {
+  return v === Collection;
+}

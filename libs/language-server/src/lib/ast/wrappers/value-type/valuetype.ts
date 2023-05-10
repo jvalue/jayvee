@@ -10,7 +10,17 @@ import {
 // eslint-disable-next-line import/no-cycle
 import { AtomicValuetype } from './atomic-valuetype';
 // eslint-disable-next-line import/no-cycle
-import { PrimitiveValuetype } from './primitive';
+import {
+  BooleanValuetype,
+  CellRangeValuetype,
+  CollectionValuetype,
+  ConstraintValuetype,
+  DecimalValuetype,
+  IntegerValuetype,
+  RegexValuetype,
+  TextValuetype,
+  ValuetypeAssignmentValuetype,
+} from './primitive';
 
 export type ValuetypeAstNode =
   | PrimitiveValuetypeKeywordLiteral
@@ -76,16 +86,16 @@ export abstract class AbstractValuetype implements Valuetype {
 }
 
 export abstract class ValuetypeVisitor<R = unknown> {
-  abstract visitBoolean(valuetype: PrimitiveValuetype): R;
-  abstract visitDecimal(valuetype: PrimitiveValuetype): R;
-  abstract visitInteger(valuetype: PrimitiveValuetype): R;
-  abstract visitText(valuetype: PrimitiveValuetype): R;
+  abstract visitBoolean(valuetype: BooleanValuetype): R;
+  abstract visitDecimal(valuetype: DecimalValuetype): R;
+  abstract visitInteger(valuetype: IntegerValuetype): R;
+  abstract visitText(valuetype: TextValuetype): R;
 
-  abstract visitCellRange(valuetype: PrimitiveValuetype): R;
-  abstract visitRegex(valuetype: PrimitiveValuetype): R;
-  abstract visitConstraint(valuetype: PrimitiveValuetype): R;
-  abstract visitValuetypeAssignment(valuetype: PrimitiveValuetype): R;
-  abstract visitCollection(valuetype: PrimitiveValuetype): R;
+  abstract visitCellRange(valuetype: CellRangeValuetype): R;
+  abstract visitRegex(valuetype: RegexValuetype): R;
+  abstract visitConstraint(valuetype: ConstraintValuetype): R;
+  abstract visitValuetypeAssignment(valuetype: ValuetypeAssignmentValuetype): R;
+  abstract visitCollection(valuetype: CollectionValuetype): R;
 
   abstract visitAtomicValuetype(valuetype: AtomicValuetype): R;
 }

@@ -3,27 +3,29 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 // eslint-disable-next-line import/no-cycle
-import { Boolean } from './boolean-valuetype';
-import { CellRange } from './cell-range-valuetype';
-import { Collection } from './collection-valuetype';
-import { Constraint } from './constraint-valuetype';
-import { Decimal } from './decimal-valuetype';
-import { Integer } from './integer-valuetype';
-import { PrimitiveValuetype } from './primitive-valuetype';
-import { Regex } from './regex-valuetype';
-import { Text } from './text-valuetype';
-import { ValuetypeAssignment } from './valuetype-assignment-valuetype';
+import { Boolean, BooleanValuetype } from './boolean-valuetype';
+import { CellRange, CellRangeValuetype } from './cell-range-valuetype';
+import { Collection, CollectionValuetype } from './collection-valuetype';
+import { Constraint, ConstraintValuetype } from './constraint-valuetype';
+import { Decimal, DecimalValuetype } from './decimal-valuetype';
+import { Integer, IntegerValuetype } from './integer-valuetype';
+import { Regex, RegexValuetype } from './regex-valuetype';
+import { Text, TextValuetype } from './text-valuetype';
+import {
+  ValuetypeAssignment,
+  ValuetypeAssignmentValuetype,
+} from './valuetype-assignment-valuetype';
 
 export const PrimitiveValuetypes: {
-  Boolean: PrimitiveValuetype;
-  Decimal: PrimitiveValuetype;
-  Integer: PrimitiveValuetype;
-  Text: PrimitiveValuetype;
-  Regex: PrimitiveValuetype;
-  CellRange: PrimitiveValuetype;
-  Constraint: PrimitiveValuetype;
-  ValuetypeAssignment: PrimitiveValuetype;
-  Collection: PrimitiveValuetype;
+  Boolean: BooleanValuetype;
+  Decimal: DecimalValuetype;
+  Integer: IntegerValuetype;
+  Text: TextValuetype;
+  Regex: RegexValuetype;
+  CellRange: CellRangeValuetype;
+  Constraint: ConstraintValuetype;
+  ValuetypeAssignment: ValuetypeAssignmentValuetype;
+  Collection: CollectionValuetype;
 } = {
   Boolean: Boolean,
   Decimal: Decimal,

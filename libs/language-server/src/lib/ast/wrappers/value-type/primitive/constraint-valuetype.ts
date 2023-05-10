@@ -7,7 +7,7 @@ import { Valuetype, ValuetypeVisitor } from '../valuetype';
 
 import { PrimitiveValuetype } from './primitive-valuetype';
 
-class ConstraintValuetype extends PrimitiveValuetype {
+class ConstraintValuetypeImpl extends PrimitiveValuetype {
   override isConvertibleTo(target: Valuetype): boolean {
     return target === this;
   }
@@ -25,4 +25,12 @@ class ConstraintValuetype extends PrimitiveValuetype {
   }
 }
 
-export const Constraint = new ConstraintValuetype();
+// Only export instance to enforce singleton
+export const Constraint = new ConstraintValuetypeImpl();
+
+// Only export type to allow narrowing down in visitors
+export type ConstraintValuetype = InstanceType<typeof ConstraintValuetypeImpl>;
+
+export function isConstraintValuetype(v: unknown): v is ConstraintValuetype {
+  return v === Constraint;
+}

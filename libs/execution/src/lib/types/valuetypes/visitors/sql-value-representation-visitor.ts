@@ -4,7 +4,10 @@
 
 import {
   AtomicValuetype,
-  Valuetype,
+  BooleanValuetype,
+  DecimalValuetype,
+  IntegerValuetype,
+  TextValuetype,
   ValuetypeVisitor,
 } from '@jvalue/jayvee-language-server';
 
@@ -13,7 +16,7 @@ import { StandardRepresentationResolver } from '../standard-representation';
 export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
   (value: unknown) => string
 > {
-  visitBoolean(valuetype: Valuetype): (value: unknown) => string {
+  visitBoolean(valuetype: BooleanValuetype): (value: unknown) => string {
     return (value: unknown) => {
       const standardRepresentation = new StandardRepresentationResolver(
         value,
@@ -22,7 +25,7 @@ export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
     };
   }
 
-  visitDecimal(valuetype: Valuetype): (value: unknown) => string {
+  visitDecimal(valuetype: DecimalValuetype): (value: unknown) => string {
     return (value: unknown) => {
       const standardRepresentation = new StandardRepresentationResolver(
         value,
@@ -31,7 +34,7 @@ export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
     };
   }
 
-  visitInteger(valuetype: Valuetype): (value: unknown) => string {
+  visitInteger(valuetype: IntegerValuetype): (value: unknown) => string {
     return (value: unknown) => {
       const standardRepresentation = new StandardRepresentationResolver(
         value,
@@ -40,7 +43,7 @@ export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
     };
   }
 
-  visitText(valuetype: Valuetype): (value: unknown) => string {
+  visitText(valuetype: TextValuetype): (value: unknown) => string {
     return (value: unknown) => {
       const standardRepresentation = new StandardRepresentationResolver(
         value,

@@ -8,7 +8,7 @@ import { Valuetype, ValuetypeVisitor } from '../valuetype';
 
 import { PrimitiveValuetype } from './primitive-valuetype';
 
-class BooleanValuetype extends PrimitiveValuetype {
+class BooleanValuetypeImpl extends PrimitiveValuetype {
   override isConvertibleTo(target: Valuetype): boolean {
     return target === this;
   }
@@ -26,4 +26,12 @@ class BooleanValuetype extends PrimitiveValuetype {
   }
 }
 
-export const Boolean = new BooleanValuetype();
+// Only export instance to enforce singleton
+export const Boolean = new BooleanValuetypeImpl();
+
+// Only export type to allow narrowing down in visitors
+export type BooleanValuetype = InstanceType<typeof BooleanValuetypeImpl>;
+
+export function isBooleanValuetype(v: unknown): v is BooleanValuetype {
+  return v === Boolean;
+}

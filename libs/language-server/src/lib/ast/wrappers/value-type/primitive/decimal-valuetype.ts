@@ -8,7 +8,7 @@ import { Valuetype, ValuetypeVisitor } from '../valuetype';
 
 import { PrimitiveValuetype } from './primitive-valuetype';
 
-class DecimalValuetype extends PrimitiveValuetype {
+class DecimalValuetypeImpl extends PrimitiveValuetype {
   override isConvertibleTo(target: Valuetype): boolean {
     return target === this;
   }
@@ -26,4 +26,12 @@ class DecimalValuetype extends PrimitiveValuetype {
   }
 }
 
-export const Decimal = new DecimalValuetype();
+// Only export instance to enforce singleton
+export const Decimal = new DecimalValuetypeImpl();
+
+// Only export type to allow narrowing down in visitors
+export type DecimalValuetype = InstanceType<typeof DecimalValuetypeImpl>;
+
+export function isDecimalValuetype(v: unknown): v is DecimalValuetype {
+  return v === Decimal;
+}
