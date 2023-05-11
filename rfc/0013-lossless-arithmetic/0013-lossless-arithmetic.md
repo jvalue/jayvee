@@ -45,4 +45,5 @@ Jayvee is a language to model data pipelines and will therefore handle numeric d
 ## Possible Future Changes/Enhancements
 
 - Find an appropriate library for decimal handling
+  - Consider [decimal.js]https://github.com/MikeMcl/decimal.js/ and [mathjs]https://github.com/josdejong/mathjs
 - Delay expression evaluation as to as late as possible
