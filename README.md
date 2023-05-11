@@ -10,7 +10,7 @@ Jayvee is a DSL to model and execute automated data pipelines, e.g., for data en
 
 [![Official Docs](assets/docs-banner.png)](https://jvalue.github.io/jayvee)
 
-
+In case you would like to contribute to Jayvee, please have a look at our [contribution guide](CONTRIBUTING.md).
 
 ## Development Quickstart
 
