@@ -6,8 +6,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 # RFC 0013: Lossless arithmetic
 
-|             |                       |
-| ----------- | --------------------- | --------------------------------------------------------------- |
+| | |
+|---|---|
 | Feature Tag | `Lossless arithmetic` | <!-- TODO: choose a unique and declarative feature name -->     |
 | Status      | `DISCUSSION`          | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED --> |
 | Responsible | `@rhazn`              | <!-- TODO: assign yourself as main driver of this RFC -->       |
