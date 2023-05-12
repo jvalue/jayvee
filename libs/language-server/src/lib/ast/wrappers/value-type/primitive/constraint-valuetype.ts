@@ -2,12 +2,17 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { type InternalValueRepresentation } from '../../../expressions/evaluation';
+import {
+  ConstraintDefinition,
+  isConstraintDefinition,
+} from '../../../generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { Valuetype, ValuetypeVisitor } from '../valuetype';
 
 import { PrimitiveValuetype } from './primitive-valuetype';
 
-class ConstraintValuetypeImpl extends PrimitiveValuetype {
+class ConstraintValuetypeImpl extends PrimitiveValuetype<ConstraintDefinition> {
   override isConvertibleTo(target: Valuetype): boolean {
     return target === this;
   }
@@ -22,6 +27,12 @@ class ConstraintValuetypeImpl extends PrimitiveValuetype {
 
   override getName(): 'constraint' {
     return 'constraint';
+  }
+
+  override isInternalValueRepresentation(
+    operandValue: InternalValueRepresentation,
+  ): operandValue is ConstraintDefinition {
+    return isConstraintDefinition(operandValue);
   }
 }
 

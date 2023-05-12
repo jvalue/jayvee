@@ -4,6 +4,7 @@
 
 import { strict as assert } from 'assert';
 
+import { type InternalValueRepresentation } from '../../expressions/evaluation';
 // eslint-disable-next-line import/no-cycle
 import { validateTypedCollection } from '../../expressions/type-inference';
 import {
@@ -18,7 +19,7 @@ import { PrimitiveValuetypes } from './primitive';
 import { AbstractValuetype, Valuetype, ValuetypeVisitor } from './valuetype';
 
 export class AtomicValuetype
-  extends AbstractValuetype
+  extends AbstractValuetype<InternalValueRepresentation>
   implements AstNodeWrapper<ValuetypeDefinition>
 {
   constructor(
@@ -65,6 +66,13 @@ export class AtomicValuetype
   override getName(): string {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     return this.astNode.name ?? '';
+  }
+
+  override isInternalValueRepresentation(
+    operandValue: InternalValueRepresentation,
+  ): operandValue is InternalValueRepresentation {
+    assert(this.supertype !== undefined);
+    return this.supertype.isInternalValueRepresentation(operandValue);
   }
 }
 

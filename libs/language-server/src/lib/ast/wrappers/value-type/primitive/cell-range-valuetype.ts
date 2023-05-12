@@ -2,12 +2,14 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { type InternalValueRepresentation } from '../../../expressions/evaluation';
+import { CellRangeWrapper } from '../../cell-range-wrapper';
 // eslint-disable-next-line import/no-cycle
 import { Valuetype, ValuetypeVisitor } from '../valuetype';
 
 import { PrimitiveValuetype } from './primitive-valuetype';
 
-class CellRangeValuetypeImpl extends PrimitiveValuetype {
+class CellRangeValuetypeImpl extends PrimitiveValuetype<CellRangeWrapper> {
   override isConvertibleTo(target: Valuetype): boolean {
     return target === this;
   }
@@ -22,6 +24,12 @@ class CellRangeValuetypeImpl extends PrimitiveValuetype {
 
   override getName(): 'cellRange' {
     return 'cellRange';
+  }
+
+  override isInternalValueRepresentation(
+    operandValue: InternalValueRepresentation,
+  ): operandValue is CellRangeWrapper {
+    return operandValue instanceof CellRangeWrapper;
   }
 }
 

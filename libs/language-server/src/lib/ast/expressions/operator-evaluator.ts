@@ -15,7 +15,7 @@ import {
 import {
   EvaluationContext,
   EvaluationStrategy,
-  OperandValue,
+  InternalValueRepresentation,
   OperandValueTypeguard,
   evaluateExpression,
 } from './evaluation';
@@ -33,12 +33,12 @@ export interface OperatorEvaluator<
     evaluationContext: EvaluationContext,
     strategy: EvaluationStrategy,
     validationContext: ValidationContext | undefined,
-  ): OperandValue | undefined;
+  ): InternalValueRepresentation | undefined;
 }
 
 export abstract class DefaultUnaryOperatorEvaluator<
-  O extends OperandValue,
-  T extends OperandValue,
+  O extends InternalValueRepresentation,
+  T extends InternalValueRepresentation,
 > implements OperatorEvaluator<UnaryExpression>
 {
   constructor(
@@ -76,9 +76,9 @@ export abstract class DefaultUnaryOperatorEvaluator<
 }
 
 export abstract class DefaultBinaryOperatorEvaluator<
-  L extends OperandValue,
-  R extends OperandValue,
-  T extends OperandValue,
+  L extends InternalValueRepresentation,
+  R extends InternalValueRepresentation,
+  T extends InternalValueRepresentation,
 > implements OperatorEvaluator<BinaryExpression>
 {
   constructor(

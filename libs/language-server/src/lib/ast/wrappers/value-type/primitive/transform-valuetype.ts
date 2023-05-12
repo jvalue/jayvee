@@ -2,12 +2,17 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { type InternalValueRepresentation } from '../../../expressions/evaluation';
+import {
+  TransformDefinition,
+  isTransformDefinition,
+} from '../../../generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { Valuetype, ValuetypeVisitor } from '../valuetype';
 
 import { PrimitiveValuetype } from './primitive-valuetype';
 
-class TransformValuetypeImpl extends PrimitiveValuetype {
+class TransformValuetypeImpl extends PrimitiveValuetype<TransformDefinition> {
   override isConvertibleTo(target: Valuetype): boolean {
     return target === this;
   }
@@ -22,6 +27,12 @@ class TransformValuetypeImpl extends PrimitiveValuetype {
 
   override getName(): 'transform' {
     return 'transform';
+  }
+
+  override isInternalValueRepresentation(
+    operandValue: InternalValueRepresentation,
+  ): operandValue is TransformDefinition {
+    return isTransformDefinition(operandValue);
   }
 }
 

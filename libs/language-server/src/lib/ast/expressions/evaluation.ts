@@ -44,7 +44,7 @@ export enum EvaluationStrategy {
   LAZY,
 }
 
-export type OperandValue =
+export type InternalValueRepresentation =
   | boolean
   | number
   | string
@@ -57,13 +57,16 @@ export type OperandValue =
   | TransformPortDefinition;
 export class EvaluationContext {
   constructor(
-    public runtimeParameterValues: Map<string, OperandValue> = new Map(),
-    public variableValues: Map<string, OperandValue> = new Map(),
+    public runtimeParameterValues: Map<
+      string,
+      InternalValueRepresentation
+    > = new Map(),
+    public variableValues: Map<string, InternalValueRepresentation> = new Map(),
   ) {}
 
   getValueFor(
     literal: ReferenceLiteral | RuntimeParameterLiteral,
-  ): OperandValue | undefined {
+  ): InternalValueRepresentation | undefined {
     if (isReferenceLiteral(literal)) {
       return this.getValueForReference(literal);
     } else if (isRuntimeParameterLiteral(literal)) {
@@ -72,7 +75,10 @@ export class EvaluationContext {
     assertUnreachable(literal);
   }
 
-  setValueForReference(refText: string, value: OperandValue): void {
+  setValueForReference(
+    refText: string,
+    value: InternalValueRepresentation,
+  ): void {
     this.variableValues.set(refText, value);
   }
 
@@ -82,7 +88,7 @@ export class EvaluationContext {
 
   getValueForReference(
     referenceLiteral: ReferenceLiteral,
-  ): OperandValue | undefined {
+  ): InternalValueRepresentation | undefined {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const dereferenced = referenceLiteral?.value?.ref;
     if (dereferenced === undefined) {
@@ -103,7 +109,7 @@ export class EvaluationContext {
 
   getValueForRuntimeParameter(
     parameterLiteral: RuntimeParameterLiteral,
-  ): OperandValue | undefined {
+  ): InternalValueRepresentation | undefined {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const key = parameterLiteral?.name;
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -115,11 +121,13 @@ export class EvaluationContext {
   }
 }
 
-export type OperandValueTypeguard<T extends OperandValue> = (
-  value: OperandValue,
+export type OperandValueTypeguard<T extends InternalValueRepresentation> = (
+  value: InternalValueRepresentation,
 ) => value is T;
 
-export function evaluatePropertyValueExpression<T extends OperandValue>(
+export function evaluatePropertyValueExpression<
+  T extends InternalValueRepresentation,
+>(
   propertyValue: Expression | RuntimeParameterLiteral,
   evaluationContext: EvaluationContext,
   typeguard: OperandValueTypeguard<T>,
@@ -136,7 +144,7 @@ export function evaluateExpression(
   evaluationContext: EvaluationContext,
   strategy: EvaluationStrategy = EvaluationStrategy.LAZY,
   context: ValidationContext | undefined = undefined,
-): OperandValue | undefined {
+): InternalValueRepresentation | undefined {
   if (isExpressionLiteral(expression)) {
     if (isReferenceLiteral(expression)) {
       return evaluationContext.getValueFor(expression);
@@ -160,7 +168,7 @@ export function evaluateExpression(
 
 function evaluateValueLiteral(
   expression: ValueLiteral,
-): OperandValue | undefined {
+): InternalValueRepresentation | undefined {
   if (isCollectionLiteral(expression)) {
     return expression;
   }
