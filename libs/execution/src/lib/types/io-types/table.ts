@@ -31,6 +31,31 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     return this.numberOfColumns;
   }
 
+  hasColumn(name: string): boolean {
+    return this.columnInformation.some((x) => x.name === name);
+  }
+
+  getColumnType(name: string): Valuetype | undefined {
+    return this.columnInformation.find((x) => x.name === name)?.type;
+  }
+
+  forEachEntryInColumn(
+    columnName: string,
+    callbackfn: (cellValue: string, rowIndex: number) => void,
+  ): void {
+    const columnIndex = this.columnInformation.findIndex(
+      (x) => x.name === columnName,
+    );
+    if (columnIndex === -1) {
+      return;
+    }
+
+    this.data.forEach((row, rowIndex) => {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      callbackfn(row[columnIndex]!, rowIndex);
+    });
+  }
+
   static generateDropTableStatement(tableName: string): string {
     return `DROP TABLE IF EXISTS "${tableName}";`;
   }
