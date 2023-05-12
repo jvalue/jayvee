@@ -12,6 +12,7 @@ import {
   Expression,
   PipelineDefinition,
   PropertyAssignment,
+  TransformDefinition,
   ValuetypeAssignment,
   evaluateExpression,
   getOrFailMetaInformation,
@@ -19,6 +20,7 @@ import {
   isExpression,
   isPipelineDefinition,
   isRuntimeParameterLiteral,
+  isTransformDefinition,
   isValuetypeAssignment,
 } from '@jvalue/jayvee-language-server';
 import { assertUnreachable } from 'langium';
@@ -97,6 +99,13 @@ export class ExecutionContext {
     assert(propertyValue instanceof CellRangeWrapper);
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return propertyValue;
+  }
+
+  public getTransformPropertyValue(propertyName: string): TransformDefinition {
+    const propertyValue = this.getPropertyValue(propertyName);
+    assert(isTransformDefinition(propertyValue));
+
     return propertyValue;
   }
 
