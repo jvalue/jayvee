@@ -72,6 +72,14 @@ export class EvaluationContext {
     assertUnreachable(literal);
   }
 
+  setValueForReference(refText: string, value: OperandValue): void {
+    this.variableValues.set(refText, value);
+  }
+
+  deleteValueForReference(refText: string): void {
+    this.variableValues.delete(refText);
+  }
+
   getValueForReference(
     referenceLiteral: ReferenceLiteral,
   ): OperandValue | undefined {
