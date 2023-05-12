@@ -57,6 +57,8 @@ export interface Valuetype extends VisitableValuetype {
 
   isAllowedAsRuntimeParameter(): boolean;
   getName(): string;
+
+  equals(target: Valuetype): boolean;
 }
 
 export abstract class AbstractValuetype implements Valuetype {
@@ -77,6 +79,10 @@ export abstract class AbstractValuetype implements Valuetype {
 
   getSupertype(): Valuetype | undefined {
     return this.supertype;
+  }
+
+  equals(target: Valuetype): boolean {
+    return this.isConvertibleTo(target) && target.isConvertibleTo(this); // TODO: solve with registry and === comparison instead
   }
 
   abstract isAllowedAsRuntimeParameter(): boolean;
