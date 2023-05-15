@@ -4,11 +4,11 @@ SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
 SPDX-License-Identifier: AGPL-3.0-only
 -->
 
-# RFC 0011: Value Transformer
+# RFC 0011: Value Transform
 
 | | |
 |---|---|
-| Feature Tag | `value-transformer` |
+| Feature Tag | `value-transform` |
 | Status | `DISCUSSION` | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED -->
 | Responsible | `georg-schwarz` |
 <!-- 
@@ -21,7 +21,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 ## Summary
 
-This RFC introduces the concept of Value Transformers that allow reading values, writing values, and transforming values.
+This RFC introduces the concept of Value Transform functions that allow reading values, writing values, and transforming values.
 
 **Note:** This RFC focuses enhancing the current state but has an elaborate "Possible Enhancements" section that showcases how this concept can be extended in the future.
 
@@ -32,99 +32,37 @@ Right now, we can only "parse" values but not manipulate them in order to clean 
 ## Explanation
 
 ```
-transformer <name> {
-  input <inputName> oftype <valuetype>; // potentially many
-  output <outputName> oftype <valuetype>; // for now: exactly one
+transform <name> {
+  from <inputName> oftype <valuetype>;
+  to <outputName> oftype <valuetype>;
 
   <outputName>: <expression producing output valuetype>;
 }
 ```
 
-A transformer can map none, one, or multiple inputs to at least one output with their types.
-See future enhancements for multiple outputs.
+A transform can map one input to one output with their types.
+See future enhancements for multiple inputs and outputs.
 
 The output value is assigned (`:`) to an expression to produces the output values.
 
-### Example 1: Simple numeric transformation
+### Example: Simple numeric transformation
 ```
-transformer CelsiusToKelvin {
-  input tempCelsius oftype decimal;
-  output tempKelvin oftype decimal;
+transform CelsiusToKelvin {
+  from tempCelsius oftype decimal;
+  to tempKelvin oftype decimal;
 
   tempKelvin: tempCelsius + 273.15; // simple calculation
 }
 ```
 
-### Example 2: Multiple inputs
-```
-// "MyStreet" and "7b" => "MyStreet 7b"
-transformer AddressComposer {
-  input streetName oftype text;
-  input houseNumber oftype text;
-  output address oftype text;
-
-  address: streetName + " " + houseNumber; // assumption: "+" is string appending (separate RFC)
-}
-```
-
-
-### Example 3: Multiple outputs
-```
-// 456 => (ones:6, tens:5, hundreds:4)
-transformer DigitSeparator {
-  input number oftype integer;
-  output ones oftype integer;
-  output tens oftype integer;
-  output hundreds oftype integer;
-
-  ones: number % 10;
-  tens: floor (number / 10) % 10;
-  hundreds: floor (number / 100);
-}
-```
-
-### Usage 1: TableInterpreter
-
-The `TableInterpreter` block uses a transformer from `text` to the desired value type with the `with` keyword. Parsing can still be used as currently (`as` keyword)
-
-Example:
-```
-block GasReserveTableInterpreter oftype TableInterpreter {
-  header: true;
-  columns: [ // only allow transformers with one input and one output or plain parsing here
-      "Datum" with DateTransformer,
-      "Kritisch" with PercentTransformer,
-      "Angespannt" as text,
-      "Stabil" with GermanToBooleanTransformer,
-      "Speicherstand IST" with PercentTransformer,
-      "gesetzliche Ziele" with PercentTransformer
-    ];
-}
-```
-
-This version only works with transformers that have exactly one input and exactly one output. We might need to come up with a different mechanism to allow other transformers (requires future RFCs).
-
-
-### Usage 2: TableTransformerBlock
+### Usage: TableTransformerBlock
 There is a newly introduced `TableTransformerBlock` block type that applies the mapper to a column in a `table`.
 
 Example:
 ```
 block GermanToBooleanBlock oftype TableTransformerBlock {
-  inputColumns: ["Kritisch"];  // array to satisfy all inputs of transformer
-  outputColumns: ["IsCritical"]; // might also overwrite one of the input columns
-  use: GermanToBooleanTransformer;
-}
-```
-
-### Usage 3: SheetTransformerBlock
-There is a newly introduced `SheetTransformerBlock` block type that applies the mapper to a set of cells in a `sheet`. Please note that the value type is not stored in sheets and thus lost after computation. Outputs are therefore parsed to string automatically by the block.
-
-Example:
-```
-block GermanToBooleanBlock oftype SheetTransformerBlock {
-  inputCells: [range A3:A17]; // if multiple arguments: have to match in dimensions
-  outputCells: [range D3:D17]; // has to match dimension of inputs
+  inputColumn: "Kritisch";  // to satisfy the input of the transform
+  outputColumn: "IsCritical"; // might also overwrite the input column if name is identical
   use: GermanToBooleanTransformer;
 }
 ```
@@ -132,24 +70,23 @@ block GermanToBooleanBlock oftype SheetTransformerBlock {
 
 ## Drawbacks
 - declaration of in and outputs might be much boilerplate.
-- TableInterpreter blocks only allow transformers with one input and one output.
 
 ## Alternatives
 
 - use other keyword, e.g., `vtrans`, `mapper`, ...
-- shorten `input` and `output` keywords to `in` and `out`
-- Transformers cannot work on sheets
-- design nicer syntax for multiple inputs and outputs via names instead of relying on the index
-- refactor TableInterpreter completely to also allow transformers with multiple in and outputs
+- use `input`/`output` keywords instead of `from`/`to`, or even shorter `in`/`out`
+- Transformers can work on sheets
+- refactor TableInterpreter to also allow transforms
 
 ## Possible Future Changes/Enhancements
 
-- We could introduce a pipe-like syntax that allows chaining transformers.
+- We could introduce a pipe-like syntax that allows chaining transforms.
+- Support multiple inputs and outputs
 
 ### Variables in Transformers
 Storing interim results can improve coding experience.
 ```
-transformer <name> {
+transform <name> {
   // inputs and outputs
   var <varBane> oftype <valuetype>: <expression producing valuetype>; // alternative: infer type automatically 
   // use variable to compute outputs
@@ -161,10 +98,10 @@ transformer <name> {
 Composite ValueTypes could be served with this implementation by extending the assignment statement:
 ```
 // "MyStreet" and "7b" => composite valuetype
-transformer AddressComposer {
-  input streetName oftype text;
-  input houseNumber oftype text;
-  output address oftype Address; // has properties "streetName" oftype StreetName and "houseNumber" oftype HouseNumber 
+transform AddressComposer {
+  from streetName oftype text;
+  from houseNumber oftype text;
+  to address oftype Address; // has properties "streetName" oftype StreetName and "houseNumber" oftype HouseNumber 
 
   // "." notation to write on property of composite value type
   address.streetName: streetName using StreetNameReader; // StreetNameReader is other transformation text -> StreetName
@@ -178,10 +115,11 @@ A mapping expression might enable easier string matching. They are syntactic sug
 
 ```
 // reads "23.4" and "$" into a compound value type
-transformer CelsiusToKelvin {
-  input amountRaw oftype text;
-  input currencyRaw oftype text;
-  output balance oftype Balance; // compound type with fields "amount" and "currency"
+transform CelsiusToKelvin {
+  from amountRaw oftype text;
+  from currencyRaw oftype text;
+  to balance oftype Balance; // compound type with fields "amount" and "currency"
+  
   balance.amount: amountRaw as decimal;    // simple parsing does not need a mapping
   balance.currency: matchOn currencyRaw { // matching
     /^(EUR|€)$/ => "EUR";
