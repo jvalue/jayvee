@@ -30,8 +30,7 @@ export class AtomicValuetype
   }
 
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
-    assert(this.supertype !== undefined);
-    return this.supertype.acceptVisitor(visitor);
+    return visitor.visitAtomicValuetype(this);
   }
 
   getConstraints(): ConstraintDefinition[] {

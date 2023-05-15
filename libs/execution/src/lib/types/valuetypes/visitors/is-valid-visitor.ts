@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
+
 import {
   AtomicValuetype,
   ValuetypeVisitor,
@@ -39,7 +41,8 @@ export class IsValidVisitor extends ValuetypeVisitor<boolean> {
       );
     }
 
-    return !Number.isNaN(this.value);
+    const result = !Number.isNaN(this.value);
+    return result;
   }
 
   override visitInteger(): boolean {
@@ -55,7 +58,9 @@ export class IsValidVisitor extends ValuetypeVisitor<boolean> {
   }
 
   override visitAtomicValuetype(valuetype: AtomicValuetype): boolean {
-    if (!valuetype.acceptVisitor(this)) {
+    const supertype = valuetype.getSupertype();
+    assert(supertype !== undefined);
+    if (!supertype.acceptVisitor(this)) {
       return false;
     }
 

@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
+
 import {
   AtomicValuetype,
   BooleanValuetype,
@@ -67,7 +69,9 @@ export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
   override visitAtomicValuetype(
     valuetype: AtomicValuetype,
   ): (value: InternalValueRepresentation) => string {
-    return valuetype.acceptVisitor(this);
+    const supertype = valuetype.getSupertype();
+    assert(supertype !== undefined);
+    return supertype.acceptVisitor(this);
   }
 
   override visitRegex(): (value: InternalValueRepresentation) => string {
