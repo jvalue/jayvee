@@ -15,7 +15,10 @@ export class InequalityOperatorEvaluator extends DefaultBinaryOperatorEvaluator<
   constructor() {
     super('!=', OPERAND_VALUE_TYPEGUARD, OPERAND_VALUE_TYPEGUARD);
   }
-  override doEvaluate(left: InternalValueRepresentation, right: InternalValueRepresentation): boolean {
+  override doEvaluate(
+    left: InternalValueRepresentation,
+    right: InternalValueRepresentation,
+  ): boolean {
     return left !== right;
   }
 }

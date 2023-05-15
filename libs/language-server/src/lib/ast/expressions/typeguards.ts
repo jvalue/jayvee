@@ -3,9 +3,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 // eslint-disable-next-line import/no-cycle
-import { InternalValueRepresentation, OperandValueTypeguard } from './evaluation';
+import {
+  InternalValueRepresentation,
+  OperandValueTypeguard,
+} from './evaluation';
 
-export const OPERAND_VALUE_TYPEGUARD: OperandValueTypeguard<InternalValueRepresentation> = (
+export const OPERAND_VALUE_TYPEGUARD: OperandValueTypeguard<
+  InternalValueRepresentation
+> = (
   value: InternalValueRepresentation,
 ): value is InternalValueRepresentation => {
   return true;
