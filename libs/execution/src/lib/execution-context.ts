@@ -19,6 +19,7 @@ import {
   isCollectionLiteral,
   isExpression,
   isPipelineDefinition,
+  isPropertyBody,
   isRuntimeParameterLiteral,
   isTransformDefinition,
   isValuetypeAssignment,
@@ -27,7 +28,10 @@ import { assertUnreachable } from 'langium';
 
 import { Logger } from './logger';
 
-export type StackNode = BlockDefinition | ConstraintDefinition;
+export type StackNode =
+  | BlockDefinition
+  | ConstraintDefinition
+  | TransformDefinition;
 
 export class ExecutionContext {
   private readonly stack: StackNode[] = [];
@@ -53,6 +57,9 @@ export class ExecutionContext {
     this.updateLoggingContext();
   }
 
+  /**
+   * @returns the latest stack node. Returns the pipeline if the stack is empty.
+   */
   public getCurrentNode(): StackNode | PipelineDefinition {
     const currentNode = this.stack[this.stack.length - 1];
     if (currentNode === undefined) {
@@ -157,9 +164,13 @@ export class ExecutionContext {
     if (isPipelineDefinition(currentNode)) {
       return undefined;
     }
-    return currentNode.body.properties.find(
-      (property) => property.name === propertyName,
-    );
+
+    const body = currentNode.body;
+    if (!isPropertyBody(body)) {
+      return undefined;
+    }
+
+    return body.properties.find((property) => property.name === propertyName);
   }
 
   public getOrFailProperty(propertyName: string): PropertyAssignment {
@@ -192,6 +203,10 @@ export class ExecutionContext {
   private getDefaultPropertyValue(propertyName: string): unknown {
     const currentNode = this.getCurrentNode();
     assert(!isPipelineDefinition(currentNode));
+
+    if (isTransformDefinition(currentNode)) {
+      return undefined;
+    }
 
     const metaInf = getOrFailMetaInformation(currentNode.type);
     const propertySpec = metaInf.getPropertySpecification(propertyName);

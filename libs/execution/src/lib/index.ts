@@ -4,6 +4,7 @@
 
 export * from './blocks';
 export * from './constraints';
+export * from './transforms';
 export * from './types';
 export * from './util';
 export * from './types/valuetypes/visitors';

@@ -15,7 +15,7 @@ import { SQLValueRepresentationVisitor } from '../valuetypes/visitors/sql-value-
 
 import { IOTypeImplementation } from './io-type-implementation';
 
-interface TableColumn<
+export interface TableColumn<
   T extends InternalValueRepresentation = InternalValueRepresentation,
 > {
   values: T[];
@@ -72,6 +72,14 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     this.numberOfRows--;
   }
 
+  dropRows(rowIds: number[]): void {
+    rowIds
+      .sort((a, b) => b - a) // delete descending to avoid messing up row indices
+      .forEach((rowId) => {
+        this.dropRow(rowId);
+      });
+  }
+
   getNumberOfRows(): number {
     return this.numberOfRows;
   }
@@ -84,8 +92,8 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     return this.columns.has(name);
   }
 
-  getColumnType(name: string): Valuetype | undefined {
-    return this.columns.get(name)?.valuetype;
+  getColumn(name: string): TableColumn | undefined {
+    return this.columns.get(name);
   }
 
   forEachEntryInColumn(
