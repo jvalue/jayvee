@@ -94,7 +94,7 @@ export abstract class AbstractValuetype<I extends InternalValueRepresentation>
   }
 
   equals(target: Valuetype): boolean {
-    return this.isConvertibleTo(target) && target.isConvertibleTo(this); // TODO: solve with registry and === comparison instead
+    return this.isConvertibleTo(target) && target.isConvertibleTo(this);
   }
 
   abstract isAllowedAsRuntimeParameter(): boolean;

@@ -110,7 +110,7 @@ function checkExpressionSimplification(
 
   const evaluatedExpression = evaluateExpression(
     expression,
-    new EvaluationContext(), // TODO
+    new EvaluationContext(), // don't know the variable or runtime parameter values that are required for simplification
     EvaluationStrategy.EXHAUSTIVE,
     context,
   );
