@@ -62,6 +62,16 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     this.numberOfRows++;
   }
 
+  dropRow(rowId: number): void {
+    assert(rowId < this.numberOfRows);
+
+    this.columns.forEach((column) => {
+      column.values.splice(rowId, 1);
+    });
+
+    this.numberOfRows--;
+  }
+
   getNumberOfRows(): number {
     return this.numberOfRows;
   }
@@ -137,5 +147,18 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     return `CREATE TABLE IF NOT EXISTS "${tableName}" (${columnStatements.join(
       ',',
     )});`;
+  }
+
+  clone(): Table {
+    const cloned = new Table();
+    cloned.numberOfRows = this.numberOfRows;
+    [...this.columns.entries()].forEach(([columnName, column]) => {
+      cloned.addColumn(columnName, {
+        values: structuredClone(column.values),
+        valuetype: column.valuetype,
+      });
+    });
+
+    return cloned;
   }
 }
