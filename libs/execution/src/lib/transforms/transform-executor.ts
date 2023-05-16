@@ -25,27 +25,22 @@ export class TransformExecutor {
     port: TransformPortDefinition;
     valuetype: Valuetype;
   } {
-    const inputPorts = this.transform.body.ports.filter(
-      (x) => x.kind === 'from',
-    );
-    assert(inputPorts.length === 1);
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const inputPort = inputPorts[0]!;
-    const inputType = inputPort.valueType;
-    const inputValuetype = createValuetype(inputType);
-
-    return {
-      port: inputPort,
-      valuetype: inputValuetype,
-    };
+    return this.getPortDetails('from');
   }
 
   getOutputDetails(): {
     port: TransformPortDefinition;
     valuetype: Valuetype;
   } {
+    return this.getPortDetails('to');
+  }
+
+  private getPortDetails(kind: TransformPortDefinition['kind']): {
+    port: TransformPortDefinition;
+    valuetype: Valuetype;
+  } {
     const outputPorts = this.transform.body.ports.filter(
-      (x) => x.kind === 'to',
+      (x) => x.kind === kind,
     );
     assert(outputPorts.length === 1);
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
