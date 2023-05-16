@@ -14,7 +14,6 @@ import {
   ReferenceLiteral,
   RuntimeParameterLiteral,
   TransformDefinition,
-  TransformPortDefinition,
   ValueLiteral,
   ValuetypeAssignment,
   isBinaryExpression,

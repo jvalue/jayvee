@@ -9,15 +9,7 @@
 
 import { inferExpressionType } from '../../ast';
 import {
-  EvaluationContext,
-  EvaluationStrategy,
-  evaluateExpression,
-} from '../../ast/expressions/evaluation';
-import {
-  Expression,
   PropertyAssignment,
-  isExpression,
-  isExpressionLiteral,
   isRuntimeParameterLiteral,
 } from '../../ast/generated/ast';
 import {

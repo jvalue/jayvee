@@ -7,21 +7,14 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { checkExpressionSimplification } from '@jvalue/jayvee-language-server';
 import { assertUnreachable } from 'langium';
 
-import {
-  EvaluationContext,
-  EvaluationStrategy,
-  evaluateExpression,
-} from '../../ast/expressions/evaluation';
 import { inferExpressionType } from '../../ast/expressions/type-inference';
 import {
   Expression,
   ReferenceLiteral,
   TransformOutputAssignment,
   isBinaryExpression,
-  isExpression,
   isExpressionLiteral,
   isReferenceLiteral,
   isTransformPortDefinition,
@@ -29,6 +22,7 @@ import {
 } from '../../ast/generated/ast';
 import { inferBasePropertyValuetype } from '../../ast/model-util';
 import { ValidationContext } from '../validation-context';
+import { checkExpressionSimplification } from '../validation-util';
 
 export function validateTransformOutputAssignment(
   outputAssignment: TransformOutputAssignment,
