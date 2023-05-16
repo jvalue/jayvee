@@ -5,7 +5,7 @@
 // eslint-disable-next-line import/no-cycle
 import { InternalValueRepresentation } from '../evaluation';
 import { DefaultBinaryOperatorEvaluator } from '../operator-evaluator';
-import { OPERAND_VALUE_TYPEGUARD } from '../typeguards';
+import { INTERNAL_VALUE_REPRESENTATION_TYPEGUARD } from '../typeguards';
 
 export class EqualityOperatorEvaluator extends DefaultBinaryOperatorEvaluator<
   InternalValueRepresentation,
@@ -13,7 +13,11 @@ export class EqualityOperatorEvaluator extends DefaultBinaryOperatorEvaluator<
   boolean
 > {
   constructor() {
-    super('==', OPERAND_VALUE_TYPEGUARD, OPERAND_VALUE_TYPEGUARD);
+    super(
+      '==',
+      INTERNAL_VALUE_REPRESENTATION_TYPEGUARD,
+      INTERNAL_VALUE_REPRESENTATION_TYPEGUARD,
+    );
   }
   override doEvaluate(
     left: InternalValueRepresentation,

@@ -25,6 +25,7 @@ import {
   PropertySpecification,
 } from '../../meta-information/meta-inf';
 import { ValidationContext } from '../validation-context';
+import { checkExpressionSimplification } from '../validation-util';
 
 export function validatePropertyAssignment(
   property: PropertyAssignment,
@@ -96,31 +97,5 @@ function checkPropertyValueTyping(
     return;
   }
 
-  if (isExpression(propertyValue)) {
-    checkExpressionSimplification(propertyValue, context);
-  }
-}
-
-function checkExpressionSimplification(
-  expression: Expression,
-  context: ValidationContext,
-): void {
-  if (isExpressionLiteral(expression)) {
-    return;
-  }
-
-  const evaluatedExpression = evaluateExpression(
-    expression,
-    new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
-    context,
-    EvaluationStrategy.EXHAUSTIVE,
-  );
-  if (evaluatedExpression !== undefined) {
-    context.accept(
-      'info',
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      `The expression can be simplified to ${evaluatedExpression}`,
-      { node: expression },
-    );
-  }
+  checkExpressionSimplification(propertyValue, context);
 }

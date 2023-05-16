@@ -20,7 +20,7 @@ import { ValidationContext } from '../validation-context';
 import { checkUniqueNames } from '../validation-util';
 
 import {
-  getReferenceLiterals,
+  extractReferenceLiterals,
   validateTransformOutputAssignment,
 } from './transform-output-assigment';
 
@@ -45,12 +45,13 @@ function checkUniqueOutputAssignments(
   transformBody: TransformBody,
   context: ValidationContext,
 ): void {
-  const assignedOutputPorts = transformBody.outputAssignments;
-  const definedOutputPorts = transformBody.ports.filter((x) => x.kind === 'to');
+  const assignedOutputPorts = transformBody?.outputAssignments ?? [];
+  const definedOutputPorts =
+    transformBody?.ports?.filter((x) => x?.kind === 'to') ?? [];
 
   for (const definedOutputPort of definedOutputPorts) {
     const usedInAssignments = assignedOutputPorts.filter(
-      (x) => x.outPortName?.ref?.name === definedOutputPort.name,
+      (x) => x?.outPortName?.ref?.name === definedOutputPort.name,
     );
 
     if (usedInAssignments.length === 0) {
@@ -122,7 +123,7 @@ function checkAreInputsUsed(
 
   const referencedPorts: TransformPortDefinition[] = [];
   outputAssignments.forEach((outputAssignment) => {
-    const referenceLiterals = getReferenceLiterals(
+    const referenceLiterals = extractReferenceLiterals(
       outputAssignment?.expression,
     );
 

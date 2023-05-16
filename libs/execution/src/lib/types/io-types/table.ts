@@ -47,7 +47,7 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
       `Added row has the wrong dimension (expected: ${this.columns.size}, actual: ${rowLength})`,
     );
     assert(
-      Object.keys(row).every((x) => this.columns.has(x)),
+      Object.keys(row).every((x) => this.hasColumn(x)),
       'Added row does not fit the columns in the table',
     );
 
@@ -94,23 +94,6 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
 
   getColumn(name: string): TableColumn | undefined {
     return this.columns.get(name);
-  }
-
-  forEachEntryInColumn(
-    columnName: string,
-    callbackfn: (
-      cellValue: InternalValueRepresentation,
-      rowIndex: number,
-    ) => void,
-  ): void {
-    const column = this.columns.get(columnName);
-    if (column === undefined) {
-      return;
-    }
-
-    column.values.forEach((value, rowIndex) => {
-      callbackfn(value, rowIndex);
-    });
   }
 
   static generateDropTableStatement(tableName: string): string {

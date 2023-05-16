@@ -166,9 +166,12 @@ export class TableInterpreterExecutor
         invalidRow = true;
         return;
       }
-      tableRow[columnEntry.columnName] = new StandardRepresentationResolver(
+
+      const stdRepresentationResolver = new StandardRepresentationResolver(
         value,
-      ).fromValuetype(columnEntry.valuetype);
+      );
+      tableRow[columnEntry.columnName] =
+        stdRepresentationResolver.fromValuetype(columnEntry.valuetype);
     });
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (invalidRow) {

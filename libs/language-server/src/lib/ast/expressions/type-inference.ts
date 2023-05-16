@@ -70,7 +70,7 @@ export function inferExpressionType(
 }
 
 /**
- * @returns the resolved @see PropertyValuetype or undefined (e.g. if variable is not defined)
+ * @returns the resolved valuetype or undefined (e.g. if a reference is not resolved)
  */
 function inferTypeFromExpressionLiteral(
   expression: ExpressionLiteral,

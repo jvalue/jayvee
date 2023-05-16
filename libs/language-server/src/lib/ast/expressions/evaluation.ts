@@ -53,8 +53,8 @@ export type InternalValueRepresentation =
   | ConstraintDefinition
   | ValuetypeAssignment
   | CollectionLiteral
-  | TransformDefinition
-  | TransformPortDefinition;
+  | TransformDefinition;
+
 export class EvaluationContext {
   constructor(
     public runtimeParameterValues: Map<
@@ -121,16 +121,16 @@ export class EvaluationContext {
   }
 }
 
-export type OperandValueTypeguard<T extends InternalValueRepresentation> = (
-  value: InternalValueRepresentation,
-) => value is T;
+export type InternalValueRepresentationTypeguard<
+  T extends InternalValueRepresentation,
+> = (value: InternalValueRepresentation) => value is T;
 
 export function evaluatePropertyValueExpression<
   T extends InternalValueRepresentation,
 >(
   propertyValue: Expression | RuntimeParameterLiteral,
   evaluationContext: EvaluationContext,
-  typeguard: OperandValueTypeguard<T>,
+  typeguard: InternalValueRepresentationTypeguard<T>,
 ): T {
   assert(isExpression(propertyValue));
   const resultingValue = evaluateExpression(propertyValue, evaluationContext);

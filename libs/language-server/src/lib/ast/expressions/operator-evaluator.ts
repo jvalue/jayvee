@@ -16,7 +16,7 @@ import {
   EvaluationContext,
   EvaluationStrategy,
   InternalValueRepresentation,
-  OperandValueTypeguard,
+  InternalValueRepresentationTypeguard,
   evaluateExpression,
 } from './evaluation';
 
@@ -43,7 +43,7 @@ export abstract class DefaultUnaryOperatorEvaluator<
 {
   constructor(
     public readonly operator: UnaryExpressionOperator,
-    private readonly operandValueTypeguard: OperandValueTypeguard<O>,
+    private readonly operandValueTypeguard: InternalValueRepresentationTypeguard<O>,
   ) {}
 
   protected abstract doEvaluate(
@@ -83,8 +83,8 @@ export abstract class DefaultBinaryOperatorEvaluator<
 {
   constructor(
     public readonly operator: BinaryExpressionOperator,
-    private readonly leftValueTypeguard: OperandValueTypeguard<L>,
-    private readonly rightValueTypeguard: OperandValueTypeguard<R>,
+    private readonly leftValueTypeguard: InternalValueRepresentationTypeguard<L>,
+    private readonly rightValueTypeguard: InternalValueRepresentationTypeguard<R>,
   ) {}
 
   protected abstract doEvaluate(

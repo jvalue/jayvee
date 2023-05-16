@@ -178,13 +178,13 @@ export function inferBasePropertyValuetype(
   }
 
   if (keyword === undefined) {
-    return keyword;
+    return undefined;
   }
 
-  return inferPropertyValuetypeFromKeyword(keyword);
+  return inferPrimitiveValuetypeFromKeyword(keyword);
 }
 
-export function inferPropertyValuetypeFromKeyword(
+export function inferPrimitiveValuetypeFromKeyword(
   valuetype: PrimitiveValuetypeKeywordLiteral,
 ): PrimitiveValuetype {
   const keyword = valuetype.keyword;

@@ -7,6 +7,7 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
+import { checkExpressionSimplification } from '@jvalue/jayvee-language-server';
 import { assertUnreachable } from 'langium';
 
 import {
@@ -72,16 +73,16 @@ function checkOutputValueTyping(
     return;
   }
 
-  if (isExpression(assignmentExpression)) {
-    checkExpressionSimplification(assignmentExpression, context);
-  }
+  checkExpressionSimplification(assignmentExpression, context);
 }
 
 function checkOutputNotInAssignmentExpression(
   outputAssignment: TransformOutputAssignment,
   context: ValidationContext,
 ): void {
-  const referenceLiterals = getReferenceLiterals(outputAssignment?.expression);
+  const referenceLiterals = extractReferenceLiterals(
+    outputAssignment?.expression,
+  );
 
   referenceLiterals.forEach((referenceLiteral) => {
     const referenced = referenceLiteral?.value?.ref;
@@ -100,31 +101,7 @@ function checkOutputNotInAssignmentExpression(
   });
 }
 
-function checkExpressionSimplification(
-  expression: Expression,
-  context: ValidationContext,
-): void {
-  if (isExpressionLiteral(expression)) {
-    return;
-  }
-
-  const evaluatedExpression = evaluateExpression(
-    expression,
-    new EvaluationContext(), // don't know the variable or runtime parameter values that are required for simplification
-    context,
-    EvaluationStrategy.EXHAUSTIVE,
-  );
-  if (evaluatedExpression !== undefined) {
-    context.accept(
-      'info',
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      `The expression can be simplified to ${evaluatedExpression}`,
-      { node: expression },
-    );
-  }
-}
-
-export function getReferenceLiterals(
+export function extractReferenceLiterals(
   expression: Expression | undefined,
 ): ReferenceLiteral[] {
   if (expression === undefined) {
@@ -138,11 +115,11 @@ export function getReferenceLiterals(
     return [];
   } else if (isBinaryExpression(expression)) {
     return [
-      ...getReferenceLiterals(expression.left),
-      ...getReferenceLiterals(expression.right),
+      ...extractReferenceLiterals(expression.left),
+      ...extractReferenceLiterals(expression.right),
     ];
   } else if (isUnaryExpression(expression)) {
-    return getReferenceLiterals(expression.expression);
+    return extractReferenceLiterals(expression.expression);
   }
   assertUnreachable(expression);
 }

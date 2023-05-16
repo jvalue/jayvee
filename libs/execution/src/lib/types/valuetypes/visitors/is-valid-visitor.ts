@@ -41,8 +41,7 @@ export class IsValidVisitor extends ValuetypeVisitor<boolean> {
       );
     }
 
-    const result = !Number.isNaN(this.value);
-    return result;
+    return !Number.isNaN(this.value);
   }
 
   override visitInteger(): boolean {
