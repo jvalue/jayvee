@@ -8,28 +8,6 @@ pipeline CarsPipeline {
 		url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
 	}
 
-	constraint MyRange oftype RangeConstraint {
-		lowerBound: 2;
-		lowerBoundInclusive: true;
-	}
-
-	valuetype XY oftype decimal {
-		constraints: [MyRange]; 
-	}
-
-	transform MyTransform {
-		from input oftype decimal;
-		to output oftype XY;
-
-		output: input / 3;
-	}
-
-	block MyTransformer oftype TableTransformer {
-		use: MyTransform;
-		inputColumn: 'cyl';
-		outputColumn: 'cyl';
-	}
-
 	pipe {
 		from: CarsExtractor;
 		to: CarsTextFileInterpreter;
@@ -64,7 +42,7 @@ pipeline CarsPipeline {
 	}
 
 	block CarsTableInterpreter oftype TableInterpreter {
-		header: true; 
+		header: true;
 		columns: [
 			"name" oftype text,
 			"mpg" oftype decimal,
@@ -83,11 +61,6 @@ pipeline CarsPipeline {
 
 	pipe {
 		from: CarsTableInterpreter;
-		to: MyTransformer;
-	}
-
-	pipe {
-		from: MyTransformer;
 		to: CarsLoader;
 	}
 
