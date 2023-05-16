@@ -142,8 +142,8 @@ export function evaluatePropertyValueExpression<
 export function evaluateExpression(
   expression: Expression,
   evaluationContext: EvaluationContext,
-  strategy: EvaluationStrategy = EvaluationStrategy.LAZY,
   context: ValidationContext | undefined = undefined,
+  strategy: EvaluationStrategy = EvaluationStrategy.LAZY,
 ): InternalValueRepresentation | undefined {
   if (isExpressionLiteral(expression)) {
     if (isReferenceLiteral(expression)) {

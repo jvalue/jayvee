@@ -111,8 +111,8 @@ function checkExpressionSimplification(
   const evaluatedExpression = evaluateExpression(
     expression,
     new EvaluationContext(), // don't know the variable or runtime parameter values that are required for simplification
-    EvaluationStrategy.EXHAUSTIVE,
     context,
+    EvaluationStrategy.EXHAUSTIVE,
   );
   if (evaluatedExpression !== undefined) {
     context.accept(

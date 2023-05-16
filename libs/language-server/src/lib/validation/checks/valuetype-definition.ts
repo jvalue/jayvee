@@ -7,12 +7,17 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { PrimitiveValuetypes, inferExpressionType } from '../../ast';
+import { strict as assert } from 'assert';
+
 import {
-  ValuetypeDefinition,
-  isConstraintDefinition,
-  isReferenceLiteral,
-} from '../../ast/generated/ast';
+  ConstraintDefinition,
+  EvaluationContext,
+  Expression,
+  PrimitiveValuetypes,
+  evaluateExpression,
+  validateTypedCollection,
+} from '../../ast';
+import { ValuetypeDefinition } from '../../ast/generated/ast';
 import { getMetaInformation } from '../../meta-information/meta-inf-registry';
 import { ValidationContext } from '../validation-context';
 
@@ -21,71 +26,78 @@ export function validateValuetypeDefinition(
   context: ValidationContext,
 ): void {
   checkConstraintsCollectionValues(valuetype, context);
-  checkConstraintsMatchPrimitiveValuetype(valuetype, context);
 }
 
 function checkConstraintsCollectionValues(
   valuetype: ValuetypeDefinition,
-  validationContext: ValidationContext,
+  context: ValidationContext,
 ): void {
-  const constraintValues = valuetype?.constraints?.values;
-  if (constraintValues === undefined) {
+  const constraintCollection = valuetype?.constraints;
+  if (constraintCollection === undefined) {
     return;
   }
-  constraintValues.forEach((collectionValue) => {
-    const type = inferExpressionType(collectionValue, validationContext);
-    if (type !== PrimitiveValuetypes.Constraint) {
-      validationContext.accept(
-        'error',
-        'Only constraints are allowed in this collection',
-        {
-          node: collectionValue,
-        },
-      );
+
+  const { validItems, invalidItems } = validateTypedCollection(
+    constraintCollection,
+    [PrimitiveValuetypes.Constraint],
+    context,
+  );
+
+  invalidItems.forEach((expression) => {
+    context.accept('error', 'Only constraints are allowed in this collection', {
+      node: expression,
+    });
+  });
+
+  validItems.forEach((expression) => {
+    const constraint = evaluateExpression(
+      expression,
+      new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
+      context,
+    );
+    if (constraint === undefined) {
+      return;
     }
+    assert(
+      PrimitiveValuetypes.Constraint.isInternalValueRepresentation(constraint),
+    );
+    checkConstraintMatchesPrimitiveValuetype(
+      valuetype,
+      constraint,
+      expression,
+      context,
+    );
   });
 }
 
-function checkConstraintsMatchPrimitiveValuetype(
+function checkConstraintMatchesPrimitiveValuetype(
   valuetype: ValuetypeDefinition,
+  constraint: ConstraintDefinition,
+  diagnosticNode: Expression,
   context: ValidationContext,
 ): void {
   if (valuetype.type === undefined) {
     return;
   }
 
-  const references =
-    valuetype?.constraints?.values?.filter(isReferenceLiteral) ?? [];
+  const constraintType = constraint.type;
 
-  for (const reference of references) {
-    const resolvedRef = reference?.value?.ref;
-    if (resolvedRef === undefined) {
-      continue;
-    }
-    if (!isConstraintDefinition(resolvedRef)) {
-      continue;
-    }
-    const constraintType = resolvedRef?.type;
+  if (constraintType === undefined) {
+    return;
+  }
 
-    if (constraintType === undefined) {
-      continue;
-    }
+  const metaInf = getMetaInformation(constraintType);
+  if (metaInf === undefined) {
+    return;
+  }
 
-    const metaInf = getMetaInformation(constraintType);
-    if (metaInf === undefined) {
-      continue;
-    }
-
-    if (
-      !metaInf.compatiblePrimitiveValuetypes.includes(valuetype.type.keyword)
-    ) {
-      context.accept(
-        'error',
-        `Only constraints for type "${valuetype.type.keyword}" are allowed in this collection`,
-        {
-          node: reference,
-        },
-      );
-    }
+  if (!metaInf.compatiblePrimitiveValuetypes.includes(valuetype.type.keyword)) {
+    context.accept(
+      'error',
+      `Only constraints for type "${valuetype.type.keyword}" are allowed in this collection`,
+      {
+        node: diagnosticNode,
+      },
+    );
   }
 }

@@ -62,8 +62,8 @@ export abstract class DefaultUnaryOperatorEvaluator<
     const operandValue = evaluateExpression(
       expression.expression,
       evaluationContext,
-      strategy,
       validationContext,
+      strategy,
     );
     if (operandValue === undefined) {
       return undefined;
@@ -104,8 +104,8 @@ export abstract class DefaultBinaryOperatorEvaluator<
     const leftValue = evaluateExpression(
       expression.left,
       evaluationContext,
-      strategy,
       validationContext,
+      strategy,
     );
     if (strategy === EvaluationStrategy.LAZY && leftValue === undefined) {
       return undefined;
@@ -113,8 +113,8 @@ export abstract class DefaultBinaryOperatorEvaluator<
     const rightValue = evaluateExpression(
       expression.right,
       evaluationContext,
-      strategy,
       validationContext,
+      strategy,
     );
     if (leftValue === undefined || rightValue === undefined) {
       return undefined;
@@ -160,8 +160,8 @@ export abstract class BooleanShortCircuitOperatorEvaluator
     const leftValue = evaluateExpression(
       expression.left,
       evaluationContext,
-      strategy,
       validationContext,
+      strategy,
     );
     assert(leftValue === undefined || typeof leftValue === 'boolean');
     if (strategy === EvaluationStrategy.LAZY) {
@@ -176,8 +176,8 @@ export abstract class BooleanShortCircuitOperatorEvaluator
     const rightValue = evaluateExpression(
       expression.right,
       evaluationContext,
-      strategy,
       validationContext,
+      strategy,
     );
     if (leftValue === undefined || rightValue === undefined) {
       return undefined;
