@@ -118,4 +118,31 @@ In order to report diagnostics in such cases, a `ValidationContext` object can b
 
 ## Evaluation of expressions
 
-TODO
+The evaluation has the purpose of computing a single value out of an expression.
+For a successful evaluation, it is a **precondition** that **a type could successfully be inferred** from the respective expression.
+Also, the **value for each free variable** in that expression (i.e. literals resembling placeholders for values) needs to be **known beforehand**.
+Therefore, an `ExecutionContext` object is passed to the evaluation which holds values for free variables in the current context.
+
+### Algorithm
+
+The algorithm for evaluating expressions is also based on a recursive depth-first search, similar to how the type inference works:
+
+Again, literals are the base case. A value literal trivially evaluates to its own value.
+Other literals that resemble free variables evaluate to their value provided by the given `ExecutionContext` object.
+
+Regarding operators, their operands first are evaluated recursively.
+Next, using the concrete operand values, the operator computes its resulting value.
+This is defined in operator evaluator classes located [here](https://github.com/jvalue/jayvee/tree/main/libs/language-server/src/lib/ast/expressions/evaluators).
+The classes are registered in [operator-registry.ts](https://github.com/jvalue/jayvee/blob/main/libs/language-server/src/lib/ast/expressions/operator-registry.ts) for every operator, similar to the previously mentioned type computers.
+
+The result of an evaluation may be `undefined` in case any errors occurred.
+If the preconditions were all met, such errors are most likely arithmetic errors (like division by zero).
+It is possible to provide a `ValidationContext` object to the evaluation for reporting such errors as diagnostics.
+
+### Evaluation strategies
+
+There are different evaluation strategies to choose from.
+They affect the way, expressions are evaluated and thus have an impact on their semantics:
+
+- `exhaustive`: A full depth-first search is performed, all parts of an expression are evaluated.
+- `lazy`: An evaluation with the least effort is performed. Logical operators use [short circuit semantics](https://en.wikipedia.org/wiki/Short-circuit_evaluation) and binary operators don't evaluate their right operand if the left one evaluated to `undefined`.
