@@ -100,9 +100,21 @@ For example, depending on the associativity of the binary `+` operator, the expr
 The associativity of operators is also defined in the Jayvee grammar, more specifically by the structure of the grammar rules that define operators.
 For details on how to encode the different kinds of associativity in grammar rules, have a look at the "Associativity" section near the end of [this blog post](https://www.typefox.io/blog/parsing-expressions-with-xtext).
 
-## Validating types of expressions
+## Typing of expressions
 
-TODO
+Jayvee has a mechanism for inferring and validating the type of a given expression.
+This is achieved using a recursive algorithm which performs depth-first search on a given expression:
+
+The base case for the algorithm are literals, i.e. the tree leaves of an expression.
+Depending on the type of literal, their type can be inferred trivially (in case of value literals) or otherwise from the context where the expression is located.
+
+For operators, the types of their operands are first inferred via recursion, and then it is checked whether they are supported by the operator.
+Next, given the operand types, the resulting type is computed.
+Such behavior is defined in a _type computer class_ located [here](https://github.com/jvalue/jayvee/tree/main/libs/language-server/src/lib/ast/expressions/type-computers).
+Additionally, there is [operator-registry.ts](https://github.com/jvalue/jayvee/blob/main/libs/language-server/src/lib/ast/expressions/operator-registry.ts) where a type computer is registered for each kind of operator.
+
+In case the algorithm fails to infer a type, e.g. due to unsupported operand types or unresolved references in literals, the resulting type is `undefined`.
+In order to report diagnostics in such cases, a `ValidationContext` object can be supplied when calling the type inference.
 
 ## Evaluation of expressions
 
