@@ -20,7 +20,7 @@ import {
   isTransformPortDefinition,
   isUnaryExpression,
 } from '../../ast/generated/ast';
-import { inferBasePropertyValuetype } from '../../ast/model-util';
+import { createValuetype } from '../../ast/wrappers/value-type/valuetype-util';
 import { ValidationContext } from '../validation-context';
 import { checkExpressionSimplification } from '../validation-util';
 
@@ -51,7 +51,7 @@ function checkOutputValueTyping(
     return;
   }
 
-  const expectedType = inferBasePropertyValuetype(outputType);
+  const expectedType = createValuetype(outputType);
   if (expectedType === undefined) {
     return;
   }

@@ -13,18 +13,9 @@ import {
   BinaryExpression,
   BlockDefinition,
   PipelineDefinition,
-  PrimitiveValuetypeKeywordLiteral,
   UnaryExpression,
-  ValuetypeDefinitionReference,
-  isPrimitiveValuetypeKeywordLiteral,
-  isValuetypeDefinitionReference,
 } from './generated/ast';
 import { PipeWrapper, createSemanticPipes } from './wrappers/pipe-wrapper';
-// eslint-disable-next-line import/no-cycle
-import {
-  PrimitiveValuetype,
-  PrimitiveValuetypes,
-} from './wrappers/value-type/primitive';
 
 export function collectStartingBlocks(
   pipeline: PipelineDefinition,
@@ -154,53 +145,6 @@ export enum IOType {
 
 export type UnaryExpressionOperator = UnaryExpression['operator'];
 export type BinaryExpressionOperator = BinaryExpression['operator'];
-
-export function getValuetypeName(
-  valuetype: PrimitiveValuetypeKeywordLiteral | ValuetypeDefinitionReference,
-): string {
-  if (isValuetypeDefinitionReference(valuetype)) {
-    return valuetype.reference.$refText;
-  }
-  return valuetype.keyword;
-}
-
-export function inferBasePropertyValuetype(
-  valuetype: PrimitiveValuetypeKeywordLiteral | ValuetypeDefinitionReference,
-): PrimitiveValuetype | undefined {
-  let keyword: PrimitiveValuetypeKeywordLiteral | undefined;
-  if (isValuetypeDefinitionReference(valuetype)) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    keyword = valuetype?.reference?.ref?.type;
-  } else if (isPrimitiveValuetypeKeywordLiteral(valuetype)) {
-    keyword = valuetype;
-  } else {
-    assertUnreachable(valuetype);
-  }
-
-  if (keyword === undefined) {
-    return undefined;
-  }
-
-  return inferPrimitiveValuetypeFromKeyword(keyword);
-}
-
-export function inferPrimitiveValuetypeFromKeyword(
-  valuetype: PrimitiveValuetypeKeywordLiteral,
-): PrimitiveValuetype {
-  const keyword = valuetype.keyword;
-  switch (keyword) {
-    case 'boolean':
-      return PrimitiveValuetypes.Boolean;
-    case 'decimal':
-      return PrimitiveValuetypes.Decimal;
-    case 'integer':
-      return PrimitiveValuetypes.Integer;
-    case 'text':
-      return PrimitiveValuetypes.Text;
-    default:
-      assertUnreachable(keyword);
-  }
-}
 
 export type AstTypeGuard<T extends AstNode = AstNode> = (
   obj: unknown,

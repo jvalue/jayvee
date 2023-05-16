@@ -26,9 +26,9 @@ import {
   isValuetypeAssignmentLiteral,
 } from '../generated/ast';
 // eslint-disable-next-line import/no-cycle
-import { inferBasePropertyValuetype } from '../model-util';
 import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-valuetypes';
 import { type Valuetype } from '../wrappers/value-type/valuetype';
+import { createValuetype } from '../wrappers/value-type/valuetype-util';
 
 import {
   binaryOperatorRegistry,
@@ -127,7 +127,7 @@ function inferTypeFromReferenceLiteral(
     if (valueType === undefined) {
       return undefined;
     }
-    return inferBasePropertyValuetype(valueType);
+    return createValuetype(valueType);
   }
   assertUnreachable(referenced);
 }

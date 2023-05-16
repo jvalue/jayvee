@@ -10,12 +10,13 @@ import {
   type InternalValueRepresentation,
   evaluateExpression,
 } from '../../expressions/evaluation';
+// eslint-disable-next-line import/no-cycle
 import { validateTypedCollection } from '../../expressions/type-inference';
 import { ConstraintDefinition, ValuetypeDefinition } from '../../generated/ast';
 import { AstNodeWrapper } from '../ast-node-wrapper';
 
-import { PrimitiveValuetypes } from './primitive';
 // eslint-disable-next-line import/no-cycle
+import { PrimitiveValuetypes } from './primitive';
 import { AbstractValuetype, Valuetype, ValuetypeVisitor } from './valuetype';
 
 export class AtomicValuetype
