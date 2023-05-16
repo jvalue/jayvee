@@ -5,15 +5,11 @@
 import { type InternalValueRepresentation } from '../../../expressions/evaluation';
 import { PrimitiveValuetypeKeyword } from '../../../generated/ast';
 // eslint-disable-next-line import/no-cycle
-import { Valuetype, ValuetypeVisitor } from '../valuetype';
+import { ValuetypeVisitor } from '../valuetype';
 
 import { PrimitiveValuetype } from './primitive-valuetype';
 
 class TextValuetypeImpl extends PrimitiveValuetype<string> {
-  override isConvertibleTo(target: Valuetype): boolean {
-    return target === this;
-  }
-
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
     return visitor.visitText(this);
   }

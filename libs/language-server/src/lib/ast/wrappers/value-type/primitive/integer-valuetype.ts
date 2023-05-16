@@ -12,7 +12,7 @@ import { PrimitiveValuetype } from './primitive-valuetype';
 
 class IntegerValuetypeImpl extends PrimitiveValuetype<number> {
   override isConvertibleTo(target: Valuetype): boolean {
-    return target === this || target === Decimal;
+    return super.isConvertibleTo(target) || target === Decimal;
   }
 
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {

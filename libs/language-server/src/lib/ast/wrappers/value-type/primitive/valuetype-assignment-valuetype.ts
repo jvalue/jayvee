@@ -8,15 +8,11 @@ import {
   isValuetypeAssignment as isAstValuetypeAssignment,
 } from '../../../generated/ast';
 // eslint-disable-next-line import/no-cycle
-import { Valuetype, ValuetypeVisitor } from '../valuetype';
+import { ValuetypeVisitor } from '../valuetype';
 
 import { PrimitiveValuetype } from './primitive-valuetype';
 
 class ValuetypeAssignmentValuetypeImpl extends PrimitiveValuetype<AstValuetypeAssignment> {
-  override isConvertibleTo(target: Valuetype): boolean {
-    return target === this;
-  }
-
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
     return visitor.visitValuetypeAssignment(this);
   }

@@ -5,15 +5,11 @@
 import { type InternalValueRepresentation } from '../../../expressions/evaluation';
 import { CellRangeWrapper } from '../../cell-range-wrapper';
 // eslint-disable-next-line import/no-cycle
-import { Valuetype, ValuetypeVisitor } from '../valuetype';
+import { ValuetypeVisitor } from '../valuetype';
 
 import { PrimitiveValuetype } from './primitive-valuetype';
 
 class CellRangeValuetypeImpl extends PrimitiveValuetype<CellRangeWrapper> {
-  override isConvertibleTo(target: Valuetype): boolean {
-    return target === this;
-  }
-
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
     return visitor.visitCellRange(this);
   }
