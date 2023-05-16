@@ -11,7 +11,7 @@ As a small practical example, you may also have a look at the [arithmetics examp
 ## Expressions in the grammar
 
 Expressions in the Jayvee grammar are defined in [`expression.langium`](https://github.com/jvalue/jayvee/blob/main/libs/language-server/src/grammar/expression.langium) and consist of operators (unary / binary) and literals.
-Unary operators only have a single operand (e.g. the `not` operator) whereas binary operators require two operands (e.g. the `+` operator).
+Unary operators only have a single operand (e.g. the `not` operator) whereas binary operators require two operands (e.g. the `*` operator).
 
 The grammar is written in a way that literals end up in the leaves of the resulting AST and the nodes above represent the operators.
 
@@ -66,8 +66,8 @@ For example, multiplication has a higher precedence than addition, which leads t
 In order to manually override such precedence conventions, parentheses can be used in expressions.
 
 The diagram below shows a more extensive precedence hierarchy, focused on common arithmetic operators.
-Note that the hierarchy is arranged in ascending order according to the operator precedence.
-Such an order is similar to how the operators in the actual Jayvee grammar are arranged:
+Note that the hierarchy is arranged in ascending order, according to the operator precedence.
+Such an order is similar to how operators in the actual Jayvee grammar are arranged:
 
 ```mermaid
 graph TD
@@ -91,7 +91,7 @@ In order to alter the precedence of operators, their hierarchy of grammar rules 
 
 The associativity of operators defines the order in which operators with the same precedence are evaluated when they appear in succession without parentheses.
 Operators may be either **left-associative**, **right-associative** or **non-associative**.
-For example, depending on the associativity of the binary `+` operator, the expression `a + b + c` is interpreted differently:
+For example, depending on the associativity of the binary `+` operator, the expression `a + b + c` has different semantics:
 
 - Left-associative: `(a + b) + c` (evaluation from left to right)
 - Right-associative: `a + (b + c)` (evaluation from right to left)
@@ -111,7 +111,7 @@ Depending on the type of literal, their type can be inferred trivially (in case 
 For operators, the types of their operands are first inferred via recursion, and then it is checked whether they are supported by the operator.
 Next, given the operand types, the resulting type is computed.
 Such behavior is defined in a _type computer class_ located [here](https://github.com/jvalue/jayvee/tree/main/libs/language-server/src/lib/ast/expressions/type-computers).
-Additionally, there is [operator-registry.ts](https://github.com/jvalue/jayvee/blob/main/libs/language-server/src/lib/ast/expressions/operator-registry.ts) where a type computer is registered for each kind of operator.
+Additionally, in [`operator-registry.ts`](https://github.com/jvalue/jayvee/blob/main/libs/language-server/src/lib/ast/expressions/operator-registry.ts), a type computer is registered for each kind of operator.
 
 In case the algorithm fails to infer a type, e.g. due to unsupported operand types or unresolved references in literals, the resulting type is `undefined`.
 In order to report diagnostics in such cases, a `ValidationContext` object can be supplied when calling the type inference.
