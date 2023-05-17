@@ -16,7 +16,7 @@ So in order to reflect changes to the source code, the additional VS Code instan
 
 Any set breakpoints should now be marked as active and pause the execution once they are reached.
 
-## Hot to view logs of the language server
+## How to view logs of the language server
 
 In the additional VS Code instance, it is possible to view the logs of the language server.
 They might also be helpful for debugging since any uncaught errors are logged with their stack trace by the Langium framework.
