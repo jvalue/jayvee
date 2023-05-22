@@ -72,7 +72,7 @@ function createOrGetValuetype(identifier: ValuetypeIdentifier): Valuetype {
 
   assert(isValuetypeDefinition(identifier));
 
-  const primitive = createOrGetValuetype(identifier.type.keyword); // TODO: allow arbitrary hierarchy of atomic valuetypes in grammar
+  const primitive = createOrGetValuetype(identifier.type.keyword);
   const createdValuetype = new AtomicValuetype(identifier, primitive);
   existingValuetypes.set(identifier, createdValuetype);
 
