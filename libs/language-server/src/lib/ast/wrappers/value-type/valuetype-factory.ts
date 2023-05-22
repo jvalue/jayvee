@@ -37,7 +37,12 @@ Object.values(PrimitiveValuetypes).forEach((primitive) => {
   existingValuetypes.set(primitive.getName(), primitive);
 });
 
-export function createValuetype(
+/**
+ * Returns the singleton valuetype instance for a given valuetype keyword or definition.
+ * Manages a cache under the hood to ensure singleton behavior.
+ * @returns the desired valuetype instance or undefined in case of incomplete AST nodes.
+ */
+export function getValuetype(
   identifier: PrimitiveValuetypeKeywordLiteral | ValuetypeDefinitionReference,
 ): Valuetype | undefined {
   if (isPrimitiveValuetypeKeywordLiteral(identifier)) {
@@ -47,19 +52,19 @@ export function createValuetype(
     if (keyword === undefined) {
       return undefined;
     }
-    return doCreateValuetype(keyword);
+    return createOrGetValuetype(keyword);
   } else if (isValuetypeDefinitionReference(identifier)) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const referenced = identifier?.reference?.ref;
     if (referenced === undefined) {
       return undefined;
     }
-    return doCreateValuetype(referenced);
+    return createOrGetValuetype(referenced);
   }
   assertUnreachable(identifier);
 }
 
-function doCreateValuetype(identifier: ValuetypeIdentifier): Valuetype {
+function createOrGetValuetype(identifier: ValuetypeIdentifier): Valuetype {
   const existingValuetype = existingValuetypes.get(identifier);
   if (existingValuetype !== undefined) {
     return existingValuetype;
@@ -67,7 +72,7 @@ function doCreateValuetype(identifier: ValuetypeIdentifier): Valuetype {
 
   assert(isValuetypeDefinition(identifier));
 
-  const primitive = doCreateValuetype(identifier.type.keyword); // TODO: allow arbitrary hierarchy of atomic valuetypes in grammar
+  const primitive = createOrGetValuetype(identifier.type.keyword); // TODO: allow arbitrary hierarchy of atomic valuetypes in grammar
   const createdValuetype = new AtomicValuetype(identifier, primitive);
   existingValuetypes.set(identifier, createdValuetype);
 
