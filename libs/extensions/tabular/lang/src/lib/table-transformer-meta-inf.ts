@@ -44,12 +44,12 @@ export class TableTransformerMetaInformation extends BlockMetaInformation {
       examples: [
         {
           description:
-            'Given a column "temperature" with temperature values in Celsius, it overwrites the column with computed values in Fahrenheit by using the `CelsiusToFahrenheit` transform defined elsewhere.',
+            'Given a column "temperature" with temperature values in Celsius, it overwrites the column with computed values in Fahrenheit by using the `CelsiusToFahrenheit` transform. The transform itself is defined elsewhere in the model.',
           code: blockExampleOverwrite,
         },
         {
           description:
-            'Given a column "temperatureCelsius" with temperature values in Celsius, it adds a new column "temperatureFahrenheit" with computed values in Fahrenheit by using the `CelsiusToFahrenheit` transform defined elsewhere.',
+            'Given a column "temperatureCelsius" with temperature values in Celsius, it adds a new column "temperatureFahrenheit" with computed values in Fahrenheit by using the `CelsiusToFahrenheit` transform. The transform itself is defined elsewhere in the model.',
           code: blockExampleNewCol,
         },
       ],
