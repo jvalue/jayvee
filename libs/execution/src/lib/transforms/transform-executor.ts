@@ -10,8 +10,8 @@ import {
   TransformOutputAssignment,
   TransformPortDefinition,
   Valuetype,
-  getValuetype,
   evaluateExpression,
+  getValuetype,
 } from '@jvalue/jayvee-language-server';
 
 import { ExecutionContext } from '../execution-context';
