@@ -20,7 +20,7 @@ import {
   isTransformPortDefinition,
   isUnaryExpression,
 } from '../../ast/generated/ast';
-import { createValuetype } from '../../ast/wrappers/value-type/valuetype-util';
+import { createValuetype } from '../../ast/wrappers/value-type/valuetype-factory';
 import { ValidationContext } from '../validation-context';
 import { checkExpressionSimplification } from '../validation-util';
 
