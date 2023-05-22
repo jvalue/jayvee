@@ -21,7 +21,6 @@ import {
   Valuetype,
   ValuetypeAssignment,
   createValuetype,
-  getValuetypeName,
   rowIndexToString,
 } from '@jvalue/jayvee-language-server';
 
@@ -159,9 +158,7 @@ export class TableInterpreterExecutor
       ) {
         const cellIndex = new CellIndex(sheetColumnIndex, sheetRowIndex);
         context.logger.logDebug(
-          `Invalid value at cell ${cellIndex.toString()}: "${value}" does not match the type ${getValuetypeName(
-            columnEntry.astNode.type,
-          )}`,
+          `Invalid value at cell ${cellIndex.toString()}: "${value}" does not match the type ${columnEntry.valuetype.getName()}`,
         );
         invalidRow = true;
         return;
@@ -186,12 +183,16 @@ export class TableInterpreterExecutor
     columnDefinitions: ValuetypeAssignment[],
   ): ColumnDefinitionEntry[] {
     return columnDefinitions.map<ColumnDefinitionEntry>(
-      (columnDefinition, columnDefinitionIndex) => ({
-        sheetColumnIndex: columnDefinitionIndex,
-        columnName: columnDefinition.name,
-        valuetype: createValuetype(columnDefinition.type),
-        astNode: columnDefinition,
-      }),
+      (columnDefinition, columnDefinitionIndex) => {
+        const columnValuetype = createValuetype(columnDefinition.type);
+        assert(columnValuetype !== undefined);
+        return {
+          sheetColumnIndex: columnDefinitionIndex,
+          columnName: columnDefinition.name,
+          valuetype: columnValuetype,
+          astNode: columnDefinition,
+        };
+      },
     );
   }
 
@@ -213,10 +214,13 @@ export class TableInterpreterExecutor
         );
         continue;
       }
+      const columnValuetype = createValuetype(columnDefinition.type);
+      assert(columnValuetype !== undefined);
+
       columnEntries.push({
         sheetColumnIndex: indexOfMatchingHeader,
         columnName: columnDefinition.name,
-        valuetype: createValuetype(columnDefinition.type),
+        valuetype: columnValuetype,
         astNode: columnDefinition,
       });
     }

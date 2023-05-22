@@ -47,6 +47,7 @@ export class TransformExecutor {
     const outputPort = outputPorts[0]!;
     const outputType = outputPort.valueType;
     const outputValuetype = createValuetype(outputType);
+    assert(outputValuetype !== undefined);
 
     return {
       port: outputPort,

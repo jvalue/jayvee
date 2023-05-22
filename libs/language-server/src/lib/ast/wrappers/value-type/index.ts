@@ -4,6 +4,6 @@
 
 // eslint-disable-next-line import/no-cycle
 export * from './valuetype';
-export * from './atomic-valuetype';
+export { type AtomicValuetype, isAtomicValuetype } from './atomic-valuetype';
 export * from './primitive';
-export * from './valuetype-util';
+export * from './valuetype-factory';

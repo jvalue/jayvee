@@ -94,7 +94,7 @@ export abstract class AbstractValuetype<I extends InternalValueRepresentation>
   }
 
   equals(target: Valuetype): boolean {
-    return this.isConvertibleTo(target) && target.isConvertibleTo(this);
+    return target === this; // we use a singleton construct via a factory
   }
 
   abstract isAllowedAsRuntimeParameter(): boolean;
