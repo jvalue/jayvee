@@ -28,7 +28,7 @@ import {
 // eslint-disable-next-line import/no-cycle
 import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-valuetypes';
 import { type Valuetype } from '../wrappers/value-type/valuetype';
-import { createValuetype } from '../wrappers/value-type/valuetype-factory';
+import { getValuetype } from '../wrappers/value-type/valuetype-factory';
 
 import {
   binaryOperatorRegistry,
@@ -127,7 +127,7 @@ function inferTypeFromReferenceLiteral(
     if (valueType === undefined) {
       return undefined;
     }
-    return createValuetype(valueType);
+    return getValuetype(valueType);
   }
   assertUnreachable(referenced);
 }
