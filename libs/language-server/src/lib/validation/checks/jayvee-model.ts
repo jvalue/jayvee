@@ -11,4 +11,7 @@ export function validateJayveeModel(
   context: ValidationContext,
 ): void {
   checkUniqueNames(model.pipelines, context);
+  checkUniqueNames(model.transforms, context);
+  checkUniqueNames(model.valuetypes, context);
+  checkUniqueNames(model.constraints, context);
 }

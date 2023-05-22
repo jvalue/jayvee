@@ -13,10 +13,7 @@ import {
   BinaryExpression,
   BlockDefinition,
   PipelineDefinition,
-  PrimitiveValuetypeKeywordLiteral,
   UnaryExpression,
-  ValuetypeDefinitionReference,
-  isValuetypeDefinitionReference,
 } from './generated/ast';
 import { PipeWrapper, createSemanticPipes } from './wrappers/pipe-wrapper';
 
@@ -148,15 +145,6 @@ export enum IOType {
 
 export type UnaryExpressionOperator = UnaryExpression['operator'];
 export type BinaryExpressionOperator = BinaryExpression['operator'];
-
-export function getValuetypeName(
-  valuetype: PrimitiveValuetypeKeywordLiteral | ValuetypeDefinitionReference,
-): string {
-  if (isValuetypeDefinitionReference(valuetype)) {
-    return valuetype.reference.$refText;
-  }
-  return valuetype.keyword;
-}
 
 export type AstTypeGuard<T extends AstNode = AstNode> = (
   obj: unknown,

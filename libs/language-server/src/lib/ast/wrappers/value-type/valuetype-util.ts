@@ -47,3 +47,12 @@ function createPrimitiveValuetype(
       assertUnreachable(keywordLiteral.keyword);
   }
 }
+
+export function getValuetypeName(
+  valuetype: PrimitiveValuetypeKeywordLiteral | ValuetypeDefinitionReference,
+): string {
+  if (isValuetypeDefinitionReference(valuetype)) {
+    return valuetype.reference.$refText;
+  }
+  return valuetype.keyword;
+}

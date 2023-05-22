@@ -8,10 +8,10 @@ import * as R from '@jvalue/jayvee-execution';
 import {
   BlockExecutor,
   BlockExecutorClass,
-  ColumnInformation,
   ExecutionContext,
   IsValidVisitor,
   Sheet,
+  StandardRepresentationResolver,
   Table,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
@@ -91,34 +91,35 @@ export class TableInterpreterExecutor
       `Validating ${numberOfTableRows} row(s) according to the column types`,
     );
 
-    const tableData = this.constructAndValidateTableData(
+    const resultingTable = this.constructAndValidateTable(
       inputSheet,
       header,
       columnEntries,
       context,
     );
-
     context.logger.logDebug(
-      `Validation completed, the resulting table has ${tableData.length} row(s) and ${columnEntries.length} column(s)`,
+      `Validation completed, the resulting table has ${resultingTable.getNumberOfRows()} row(s) and ${resultingTable.getNumberOfColumns()} column(s)`,
     );
-
-    const columnInformation = columnEntries.map<ColumnInformation>(
-      (columnEntry) => ({
-        name: columnEntry.columnName,
-        type: columnEntry.valuetype,
-      }),
-    );
-    const resultingTable = new Table(columnInformation, tableData);
     return R.ok(resultingTable);
   }
 
-  private constructAndValidateTableData(
+  private constructAndValidateTable(
     sheet: Sheet,
     header: boolean,
     columnEntries: ColumnDefinitionEntry[],
     context: ExecutionContext,
-  ): string[][] {
-    const tableData: string[][] = [];
+  ): Table {
+    const table = new Table();
+
+    // add columns
+    columnEntries.forEach((columnEntry) => {
+      table.addColumn(columnEntry.columnName, {
+        values: [],
+        valuetype: columnEntry.valuetype,
+      });
+    });
+
+    // add rows
     sheet.iterateRows((sheetRow, sheetRowIndex) => {
       if (header && sheetRowIndex === 0) {
         return;
@@ -134,11 +135,11 @@ export class TableInterpreterExecutor
         context.logger.logDebug(
           `Omitting row ${rowIndexToString(sheetRowIndex)}`,
         );
-      } else {
-        tableData.push(tableRow);
+        return;
       }
+      table.addRow(tableRow);
     });
-    return tableData;
+    return table;
   }
 
   private constructAndValidateTableRow(
@@ -146,10 +147,10 @@ export class TableInterpreterExecutor
     sheetRowIndex: number,
     columnEntries: ColumnDefinitionEntry[],
     context: ExecutionContext,
-  ): string[] | undefined {
+  ): R.TableRow | undefined {
     let invalidRow = false;
-    const tableRow: string[] = [];
-    columnEntries.forEach((columnEntry, tableColumnIndex) => {
+    const tableRow: R.TableRow = {};
+    columnEntries.forEach((columnEntry) => {
       const sheetColumnIndex = columnEntry.sheetColumnIndex;
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const value = sheetRow[sheetColumnIndex]!;
@@ -165,14 +166,19 @@ export class TableInterpreterExecutor
         invalidRow = true;
         return;
       }
-      tableRow[tableColumnIndex] = value;
+
+      const stdRepresentationResolver = new StandardRepresentationResolver(
+        value,
+      );
+      tableRow[columnEntry.columnName] =
+        stdRepresentationResolver.fromValuetype(columnEntry.valuetype);
     });
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (invalidRow) {
       return undefined;
     }
 
-    assert(tableRow.length === columnEntries.length);
+    assert(Object.keys(tableRow).length === columnEntries.length);
     return tableRow;
   }
 

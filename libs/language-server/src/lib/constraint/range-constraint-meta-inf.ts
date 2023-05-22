@@ -3,7 +3,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { isRuntimeParameterLiteral } from '../ast';
-import { evaluatePropertyValueExpression } from '../ast/expressions/evaluation';
+import {
+  EvaluationContext,
+  evaluatePropertyValueExpression,
+} from '../ast/expressions/evaluation';
 import {
   BOOLEAN_TYPEGUARD,
   NUMBER_TYPEGUARD,
@@ -59,10 +62,12 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
 
         const lowerBound = evaluatePropertyValueExpression(
           lowerBoundProperty.value,
+          new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
           NUMBER_TYPEGUARD,
         );
         const upperBound = evaluatePropertyValueExpression(
           upperBoundProperty.value,
+          new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
           NUMBER_TYPEGUARD,
         );
 
@@ -93,6 +98,7 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
             }
             const expressionValue = evaluatePropertyValueExpression(
               lowerBoundInclusiveProperty.value,
+              new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
               BOOLEAN_TYPEGUARD,
             );
             lowerBoundInclusive = expressionValue;
@@ -106,6 +112,7 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
             }
             const expressionValue = evaluatePropertyValueExpression(
               upperBoundInclusiveProperty.value,
+              new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
               BOOLEAN_TYPEGUARD,
             );
             upperBoundInclusive = expressionValue;

@@ -4,6 +4,14 @@
 
 import { AstNode } from 'langium';
 
+import {
+  EvaluationContext,
+  EvaluationStrategy,
+  Expression,
+  evaluateExpression,
+  isExpressionLiteral,
+} from '../ast';
+
 import { ValidationContext } from './validation-context';
 
 export type NamedAstNode = AstNode & { name: string };
@@ -11,11 +19,14 @@ export type NamedAstNode = AstNode & { name: string };
 export function checkUniqueNames(
   nodes: NamedAstNode[],
   context: ValidationContext,
+  nodeName?: string,
 ): void {
   getNodesWithNonUniqueNames(nodes).forEach((node) => {
     context.accept(
       'error',
-      `The ${node.$type.toLowerCase()} name "${node.name}" needs to be unique.`,
+      `The ${nodeName ?? node.$type.toLowerCase()} name "${
+        node.name
+      }" needs to be unique.`,
       {
         node,
         property: 'name',
@@ -64,4 +75,28 @@ function groupBy<T, K extends keyof never>(
     result[key].push(element);
     return result;
   }, initialValue);
+}
+
+export function checkExpressionSimplification(
+  expression: Expression,
+  context: ValidationContext,
+): void {
+  if (isExpressionLiteral(expression)) {
+    return;
+  }
+
+  const evaluatedExpression = evaluateExpression(
+    expression,
+    new EvaluationContext(), // don't know the variable or runtime parameter values that are required for simplification
+    context,
+    EvaluationStrategy.EXHAUSTIVE,
+  );
+  if (evaluatedExpression !== undefined) {
+    context.accept(
+      'info',
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      `The expression can be simplified to ${evaluatedExpression}`,
+      { node: expression },
+    );
+  }
 }

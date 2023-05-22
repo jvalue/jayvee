@@ -22,6 +22,7 @@ import { validatePipelineDefinition } from './checks/pipeline-definition';
 import { validatePropertyBody } from './checks/property-body';
 import { validateRangeLiteral } from './checks/range-literal';
 import { validateRegexLiteral } from './checks/regex-literal';
+import { validateTransformBody } from './checks/transform-body';
 import { validateValuetypeDefinition } from './checks/valuetype-definition';
 import { ValidationContext } from './validation-context';
 
@@ -43,6 +44,7 @@ export class JayveeValidationRegistry extends ValidationRegistry {
       RangeLiteral: wrapCheck(validateRangeLiteral),
       RegexLiteral: wrapCheck(validateRegexLiteral),
       ValuetypeDefinition: wrapCheck(validateValuetypeDefinition),
+      TransformBody: wrapCheck(validateTransformBody),
     });
   }
 }

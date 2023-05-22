@@ -2,7 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { evaluatePropertyValueExpression } from '../ast/expressions/evaluation';
+import {
+  EvaluationContext,
+  evaluatePropertyValueExpression,
+} from '../ast/expressions/evaluation';
 import { NUMBER_TYPEGUARD } from '../ast/expressions/typeguards';
 import {
   PropertyAssignment,
@@ -52,10 +55,12 @@ export class LengthConstraintMetaInformation extends ConstraintMetaInformation {
         }
         const minLength = evaluatePropertyValueExpression(
           minLengthProperty.value,
+          new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
           NUMBER_TYPEGUARD,
         );
         const maxLength = evaluatePropertyValueExpression(
           maxLengthProperty.value,
+          new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
           NUMBER_TYPEGUARD,
         );
 
@@ -99,6 +104,7 @@ function nonNegativeValidation(
 
   const value = evaluatePropertyValueExpression(
     propertyValue,
+    new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
     NUMBER_TYPEGUARD,
   );
 

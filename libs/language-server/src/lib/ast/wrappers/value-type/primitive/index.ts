@@ -27,3 +27,7 @@ export {
   type ValuetypeAssignmentValuetype,
   isValuetypeAssignmentValuetype,
 } from './valuetype-assignment-valuetype';
+export {
+  TransformValuetype,
+  isTransformValuetype,
+} from './transform-valuetype';

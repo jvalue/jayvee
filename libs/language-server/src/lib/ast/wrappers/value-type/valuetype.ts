@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { type InternalValueRepresentation } from '../../expressions/evaluation';
 import {
   PrimitiveValuetypeKeywordLiteral,
   ValuetypeDefinition,
@@ -9,17 +10,17 @@ import {
 
 // eslint-disable-next-line import/no-cycle
 import { AtomicValuetype } from './atomic-valuetype';
-// eslint-disable-next-line import/no-cycle
 import {
-  BooleanValuetype,
-  CellRangeValuetype,
-  CollectionValuetype,
-  ConstraintValuetype,
-  DecimalValuetype,
-  IntegerValuetype,
-  RegexValuetype,
-  TextValuetype,
-  ValuetypeAssignmentValuetype,
+  type BooleanValuetype,
+  type CellRangeValuetype,
+  type CollectionValuetype,
+  type ConstraintValuetype,
+  type DecimalValuetype,
+  type IntegerValuetype,
+  type RegexValuetype,
+  type TextValuetype,
+  type TransformValuetype,
+  type ValuetypeAssignmentValuetype,
 } from './primitive';
 
 export type ValuetypeAstNode =
@@ -30,7 +31,9 @@ export interface VisitableValuetype {
   acceptVisitor(visitor: ValuetypeVisitor): void;
 }
 
-export interface Valuetype extends VisitableValuetype {
+export interface Valuetype<
+  I extends InternalValueRepresentation = InternalValueRepresentation,
+> extends VisitableValuetype {
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R;
 
   /**
@@ -54,11 +57,23 @@ export interface Valuetype extends VisitableValuetype {
    */
   isConvertibleTo(target: Valuetype): boolean;
 
+  /**
+   * Typeguard to validate whether a given value is in the correct internal representation of this valuetype.
+   * For example, a TextValuetype has the internal representation string.
+   */
+  isInternalValueRepresentation(
+    operandValue: InternalValueRepresentation,
+  ): operandValue is I;
+
   isAllowedAsRuntimeParameter(): boolean;
   getName(): string;
+
+  equals(target: Valuetype): boolean;
 }
 
-export abstract class AbstractValuetype implements Valuetype {
+export abstract class AbstractValuetype<I extends InternalValueRepresentation>
+  implements Valuetype<I>
+{
   constructor(protected readonly supertype?: Valuetype) {}
 
   abstract acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R;
@@ -78,9 +93,17 @@ export abstract class AbstractValuetype implements Valuetype {
     return this.supertype;
   }
 
+  equals(target: Valuetype): boolean {
+    return this.isConvertibleTo(target) && target.isConvertibleTo(this);
+  }
+
   abstract isAllowedAsRuntimeParameter(): boolean;
 
   abstract isConvertibleTo(target: Valuetype): boolean;
+
+  abstract isInternalValueRepresentation(
+    operandValue: InternalValueRepresentation,
+  ): operandValue is I;
 
   abstract getName(): string;
 }
@@ -96,6 +119,7 @@ export abstract class ValuetypeVisitor<R = unknown> {
   abstract visitConstraint(valuetype: ConstraintValuetype): R;
   abstract visitValuetypeAssignment(valuetype: ValuetypeAssignmentValuetype): R;
   abstract visitCollection(valuetype: CollectionValuetype): R;
+  abstract visitTransform(valuetype: TransformValuetype): R;
 
   abstract visitAtomicValuetype(valuetype: AtomicValuetype): R;
 }

@@ -8,23 +8,30 @@ import {
   BlockDefinition,
   CellRangeWrapper,
   ConstraintDefinition,
+  EvaluationContext,
   Expression,
   PipelineDefinition,
   PropertyAssignment,
+  TransformDefinition,
   ValuetypeAssignment,
   evaluateExpression,
   getOrFailMetaInformation,
   isCollectionLiteral,
   isExpression,
   isPipelineDefinition,
+  isPropertyBody,
   isRuntimeParameterLiteral,
+  isTransformDefinition,
   isValuetypeAssignment,
 } from '@jvalue/jayvee-language-server';
 import { assertUnreachable } from 'langium';
 
 import { Logger } from './logger';
 
-export type StackNode = BlockDefinition | ConstraintDefinition;
+export type StackNode =
+  | BlockDefinition
+  | ConstraintDefinition
+  | TransformDefinition;
 
 export class ExecutionContext {
   private readonly stack: StackNode[] = [];
@@ -32,7 +39,7 @@ export class ExecutionContext {
   constructor(
     public readonly pipeline: PipelineDefinition,
     public readonly logger: Logger,
-    public readonly runtimeParameters: Map<string, string | number | boolean>,
+    public readonly evaluationContext: EvaluationContext,
   ) {
     logger.setLoggingContext(pipeline.name);
   }
@@ -50,6 +57,9 @@ export class ExecutionContext {
     this.updateLoggingContext();
   }
 
+  /**
+   * @returns the latest stack node. Returns the pipeline if the stack is empty.
+   */
   public getCurrentNode(): StackNode | PipelineDefinition {
     const currentNode = this.stack[this.stack.length - 1];
     if (currentNode === undefined) {
@@ -99,6 +109,13 @@ export class ExecutionContext {
     return propertyValue;
   }
 
+  public getTransformPropertyValue(propertyName: string): TransformDefinition {
+    const propertyValue = this.getPropertyValue(propertyName);
+    assert(isTransformDefinition(propertyValue));
+
+    return propertyValue;
+  }
+
   public getExpressionCollectionPropertyValue(
     propertyName: string,
   ): Expression[] {
@@ -117,7 +134,7 @@ export class ExecutionContext {
     assert(propertyValue.every(isExpression));
 
     const evaluatedExpressions = propertyValue.map((x) =>
-      evaluateExpression(x),
+      evaluateExpression(x, this.evaluationContext),
     );
     assert(
       evaluatedExpressions.every(
@@ -136,7 +153,7 @@ export class ExecutionContext {
     assert(propertyValue.every(isExpression));
 
     const evaluatedExpressions = propertyValue.map((x) =>
-      evaluateExpression(x),
+      evaluateExpression(x, this.evaluationContext),
     );
     assert(evaluatedExpressions.every(isValuetypeAssignment));
     return evaluatedExpressions;
@@ -147,9 +164,13 @@ export class ExecutionContext {
     if (isPipelineDefinition(currentNode)) {
       return undefined;
     }
-    return currentNode.body.properties.find(
-      (property) => property.name === propertyName,
-    );
+
+    const body = currentNode.body;
+    if (!isPropertyBody(body)) {
+      return undefined;
+    }
+
+    return body.properties.find((property) => property.name === propertyName);
   }
 
   public getOrFailProperty(propertyName: string): PropertyAssignment {
@@ -168,13 +189,13 @@ export class ExecutionContext {
     const propertyValue = property.value;
 
     if (isRuntimeParameterLiteral(propertyValue)) {
-      return this.runtimeParameters.get(propertyValue.name);
+      return this.evaluationContext.getValueForRuntimeParameter(propertyValue);
     }
     if (isCollectionLiteral(propertyValue)) {
       return propertyValue.values;
     }
     if (isExpression(propertyValue)) {
-      return evaluateExpression(propertyValue);
+      return evaluateExpression(propertyValue, this.evaluationContext);
     }
     assertUnreachable(propertyValue);
   }
@@ -182,6 +203,10 @@ export class ExecutionContext {
   private getDefaultPropertyValue(propertyName: string): unknown {
     const currentNode = this.getCurrentNode();
     assert(!isPipelineDefinition(currentNode));
+
+    if (isTransformDefinition(currentNode)) {
+      return undefined;
+    }
 
     const metaInf = getOrFailMetaInformation(currentNode.type);
     const propertySpec = metaInf.getPropertySpecification(propertyName);

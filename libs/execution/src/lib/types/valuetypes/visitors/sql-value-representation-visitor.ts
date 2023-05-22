@@ -2,11 +2,14 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
+
 import {
   AtomicValuetype,
   BooleanValuetype,
   DecimalValuetype,
   IntegerValuetype,
+  InternalValueRepresentation,
   TextValuetype,
   ValuetypeVisitor,
 } from '@jvalue/jayvee-language-server';
@@ -14,10 +17,12 @@ import {
 import { StandardRepresentationResolver } from '../standard-representation';
 
 export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
-  (value: unknown) => string
+  (value: InternalValueRepresentation) => string
 > {
-  visitBoolean(valuetype: BooleanValuetype): (value: unknown) => string {
-    return (value: unknown) => {
+  visitBoolean(
+    valuetype: BooleanValuetype,
+  ): (value: InternalValueRepresentation) => string {
+    return (value: InternalValueRepresentation) => {
       const standardRepresentation = new StandardRepresentationResolver(
         value,
       ).fromBooleanValuetype(valuetype);
@@ -25,8 +30,10 @@ export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
     };
   }
 
-  visitDecimal(valuetype: DecimalValuetype): (value: unknown) => string {
-    return (value: unknown) => {
+  visitDecimal(
+    valuetype: DecimalValuetype,
+  ): (value: InternalValueRepresentation) => string {
+    return (value: InternalValueRepresentation) => {
       const standardRepresentation = new StandardRepresentationResolver(
         value,
       ).fromDecimalValuetype(valuetype);
@@ -34,8 +41,10 @@ export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
     };
   }
 
-  visitInteger(valuetype: IntegerValuetype): (value: unknown) => string {
-    return (value: unknown) => {
+  visitInteger(
+    valuetype: IntegerValuetype,
+  ): (value: InternalValueRepresentation) => string {
+    return (value: InternalValueRepresentation) => {
       const standardRepresentation = new StandardRepresentationResolver(
         value,
       ).fromIntegerValuetype(valuetype);
@@ -43,8 +52,10 @@ export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
     };
   }
 
-  visitText(valuetype: TextValuetype): (value: unknown) => string {
-    return (value: unknown) => {
+  visitText(
+    valuetype: TextValuetype,
+  ): (value: InternalValueRepresentation) => string {
+    return (value: InternalValueRepresentation) => {
       const standardRepresentation = new StandardRepresentationResolver(
         value,
       ).fromTextValuetype(valuetype);
@@ -57,37 +68,47 @@ export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
 
   override visitAtomicValuetype(
     valuetype: AtomicValuetype,
-  ): (value: unknown) => string {
-    return valuetype.acceptVisitor(this);
+  ): (value: InternalValueRepresentation) => string {
+    const supertype = valuetype.getSupertype();
+    assert(supertype !== undefined);
+    return supertype.acceptVisitor(this);
   }
 
-  override visitRegex(): (value: unknown) => string {
+  override visitRegex(): (value: InternalValueRepresentation) => string {
     throw new Error(
       'No visit implementation given for regex. Cannot be the type of a column.',
     );
   }
 
-  override visitCellRange(): (value: unknown) => string {
+  override visitCellRange(): (value: InternalValueRepresentation) => string {
     throw new Error(
       'No visit implementation given for cell ranges. Cannot be the type of a column.',
     );
   }
 
-  override visitConstraint(): (value: unknown) => string {
+  override visitConstraint(): (value: InternalValueRepresentation) => string {
     throw new Error(
       'No visit implementation given for constraints. Cannot be the type of a column.',
     );
   }
 
-  override visitValuetypeAssignment(): (value: unknown) => string {
+  override visitValuetypeAssignment(): (
+    value: InternalValueRepresentation,
+  ) => string {
     throw new Error(
       'No visit implementation given for valuetype assignments. Cannot be the type of a column.',
     );
   }
 
-  override visitCollection(): (value: unknown) => string {
+  override visitCollection(): (value: InternalValueRepresentation) => string {
     throw new Error(
       'No visit implementation given for collections. Cannot be the type of a column.',
+    );
+  }
+
+  override visitTransform(): (value: InternalValueRepresentation) => string {
+    throw new Error(
+      'No visit implementation given for transforms. Cannot be the type of a column.',
     );
   }
 }

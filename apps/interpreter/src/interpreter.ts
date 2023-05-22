@@ -16,6 +16,7 @@ import { StdExecExtension } from '@jvalue/jayvee-extensions/std/exec';
 import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
 import {
   BlockDefinition,
+  EvaluationContext,
   JayveeModel,
   PipelineDefinition,
   collectChildren,
@@ -100,7 +101,7 @@ async function runPipeline(
   const executionContext = new ExecutionContext(
     pipeline,
     loggerFactory.createLogger(),
-    runtimeParameters,
+    new EvaluationContext(runtimeParameters, new Map()),
   );
 
   logPipelineOverview(pipeline, runtimeParameters, executionContext.logger);

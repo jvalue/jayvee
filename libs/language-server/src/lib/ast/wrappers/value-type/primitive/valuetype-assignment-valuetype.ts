@@ -2,16 +2,17 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { type InternalValueRepresentation } from '../../../expressions/evaluation';
+import {
+  ValuetypeAssignment as AstValuetypeAssignment,
+  isValuetypeAssignment as isAstValuetypeAssignment,
+} from '../../../generated/ast';
 // eslint-disable-next-line import/no-cycle
-import { Valuetype, ValuetypeVisitor } from '../valuetype';
+import { ValuetypeVisitor } from '../valuetype';
 
 import { PrimitiveValuetype } from './primitive-valuetype';
 
-class ValuetypeAssignmentValuetypeImpl extends PrimitiveValuetype {
-  override isConvertibleTo(target: Valuetype): boolean {
-    return target === this;
-  }
-
+class ValuetypeAssignmentValuetypeImpl extends PrimitiveValuetype<AstValuetypeAssignment> {
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
     return visitor.visitValuetypeAssignment(this);
   }
@@ -22,6 +23,12 @@ class ValuetypeAssignmentValuetypeImpl extends PrimitiveValuetype {
 
   override getName(): 'valuetypeAssignment' {
     return 'valuetypeAssignment';
+  }
+
+  override isInternalValueRepresentation(
+    operandValue: InternalValueRepresentation,
+  ): operandValue is AstValuetypeAssignment {
+    return isAstValuetypeAssignment(operandValue);
   }
 }
 

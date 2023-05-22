@@ -6,6 +6,7 @@ import './cellrange'
 import './constraint'
 import './valuetype'
 import './terminal'
+import './transform'
 
 Expression:
   OrExpression;
@@ -45,13 +46,16 @@ UnaryExpression:
   operator=('not' | '+' | '-' | 'sqrt' | 'floor' | 'ceil' | 'round') expression=PrimaryExpression;
 
 ExpressionLiteral:
+  ValueLiteral
+  | ReferenceLiteral;
+
+ValueLiteral:
   TextLiteral
   | NumericLiteral
   | BooleanLiteral
   | RegexLiteral
   | CellRangeLiteral
   | ValuetypeAssignmentLiteral
-  | ConstraintReferenceLiteral
   | CollectionLiteral;
 
 TextLiteral:
@@ -68,3 +72,11 @@ RegexLiteral:
 
 CollectionLiteral:
   '[' (values+=(Expression) (',' values+=(Expression))*)? ','? ']';
+
+ReferenceLiteral:
+  value=[Referencable];
+
+Referencable:
+  ConstraintDefinition
+  | TransformDefinition
+  | TransformPortDefinition;

@@ -9,21 +9,26 @@ import {
   CollectionLiteral,
   Expression,
   ExpressionLiteral,
+  ReferenceLiteral,
   isBinaryExpression,
   isBooleanLiteral,
   isCellRangeLiteral,
   isCollectionLiteral,
-  isConstraintReferenceLiteral,
+  isConstraintDefinition,
   isExpressionLiteral,
   isNumericLiteral,
+  isReferenceLiteral,
   isRegexLiteral,
   isTextLiteral,
+  isTransformDefinition,
+  isTransformPortDefinition,
   isUnaryExpression,
   isValuetypeAssignmentLiteral,
 } from '../generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-valuetypes';
 import { type Valuetype } from '../wrappers/value-type/valuetype';
+import { createValuetype } from '../wrappers/value-type/valuetype-util';
 
 import {
   binaryOperatorRegistry,
@@ -64,9 +69,12 @@ export function inferExpressionType(
   assertUnreachable(expression);
 }
 
+/**
+ * @returns the resolved valuetype or undefined (e.g. if a reference is not resolved)
+ */
 function inferTypeFromExpressionLiteral(
   expression: ExpressionLiteral,
-): Valuetype {
+): Valuetype | undefined {
   if (isTextLiteral(expression)) {
     return PrimitiveValuetypes.Text;
   }
@@ -82,9 +90,6 @@ function inferTypeFromExpressionLiteral(
   if (isCellRangeLiteral(expression)) {
     return PrimitiveValuetypes.CellRange;
   }
-  if (isConstraintReferenceLiteral(expression)) {
-    return PrimitiveValuetypes.Constraint;
-  }
   if (isRegexLiteral(expression)) {
     return PrimitiveValuetypes.Regex;
   }
@@ -94,7 +99,37 @@ function inferTypeFromExpressionLiteral(
   if (isCollectionLiteral(expression)) {
     return PrimitiveValuetypes.Collection;
   }
+  if (isReferenceLiteral(expression)) {
+    return inferTypeFromReferenceLiteral(expression);
+  }
   assertUnreachable(expression);
+}
+
+function inferTypeFromReferenceLiteral(
+  expression: ReferenceLiteral,
+): Valuetype | undefined {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const referenced = expression?.value?.ref;
+  if (referenced === undefined) {
+    return undefined;
+  }
+
+  if (isConstraintDefinition(referenced)) {
+    return PrimitiveValuetypes.Constraint;
+  }
+  if (isTransformDefinition(referenced)) {
+    return PrimitiveValuetypes.Transform;
+  }
+  if (isTransformPortDefinition(referenced)) {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const valueType = referenced?.valueType;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (valueType === undefined) {
+      return undefined;
+    }
+    return createValuetype(valueType);
+  }
+  assertUnreachable(referenced);
 }
 
 export interface TypedCollectionValidation {

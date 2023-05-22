@@ -9,14 +9,7 @@
 
 import { inferExpressionType } from '../../ast';
 import {
-  EvaluationStrategy,
-  evaluateExpression,
-} from '../../ast/expressions/evaluation';
-import {
-  Expression,
   PropertyAssignment,
-  isExpression,
-  isExpressionLiteral,
   isRuntimeParameterLiteral,
 } from '../../ast/generated/ast';
 import {
@@ -24,6 +17,7 @@ import {
   PropertySpecification,
 } from '../../meta-information/meta-inf';
 import { ValidationContext } from '../validation-context';
+import { checkExpressionSimplification } from '../validation-util';
 
 export function validatePropertyAssignment(
   property: PropertyAssignment,
@@ -95,30 +89,5 @@ function checkPropertyValueTyping(
     return;
   }
 
-  if (isExpression(propertyValue)) {
-    checkExpressionSimplification(propertyValue, context);
-  }
-}
-
-function checkExpressionSimplification(
-  expression: Expression,
-  context: ValidationContext,
-): void {
-  if (isExpressionLiteral(expression)) {
-    return;
-  }
-
-  const evaluatedExpression = evaluateExpression(
-    expression,
-    EvaluationStrategy.EXHAUSTIVE,
-    context,
-  );
-  if (evaluatedExpression !== undefined) {
-    context.accept(
-      'info',
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      `The expression can be simplified to ${evaluatedExpression}`,
-      { node: expression },
-    );
-  }
+  checkExpressionSimplification(propertyValue, context);
 }

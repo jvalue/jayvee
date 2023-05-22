@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { type InternalValueRepresentation } from '../../../expressions/evaluation';
 import { PrimitiveValuetypeKeyword } from '../../../generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { Valuetype, ValuetypeVisitor } from '../valuetype';
@@ -9,9 +10,9 @@ import { Valuetype, ValuetypeVisitor } from '../valuetype';
 import { Decimal } from './decimal-valuetype';
 import { PrimitiveValuetype } from './primitive-valuetype';
 
-class IntegerValuetypeImpl extends PrimitiveValuetype {
+class IntegerValuetypeImpl extends PrimitiveValuetype<number> {
   override isConvertibleTo(target: Valuetype): boolean {
-    return target === this || target === Decimal;
+    return super.isConvertibleTo(target) || target === Decimal;
   }
 
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
@@ -24,6 +25,12 @@ class IntegerValuetypeImpl extends PrimitiveValuetype {
 
   override getName(): PrimitiveValuetypeKeyword {
     return 'integer';
+  }
+
+  override isInternalValueRepresentation(
+    operandValue: InternalValueRepresentation,
+  ): operandValue is number {
+    return typeof operandValue === 'number' && Number.isInteger(operandValue);
   }
 }
 

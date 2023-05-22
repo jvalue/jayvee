@@ -4,6 +4,7 @@
 
 import {
   BlockMetaInformation,
+  EvaluationContext,
   IOType,
   NUMBER_TYPEGUARD,
   PrimitiveValuetypes,
@@ -57,10 +58,12 @@ export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
 
         const lineFrom = evaluatePropertyValueExpression(
           lineFromProperty.value,
+          new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
           NUMBER_TYPEGUARD,
         );
         const lineTo = evaluatePropertyValueExpression(
           lineToProperty.value,
+          new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
           NUMBER_TYPEGUARD,
         );
 
@@ -91,6 +94,7 @@ function greaterThanZeroValidation(
   }
   const value = evaluatePropertyValueExpression(
     propertyValue,
+    new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
     NUMBER_TYPEGUARD,
   );
 

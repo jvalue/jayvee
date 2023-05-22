@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
+
 import {
   AtomicValuetype,
   ValuetypeVisitor,
@@ -25,7 +27,9 @@ export class SQLColumnTypeVisitor extends ValuetypeVisitor<string> {
   }
 
   override visitAtomicValuetype(valuetype: AtomicValuetype): string {
-    return valuetype.acceptVisitor(this);
+    const supertype = valuetype.getSupertype();
+    assert(supertype !== undefined);
+    return supertype.acceptVisitor(this);
   }
 
   override visitRegex(): string {
@@ -55,6 +59,12 @@ export class SQLColumnTypeVisitor extends ValuetypeVisitor<string> {
   override visitCollection(): string {
     throw new Error(
       'No visit implementation given for collections. Cannot be the type of a column.',
+    );
+  }
+
+  override visitTransform(): string {
+    throw new Error(
+      'No visit implementation given for transforms. Cannot be the type of a column.',
     );
   }
 }

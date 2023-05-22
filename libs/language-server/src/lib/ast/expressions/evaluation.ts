@@ -4,25 +4,35 @@
 
 import { strict as assert } from 'assert';
 
-import { assertUnreachable, isReference } from 'langium';
+import { assertUnreachable } from 'langium';
 
 import { ValidationContext } from '../../validation/validation-context';
 import {
   CollectionLiteral,
   ConstraintDefinition,
   Expression,
-  ExpressionLiteral,
+  ReferenceLiteral,
+  RuntimeParameterLiteral,
+  TransformDefinition,
+  ValueLiteral,
   ValuetypeAssignment,
   isBinaryExpression,
   isCellRangeLiteral,
   isCollectionLiteral,
+  isConstraintDefinition,
+  isExpression,
   isExpressionLiteral,
+  isReferenceLiteral,
   isRegexLiteral,
+  isRuntimeParameterLiteral,
+  isTransformDefinition,
+  isTransformPortDefinition,
   isUnaryExpression,
+  isValueLiteral,
 } from '../generated/ast';
-// eslint-disable-next-line import/no-cycle
-import { CellRangeWrapper } from '../wrappers';
+import { CellRangeWrapper } from '../wrappers/cell-range-wrapper';
 
+// eslint-disable-next-line import/no-cycle
 import {
   binaryOperatorRegistry,
   unaryOperatorRegistry,
@@ -33,7 +43,7 @@ export enum EvaluationStrategy {
   LAZY,
 }
 
-export type OperandValue =
+export type InternalValueRepresentation =
   | boolean
   | number
   | string
@@ -41,16 +51,88 @@ export type OperandValue =
   | CellRangeWrapper
   | ConstraintDefinition
   | ValuetypeAssignment
-  | CollectionLiteral;
-export type OperandValueTypeguard<T extends OperandValue> = (
-  value: OperandValue,
-) => value is T;
+  | CollectionLiteral
+  | TransformDefinition;
 
-export function evaluatePropertyValueExpression<T extends OperandValue>(
-  propertyValue: Expression,
-  typeguard: OperandValueTypeguard<T>,
+export class EvaluationContext {
+  constructor(
+    public runtimeParameterValues: Map<
+      string,
+      InternalValueRepresentation
+    > = new Map(),
+    public variableValues: Map<string, InternalValueRepresentation> = new Map(),
+  ) {}
+
+  getValueFor(
+    literal: ReferenceLiteral | RuntimeParameterLiteral,
+  ): InternalValueRepresentation | undefined {
+    if (isReferenceLiteral(literal)) {
+      return this.getValueForReference(literal);
+    } else if (isRuntimeParameterLiteral(literal)) {
+      return this.getValueForRuntimeParameter(literal);
+    }
+    assertUnreachable(literal);
+  }
+
+  setValueForReference(
+    refText: string,
+    value: InternalValueRepresentation,
+  ): void {
+    this.variableValues.set(refText, value);
+  }
+
+  deleteValueForReference(refText: string): void {
+    this.variableValues.delete(refText);
+  }
+
+  getValueForReference(
+    referenceLiteral: ReferenceLiteral,
+  ): InternalValueRepresentation | undefined {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const dereferenced = referenceLiteral?.value?.ref;
+    if (dereferenced === undefined) {
+      return undefined;
+    }
+
+    if (isConstraintDefinition(dereferenced)) {
+      return dereferenced;
+    }
+    if (isTransformDefinition(dereferenced)) {
+      return dereferenced;
+    }
+    if (isTransformPortDefinition(dereferenced)) {
+      return this.variableValues.get(dereferenced.name);
+    }
+    assertUnreachable(dereferenced);
+  }
+
+  getValueForRuntimeParameter(
+    parameterLiteral: RuntimeParameterLiteral,
+  ): InternalValueRepresentation | undefined {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const key = parameterLiteral?.name;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (key === undefined) {
+      return undefined;
+    }
+
+    return this.runtimeParameterValues.get(key);
+  }
+}
+
+export type InternalValueRepresentationTypeguard<
+  T extends InternalValueRepresentation,
+> = (value: InternalValueRepresentation) => value is T;
+
+export function evaluatePropertyValueExpression<
+  T extends InternalValueRepresentation,
+>(
+  propertyValue: Expression | RuntimeParameterLiteral,
+  evaluationContext: EvaluationContext,
+  typeguard: InternalValueRepresentationTypeguard<T>,
 ): T {
-  const resultingValue = evaluateExpression(propertyValue);
+  assert(isExpression(propertyValue));
+  const resultingValue = evaluateExpression(propertyValue, evaluationContext);
   assert(resultingValue !== undefined);
   assert(typeguard(resultingValue));
   return resultingValue;
@@ -58,28 +140,34 @@ export function evaluatePropertyValueExpression<T extends OperandValue>(
 
 export function evaluateExpression(
   expression: Expression,
-  strategy: EvaluationStrategy = EvaluationStrategy.LAZY,
+  evaluationContext: EvaluationContext,
   context: ValidationContext | undefined = undefined,
-): OperandValue | undefined {
+  strategy: EvaluationStrategy = EvaluationStrategy.LAZY,
+): InternalValueRepresentation | undefined {
   if (isExpressionLiteral(expression)) {
-    return evaluateExpressionLiteral(expression);
+    if (isReferenceLiteral(expression)) {
+      return evaluationContext.getValueFor(expression);
+    } else if (isValueLiteral(expression)) {
+      return evaluateValueLiteral(expression);
+    }
+    assertUnreachable(expression);
   }
   if (isUnaryExpression(expression)) {
     const operator = expression.operator;
     const evaluator = unaryOperatorRegistry[operator].evaluation;
-    return evaluator.evaluate(expression, strategy, context);
+    return evaluator.evaluate(expression, evaluationContext, strategy, context);
   }
   if (isBinaryExpression(expression)) {
     const operator = expression.operator;
     const evaluator = binaryOperatorRegistry[operator].evaluation;
-    return evaluator.evaluate(expression, strategy, context);
+    return evaluator.evaluate(expression, evaluationContext, strategy, context);
   }
   assertUnreachable(expression);
 }
 
-function evaluateExpressionLiteral(
-  expression: ExpressionLiteral,
-): OperandValue | undefined {
+function evaluateValueLiteral(
+  expression: ValueLiteral,
+): InternalValueRepresentation | undefined {
   if (isCollectionLiteral(expression)) {
     return expression;
   }
@@ -96,12 +184,6 @@ function evaluateExpressionLiteral(
     }
     return new RegExp(expression.value);
   }
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (isReference(expression?.value)) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    return expression?.value?.ref;
-  }
-
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   return expression?.value;
 }

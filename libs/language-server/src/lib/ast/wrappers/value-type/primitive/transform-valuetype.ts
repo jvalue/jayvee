@@ -4,40 +4,40 @@
 
 import { type InternalValueRepresentation } from '../../../expressions/evaluation';
 import {
-  ConstraintDefinition,
-  isConstraintDefinition,
+  TransformDefinition,
+  isTransformDefinition,
 } from '../../../generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { ValuetypeVisitor } from '../valuetype';
 
 import { PrimitiveValuetype } from './primitive-valuetype';
 
-class ConstraintValuetypeImpl extends PrimitiveValuetype<ConstraintDefinition> {
+class TransformValuetypeImpl extends PrimitiveValuetype<TransformDefinition> {
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {
-    return visitor.visitConstraint(this);
+    return visitor.visitTransform(this);
   }
 
   override isAllowedAsRuntimeParameter(): boolean {
     return false;
   }
 
-  override getName(): 'constraint' {
-    return 'constraint';
+  override getName(): 'transform' {
+    return 'transform';
   }
 
   override isInternalValueRepresentation(
     operandValue: InternalValueRepresentation,
-  ): operandValue is ConstraintDefinition {
-    return isConstraintDefinition(operandValue);
+  ): operandValue is TransformDefinition {
+    return isTransformDefinition(operandValue);
   }
 }
 
 // Only export instance to enforce singleton
-export const Constraint = new ConstraintValuetypeImpl();
+export const Transform = new TransformValuetypeImpl();
 
 // Only export type to allow narrowing down in visitors
-export type ConstraintValuetype = InstanceType<typeof ConstraintValuetypeImpl>;
+export type TransformValuetype = InstanceType<typeof TransformValuetypeImpl>;
 
-export function isConstraintValuetype(v: unknown): v is ConstraintValuetype {
-  return v === Constraint;
+export function isTransformValuetype(v: unknown): v is TransformValuetype {
+  return v === Transform;
 }

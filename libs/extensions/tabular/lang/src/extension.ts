@@ -14,6 +14,7 @@ import { ColumnDeleterMetaInformation } from './lib/column-deleter-meta-inf';
 import { CSVInterpreterMetaInformation } from './lib/csv-interpreter-meta-inf';
 import { RowDeleterMetaInformation } from './lib/row-deleter-meta-inf';
 import { TableInterpreterMetaInformation } from './lib/table-interpreter-meta-inf';
+import { TableTransformerMetaInformation } from './lib/table-transformer-meta-inf';
 
 export class TabularLangExtension implements JayveeLangExtension {
   getBlockMetaInf(): Array<ConstructorClass<BlockMetaInformation>> {
@@ -24,6 +25,7 @@ export class TabularLangExtension implements JayveeLangExtension {
       CellWriterMetaInformation,
       TableInterpreterMetaInformation,
       CSVInterpreterMetaInformation,
+      TableTransformerMetaInformation,
     ];
   }
 }

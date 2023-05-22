@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
+
 import {
   AtomicValuetype,
   ValuetypeVisitor,
@@ -55,7 +57,9 @@ export class IsValidVisitor extends ValuetypeVisitor<boolean> {
   }
 
   override visitAtomicValuetype(valuetype: AtomicValuetype): boolean {
-    if (!valuetype.acceptVisitor(this)) {
+    const supertype = valuetype.getSupertype();
+    assert(supertype !== undefined);
+    if (!supertype.acceptVisitor(this)) {
       return false;
     }
 
@@ -105,6 +109,12 @@ export class IsValidVisitor extends ValuetypeVisitor<boolean> {
   override visitCollection(): boolean {
     throw new Error(
       'No visit implementation given for collections. Cannot be the type of a column.',
+    );
+  }
+
+  override visitTransform(): boolean {
+    throw new Error(
+      'No visit implementation given for transforms. Cannot be the type of a column.',
     );
   }
 }
