@@ -90,6 +90,13 @@ function checkSingleInput(
       });
     });
   }
+
+  if (inputs.length === 0) {
+    context.accept('error', 'There has to be a single input port', {
+      node: transformBody.$container,
+      property: 'name',
+    });
+  }
 }
 
 function checkSingleOutput(
@@ -107,6 +114,13 @@ function checkSingleOutput(
         node: input,
         property: 'kind',
       });
+    });
+  }
+
+  if (outputs.length === 0) {
+    context.accept('error', 'There has to be a single output port', {
+      node: transformBody.$container,
+      property: 'name',
     });
   }
 }
