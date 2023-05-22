@@ -38,6 +38,7 @@ class ` :NumericLiteral` {
     value = 3
 }
 
+%% Uses spaces in the name so it is unique
 class `  :NumericLiteral` {
     value = 5
 }
@@ -99,6 +100,7 @@ For example, depending on the associativity of the binary `+` operator, the expr
 
 The associativity of operators is also defined in the Jayvee grammar, more specifically by the structure of the grammar rules that define operators.
 For details on how to encode the different kinds of associativity in grammar rules, have a look at the "Associativity" section near the end of [this blog post](https://www.typefox.io/blog/parsing-expressions-with-xtext).
+The patterns described in the linked article can be found in [`expression.langium`](https://github.com/jvalue/jayvee/blob/main/libs/language-server/src/grammar/expression.langium), so each operator grammar rule encodes its own associativity.
 
 ## Typing of expressions
 
