@@ -31,8 +31,8 @@ export function validateTransformBody(
   checkUniqueNames(transformBody.ports, context, 'transform port');
   checkUniqueOutputAssignments(transformBody, context);
 
-  checkSingleInput(transformBody, context);
-  checkSingleOutput(transformBody, context);
+  checkSinglePortOfKind(transformBody, 'from', context);
+  checkSinglePortOfKind(transformBody, 'to', context);
 
   checkAreInputsUsed(transformBody, context);
 
@@ -73,52 +73,28 @@ function checkUniqueOutputAssignments(
   }
 }
 
-function checkSingleInput(
+function checkSinglePortOfKind(
   transformBody: TransformBody,
+  portKind: TransformPortDefinition['kind'],
   context: ValidationContext,
 ): void {
-  const inputs = transformBody.ports?.filter((x) => x.kind === 'from');
-  if (inputs === undefined) {
+  const portKindName = portKind === 'to' ? 'output' : 'input';
+
+  const ports = transformBody.ports?.filter((x) => x.kind === portKind);
+  if (ports === undefined) {
     return undefined;
   }
 
-  if (inputs.length > 1) {
-    inputs.forEach((input) => {
-      context.accept('error', 'More than one input port is defined', {
-        node: input,
-        property: 'kind',
+  if (ports.length > 1) {
+    ports.forEach((port) => {
+      context.accept('error', `More than one ${portKindName} port is defined`, {
+        node: port,
       });
     });
   }
 
-  if (inputs.length === 0) {
-    context.accept('error', 'There has to be a single input port', {
-      node: transformBody.$container,
-      property: 'name',
-    });
-  }
-}
-
-function checkSingleOutput(
-  transformBody: TransformBody,
-  context: ValidationContext,
-): void {
-  const outputs = transformBody.ports?.filter((x) => x.kind === 'to');
-  if (outputs === undefined) {
-    return undefined;
-  }
-
-  if (outputs.length > 1) {
-    outputs.forEach((input) => {
-      context.accept('error', 'More than one output port is defined', {
-        node: input,
-        property: 'kind',
-      });
-    });
-  }
-
-  if (outputs.length === 0) {
-    context.accept('error', 'There has to be a single output port', {
+  if (ports.length === 0) {
+    context.accept('error', `There has to be a single ${portKindName} port`, {
       node: transformBody.$container,
       property: 'name',
     });
