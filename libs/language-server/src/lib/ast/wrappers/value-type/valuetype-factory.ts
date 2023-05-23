@@ -8,9 +8,8 @@ import { assertUnreachable } from 'langium';
 
 import {
   PrimitiveValuetypeKeyword,
-  PrimitiveValuetypeKeywordLiteral,
   ValuetypeDefinition,
-  ValuetypeDefinitionReference,
+  ValuetypeReference,
   isPrimitiveValuetypeKeywordLiteral,
   isValuetypeDefinition,
   isValuetypeDefinitionReference,
@@ -40,11 +39,16 @@ Object.values(PrimitiveValuetypes).forEach((primitive) => {
 /**
  * Returns the singleton valuetype instance for a given valuetype keyword or definition.
  * Manages a cache under the hood to ensure singleton behavior.
- * @returns the desired valuetype instance or undefined in case of incomplete AST nodes.
+ * @returns the desired valuetype instance or undefined in case of incomplete AST nodes or a cycle in the hierarchy.
  */
 export function getValuetype(
-  identifier: PrimitiveValuetypeKeywordLiteral | ValuetypeDefinitionReference,
+  identifier: ValuetypeDefinition | ValuetypeReference | undefined,
+  visitedSupertypes: ValuetypeReference[] = [],
 ): Valuetype | undefined {
+  if (identifier === undefined) {
+    return undefined;
+  }
+
   if (isPrimitiveValuetypeKeywordLiteral(identifier)) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const keyword = identifier?.keyword;
@@ -52,19 +56,24 @@ export function getValuetype(
     if (keyword === undefined) {
       return undefined;
     }
-    return createOrGetValuetype(keyword);
+    return createOrGetValuetype(keyword, visitedSupertypes);
+  } else if (isValuetypeDefinition(identifier)) {
+    return createOrGetValuetype(identifier, visitedSupertypes);
   } else if (isValuetypeDefinitionReference(identifier)) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const referenced = identifier?.reference?.ref;
     if (referenced === undefined) {
       return undefined;
     }
-    return createOrGetValuetype(referenced);
+    return createOrGetValuetype(referenced, visitedSupertypes);
   }
   assertUnreachable(identifier);
 }
 
-function createOrGetValuetype(identifier: ValuetypeIdentifier): Valuetype {
+function createOrGetValuetype(
+  identifier: ValuetypeIdentifier,
+  visitedSupertypes: ValuetypeReference[] = [],
+): Valuetype | undefined {
   const existingValuetype = existingValuetypes.get(identifier);
   if (existingValuetype !== undefined) {
     return existingValuetype;
@@ -72,8 +81,26 @@ function createOrGetValuetype(identifier: ValuetypeIdentifier): Valuetype {
 
   assert(isValuetypeDefinition(identifier));
 
-  const primitive = createOrGetValuetype(identifier.type.keyword);
-  const createdValuetype = new AtomicValuetype(identifier, primitive);
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const identifierType = identifier?.type;
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (identifierType === undefined) {
+    return undefined;
+  }
+
+  const isCycleDetected = visitedSupertypes.includes(identifierType);
+  if (isCycleDetected) {
+    return undefined;
+  }
+  visitedSupertypes.push(identifierType);
+
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const supertype = getValuetype(identifier?.type, visitedSupertypes);
+  if (supertype === undefined) {
+    return undefined;
+  }
+
+  const createdValuetype = new AtomicValuetype(identifier, supertype);
   existingValuetypes.set(identifier, createdValuetype);
 
   return createdValuetype;

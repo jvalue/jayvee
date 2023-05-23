@@ -38,7 +38,7 @@ export class AllowlistConstraintMetaInformation extends ConstraintMetaInformatio
           },
         },
       },
-      ['text'],
+      PrimitiveValuetypes.Text,
     );
     super.docs = {
       description:

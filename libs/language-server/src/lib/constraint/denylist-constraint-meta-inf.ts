@@ -38,7 +38,7 @@ export class DenylistConstraintMetaInformation extends ConstraintMetaInformation
           },
         },
       },
-      ['text'],
+      PrimitiveValuetypes.Text,
     );
     super.docs = {
       description:

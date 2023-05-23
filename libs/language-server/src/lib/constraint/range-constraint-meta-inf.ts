@@ -36,7 +36,7 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
           defaultValue: true,
         },
       },
-      ['integer', 'decimal'],
+      PrimitiveValuetypes.Decimal,
       (propertyBody, context) => {
         const lowerBoundProperty = propertyBody.properties.find(
           (p) => p.name === 'lowerBound',

@@ -99,7 +99,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       acceptor({
         label: metaInf.type,
         labelDetails: {
-          detail: ` ${metaInf.compatiblePrimitiveValuetypes.join(',')}`,
+          detail: ` ${metaInf.compatibleValuetype.getName()}`,
         },
         kind: CompletionItemKind.Class,
         detail: `(constraint type)`,
