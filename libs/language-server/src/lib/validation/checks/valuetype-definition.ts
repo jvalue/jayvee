@@ -16,7 +16,6 @@ import {
   PrimitiveValuetypes,
   evaluateExpression,
   getValuetype,
-  hasSupertypeCycle,
   validateTypedCollection,
 } from '../../ast';
 import { ValuetypeDefinition } from '../../ast/generated/ast';
@@ -38,7 +37,8 @@ function checkSupertypeCycle(
   valuetypeDefinition: ValuetypeDefinition,
   context: ValidationContext,
 ): void {
-  const hasCycle = hasSupertypeCycle(valuetypeDefinition);
+  const hasCycle =
+    getValuetype(valuetypeDefinition)?.hasSupertypeCycle() ?? false;
   if (hasCycle) {
     context.accept(
       'error',
