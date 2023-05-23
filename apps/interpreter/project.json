@@ -27,7 +27,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
-        "commands": ["node dist/apps/interpreter/main.js"]
+        "commands": ["node --enable-source-maps dist/apps/interpreter/main.js"]
       }
     },
     "test": {

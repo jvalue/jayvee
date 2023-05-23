@@ -188,7 +188,7 @@ async function executeBlock(
     return R.err({
       message: `An unknown error occurred: ${
         unexpectedError instanceof Error
-          ? unexpectedError.message
+          ? unexpectedError.stack ?? unexpectedError.message
           : JSON.stringify(unexpectedError)
       }`,
       diagnostic: { node: block, property: 'name' },
