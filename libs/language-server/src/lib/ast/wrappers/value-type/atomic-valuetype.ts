@@ -15,7 +15,6 @@ import { validateTypedCollection } from '../../expressions/type-inference';
 import { ConstraintDefinition, ValuetypeDefinition } from '../../generated/ast';
 import { AstNodeWrapper } from '../ast-node-wrapper';
 
-// eslint-disable-next-line import/no-cycle
 import { PrimitiveValuetypes } from './primitive';
 import { AbstractValuetype, Valuetype, ValuetypeVisitor } from './valuetype';
 
