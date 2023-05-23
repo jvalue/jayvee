@@ -31,7 +31,7 @@ export class LengthConstraintMetaInformation extends ConstraintMetaInformation {
           validation: nonNegativeValidation,
         },
       },
-      ['text'],
+      PrimitiveValuetypes.Text,
       (propertyBody, context) => {
         const minLengthProperty = propertyBody.properties.find(
           (p) => p.name === 'minLength',

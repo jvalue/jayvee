@@ -6,7 +6,7 @@ import './expression'
 import './terminal'
 
 ValuetypeDefinition:
-  'valuetype' name=ID 'oftype' type=PrimitiveValuetypeKeywordLiteral '{'
+  'valuetype' name=ID 'oftype' type=ValuetypeReference '{'
     'constraints' ':' constraints=CollectionLiteral ';'
   '}';
 
@@ -14,7 +14,10 @@ ValuetypeAssignmentLiteral:
   value=ValuetypeAssignment;
 
 ValuetypeAssignment:
-  name=STRING 'oftype' type=(PrimitiveValuetypeKeywordLiteral | ValuetypeDefinitionReference);
+  name=STRING 'oftype' type=ValuetypeReference;
+
+ValuetypeReference:
+  (PrimitiveValuetypeKeywordLiteral | ValuetypeDefinitionReference);
 
 // Workaround as cross-references cannot be mixed with other types
 ValuetypeDefinitionReference:

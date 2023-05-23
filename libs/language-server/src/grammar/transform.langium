@@ -13,7 +13,7 @@ TransformBody:
   '{' (ports+=TransformPortDefinition)* (outputAssignments+=TransformOutputAssignment)* '}';
 
 TransformPortDefinition:
-  kind=('from' | 'to') name=ID 'oftype' valueType=(PrimitiveValuetypeKeywordLiteral | ValuetypeDefinitionReference) ';'; 
+  kind=('from' | 'to') name=ID 'oftype' valueType=ValuetypeReference ';'; 
  
 TransformOutputAssignment:
   outPortName=[TransformPortDefinition] ':' expression=Expression ';';

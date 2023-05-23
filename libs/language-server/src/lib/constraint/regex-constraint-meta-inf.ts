@@ -14,7 +14,7 @@ export class RegexConstraintMetaInformation extends ConstraintMetaInformation {
           type: PrimitiveValuetypes.Regex,
         },
       },
-      ['text'],
+      PrimitiveValuetypes.Text,
     );
     super.docs = {
       description:
