@@ -10,8 +10,8 @@ import {
   TransformOutputAssignment,
   TransformPortDefinition,
   Valuetype,
+  createValuetype,
   evaluateExpression,
-  getValuetype,
 } from '@jvalue/jayvee-language-server';
 
 import { ExecutionContext } from '../execution-context';
@@ -46,7 +46,7 @@ export class TransformExecutor {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const outputPort = outputPorts[0]!;
     const outputType = outputPort.valueType;
-    const outputValuetype = getValuetype(outputType);
+    const outputValuetype = createValuetype(outputType);
     assert(outputValuetype !== undefined);
 
     return {

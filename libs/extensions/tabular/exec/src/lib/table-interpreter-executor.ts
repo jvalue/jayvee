@@ -20,7 +20,7 @@ import {
   IOType,
   Valuetype,
   ValuetypeAssignment,
-  getValuetype,
+  createValuetype,
   rowIndexToString,
 } from '@jvalue/jayvee-language-server';
 
@@ -184,7 +184,7 @@ export class TableInterpreterExecutor
   ): ColumnDefinitionEntry[] {
     return columnDefinitions.map<ColumnDefinitionEntry>(
       (columnDefinition, columnDefinitionIndex) => {
-        const columnValuetype = getValuetype(columnDefinition.type);
+        const columnValuetype = createValuetype(columnDefinition.type);
         assert(columnValuetype !== undefined);
         return {
           sheetColumnIndex: columnDefinitionIndex,
@@ -214,7 +214,7 @@ export class TableInterpreterExecutor
         );
         continue;
       }
-      const columnValuetype = getValuetype(columnDefinition.type);
+      const columnValuetype = createValuetype(columnDefinition.type);
       assert(columnValuetype !== undefined);
 
       columnEntries.push({
