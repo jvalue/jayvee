@@ -6,4 +6,4 @@
 export * from './valuetype';
 export { type AtomicValuetype, isAtomicValuetype } from './atomic-valuetype';
 export * from './primitive';
-export * from './valuetype-factory';
+export * from './valuetype-util';

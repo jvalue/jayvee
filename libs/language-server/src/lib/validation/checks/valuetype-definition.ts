@@ -14,8 +14,8 @@ import {
   EvaluationContext,
   Expression,
   PrimitiveValuetypes,
+  createValuetype,
   evaluateExpression,
-  getValuetype,
   validateTypedCollection,
 } from '../../ast';
 import { ValuetypeDefinition } from '../../ast/generated/ast';
@@ -38,7 +38,7 @@ function checkSupertypeCycle(
   context: ValidationContext,
 ): void {
   const hasCycle =
-    getValuetype(valuetypeDefinition)?.hasSupertypeCycle() ?? false;
+    createValuetype(valuetypeDefinition)?.hasSupertypeCycle() ?? false;
   if (hasCycle) {
     context.accept(
       'error',
@@ -114,7 +114,7 @@ function checkConstraintMatchesPrimitiveValuetype(
     return;
   }
 
-  const valuetype = getValuetype(valuetypeDefinition);
+  const valuetype = createValuetype(valuetypeDefinition);
   if (valuetype === undefined) {
     return;
   }

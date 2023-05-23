@@ -39,7 +39,7 @@ Object.values(PrimitiveValuetypes).forEach((primitive) => {
  * Returns the matching valuetype instance for a given valuetype keyword or definition.
  * @returns the desired valuetype instance or undefined in case of incomplete AST nodes or a cycle in the hierarchy.
  */
-export function getValuetype(
+export function createValuetype(
   identifier: ValuetypeDefinition | ValuetypeReference | undefined,
 ): Valuetype | undefined {
   if (identifier === undefined) {

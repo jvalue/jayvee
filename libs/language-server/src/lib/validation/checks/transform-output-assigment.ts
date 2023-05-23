@@ -20,7 +20,7 @@ import {
   isTransformPortDefinition,
   isUnaryExpression,
 } from '../../ast/generated/ast';
-import { getValuetype } from '../../ast/wrappers/value-type/valuetype-factory';
+import { createValuetype } from '../../ast/wrappers/value-type/valuetype-util';
 import { ValidationContext } from '../validation-context';
 import { checkExpressionSimplification } from '../validation-util';
 
@@ -51,7 +51,7 @@ function checkOutputValueTyping(
     return;
   }
 
-  const expectedType = getValuetype(outputType);
+  const expectedType = createValuetype(outputType);
   if (expectedType === undefined) {
     return;
   }
