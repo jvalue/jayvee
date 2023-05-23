@@ -8,6 +8,7 @@ import { assertUnreachable } from 'langium';
 
 import {
   PrimitiveValuetypeKeyword,
+  PrimitiveValuetypeKeywordLiteral,
   ValuetypeDefinition,
   ValuetypeReference,
   isPrimitiveValuetypeKeywordLiteral,
@@ -43,59 +44,62 @@ Object.values(PrimitiveValuetypes).forEach((primitive) => {
  */
 export function getValuetype(
   identifier: ValuetypeDefinition | ValuetypeReference | undefined,
-  visitedSupertypes: ValuetypeReference[] = [],
+): Valuetype | undefined {
+  if (hasSupertypeCycle(identifier)) {
+    return undefined;
+  }
+
+  return doGetValuetype(identifier);
+}
+
+function doGetValuetype(
+  identifier: ValuetypeDefinition | ValuetypeReference | undefined,
 ): Valuetype | undefined {
   if (identifier === undefined) {
     return undefined;
   }
 
   if (isPrimitiveValuetypeKeywordLiteral(identifier)) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const keyword = identifier?.keyword;
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (keyword === undefined) {
-      return undefined;
-    }
-    return createOrGetValuetype(keyword, visitedSupertypes);
+    return doGetPrimitiveValuetype(identifier);
   } else if (isValuetypeDefinition(identifier)) {
-    return createOrGetValuetype(identifier, visitedSupertypes);
+    return doCreateOrGetValuetype(identifier);
   } else if (isValuetypeDefinitionReference(identifier)) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const referenced = identifier?.reference?.ref;
     if (referenced === undefined) {
       return undefined;
     }
-    return createOrGetValuetype(referenced, visitedSupertypes);
+    return doCreateOrGetValuetype(referenced);
   }
   assertUnreachable(identifier);
 }
 
-function createOrGetValuetype(
-  identifier: ValuetypeIdentifier,
-  visitedSupertypes: ValuetypeReference[] = [],
+function doGetPrimitiveValuetype(
+  keywordLiteral: PrimitiveValuetypeKeywordLiteral,
+): Valuetype | undefined {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const keyword = keywordLiteral?.keyword;
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (keyword === undefined) {
+    return undefined;
+  }
+
+  const existingValuetype = existingValuetypes.get(keyword);
+  assert(existingValuetype !== undefined);
+  return existingValuetype;
+}
+
+function doCreateOrGetValuetype(
+  identifier: ValuetypeDefinition,
 ): Valuetype | undefined {
   const existingValuetype = existingValuetypes.get(identifier);
   if (existingValuetype !== undefined) {
     return existingValuetype;
   }
 
-  assert(isValuetypeDefinition(identifier));
-
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  const identifierType = identifier?.type;
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (identifierType === undefined) {
-    return undefined;
-  }
-
-  const isCycleDetected = visitedSupertypes.includes(identifierType);
-  if (isCycleDetected) {
-    return undefined;
-  }
-  visitedSupertypes.push(identifierType);
-
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  const supertype = getValuetype(identifier?.type, visitedSupertypes);
+  const supertypeIdentifier = identifier?.type;
+  const supertype = doGetValuetype(supertypeIdentifier);
   if (supertype === undefined) {
     return undefined;
   }
@@ -104,4 +108,47 @@ function createOrGetValuetype(
   existingValuetypes.set(identifier, createdValuetype);
 
   return createdValuetype;
+}
+
+export function hasSupertypeCycle(
+  identifier: ValuetypeDefinition | ValuetypeReference | undefined,
+  visitedSupertypes: ValuetypeReference[] = [],
+): boolean {
+  if (identifier === undefined) {
+    return false;
+  }
+
+  if (isPrimitiveValuetypeKeywordLiteral(identifier)) {
+    return false;
+  } else if (isValuetypeDefinition(identifier)) {
+    return doHasSupertypeCycle(identifier, visitedSupertypes);
+  } else if (isValuetypeDefinitionReference(identifier)) {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const referenced = identifier?.reference?.ref;
+    if (referenced === undefined) {
+      return false;
+    }
+    return doHasSupertypeCycle(referenced, visitedSupertypes);
+  }
+  assertUnreachable(identifier);
+}
+
+function doHasSupertypeCycle(
+  identifier: ValuetypeDefinition,
+  visitedSupertypes: ValuetypeReference[] = [],
+): boolean {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const supertypeIdentifier = identifier?.type;
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (supertypeIdentifier === undefined) {
+    return false;
+  }
+
+  const isCycleDetected = visitedSupertypes.includes(supertypeIdentifier);
+  if (isCycleDetected) {
+    return true;
+  }
+  visitedSupertypes.push(supertypeIdentifier);
+
+  return hasSupertypeCycle(supertypeIdentifier, visitedSupertypes);
 }
