@@ -12,10 +12,22 @@ export abstract class PrimitiveValuetype<
   I extends InternalValueRepresentation = InternalValueRepresentation,
 > extends AbstractValuetype<I> {
   constructor() {
-    super(undefined);
+    super();
   }
 
-  isConvertibleTo(target: Valuetype): boolean {
+  override isConvertibleTo(target: Valuetype): boolean {
+    return target.equals(this);
+  }
+
+  override equals(target: Valuetype): boolean {
     return target === this;
+  }
+
+  override doGetSupertype(): undefined {
+    return undefined;
+  }
+
+  override hasSupertypeCycle(): boolean {
+    return false;
   }
 }

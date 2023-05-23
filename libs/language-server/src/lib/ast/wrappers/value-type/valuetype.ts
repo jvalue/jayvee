@@ -65,6 +65,11 @@ export interface Valuetype<
     operandValue: InternalValueRepresentation,
   ): operandValue is I;
 
+  /**
+   * Checks if there is a cycle in the supertype relation.
+   */
+  hasSupertypeCycle(visited?: Valuetype[]): boolean;
+
   isAllowedAsRuntimeParameter(): boolean;
   getName(): string;
 
@@ -74,8 +79,6 @@ export interface Valuetype<
 export abstract class AbstractValuetype<I extends InternalValueRepresentation>
   implements Valuetype<I>
 {
-  constructor(protected readonly supertype?: Valuetype) {}
-
   abstract acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R;
 
   isSubtypeOf(other: Valuetype): boolean {
@@ -90,12 +93,15 @@ export abstract class AbstractValuetype<I extends InternalValueRepresentation>
   }
 
   getSupertype(): Valuetype | undefined {
-    return this.supertype;
+    if (this.hasSupertypeCycle()) {
+      return undefined;
+    }
+    return this.doGetSupertype();
   }
 
-  equals(target: Valuetype): boolean {
-    return target === this; // we use a singleton construct via a factory
-  }
+  abstract doGetSupertype(): Valuetype | undefined;
+
+  abstract equals(target: Valuetype): boolean;
 
   abstract isAllowedAsRuntimeParameter(): boolean;
 
@@ -106,6 +112,21 @@ export abstract class AbstractValuetype<I extends InternalValueRepresentation>
   ): operandValue is I;
 
   abstract getName(): string;
+
+  hasSupertypeCycle(visited: Valuetype[] = []): boolean {
+    const cycleDetected = visited.some((v) => v.equals(this));
+    if (cycleDetected) {
+      return true;
+    }
+    visited.push(this);
+
+    const supertype = this.doGetSupertype();
+    if (supertype === undefined) {
+      return false;
+    }
+
+    return supertype.hasSupertypeCycle(visited);
+  }
 }
 
 export abstract class ValuetypeVisitor<R = unknown> {
