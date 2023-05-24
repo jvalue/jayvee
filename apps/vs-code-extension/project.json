@@ -16,7 +16,6 @@
         "external": ["vscode"],
         "platform": "node",
         "format": ["cjs"],
-        "minify": true,
         "esbuildOptions": {
           "sourcemap": "linked"
         },
