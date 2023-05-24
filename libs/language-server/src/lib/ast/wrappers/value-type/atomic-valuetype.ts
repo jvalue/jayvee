@@ -84,7 +84,7 @@ export class AtomicValuetype
   }
 
   override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation,
+    operandValue: InternalValueRepresentation | undefined,
   ): operandValue is InternalValueRepresentation {
     const supertype = this.getSupertype();
     if (supertype === undefined) {

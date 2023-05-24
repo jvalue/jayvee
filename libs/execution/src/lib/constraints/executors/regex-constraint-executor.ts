@@ -5,9 +5,9 @@
 import { ExecutionContext } from '../../execution-context';
 import { implementsStatic } from '../../util/implements-static-decorator';
 import { ConstraintExecutor } from '../constraint-executor';
-import { ConstraintExecutorClass } from '../constraint-executor-class';
+import { TypedConstraintExecutorClass } from '../typed-constraint-executor-class';
 
-@implementsStatic<ConstraintExecutorClass>()
+@implementsStatic<TypedConstraintExecutorClass>()
 export class RegexConstraintExecutor implements ConstraintExecutor {
   public static readonly type = 'RegexConstraint';
 

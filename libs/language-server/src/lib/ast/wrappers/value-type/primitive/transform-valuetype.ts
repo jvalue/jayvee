@@ -26,7 +26,7 @@ class TransformValuetypeImpl extends PrimitiveValuetype<TransformDefinition> {
   }
 
   override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation,
+    operandValue: InternalValueRepresentation | undefined,
   ): operandValue is TransformDefinition {
     return isTransformDefinition(operandValue);
   }

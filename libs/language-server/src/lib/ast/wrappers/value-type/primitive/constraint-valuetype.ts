@@ -26,7 +26,7 @@ class ConstraintValuetypeImpl extends PrimitiveValuetype<ConstraintDefinition> {
   }
 
   override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation,
+    operandValue: InternalValueRepresentation | undefined,
   ): operandValue is ConstraintDefinition {
     return isConstraintDefinition(operandValue);
   }

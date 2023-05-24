@@ -23,7 +23,7 @@ class CellRangeValuetypeImpl extends PrimitiveValuetype<CellRangeWrapper> {
   }
 
   override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation,
+    operandValue: InternalValueRepresentation | undefined,
   ): operandValue is CellRangeWrapper {
     return operandValue instanceof CellRangeWrapper;
   }

@@ -9,9 +9,9 @@ import { evaluateExpression } from '@jvalue/jayvee-language-server';
 import { ExecutionContext } from '../../execution-context';
 import { implementsStatic } from '../../util/implements-static-decorator';
 import { ConstraintExecutor } from '../constraint-executor';
-import { ConstraintExecutorClass } from '../constraint-executor-class';
+import { TypedConstraintExecutorClass } from '../typed-constraint-executor-class';
 
-@implementsStatic<ConstraintExecutorClass>()
+@implementsStatic<TypedConstraintExecutorClass>()
 export class DenylistConstraintExecutor implements ConstraintExecutor {
   public static readonly type = 'DenylistConstraint';
 
