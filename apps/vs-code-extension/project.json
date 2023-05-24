@@ -28,7 +28,9 @@
           "minify": false
         },
         "prod": {
-          "sourcemap": false,
+          "esbuildOptions": {
+            "sourcemap": false
+          },
           "minify": true
         }
       },
