@@ -23,6 +23,7 @@
       "configurations": {
         "dev": {
           "esbuildOptions": {
+            // Required, so VS Code's debugger is able to attach when running the extension
             "sourcemap": "linked"
           },
           "minify": false
