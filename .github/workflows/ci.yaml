@@ -37,7 +37,7 @@ jobs:
         run: npm run generate
 
       - name: Build
-        run: npx nx affected --target=build --parallel=3
+        run: npx nx affected --target=build --configuration=prod --parallel=3
 
       - name: Lint Nx specific workspace files
         run: npx nx workspace-lint

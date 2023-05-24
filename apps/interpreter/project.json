@@ -14,7 +14,13 @@
         "main": "apps/interpreter/src/index.ts",
         "tsConfig": "apps/interpreter/tsconfig.app.json",
         "generatePackageJson": true
-      }
+      },
+      "configurations": {
+        // https://nx.dev/recipes/executors/use-executor-configurations
+        "dev": {},
+        "prod": {}
+      },
+      "defaultConfiguration": "dev"
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",

@@ -5,6 +5,7 @@
     "nx": "nx",
     "format": "nx format:write",
     "build": "nx run-many --target build",
+    "build:prod": "nx run-many --target build --configuration=prod",
     "lint": "nx run-many --target lint --max-warnings 0",
     "test": "nx run-many --target test",
     "generate": "nx run language-server:generate",

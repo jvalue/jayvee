@@ -16,13 +16,23 @@
         "external": ["vscode"],
         "platform": "node",
         "format": ["cjs"],
-        "esbuildOptions": {
-          "sourcemap": "linked"
-        },
         "assets": [
           { "input": "apps/vs-code-extension/assets", "glob": "*", "output": "/" }
         ]
-      }
+      },
+      "configurations": {
+        "dev": {
+          "esbuildOptions": {
+            "sourcemap": "linked"
+          },
+          "minify": false
+        },
+        "prod": {
+          "sourcemap": false,
+          "minify": true
+        }
+      },
+      "defaultConfiguration": "dev"
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
