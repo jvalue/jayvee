@@ -23,11 +23,7 @@ export abstract class PrimitiveValuetype<
     return target === this;
   }
 
-  override doGetSupertype(): undefined {
+  protected override doGetSupertype(): undefined {
     return undefined;
-  }
-
-  override hasSupertypeCycle(): boolean {
-    return false;
   }
 }

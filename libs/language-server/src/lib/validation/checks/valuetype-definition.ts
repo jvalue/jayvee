@@ -27,9 +27,6 @@ export function validateValuetypeDefinition(
   context: ValidationContext,
 ): void {
   checkSupertypeCycle(valuetype, context);
-  if (context.hasErrorOccurred()) {
-    return;
-  }
   checkConstraintsCollectionValues(valuetype, context);
 }
 
