@@ -5,7 +5,6 @@
 import { assertUnreachable } from 'langium';
 
 import {
-  PrimitiveValuetypeKeyword,
   ValuetypeDefinition,
   ValuetypeReference,
   isPrimitiveValuetypeKeywordLiteral,
@@ -16,24 +15,8 @@ import {
 
 // eslint-disable-next-line import/no-cycle
 import { AtomicValuetype } from './atomic-valuetype';
-import { PrimitiveValuetypes, createPrimitiveValuetype } from './primitive';
+import { createPrimitiveValuetype } from './primitive';
 import { Valuetype } from './valuetype';
-
-type ValuetypeIdentifier =
-  | ValuetypeDefinition
-  | PrimitiveValuetypeKeyword
-  | 'cellRange'
-  | 'constraint'
-  | 'regex'
-  | 'transform'
-  | 'valuetypeAssignment'
-  | 'collection';
-const existingValuetypes = new Map<ValuetypeIdentifier, Valuetype>();
-
-// initialize primitive valuetypes
-Object.values(PrimitiveValuetypes).forEach((primitive) => {
-  existingValuetypes.set(primitive.getName(), primitive);
-});
 
 /**
  * Returns the matching valuetype instance for a given valuetype keyword or definition.

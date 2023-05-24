@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { assertUnreachable } from 'langium';
-
 // eslint-disable-next-line import/no-cycle
 import {
   EvaluationContext,
@@ -12,16 +10,12 @@ import {
 } from '../../expressions/evaluation';
 // eslint-disable-next-line import/no-cycle
 import { validateTypedCollection } from '../../expressions/type-inference';
-import {
-  ConstraintDefinition,
-  ValuetypeDefinition,
-  isPrimitiveValuetypeKeywordLiteral,
-  isValuetypeDefinitionReference,
-} from '../../generated/ast';
+import { ConstraintDefinition, ValuetypeDefinition } from '../../generated/ast';
 import { AstNodeWrapper } from '../ast-node-wrapper';
 
-import { PrimitiveValuetypes, createPrimitiveValuetype } from './primitive';
+import { PrimitiveValuetypes } from './primitive';
 import { AbstractValuetype, Valuetype, ValuetypeVisitor } from './valuetype';
+import { createValuetype } from './valuetype-util';
 
 export class AtomicValuetype
   extends AbstractValuetype<InternalValueRepresentation>
@@ -83,20 +77,10 @@ export class AtomicValuetype
     return this.astNode.name ?? '';
   }
 
-  override doGetSupertype(): Valuetype | undefined {
-    const supertype = this.astNode.type;
-    if (isPrimitiveValuetypeKeywordLiteral(supertype)) {
-      return createPrimitiveValuetype(supertype);
-    } else if (isValuetypeDefinitionReference(supertype)) {
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      const referenced = supertype?.reference?.ref;
-      if (referenced === undefined) {
-        return undefined;
-      }
-
-      return new AtomicValuetype(referenced);
-    }
-    assertUnreachable(supertype);
+  protected override doGetSupertype(): Valuetype | undefined {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const supertype = this.astNode?.type;
+    return createValuetype(supertype);
   }
 
   override isInternalValueRepresentation(

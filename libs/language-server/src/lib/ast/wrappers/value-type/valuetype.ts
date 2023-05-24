@@ -99,7 +99,7 @@ export abstract class AbstractValuetype<I extends InternalValueRepresentation>
     return this.doGetSupertype();
   }
 
-  abstract doGetSupertype(): Valuetype | undefined;
+  protected abstract doGetSupertype(): Valuetype | undefined;
 
   abstract equals(target: Valuetype): boolean;
 
