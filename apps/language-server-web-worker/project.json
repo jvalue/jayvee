@@ -16,7 +16,13 @@
         "vendorChunk": false,
         "externalDependencies": "none",
         "generatePackageJson": true
-      }
+      },
+      "configurations": {
+        // https://nx.dev/recipes/executors/use-executor-configurations
+        "dev": {},
+        "prod": {}
+      },
+      "defaultConfiguration": "dev"
     },
     "serve": {
       "executor": "@nrwl/js:node",
