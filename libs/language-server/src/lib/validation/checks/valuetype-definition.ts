@@ -9,13 +9,18 @@
 
 import { strict as assert } from 'assert';
 
+import { assertUnreachable } from 'langium';
+
 import {
   ConstraintDefinition,
   EvaluationContext,
   Expression,
   PrimitiveValuetypes,
+  Valuetype,
   createValuetype,
   evaluateExpression,
+  isExpressionConstraintDefinition,
+  isTypedConstraintDefinition,
   validateTypedCollection,
 } from '../../ast';
 import { ValuetypeDefinition } from '../../ast/generated/ast';
@@ -81,48 +86,44 @@ function checkConstraintsCollectionValues(
     assert(
       PrimitiveValuetypes.Constraint.isInternalValueRepresentation(constraint),
     );
-    checkConstraintMatchesPrimitiveValuetype(
-      valuetype,
-      constraint,
-      expression,
-      context,
-    );
+    checkConstraintMatchesValuetype(valuetype, constraint, expression, context);
   });
 }
 
-function checkConstraintMatchesPrimitiveValuetype(
+function checkConstraintMatchesValuetype(
   valuetypeDefinition: ValuetypeDefinition,
   constraint: ConstraintDefinition,
   diagnosticNode: Expression,
   context: ValidationContext,
 ): void {
-  if (valuetypeDefinition.type === undefined) {
+  const actualValuetype = createValuetype(valuetypeDefinition);
+  const compatibleValuetype = getCompatibleValuetype(constraint);
+
+  if (actualValuetype === undefined || compatibleValuetype === undefined) {
     return;
   }
 
-  const constraintType = constraint.type;
-
-  if (constraintType === undefined) {
-    return;
-  }
-
-  const metaInf = getMetaInformation(constraintType);
-  if (metaInf === undefined) {
-    return;
-  }
-
-  const valuetype = createValuetype(valuetypeDefinition);
-  if (valuetype === undefined) {
-    return;
-  }
-
-  if (!valuetype.isConvertibleTo(metaInf.compatibleValuetype)) {
+  if (!actualValuetype.isConvertibleTo(compatibleValuetype)) {
     context.accept(
       'error',
-      `Only constraints for types convertible to "${metaInf.compatibleValuetype.getName()}" are allowed in this collection`,
+      `This valuetype ${actualValuetype.getName()} is not convertible to the type ${compatibleValuetype.getName()} of the constraint "${
+        constraint.name
+      }"`,
       {
         node: diagnosticNode,
       },
     );
   }
+}
+
+function getCompatibleValuetype(
+  constraint: ConstraintDefinition,
+): Valuetype | undefined {
+  if (isTypedConstraintDefinition(constraint)) {
+    const constraintMetaInf = getMetaInformation(constraint?.type);
+    return constraintMetaInf?.compatibleValuetype;
+  } else if (isExpressionConstraintDefinition(constraint)) {
+    return createValuetype(constraint?.valuetype);
+  }
+  assertUnreachable(constraint);
 }

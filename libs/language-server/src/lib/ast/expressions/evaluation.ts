@@ -11,9 +11,11 @@ import {
   CollectionLiteral,
   ConstraintDefinition,
   Expression,
+  FreeVariableLiteral,
   ReferenceLiteral,
   RuntimeParameterLiteral,
   TransformDefinition,
+  ValueKeywordLiteral,
   ValueLiteral,
   ValuetypeAssignment,
   isBinaryExpression,
@@ -22,14 +24,18 @@ import {
   isConstraintDefinition,
   isExpression,
   isExpressionLiteral,
+  isFreeVariableLiteral,
   isReferenceLiteral,
   isRegexLiteral,
   isRuntimeParameterLiteral,
   isTransformDefinition,
   isTransformPortDefinition,
   isUnaryExpression,
+  isValueKeywordLiteral,
   isValueLiteral,
 } from '../generated/ast';
+// eslint-disable-next-line import/no-cycle
+import { PrimitiveValuetypes } from '../wrappers';
 import { CellRangeWrapper } from '../wrappers/cell-range-wrapper';
 
 // eslint-disable-next-line import/no-cycle
@@ -56,18 +62,29 @@ export type InternalValueRepresentation =
 
 export class EvaluationContext {
   constructor(
-    public runtimeParameterValues: Map<
+    private readonly runtimeParameterValues: Map<
       string,
       InternalValueRepresentation
     > = new Map(),
-    public variableValues: Map<string, InternalValueRepresentation> = new Map(),
+    private readonly variableValues: Map<
+      string,
+      InternalValueRepresentation
+    > = new Map(),
+    private valueKeywordValue:
+      | InternalValueRepresentation
+      | undefined = undefined,
   ) {}
 
   getValueFor(
-    literal: ReferenceLiteral | RuntimeParameterLiteral,
+    literal: FreeVariableLiteral | RuntimeParameterLiteral,
   ): InternalValueRepresentation | undefined {
-    if (isReferenceLiteral(literal)) {
-      return this.getValueForReference(literal);
+    if (isFreeVariableLiteral(literal)) {
+      if (isReferenceLiteral(literal)) {
+        return this.getValueForReference(literal);
+      } else if (isValueKeywordLiteral(literal)) {
+        return this.getValueForValueKeyword(literal);
+      }
+      assertUnreachable(literal);
     } else if (isRuntimeParameterLiteral(literal)) {
       return this.getValueForRuntimeParameter(literal);
     }
@@ -118,6 +135,33 @@ export class EvaluationContext {
 
     return this.runtimeParameterValues.get(key);
   }
+
+  setValueForValueKeyword(value: InternalValueRepresentation) {
+    this.valueKeywordValue = value;
+  }
+
+  deleteValueForValueKeyword() {
+    this.valueKeywordValue = undefined;
+  }
+
+  getValueForValueKeyword(
+    literal: ValueKeywordLiteral,
+  ): InternalValueRepresentation | undefined {
+    if (this.valueKeywordValue === undefined) {
+      return undefined;
+    }
+
+    if (literal.lengthAccess) {
+      assert(
+        PrimitiveValuetypes.Text.isInternalValueRepresentation(
+          this.valueKeywordValue,
+        ),
+      );
+      return this.valueKeywordValue.length;
+    }
+
+    return this.valueKeywordValue;
+  }
 }
 
 export type InternalValueRepresentationTypeguard<
@@ -145,7 +189,7 @@ export function evaluateExpression(
   strategy: EvaluationStrategy = EvaluationStrategy.LAZY,
 ): InternalValueRepresentation | undefined {
   if (isExpressionLiteral(expression)) {
-    if (isReferenceLiteral(expression)) {
+    if (isFreeVariableLiteral(expression)) {
       return evaluationContext.getValueFor(expression);
     } else if (isValueLiteral(expression)) {
       return evaluateValueLiteral(expression);

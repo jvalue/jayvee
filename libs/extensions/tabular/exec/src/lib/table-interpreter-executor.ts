@@ -9,15 +9,16 @@ import {
   BlockExecutor,
   BlockExecutorClass,
   ExecutionContext,
-  IsValidVisitor,
   Sheet,
-  StandardRepresentationResolver,
   Table,
   implementsStatic,
+  isValidValueRepresentation,
+  parseValueToInternalRepresentation,
 } from '@jvalue/jayvee-execution';
 import {
   CellIndex,
   IOType,
+  InternalValueRepresentation,
   Valuetype,
   ValuetypeAssignment,
   createValuetype,
@@ -153,22 +154,19 @@ export class TableInterpreterExecutor
       const sheetColumnIndex = columnEntry.sheetColumnIndex;
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const value = sheetRow[sheetColumnIndex]!;
-      if (
-        !columnEntry.valuetype.acceptVisitor(new IsValidVisitor(value, context))
-      ) {
-        const cellIndex = new CellIndex(sheetColumnIndex, sheetRowIndex);
+      const valuetype = columnEntry.valuetype;
+
+      const parsedValue = this.parseAndValidateValue(value, valuetype, context);
+      if (parsedValue === undefined) {
+        const currentCellIndex = new CellIndex(sheetColumnIndex, sheetRowIndex);
         context.logger.logDebug(
-          `Invalid value at cell ${cellIndex.toString()}: "${value}" does not match the type ${columnEntry.valuetype.getName()}`,
+          `Invalid value at cell ${currentCellIndex.toString()}: "${value}" does not match the type ${columnEntry.valuetype.getName()}`,
         );
         invalidRow = true;
         return;
       }
 
-      const stdRepresentationResolver = new StandardRepresentationResolver(
-        value,
-      );
-      tableRow[columnEntry.columnName] =
-        stdRepresentationResolver.fromValuetype(columnEntry.valuetype);
+      tableRow[columnEntry.columnName] = parsedValue;
     });
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (invalidRow) {
@@ -177,6 +175,22 @@ export class TableInterpreterExecutor
 
     assert(Object.keys(tableRow).length === columnEntries.length);
     return tableRow;
+  }
+
+  private parseAndValidateValue(
+    value: string,
+    valuetype: Valuetype,
+    context: ExecutionContext,
+  ): InternalValueRepresentation | undefined {
+    const parsedValue = parseValueToInternalRepresentation(value, valuetype);
+    if (parsedValue === undefined) {
+      return undefined;
+    }
+
+    if (!isValidValueRepresentation(parsedValue, valuetype, context)) {
+      return undefined;
+    }
+    return parsedValue;
   }
 
   private deriveColumnDefinitionEntriesWithoutHeader(

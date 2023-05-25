@@ -14,8 +14,6 @@ import {
   ValuetypeVisitor,
 } from '@jvalue/jayvee-language-server';
 
-import { StandardRepresentationResolver } from '../standard-representation';
-
 export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
   (value: InternalValueRepresentation) => string
 > {
@@ -23,10 +21,8 @@ export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
     valuetype: BooleanValuetype,
   ): (value: InternalValueRepresentation) => string {
     return (value: InternalValueRepresentation) => {
-      const standardRepresentation = new StandardRepresentationResolver(
-        value,
-      ).fromBooleanValuetype(valuetype);
-      return standardRepresentation ? String.raw`'true'` : String.raw`'false'`;
+      assert(valuetype.isInternalValueRepresentation(value));
+      return value ? `'true'` : `'false'`;
     };
   }
 
@@ -34,10 +30,8 @@ export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
     valuetype: DecimalValuetype,
   ): (value: InternalValueRepresentation) => string {
     return (value: InternalValueRepresentation) => {
-      const standardRepresentation = new StandardRepresentationResolver(
-        value,
-      ).fromDecimalValuetype(valuetype);
-      return standardRepresentation.toString();
+      assert(valuetype.isInternalValueRepresentation(value));
+      return value.toString();
     };
   }
 
@@ -45,10 +39,8 @@ export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
     valuetype: IntegerValuetype,
   ): (value: InternalValueRepresentation) => string {
     return (value: InternalValueRepresentation) => {
-      const standardRepresentation = new StandardRepresentationResolver(
-        value,
-      ).fromIntegerValuetype(valuetype);
-      return standardRepresentation.toString();
+      assert(valuetype.isInternalValueRepresentation(value));
+      return value.toString();
     };
   }
 
@@ -56,13 +48,9 @@ export class SQLValueRepresentationVisitor extends ValuetypeVisitor<
     valuetype: TextValuetype,
   ): (value: InternalValueRepresentation) => string {
     return (value: InternalValueRepresentation) => {
-      const standardRepresentation = new StandardRepresentationResolver(
-        value,
-      ).fromTextValuetype(valuetype);
-      const escapedValueRepresentation = escapeSingleQuotes(
-        standardRepresentation,
-      );
-      return `'${escapedValueRepresentation}'`;
+      assert(valuetype.isInternalValueRepresentation(value));
+      const escapedValue = escapeSingleQuotes(value);
+      return `'${escapedValue}'`;
     };
   }
 

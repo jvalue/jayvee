@@ -62,7 +62,7 @@ export interface Valuetype<
    * For example, a TextValuetype has the internal representation string.
    */
   isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation,
+    operandValue: InternalValueRepresentation | undefined,
   ): operandValue is I;
 
   /**
@@ -108,7 +108,7 @@ export abstract class AbstractValuetype<I extends InternalValueRepresentation>
   abstract isConvertibleTo(target: Valuetype): boolean;
 
   abstract isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation,
+    operandValue: InternalValueRepresentation | undefined,
   ): operandValue is I;
 
   abstract getName(): string;

@@ -23,7 +23,10 @@ XorExpression infers Expression:
   EqualityExpression ({infer BinaryExpression.left=current} operator='xor' right=EqualityExpression)*;
 
 EqualityExpression infers Expression:
-  RelationalExpression ({infer BinaryExpression.left=current} operator=('==' | '!=') right=RelationalExpression)*;
+  MatchesExpression ({infer BinaryExpression.left=current} operator=('==' | '!=') right=MatchesExpression)*;
+
+MatchesExpression infers Expression:
+  RelationalExpression ({infer BinaryExpression.left=current} operator='matches' right=RelationalExpression)*;
 
 RelationalExpression infers Expression:
   AdditiveExpression ({infer BinaryExpression.left=current} operator=('<' | '<=' | '>' | '>=') right=AdditiveExpression)*;
@@ -46,8 +49,7 @@ UnaryExpression:
   operator=('not' | '+' | '-' | 'sqrt' | 'floor' | 'ceil' | 'round') expression=PrimaryExpression;
 
 ExpressionLiteral:
-  ValueLiteral
-  | ReferenceLiteral;
+  ValueLiteral | FreeVariableLiteral;
 
 ValueLiteral:
   TextLiteral
@@ -72,6 +74,12 @@ RegexLiteral:
 
 CollectionLiteral:
   '[' (values+=(Expression) (',' values+=(Expression))*)? ','? ']';
+
+FreeVariableLiteral:
+  ValueKeywordLiteral | ReferenceLiteral;
+
+ValueKeywordLiteral:
+  'value' ('.' lengthAccess?='length')?;
 
 ReferenceLiteral:
   value=[Referencable];

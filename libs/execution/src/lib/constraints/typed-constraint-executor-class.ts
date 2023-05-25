@@ -6,7 +6,7 @@ import { ConstructorClass } from '@jvalue/jayvee-language-server';
 
 import { ConstraintExecutor } from './constraint-executor';
 
-export interface ConstraintExecutorClass<
+export interface TypedConstraintExecutorClass<
   T extends ConstraintExecutor = ConstraintExecutor,
 > extends ConstructorClass<T> {
   readonly type: string;

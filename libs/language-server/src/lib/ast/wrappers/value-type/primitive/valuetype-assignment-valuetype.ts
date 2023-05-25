@@ -26,7 +26,7 @@ class ValuetypeAssignmentValuetypeImpl extends PrimitiveValuetype<AstValuetypeAs
   }
 
   override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation,
+    operandValue: InternalValueRepresentation | undefined,
   ): operandValue is AstValuetypeAssignment {
     return isAstValuetypeAssignment(operandValue);
   }

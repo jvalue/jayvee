@@ -4,17 +4,24 @@
 
 import { strict as assert } from 'assert';
 
-import { ConstraintDefinition, Registry } from '@jvalue/jayvee-language-server';
+import {
+  ConstraintDefinition,
+  Registry,
+  isExpressionConstraintDefinition,
+  isTypedConstraintDefinition,
+} from '@jvalue/jayvee-language-server';
+import { assertUnreachable } from 'langium';
 
 import { ConstraintExecutor } from './constraint-executor';
-import { ConstraintExecutorClass } from './constraint-executor-class';
 import { AllowlistConstraintExecutor } from './executors/allowlist-constraint-executor';
 import { DenylistConstraintExecutor } from './executors/denylist-constraint-executor';
+import { ExpressionConstraintExecutor } from './executors/expression-constraint-executor';
 import { LengthConstraintExecutor } from './executors/length-constraint-executor';
 import { RangeConstraintExecutor } from './executors/range-constraint-executor';
 import { RegexConstraintExecutor } from './executors/regex-constraint-executor';
+import { TypedConstraintExecutorClass } from './typed-constraint-executor-class';
 
-const constraintExecutorRegistry = new Registry<ConstraintExecutorClass>();
+const constraintExecutorRegistry = new Registry<TypedConstraintExecutorClass>();
 
 export function registerDefaultConstraintExecutors() {
   registerConstraintExecutor(AllowlistConstraintExecutor);
@@ -25,24 +32,29 @@ export function registerDefaultConstraintExecutors() {
 }
 
 export function registerConstraintExecutor(
-  executorClass: ConstraintExecutorClass,
+  executorClass: TypedConstraintExecutorClass,
 ) {
   constraintExecutorRegistry.register(executorClass.type, executorClass);
 }
 
-export function getRegisteredConstraintExecutors(): ConstraintExecutorClass[] {
+export function getRegisteredConstraintExecutors(): TypedConstraintExecutorClass[] {
   return constraintExecutorRegistry.getAll();
 }
 
 export function createConstraintExecutor(
   constraint: ConstraintDefinition,
 ): ConstraintExecutor {
-  const constraintType = constraint.type.name;
-  const constraintExecutor = constraintExecutorRegistry.get(constraintType);
-  assert(
-    constraintExecutor !== undefined,
-    `No executor was registered for constraint type ${constraintType}`,
-  );
+  if (isTypedConstraintDefinition(constraint)) {
+    const constraintType = constraint.type.name;
+    const constraintExecutor = constraintExecutorRegistry.get(constraintType);
+    assert(
+      constraintExecutor !== undefined,
+      `No executor was registered for constraint type ${constraintType}`,
+    );
 
-  return new constraintExecutor();
+    return new constraintExecutor();
+  } else if (isExpressionConstraintDefinition(constraint)) {
+    return new ExpressionConstraintExecutor(constraint);
+  }
+  assertUnreachable(constraint);
 }

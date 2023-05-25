@@ -28,7 +28,7 @@ class IntegerValuetypeImpl extends PrimitiveValuetype<number> {
   }
 
   override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation,
+    operandValue: InternalValueRepresentation | undefined,
   ): operandValue is number {
     return typeof operandValue === 'number' && Number.isInteger(operandValue);
   }

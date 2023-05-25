@@ -23,7 +23,7 @@ class BooleanValuetypeImpl extends PrimitiveValuetype<boolean> {
   }
 
   override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation,
+    operandValue: InternalValueRepresentation | undefined,
   ): operandValue is boolean {
     return typeof operandValue === 'boolean';
   }
