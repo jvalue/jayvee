@@ -23,7 +23,10 @@ XorExpression infers Expression:
   EqualityExpression ({infer BinaryExpression.left=current} operator='xor' right=EqualityExpression)*;
 
 EqualityExpression infers Expression:
-  RelationalExpression ({infer BinaryExpression.left=current} operator=('==' | '!=') right=RelationalExpression)*;
+  MatchesExpression ({infer BinaryExpression.left=current} operator=('==' | '!=') right=MatchesExpression)*;
+
+MatchesExpression infers Expression:
+  RelationalExpression ({infer BinaryExpression.left=current} operator='matches' right=RelationalExpression)*;
 
 RelationalExpression infers Expression:
   AdditiveExpression ({infer BinaryExpression.left=current} operator=('<' | '<=' | '>' | '>=') right=AdditiveExpression)*;

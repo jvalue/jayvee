@@ -2,10 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line import/no-cycle
 import {
-  InternalValueRepresentation,
-  InternalValueRepresentationTypeguard,
+  type InternalValueRepresentation,
+  type InternalValueRepresentationTypeguard,
 } from './evaluation';
 
 export const INTERNAL_VALUE_REPRESENTATION_TYPEGUARD: InternalValueRepresentationTypeguard<
@@ -29,4 +28,10 @@ export const STRING_TYPEGUARD: InternalValueRepresentationTypeguard<string> = (
   value: InternalValueRepresentation,
 ): value is string => {
   return typeof value === 'string';
+};
+
+export const REGEXP_TYPEGUARD: InternalValueRepresentationTypeguard<RegExp> = (
+  value: InternalValueRepresentation,
+): value is RegExp => {
+  return value instanceof RegExp;
 };
