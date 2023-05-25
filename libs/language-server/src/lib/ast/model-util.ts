@@ -151,7 +151,7 @@ export type AstTypeGuard<T extends AstNode = AstNode> = (
 ) => obj is T;
 
 /**
- * In the container hierarchy of the given AST node, searches for the closest AST node that satisfies the given type guard.
+ * Recursively goes upwards through the AST until it finds an AST node that satisfies the given type guard.
  * The entered AST node itself cannot be the result.
  * @param node The current AST node to start the search from.
  * @param guard The type guard function to check if a container matches the desired type.
