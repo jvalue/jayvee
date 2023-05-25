@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
+
 import * as R from '@jvalue/jayvee-execution';
 import {
   BlockExecutor,
@@ -11,7 +13,11 @@ import {
   TransformExecutor,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
-import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
+import {
+  CollectionValuetype,
+  IOType,
+  PrimitiveValuetypes,
+} from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
 export class TableTransformerExecutor
@@ -26,9 +32,9 @@ export class TableTransformerExecutor
     inputTable: Table,
     context: ExecutionContext,
   ): Promise<R.Result<Table>> {
-    const inputColumnName = context.getPropertyValue(
-      'inputColumn',
-      PrimitiveValuetypes.Text,
+    const inputColumnNames = context.getPropertyValue(
+      'inputColumns',
+      new CollectionValuetype(PrimitiveValuetypes.Text),
     );
     const outputColumnName = context.getPropertyValue(
       'outputColumn',
@@ -39,31 +45,48 @@ export class TableTransformerExecutor
       PrimitiveValuetypes.Transform,
     );
 
-    // check input column exists
-    const inputColumn = inputTable.getColumn(inputColumnName);
-    if (inputColumn === undefined) {
-      return R.err({
-        message: `The specified input column "${inputColumnName}" does not exist in the given table`,
-        diagnostic: {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          node: context.getProperty('inputColumn')!,
-        },
-      });
+    // check input columns exist
+    for (const inputColumnName of inputColumnNames) {
+      const inputColumn = inputTable.getColumn(inputColumnName);
+      if (inputColumn === undefined) {
+        return R.err({
+          message: `The specified input column "${inputColumnName}" does not exist in the given table`,
+          diagnostic: {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            node: context.getProperty('inputColumns')!,
+          },
+        });
+      }
     }
 
     const executor = new TransformExecutor(usedTransform);
-    const inputDetails = executor.getInputDetails();
-    const outputDetails = executor.getOutputDetails();
+    const transformInputDetailsList = executor.getInputDetails();
+    const transformOutputDetails = executor.getOutputDetails();
 
-    // check input column type matches transform input type
-    if (!inputColumn.valuetype.isConvertibleTo(inputDetails.valuetype)) {
-      return R.err({
-        message: `Type ${inputColumn.valuetype.getName()} of column "${inputColumnName}" is not convertible to type ${inputDetails.valuetype.getName()}`,
-        diagnostic: {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          node: context.getProperty('use')!,
-        },
-      });
+    // check input column types matche transform input types
+    const variableToColumnMap: Map<string, R.TableColumn> = new Map();
+    for (let i = 0; i < inputColumnNames.length; ++i) {
+      const inputColumnName = inputColumnNames[i];
+      assert(inputColumnName !== undefined);
+      const inputColumn = inputTable.getColumn(inputColumnName);
+      assert(inputColumn !== undefined);
+
+      const matchingInputDetails = transformInputDetailsList[i];
+      assert(matchingInputDetails !== undefined);
+
+      if (
+        !inputColumn.valuetype.isConvertibleTo(matchingInputDetails.valuetype)
+      ) {
+        return R.err({
+          message: `Type ${inputColumn.valuetype.getName()} of column "${inputColumnName}" is not convertible to type ${matchingInputDetails.valuetype.getName()}`,
+          diagnostic: {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            node: context.getProperty('use')!,
+          },
+        });
+      }
+      const variableName = matchingInputDetails.port.name;
+      variableToColumnMap.set(variableName, inputColumn);
     }
 
     // log if output column is overwritten
@@ -74,16 +97,21 @@ export class TableTransformerExecutor
       );
 
       // log if output column type changes
-      if (!outputColumn.valuetype.equals(outputDetails.valuetype)) {
+      if (!outputColumn.valuetype.equals(transformOutputDetails.valuetype)) {
         context.logger.logInfo(
-          `Column "${outputColumnName}" will change its type from ${outputColumn.valuetype.getName()} to ${outputDetails.valuetype.getName()}`,
+          `Column "${outputColumnName}" will change its type from ${outputColumn.valuetype.getName()} to ${transformOutputDetails.valuetype.getName()}`,
         );
       }
     }
 
     // perform transformation
-    const transformResult = executor.executeTransform(inputColumn, context);
+    const transformResult = executor.executeTransform(
+      variableToColumnMap,
+      inputTable.getNumberOfRows(),
+      context,
+    );
 
+    // construct output table
     const outputTable = inputTable.clone();
     outputTable.dropRows(transformResult.rowsToDelete);
     outputTable.addColumn(outputColumnName, transformResult.resultingColumn);
