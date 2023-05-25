@@ -2,10 +2,20 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
+
 import {
   BlockMetaInformation,
+  CollectionValuetype,
   IOType,
   PrimitiveValuetypes,
+  PropertyAssignment,
+  PropertyBody,
+  ValidationContext,
+  isCollectionLiteral,
+  isReferenceLiteral,
+  isTextValuetype,
+  isTransformDefinition,
 } from '@jvalue/jayvee-language-server';
 
 export class TableTransformerMetaInformation extends BlockMetaInformation {
@@ -13,11 +23,14 @@ export class TableTransformerMetaInformation extends BlockMetaInformation {
     super(
       'TableTransformer',
       {
-        inputColumn: {
-          type: PrimitiveValuetypes.Text,
+        inputColumns: {
+          type: new CollectionValuetype(PrimitiveValuetypes.Text),
           docs: {
             description:
-              "The name of the input column. Has to be present in the table and match with the transform's input port type.",
+              "The names of the input columns. The columns have to be present in the table and match with the transform's input port types.",
+          },
+          validation: (property, context) => {
+            this.checkInputColumnsType(property, context);
           },
         },
         outputColumn: {
@@ -37,6 +50,9 @@ export class TableTransformerMetaInformation extends BlockMetaInformation {
       },
       IOType.TABLE,
       IOType.TABLE,
+      (property, context) => {
+        this.checkInputColumnsMatchTransformationPorts(property, context);
+      },
     );
     this.docs = {
       description:
@@ -55,6 +71,95 @@ export class TableTransformerMetaInformation extends BlockMetaInformation {
       ],
     };
   }
+
+  private checkInputColumnsMatchTransformationPorts(
+    body: PropertyBody,
+    context: ValidationContext,
+  ): void {
+    const useProperty = body.properties.find((x) => x.name === 'use');
+    if (useProperty === undefined) {
+      return;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const reference = useProperty?.value;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (reference === undefined) {
+      return;
+    }
+    assert(isReferenceLiteral(reference));
+
+    const inputColumnsProperty = body.properties.find(
+      (x) => x.name === 'inputColumns',
+    );
+    if (inputColumnsProperty === undefined) {
+      return;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const inputColumns = inputColumnsProperty?.value;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (inputColumns === undefined) {
+      return;
+    }
+    assert(isCollectionLiteral(inputColumns));
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const referencedTransform = reference?.value?.ref;
+    if (referencedTransform === undefined) {
+      return;
+    }
+    assert(isTransformDefinition(referencedTransform));
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const transformInputPorts = referencedTransform?.body?.ports?.filter(
+      (x) => x.kind === 'from',
+    );
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (transformInputPorts === undefined) {
+      return undefined;
+    }
+
+    const numberTransformPorts = transformInputPorts.length;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const numberInputColumns = inputColumns?.values.length;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (numberInputColumns === undefined) {
+      return undefined;
+    }
+
+    if (numberTransformPorts !== numberInputColumns) {
+      context.accept(
+        'error',
+        `Expected ${numberTransformPorts} columns but only got ${numberInputColumns}`,
+        {
+          node: inputColumnsProperty,
+        },
+      );
+    }
+  }
+
+  private checkInputColumnsType(
+    property: PropertyAssignment,
+    context: ValidationContext,
+  ) {
+    const propertyValue = property.value;
+    if (!isCollectionLiteral(propertyValue)) {
+      return;
+    }
+
+    propertyValue.values
+      .filter((x) => !isTextValuetype(x))
+      .forEach((invalidValue) =>
+        context.accept(
+          'error',
+          'Only column names are allowed in this collection',
+          {
+            node: invalidValue,
+          },
+        ),
+      );
+  }
 }
 
 const blockExampleOverwrite = `
@@ -66,7 +171,7 @@ transform CelsiusToFahrenheit {
 }
 
 block CelsiusToFahrenheitTransformer oftype TableTransformer {
-  inputColumn: 'temperature';
+  inputColumns: ['temperature'];
   outputColumn: 'temperature';
   use: CelsiusToFahrenheit;
 }`;
@@ -80,7 +185,7 @@ transform CelsiusToFahrenheit {
 }
 
 block CelsiusToFahrenheitTransformer oftype TableTransformer {
-  inputColumn: 'temperatureCelsius';
+  inputColumns: ['temperatureCelsius'];
   outputColumn: 'temperatureFahrenheit';
   use: CelsiusToFahrenheit;
 }`;
