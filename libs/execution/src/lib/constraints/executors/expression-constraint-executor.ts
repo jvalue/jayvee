@@ -7,6 +7,7 @@ import { strict as assert } from 'assert';
 import {
   AstNodeWrapper,
   ExpressionConstraintDefinition,
+  InternalValueRepresentation,
   PrimitiveValuetypes,
   evaluateExpression,
 } from '@jvalue/jayvee-language-server';
@@ -19,11 +20,18 @@ export class ExpressionConstraintExecutor
 {
   constructor(public readonly astNode: ExpressionConstraintDefinition) {}
 
-  isValid(value: unknown, context: ExecutionContext): boolean {
+  isValid(
+    value: InternalValueRepresentation,
+    context: ExecutionContext,
+  ): boolean {
     const expression = this.astNode.expression;
+
+    context.evaluationContext.setValueForValueKeyword(value);
 
     const result = evaluateExpression(expression, context.evaluationContext);
     assert(PrimitiveValuetypes.Boolean.isInternalValueRepresentation(result));
+
+    context.evaluationContext.deleteValueForValueKeyword();
 
     return result;
   }

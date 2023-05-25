@@ -4,7 +4,10 @@
 
 import { strict as assert } from 'assert';
 
-import { evaluateExpression } from '@jvalue/jayvee-language-server';
+import {
+  InternalValueRepresentation,
+  evaluateExpression,
+} from '@jvalue/jayvee-language-server';
 
 import { ExecutionContext } from '../../execution-context';
 import { implementsStatic } from '../../util/implements-static-decorator';
@@ -15,7 +18,10 @@ import { TypedConstraintExecutorClass } from '../typed-constraint-executor-class
 export class AllowlistConstraintExecutor implements ConstraintExecutor {
   public static readonly type = 'AllowlistConstraint';
 
-  isValid(value: unknown, context: ExecutionContext): boolean {
+  isValid(
+    value: InternalValueRepresentation,
+    context: ExecutionContext,
+  ): boolean {
     if (typeof value !== 'string') {
       return false;
     }

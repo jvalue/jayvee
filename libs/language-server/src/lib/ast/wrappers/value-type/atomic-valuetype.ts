@@ -13,7 +13,8 @@ import { validateTypedCollection } from '../../expressions/type-inference';
 import { ConstraintDefinition, ValuetypeDefinition } from '../../generated/ast';
 import { AstNodeWrapper } from '../ast-node-wrapper';
 
-import { PrimitiveValuetypes } from './primitive';
+import { PrimitiveValuetypes } from './primitive/primitive-valuetypes';
+// eslint-disable-next-line import/no-cycle
 import { AbstractValuetype, Valuetype, ValuetypeVisitor } from './valuetype';
 import { createValuetype } from './valuetype-util';
 

@@ -2,4 +2,5 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-export * from './standard-representation';
+export * from './internal-representation-parsing';
+export * from './value-representation-validity';

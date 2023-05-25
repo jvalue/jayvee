@@ -46,8 +46,7 @@ UnaryExpression:
   operator=('not' | '+' | '-' | 'sqrt' | 'floor' | 'ceil' | 'round') expression=PrimaryExpression;
 
 ExpressionLiteral:
-  ValueLiteral
-  | ReferenceLiteral;
+  ValueLiteral | FreeVariableLiteral;
 
 ValueLiteral:
   TextLiteral
@@ -72,6 +71,12 @@ RegexLiteral:
 
 CollectionLiteral:
   '[' (values+=(Expression) (',' values+=(Expression))*)? ','? ']';
+
+FreeVariableLiteral:
+  ValueKeywordLiteral | ReferenceLiteral;
+
+ValueKeywordLiteral:
+  'value' ('.' lengthAccess?='length')?;
 
 ReferenceLiteral:
   value=[Referencable];

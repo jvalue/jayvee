@@ -149,3 +149,23 @@ export type BinaryExpressionOperator = BinaryExpression['operator'];
 export type AstTypeGuard<T extends AstNode = AstNode> = (
   obj: unknown,
 ) => obj is T;
+
+/**
+ * In the container hierarchy of the given AST node, searches for the closest AST node that satisfies the given type guard.
+ * The entered AST node itself cannot be the result.
+ * @param node The current AST node to start the search from.
+ * @param guard The type guard function to check if a container matches the desired type.
+ * @returns The desired container node that satisfies the type guard, or undefined if not found.
+ */
+export function getNextAstNodeContainer<T extends AstNode>(
+  node: AstNode,
+  guard: AstTypeGuard<T>,
+): T | undefined {
+  if (node.$container === undefined) {
+    return undefined;
+  }
+  if (guard(node.$container)) {
+    return node.$container;
+  }
+  return getNextAstNodeContainer(node.$container, guard);
+}

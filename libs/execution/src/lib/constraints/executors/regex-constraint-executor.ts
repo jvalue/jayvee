@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { InternalValueRepresentation } from '@jvalue/jayvee-language-server';
+
 import { ExecutionContext } from '../../execution-context';
 import { implementsStatic } from '../../util/implements-static-decorator';
 import { ConstraintExecutor } from '../constraint-executor';
@@ -11,7 +13,10 @@ import { TypedConstraintExecutorClass } from '../typed-constraint-executor-class
 export class RegexConstraintExecutor implements ConstraintExecutor {
   public static readonly type = 'RegexConstraint';
 
-  isValid(value: unknown, context: ExecutionContext): boolean {
+  isValid(
+    value: InternalValueRepresentation,
+    context: ExecutionContext,
+  ): boolean {
     if (typeof value !== 'string') {
       return false;
     }
