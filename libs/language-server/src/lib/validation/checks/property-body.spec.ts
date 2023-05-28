@@ -32,6 +32,21 @@ describe('property-body validation tests', () => {
 
   let locator: AstNodeLocator;
 
+  async function parseAndValidatePropertyBody(input: string) {
+    const document = await parse(input);
+    expectNoParserAndLexerErrors(document);
+
+    const propertyBody = locator.getAstNode<PropertyBody>(
+      document.parseResult.value,
+      'pipelines@0/blocks@0/body',
+    ) as PropertyBody;
+
+    validatePropertyBody(
+      propertyBody,
+      new ValidationContext(validationAcceptorMock),
+    );
+  }
+
   beforeAll(() => {
     // Register std extension
     useExtension(new StdLangExtension());
@@ -50,18 +65,7 @@ describe('property-body validation tests', () => {
   it('error on missing properties', async () => {
     const text = readJvTestAsset('property-body/invalid-missing-property.jv');
 
-    const document = await parse(text);
-    expectNoParserAndLexerErrors(document);
-
-    const propertyBody = locator.getAstNode<PropertyBody>(
-      document.parseResult.value,
-      'pipelines@0/blocks@0/body',
-    ) as PropertyBody;
-
-    validatePropertyBody(
-      propertyBody,
-      new ValidationContext(validationAcceptorMock),
-    );
+    await parseAndValidatePropertyBody(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
@@ -74,18 +78,7 @@ describe('property-body validation tests', () => {
   it('should have no error on missing properties with default values', async () => {
     const text = readJvTestAsset('property-body/valid-default-values.jv');
 
-    const document = await parse(text);
-    expectNoParserAndLexerErrors(document);
-
-    const propertyBody = locator.getAstNode<PropertyBody>(
-      document.parseResult.value,
-      'pipelines@0/blocks@0/body',
-    ) as PropertyBody;
-
-    validatePropertyBody(
-      propertyBody,
-      new ValidationContext(validationAcceptorMock),
-    );
+    await parseAndValidatePropertyBody(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
@@ -93,18 +86,7 @@ describe('property-body validation tests', () => {
   it('error on invalid property name', async () => {
     const text = readJvTestAsset('property-body/invalid-unknown-property.jv');
 
-    const document = await parse(text);
-    expectNoParserAndLexerErrors(document);
-
-    const propertyBody = locator.getAstNode<PropertyBody>(
-      document.parseResult.value,
-      'pipelines@0/blocks@0/body',
-    ) as PropertyBody;
-
-    validatePropertyBody(
-      propertyBody,
-      new ValidationContext(validationAcceptorMock),
-    );
+    await parseAndValidatePropertyBody(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
@@ -118,18 +100,7 @@ describe('property-body validation tests', () => {
     it('should have no error on runtime parameter for text property', async () => {
       const text = readJvTestAsset('property-body/valid-runtime-property.jv');
 
-      const document = await parse(text);
-      expectNoParserAndLexerErrors(document);
-
-      const propertyBody = locator.getAstNode<PropertyBody>(
-        document.parseResult.value,
-        'pipelines@0/blocks@0/body',
-      ) as PropertyBody;
-
-      validatePropertyBody(
-        propertyBody,
-        new ValidationContext(validationAcceptorMock),
-      );
+      await parseAndValidatePropertyBody(text);
 
       expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
     });
@@ -137,18 +108,7 @@ describe('property-body validation tests', () => {
     it('error on runtime parameter for regex property', async () => {
       const text = readJvTestAsset('property-body/invalid-runtime-property.jv');
 
-      const document = await parse(text);
-      expectNoParserAndLexerErrors(document);
-
-      const propertyBody = locator.getAstNode<PropertyBody>(
-        document.parseResult.value,
-        'pipelines@0/blocks@0/body',
-      ) as PropertyBody;
-
-      validatePropertyBody(
-        propertyBody,
-        new ValidationContext(validationAcceptorMock),
-      );
+      await parseAndValidatePropertyBody(text);
 
       expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
       expect(validationAcceptorMock).toHaveBeenCalledWith(
@@ -162,18 +122,7 @@ describe('property-body validation tests', () => {
   it('error on invalid property typing', async () => {
     const text = readJvTestAsset('property-body/invalid-property-type.jv');
 
-    const document = await parse(text);
-    expectNoParserAndLexerErrors(document);
-
-    const propertyBody = locator.getAstNode<PropertyBody>(
-      document.parseResult.value,
-      'pipelines@0/blocks@0/body',
-    ) as PropertyBody;
-
-    validatePropertyBody(
-      propertyBody,
-      new ValidationContext(validationAcceptorMock),
-    );
+    await parseAndValidatePropertyBody(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
@@ -186,18 +135,7 @@ describe('property-body validation tests', () => {
   it('info on simplifiable property expression', async () => {
     const text = readJvTestAsset('property-body/valid-simplify-info.jv');
 
-    const document = await parse(text);
-    expectNoParserAndLexerErrors(document);
-
-    const propertyBody = locator.getAstNode<PropertyBody>(
-      document.parseResult.value,
-      'pipelines@0/blocks@0/body',
-    ) as PropertyBody;
-
-    validatePropertyBody(
-      propertyBody,
-      new ValidationContext(validationAcceptorMock),
-    );
+    await parseAndValidatePropertyBody(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(

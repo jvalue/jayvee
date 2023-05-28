@@ -32,6 +32,21 @@ describe('pipeline-definition validation tests', () => {
 
   let locator: AstNodeLocator;
 
+  async function parseAndValidatePipeline(input: string) {
+    const document = await parse(input);
+    expectNoParserAndLexerErrors(document);
+
+    const pipeline = locator.getAstNode<PipelineDefinition>(
+      document.parseResult.value,
+      'pipelines@0',
+    ) as PipelineDefinition;
+
+    validatePipelineDefinition(
+      pipeline,
+      new ValidationContext(validationAcceptorMock),
+    );
+  }
+
   beforeAll(() => {
     // Register std extension
     useExtension(new StdLangExtension());
@@ -52,18 +67,7 @@ describe('pipeline-definition validation tests', () => {
       'pipeline-definition/invalid-empty-pipeline.jv',
     );
 
-    const document = await parse(text);
-    expectNoParserAndLexerErrors(document);
-
-    const pipeline = locator.getAstNode<PipelineDefinition>(
-      document.parseResult.value,
-      'pipelines@0',
-    ) as PipelineDefinition;
-
-    validatePipelineDefinition(
-      pipeline,
-      new ValidationContext(validationAcceptorMock),
-    );
+    await parseAndValidatePipeline(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
@@ -76,18 +80,7 @@ describe('pipeline-definition validation tests', () => {
   it('should have no error on valid pipeline', async () => {
     const text = readJvTestAsset('pipeline-definition/valid-pipeline.jv');
 
-    const document = await parse(text);
-    expectNoParserAndLexerErrors(document);
-
-    const pipeline = locator.getAstNode<PipelineDefinition>(
-      document.parseResult.value,
-      'pipelines@0',
-    ) as PipelineDefinition;
-
-    validatePipelineDefinition(
-      pipeline,
-      new ValidationContext(validationAcceptorMock),
-    );
+    await parseAndValidatePipeline(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });

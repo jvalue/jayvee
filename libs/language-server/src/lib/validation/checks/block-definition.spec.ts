@@ -33,6 +33,21 @@ describe('block-definition validation tests', () => {
 
   let locator: AstNodeLocator;
 
+  async function parseAndValidateBlock(input: string) {
+    const document = await parse(input);
+    expectNoParserAndLexerErrors(document);
+
+    const block = locator.getAstNode<BlockDefinition>(
+      document.parseResult.value,
+      'pipelines@0/blocks@0',
+    ) as BlockDefinition;
+
+    validateBlockDefinition(
+      block,
+      new ValidationContext(validationAcceptorMock),
+    );
+  }
+
   beforeAll(() => {
     // Register std extension
     useExtension(new StdLangExtension());
@@ -51,18 +66,7 @@ describe('block-definition validation tests', () => {
   it('error on unknown block type', async () => {
     const text = readJvTestAsset('block-definition/invalid-unknown-block.jv');
 
-    const document = await parse(text);
-    expectNoParserAndLexerErrors(document);
-
-    const block = locator.getAstNode<BlockDefinition>(
-      document.parseResult.value,
-      'pipelines@0/blocks@0',
-    ) as BlockDefinition;
-
-    validateBlockDefinition(
-      block,
-      new ValidationContext(validationAcceptorMock),
-    );
+    await parseAndValidateBlock(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
@@ -75,18 +79,7 @@ describe('block-definition validation tests', () => {
   it('error on block without pipe', async () => {
     const text = readJvTestAsset('block-definition/invalid-missing-pipe.jv');
 
-    const document = await parse(text);
-    expectNoParserAndLexerErrors(document);
-
-    const block = locator.getAstNode<BlockDefinition>(
-      document.parseResult.value,
-      'pipelines@0/blocks@0',
-    ) as BlockDefinition;
-
-    validateBlockDefinition(
-      block,
-      new ValidationContext(validationAcceptorMock),
-    );
+    await parseAndValidateBlock(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
@@ -101,18 +94,7 @@ describe('block-definition validation tests', () => {
       'block-definition/invalid-output-block-as-input.jv',
     );
 
-    const document = await parse(text);
-    expectNoParserAndLexerErrors(document);
-
-    const block = locator.getAstNode<BlockDefinition>(
-      document.parseResult.value,
-      'pipelines@0/blocks@0',
-    ) as BlockDefinition;
-
-    validateBlockDefinition(
-      block,
-      new ValidationContext(validationAcceptorMock),
-    );
+    await parseAndValidateBlock(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
@@ -127,18 +109,7 @@ describe('block-definition validation tests', () => {
       'block-definition/invalid-block-as-multiple-pipe-inputs.jv',
     );
 
-    const document = await parse(text);
-    expectNoParserAndLexerErrors(document);
-
-    const block = locator.getAstNode<BlockDefinition>(
-      document.parseResult.value,
-      'pipelines@0/blocks@0',
-    ) as BlockDefinition;
-
-    validateBlockDefinition(
-      block,
-      new ValidationContext(validationAcceptorMock),
-    );
+    await parseAndValidateBlock(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
     expect(validationAcceptorMock).toHaveBeenNthCalledWith(
@@ -152,18 +123,7 @@ describe('block-definition validation tests', () => {
   it('should have no error on valid block definition', async () => {
     const text = readJvTestAsset('block-definition/valid-block-definition.jv');
 
-    const document = await parse(text);
-    expectNoParserAndLexerErrors(document);
-
-    const block = locator.getAstNode<BlockDefinition>(
-      document.parseResult.value,
-      'pipelines@0/blocks@0',
-    ) as BlockDefinition;
-
-    validateBlockDefinition(
-      block,
-      new ValidationContext(validationAcceptorMock),
-    );
+    await parseAndValidateBlock(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });

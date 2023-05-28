@@ -32,6 +32,18 @@ describe('validation-utils tests', () => {
 
   let locator: AstNodeLocator;
 
+  async function parseAndExtractPropertyBody(
+    input: string,
+  ): Promise<PropertyBody> {
+    const document = await parse(input);
+    expectNoParserAndLexerErrors(document);
+
+    return locator.getAstNode<PropertyBody>(
+      document.parseResult.value,
+      'pipelines@0/blocks@0/body',
+    ) as PropertyBody;
+  }
+
   beforeAll(() => {
     // Register std extension
     useExtension(new StdLangExtension());
@@ -55,14 +67,9 @@ describe('validation-utils tests', () => {
         'validation-utils/valid-distinct-property-names.jv',
       );
 
-      const document = await parse(text);
-      expectNoParserAndLexerErrors(document);
-
-      const propertyBody = locator.getAstNode<PropertyBody>(
-        document.parseResult.value,
-        'pipelines@0/blocks@0/body',
-      ) as PropertyBody;
-
+      const propertyBody: PropertyBody = await parseAndExtractPropertyBody(
+        text,
+      );
       checkUniqueNames(
         propertyBody.properties,
         new ValidationContext(validationAcceptorMock),
@@ -76,14 +83,9 @@ describe('validation-utils tests', () => {
         'validation-utils/invalid-duplicate-property-names.jv',
       );
 
-      const document = await parse(text);
-      expectNoParserAndLexerErrors(document);
-
-      const propertyBody = locator.getAstNode<PropertyBody>(
-        document.parseResult.value,
-        'pipelines@0/blocks@0/body',
-      ) as PropertyBody;
-
+      const propertyBody: PropertyBody = await parseAndExtractPropertyBody(
+        text,
+      );
       checkUniqueNames(
         propertyBody.properties,
         new ValidationContext(validationAcceptorMock),
@@ -105,14 +107,9 @@ describe('validation-utils tests', () => {
         'validation-utils/invalid-duplicate-property-names.jv',
       );
 
-      const document = await parse(text);
-      expectNoParserAndLexerErrors(document);
-
-      const propertyBody = locator.getAstNode<PropertyBody>(
-        document.parseResult.value,
-        'pipelines@0/blocks@0/body',
-      ) as PropertyBody;
-
+      const propertyBody: PropertyBody = await parseAndExtractPropertyBody(
+        text,
+      );
       const nonUniqueNodes = getNodesWithNonUniqueNames(
         propertyBody.properties,
       );
@@ -131,14 +128,9 @@ describe('validation-utils tests', () => {
         'validation-utils/valid-distinct-property-names.jv',
       );
 
-      const document = await parse(text);
-      expectNoParserAndLexerErrors(document);
-
-      const propertyBody = locator.getAstNode<PropertyBody>(
-        document.parseResult.value,
-        'pipelines@0/blocks@0/body',
-      ) as PropertyBody;
-
+      const propertyBody: PropertyBody = await parseAndExtractPropertyBody(
+        text,
+      );
       const nonUniqueNodes = getNodesWithNonUniqueNames(
         propertyBody.properties,
       );

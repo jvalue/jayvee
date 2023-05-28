@@ -32,6 +32,18 @@ describe('pipe-definition validation tests', () => {
 
   let locator: AstNodeLocator;
 
+  async function parseAndValidatePipe(input: string) {
+    const document = await parse(input);
+    expectNoParserAndLexerErrors(document);
+
+    const pipe = locator.getAstNode<PipeDefinition>(
+      document.parseResult.value,
+      'pipelines@0/pipes@0',
+    ) as PipeDefinition;
+
+    validatePipeDefinition(pipe, new ValidationContext(validationAcceptorMock));
+  }
+
   beforeAll(() => {
     // Register std extension
     useExtension(new StdLangExtension());
@@ -54,18 +66,7 @@ describe('pipe-definition validation tests', () => {
         'pipe-definition/single/valid-undefined-block.jv',
       );
 
-      const document = await parse(text);
-      expectNoParserAndLexerErrors(document);
-
-      const pipe = locator.getAstNode<PipeDefinition>(
-        document.parseResult.value,
-        'pipelines@0/pipes@0',
-      ) as PipeDefinition;
-
-      validatePipeDefinition(
-        pipe,
-        new ValidationContext(validationAcceptorMock),
-      );
+      await parseAndValidatePipe(text);
 
       expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
     });
@@ -75,18 +76,7 @@ describe('pipe-definition validation tests', () => {
         'pipe-definition/single/valid-unknown-blocktype.jv',
       );
 
-      const document = await parse(text);
-      expectNoParserAndLexerErrors(document);
-
-      const pipe = locator.getAstNode<PipeDefinition>(
-        document.parseResult.value,
-        'pipelines@0/pipes@0',
-      ) as PipeDefinition;
-
-      validatePipeDefinition(
-        pipe,
-        new ValidationContext(validationAcceptorMock),
-      );
+      await parseAndValidatePipe(text);
 
       expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
     });
@@ -96,18 +86,7 @@ describe('pipe-definition validation tests', () => {
         'pipe-definition/single/invalid-pipe-between-blocktypes.jv',
       );
 
-      const document = await parse(text);
-      expectNoParserAndLexerErrors(document);
-
-      const pipe = locator.getAstNode<PipeDefinition>(
-        document.parseResult.value,
-        'pipelines@0/pipes@0',
-      ) as PipeDefinition;
-
-      validatePipeDefinition(
-        pipe,
-        new ValidationContext(validationAcceptorMock),
-      );
+      await parseAndValidatePipe(text);
 
       expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
       expect(validationAcceptorMock).toHaveBeenNthCalledWith(
@@ -126,18 +105,7 @@ describe('pipe-definition validation tests', () => {
         'pipe-definition/chained/valid-undefined-block.jv',
       );
 
-      const document = await parse(text);
-      expectNoParserAndLexerErrors(document);
-
-      const pipe = locator.getAstNode<PipeDefinition>(
-        document.parseResult.value,
-        'pipelines@0/pipes@0',
-      ) as PipeDefinition;
-
-      validatePipeDefinition(
-        pipe,
-        new ValidationContext(validationAcceptorMock),
-      );
+      await parseAndValidatePipe(text);
 
       expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
     });
@@ -147,18 +115,7 @@ describe('pipe-definition validation tests', () => {
         'pipe-definition/chained/valid-unknown-blocktype.jv',
       );
 
-      const document = await parse(text);
-      expectNoParserAndLexerErrors(document);
-
-      const pipe = locator.getAstNode<PipeDefinition>(
-        document.parseResult.value,
-        'pipelines@0/pipes@0',
-      ) as PipeDefinition;
-
-      validatePipeDefinition(
-        pipe,
-        new ValidationContext(validationAcceptorMock),
-      );
+      await parseAndValidatePipe(text);
 
       expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
     });
@@ -168,18 +125,7 @@ describe('pipe-definition validation tests', () => {
         'pipe-definition/chained/invalid-pipe-between-blocktypes.jv',
       );
 
-      const document = await parse(text);
-      expectNoParserAndLexerErrors(document);
-
-      const pipe = locator.getAstNode<PipeDefinition>(
-        document.parseResult.value,
-        'pipelines@0/pipes@0',
-      ) as PipeDefinition;
-
-      validatePipeDefinition(
-        pipe,
-        new ValidationContext(validationAcceptorMock),
-      );
+      await parseAndValidatePipe(text);
 
       expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
       expect(validationAcceptorMock).toHaveBeenNthCalledWith(
