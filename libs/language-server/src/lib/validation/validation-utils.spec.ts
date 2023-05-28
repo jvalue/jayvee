@@ -20,6 +20,7 @@ import {
   ParseHelperOptions,
   extractPropertyBodyFromBlock,
   parseHelper,
+  readJvTestAsset,
   validationAcceptorMockImpl,
 } from '../../test';
 
@@ -47,14 +48,9 @@ describe('validation-utils tests', () => {
     });
 
     it('should have no error', async () => {
-      const text = `
-      pipeline Test {
-        block CarsExtractor oftype HttpExtractor {
-          url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
-          uri: "test";
-        }
-      }
-      `;
+      const text = readJvTestAsset(
+        'validation-utils/valid-distinct-property-names.jv',
+      );
 
       const parseResult = await parse(text);
 
@@ -69,14 +65,9 @@ describe('validation-utils tests', () => {
     });
 
     it('error on duplicate property names', async () => {
-      const text = `
-      pipeline Test {
-        block CarsExtractor oftype HttpExtractor {
-          url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
-          url: "Duplicate";
-        }
-      }
-      `;
+      const text = readJvTestAsset(
+        'validation-utils/invalid-duplicate-property-names.jv',
+      );
 
       const parseResult = await parse(text);
 
@@ -99,14 +90,9 @@ describe('validation-utils tests', () => {
 
   describe('getNodesWithNonUniqueNames tests', () => {
     it('should return two duplicates', async () => {
-      const text = `
-      pipeline Test {
-        block CarsExtractor oftype HttpExtractor {
-          url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
-          url: "Duplicate";
-        }
-      }
-      `;
+      const text = readJvTestAsset(
+        'validation-utils/invalid-duplicate-property-names.jv',
+      );
 
       const parseResult = await parse(text);
 
@@ -126,14 +112,9 @@ describe('validation-utils tests', () => {
     });
 
     it('should return empty array', async () => {
-      const text = `
-        pipeline Test {
-          block CarsExtractor oftype HttpExtractor {
-            url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
-            uri: "test";
-          }
-        }
-        `;
+      const text = readJvTestAsset(
+        'validation-utils/valid-distinct-property-names.jv',
+      );
 
       const parseResult = await parse(text);
 
