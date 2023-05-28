@@ -4,7 +4,7 @@
 
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
-import { AstNode, LangiumDocument } from 'langium';
+import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
@@ -16,7 +16,7 @@ import {
 import { validatePipeDefinition } from '../../../lib/validation/checks/pipe-definition';
 import {
   ParseHelperOptions,
-  extractPipe,
+  expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAsset,
   validationAcceptorMockImpl,
@@ -30,11 +30,14 @@ describe('pipe-definition validation tests', () => {
 
   const validationAcceptorMock = jest.fn(validationAcceptorMockImpl);
 
+  let locator: AstNodeLocator;
+
   beforeAll(() => {
     // Register std extension
     useExtension(new StdLangExtension());
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
+    locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });
@@ -51,9 +54,13 @@ describe('pipe-definition validation tests', () => {
         'pipe-definition/single/valid-undefined-block.jv',
       );
 
-      const parseResult = await parse(text);
+      const document = await parse(text);
+      expectNoParserAndLexerErrors(document);
 
-      const pipe: PipeDefinition = extractPipe(parseResult);
+      const pipe = locator.getAstNode<PipeDefinition>(
+        document.parseResult.value,
+        'pipelines@0/pipes@0',
+      ) as PipeDefinition;
 
       validatePipeDefinition(
         pipe,
@@ -68,9 +75,13 @@ describe('pipe-definition validation tests', () => {
         'pipe-definition/single/valid-unknown-blocktype.jv',
       );
 
-      const parseResult = await parse(text);
+      const document = await parse(text);
+      expectNoParserAndLexerErrors(document);
 
-      const pipe: PipeDefinition = extractPipe(parseResult);
+      const pipe = locator.getAstNode<PipeDefinition>(
+        document.parseResult.value,
+        'pipelines@0/pipes@0',
+      ) as PipeDefinition;
 
       validatePipeDefinition(
         pipe,
@@ -85,9 +96,13 @@ describe('pipe-definition validation tests', () => {
         'pipe-definition/single/invalid-pipe-between-blocktypes.jv',
       );
 
-      const parseResult = await parse(text);
+      const document = await parse(text);
+      expectNoParserAndLexerErrors(document);
 
-      const pipe: PipeDefinition = extractPipe(parseResult);
+      const pipe = locator.getAstNode<PipeDefinition>(
+        document.parseResult.value,
+        'pipelines@0/pipes@0',
+      ) as PipeDefinition;
 
       validatePipeDefinition(
         pipe,
@@ -111,9 +126,13 @@ describe('pipe-definition validation tests', () => {
         'pipe-definition/chained/valid-undefined-block.jv',
       );
 
-      const parseResult = await parse(text);
+      const document = await parse(text);
+      expectNoParserAndLexerErrors(document);
 
-      const pipe: PipeDefinition = extractPipe(parseResult);
+      const pipe = locator.getAstNode<PipeDefinition>(
+        document.parseResult.value,
+        'pipelines@0/pipes@0',
+      ) as PipeDefinition;
 
       validatePipeDefinition(
         pipe,
@@ -128,9 +147,13 @@ describe('pipe-definition validation tests', () => {
         'pipe-definition/chained/valid-unknown-blocktype.jv',
       );
 
-      const parseResult = await parse(text);
+      const document = await parse(text);
+      expectNoParserAndLexerErrors(document);
 
-      const pipe: PipeDefinition = extractPipe(parseResult);
+      const pipe = locator.getAstNode<PipeDefinition>(
+        document.parseResult.value,
+        'pipelines@0/pipes@0',
+      ) as PipeDefinition;
 
       validatePipeDefinition(
         pipe,
@@ -145,9 +168,13 @@ describe('pipe-definition validation tests', () => {
         'pipe-definition/chained/invalid-pipe-between-blocktypes.jv',
       );
 
-      const parseResult = await parse(text);
+      const document = await parse(text);
+      expectNoParserAndLexerErrors(document);
 
-      const pipe: PipeDefinition = extractPipe(parseResult);
+      const pipe = locator.getAstNode<PipeDefinition>(
+        document.parseResult.value,
+        'pipelines@0/pipes@0',
+      ) as PipeDefinition;
 
       validatePipeDefinition(
         pipe,

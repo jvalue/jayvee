@@ -4,7 +4,7 @@
 
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
-import { AstNode, LangiumDocument } from 'langium';
+import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
@@ -16,7 +16,7 @@ import {
 import { validatePropertyBody } from '../../../lib/validation/checks/property-body';
 import {
   ParseHelperOptions,
-  extractPropertyBodyFromBlock,
+  expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAsset,
   validationAcceptorMockImpl,
@@ -30,11 +30,14 @@ describe('property-body validation tests', () => {
 
   const validationAcceptorMock = jest.fn(validationAcceptorMockImpl);
 
+  let locator: AstNodeLocator;
+
   beforeAll(() => {
     // Register std extension
     useExtension(new StdLangExtension());
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
+    locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });
@@ -47,10 +50,13 @@ describe('property-body validation tests', () => {
   it('error on missing properties', async () => {
     const text = readJvTestAsset('property-body/invalid-missing-property.jv');
 
-    const parseResult = await parse(text);
+    const document = await parse(text);
+    expectNoParserAndLexerErrors(document);
 
-    const propertyBody: PropertyBody =
-      extractPropertyBodyFromBlock(parseResult);
+    const propertyBody = locator.getAstNode<PropertyBody>(
+      document.parseResult.value,
+      'pipelines@0/blocks@0/body',
+    ) as PropertyBody;
 
     validatePropertyBody(
       propertyBody,
@@ -68,10 +74,13 @@ describe('property-body validation tests', () => {
   it('should have no error on missing properties with default values', async () => {
     const text = readJvTestAsset('property-body/valid-default-values.jv');
 
-    const parseResult = await parse(text);
+    const document = await parse(text);
+    expectNoParserAndLexerErrors(document);
 
-    const propertyBody: PropertyBody =
-      extractPropertyBodyFromBlock(parseResult);
+    const propertyBody = locator.getAstNode<PropertyBody>(
+      document.parseResult.value,
+      'pipelines@0/blocks@0/body',
+    ) as PropertyBody;
 
     validatePropertyBody(
       propertyBody,
@@ -84,10 +93,13 @@ describe('property-body validation tests', () => {
   it('error on invalid property name', async () => {
     const text = readJvTestAsset('property-body/invalid-unknown-property.jv');
 
-    const parseResult = await parse(text);
+    const document = await parse(text);
+    expectNoParserAndLexerErrors(document);
 
-    const propertyBody: PropertyBody =
-      extractPropertyBodyFromBlock(parseResult);
+    const propertyBody = locator.getAstNode<PropertyBody>(
+      document.parseResult.value,
+      'pipelines@0/blocks@0/body',
+    ) as PropertyBody;
 
     validatePropertyBody(
       propertyBody,
@@ -106,10 +118,13 @@ describe('property-body validation tests', () => {
     it('should have no error on runtime parameter for text property', async () => {
       const text = readJvTestAsset('property-body/valid-runtime-property.jv');
 
-      const parseResult = await parse(text);
+      const document = await parse(text);
+      expectNoParserAndLexerErrors(document);
 
-      const propertyBody: PropertyBody =
-        extractPropertyBodyFromBlock(parseResult);
+      const propertyBody = locator.getAstNode<PropertyBody>(
+        document.parseResult.value,
+        'pipelines@0/blocks@0/body',
+      ) as PropertyBody;
 
       validatePropertyBody(
         propertyBody,
@@ -122,10 +137,13 @@ describe('property-body validation tests', () => {
     it('error on runtime parameter for regex property', async () => {
       const text = readJvTestAsset('property-body/invalid-runtime-property.jv');
 
-      const parseResult = await parse(text);
+      const document = await parse(text);
+      expectNoParserAndLexerErrors(document);
 
-      const propertyBody: PropertyBody =
-        extractPropertyBodyFromBlock(parseResult);
+      const propertyBody = locator.getAstNode<PropertyBody>(
+        document.parseResult.value,
+        'pipelines@0/blocks@0/body',
+      ) as PropertyBody;
 
       validatePropertyBody(
         propertyBody,
@@ -144,10 +162,13 @@ describe('property-body validation tests', () => {
   it('error on invalid property typing', async () => {
     const text = readJvTestAsset('property-body/invalid-property-type.jv');
 
-    const parseResult = await parse(text);
+    const document = await parse(text);
+    expectNoParserAndLexerErrors(document);
 
-    const propertyBody: PropertyBody =
-      extractPropertyBodyFromBlock(parseResult);
+    const propertyBody = locator.getAstNode<PropertyBody>(
+      document.parseResult.value,
+      'pipelines@0/blocks@0/body',
+    ) as PropertyBody;
 
     validatePropertyBody(
       propertyBody,
@@ -165,10 +186,13 @@ describe('property-body validation tests', () => {
   it('info on simplifiable property expression', async () => {
     const text = readJvTestAsset('property-body/valid-simplify-info.jv');
 
-    const parseResult = await parse(text);
+    const document = await parse(text);
+    expectNoParserAndLexerErrors(document);
 
-    const propertyBody: PropertyBody =
-      extractPropertyBodyFromBlock(parseResult);
+    const propertyBody = locator.getAstNode<PropertyBody>(
+      document.parseResult.value,
+      'pipelines@0/blocks@0/body',
+    ) as PropertyBody;
 
     validatePropertyBody(
       propertyBody,

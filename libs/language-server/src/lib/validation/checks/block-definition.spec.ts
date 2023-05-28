@@ -4,7 +4,7 @@
 
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
-import { AstNode, LangiumDocument } from 'langium';
+import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
@@ -15,7 +15,7 @@ import {
 } from '../..';
 import {
   ParseHelperOptions,
-  extractBlock,
+  expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAsset,
   validationAcceptorMockImpl,
@@ -31,11 +31,14 @@ describe('block-definition validation tests', () => {
 
   const validationAcceptorMock = jest.fn(validationAcceptorMockImpl);
 
+  let locator: AstNodeLocator;
+
   beforeAll(() => {
     // Register std extension
     useExtension(new StdLangExtension());
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
+    locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });
@@ -48,9 +51,13 @@ describe('block-definition validation tests', () => {
   it('error on unknown block type', async () => {
     const text = readJvTestAsset('block-definition/invalid-unknown-block.jv');
 
-    const parseResult = await parse(text);
+    const document = await parse(text);
+    expectNoParserAndLexerErrors(document);
 
-    const block: BlockDefinition = extractBlock(parseResult);
+    const block = locator.getAstNode<BlockDefinition>(
+      document.parseResult.value,
+      'pipelines@0/blocks@0',
+    ) as BlockDefinition;
 
     validateBlockDefinition(
       block,
@@ -68,9 +75,13 @@ describe('block-definition validation tests', () => {
   it('error on block without pipe', async () => {
     const text = readJvTestAsset('block-definition/invalid-missing-pipe.jv');
 
-    const parseResult = await parse(text);
+    const document = await parse(text);
+    expectNoParserAndLexerErrors(document);
 
-    const block: BlockDefinition = extractBlock(parseResult);
+    const block = locator.getAstNode<BlockDefinition>(
+      document.parseResult.value,
+      'pipelines@0/blocks@0',
+    ) as BlockDefinition;
 
     validateBlockDefinition(
       block,
@@ -90,9 +101,13 @@ describe('block-definition validation tests', () => {
       'block-definition/invalid-output-block-as-input.jv',
     );
 
-    const parseResult = await parse(text);
+    const document = await parse(text);
+    expectNoParserAndLexerErrors(document);
 
-    const block: BlockDefinition = extractBlock(parseResult);
+    const block = locator.getAstNode<BlockDefinition>(
+      document.parseResult.value,
+      'pipelines@0/blocks@0',
+    ) as BlockDefinition;
 
     validateBlockDefinition(
       block,
@@ -112,9 +127,13 @@ describe('block-definition validation tests', () => {
       'block-definition/invalid-block-as-multiple-pipe-inputs.jv',
     );
 
-    const parseResult = await parse(text);
+    const document = await parse(text);
+    expectNoParserAndLexerErrors(document);
 
-    const block: BlockDefinition = extractBlock(parseResult);
+    const block = locator.getAstNode<BlockDefinition>(
+      document.parseResult.value,
+      'pipelines@0/blocks@0',
+    ) as BlockDefinition;
 
     validateBlockDefinition(
       block,
@@ -133,9 +152,13 @@ describe('block-definition validation tests', () => {
   it('should have no error on valid block definition', async () => {
     const text = readJvTestAsset('block-definition/valid-block-definition.jv');
 
-    const parseResult = await parse(text);
+    const document = await parse(text);
+    expectNoParserAndLexerErrors(document);
 
-    const block: BlockDefinition = extractBlock(parseResult);
+    const block = locator.getAstNode<BlockDefinition>(
+      document.parseResult.value,
+      'pipelines@0/blocks@0',
+    ) as BlockDefinition;
 
     validateBlockDefinition(
       block,

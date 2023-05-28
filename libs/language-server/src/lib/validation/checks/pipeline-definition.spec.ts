@@ -4,7 +4,7 @@
 
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
-import { AstNode, LangiumDocument } from 'langium';
+import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
@@ -16,7 +16,7 @@ import {
 import { validatePipelineDefinition } from '../../../lib/validation/checks/pipeline-definition';
 import {
   ParseHelperOptions,
-  extractPipeline,
+  expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAsset,
   validationAcceptorMockImpl,
@@ -30,11 +30,14 @@ describe('pipeline-definition validation tests', () => {
 
   const validationAcceptorMock = jest.fn(validationAcceptorMockImpl);
 
+  let locator: AstNodeLocator;
+
   beforeAll(() => {
     // Register std extension
     useExtension(new StdLangExtension());
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
+    locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });
@@ -49,9 +52,13 @@ describe('pipeline-definition validation tests', () => {
       'pipeline-definition/invalid-empty-pipeline.jv',
     );
 
-    const parseResult = await parse(text);
+    const document = await parse(text);
+    expectNoParserAndLexerErrors(document);
 
-    const pipeline: PipelineDefinition = extractPipeline(parseResult);
+    const pipeline = locator.getAstNode<PipelineDefinition>(
+      document.parseResult.value,
+      'pipelines@0',
+    ) as PipelineDefinition;
 
     validatePipelineDefinition(
       pipeline,
@@ -69,9 +76,13 @@ describe('pipeline-definition validation tests', () => {
   it('should have no error on valid pipeline', async () => {
     const text = readJvTestAsset('pipeline-definition/valid-pipeline.jv');
 
-    const parseResult = await parse(text);
+    const document = await parse(text);
+    expectNoParserAndLexerErrors(document);
 
-    const pipeline: PipelineDefinition = extractPipeline(parseResult);
+    const pipeline = locator.getAstNode<PipelineDefinition>(
+      document.parseResult.value,
+      'pipelines@0',
+    ) as PipelineDefinition;
 
     validatePipelineDefinition(
       pipeline,

@@ -4,7 +4,7 @@
 
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
-import { AstNode, LangiumDocument } from 'langium';
+import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
@@ -16,7 +16,7 @@ import {
 import { validateColumnId } from '../../../lib/validation/checks/column-id';
 import {
   ParseHelperOptions,
-  extractColumnIdFromBlockProperty,
+  expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAsset,
   validationAcceptorMockImpl,
@@ -30,11 +30,14 @@ describe('column-id validation tests', () => {
 
   const validationAcceptorMock = jest.fn(validationAcceptorMockImpl);
 
+  let locator: AstNodeLocator;
+
   beforeAll(() => {
     // Register std extension
     useExtension(new StdLangExtension());
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
+    locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });
@@ -49,9 +52,13 @@ describe('column-id validation tests', () => {
       'column-id/valid-column-id-capital-letters.jv',
     );
 
-    const parseResult = await parse(text);
+    const document = await parse(text);
+    expectNoParserAndLexerErrors(document);
 
-    const columnId: ColumnId = extractColumnIdFromBlockProperty(parseResult);
+    const columnId = locator.getAstNode<ColumnId>(
+      document.parseResult.value,
+      'pipelines@0/blocks@0/body/properties@0/value/columnId',
+    ) as ColumnId;
 
     validateColumnId(columnId, new ValidationContext(validationAcceptorMock));
 
@@ -61,9 +68,13 @@ describe('column-id validation tests', () => {
   it('should have no error if denoted with *', async () => {
     const text = readJvTestAsset('column-id/valid-column-id-asterix.jv');
 
-    const parseResult = await parse(text);
+    const document = await parse(text);
+    expectNoParserAndLexerErrors(document);
 
-    const columnId: ColumnId = extractColumnIdFromBlockProperty(parseResult);
+    const columnId = locator.getAstNode<ColumnId>(
+      document.parseResult.value,
+      'pipelines@0/blocks@0/body/properties@0/value/columnId',
+    ) as ColumnId;
 
     validateColumnId(columnId, new ValidationContext(validationAcceptorMock));
 
@@ -73,9 +84,13 @@ describe('column-id validation tests', () => {
   it('error on lower case denotion', async () => {
     const text = readJvTestAsset('column-id/invalid-column-id-lower-case.jv');
 
-    const parseResult = await parse(text);
+    const document = await parse(text);
+    expectNoParserAndLexerErrors(document);
 
-    const columnId: ColumnId = extractColumnIdFromBlockProperty(parseResult);
+    const columnId = locator.getAstNode<ColumnId>(
+      document.parseResult.value,
+      'pipelines@0/blocks@0/body/properties@0/value/columnId',
+    ) as ColumnId;
 
     validateColumnId(columnId, new ValidationContext(validationAcceptorMock));
 
@@ -90,9 +105,13 @@ describe('column-id validation tests', () => {
   it('error on camel case', async () => {
     const text = readJvTestAsset('column-id/invalid-column-id-camel-case.jv');
 
-    const parseResult = await parse(text);
+    const document = await parse(text);
+    expectNoParserAndLexerErrors(document);
 
-    const columnId: ColumnId = extractColumnIdFromBlockProperty(parseResult);
+    const columnId = locator.getAstNode<ColumnId>(
+      document.parseResult.value,
+      'pipelines@0/blocks@0/body/properties@0/value/columnId',
+    ) as ColumnId;
 
     validateColumnId(columnId, new ValidationContext(validationAcceptorMock));
 
@@ -107,9 +126,13 @@ describe('column-id validation tests', () => {
   it('error on snake case', async () => {
     const text = readJvTestAsset('column-id/invalid-column-id-snake-case.jv');
 
-    const parseResult = await parse(text);
+    const document = await parse(text);
+    expectNoParserAndLexerErrors(document);
 
-    const columnId: ColumnId = extractColumnIdFromBlockProperty(parseResult);
+    const columnId = locator.getAstNode<ColumnId>(
+      document.parseResult.value,
+      'pipelines@0/blocks@0/body/properties@0/value/columnId',
+    ) as ColumnId;
 
     validateColumnId(columnId, new ValidationContext(validationAcceptorMock));
 
@@ -124,9 +147,13 @@ describe('column-id validation tests', () => {
   it('error on pascal case', async () => {
     const text = readJvTestAsset('column-id/invalid-column-id-pascal-case.jv');
 
-    const parseResult = await parse(text);
+    const document = await parse(text);
+    expectNoParserAndLexerErrors(document);
 
-    const columnId: ColumnId = extractColumnIdFromBlockProperty(parseResult);
+    const columnId = locator.getAstNode<ColumnId>(
+      document.parseResult.value,
+      'pipelines@0/blocks@0/body/properties@0/value/columnId',
+    ) as ColumnId;
 
     validateColumnId(columnId, new ValidationContext(validationAcceptorMock));
 

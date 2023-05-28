@@ -4,7 +4,7 @@
 
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
-import { AstNode, LangiumDocument } from 'langium';
+import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
@@ -18,7 +18,7 @@ import {
 } from '..';
 import {
   ParseHelperOptions,
-  extractPropertyBodyFromBlock,
+  expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAsset,
   validationAcceptorMockImpl,
@@ -30,11 +30,14 @@ describe('validation-utils tests', () => {
     options?: ParseHelperOptions,
   ) => Promise<LangiumDocument<AstNode>>;
 
+  let locator: AstNodeLocator;
+
   beforeAll(() => {
     // Register std extension
     useExtension(new StdLangExtension());
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
+    locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });
@@ -52,10 +55,14 @@ describe('validation-utils tests', () => {
         'validation-utils/valid-distinct-property-names.jv',
       );
 
-      const parseResult = await parse(text);
+      const document = await parse(text);
+      expectNoParserAndLexerErrors(document);
 
-      const propertyBody: PropertyBody =
-        extractPropertyBodyFromBlock(parseResult);
+      const propertyBody = locator.getAstNode<PropertyBody>(
+        document.parseResult.value,
+        'pipelines@0/blocks@0/body',
+      ) as PropertyBody;
+
       checkUniqueNames(
         propertyBody.properties,
         new ValidationContext(validationAcceptorMock),
@@ -69,10 +76,14 @@ describe('validation-utils tests', () => {
         'validation-utils/invalid-duplicate-property-names.jv',
       );
 
-      const parseResult = await parse(text);
+      const document = await parse(text);
+      expectNoParserAndLexerErrors(document);
 
-      const propertyBody: PropertyBody =
-        extractPropertyBodyFromBlock(parseResult);
+      const propertyBody = locator.getAstNode<PropertyBody>(
+        document.parseResult.value,
+        'pipelines@0/blocks@0/body',
+      ) as PropertyBody;
+
       checkUniqueNames(
         propertyBody.properties,
         new ValidationContext(validationAcceptorMock),
@@ -94,10 +105,14 @@ describe('validation-utils tests', () => {
         'validation-utils/invalid-duplicate-property-names.jv',
       );
 
-      const parseResult = await parse(text);
+      const document = await parse(text);
+      expectNoParserAndLexerErrors(document);
 
-      const propertyBody: PropertyBody =
-        extractPropertyBodyFromBlock(parseResult);
+      const propertyBody = locator.getAstNode<PropertyBody>(
+        document.parseResult.value,
+        'pipelines@0/blocks@0/body',
+      ) as PropertyBody;
+
       const nonUniqueNodes = getNodesWithNonUniqueNames(
         propertyBody.properties,
       );
@@ -116,10 +131,14 @@ describe('validation-utils tests', () => {
         'validation-utils/valid-distinct-property-names.jv',
       );
 
-      const parseResult = await parse(text);
+      const document = await parse(text);
+      expectNoParserAndLexerErrors(document);
 
-      const propertyBody: PropertyBody =
-        extractPropertyBodyFromBlock(parseResult);
+      const propertyBody = locator.getAstNode<PropertyBody>(
+        document.parseResult.value,
+        'pipelines@0/blocks@0/body',
+      ) as PropertyBody;
+
       const nonUniqueNodes = getNodesWithNonUniqueNames(
         propertyBody.properties,
       );
