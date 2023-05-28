@@ -12,7 +12,7 @@ import { NodeFileSystem } from 'langium/node';
 
 import { JayveeServices, createJayveeServices, useExtension } from '../lib';
 
-import { ValidationResult, validationHelper } from './utils';
+import { ValidationResult, validationHelper } from './langium-utils';
 
 describe('jv example tests', () => {
   let services: JayveeServices;

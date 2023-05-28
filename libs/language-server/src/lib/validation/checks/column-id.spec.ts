@@ -19,7 +19,7 @@ import {
   extractColumnIdFromBlockProperty,
   parseHelper,
   validationAcceptorMockImpl,
-} from '../../utils';
+} from '../../../test';
 
 describe('column-id validation tests', () => {
   let parse: (

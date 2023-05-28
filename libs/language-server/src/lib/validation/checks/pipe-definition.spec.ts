@@ -19,7 +19,7 @@ import {
   extractPipe,
   parseHelper,
   validationAcceptorMockImpl,
-} from '../../utils';
+} from '../../../test';
 
 describe('pipe-definition validation tests', () => {
   let parse: (

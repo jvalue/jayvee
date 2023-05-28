@@ -15,13 +15,13 @@ import {
   createJayveeServices,
   getNodesWithNonUniqueNames,
   useExtension,
-} from '../../lib';
+} from '..';
 import {
   ParseHelperOptions,
   extractPropertyBodyFromBlock,
   parseHelper,
   validationAcceptorMockImpl,
-} from '../utils';
+} from '../../test';
 
 describe('validation-utils tests', () => {
   let parse: (

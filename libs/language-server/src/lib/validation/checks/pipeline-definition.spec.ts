@@ -19,7 +19,7 @@ import {
   extractPipeline,
   parseHelper,
   validationAcceptorMockImpl,
-} from '../../utils';
+} from '../../../test';
 
 describe('pipeline-definition validation tests', () => {
   let parse: (

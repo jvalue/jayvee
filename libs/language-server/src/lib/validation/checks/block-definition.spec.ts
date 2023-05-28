@@ -12,14 +12,15 @@ import {
   ValidationContext,
   createJayveeServices,
   useExtension,
-} from '../../../lib';
-import { validateBlockDefinition } from '../../../lib/validation/checks/block-definition';
+} from '../..';
 import {
   ParseHelperOptions,
   extractBlock,
   parseHelper,
   validationAcceptorMockImpl,
-} from '../../utils';
+} from '../../../test';
+
+import { validateBlockDefinition } from './block-definition';
 
 describe('block-definition validation tests', () => {
   let parse: (

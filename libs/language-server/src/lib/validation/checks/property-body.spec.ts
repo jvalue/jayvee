@@ -19,7 +19,7 @@ import {
   extractPropertyBodyFromBlock,
   parseHelper,
   validationAcceptorMockImpl,
-} from '../../utils';
+} from '../../../test';
 
 describe('property-body validation tests', () => {
   let parse: (
