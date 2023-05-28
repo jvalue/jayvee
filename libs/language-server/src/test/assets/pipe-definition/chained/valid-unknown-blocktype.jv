@@ -1,0 +1,9 @@
+pipeline Test {
+  block UnknownOutput oftype UnknownOutputType {
+  }
+
+  block UnknownInput oftype UnknownInputType {
+  }
+        
+  UnknownOutput -> UnknownInput;
+}

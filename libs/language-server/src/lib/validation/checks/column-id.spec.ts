@@ -18,6 +18,7 @@ import {
   ParseHelperOptions,
   extractColumnIdFromBlockProperty,
   parseHelper,
+  readJvTestAsset,
   validationAcceptorMockImpl,
 } from '../../../test';
 
@@ -44,13 +45,9 @@ describe('column-id validation tests', () => {
   });
 
   it('should have no error if denoted with capital letter', async () => {
-    const text = `
-      pipeline Test {
-        block Test oftype HttpExtractor {
-          url: column TEST;
-        }
-      }
-      `;
+    const text = readJvTestAsset(
+      'column-id/valid-column-id-capital-letters.jv',
+    );
 
     const parseResult = await parse(text);
 
@@ -62,13 +59,7 @@ describe('column-id validation tests', () => {
   });
 
   it('should have no error if denoted with *', async () => {
-    const text = `
-      pipeline Test {
-        block Test oftype HttpExtractor {
-          url: column *;
-        }
-      }
-      `;
+    const text = readJvTestAsset('column-id/valid-column-id-asterix.jv');
 
     const parseResult = await parse(text);
 
@@ -80,13 +71,7 @@ describe('column-id validation tests', () => {
   });
 
   it('error on lower case denotion', async () => {
-    const text = `
-      pipeline Test {
-        block Test oftype HttpExtractor {
-          url: column test;
-        }
-      }
-      `;
+    const text = readJvTestAsset('column-id/invalid-column-id-lower-case.jv');
 
     const parseResult = await parse(text);
 
@@ -103,13 +88,7 @@ describe('column-id validation tests', () => {
   });
 
   it('error on camel case', async () => {
-    const text = `
-      pipeline Test {
-        block Test oftype HttpExtractor {
-          url: column testTest;
-        }
-      }
-      `;
+    const text = readJvTestAsset('column-id/invalid-column-id-camel-case.jv');
 
     const parseResult = await parse(text);
 
@@ -126,13 +105,7 @@ describe('column-id validation tests', () => {
   });
 
   it('error on snake case', async () => {
-    const text = `
-      pipeline Test {
-        block Test oftype HttpExtractor {
-          url: column test_test;
-        }
-      }
-      `;
+    const text = readJvTestAsset('column-id/invalid-column-id-snake-case.jv');
 
     const parseResult = await parse(text);
 
@@ -149,13 +122,7 @@ describe('column-id validation tests', () => {
   });
 
   it('error on pascal case', async () => {
-    const text = `
-      pipeline Test {
-        block Test oftype HttpExtractor {
-          url: column TestTest;
-        }
-      }
-      `;
+    const text = readJvTestAsset('column-id/invalid-column-id-pascal-case.jv');
 
     const parseResult = await parse(text);
 

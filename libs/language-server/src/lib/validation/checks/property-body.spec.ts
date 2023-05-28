@@ -18,6 +18,7 @@ import {
   ParseHelperOptions,
   extractPropertyBodyFromBlock,
   parseHelper,
+  readJvTestAsset,
   validationAcceptorMockImpl,
 } from '../../../test';
 
@@ -44,12 +45,7 @@ describe('property-body validation tests', () => {
   });
 
   it('error on missing properties', async () => {
-    const text = `
-    pipeline Test {
-      block CarsExtractor oftype HttpExtractor {
-      }
-    }
-    `;
+    const text = readJvTestAsset('property-body/invalid-missing-property.jv');
 
     const parseResult = await parse(text);
 
@@ -70,14 +66,7 @@ describe('property-body validation tests', () => {
   });
 
   it('should have no error on missing properties with default values', async () => {
-    const text = `
-    pipeline Test {
-      block CarsLoader oftype SQLiteLoader {
-        table: "Cars";
-        file: "./cars.sqlite";
-      }
-    }
-    `;
+    const text = readJvTestAsset('property-body/valid-default-values.jv');
 
     const parseResult = await parse(text);
 
@@ -92,20 +81,8 @@ describe('property-body validation tests', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
 
-  // TODO
-  // - validatePropertyAssignment
-  //    -> test with a RuntimeParameterLiteral
-  // - checkCustomPropertyValidation
-
   it('error on invalid property name', async () => {
-    const text = `
-    pipeline Test {
-      block CarsExtractor oftype HttpExtractor {
-        url: "test";
-        name: "teste";
-      }
-    }
-    `;
+    const text = readJvTestAsset('property-body/invalid-unknown-property.jv');
 
     const parseResult = await parse(text);
 
@@ -126,23 +103,8 @@ describe('property-body validation tests', () => {
   });
 
   describe('runtime parameter for property', () => {
-    // TODO test that for all forbidden types:
-    // - constraint
-    // TODO SHOULD THIS REALLY BE TESTED HERE?!?!?!?
-    // -> IDEA: just test for one and in valuetype tests test if isAllowedAsRuntimeParameter returns expected value
     it('should have no error on runtime parameter for text property', async () => {
-      const text = `
-      pipeline Test {
-        block GasReserveLoader oftype PostgresLoader {
-          host: requires DB_HOST;
-          port: requires DB_PORT;
-          username: requires DB_USERNAME;
-          password: requires DB_PASSWORD;
-          database: requires DB_DATABASE;
-          table: requires DB_TABLE;
-        }
-      }
-      `;
+      const text = readJvTestAsset('property-body/valid-runtime-property.jv');
 
       const parseResult = await parse(text);
 
@@ -158,13 +120,7 @@ describe('property-body validation tests', () => {
     });
 
     it('error on runtime parameter for regex property', async () => {
-      const text = `
-      pipeline Test {
-        block CarsTextFileInterpreter oftype TextFileInterpreter {
-          lineBreak: requires LINE_BREAK;
-        }
-      }
-      `;
+      const text = readJvTestAsset('property-body/invalid-runtime-property.jv');
 
       const parseResult = await parse(text);
 
@@ -183,72 +139,10 @@ describe('property-body validation tests', () => {
         expect.any(Object),
       );
     });
-
-    it('error on runtime parameter for cell-range property', async () => {
-      const text = `
-      pipeline Test {
-        block NameHeaderWriter oftype CellWriter {
-          at: requires AT;
-          write: ["name"];
-        }
-      }
-      `;
-
-      const parseResult = await parse(text);
-
-      const propertyBody: PropertyBody =
-        extractPropertyBodyFromBlock(parseResult);
-
-      validatePropertyBody(
-        propertyBody,
-        new ValidationContext(validationAcceptorMock),
-      );
-
-      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-      expect(validationAcceptorMock).toHaveBeenCalledWith(
-        'error',
-        `Runtime parameters are not allowed for properties of type cellRange`,
-        expect.any(Object),
-      );
-    });
-
-    it('error on runtime parameter for collection property', async () => {
-      const text = `
-      pipeline Test {
-        block NameHeaderWriter oftype CellWriter {
-          at: cell A1;
-          write: requires WRITE;
-        }
-      }
-      `;
-
-      const parseResult = await parse(text);
-
-      const propertyBody: PropertyBody =
-        extractPropertyBodyFromBlock(parseResult);
-
-      validatePropertyBody(
-        propertyBody,
-        new ValidationContext(validationAcceptorMock),
-      );
-
-      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-      expect(validationAcceptorMock).toHaveBeenCalledWith(
-        'error',
-        `Runtime parameters are not allowed for properties of type collection`,
-        expect.any(Object),
-      );
-    });
   });
 
   it('error on invalid property typing', async () => {
-    const text = `
-    pipeline Test {
-      block CarsExtractor oftype HttpExtractor {
-        url: 2;
-      }
-    }
-    `;
+    const text = readJvTestAsset('property-body/invalid-property-type.jv');
 
     const parseResult = await parse(text);
 
@@ -269,18 +163,7 @@ describe('property-body validation tests', () => {
   });
 
   it('info on simplifiable property expression', async () => {
-    const text = `
-    pipeline Test {
-      block GasReserveLoader oftype PostgresLoader {
-        host: requires DB_HOST;
-        port: 345 + 674;
-        username: requires DB_USERNAME;
-        password: requires DB_PASSWORD;
-        database: requires DB_DATABASE;
-        table: requires DB_TABLE;
-      }
-    }
-    `;
+    const text = readJvTestAsset('property-body/valid-simplify-info.jv');
 
     const parseResult = await parse(text);
 

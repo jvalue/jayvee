@@ -1,0 +1,6 @@
+pipeline Test {
+  block CarsLoader oftype SQLiteLoader {
+    table: "Cars";
+    file: "./cars.sqlite";
+  }
+}

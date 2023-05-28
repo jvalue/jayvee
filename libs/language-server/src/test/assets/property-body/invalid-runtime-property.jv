@@ -1,0 +1,5 @@
+pipeline Test {
+  block CarsTextFileInterpreter oftype TextFileInterpreter {
+    lineBreak: requires LINE_BREAK;
+  }
+}

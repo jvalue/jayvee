@@ -1,0 +1,12 @@
+pipeline Test {
+  block UnknownOutput oftype UnknownOutputType {
+  }
+
+  block UnknownInput oftype UnknownInputType {
+  }
+
+  pipe {
+    from: UnknownOutput;
+    to: UnknownInput;
+  }
+}

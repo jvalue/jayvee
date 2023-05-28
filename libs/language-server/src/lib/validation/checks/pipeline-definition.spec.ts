@@ -18,6 +18,7 @@ import {
   ParseHelperOptions,
   extractPipeline,
   parseHelper,
+  readJvTestAsset,
   validationAcceptorMockImpl,
 } from '../../../test';
 
@@ -44,10 +45,9 @@ describe('pipeline-definition validation tests', () => {
   });
 
   it('error on missing extractor block', async () => {
-    const text = `
-    pipeline Test {
-    }
-    `;
+    const text = readJvTestAsset(
+      'pipeline-definition/invalid-empty-pipeline.jv',
+    );
 
     const parseResult = await parse(text);
 
@@ -67,13 +67,7 @@ describe('pipeline-definition validation tests', () => {
   });
 
   it('should have no error on valid pipeline', async () => {
-    const text = `
-    pipeline Test {
-      block CarsExtractor oftype HttpExtractor {
-        url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
-      }
-    }
-    `;
+    const text = readJvTestAsset('pipeline-definition/valid-pipeline.jv');
 
     const parseResult = await parse(text);
 

@@ -18,6 +18,7 @@ import {
   ParseHelperOptions,
   extractPipe,
   parseHelper,
+  readJvTestAsset,
   validationAcceptorMockImpl,
 } from '../../../test';
 
@@ -46,14 +47,9 @@ describe('pipe-definition validation tests', () => {
   describe('single pipe', () => {
     // This test should succeed, because the error is thrown by langium during linking, not during validation!
     it('should have no error even if pipe references non existing block', async () => {
-      const text = `
-      pipeline Test {
-        pipe {
-          from: CarsExtractor;
-          to: CarsLoader;
-        }
-      }
-      `;
+      const text = readJvTestAsset(
+        'pipe-definition/single/valid-undefined-block.jv',
+      );
 
       const parseResult = await parse(text);
 
@@ -68,20 +64,9 @@ describe('pipe-definition validation tests', () => {
     });
 
     it('should have no error even if pipe references block of non existing type', async () => {
-      const text = `
-      pipeline Test {
-        block UnknownOutput oftype UnknownOutputType {
-        }
-
-        block UnknownInput oftype UnknownInputType {
-        }
-
-        pipe {
-          from: UnknownOutput;
-          to: UnknownInput;
-        }
-      }
-      `;
+      const text = readJvTestAsset(
+        'pipe-definition/single/valid-unknown-blocktype.jv',
+      );
 
       const parseResult = await parse(text);
 
@@ -96,23 +81,9 @@ describe('pipe-definition validation tests', () => {
     });
 
     it('error on unsupported pipe between Blocktypes', async () => {
-      const text = `
-      pipeline Test {
-        block CarsExtractor oftype HttpExtractor {
-          url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
-        }
-
-        block CarsLoader oftype SQLiteLoader {
-          table: "Cars";
-          file: "./cars.sqlite";
-        }
-
-        pipe {
-          from: CarsExtractor;
-          to: CarsLoader;
-        }
-      }
-      `;
+      const text = readJvTestAsset(
+        'pipe-definition/single/invalid-pipe-between-blocktypes.jv',
+      );
 
       const parseResult = await parse(text);
 
@@ -136,11 +107,9 @@ describe('pipe-definition validation tests', () => {
   describe('chained pipe', () => {
     // This test should succeed, because the error is thrown by langium during linking, not during validation!
     it('should have no error even if pipe references non existing block', async () => {
-      const text = `
-      pipeline Test {
-        CarsExtractor -> CarsLoader;
-      }
-      `;
+      const text = readJvTestAsset(
+        'pipe-definition/chained/valid-undefined-block.jv',
+      );
 
       const parseResult = await parse(text);
 
@@ -155,17 +124,9 @@ describe('pipe-definition validation tests', () => {
     });
 
     it('should have no error even if pipe references block of non existing type', async () => {
-      const text = `
-      pipeline Test {
-        block UnknownOutput oftype UnknownOutputType {
-        }
-
-        block UnknownInput oftype UnknownInputType {
-        }
-        
-        UnknownOutput -> UnknownInput;
-      }
-      `;
+      const text = readJvTestAsset(
+        'pipe-definition/chained/valid-unknown-blocktype.jv',
+      );
 
       const parseResult = await parse(text);
 
@@ -180,20 +141,9 @@ describe('pipe-definition validation tests', () => {
     });
 
     it('error on unsupported pipe between Blocktypes', async () => {
-      const text = `
-      pipeline Test {
-        block CarsExtractor oftype HttpExtractor {
-          url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
-        }
-
-        block CarsLoader oftype SQLiteLoader {
-          table: "Cars";
-          file: "./cars.sqlite";
-        }
-        
-        CarsExtractor -> CarsLoader;
-      }
-      `;
+      const text = readJvTestAsset(
+        'pipe-definition/chained/invalid-pipe-between-blocktypes.jv',
+      );
 
       const parseResult = await parse(text);
 

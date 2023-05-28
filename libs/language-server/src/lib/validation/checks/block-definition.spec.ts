@@ -17,6 +17,7 @@ import {
   ParseHelperOptions,
   extractBlock,
   parseHelper,
+  readJvTestAsset,
   validationAcceptorMockImpl,
 } from '../../../test';
 
@@ -45,12 +46,7 @@ describe('block-definition validation tests', () => {
   });
 
   it('error on unknown block type', async () => {
-    const text = `
-    pipeline Test {
-      block CarsExtractor oftype UnknownBlockType {
-      }
-    }
-    `;
+    const text = readJvTestAsset('block-definition/invalid-unknown-block.jv');
 
     const parseResult = await parse(text);
 
@@ -70,13 +66,7 @@ describe('block-definition validation tests', () => {
   });
 
   it('error on block without pipe', async () => {
-    const text = `
-    pipeline Test {
-      block CarsExtractor oftype HttpExtractor {
-        url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
-      }
-    }
-    `;
+    const text = readJvTestAsset('block-definition/invalid-missing-pipe.jv');
 
     const parseResult = await parse(text);
 
@@ -96,28 +86,9 @@ describe('block-definition validation tests', () => {
   });
 
   it('error on block as output without output', async () => {
-    const text = `
-    pipeline Test {
-      block CarsLoader oftype SQLiteLoader {
-        table: "Cars";
-        file: "./cars.sqlite";
-      }
-
-      block CarsExtractor oftype HttpExtractor {
-        url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
-      }
-
-      pipe {
-        from: CarsExtractor;
-        to: CarsLoader;
-      }
-
-      pipe {
-        from: CarsLoader;
-        to: CarsExtractor;
-      }
-    }
-    `;
+    const text = readJvTestAsset(
+      'block-definition/invalid-output-block-as-input.jv',
+    );
 
     const parseResult = await parse(text);
 
@@ -137,28 +108,9 @@ describe('block-definition validation tests', () => {
   });
 
   it('error on block as input for multiple pipes', async () => {
-    const text = `
-    pipeline Test {
-      block CarsLoader oftype SQLiteLoader {
-        table: "Cars";
-        file: "./cars.sqlite";
-      }
-
-      block CarsExtractor oftype HttpExtractor {
-        url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
-      }
-
-      pipe {
-        from: CarsExtractor;
-        to: CarsLoader;
-      }
-
-      pipe {
-        from: CarsExtractor;
-        to: CarsLoader;
-      }
-    }
-    `;
+    const text = readJvTestAsset(
+      'block-definition/invalid-block-as-multiple-pipe-inputs.jv',
+    );
 
     const parseResult = await parse(text);
 
@@ -179,23 +131,7 @@ describe('block-definition validation tests', () => {
   });
 
   it('should have no error on valid block definition', async () => {
-    const text = `
-    pipeline Test {
-      block CarsExtractor oftype HttpExtractor {
-        url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
-      }
-
-      block CarsLoader oftype SQLiteLoader {
-        table: "Cars";
-        file: "./cars.sqlite";
-      }
-
-      pipe {
-        from: CarsExtractor;
-        to: CarsLoader;
-      }
-    }
-    `;
+    const text = readJvTestAsset('block-definition/valid-block-definition.jv');
 
     const parseResult = await parse(text);
 

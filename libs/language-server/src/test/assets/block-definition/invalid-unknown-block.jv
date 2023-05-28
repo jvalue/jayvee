@@ -1,0 +1,4 @@
+pipeline Test {
+  block CarsExtractor oftype UnknownBlockType {
+  }
+}
