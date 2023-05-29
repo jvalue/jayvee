@@ -6,13 +6,17 @@ import { readFileSync } from 'fs';
 import * as path from 'path';
 
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
+import {
+  JayveeServices,
+  ValidationResult,
+  createJayveeServices,
+  useExtension,
+  validationHelper,
+} from '@jvalue/jayvee-language-server';
 import { AstNode } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { JayveeServices, createJayveeServices, useExtension } from '../lib';
-
-import { ValidationResult, validationHelper } from './langium-utils';
+import { StdLangExtension } from './extension';
 
 describe('jv example tests', () => {
   let services: JayveeServices;
@@ -35,7 +39,7 @@ describe('jv example tests', () => {
     'gtfs-static.jv',
   ])('valid %s', async (file: string) => {
     const text = readFileSync(
-      path.resolve(__dirname, '../../../../example/', file),
+      path.resolve(__dirname, '../../../../../example/', file),
       'utf-8',
     );
 
