@@ -79,7 +79,8 @@ function groupBy<T, K extends keyof never>(
 
 export function checkExpressionSimplification(
   expression: Expression,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ): void {
   if (isExpressionLiteral(expression)) {
     return;
@@ -87,12 +88,12 @@ export function checkExpressionSimplification(
 
   const evaluatedExpression = evaluateExpression(
     expression,
-    new EvaluationContext(), // don't know the variable or runtime parameter values that are required for simplification
-    context,
+    evaluationContext,
+    validationContext,
     EvaluationStrategy.EXHAUSTIVE,
   );
   if (evaluatedExpression !== undefined) {
-    context.accept(
+    validationContext.accept(
       'info',
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       `The expression can be simplified to ${evaluatedExpression}`,

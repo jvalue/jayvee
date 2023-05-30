@@ -7,6 +7,7 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
+import { EvaluationContext } from '../../ast/expressions/evaluation';
 import { inferExpressionType } from '../../ast/expressions/type-inference';
 import { ExpressionConstraintDefinition } from '../../ast/generated/ast';
 import { PrimitiveValuetypes } from '../../ast/wrappers/value-type/primitive/primitive-valuetypes';
@@ -15,24 +16,26 @@ import { checkExpressionSimplification } from '../validation-util';
 
 export function validateExpressionConstraintDefinition(
   constraint: ExpressionConstraintDefinition,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ): void {
-  checkConstraintExpression(constraint, context);
+  checkConstraintExpression(constraint, validationContext, evaluationContext);
 }
 
 function checkConstraintExpression(
   constraint: ExpressionConstraintDefinition,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ): void {
   const expression = constraint?.expression;
-  const inferredType = inferExpressionType(expression, context);
+  const inferredType = inferExpressionType(expression, validationContext);
   if (inferredType === undefined) {
     return;
   }
 
   const expectedType = PrimitiveValuetypes.Boolean;
   if (!inferredType.isConvertibleTo(expectedType)) {
-    context.accept(
+    validationContext.accept(
       'error',
       `The value needs to be of type ${expectedType.getName()} but is of type ${inferredType.getName()}`,
       {
@@ -42,5 +45,9 @@ function checkConstraintExpression(
     return;
   }
 
-  checkExpressionSimplification(expression, context);
+  checkExpressionSimplification(
+    expression,
+    validationContext,
+    evaluationContext,
+  );
 }

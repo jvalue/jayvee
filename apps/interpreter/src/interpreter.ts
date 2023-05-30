@@ -8,6 +8,7 @@ import {
   Logger,
   NONE,
   createBlockExecutor,
+  parseValueToInternalRepresentation,
   registerDefaultConstraintExecutors,
   useExtension as useExecutionExtension,
 } from '@jvalue/jayvee-execution';
@@ -16,14 +17,18 @@ import { StdExecExtension } from '@jvalue/jayvee-extensions/std/exec';
 import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
 import {
   BlockDefinition,
+  BlockTypeLiteral,
+  ConstraintTypeLiteral,
   EvaluationContext,
   JayveeModel,
   PipelineDefinition,
+  RuntimeParameterProvider,
   collectChildren,
   collectParents,
   collectStartingBlocks,
   createJayveeServices,
   getBlocksInTopologicalSorting,
+  getMetaInformation,
   useExtension as useLangExtension,
 } from '@jvalue/jayvee-language-server';
 import * as chalk from 'chalk';
@@ -31,10 +36,6 @@ import { NodeFileSystem } from 'langium/node';
 
 import { ExitCode, extractAstNode } from './cli-util';
 import { LoggerFactory } from './logging/logger-factory';
-import {
-  extractRequiredRuntimeParameters,
-  extractRuntimeParameters,
-} from './runtime-parameter-util';
 
 export async function runAction(
   fileName: string,
@@ -46,25 +47,85 @@ export async function runAction(
   registerDefaultConstraintExecutors();
 
   const services = createJayveeServices(NodeFileSystem).Jayvee;
+
+  const runtimeParameterProvider = services.RuntimeParameterProvider;
+  // TODO refactor
+  runtimeParameterProvider.runtimeParameterValueParser =
+    parseValueToInternalRepresentation;
+
+  for (const [key, value] of options.env.entries()) {
+    runtimeParameterProvider.setValue(key, value);
+  }
+
+  // TODO refactor
+  services.validation.ValidationRegistry.registerJayveeValidationCheck({
+    RuntimeParameterLiteral: (
+      runtimeParameter,
+      validationContext,
+      evaluationContext,
+    ) => {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      const runtimeParameterName = runtimeParameter?.name;
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (runtimeParameterName === undefined) {
+        return;
+      }
+
+      if (
+        !evaluationContext.hasValueForRuntimeParameter(runtimeParameterName)
+      ) {
+        validationContext.accept(
+          'error',
+          `A value needs to be provided by adding "-e ${runtimeParameterName}=<value>" to the command.`,
+          { node: runtimeParameter },
+        );
+        return;
+      }
+
+      const containerType: BlockTypeLiteral | ConstraintTypeLiteral =
+        runtimeParameter.$container.$container.$container.type;
+
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      const propertyName = runtimeParameter.$container?.name;
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (propertyName === undefined) {
+        return;
+      }
+
+      const metaInf = getMetaInformation(containerType);
+      const propertySpec = metaInf?.getPropertySpecification(propertyName);
+      if (propertySpec === undefined) {
+        return;
+      }
+
+      const valuetype = propertySpec.type;
+      const runtimeParameterValue =
+        evaluationContext.getValueForRuntimeParameter(
+          runtimeParameterName,
+          valuetype,
+        );
+      if (runtimeParameterValue === undefined) {
+        const rawValue = options.env.get(runtimeParameterName);
+        validationContext.accept(
+          'error',
+          `Unable to parse the value "${
+            rawValue ?? ''
+          }" as ${valuetype.getName()}.`,
+          { node: runtimeParameter },
+        );
+      }
+    },
+  });
+
   const model = await extractAstNode<JayveeModel>(
     fileName,
     services,
     loggerFactory.createLogger(),
   );
 
-  const requiredRuntimeParameters = extractRequiredRuntimeParameters(model);
-  const parameterReadResult = extractRuntimeParameters(
-    requiredRuntimeParameters,
-    options.env,
-    loggerFactory.createLogger(),
-  );
-  if (parameterReadResult === undefined) {
-    process.exit(ExitCode.FAILURE);
-  }
-
   const interpretationExitCode = await interpretJayveeModel(
     model,
-    parameterReadResult,
+    runtimeParameterProvider,
     loggerFactory,
   );
   process.exit(interpretationExitCode);
@@ -77,12 +138,12 @@ export function useStdExtension() {
 
 async function interpretJayveeModel(
   model: JayveeModel,
-  runtimeParameters: Map<string, string | number | boolean>,
+  runtimeParameterProvider: RuntimeParameterProvider,
   loggerFactory: LoggerFactory,
 ): Promise<ExitCode> {
   const pipelineRuns: Array<Promise<ExitCode>> = model.pipelines.map(
     (pipeline) => {
-      return runPipeline(pipeline, runtimeParameters, loggerFactory);
+      return runPipeline(pipeline, runtimeParameterProvider, loggerFactory);
     },
   );
   const exitCodes = await Promise.all(pipelineRuns);
@@ -95,16 +156,20 @@ async function interpretJayveeModel(
 
 async function runPipeline(
   pipeline: PipelineDefinition,
-  runtimeParameters: Map<string, string | number | boolean>,
+  runtimeParameterProvider: RuntimeParameterProvider,
   loggerFactory: LoggerFactory,
 ): Promise<ExitCode> {
   const executionContext = new ExecutionContext(
     pipeline,
     loggerFactory.createLogger(),
-    new EvaluationContext(runtimeParameters, new Map()),
+    new EvaluationContext(runtimeParameterProvider),
   );
 
-  logPipelineOverview(pipeline, runtimeParameters, executionContext.logger);
+  logPipelineOverview(
+    pipeline,
+    runtimeParameterProvider,
+    executionContext.logger,
+  );
 
   const startTime = new Date();
 
@@ -209,7 +274,7 @@ export function logExecutionDuration(startTime: Date, logger: Logger): void {
 
 export function logPipelineOverview(
   pipeline: PipelineDefinition,
-  runtimeParameters: Map<string, string | number | boolean>,
+  runtimeParameterProvider: RuntimeParameterProvider,
   logger: Logger,
 ) {
   const toString = (block: BlockDefinition, depth = 0): string => {
@@ -226,17 +291,11 @@ export function logPipelineOverview(
 
   linesBuffer.push(chalk.underline('Overview:'));
 
+  const runtimeParameters = runtimeParameterProvider.getReadonlyMap();
   if (runtimeParameters.size > 0) {
     linesBuffer.push(`\tRuntime Parameters (${runtimeParameters.size}):`);
-    for (const key of runtimeParameters.keys()) {
-      linesBuffer.push(
-        `\t\t${key}: ${
-          runtimeParameters.has(key)
-            ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              runtimeParameters.get(key)!.toString()
-            : 'undefined'
-        }`,
-      );
+    for (const [key, value] of runtimeParameters.entries()) {
+      linesBuffer.push(`\t\t${key}: ${value.toString()}`);
     }
   }
   linesBuffer.push(

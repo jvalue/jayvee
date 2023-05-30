@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
+
 import * as R from '@jvalue/jayvee-execution';
 import {
   BlockExecutor,
@@ -12,7 +14,7 @@ import {
 } from '@jvalue/jayvee-execution';
 import {
   IOType,
-  NUMBER_TYPEGUARD,
+  PrimitiveValuetypes,
   evaluatePropertyValueExpression,
 } from '@jvalue/jayvee-language-server';
 
@@ -35,8 +37,9 @@ export class TextLineDeleterExecutor
       const value = evaluatePropertyValueExpression(
         expression,
         context.evaluationContext,
-        NUMBER_TYPEGUARD,
+        PrimitiveValuetypes.Integer,
       );
+      assert(value !== undefined);
       return { lineNumber: value, astNode: expression };
     });
     const numberOfLines = file.content.length;

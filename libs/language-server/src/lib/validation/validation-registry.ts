@@ -10,8 +10,10 @@ import {
   ValidationRegistry,
 } from 'langium';
 
+import { EvaluationContext } from '../ast';
 import { JayveeAstType } from '../ast/generated/ast';
 import type { JayveeServices } from '../jayvee-module';
+import { RuntimeParameterProvider } from '../services';
 
 import { validateBlockDefinition } from './checks/block-definition';
 import { validateColumnId } from './checks/column-id';
@@ -31,38 +33,59 @@ import { ValidationContext } from './validation-context';
  * Registry for validation checks.
  */
 export class JayveeValidationRegistry extends ValidationRegistry {
+  private readonly runtimeParameterProvider;
   constructor(services: JayveeServices) {
     super(services);
 
-    this.register<JayveeAstType>({
-      BlockDefinition: wrapCheck(validateBlockDefinition),
-      ColumnId: wrapCheck(validateColumnId),
-      TypedConstraintDefinition: wrapCheck(validateTypedConstraintDefinition),
-      ExpressionConstraintDefinition: wrapCheck(
-        validateExpressionConstraintDefinition,
-      ),
-      JayveeModel: wrapCheck(validateJayveeModel),
-      PipeDefinition: wrapCheck(validatePipeDefinition),
-      PipelineDefinition: wrapCheck(validatePipelineDefinition),
-      PropertyBody: wrapCheck(validatePropertyBody),
-      RangeLiteral: wrapCheck(validateRangeLiteral),
-      RegexLiteral: wrapCheck(validateRegexLiteral),
-      ValuetypeDefinition: wrapCheck(validateValuetypeDefinition),
-      TransformBody: wrapCheck(validateTransformBody),
+    this.runtimeParameterProvider = services.RuntimeParameterProvider;
+
+    this.registerJayveeValidationCheck({
+      BlockDefinition: validateBlockDefinition,
+      ColumnId: validateColumnId,
+      TypedConstraintDefinition: validateTypedConstraintDefinition,
+      ExpressionConstraintDefinition: validateExpressionConstraintDefinition,
+      JayveeModel: validateJayveeModel,
+      PipeDefinition: validatePipeDefinition,
+      PipelineDefinition: validatePipelineDefinition,
+      PropertyBody: validatePropertyBody,
+      RangeLiteral: validateRangeLiteral,
+      RegexLiteral: validateRegexLiteral,
+      ValuetypeDefinition: validateValuetypeDefinition,
+      TransformBody: validateTransformBody,
     });
+  }
+
+  registerJayveeValidationCheck(checksRecord: JayveeValidationChecks) {
+    for (const [type, check] of Object.entries(checksRecord)) {
+      const wrappedCheck = this.wrapJayveeValidationCheck(
+        check as JayveeValidationCheck,
+        this.runtimeParameterProvider,
+      );
+
+      this.doRegister(type, this.wrapValidationException(wrappedCheck, this));
+    }
+  }
+
+  private wrapJayveeValidationCheck<T extends AstNode = AstNode>(
+    check: JayveeValidationCheck<T>,
+    runtimeParameterProvider: RuntimeParameterProvider,
+  ): ValidationCheck<T> {
+    return (node: T, accept: ValidationAcceptor): MaybePromise<void> => {
+      const validationContext = new ValidationContext(accept);
+      const evaluationContext = new EvaluationContext(runtimeParameterProvider);
+      return check(node, validationContext, evaluationContext);
+    };
   }
 }
 
+export type JayveeValidationChecks<T = JayveeAstType> = {
+  [K in keyof T]?: T[K] extends AstNode ? JayveeValidationCheck<T[K]> : never;
+} & {
+  AstNode?: ValidationCheck<AstNode>;
+};
+
 type JayveeValidationCheck<T extends AstNode = AstNode> = (
   node: T,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ) => MaybePromise<void>;
-
-function wrapCheck<T extends AstNode = AstNode>(
-  check: JayveeValidationCheck<T>,
-): ValidationCheck<T> {
-  return (node: T, accept: ValidationAcceptor): MaybePromise<void> => {
-    const context = new ValidationContext(accept);
-    return check(node, context);
-  };
-}

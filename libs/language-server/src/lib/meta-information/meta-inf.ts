@@ -2,8 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { PropertyAssignment, PropertyBody } from '../ast/generated/ast';
 // eslint-disable-next-line import/no-cycle
+import { EvaluationContext } from '../ast/expressions/evaluation';
+import { PropertyAssignment, PropertyBody } from '../ast/generated/ast';
 import { Valuetype } from '../ast/wrappers/value-type';
 import { ValidationContext } from '../validation/validation-context';
 
@@ -12,7 +13,8 @@ export interface PropertySpecification {
   defaultValue?: unknown;
   validation?: (
     property: PropertyAssignment,
-    context: ValidationContext,
+    validationContext: ValidationContext,
+    evaluationContext: EvaluationContext,
   ) => void;
   docs?: PropertyDocs;
 }
@@ -34,11 +36,16 @@ export abstract class MetaInformation {
     private readonly properties: Record<string, PropertySpecification>,
     private readonly validation?: (
       property: PropertyBody,
-      context: ValidationContext,
+      validationContext: ValidationContext,
+      evaluationContext: EvaluationContext,
     ) => void,
   ) {}
 
-  validate(propertyBody: PropertyBody, context: ValidationContext): void {
+  validate(
+    propertyBody: PropertyBody,
+    validationContext: ValidationContext,
+    evaluationContext: EvaluationContext,
+  ): void {
     for (const property of propertyBody.properties) {
       const propertySpecification = this.getPropertySpecification(
         property.name,
@@ -47,11 +54,11 @@ export abstract class MetaInformation {
       if (propertyValidationFn === undefined) {
         continue;
       }
-      propertyValidationFn(property, context);
+      propertyValidationFn(property, validationContext, evaluationContext);
     }
 
     if (this.validation !== undefined) {
-      this.validation(propertyBody, context);
+      this.validation(propertyBody, validationContext, evaluationContext);
     }
   }
 

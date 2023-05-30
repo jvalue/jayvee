@@ -28,7 +28,7 @@ export class PostgresLoaderExecutor
     context: ExecutionContext,
   ): Promise<R.Result<None>> {
     const host = context.getTextPropertyValue('host');
-    const port = context.getNumericPropertyValue('port');
+    const port = context.getIntegerPropertyValue('port');
     const user = context.getTextPropertyValue('username');
     const password = context.getTextPropertyValue('password');
     const database = context.getTextPropertyValue('database');

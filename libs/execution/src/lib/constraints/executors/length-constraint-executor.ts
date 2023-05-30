@@ -21,8 +21,8 @@ export class LengthConstraintExecutor implements ConstraintExecutor {
       return false;
     }
 
-    const minLength = context.getNumericPropertyValue('minLength');
-    const maxLength = context.getNumericPropertyValue('maxLength');
+    const minLength = context.getIntegerPropertyValue('minLength');
+    const maxLength = context.getIntegerPropertyValue('maxLength');
 
     return minLength <= value.length && value.length <= maxLength;
   }

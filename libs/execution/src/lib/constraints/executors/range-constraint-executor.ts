@@ -26,11 +26,11 @@ export class RangeConstraintExecutor implements ConstraintExecutor {
       return false;
     }
 
-    const lowerBound = context.getNumericPropertyValue('lowerBound');
+    const lowerBound = context.getDecimalPropertyValue('lowerBound');
     const lowerBoundInclusive = context.getBooleanPropertyValue(
       'lowerBoundInclusive',
     );
-    const upperBound = context.getNumericPropertyValue('upperBound');
+    const upperBound = context.getDecimalPropertyValue('upperBound');
     const upperBoundInclusive = context.getBooleanPropertyValue(
       'upperBoundInclusive',
     );

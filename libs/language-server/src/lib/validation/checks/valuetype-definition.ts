@@ -29,10 +29,15 @@ import { ValidationContext } from '../validation-context';
 
 export function validateValuetypeDefinition(
   valuetype: ValuetypeDefinition,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ): void {
-  checkSupertypeCycle(valuetype, context);
-  checkConstraintsCollectionValues(valuetype, context);
+  checkSupertypeCycle(valuetype, validationContext);
+  checkConstraintsCollectionValues(
+    valuetype,
+    validationContext,
+    evaluationContext,
+  );
 }
 
 function checkSupertypeCycle(
@@ -55,7 +60,8 @@ function checkSupertypeCycle(
 
 function checkConstraintsCollectionValues(
   valuetype: ValuetypeDefinition,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ): void {
   const constraintCollection = valuetype?.constraints;
   if (constraintCollection === undefined) {
@@ -65,20 +71,24 @@ function checkConstraintsCollectionValues(
   const { validItems, invalidItems } = validateTypedCollection(
     constraintCollection,
     [PrimitiveValuetypes.Constraint],
-    context,
+    validationContext,
   );
 
   invalidItems.forEach((expression) => {
-    context.accept('error', 'Only constraints are allowed in this collection', {
-      node: expression,
-    });
+    validationContext.accept(
+      'error',
+      'Only constraints are allowed in this collection',
+      {
+        node: expression,
+      },
+    );
   });
 
   validItems.forEach((expression) => {
     const constraint = evaluateExpression(
       expression,
-      new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
-      context,
+      evaluationContext,
+      validationContext,
     );
     if (constraint === undefined) {
       return;
@@ -86,7 +96,12 @@ function checkConstraintsCollectionValues(
     assert(
       PrimitiveValuetypes.Constraint.isInternalValueRepresentation(constraint),
     );
-    checkConstraintMatchesValuetype(valuetype, constraint, expression, context);
+    checkConstraintMatchesValuetype(
+      valuetype,
+      constraint,
+      expression,
+      validationContext,
+    );
   });
 }
 
