@@ -71,7 +71,7 @@ function setupJayveeServices(
     rawRuntimeParameters,
   );
 
-  services.validation.ValidationRegistry.registerJayveeValidationCheck({
+  services.validation.ValidationRegistry.registerJayveeValidationChecks({
     RuntimeParameterLiteral: validateRuntimeParameterLiteral,
   });
 }

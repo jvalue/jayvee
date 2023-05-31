@@ -39,7 +39,7 @@ export class JayveeValidationRegistry extends ValidationRegistry {
 
     this.runtimeParameterProvider = services.RuntimeParameterProvider;
 
-    this.registerJayveeValidationCheck({
+    this.registerJayveeValidationChecks({
       BlockDefinition: validateBlockDefinition,
       ColumnId: validateColumnId,
       TypedConstraintDefinition: validateTypedConstraintDefinition,
@@ -55,7 +55,7 @@ export class JayveeValidationRegistry extends ValidationRegistry {
     });
   }
 
-  registerJayveeValidationCheck(checksRecord: JayveeValidationChecks) {
+  registerJayveeValidationChecks(checksRecord: JayveeValidationChecks) {
     for (const [type, check] of Object.entries(checksRecord)) {
       const wrappedCheck = this.wrapJayveeValidationCheck(
         check as JayveeValidationCheck,
