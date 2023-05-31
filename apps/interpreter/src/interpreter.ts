@@ -17,10 +17,9 @@ import { StdExecExtension } from '@jvalue/jayvee-extensions/std/exec';
 import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
 import {
   BlockDefinition,
-  BlockTypeLiteral,
-  ConstraintTypeLiteral,
   EvaluationContext,
   JayveeModel,
+  JayveeServices,
   PipelineDefinition,
   RuntimeParameterProvider,
   collectChildren,
@@ -28,7 +27,6 @@ import {
   collectStartingBlocks,
   createJayveeServices,
   getBlocksInTopologicalSorting,
-  getMetaInformation,
   useExtension as useLangExtension,
 } from '@jvalue/jayvee-language-server';
 import * as chalk from 'chalk';
@@ -36,6 +34,7 @@ import { NodeFileSystem } from 'langium/node';
 
 import { ExitCode, extractAstNode } from './cli-util';
 import { LoggerFactory } from './logging/logger-factory';
+import { validateRuntimeParameterLiteral } from './validation-checks/runtime-parameter-literal';
 
 export async function runAction(
   fileName: string,
@@ -47,75 +46,7 @@ export async function runAction(
   registerDefaultConstraintExecutors();
 
   const services = createJayveeServices(NodeFileSystem).Jayvee;
-
-  const runtimeParameterProvider = services.RuntimeParameterProvider;
-  // TODO refactor
-  runtimeParameterProvider.runtimeParameterValueParser =
-    parseValueToInternalRepresentation;
-
-  for (const [key, value] of options.env.entries()) {
-    runtimeParameterProvider.setValue(key, value);
-  }
-
-  // TODO refactor
-  services.validation.ValidationRegistry.registerJayveeValidationCheck({
-    RuntimeParameterLiteral: (
-      runtimeParameter,
-      validationContext,
-      evaluationContext,
-    ) => {
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      const runtimeParameterName = runtimeParameter?.name;
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      if (runtimeParameterName === undefined) {
-        return;
-      }
-
-      if (
-        !evaluationContext.hasValueForRuntimeParameter(runtimeParameterName)
-      ) {
-        validationContext.accept(
-          'error',
-          `A value needs to be provided by adding "-e ${runtimeParameterName}=<value>" to the command.`,
-          { node: runtimeParameter },
-        );
-        return;
-      }
-
-      const containerType: BlockTypeLiteral | ConstraintTypeLiteral =
-        runtimeParameter.$container.$container.$container.type;
-
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      const propertyName = runtimeParameter.$container?.name;
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      if (propertyName === undefined) {
-        return;
-      }
-
-      const metaInf = getMetaInformation(containerType);
-      const propertySpec = metaInf?.getPropertySpecification(propertyName);
-      if (propertySpec === undefined) {
-        return;
-      }
-
-      const valuetype = propertySpec.type;
-      const runtimeParameterValue =
-        evaluationContext.getValueForRuntimeParameter(
-          runtimeParameterName,
-          valuetype,
-        );
-      if (runtimeParameterValue === undefined) {
-        const rawValue = options.env.get(runtimeParameterName);
-        validationContext.accept(
-          'error',
-          `Unable to parse the value "${
-            rawValue ?? ''
-          }" as ${valuetype.getName()}.`,
-          { node: runtimeParameter },
-        );
-      }
-    },
-  });
+  setupJayveeServices(services, options.env);
 
   const model = await extractAstNode<JayveeModel>(
     fileName,
@@ -125,10 +56,35 @@ export async function runAction(
 
   const interpretationExitCode = await interpretJayveeModel(
     model,
-    runtimeParameterProvider,
+    services.RuntimeParameterProvider,
     loggerFactory,
   );
   process.exit(interpretationExitCode);
+}
+
+function setupJayveeServices(
+  services: JayveeServices,
+  rawRuntimeParameters: ReadonlyMap<string, string>,
+) {
+  setupRuntimeParameterProvider(
+    services.RuntimeParameterProvider,
+    rawRuntimeParameters,
+  );
+
+  services.validation.ValidationRegistry.registerJayveeValidationCheck({
+    RuntimeParameterLiteral: validateRuntimeParameterLiteral,
+  });
+}
+
+function setupRuntimeParameterProvider(
+  runtimeParameterProvider: RuntimeParameterProvider,
+  rawRuntimeParameters: ReadonlyMap<string, string>,
+) {
+  runtimeParameterProvider.setValueParser(parseValueToInternalRepresentation);
+
+  for (const [key, value] of rawRuntimeParameters.entries()) {
+    runtimeParameterProvider.setValue(key, value);
+  }
 }
 
 export function useStdExtension() {

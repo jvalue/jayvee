@@ -71,7 +71,7 @@ export class EvaluationContext {
     undefined;
 
   constructor(
-    private readonly runtimeParameterProvider: RuntimeParameterProvider,
+    public readonly runtimeParameterProvider: RuntimeParameterProvider,
   ) {}
 
   getValueFor(

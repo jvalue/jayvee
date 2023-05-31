@@ -84,7 +84,7 @@ export type JayveeValidationChecks<T = JayveeAstType> = {
   AstNode?: ValidationCheck<AstNode>;
 };
 
-type JayveeValidationCheck<T extends AstNode = AstNode> = (
+export type JayveeValidationCheck<T extends AstNode = AstNode> = (
   node: T,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,

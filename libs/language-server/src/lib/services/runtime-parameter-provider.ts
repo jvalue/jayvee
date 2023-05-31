@@ -5,22 +5,35 @@
 import { type InternalValueRepresentation } from '../ast/expressions/evaluation';
 import { type Valuetype } from '../ast/wrappers/value-type/valuetype';
 
+export type InternalValueRepresentationParser = <
+  I extends InternalValueRepresentation,
+>(
+  value: string,
+  valuetype: Valuetype<I>,
+) => I | undefined;
+
 export class RuntimeParameterProvider {
   private runtimeParameters = new Map<string, string>();
-  public runtimeParameterValueParser: <I extends InternalValueRepresentation>(
-    value: string,
-    valuetype: Valuetype<I>,
-  ) => I | undefined = () => undefined;
+  private valueParser: InternalValueRepresentationParser | undefined =
+    undefined;
+
+  setValueParser(valueParser: InternalValueRepresentationParser) {
+    this.valueParser = valueParser;
+  }
 
   getParsedValue<I extends InternalValueRepresentation>(
     key: string,
     valuetype: Valuetype<I>,
   ): I | undefined {
-    const stringValue = this.runtimeParameters.get(key);
+    const stringValue = this.getRawValue(key);
     if (stringValue === undefined) {
       return undefined;
     }
-    return this.runtimeParameterValueParser(stringValue, valuetype);
+    return this.valueParser?.(stringValue, valuetype);
+  }
+
+  getRawValue(key: string): string | undefined {
+    return this.runtimeParameters.get(key);
   }
 
   setValue(key: string, value: string) {
