@@ -1,5 +1,5 @@
 pipeline Test {
-  block Test oftype HttpExtractor {
-    url: column *;
+  block Test oftype TestProperty {
+    textProperty: column *;
   }
 }

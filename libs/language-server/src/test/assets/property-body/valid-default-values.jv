@@ -1,6 +1,5 @@
 pipeline Test {
-  block CarsLoader oftype SQLiteLoader {
-    table: "Cars";
-    file: "./cars.sqlite";
+  block Test oftype TestProperty {
+    textProperty: '';
   }
 }

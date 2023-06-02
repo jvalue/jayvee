@@ -1,4 +1,4 @@
 pipeline Test {
-  block CarsExtractor oftype UnknownBlockType {
+  block TestExtractor oftype UnknownBlockType {
   }
 }

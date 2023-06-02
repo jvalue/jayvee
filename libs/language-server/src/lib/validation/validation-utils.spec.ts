@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
@@ -23,6 +21,7 @@ import {
   readJvTestAsset,
   validationAcceptorMockImpl,
 } from '../../test';
+import { TestLangExtension } from '../../test/extension';
 
 describe('validation-utils tests', () => {
   let parse: (
@@ -45,8 +44,8 @@ describe('validation-utils tests', () => {
   }
 
   beforeAll(() => {
-    // Register std extension
-    useExtension(new StdLangExtension());
+    // Register test extension
+    useExtension(new TestLangExtension());
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;
@@ -95,7 +94,7 @@ describe('validation-utils tests', () => {
       expect(validationAcceptorMock).toHaveBeenNthCalledWith(
         2,
         'error',
-        `The propertyassignment name "url" needs to be unique.`,
+        `The propertyassignment name "textProperty" needs to be unique.`,
         expect.any(Object),
       );
     });
@@ -116,8 +115,12 @@ describe('validation-utils tests', () => {
 
       expect(nonUniqueNodes).toEqual(
         expect.arrayContaining<PropertyAssignment>([
-          expect.objectContaining({ name: 'url' }) as PropertyAssignment,
-          expect.objectContaining({ name: 'url' }) as PropertyAssignment,
+          expect.objectContaining({
+            name: 'textProperty',
+          }) as PropertyAssignment,
+          expect.objectContaining({
+            name: 'textProperty',
+          }) as PropertyAssignment,
         ]),
       );
       expect(nonUniqueNodes).toHaveLength(2);

@@ -1,10 +1,6 @@
 pipeline Test {
-  block GasReserveLoader oftype PostgresLoader {
-    host: requires DB_HOST;
-    port: 345 + 674;
-    username: requires DB_USERNAME;
-    password: requires DB_PASSWORD;
-    database: requires DB_DATABASE;
-    table: requires DB_TABLE;
+  block Test oftype TestProperty {
+    textProperty: '';
+    integerProperty: 345 + 674;
   }
 }

@@ -1,6 +1,6 @@
 pipeline Test {
   pipe {
-    from: CarsExtractor;
-    to: CarsLoader;
+    from: TestExtractor;
+    to: TestLoader;
   }
 }

@@ -5,7 +5,6 @@
 import { readFileSync } from 'fs';
 import * as path from 'path';
 
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import {
   JayveeServices,
   ValidationResult,

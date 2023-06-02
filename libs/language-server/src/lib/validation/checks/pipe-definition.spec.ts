@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
@@ -21,6 +19,7 @@ import {
   readJvTestAsset,
   validationAcceptorMockImpl,
 } from '../../../test';
+import { TestLangExtension } from '../../../test/extension';
 
 describe('pipe-definition validation tests', () => {
   let parse: (
@@ -45,8 +44,8 @@ describe('pipe-definition validation tests', () => {
   }
 
   beforeAll(() => {
-    // Register std extension
-    useExtension(new StdLangExtension());
+    // Register test extension
+    useExtension(new TestLangExtension());
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;
@@ -92,7 +91,7 @@ describe('pipe-definition validation tests', () => {
       expect(validationAcceptorMock).toHaveBeenNthCalledWith(
         2,
         'error',
-        `The output type "File" of HttpExtractor is incompatible with the input type "Table" of SQLiteLoader`,
+        `The output type "File" of TestFileOutput is incompatible with the input type "Table" of TestTableInput`,
         expect.any(Object),
       );
     });
@@ -131,7 +130,7 @@ describe('pipe-definition validation tests', () => {
       expect(validationAcceptorMock).toHaveBeenNthCalledWith(
         2,
         'error',
-        `The output type "File" of HttpExtractor is incompatible with the input type "Table" of SQLiteLoader`,
+        `The output type "File" of TestFileOutput is incompatible with the input type "Table" of TestTableInput`,
         expect.any(Object),
       );
     });

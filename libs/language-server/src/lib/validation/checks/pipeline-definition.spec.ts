@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
@@ -21,6 +19,7 @@ import {
   readJvTestAsset,
   validationAcceptorMockImpl,
 } from '../../../test';
+import { TestLangExtension } from '../../../test/extension';
 
 describe('pipeline-definition validation tests', () => {
   let parse: (
@@ -48,8 +47,8 @@ describe('pipeline-definition validation tests', () => {
   }
 
   beforeAll(() => {
-    // Register std extension
-    useExtension(new StdLangExtension());
+    // Register test extension
+    useExtension(new TestLangExtension());
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;

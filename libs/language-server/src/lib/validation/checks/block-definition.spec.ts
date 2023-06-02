@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
@@ -20,6 +18,7 @@ import {
   readJvTestAsset,
   validationAcceptorMockImpl,
 } from '../../../test';
+import { TestLangExtension } from '../../../test/extension';
 
 import { validateBlockDefinition } from './block-definition';
 
@@ -49,8 +48,8 @@ describe('block-definition validation tests', () => {
   }
 
   beforeAll(() => {
-    // Register std extension
-    useExtension(new StdLangExtension());
+    // Register test extension
+    useExtension(new TestLangExtension());
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;
@@ -99,7 +98,7 @@ describe('block-definition validation tests', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
-      'Blocks of type SQLiteLoader do not have an output',
+      'Blocks of type TestTableInput do not have an output',
       expect.any(Object),
     );
   });
@@ -115,7 +114,7 @@ describe('block-definition validation tests', () => {
     expect(validationAcceptorMock).toHaveBeenNthCalledWith(
       2,
       'error',
-      'At most one pipe can be connected to the input of a SQLiteLoader',
+      'At most one pipe can be connected to the input of a TestTableInput',
       expect.any(Object),
     );
   });

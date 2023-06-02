@@ -1,4 +1,4 @@
 pipeline Test {
-  block CarsExtractor oftype HttpExtractor {
+  block Test oftype TestProperty {
   }
 }
