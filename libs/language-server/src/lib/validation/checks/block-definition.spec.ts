@@ -15,7 +15,7 @@ import {
   ParseHelperOptions,
   expectNoParserAndLexerErrors,
   parseHelper,
-  readJvTestAsset,
+  readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../test';
 import { TestLangExtension } from '../../../test/extension';
@@ -31,6 +31,11 @@ describe('block-definition validation tests', () => {
   const validationAcceptorMock = jest.fn(validationAcceptorMockImpl);
 
   let locator: AstNodeLocator;
+
+  const readJvTestAsset = readJvTestAssetHelper(
+    __dirname,
+    '../../../test/assets/',
+  );
 
   async function parseAndValidateBlock(input: string) {
     const document = await parse(input);

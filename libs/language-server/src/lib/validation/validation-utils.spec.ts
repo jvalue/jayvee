@@ -18,7 +18,7 @@ import {
   ParseHelperOptions,
   expectNoParserAndLexerErrors,
   parseHelper,
-  readJvTestAsset,
+  readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../test';
 import { TestLangExtension } from '../../test/extension';
@@ -30,6 +30,11 @@ describe('validation-utils tests', () => {
   ) => Promise<LangiumDocument<AstNode>>;
 
   let locator: AstNodeLocator;
+
+  const readJvTestAsset = readJvTestAssetHelper(
+    __dirname,
+    '../../test/assets/',
+  );
 
   async function parseAndExtractPropertyBody(
     input: string,

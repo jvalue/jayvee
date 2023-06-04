@@ -16,7 +16,7 @@ import {
   ParseHelperOptions,
   expectNoParserAndLexerErrors,
   parseHelper,
-  readJvTestAsset,
+  readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../test';
 import { TestLangExtension } from '../../../test/extension';
@@ -30,6 +30,11 @@ describe('pipeline-definition validation tests', () => {
   const validationAcceptorMock = jest.fn(validationAcceptorMockImpl);
 
   let locator: AstNodeLocator;
+
+  const readJvTestAsset = readJvTestAssetHelper(
+    __dirname,
+    '../../../test/assets/',
+  );
 
   async function parseAndValidatePipeline(input: string) {
     const document = await parse(input);

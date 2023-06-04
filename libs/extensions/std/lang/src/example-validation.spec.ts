@@ -2,13 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { readFileSync } from 'fs';
-import * as path from 'path';
-
 import {
   JayveeServices,
   ValidationResult,
   createJayveeServices,
+  readJvTestAssetHelper,
   useExtension,
   validationHelper,
 } from '@jvalue/jayvee-language-server';
@@ -20,6 +18,11 @@ import { StdLangExtension } from './extension';
 describe('jv example tests', () => {
   let services: JayveeServices;
   let validate: (input: string) => Promise<ValidationResult<AstNode>>;
+
+  const readJvTestAsset = readJvTestAssetHelper(
+    __dirname,
+    '../../../../../example/',
+  );
 
   beforeAll(() => {
     // Register std extension
@@ -37,10 +40,7 @@ describe('jv example tests', () => {
     'gtfs-static-and-rt.jv',
     'gtfs-static.jv',
   ])('valid %s', async (file: string) => {
-    const text = readFileSync(
-      path.resolve(__dirname, '../../../../../example/', file),
-      'utf-8',
-    );
+    const text = readJvTestAsset(file);
 
     // Validate input
     const validationResult = await validate(text);
