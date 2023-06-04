@@ -31,7 +31,6 @@ export function readJvTestAssetHelper(
    * @returns content of asset file
    */
   return (testFileName: string) => {
-    // __dirname, './assets/',
     const text = readFileSync(
       path.resolve(...assetPath, testFileName),
       'utf-8',
