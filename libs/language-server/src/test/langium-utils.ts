@@ -1,8 +1,7 @@
-/** ****************************************************************************
- * Copyright 2021 TypeFox GmbH
- * This program and the accompanying materials are made available under the
- * terms of the MIT License, which is available in the project root.
- ******************************************************************************/
+// SPDX-FileCopyrightText: 2021 TypeFox GmbH
+//
+// SPDX-License-Identifier: MIT
+//
 /**
  * The content of this file was copied from the official langium github repo
  * https://github.com/langium/langium/blob/main/packages/langium/src/test/langium-test.ts
