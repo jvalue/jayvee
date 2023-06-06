@@ -9,13 +9,7 @@ pipeline Pipeline {
   block BlockFrom oftype TestFileExtractor {
   }
 
-  pipe {
-    from: BlockFrom;
-    to: BlockTo;
-  }
+  BlockFrom -> BlockTo;
 
-  pipe {
-    from: BlockTo;
-    to: BlockFrom;
-  }
+  BlockTo -> BlockFrom;
 }

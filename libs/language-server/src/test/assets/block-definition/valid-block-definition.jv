@@ -9,8 +9,5 @@ pipeline Pipeline {
   block TestLoader oftype TestTableLoader {
   }
 
-  pipe {
-    from: TestExtractor;
-    to: TestLoader;
-  }
+  TestExtractor -> TestLoader;
 }
