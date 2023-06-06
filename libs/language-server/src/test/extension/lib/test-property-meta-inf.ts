@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { TextDecoder } from 'util';
-
 import {
   BlockMetaInformation,
   EvaluationContext,
@@ -26,7 +24,7 @@ export class TestPropertyMetaInformation extends BlockMetaInformation {
         },
         customValidationTextProperty: {
           type: PrimitiveValuetypes.Text,
-          defaultValue: 'utf-8',
+          defaultValue: 'valid',
           validation: (property, context) => {
             const propertyValue = property.value;
             if (isRuntimeParameterLiteral(propertyValue)) {
@@ -34,16 +32,14 @@ export class TestPropertyMetaInformation extends BlockMetaInformation {
               return;
             }
 
-            const encodingValue = evaluatePropertyValueExpression(
+            const value = evaluatePropertyValueExpression(
               propertyValue,
               new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
               STRING_TYPEGUARD,
             );
 
-            try {
-              new TextDecoder(encodingValue);
-            } catch (error) {
-              context.accept('error', `Unknown encoding "${encodingValue}"`, {
+            if (value !== 'valid') {
+              context.accept('error', `Invalid value "${value}"`, {
                 node: propertyValue,
               });
             }

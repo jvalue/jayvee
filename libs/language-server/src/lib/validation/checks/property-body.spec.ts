@@ -136,6 +136,21 @@ describe('property-body validation tests', () => {
     );
   });
 
+  it('error on failed property validation', async () => {
+    const text = readJvTestAsset(
+      'property-body/invalid-property-validation-failed.jv',
+    );
+
+    await parseAndValidatePropertyBody(text);
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+    expect(validationAcceptorMock).toHaveBeenCalledWith(
+      'error',
+      `Invalid value "invalid"`,
+      expect.any(Object),
+    );
+  });
+
   it('info on simplifiable property expression', async () => {
     const text = readJvTestAsset('property-body/valid-simplify-info.jv');
 
