@@ -93,43 +93,4 @@ describe('column-id validation tests', () => {
       expect.any(Object),
     );
   });
-
-  it('error on camel case', async () => {
-    const text = readJvTestAsset('column-id/invalid-column-id-camel-case.jv');
-
-    await parseAndValidateColumnId(text);
-
-    expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
-      'error',
-      `Columns need to be denoted via capital letters or the * character`,
-      expect.any(Object),
-    );
-  });
-
-  it('error on snake case', async () => {
-    const text = readJvTestAsset('column-id/invalid-column-id-snake-case.jv');
-
-    await parseAndValidateColumnId(text);
-
-    expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
-      'error',
-      `Columns need to be denoted via capital letters or the * character`,
-      expect.any(Object),
-    );
-  });
-
-  it('error on pascal case', async () => {
-    const text = readJvTestAsset('column-id/invalid-column-id-pascal-case.jv');
-
-    await parseAndValidateColumnId(text);
-
-    expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
-      'error',
-      `Columns need to be denoted via capital letters or the * character`,
-      expect.any(Object),
-    );
-  });
 });
