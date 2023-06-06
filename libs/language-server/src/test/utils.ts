@@ -5,17 +5,10 @@
 import { readFileSync } from 'fs';
 import * as path from 'path';
 
-import { AstNode, DiagnosticInfo, LangiumDocument } from 'langium';
+import { AstNode, LangiumDocument, ValidationAcceptor } from 'langium';
 
-export const validationAcceptorMockImpl = <N extends AstNode>(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  severity: 'error' | 'warning' | 'info' | 'hint',
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  message: string,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  info: DiagnosticInfo<N>,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-) => {};
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+export const validationAcceptorMockImpl: ValidationAcceptor = () => {};
 
 /**
  * Returns function for reading a jv test asset file from the specified asset root
