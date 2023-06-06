@@ -2,20 +2,20 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pipeline Test {
-  block TestPipeTo oftype TestTableInput {
+pipeline Pipeline {
+  block BlockTo oftype TestTableLoader {
   }
 
-  block TestPipeFrom oftype TestFileOutput {
-  }
-
-  pipe {
-    from: TestPipeFrom;
-    to: TestPipeTo;
+  block BlockFrom oftype TestFileExtractor {
   }
 
   pipe {
-    from: TestPipeFrom;
-    to: TestPipeTo;
+    from: BlockFrom;
+    to: BlockTo;
+  }
+
+  pipe {
+    from: BlockFrom;
+    to: BlockTo;
   }
 }

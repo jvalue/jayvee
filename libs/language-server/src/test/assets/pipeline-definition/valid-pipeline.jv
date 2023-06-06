@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pipeline Test {
-  block TestExtractor oftype TestFileOutput {
+pipeline Pipeline {
+  block TestExtractor oftype TestFileExtractor {
   }
 }

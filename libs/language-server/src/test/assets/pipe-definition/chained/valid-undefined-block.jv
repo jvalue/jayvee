@@ -2,6 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pipeline Test {
+pipeline Pipeline {
   TestExtractor -> TestLoader;
 }

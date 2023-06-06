@@ -96,7 +96,7 @@ describe('pipe-definition validation tests', () => {
       expect(validationAcceptorMock).toHaveBeenNthCalledWith(
         2,
         'error',
-        `The output type "File" of TestFileOutput is incompatible with the input type "Table" of TestTableInput`,
+        `The output type "File" of TestFileExtractor is incompatible with the input type "Table" of TestTableLoader`,
         expect.any(Object),
       );
     });
@@ -135,7 +135,7 @@ describe('pipe-definition validation tests', () => {
       expect(validationAcceptorMock).toHaveBeenNthCalledWith(
         2,
         'error',
-        `The output type "File" of TestFileOutput is incompatible with the input type "Table" of TestTableInput`,
+        `The output type "File" of TestFileExtractor is incompatible with the input type "Table" of TestTableLoader`,
         expect.any(Object),
       );
     });

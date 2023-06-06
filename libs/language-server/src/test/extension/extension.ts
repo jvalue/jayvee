@@ -9,17 +9,17 @@ import {
 } from '../../lib';
 
 import {
-  TestFileOutputMetaInformation,
+  TestFileExtractorMetaInformation,
   TestPropertyMetaInformation,
-  TestTableInputMetaInformation,
+  TestTableLoaderMetaInformation,
 } from './lib';
 
 export class TestLangExtension implements JayveeLangExtension {
   getBlockMetaInf(): Array<ConstructorClass<BlockMetaInformation>> {
     return [
-      TestFileOutputMetaInformation,
+      TestFileExtractorMetaInformation,
       TestPropertyMetaInformation,
-      TestTableInputMetaInformation,
+      TestTableLoaderMetaInformation,
     ];
   }
 }

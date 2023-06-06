@@ -4,11 +4,11 @@
 
 import { BlockMetaInformation, IOType } from '../../../lib';
 
-export class TestFileOutputMetaInformation extends BlockMetaInformation {
+export class TestFileExtractorMetaInformation extends BlockMetaInformation {
   constructor() {
     super(
       // How the block type should be called:
-      'TestFileOutput',
+      'TestFileExtractor',
 
       // Property definitions:
       {},
@@ -18,15 +18,5 @@ export class TestFileOutputMetaInformation extends BlockMetaInformation {
       // Output type:
       IOType.FILE,
     );
-    this.docs.description = 'Test block that outputs a IOType.FILE';
-    this.docs.examples = [
-      {
-        code: blockExampleUsage,
-        description: 'Example',
-      },
-    ];
   }
 }
-
-const blockExampleUsage = `block TestExtractor oftype TestFileOutput {
-}`;

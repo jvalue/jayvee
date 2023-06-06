@@ -4,11 +4,11 @@
 
 import { BlockMetaInformation, IOType } from '../../../lib';
 
-export class TestTableInputMetaInformation extends BlockMetaInformation {
+export class TestTableLoaderMetaInformation extends BlockMetaInformation {
   constructor() {
     super(
       // How the block type should be called:
-      'TestTableInput',
+      'TestTableLoader',
       // Property definitions:
       {},
       // Input type:
@@ -16,15 +16,5 @@ export class TestTableInputMetaInformation extends BlockMetaInformation {
       // Output type:
       IOType.NONE,
     );
-    this.docs.description = 'Test block that requires an input of IOType.TABLE';
-    this.docs.examples = [
-      {
-        code: blockExampleUsage,
-        description: 'Example',
-      },
-    ];
   }
 }
-
-const blockExampleUsage = `block TestLoader oftype TestTableInput {
-}`;

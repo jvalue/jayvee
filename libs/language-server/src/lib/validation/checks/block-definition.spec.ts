@@ -103,7 +103,7 @@ describe('block-definition validation tests', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
-      'Blocks of type TestTableInput do not have an output',
+      'Blocks of type TestTableLoader do not have an output',
       expect.any(Object),
     );
   });
@@ -119,7 +119,7 @@ describe('block-definition validation tests', () => {
     expect(validationAcceptorMock).toHaveBeenNthCalledWith(
       2,
       'error',
-      'At most one pipe can be connected to the input of a TestTableInput',
+      'At most one pipe can be connected to the input of a TestTableLoader',
       expect.any(Object),
     );
   });

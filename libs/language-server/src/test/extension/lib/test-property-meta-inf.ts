@@ -23,17 +23,10 @@ export class TestPropertyMetaInformation extends BlockMetaInformation {
       {
         textProperty: {
           type: PrimitiveValuetypes.Text,
-          docs: {
-            description: 'Required text property.',
-          },
         },
         customValidationTextProperty: {
           type: PrimitiveValuetypes.Text,
           defaultValue: 'utf-8',
-          docs: {
-            description:
-              'Text property with custom validation and default value.',
-          },
           validation: (property, context) => {
             const propertyValue = property.value;
             if (isRuntimeParameterLiteral(propertyValue)) {
@@ -59,37 +52,22 @@ export class TestPropertyMetaInformation extends BlockMetaInformation {
         booleanProperty: {
           type: PrimitiveValuetypes.Boolean,
           defaultValue: false,
-          docs: {
-            description: 'Boolean property with default value',
-          },
         },
         integerProperty: {
           type: PrimitiveValuetypes.Integer,
           defaultValue: 0,
-          docs: {
-            description: 'Integer property with default value',
-          },
         },
         decimalProperty: {
           type: PrimitiveValuetypes.Decimal,
           defaultValue: 0.0,
-          docs: {
-            description: 'Decimal property with default value',
-          },
         },
         regexProperty: {
           type: PrimitiveValuetypes.Regex,
           defaultValue: /\r?\n/,
-          docs: {
-            description: 'Regex property with default value',
-          },
         },
         collectionProperty: {
           type: PrimitiveValuetypes.Collection,
           defaultValue: [],
-          docs: {
-            description: 'Collection property with default value',
-          },
         },
       },
       // Input type:
@@ -98,7 +76,5 @@ export class TestPropertyMetaInformation extends BlockMetaInformation {
       // Output type:
       IOType.TABLE,
     );
-    this.docs.description =
-      'Test block for different types of properties, requiring IOType.FILE and outputting IOType.TABLE.';
   }
 }
