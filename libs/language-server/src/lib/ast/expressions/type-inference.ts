@@ -10,12 +10,15 @@ import {
   Expression,
   ExpressionLiteral,
   ReferenceLiteral,
+  ValueKeywordLiteral,
   isBinaryExpression,
   isBooleanLiteral,
   isCellRangeLiteral,
   isCollectionLiteral,
   isConstraintDefinition,
+  isExpressionConstraintDefinition,
   isExpressionLiteral,
+  isFreeVariableLiteral,
   isNumericLiteral,
   isReferenceLiteral,
   isRegexLiteral,
@@ -23,9 +26,12 @@ import {
   isTransformDefinition,
   isTransformPortDefinition,
   isUnaryExpression,
+  isValueKeywordLiteral,
+  isValueLiteral,
   isValuetypeAssignmentLiteral,
 } from '../generated/ast';
 // eslint-disable-next-line import/no-cycle
+import { getNextAstNodeContainer } from '../model-util';
 import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-valuetypes';
 import { type Valuetype } from '../wrappers/value-type/valuetype';
 import { createValuetype } from '../wrappers/value-type/valuetype-util';
@@ -43,7 +49,7 @@ export function inferExpressionType(
     return undefined;
   }
   if (isExpressionLiteral(expression)) {
-    return inferTypeFromExpressionLiteral(expression);
+    return inferTypeFromExpressionLiteral(expression, context);
   }
   if (isUnaryExpression(expression)) {
     const innerType = inferExpressionType(expression.expression, context);
@@ -74,35 +80,79 @@ export function inferExpressionType(
  */
 function inferTypeFromExpressionLiteral(
   expression: ExpressionLiteral,
+  context: ValidationContext | undefined,
 ): Valuetype | undefined {
-  if (isTextLiteral(expression)) {
-    return PrimitiveValuetypes.Text;
-  }
-  if (isBooleanLiteral(expression)) {
-    return PrimitiveValuetypes.Boolean;
-  }
-  if (isNumericLiteral(expression)) {
-    if (Number.isInteger(expression.value)) {
-      return PrimitiveValuetypes.Integer;
+  if (isValueLiteral(expression)) {
+    if (isTextLiteral(expression)) {
+      return PrimitiveValuetypes.Text;
+    } else if (isBooleanLiteral(expression)) {
+      return PrimitiveValuetypes.Boolean;
+    } else if (isNumericLiteral(expression)) {
+      if (Number.isInteger(expression.value)) {
+        return PrimitiveValuetypes.Integer;
+      }
+      return PrimitiveValuetypes.Decimal;
+    } else if (isCellRangeLiteral(expression)) {
+      return PrimitiveValuetypes.CellRange;
+    } else if (isRegexLiteral(expression)) {
+      return PrimitiveValuetypes.Regex;
+    } else if (isValuetypeAssignmentLiteral(expression)) {
+      return PrimitiveValuetypes.ValuetypeAssignment;
+    } else if (isCollectionLiteral(expression)) {
+      return PrimitiveValuetypes.Collection;
     }
-    return PrimitiveValuetypes.Decimal;
-  }
-  if (isCellRangeLiteral(expression)) {
-    return PrimitiveValuetypes.CellRange;
-  }
-  if (isRegexLiteral(expression)) {
-    return PrimitiveValuetypes.Regex;
-  }
-  if (isValuetypeAssignmentLiteral(expression)) {
-    return PrimitiveValuetypes.ValuetypeAssignment;
-  }
-  if (isCollectionLiteral(expression)) {
-    return PrimitiveValuetypes.Collection;
-  }
-  if (isReferenceLiteral(expression)) {
-    return inferTypeFromReferenceLiteral(expression);
+    assertUnreachable(expression);
+  } else if (isFreeVariableLiteral(expression)) {
+    if (isValueKeywordLiteral(expression)) {
+      return inferTypeFromValueKeyword(expression, context);
+    } else if (isReferenceLiteral(expression)) {
+      return inferTypeFromReferenceLiteral(expression);
+    }
+    assertUnreachable(expression);
   }
   assertUnreachable(expression);
+}
+
+function inferTypeFromValueKeyword(
+  expression: ValueKeywordLiteral,
+  context: ValidationContext | undefined,
+): Valuetype | undefined {
+  const expressionConstraintContainer = getNextAstNodeContainer(
+    expression,
+    isExpressionConstraintDefinition,
+  );
+  if (expressionConstraintContainer === undefined) {
+    context?.accept(
+      'error',
+      'The value keyword is not allowed in this context',
+      {
+        node: expression,
+      },
+    );
+    return undefined;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const valuetype = createValuetype(expressionConstraintContainer?.valuetype);
+  if (valuetype === undefined) {
+    return undefined;
+  }
+
+  if (expression.lengthAccess) {
+    if (!valuetype.isConvertibleTo(PrimitiveValuetypes.Text)) {
+      context?.accept(
+        'error',
+        'The length can only be accessed from text values ',
+        {
+          node: expression,
+          keyword: 'length',
+        },
+      );
+      return undefined;
+    }
+    return PrimitiveValuetypes.Integer;
+  }
+  return valuetype;
 }
 
 function inferTypeFromReferenceLiteral(

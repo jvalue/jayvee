@@ -23,7 +23,7 @@ class TextValuetypeImpl extends PrimitiveValuetype<string> {
   }
 
   override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation,
+    operandValue: InternalValueRepresentation | undefined,
   ): operandValue is string {
     return typeof operandValue === 'string';
   }

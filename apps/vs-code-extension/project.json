@@ -16,14 +16,26 @@
         "external": ["vscode"],
         "platform": "node",
         "format": ["cjs"],
-        "minify": true,
-        "esbuildOptions": {
-          "sourcemap": "linked"
-        },
         "assets": [
           { "input": "apps/vs-code-extension/assets", "glob": "*", "output": "/" }
         ]
-      }
+      },
+      "configurations": {
+        "dev": {
+          "esbuildOptions": {
+            // Required, so VS Code's debugger is able to attach when running the extension
+            "sourcemap": "linked"
+          },
+          "minify": false
+        },
+        "prod": {
+          "esbuildOptions": {
+            "sourcemap": false
+          },
+          "minify": true
+        }
+      },
+      "defaultConfiguration": "dev"
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",

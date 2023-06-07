@@ -120,9 +120,11 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
       formattedRowValues.push(`(${rowValues.join(',')})`);
     }
 
-    return `INSERT INTO "${tableName}" (${columnNames.join(
-      ',',
-    )}) VALUES ${formattedRowValues.join(', ')}`;
+    const formattedColumns = columnNames.map((c) => `"${c}"`).join(',');
+
+    return `INSERT INTO "${tableName}" (${formattedColumns}) VALUES ${formattedRowValues.join(
+      ', ',
+    )}`;
   }
 
   generateCreateTableStatement(tableName: string): string {

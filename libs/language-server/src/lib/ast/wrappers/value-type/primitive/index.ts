@@ -28,6 +28,6 @@ export {
   isValuetypeAssignmentValuetype,
 } from './valuetype-assignment-valuetype';
 export {
-  TransformValuetype,
+  type TransformValuetype,
   isTransformValuetype,
 } from './transform-valuetype';

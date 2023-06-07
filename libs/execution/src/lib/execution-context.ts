@@ -18,6 +18,7 @@ import {
   getOrFailMetaInformation,
   isCollectionLiteral,
   isExpression,
+  isExpressionConstraintDefinition,
   isPipelineDefinition,
   isPropertyBody,
   isRuntimeParameterLiteral,
@@ -161,7 +162,10 @@ export class ExecutionContext {
 
   public getProperty(propertyName: string): PropertyAssignment | undefined {
     const currentNode = this.getCurrentNode();
-    if (isPipelineDefinition(currentNode)) {
+    if (
+      isPipelineDefinition(currentNode) ||
+      isExpressionConstraintDefinition(currentNode)
+    ) {
       return undefined;
     }
 
@@ -203,6 +207,7 @@ export class ExecutionContext {
   private getDefaultPropertyValue(propertyName: string): unknown {
     const currentNode = this.getCurrentNode();
     assert(!isPipelineDefinition(currentNode));
+    assert(!isExpressionConstraintDefinition(currentNode));
 
     if (isTransformDefinition(currentNode)) {
       return undefined;

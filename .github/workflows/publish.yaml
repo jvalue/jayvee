@@ -24,23 +24,23 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: npm ci
       - name: Publish language server
-        run: npx nx run language-server:publish
+        run: npx nx run language-server:publish:prod
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish interpreter
-        run: npx nx run interpreter:publish
+        run: npx nx run interpreter:publish:prod
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish language server web worker
-        run: npx nx run language-server-web-worker:publish
+        run: npx nx run language-server-web-worker:publish:prod
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish monaco editor
-        run: npx nx run monaco-editor:publish
+        run: npx nx run monaco-editor:publish:prod
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Pack VS Code extension
-        run: npx nx run vs-code-extension:pack
+        run: npx nx run vs-code-extension:pack:prod
       - id: get_release
         uses: bruceadams/get-release@v1.3.2
         env:

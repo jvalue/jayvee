@@ -23,7 +23,13 @@
         "outputPath": "dist/libs/language-server",
         "main": "libs/language-server/src/index.ts",
         "tsConfig": "libs/language-server/tsconfig.lib.json"
-      }
+      },
+      "configurations": {
+        // https://nx.dev/recipes/executors/use-executor-configurations
+        "dev": {},
+        "prod": {}
+      },
+      "defaultConfiguration": "dev"
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",

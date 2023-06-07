@@ -22,7 +22,7 @@ class RegexValuetypeImpl extends PrimitiveValuetype<RegExp> {
   }
 
   override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation,
+    operandValue: InternalValueRepresentation | undefined,
   ): operandValue is RegExp {
     return operandValue instanceof RegExp;
   }

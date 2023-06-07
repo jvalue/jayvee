@@ -23,7 +23,7 @@ class CollectionValuetypeImpl extends PrimitiveValuetype<CollectionLiteral> {
   }
 
   override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation,
+    operandValue: InternalValueRepresentation | undefined,
   ): operandValue is CollectionLiteral {
     return isCollectionLiteral(operandValue);
   }

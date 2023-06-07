@@ -29,7 +29,13 @@
             "output": "."
           }
         ]
-      }
+      },
+      "configurations": {
+        // https://nx.dev/recipes/executors/use-executor-configurations
+        "dev": {},
+        "prod": {}
+      },
+      "defaultConfiguration": "dev"
     },
     "test": {
       "executor": "@nrwl/jest:jest",

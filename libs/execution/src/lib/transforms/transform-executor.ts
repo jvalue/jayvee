@@ -15,8 +15,8 @@ import {
 } from '@jvalue/jayvee-language-server';
 
 import { ExecutionContext } from '../execution-context';
+import { isValidValueRepresentation } from '../types';
 import { TableColumn } from '../types/io-types/table';
-import { IsValidVisitor } from '../types/valuetypes/visitors/is-valid-visitor';
 
 export class TransformExecutor {
   constructor(private readonly transform: TransformDefinition) {}
@@ -107,9 +107,7 @@ export class TransformExecutor {
         );
         rowsToDelete.push(rowIndex);
       } else if (
-        !outputDetails.valuetype.acceptVisitor(
-          new IsValidVisitor(newValue, context),
-        )
+        !isValidValueRepresentation(newValue, outputDetails.valuetype, context)
       ) {
         assert(
           typeof newValue === 'string' ||
