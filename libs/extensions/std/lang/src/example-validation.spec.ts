@@ -4,12 +4,14 @@
 
 import {
   JayveeServices,
-  ValidationResult,
   createJayveeServices,
-  readJvTestAssetHelper,
   useExtension,
-  validationHelper,
 } from '@jvalue/jayvee-language-server';
+import {
+  ValidationResult,
+  readJvTestAssetHelper,
+  validationHelper,
+} from '@jvalue/jayvee-language-server/test';
 import { AstNode } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
