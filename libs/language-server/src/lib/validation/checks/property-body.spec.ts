@@ -163,4 +163,14 @@ describe('property-body validation tests', () => {
       expect.any(Object),
     );
   });
+
+  it('info on non simplifiable property expression', async () => {
+    const text = readJvTestAsset(
+      'property-body/valid-uneccessarysimplify-info.jv',
+    );
+
+    await parseAndValidatePropertyBody(text);
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
+  });
 });
