@@ -10,6 +10,8 @@ import {
   Expression,
   evaluateExpression,
   isExpressionLiteral,
+  isUnaryExpression,
+  isValueLiteral,
 } from '../ast';
 
 import { ValidationContext } from './validation-context';
@@ -81,7 +83,7 @@ export function checkExpressionSimplification(
   expression: Expression,
   context: ValidationContext,
 ): void {
-  if (isExpressionLiteral(expression)) {
+  if (isNonSimplifiableExpression(expression)) {
     return;
   }
 
@@ -99,4 +101,18 @@ export function checkExpressionSimplification(
       { node: expression },
     );
   }
+}
+
+function isNonSimplifiableExpression(expression: Expression): boolean {
+  return (
+    isExpressionLiteral(expression) || isNegativeNumberExpression(expression)
+  );
+}
+
+function isNegativeNumberExpression(expression: Expression): boolean {
+  return (
+    isUnaryExpression(expression) &&
+    expression.operator === '-' &&
+    isValueLiteral(expression.expression)
+  );
 }
