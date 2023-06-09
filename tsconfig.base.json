@@ -37,6 +37,7 @@
         "libs/extensions/tabular/lang/src/index.ts"
       ],
       "@jvalue/jayvee-language-server": ["libs/language-server/src/index.ts"],
+      "@jvalue/jayvee-language-server/test": ["libs/language-server/src/test/index.ts"],
       "@jvalue/jayvee-monaco": ["libs/monaco-editor/src/index.ts"]
     }
   }
