@@ -9,6 +9,7 @@
 
 import { assertUnreachable } from 'langium';
 
+import { EvaluationContext } from '../../ast/expressions/evaluation';
 import {
   TransformBody,
   TransformPortDefinition,
@@ -26,18 +27,23 @@ import {
 
 export function validateTransformBody(
   transformBody: TransformBody,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ): void {
-  checkUniqueNames(transformBody.ports, context, 'transform port');
-  checkUniqueOutputAssignments(transformBody, context);
+  checkUniqueNames(transformBody.ports, validationContext, 'transform port');
+  checkUniqueOutputAssignments(transformBody, validationContext);
 
-  checkSinglePortOfKind(transformBody, 'from', context);
-  checkSinglePortOfKind(transformBody, 'to', context);
+  checkSinglePortOfKind(transformBody, 'from', validationContext);
+  checkSinglePortOfKind(transformBody, 'to', validationContext);
 
-  checkAreInputsUsed(transformBody, context);
+  checkAreInputsUsed(transformBody, validationContext);
 
   for (const property of transformBody.outputAssignments) {
-    validateTransformOutputAssignment(property, context);
+    validateTransformOutputAssignment(
+      property,
+      validationContext,
+      evaluationContext,
+    );
   }
 }
 

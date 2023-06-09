@@ -7,7 +7,7 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { inferExpressionType } from '../../ast';
+import { EvaluationContext, inferExpressionType } from '../../ast';
 import {
   PropertyAssignment,
   isRuntimeParameterLiteral,
@@ -22,16 +22,22 @@ import { checkExpressionSimplification } from '../validation-util';
 export function validatePropertyAssignment(
   property: PropertyAssignment,
   metaInf: MetaInformation,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ): void {
   const propertySpec = metaInf.getPropertySpecification(property.name);
 
-  checkPropertyNameValidity(property, propertySpec, context);
+  checkPropertyNameValidity(property, propertySpec, validationContext);
 
   if (propertySpec === undefined) {
     return;
   }
-  checkPropertyValueTyping(property, propertySpec, context);
+  checkPropertyValueTyping(
+    property,
+    propertySpec,
+    validationContext,
+    evaluationContext,
+  );
 }
 
 function checkPropertyNameValidity(
@@ -50,7 +56,8 @@ function checkPropertyNameValidity(
 function checkPropertyValueTyping(
   property: PropertyAssignment,
   propertySpec: PropertySpecification,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ): void {
   const propertyType = propertySpec.type;
 
@@ -61,7 +68,7 @@ function checkPropertyValueTyping(
 
   if (isRuntimeParameterLiteral(propertyValue)) {
     if (!propertyType.isAllowedAsRuntimeParameter()) {
-      context.accept(
+      validationContext.accept(
         'error',
         `Runtime parameters are not allowed for properties of type ${propertyType.getName()}`,
         {
@@ -72,13 +79,13 @@ function checkPropertyValueTyping(
     }
     return;
   }
-  const inferredType = inferExpressionType(propertyValue, context);
+  const inferredType = inferExpressionType(propertyValue, validationContext);
   if (inferredType === undefined) {
     return;
   }
 
   if (!inferredType.isConvertibleTo(propertyType)) {
-    context.accept(
+    validationContext.accept(
       'error',
       `The value needs to be of type ${propertyType.getName()} but is of type ${inferredType.getName()}`,
       {
@@ -89,5 +96,9 @@ function checkPropertyValueTyping(
     return;
   }
 
-  checkExpressionSimplification(propertyValue, context);
+  checkExpressionSimplification(
+    propertyValue,
+    validationContext,
+    evaluationContext,
+  );
 }

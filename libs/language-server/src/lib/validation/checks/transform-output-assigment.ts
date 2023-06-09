@@ -9,6 +9,7 @@
 
 import { assertUnreachable } from 'langium';
 
+import { EvaluationContext } from '../../ast/expressions/evaluation';
 import { inferExpressionType } from '../../ast/expressions/type-inference';
 import {
   Expression,
@@ -26,15 +27,21 @@ import { checkExpressionSimplification } from '../validation-util';
 
 export function validateTransformOutputAssignment(
   outputAssignment: TransformOutputAssignment,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ): void {
-  checkOutputValueTyping(outputAssignment, context);
-  checkOutputNotInAssignmentExpression(outputAssignment, context);
+  checkOutputValueTyping(
+    outputAssignment,
+    validationContext,
+    evaluationContext,
+  );
+  checkOutputNotInAssignmentExpression(outputAssignment, validationContext);
 }
 
 function checkOutputValueTyping(
   outputAssignment: TransformOutputAssignment,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ): void {
   const assignmentExpression = outputAssignment?.expression;
   if (assignmentExpression === undefined) {
@@ -46,7 +53,10 @@ function checkOutputValueTyping(
     return;
   }
 
-  const inferredType = inferExpressionType(assignmentExpression, context);
+  const inferredType = inferExpressionType(
+    assignmentExpression,
+    validationContext,
+  );
   if (inferredType === undefined) {
     return;
   }
@@ -57,7 +67,7 @@ function checkOutputValueTyping(
   }
 
   if (!inferredType.isConvertibleTo(expectedType)) {
-    context.accept(
+    validationContext.accept(
       'error',
       `The value needs to be of type ${expectedType.getName()} but is of type ${inferredType.getName()}`,
       {
@@ -67,7 +77,11 @@ function checkOutputValueTyping(
     return;
   }
 
-  checkExpressionSimplification(assignmentExpression, context);
+  checkExpressionSimplification(
+    assignmentExpression,
+    validationContext,
+    evaluationContext,
+  );
 }
 
 function checkOutputNotInAssignmentExpression(

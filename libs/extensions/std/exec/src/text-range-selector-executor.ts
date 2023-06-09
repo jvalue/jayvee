@@ -25,8 +25,8 @@ export class TextRangeSelectorExecutor
     file: TextFile,
     context: ExecutionContext,
   ): Promise<R.Result<TextFile>> {
-    const lineFrom = context.getNumericPropertyValue('lineFrom');
-    const lineTo = context.getNumericPropertyValue('lineTo');
+    const lineFrom = context.getIntegerPropertyValue('lineFrom');
+    const lineTo = context.getIntegerPropertyValue('lineTo');
 
     const numberOfLines = file.content.length;
 

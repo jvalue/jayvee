@@ -3,8 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 export * from './util';
+export * from './value-type';
 
 export * from './ast-node-wrapper';
 export * from './cell-range-wrapper';
-// eslint-disable-next-line import/no-cycle
-export * from './value-type';

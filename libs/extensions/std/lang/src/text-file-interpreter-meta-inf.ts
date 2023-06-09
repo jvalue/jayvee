@@ -6,12 +6,9 @@ import { TextDecoder } from 'util';
 
 import {
   BlockMetaInformation,
-  EvaluationContext,
   IOType,
   PrimitiveValuetypes,
-  STRING_TYPEGUARD,
   evaluatePropertyValueExpression,
-  isRuntimeParameterLiteral,
 } from '@jvalue/jayvee-language-server';
 
 export class TextFileInterpreterMetaInformation extends BlockMetaInformation {
@@ -25,25 +22,28 @@ export class TextFileInterpreterMetaInformation extends BlockMetaInformation {
           docs: {
             description: 'The encoding used for decoding the file contents.',
           },
-          validation: (property, context) => {
+          validation: (property, validationContext, evaluationContext) => {
             const propertyValue = property.value;
-            if (isRuntimeParameterLiteral(propertyValue)) {
-              // We currently ignore runtime parameters during validation.
-              return;
-            }
 
             const encodingValue = evaluatePropertyValueExpression(
               propertyValue,
-              new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
-              STRING_TYPEGUARD,
+              evaluationContext,
+              PrimitiveValuetypes.Text,
             );
+            if (encodingValue === undefined) {
+              return;
+            }
 
             try {
               new TextDecoder(encodingValue);
             } catch (error) {
-              context.accept('error', `Unknown encoding "${encodingValue}"`, {
-                node: propertyValue,
-              });
+              validationContext.accept(
+                'error',
+                `Unknown encoding "${encodingValue}"`,
+                {
+                  node: propertyValue,
+                },
+              );
             }
           },
         },
