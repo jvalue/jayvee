@@ -6,6 +6,7 @@ import { strict as assert } from 'assert';
 
 import {
   BlockMetaInformation,
+  CollectionValuetype,
   IOType,
   PrimitiveValuetypes,
   getNodesWithNonUniqueNames,
@@ -39,7 +40,9 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
           },
         },
         columns: {
-          type: PrimitiveValuetypes.Collection,
+          type: new CollectionValuetype(
+            PrimitiveValuetypes.ValuetypeAssignment,
+          ),
           validation: (property, context) => {
             const propertyValue = property.value;
             if (!isCollectionLiteral(propertyValue)) {
@@ -53,6 +56,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
             );
 
             invalidItems.forEach((invalidValue) =>
+              // TODO assume correctly typed values
               context.accept(
                 'error',
                 'Only type assignments are allowed in this collection',

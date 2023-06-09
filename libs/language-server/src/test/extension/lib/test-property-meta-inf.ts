@@ -4,6 +4,7 @@
 
 import {
   BlockMetaInformation,
+  CollectionValuetype,
   EvaluationContext,
   IOType,
   PrimitiveValuetypes,
@@ -61,8 +62,8 @@ export class TestPropertyMetaInformation extends BlockMetaInformation {
           type: PrimitiveValuetypes.Regex,
           defaultValue: /\r?\n/,
         },
-        collectionProperty: {
-          type: PrimitiveValuetypes.Collection,
+        textCollectionProperty: {
+          type: new CollectionValuetype(PrimitiveValuetypes.Text),
           defaultValue: [],
         },
       },

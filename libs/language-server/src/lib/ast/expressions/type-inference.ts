@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
+
 import { assertUnreachable } from 'langium';
 
 import { ValidationContext } from '../../validation/validation-context';
@@ -32,6 +34,13 @@ import {
 } from '../generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { getNextAstNodeContainer } from '../model-util';
+import {
+  AtomicValuetype,
+  CollectionValuetype,
+  PrimitiveValuetype,
+  isAtomicValuetype,
+  isPrimitiveValuetype,
+} from '../wrappers';
 import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-valuetypes';
 import { type Valuetype } from '../wrappers/value-type/valuetype';
 import { createValuetype } from '../wrappers/value-type/valuetype-util';
@@ -40,6 +49,7 @@ import {
   binaryOperatorRegistry,
   unaryOperatorRegistry,
 } from './operator-registry';
+import { isEveryValueDefined } from './typeguards';
 
 export function inferExpressionType(
   expression: Expression | undefined,
@@ -99,7 +109,7 @@ function inferTypeFromExpressionLiteral(
     } else if (isValuetypeAssignmentLiteral(expression)) {
       return PrimitiveValuetypes.ValuetypeAssignment;
     } else if (isCollectionLiteral(expression)) {
-      return PrimitiveValuetypes.Collection;
+      return inferCollectionType(expression, context);
     }
     assertUnreachable(expression);
   } else if (isFreeVariableLiteral(expression)) {
@@ -111,6 +121,141 @@ function inferTypeFromExpressionLiteral(
     assertUnreachable(expression);
   }
   assertUnreachable(expression);
+}
+
+function inferCollectionType(
+  collection: CollectionLiteral,
+  context: ValidationContext | undefined,
+): Valuetype | undefined {
+  const elementValuetypes = inferCollectionElementTypes(collection, context);
+  if (elementValuetypes === undefined) {
+    return undefined;
+  }
+
+  const stacks = elementValuetypes.map(getValuetypeHierarchyStack);
+
+  if (stacks.length === 0) {
+    return PrimitiveValuetypes.EmptyCollection;
+  }
+  if (stacks.length === 1) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const stack = stacks[0]!;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const resultingInnerType = stack[stack.length - 1]!;
+    return new CollectionValuetype(resultingInnerType);
+  }
+
+  const primitiveValuetypes = stacks.map((stack) => stack[0]);
+
+  const commonPrimitiveValuetype =
+    pickCommonPrimitiveValuetype(primitiveValuetypes);
+
+  if (commonPrimitiveValuetype === undefined) {
+    context?.accept(
+      'error',
+      'The type of the collection cannot be inferred from its elements',
+      {
+        node: collection,
+      },
+    );
+    return undefined;
+  }
+
+  const commonAtomicValuetype = pickCommonAtomicValuetype(stacks);
+  if (commonAtomicValuetype === undefined) {
+    return new CollectionValuetype(commonPrimitiveValuetype);
+  }
+  return new CollectionValuetype(commonAtomicValuetype);
+}
+
+function inferCollectionElementTypes(
+  collection: CollectionLiteral,
+  context: ValidationContext | undefined,
+): Valuetype[] | undefined {
+  const elementValuetypes = collection.values.map((value) =>
+    inferExpressionType(value, context),
+  );
+  if (!isEveryValueDefined(elementValuetypes)) {
+    return undefined;
+  }
+  return elementValuetypes;
+}
+
+type ValuetypeHierarchyStack = [PrimitiveValuetype, ...AtomicValuetype[]];
+
+function getValuetypeHierarchyStack(
+  valuetype: Valuetype,
+): ValuetypeHierarchyStack {
+  if (isPrimitiveValuetype(valuetype)) {
+    return [valuetype];
+  } else if (isAtomicValuetype(valuetype)) {
+    const supertype = valuetype.getSupertype();
+    assert(supertype !== undefined);
+    return [...getValuetypeHierarchyStack(supertype), valuetype];
+  }
+  throw new Error(
+    'Should be unreachable, encountered an unknown kind of valuetype',
+  );
+}
+
+function pickCommonPrimitiveValuetype(
+  primitiveValuetypes: PrimitiveValuetype[],
+): PrimitiveValuetype | undefined {
+  assert(primitiveValuetypes.length > 0);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  let resultingType: PrimitiveValuetype = primitiveValuetypes[0]!;
+  for (let i = 1; i < primitiveValuetypes.length; ++i) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const currentType = primitiveValuetypes[i]!;
+
+    if (currentType.isConvertibleTo(resultingType)) {
+      continue;
+    }
+
+    if (resultingType.isConvertibleTo(currentType)) {
+      // Pick the more general type as a result
+      resultingType = currentType;
+      continue;
+    }
+
+    // Unable to convert the valuetypes into each other, so there is no common primitive valuetype
+    return undefined;
+  }
+  return resultingType;
+}
+
+function pickCommonAtomicValuetype(
+  stacks: ValuetypeHierarchyStack[],
+): Valuetype | undefined {
+  const minimumStackLength = Math.min(...stacks.map((stack) => stack.length));
+
+  let resultingType: Valuetype | undefined = undefined;
+  for (let stackLevel = 1; stackLevel < minimumStackLength; ++stackLevel) {
+    const typesOfCurrentLevel: Valuetype[] = stacks.map(
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      (stack) => stack[stackLevel]!,
+    );
+
+    if (!allTypesEqual(typesOfCurrentLevel)) {
+      // Return the common valuetype of the previous level
+      return resultingType;
+    }
+
+    // Pick any type of the current level since they are all equal
+    resultingType = typesOfCurrentLevel[0];
+  }
+  return resultingType;
+}
+
+function allTypesEqual(types: Valuetype[]): boolean {
+  for (let i = 1; i < types.length; i++) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    if (!types[i - 1]!.equals(types[i]!)) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 function inferTypeFromValueKeyword(

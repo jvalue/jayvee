@@ -8,7 +8,6 @@ import { assertUnreachable } from 'langium';
 
 import { ValidationContext } from '../../validation/validation-context';
 import {
-  CollectionLiteral,
   ConstraintDefinition,
   Expression,
   FreeVariableLiteral,
@@ -43,6 +42,7 @@ import {
   binaryOperatorRegistry,
   unaryOperatorRegistry,
 } from './operator-registry';
+import { isEveryValueDefined } from './typeguards';
 
 export enum EvaluationStrategy {
   EXHAUSTIVE,
@@ -50,6 +50,11 @@ export enum EvaluationStrategy {
 }
 
 export type InternalValueRepresentation =
+  | AtomicInternalValueRepresentation
+  | Array<InternalValueRepresentation>
+  | [];
+
+export type AtomicInternalValueRepresentation =
   | boolean
   | number
   | string
@@ -57,7 +62,6 @@ export type InternalValueRepresentation =
   | CellRangeWrapper
   | ConstraintDefinition
   | ValuetypeAssignment
-  | CollectionLiteral
   | TransformDefinition;
 
 export class EvaluationContext {
@@ -192,7 +196,12 @@ export function evaluateExpression(
     if (isFreeVariableLiteral(expression)) {
       return evaluationContext.getValueFor(expression);
     } else if (isValueLiteral(expression)) {
-      return evaluateValueLiteral(expression);
+      return evaluateValueLiteral(
+        expression,
+        evaluationContext,
+        context,
+        strategy,
+      );
     }
     assertUnreachable(expression);
   }
@@ -211,9 +220,18 @@ export function evaluateExpression(
 
 function evaluateValueLiteral(
   expression: ValueLiteral,
+  evaluationContext: EvaluationContext,
+  context: ValidationContext | undefined = undefined,
+  strategy: EvaluationStrategy = EvaluationStrategy.LAZY,
 ): InternalValueRepresentation | undefined {
   if (isCollectionLiteral(expression)) {
-    return expression;
+    const evaluatedCollection = expression.values.map((v) =>
+      evaluateExpression(v, evaluationContext, context, strategy),
+    );
+    if (!isEveryValueDefined(evaluatedCollection)) {
+      return undefined;
+    }
+    return evaluatedCollection;
   }
   if (isCellRangeLiteral(expression)) {
     if (!CellRangeWrapper.canBeWrapped(expression)) {

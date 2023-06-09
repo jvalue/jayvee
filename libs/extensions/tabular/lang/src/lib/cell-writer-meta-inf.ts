@@ -5,6 +5,7 @@
 import {
   BlockMetaInformation,
   CellRangeWrapper,
+  CollectionValuetype,
   IOType,
   PrimitiveValuetypes,
   isCellRangeLiteral,
@@ -18,7 +19,7 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
       'CellWriter',
       {
         write: {
-          type: PrimitiveValuetypes.Collection,
+          type: new CollectionValuetype(PrimitiveValuetypes.Text),
           docs: {
             description: 'The values to write.',
             examples: [
@@ -94,6 +95,7 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
         );
 
         invalidItems.forEach((invalidValue) =>
+          // TODO assume correctly typed values
           context.accept(
             'error',
             'Only text values are allowed in this collection',

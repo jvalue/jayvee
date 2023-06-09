@@ -7,6 +7,7 @@ import { strict as assert } from 'assert';
 import {
   BlockMetaInformation,
   CellRangeWrapper,
+  CollectionValuetype,
   IOType,
   PrimitiveValuetypes,
   isCellRangeLiteral,
@@ -21,7 +22,7 @@ export class RowDeleterMetaInformation extends BlockMetaInformation {
       'RowDeleter',
       {
         delete: {
-          type: PrimitiveValuetypes.Collection,
+          type: new CollectionValuetype(PrimitiveValuetypes.CellRange),
           validation: (property, context) => {
             const propertyValue = property.value;
             if (!isCollectionLiteral(propertyValue)) {
@@ -35,6 +36,7 @@ export class RowDeleterMetaInformation extends BlockMetaInformation {
             );
 
             invalidItems.forEach((invalidValue) =>
+              // TODO assume correctly typed values
               context.accept(
                 'error',
                 'Only cell ranges are allowed in this collection',

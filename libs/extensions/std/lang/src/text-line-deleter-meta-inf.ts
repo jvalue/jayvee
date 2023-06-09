@@ -6,6 +6,7 @@ import { strict as assert } from 'assert';
 
 import {
   BlockMetaInformation,
+  CollectionValuetype,
   EvaluationContext,
   IOType,
   NUMBER_TYPEGUARD,
@@ -22,7 +23,7 @@ export class TextLineDeleterMetaInformation extends BlockMetaInformation {
       'TextLineDeleter',
       {
         lines: {
-          type: PrimitiveValuetypes.Collection,
+          type: new CollectionValuetype(PrimitiveValuetypes.Integer),
           validation: (property, context) => {
             const propertyValue = property.value;
             assert(isCollectionLiteral(propertyValue));
@@ -34,6 +35,7 @@ export class TextLineDeleterMetaInformation extends BlockMetaInformation {
             );
 
             invalidItems.forEach((invalidValue) =>
+              // TODO assume correctly typed values
               context.accept(
                 'error',
                 'Only integers are allowed in this collection',

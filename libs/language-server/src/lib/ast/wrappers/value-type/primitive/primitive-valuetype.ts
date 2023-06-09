@@ -25,3 +25,7 @@ export abstract class PrimitiveValuetype<
     return undefined;
   }
 }
+
+export function isPrimitiveValuetype(v: unknown): v is PrimitiveValuetype {
+  return v instanceof PrimitiveValuetype;
+}
