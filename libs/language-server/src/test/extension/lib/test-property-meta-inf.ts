@@ -5,10 +5,8 @@
 import {
   BlockMetaInformation,
   CollectionValuetype,
-  EvaluationContext,
   IOType,
   PrimitiveValuetypes,
-  STRING_TYPEGUARD,
   evaluatePropertyValueExpression,
   isRuntimeParameterLiteral,
 } from '../../../lib';
@@ -26,7 +24,7 @@ export class TestPropertyMetaInformation extends BlockMetaInformation {
         customValidationTextProperty: {
           type: PrimitiveValuetypes.Text,
           defaultValue: 'valid',
-          validation: (property, context) => {
+          validation: (property, validationContext, evaluationContext) => {
             const propertyValue = property.value;
             if (isRuntimeParameterLiteral(propertyValue)) {
               // We currently ignore runtime parameters during validation.
@@ -35,12 +33,12 @@ export class TestPropertyMetaInformation extends BlockMetaInformation {
 
             const value = evaluatePropertyValueExpression(
               propertyValue,
-              new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
-              STRING_TYPEGUARD,
+              evaluationContext,
+              PrimitiveValuetypes.Text,
             );
 
-            if (value !== 'valid') {
-              context.accept('error', `Invalid value "${value}"`, {
+            if (value !== undefined && value !== 'valid') {
+              validationContext.accept('error', `Invalid value "${value}"`, {
                 node: propertyValue,
               });
             }

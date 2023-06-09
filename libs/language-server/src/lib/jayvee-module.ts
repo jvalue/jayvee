@@ -23,13 +23,19 @@ import { JayveeCompletionProvider } from './completion/jayvee-completion-provide
 import { registerConstraints } from './constraint/constraint-registry';
 import { JayveeHoverProvider } from './hover/jayvee-hover-provider';
 import { JayveeValueConverter } from './jayvee-value-converter';
+import { RuntimeParameterProvider } from './services/runtime-parameter-provider';
 import { JayveeValidationRegistry } from './validation/validation-registry';
 
 /**
  * Declaration of custom services - add your own service classes here.
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface JayveeAddedServices {}
+
+export interface JayveeAddedServices {
+  RuntimeParameterProvider: RuntimeParameterProvider;
+  validation: {
+    ValidationRegistry: JayveeValidationRegistry;
+  };
+}
 
 /**
  * Union of Langium default services and your custom services - use this as constructor parameter
@@ -60,6 +66,7 @@ export const JayveeModule: Module<
     HoverProvider: (services: LangiumServices) =>
       new JayveeHoverProvider(services),
   },
+  RuntimeParameterProvider: () => new RuntimeParameterProvider(),
 };
 
 export const JayveeSharedModule: Module<

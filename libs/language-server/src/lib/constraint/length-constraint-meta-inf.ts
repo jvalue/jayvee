@@ -6,11 +6,7 @@ import {
   EvaluationContext,
   evaluatePropertyValueExpression,
 } from '../ast/expressions/evaluation';
-import { NUMBER_TYPEGUARD } from '../ast/expressions/typeguards';
-import {
-  PropertyAssignment,
-  isRuntimeParameterLiteral,
-} from '../ast/generated/ast';
+import { PropertyAssignment } from '../ast/generated/ast';
 import { PrimitiveValuetypes } from '../ast/wrappers/value-type';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 import { ValidationContext } from '../validation/validation-context';
@@ -32,7 +28,7 @@ export class LengthConstraintMetaInformation extends ConstraintMetaInformation {
         },
       },
       PrimitiveValuetypes.Text,
-      (propertyBody, context) => {
+      (propertyBody, validationContext, evaluationContext) => {
         const minLengthProperty = propertyBody.properties.find(
           (p) => p.name === 'minLength',
         );
@@ -46,27 +42,24 @@ export class LengthConstraintMetaInformation extends ConstraintMetaInformation {
         ) {
           return;
         }
-        if (
-          isRuntimeParameterLiteral(minLengthProperty.value) ||
-          isRuntimeParameterLiteral(maxLengthProperty.value)
-        ) {
-          // We currently ignore runtime parameters during validation.
-          return;
-        }
+
         const minLength = evaluatePropertyValueExpression(
           minLengthProperty.value,
-          new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
-          NUMBER_TYPEGUARD,
+          evaluationContext,
+          PrimitiveValuetypes.Integer,
         );
         const maxLength = evaluatePropertyValueExpression(
           maxLengthProperty.value,
-          new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
-          NUMBER_TYPEGUARD,
+          evaluationContext,
+          PrimitiveValuetypes.Integer,
         );
+        if (minLength === undefined || maxLength === undefined) {
+          return;
+        }
 
         if (minLength > maxLength) {
           [minLengthProperty, maxLengthProperty].forEach((property) => {
-            context.accept(
+            validationContext.accept(
               'error',
               'The minimum length needs to be smaller or equal to the maximum length',
               { node: property.value },
@@ -93,23 +86,22 @@ export class LengthConstraintMetaInformation extends ConstraintMetaInformation {
 
 function nonNegativeValidation(
   property: PropertyAssignment,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ) {
   const propertyValue = property.value;
 
-  if (isRuntimeParameterLiteral(propertyValue)) {
-    // We currently ignore runtime parameters during validation.
+  const value = evaluatePropertyValueExpression(
+    propertyValue,
+    evaluationContext,
+    PrimitiveValuetypes.Integer,
+  );
+  if (value === undefined) {
     return;
   }
 
-  const value = evaluatePropertyValueExpression(
-    propertyValue,
-    new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
-    NUMBER_TYPEGUARD,
-  );
-
   if (value < 0) {
-    context.accept(
+    validationContext.accept(
       'error',
       `Bounds for length need to be equal or greater than zero`,
       {

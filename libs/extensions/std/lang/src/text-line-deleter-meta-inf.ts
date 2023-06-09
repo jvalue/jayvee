@@ -7,9 +7,7 @@ import { strict as assert } from 'assert';
 import {
   BlockMetaInformation,
   CollectionValuetype,
-  EvaluationContext,
   IOType,
-  NUMBER_TYPEGUARD,
   PrimitiveValuetypes,
   evaluatePropertyValueExpression,
   isCollectionLiteral,
@@ -24,19 +22,19 @@ export class TextLineDeleterMetaInformation extends BlockMetaInformation {
       {
         lines: {
           type: new CollectionValuetype(PrimitiveValuetypes.Integer),
-          validation: (property, context) => {
+          validation: (property, validationContext, evaluationContext) => {
             const propertyValue = property.value;
             assert(isCollectionLiteral(propertyValue));
 
             const { validItems, invalidItems } = validateTypedCollection(
               propertyValue,
               [PrimitiveValuetypes.Integer],
-              context,
+              validationContext,
             );
 
             invalidItems.forEach((invalidValue) =>
               // TODO assume correctly typed values
-              context.accept(
+              validationContext.accept(
                 'error',
                 'Only integers are allowed in this collection',
                 {
@@ -50,12 +48,15 @@ export class TextLineDeleterMetaInformation extends BlockMetaInformation {
             for (const expression of validItems) {
               const value = evaluatePropertyValueExpression(
                 expression,
-                new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
-                NUMBER_TYPEGUARD,
+                evaluationContext,
+                PrimitiveValuetypes.Integer,
               );
+              if (value === undefined) {
+                continue;
+              }
 
               if (value <= 0) {
-                context.accept(
+                validationContext.accept(
                   'error',
                   `Line numbers need to be greater than zero`,
                   {

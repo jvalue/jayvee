@@ -6,6 +6,7 @@ import { strict as assert } from 'assert';
 
 import { assertUnreachable } from 'langium';
 
+import { RuntimeParameterProvider } from '../../services';
 import { ValidationContext } from '../../validation/validation-context';
 import {
   ConstraintDefinition,
@@ -33,9 +34,10 @@ import {
   isValueKeywordLiteral,
   isValueLiteral,
 } from '../generated/ast';
-// eslint-disable-next-line import/no-cycle
-import { PrimitiveValuetypes } from '../wrappers';
 import { CellRangeWrapper } from '../wrappers/cell-range-wrapper';
+// eslint-disable-next-line import/no-cycle
+import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-valuetypes';
+import { Valuetype } from '../wrappers/value-type/valuetype';
 
 // eslint-disable-next-line import/no-cycle
 import {
@@ -65,32 +67,24 @@ export type AtomicInternalValueRepresentation =
   | TransformDefinition;
 
 export class EvaluationContext {
+  private readonly variableValues = new Map<
+    string,
+    InternalValueRepresentation
+  >();
+  private valueKeywordValue: InternalValueRepresentation | undefined =
+    undefined;
+
   constructor(
-    private readonly runtimeParameterValues: Map<
-      string,
-      InternalValueRepresentation
-    > = new Map(),
-    private readonly variableValues: Map<
-      string,
-      InternalValueRepresentation
-    > = new Map(),
-    private valueKeywordValue:
-      | InternalValueRepresentation
-      | undefined = undefined,
+    public readonly runtimeParameterProvider: RuntimeParameterProvider,
   ) {}
 
   getValueFor(
-    literal: FreeVariableLiteral | RuntimeParameterLiteral,
+    literal: FreeVariableLiteral,
   ): InternalValueRepresentation | undefined {
-    if (isFreeVariableLiteral(literal)) {
-      if (isReferenceLiteral(literal)) {
-        return this.getValueForReference(literal);
-      } else if (isValueKeywordLiteral(literal)) {
-        return this.getValueForValueKeyword(literal);
-      }
-      assertUnreachable(literal);
-    } else if (isRuntimeParameterLiteral(literal)) {
-      return this.getValueForRuntimeParameter(literal);
+    if (isReferenceLiteral(literal)) {
+      return this.getValueForReference(literal);
+    } else if (isValueKeywordLiteral(literal)) {
+      return this.getValueForValueKeyword(literal);
     }
     assertUnreachable(literal);
   }
@@ -127,17 +121,15 @@ export class EvaluationContext {
     assertUnreachable(dereferenced);
   }
 
-  getValueForRuntimeParameter(
-    parameterLiteral: RuntimeParameterLiteral,
-  ): InternalValueRepresentation | undefined {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const key = parameterLiteral?.name;
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (key === undefined) {
-      return undefined;
-    }
+  hasValueForRuntimeParameter(key: string): boolean {
+    return this.runtimeParameterProvider.hasValue(key);
+  }
 
-    return this.runtimeParameterValues.get(key);
+  getValueForRuntimeParameter<I extends InternalValueRepresentation>(
+    key: string,
+    valuetype: Valuetype<I>,
+  ): I | undefined {
+    return this.runtimeParameterProvider.getParsedValue(key, valuetype);
   }
 
   setValueForValueKeyword(value: InternalValueRepresentation) {
@@ -177,13 +169,31 @@ export function evaluatePropertyValueExpression<
 >(
   propertyValue: Expression | RuntimeParameterLiteral,
   evaluationContext: EvaluationContext,
-  typeguard: InternalValueRepresentationTypeguard<T>,
-): T {
-  assert(isExpression(propertyValue));
-  const resultingValue = evaluateExpression(propertyValue, evaluationContext);
-  assert(resultingValue !== undefined);
-  assert(typeguard(resultingValue));
-  return resultingValue;
+  valuetype: Valuetype<T>,
+): T | undefined {
+  let result: InternalValueRepresentation | undefined;
+  if (isRuntimeParameterLiteral(propertyValue)) {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const runtimeParameterName = propertyValue?.name;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (runtimeParameterName === undefined) {
+      result = undefined;
+    } else {
+      result = evaluationContext.getValueForRuntimeParameter(
+        runtimeParameterName,
+        valuetype,
+      );
+    }
+  } else if (isExpression(propertyValue)) {
+    result = evaluateExpression(propertyValue, evaluationContext);
+  } else {
+    assertUnreachable(propertyValue);
+  }
+
+  assert(
+    result === undefined || valuetype.isInternalValueRepresentation(result),
+  );
+  return result;
 }
 
 export function evaluateExpression(

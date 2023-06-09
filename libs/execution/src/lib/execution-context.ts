@@ -11,8 +11,10 @@ import {
   EvaluationContext,
   Expression,
   PipelineDefinition,
+  PrimitiveValuetypes,
   PropertyAssignment,
   TransformDefinition,
+  Valuetype,
   ValuetypeAssignment,
   evaluateExpression,
   getOrFailMetaInformation,
@@ -75,35 +77,60 @@ export class ExecutionContext {
   }
 
   public getTextPropertyValue(propertyName: string): string {
-    const propertyValue = this.getPropertyValue(propertyName);
+    const propertyValue = this.getPropertyValue(
+      propertyName,
+      PrimitiveValuetypes.Text,
+    );
     assert(typeof propertyValue === 'string');
 
     return propertyValue;
   }
 
-  public getNumericPropertyValue(propertyName: string): number {
-    const propertyValue = this.getPropertyValue(propertyName);
+  public getDecimalPropertyValue(propertyName: string): number {
+    const propertyValue = this.getPropertyValue(
+      propertyName,
+      PrimitiveValuetypes.Decimal,
+    );
+    assert(typeof propertyValue === 'number');
+
+    return propertyValue;
+  }
+
+  public getIntegerPropertyValue(propertyName: string): number {
+    const propertyValue = this.getPropertyValue(
+      propertyName,
+      PrimitiveValuetypes.Integer,
+    );
     assert(typeof propertyValue === 'number');
 
     return propertyValue;
   }
 
   public getBooleanPropertyValue(propertyName: string): boolean {
-    const propertyValue = this.getPropertyValue(propertyName);
+    const propertyValue = this.getPropertyValue(
+      propertyName,
+      PrimitiveValuetypes.Boolean,
+    );
     assert(typeof propertyValue === 'boolean');
 
     return propertyValue;
   }
 
   public getRegexPropertyValue(propertyName: string): RegExp {
-    const propertyValue = this.getPropertyValue(propertyName);
+    const propertyValue = this.getPropertyValue(
+      propertyName,
+      PrimitiveValuetypes.Regex,
+    );
     assert(propertyValue instanceof RegExp);
 
     return propertyValue;
   }
 
   public getCellRangePropertyValue(propertyName: string): CellRangeWrapper {
-    const propertyValue = this.getPropertyValue(propertyName);
+    const propertyValue = this.getPropertyValue(
+      propertyName,
+      PrimitiveValuetypes.CellRange,
+    );
     assert(propertyValue instanceof CellRangeWrapper);
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -111,7 +138,10 @@ export class ExecutionContext {
   }
 
   public getTransformPropertyValue(propertyName: string): TransformDefinition {
-    const propertyValue = this.getPropertyValue(propertyName);
+    const propertyValue = this.getPropertyValue(
+      propertyName,
+      PrimitiveValuetypes.Transform,
+    );
     assert(isTransformDefinition(propertyValue));
 
     return propertyValue;
@@ -120,7 +150,10 @@ export class ExecutionContext {
   public getExpressionCollectionPropertyValue(
     propertyName: string,
   ): Expression[] {
-    const propertyValue = this.getPropertyValue(propertyName);
+    const propertyValue = this.getPropertyValue(
+      propertyName,
+      PrimitiveValuetypes.Collection,
+    );
     assert(Array.isArray(propertyValue));
     assert(propertyValue.every(isExpression));
 
@@ -130,7 +163,10 @@ export class ExecutionContext {
   public getCellRangeCollectionPropertyValue(
     propertyName: string,
   ): CellRangeWrapper[] {
-    const propertyValue = this.getPropertyValue(propertyName);
+    const propertyValue = this.getPropertyValue(
+      propertyName,
+      PrimitiveValuetypes.Collection,
+    );
     assert(Array.isArray(propertyValue));
     assert(propertyValue.every(isExpression));
 
@@ -149,7 +185,10 @@ export class ExecutionContext {
   public getValuetypeAssignmentCollectionPropertyValue(
     propertyName: string,
   ): ValuetypeAssignment[] {
-    const propertyValue = this.getPropertyValue(propertyName);
+    const propertyValue = this.getPropertyValue(
+      propertyName,
+      PrimitiveValuetypes.Collection,
+    );
     assert(Array.isArray(propertyValue));
     assert(propertyValue.every(isExpression));
 
@@ -184,7 +223,10 @@ export class ExecutionContext {
     return property;
   }
 
-  private getPropertyValue(propertyName: string): unknown {
+  private getPropertyValue(
+    propertyName: string,
+    valuetype: Valuetype,
+  ): unknown {
     const property = this.getProperty(propertyName);
 
     if (property === undefined) {
@@ -193,7 +235,10 @@ export class ExecutionContext {
     const propertyValue = property.value;
 
     if (isRuntimeParameterLiteral(propertyValue)) {
-      return this.evaluationContext.getValueForRuntimeParameter(propertyValue);
+      return this.evaluationContext.getValueForRuntimeParameter(
+        propertyValue.name,
+        valuetype,
+      );
     }
     if (isCollectionLiteral(propertyValue)) {
       return propertyValue.values;

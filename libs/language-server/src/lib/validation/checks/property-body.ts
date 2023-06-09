@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { EvaluationContext } from '../../ast/expressions/evaluation';
 import { PropertyBody } from '../../ast/generated/ast';
 import { MetaInformation } from '../../meta-information/meta-inf';
 import { getMetaInformation } from '../../meta-information/meta-inf-registry';
@@ -12,24 +13,35 @@ import { validatePropertyAssignment } from './property-assignment';
 
 export function validatePropertyBody(
   propertyBody: PropertyBody,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ): void {
-  checkUniqueNames(propertyBody.properties, context);
+  checkUniqueNames(propertyBody.properties, validationContext);
 
   const metaInf = inferMetaInformation(propertyBody);
   if (metaInf === undefined) {
     return;
   }
 
-  checkPropertyCompleteness(propertyBody, metaInf, context);
+  checkPropertyCompleteness(propertyBody, metaInf, validationContext);
   for (const property of propertyBody.properties) {
-    validatePropertyAssignment(property, metaInf, context);
+    validatePropertyAssignment(
+      property,
+      metaInf,
+      validationContext,
+      evaluationContext,
+    );
   }
-  if (context.hasErrorOccurred()) {
+  if (validationContext.hasErrorOccurred()) {
     return;
   }
 
-  checkCustomPropertyValidation(propertyBody, metaInf, context);
+  checkCustomPropertyValidation(
+    propertyBody,
+    metaInf,
+    validationContext,
+    evaluationContext,
+  );
 }
 
 function inferMetaInformation(
@@ -69,7 +81,8 @@ function checkPropertyCompleteness(
 function checkCustomPropertyValidation(
   propertyBody: PropertyBody,
   metaInf: MetaInformation,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ): void {
-  metaInf.validate(propertyBody, context);
+  metaInf.validate(propertyBody, validationContext, evaluationContext);
 }
