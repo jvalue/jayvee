@@ -37,7 +37,7 @@ import {
 import { CellRangeWrapper } from '../wrappers/cell-range-wrapper';
 // eslint-disable-next-line import/no-cycle
 import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-valuetypes';
-import { Valuetype } from '../wrappers/value-type/valuetype';
+import { type Valuetype } from '../wrappers/value-type/valuetype';
 
 // eslint-disable-next-line import/no-cycle
 import {

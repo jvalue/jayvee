@@ -12,7 +12,7 @@ import {
   Sheet,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
-import { IOType, evaluateExpression } from '@jvalue/jayvee-language-server';
+import { IOType } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
 export class CellWriterExecutor
@@ -28,13 +28,7 @@ export class CellWriterExecutor
     context: ExecutionContext,
   ): Promise<R.Result<Sheet>> {
     const relativeCellRange = context.getCellRangePropertyValue('at');
-    const writeCollection =
-      context.getExpressionCollectionPropertyValue('write');
-    const writeValues = writeCollection.map((expression) => {
-      const value = evaluateExpression(expression, context.evaluationContext);
-      assert(typeof value === 'string');
-      return value;
-    });
+    const writeValues = context.getTextCollectionPropertyValue('write');
 
     assert(relativeCellRange.isOneDimensional());
 

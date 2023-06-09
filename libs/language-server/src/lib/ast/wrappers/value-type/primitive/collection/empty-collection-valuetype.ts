@@ -2,11 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line import/no-cycle
-import { InternalValueRepresentation } from '../../../../expressions/evaluation';
-import { Valuetype, ValuetypeVisitor } from '../../valuetype';
+import { type InternalValueRepresentation } from '../../../../expressions/evaluation';
+import { type Valuetype, type ValuetypeVisitor } from '../../valuetype';
 
+// eslint-disable-next-line import/no-cycle
 import { AbstractCollectionValuetype } from './abstract-collection-valuetype';
+// eslint-disable-next-line import/no-cycle
 import { CollectionValuetype } from './collection-valuetype';
 
 class EmptyCollectionValuetypeImpl extends AbstractCollectionValuetype<undefined> {

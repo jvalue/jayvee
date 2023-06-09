@@ -7,12 +7,14 @@ import { strict as assert } from 'assert';
 import {
   BlockDefinition,
   CellRangeWrapper,
+  CollectionValuetype,
   ConstraintDefinition,
   EvaluationContext,
-  Expression,
+  NUMBER_TYPEGUARD,
   PipelineDefinition,
   PrimitiveValuetypes,
   PropertyAssignment,
+  STRING_TYPEGUARD,
   TransformDefinition,
   Valuetype,
   ValuetypeAssignment,
@@ -147,17 +149,44 @@ export class ExecutionContext {
     return propertyValue;
   }
 
-  public getExpressionCollectionPropertyValue(
-    propertyName: string,
-  ): Expression[] {
+  public getTextCollectionPropertyValue(propertyName: string): string[] {
     const propertyValue = this.getPropertyValue(
       propertyName,
-      PrimitiveValuetypes.Collection,
+      new CollectionValuetype(PrimitiveValuetypes.CellRange),
     );
     assert(Array.isArray(propertyValue));
     assert(propertyValue.every(isExpression));
 
-    return propertyValue;
+    const evaluatedExpressions = propertyValue.map((x) =>
+      evaluateExpression(x, this.evaluationContext),
+    );
+    assert(
+      evaluatedExpressions.every(
+        (x): x is string => x !== undefined && STRING_TYPEGUARD(x),
+      ),
+    );
+
+    return evaluatedExpressions;
+  }
+
+  public getNumberCollectionPropertyValue(propertyName: string): number[] {
+    const propertyValue = this.getPropertyValue(
+      propertyName,
+      new CollectionValuetype(PrimitiveValuetypes.CellRange),
+    );
+    assert(Array.isArray(propertyValue));
+    assert(propertyValue.every(isExpression));
+
+    const evaluatedExpressions = propertyValue.map((x) =>
+      evaluateExpression(x, this.evaluationContext),
+    );
+    assert(
+      evaluatedExpressions.every(
+        (x): x is number => x !== undefined && NUMBER_TYPEGUARD(x),
+      ),
+    );
+
+    return evaluatedExpressions;
   }
 
   public getCellRangeCollectionPropertyValue(
@@ -165,7 +194,7 @@ export class ExecutionContext {
   ): CellRangeWrapper[] {
     const propertyValue = this.getPropertyValue(
       propertyName,
-      PrimitiveValuetypes.Collection,
+      new CollectionValuetype(PrimitiveValuetypes.CellRange),
     );
     assert(Array.isArray(propertyValue));
     assert(propertyValue.every(isExpression));
@@ -187,7 +216,7 @@ export class ExecutionContext {
   ): ValuetypeAssignment[] {
     const propertyValue = this.getPropertyValue(
       propertyName,
-      PrimitiveValuetypes.Collection,
+      new CollectionValuetype(PrimitiveValuetypes.ValuetypeAssignment),
     );
     assert(Array.isArray(propertyValue));
     assert(propertyValue.every(isExpression));
