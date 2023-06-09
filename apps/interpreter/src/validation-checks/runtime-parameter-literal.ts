@@ -6,6 +6,7 @@ import {
   BlockTypeLiteral,
   ConstraintTypeLiteral,
   EvaluationContext,
+  PropertyBody,
   RuntimeParameterLiteral,
   ValidationContext,
   getMetaInformation,
@@ -58,9 +59,10 @@ function checkRuntimeParameterValueParsing(
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
 ) {
-  const containerType: BlockTypeLiteral | ConstraintTypeLiteral | undefined =
+  const enclosingPropertyBody = getEnclosingPropertyBody(runtimeParameter);
+  const typeLiteral: BlockTypeLiteral | ConstraintTypeLiteral | undefined =
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    runtimeParameter.$container.$container.$container?.type;
+    enclosingPropertyBody.$container?.type;
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const propertyName = runtimeParameter.$container?.name;
@@ -69,7 +71,7 @@ function checkRuntimeParameterValueParsing(
     return;
   }
 
-  const metaInf = getMetaInformation(containerType);
+  const metaInf = getMetaInformation(typeLiteral);
   const propertySpec = metaInf?.getPropertySpecification(propertyName);
   if (propertySpec === undefined) {
     return;
@@ -101,4 +103,10 @@ function checkRuntimeParameterValueParsing(
       { node: runtimeParameter },
     );
   }
+}
+
+function getEnclosingPropertyBody(
+  runtimeParameter: RuntimeParameterLiteral,
+): PropertyBody {
+  return runtimeParameter.$container.$container;
 }
