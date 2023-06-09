@@ -6,7 +6,9 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
+  EvaluationContext,
   PropertyBody,
+  RuntimeParameterProvider,
   ValidationContext,
   createJayveeServices,
   useExtension,
@@ -48,6 +50,7 @@ describe('property-body validation tests', () => {
     validatePropertyBody(
       propertyBody,
       new ValidationContext(validationAcceptorMock),
+      new EvaluationContext(new RuntimeParameterProvider()),
     );
   }
 
