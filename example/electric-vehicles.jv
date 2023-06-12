@@ -84,7 +84,7 @@ pipeline ElectricVehiclesPipeline {
 	}
 
 	block ElectricRangeTransformer oftype TableTransformer {
-		inputColumn: "Electric Range";
+		inputColumns: ["Electric Range"];
 		outputColumn: "Electric Range (km)";
 		use: MilesToKilometers;
 	}
