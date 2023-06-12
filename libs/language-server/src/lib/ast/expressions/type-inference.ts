@@ -236,7 +236,7 @@ function pickCommonAtomicValuetype(
       (stack) => stack[stackLevel]!,
     );
 
-    if (!allTypesEqual(typesOfCurrentLevel)) {
+    if (!areAllTypesEqual(typesOfCurrentLevel)) {
       // Return the common valuetype of the previous level
       return resultingType;
     }
@@ -247,7 +247,7 @@ function pickCommonAtomicValuetype(
   return resultingType;
 }
 
-function allTypesEqual(types: Valuetype[]): boolean {
+function areAllTypesEqual(types: Valuetype[]): boolean {
   for (let i = 1; i < types.length; i++) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     if (!types[i - 1]!.equals(types[i]!)) {
