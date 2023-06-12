@@ -31,7 +31,7 @@ export class TextLineDeleterMetaInformation extends BlockMetaInformation {
                   {
                     node: property.value,
                     property: 'values',
-                    index,
+                    index: index,
                   },
                 );
               }
