@@ -152,7 +152,7 @@ export class ExecutionContext {
   public getTextCollectionPropertyValue(propertyName: string): string[] {
     const propertyValue = this.getPropertyValue(
       propertyName,
-      new CollectionValuetype(PrimitiveValuetypes.CellRange),
+      new CollectionValuetype(PrimitiveValuetypes.Text),
     );
     assert(Array.isArray(propertyValue));
     assert(propertyValue.every(isExpression));
@@ -172,7 +172,7 @@ export class ExecutionContext {
   public getNumberCollectionPropertyValue(propertyName: string): number[] {
     const propertyValue = this.getPropertyValue(
       propertyName,
-      new CollectionValuetype(PrimitiveValuetypes.CellRange),
+      new CollectionValuetype(PrimitiveValuetypes.Decimal),
     );
     assert(Array.isArray(propertyValue));
     assert(propertyValue.every(isExpression));
