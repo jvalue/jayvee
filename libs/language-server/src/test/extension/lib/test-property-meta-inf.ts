@@ -7,8 +7,7 @@ import {
   CollectionValuetype,
   IOType,
   PrimitiveValuetypes,
-  evaluatePropertyValueExpression,
-  isRuntimeParameterLiteral,
+  evaluatePropertyValue,
 } from '../../../lib';
 
 export class TestPropertyMetaInformation extends BlockMetaInformation {
@@ -25,21 +24,15 @@ export class TestPropertyMetaInformation extends BlockMetaInformation {
           type: PrimitiveValuetypes.Text,
           defaultValue: 'valid',
           validation: (property, validationContext, evaluationContext) => {
-            const propertyValue = property.value;
-            if (isRuntimeParameterLiteral(propertyValue)) {
-              // We currently ignore runtime parameters during validation.
-              return;
-            }
-
-            const value = evaluatePropertyValueExpression(
-              propertyValue,
+            const value = evaluatePropertyValue(
+              property,
               evaluationContext,
               PrimitiveValuetypes.Text,
             );
 
             if (value !== undefined && value !== 'valid') {
               validationContext.accept('error', `Invalid value "${value}"`, {
-                node: propertyValue,
+                node: property.value,
               });
             }
           },

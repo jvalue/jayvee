@@ -9,7 +9,7 @@ import {
   PrimitiveValuetypes,
   PropertyAssignment,
   ValidationContext,
-  evaluatePropertyValueExpression,
+  evaluatePropertyValue,
 } from '@jvalue/jayvee-language-server';
 
 export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
@@ -46,13 +46,13 @@ export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
           return;
         }
 
-        const lineFrom = evaluatePropertyValueExpression(
-          lineFromProperty.value,
+        const lineFrom = evaluatePropertyValue(
+          lineFromProperty,
           evaluationContext,
           PrimitiveValuetypes.Integer,
         );
-        const lineTo = evaluatePropertyValueExpression(
-          lineToProperty.value,
+        const lineTo = evaluatePropertyValue(
+          lineToProperty,
           evaluationContext,
           PrimitiveValuetypes.Integer,
         );
@@ -80,10 +80,8 @@ function greaterThanZeroValidation(
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
 ) {
-  const propertyValue = property.value;
-
-  const value = evaluatePropertyValueExpression(
-    propertyValue,
+  const value = evaluatePropertyValue(
+    property,
     evaluationContext,
     PrimitiveValuetypes.Integer,
   );
@@ -96,7 +94,7 @@ function greaterThanZeroValidation(
       'error',
       `Line numbers need to be greater than zero`,
       {
-        node: propertyValue,
+        node: property.value,
       },
     );
   }

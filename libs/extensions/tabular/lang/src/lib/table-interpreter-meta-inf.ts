@@ -2,17 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'assert';
-
 import {
   BlockMetaInformation,
   CollectionValuetype,
   IOType,
   PrimitiveValuetypes,
+  evaluatePropertyValue,
   getNodesWithNonUniqueNames,
-  isCollectionLiteral,
-  isValuetypeAssignmentLiteral,
-  validateTypedCollection,
 } from '@jvalue/jayvee-language-server';
 
 export class TableInterpreterMetaInformation extends BlockMetaInformation {
@@ -43,37 +39,19 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
           type: new CollectionValuetype(
             PrimitiveValuetypes.ValuetypeAssignment,
           ),
-          validation: (property, context) => {
-            const propertyValue = property.value;
-            if (!isCollectionLiteral(propertyValue)) {
+          validation: (property, validationContext, evaluationContext) => {
+            const valuetypeAssignments = evaluatePropertyValue(
+              property,
+              evaluationContext,
+              new CollectionValuetype(PrimitiveValuetypes.ValuetypeAssignment),
+            );
+            if (valuetypeAssignments === undefined) {
               return;
             }
 
-            const { validItems, invalidItems } = validateTypedCollection(
-              propertyValue,
-              [PrimitiveValuetypes.ValuetypeAssignment],
-              context,
-            );
-
-            invalidItems.forEach((invalidValue) =>
-              // TODO assume correctly typed values
-              context.accept(
-                'error',
-                'Only type assignments are allowed in this collection',
-                {
-                  node: invalidValue,
-                },
-              ),
-            );
-
-            assert(validItems.every(isValuetypeAssignmentLiteral));
-
-            const valuetypeAssignments = validItems.map(
-              (assignment) => assignment.value,
-            );
             getNodesWithNonUniqueNames(valuetypeAssignments).forEach(
               (valuetypeAssignment) => {
-                context.accept(
+                validationContext.accept(
                   'error',
                   `The column name "${valuetypeAssignment.name}" needs to be unique.`,
                   {

@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { evaluatePropertyValueExpression } from '../ast/expressions/evaluation';
+import { evaluatePropertyValue } from '../ast/expressions/evaluation';
 import { PrimitiveValuetypes } from '../ast/wrappers/value-type';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 
@@ -44,13 +44,13 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
           return;
         }
 
-        const lowerBound = evaluatePropertyValueExpression(
-          lowerBoundProperty.value,
+        const lowerBound = evaluatePropertyValue(
+          lowerBoundProperty,
           evaluationContext,
           PrimitiveValuetypes.Decimal,
         );
-        const upperBound = evaluatePropertyValueExpression(
-          upperBoundProperty.value,
+        const upperBound = evaluatePropertyValue(
+          upperBoundProperty,
           evaluationContext,
           PrimitiveValuetypes.Decimal,
         );
@@ -79,8 +79,8 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
         if (lowerBound === upperBound) {
           let lowerBoundInclusive = true;
           if (lowerBoundInclusiveProperty !== undefined) {
-            const expressionValue = evaluatePropertyValueExpression(
-              lowerBoundInclusiveProperty.value,
+            const expressionValue = evaluatePropertyValue(
+              lowerBoundInclusiveProperty,
               evaluationContext,
               PrimitiveValuetypes.Boolean,
             );
@@ -92,8 +92,8 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
 
           let upperBoundInclusive = true;
           if (upperBoundInclusiveProperty !== undefined) {
-            const expressionValue = evaluatePropertyValueExpression(
-              upperBoundInclusiveProperty.value,
+            const expressionValue = evaluatePropertyValue(
+              upperBoundInclusiveProperty,
               evaluationContext,
               PrimitiveValuetypes.Boolean,
             );

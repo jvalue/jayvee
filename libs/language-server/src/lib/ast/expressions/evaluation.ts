@@ -12,8 +12,8 @@ import {
   ConstraintDefinition,
   Expression,
   FreeVariableLiteral,
+  PropertyAssignment,
   ReferenceLiteral,
-  RuntimeParameterLiteral,
   TransformDefinition,
   ValueKeywordLiteral,
   ValueLiteral,
@@ -164,13 +164,16 @@ export type InternalValueRepresentationTypeguard<
   T extends InternalValueRepresentation,
 > = (value: InternalValueRepresentation) => value is T;
 
-export function evaluatePropertyValueExpression<
-  T extends InternalValueRepresentation,
->(
-  propertyValue: Expression | RuntimeParameterLiteral,
+export function evaluatePropertyValue<T extends InternalValueRepresentation>(
+  property: PropertyAssignment,
   evaluationContext: EvaluationContext,
   valuetype: Valuetype<T>,
 ): T | undefined {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const propertyValue = property?.value;
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  assert(propertyValue !== undefined);
+
   let result: InternalValueRepresentation | undefined;
   if (isRuntimeParameterLiteral(propertyValue)) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -197,11 +200,14 @@ export function evaluatePropertyValueExpression<
 }
 
 export function evaluateExpression(
-  expression: Expression,
+  expression: Expression | undefined,
   evaluationContext: EvaluationContext,
   context: ValidationContext | undefined = undefined,
   strategy: EvaluationStrategy = EvaluationStrategy.LAZY,
 ): InternalValueRepresentation | undefined {
+  if (expression === undefined) {
+    return undefined;
+  }
   if (isExpressionLiteral(expression)) {
     if (isFreeVariableLiteral(expression)) {
       return evaluationContext.getValueFor(expression);

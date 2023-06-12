@@ -4,13 +4,10 @@
 
 import {
   BlockMetaInformation,
-  CellRangeWrapper,
   CollectionValuetype,
   IOType,
   PrimitiveValuetypes,
-  isCellRangeLiteral,
-  isCollectionLiteral,
-  validateTypedCollection,
+  evaluatePropertyValue,
 } from '@jvalue/jayvee-language-server';
 
 export class CellWriterMetaInformation extends BlockMetaInformation {
@@ -37,22 +34,22 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
         },
         at: {
           type: PrimitiveValuetypes.CellRange,
-          validation: (property, context) => {
-            const propertyValue = property.value;
-            if (!isCellRangeLiteral(propertyValue)) {
+          validation: (property, validationContext, evaluationContext) => {
+            const cellRange = evaluatePropertyValue(
+              property,
+              evaluationContext,
+              PrimitiveValuetypes.CellRange,
+            );
+            if (cellRange === undefined) {
               return;
             }
 
-            if (!CellRangeWrapper.canBeWrapped(propertyValue)) {
-              return;
-            }
-            const semanticCellRange = new CellRangeWrapper(propertyValue);
-            if (!semanticCellRange.isOneDimensional()) {
-              context.accept(
+            if (!cellRange.isOneDimensional()) {
+              validationContext.accept(
                 'error',
                 'The cell range needs to be one-dimensional',
                 {
-                  node: semanticCellRange.astNode,
+                  node: cellRange.astNode,
                 },
               );
             }
@@ -75,7 +72,7 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
       },
       IOType.SHEET,
       IOType.SHEET,
-      (propertyBody, context) => {
+      (propertyBody, validationContext, evaluationContext) => {
         const writeProperty = propertyBody.properties.find(
           (p) => p.name === 'write',
         );
@@ -85,44 +82,28 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
           return;
         }
 
-        if (!isCollectionLiteral(writeProperty.value)) {
-          return;
-        }
-        const { invalidItems } = validateTypedCollection(
-          writeProperty.value,
-          [PrimitiveValuetypes.Text],
-          context,
+        const writeValues = evaluatePropertyValue(
+          writeProperty,
+          evaluationContext,
+          new CollectionValuetype(PrimitiveValuetypes.Text),
         );
 
-        invalidItems.forEach((invalidValue) =>
-          // TODO assume correctly typed values
-          context.accept(
-            'error',
-            'Only text values are allowed in this collection',
-            {
-              node: invalidValue,
-            },
-          ),
+        const atValue = evaluatePropertyValue(
+          atProperty,
+          evaluationContext,
+          PrimitiveValuetypes.CellRange,
         );
-        if (invalidItems.length > 0) {
+
+        if (writeValues === undefined || atValue === undefined) {
           return;
         }
 
-        if (!isCellRangeLiteral(atProperty.value)) {
-          return;
-        }
-
-        const numberOfValuesToWrite = writeProperty.value.values.length;
-
-        if (!CellRangeWrapper.canBeWrapped(atProperty.value)) {
-          return;
-        }
-        const semanticCellRange = new CellRangeWrapper(atProperty.value);
-        const numberOfCells = semanticCellRange.numberOfCells();
+        const numberOfValuesToWrite = writeValues.length;
+        const numberOfCells = atValue.numberOfCells();
 
         if (numberOfCells !== numberOfValuesToWrite) {
           [writeProperty, atProperty].forEach((propertyNode) => {
-            context.accept(
+            validationContext.accept(
               'warning',
               `The number of values to write (${numberOfValuesToWrite}) does not match the number of cells (${numberOfCells})`,
               { node: propertyNode.value },

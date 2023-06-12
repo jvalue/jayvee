@@ -2,18 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'assert';
-
 import {
   BlockMetaInformation,
-  CellRangeWrapper,
   CollectionValuetype,
   IOType,
   PrimitiveValuetypes,
-  isCellRangeLiteral,
-  isCollectionLiteral,
+  evaluatePropertyValue,
   isColumnWrapper,
-  validateTypedCollection,
 } from '@jvalue/jayvee-language-server';
 
 export class ColumnDeleterMetaInformation extends BlockMetaInformation {
@@ -23,46 +18,24 @@ export class ColumnDeleterMetaInformation extends BlockMetaInformation {
       {
         delete: {
           type: new CollectionValuetype(PrimitiveValuetypes.CellRange),
-          validation: (property, context) => {
-            const propertyValue = property.value;
-            if (!isCollectionLiteral(propertyValue)) {
-              return;
-            }
-
-            const { validItems, invalidItems } = validateTypedCollection(
-              propertyValue,
-              [PrimitiveValuetypes.CellRange],
-              context,
+          validation: (property, validationContext, evaluationContext) => {
+            const cellRanges = evaluatePropertyValue(
+              property,
+              evaluationContext,
+              new CollectionValuetype(PrimitiveValuetypes.CellRange),
             );
 
-            invalidItems.forEach((invalidValue) =>
-              // TODO assume correctly typed values
-              context.accept(
-                'error',
-                'Only cell ranges are allowed in this collection',
-                {
-                  node: invalidValue,
-                },
-              ),
-            );
-
-            assert(validItems.every(isCellRangeLiteral));
-
-            for (const collectionValue of validItems) {
-              if (!CellRangeWrapper.canBeWrapped(collectionValue)) {
-                continue;
-              }
-              const semanticCellRange = new CellRangeWrapper(collectionValue);
-              if (!isColumnWrapper(semanticCellRange)) {
-                context.accept(
+            cellRanges?.forEach((cellRange) => {
+              if (!isColumnWrapper(cellRange)) {
+                validationContext.accept(
                   'error',
                   'An entire column needs to be selected',
                   {
-                    node: semanticCellRange.astNode,
+                    node: cellRange.astNode,
                   },
                 );
               }
-            }
+            });
           },
           docs: {
             description: 'The columns to delete.',
