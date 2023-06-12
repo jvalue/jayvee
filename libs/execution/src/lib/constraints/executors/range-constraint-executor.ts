@@ -2,7 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { InternalValueRepresentation } from '@jvalue/jayvee-language-server';
+import {
+  InternalValueRepresentation,
+  PrimitiveValuetypes,
+} from '@jvalue/jayvee-language-server';
 
 import { ExecutionContext } from '../../execution-context';
 import { implementsStatic } from '../../util/implements-static-decorator';
@@ -26,13 +29,21 @@ export class RangeConstraintExecutor implements ConstraintExecutor {
       return false;
     }
 
-    const lowerBound = context.getDecimalPropertyValue('lowerBound');
-    const lowerBoundInclusive = context.getBooleanPropertyValue(
-      'lowerBoundInclusive',
+    const lowerBound = context.getPropertyValue(
+      'lowerBound',
+      PrimitiveValuetypes.Decimal,
     );
-    const upperBound = context.getDecimalPropertyValue('upperBound');
-    const upperBoundInclusive = context.getBooleanPropertyValue(
+    const lowerBoundInclusive = context.getPropertyValue(
+      'lowerBoundInclusive',
+      PrimitiveValuetypes.Boolean,
+    );
+    const upperBound = context.getPropertyValue(
+      'upperBound',
+      PrimitiveValuetypes.Decimal,
+    );
+    const upperBoundInclusive = context.getPropertyValue(
       'upperBoundInclusive',
+      PrimitiveValuetypes.Boolean,
     );
 
     const lowerBoundFulfilled = lowerBoundInclusive

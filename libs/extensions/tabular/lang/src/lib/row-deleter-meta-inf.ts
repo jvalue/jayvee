@@ -2,17 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'assert';
-
 import {
   BlockMetaInformation,
-  CellRangeWrapper,
+  CollectionValuetype,
   IOType,
   PrimitiveValuetypes,
-  isCellRangeLiteral,
-  isCollectionLiteral,
+  evaluatePropertyValue,
   isRowWrapper,
-  validateTypedCollection,
 } from '@jvalue/jayvee-language-server';
 
 export class RowDeleterMetaInformation extends BlockMetaInformation {
@@ -21,42 +17,25 @@ export class RowDeleterMetaInformation extends BlockMetaInformation {
       'RowDeleter',
       {
         delete: {
-          type: PrimitiveValuetypes.Collection,
-          validation: (property, context) => {
-            const propertyValue = property.value;
-            if (!isCollectionLiteral(propertyValue)) {
-              return;
-            }
-
-            const { validItems, invalidItems } = validateTypedCollection(
-              propertyValue,
-              [PrimitiveValuetypes.CellRange],
-              context,
+          type: new CollectionValuetype(PrimitiveValuetypes.CellRange),
+          validation: (property, validationContext, evaluationContext) => {
+            const cellRanges = evaluatePropertyValue(
+              property,
+              evaluationContext,
+              new CollectionValuetype(PrimitiveValuetypes.CellRange),
             );
 
-            invalidItems.forEach((invalidValue) =>
-              context.accept(
-                'error',
-                'Only cell ranges are allowed in this collection',
-                {
-                  node: invalidValue,
-                },
-              ),
-            );
-
-            assert(validItems.every(isCellRangeLiteral));
-
-            for (const collectionValue of validItems) {
-              if (!CellRangeWrapper.canBeWrapped(collectionValue)) {
-                continue;
+            cellRanges?.forEach((cellRange) => {
+              if (!isRowWrapper(cellRange)) {
+                validationContext.accept(
+                  'error',
+                  'An entire row needs to be selected',
+                  {
+                    node: cellRange.astNode,
+                  },
+                );
               }
-              const semanticCellRange = new CellRangeWrapper(collectionValue);
-              if (!isRowWrapper(semanticCellRange)) {
-                context.accept('error', 'An entire row needs to be selected', {
-                  node: semanticCellRange.astNode,
-                });
-              }
-            }
+            });
           },
           docs: {
             description: 'The rows to delete.',

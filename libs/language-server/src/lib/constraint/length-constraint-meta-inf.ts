@@ -4,7 +4,7 @@
 
 import {
   EvaluationContext,
-  evaluatePropertyValueExpression,
+  evaluatePropertyValue,
 } from '../ast/expressions/evaluation';
 import { PropertyAssignment } from '../ast/generated/ast';
 import { PrimitiveValuetypes } from '../ast/wrappers/value-type';
@@ -43,13 +43,13 @@ export class LengthConstraintMetaInformation extends ConstraintMetaInformation {
           return;
         }
 
-        const minLength = evaluatePropertyValueExpression(
-          minLengthProperty.value,
+        const minLength = evaluatePropertyValue(
+          minLengthProperty,
           evaluationContext,
           PrimitiveValuetypes.Integer,
         );
-        const maxLength = evaluatePropertyValueExpression(
-          maxLengthProperty.value,
+        const maxLength = evaluatePropertyValue(
+          maxLengthProperty,
           evaluationContext,
           PrimitiveValuetypes.Integer,
         );
@@ -89,10 +89,8 @@ function nonNegativeValidation(
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
 ) {
-  const propertyValue = property.value;
-
-  const value = evaluatePropertyValueExpression(
-    propertyValue,
+  const value = evaluatePropertyValue(
+    property,
     evaluationContext,
     PrimitiveValuetypes.Integer,
   );
@@ -105,7 +103,7 @@ function nonNegativeValidation(
       'error',
       `Bounds for length need to be equal or greater than zero`,
       {
-        node: propertyValue,
+        node: property.value,
       },
     );
   }

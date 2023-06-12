@@ -17,8 +17,10 @@ import {
 } from '@jvalue/jayvee-execution';
 import {
   CellIndex,
+  CollectionValuetype,
   IOType,
   InternalValueRepresentation,
+  PrimitiveValuetypes,
   Valuetype,
   ValuetypeAssignment,
   createValuetype,
@@ -45,9 +47,14 @@ export class TableInterpreterExecutor
     inputSheet: Sheet,
     context: ExecutionContext,
   ): Promise<R.Result<Table>> {
-    const header = context.getBooleanPropertyValue('header');
-    const columnDefinitions =
-      context.getValuetypeAssignmentCollectionPropertyValue('columns');
+    const header = context.getPropertyValue(
+      'header',
+      PrimitiveValuetypes.Boolean,
+    );
+    const columnDefinitions = context.getPropertyValue(
+      'columns',
+      new CollectionValuetype(PrimitiveValuetypes.ValuetypeAssignment),
+    );
 
     let columnEntries: ColumnDefinitionEntry[];
 

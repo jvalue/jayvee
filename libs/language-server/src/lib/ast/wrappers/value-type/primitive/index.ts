@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 // eslint-disable-next-line import/no-cycle
+export * from './collection';
+
 export * from './primitive-valuetype';
 export * from './primitive-valuetypes';
 
@@ -11,10 +13,6 @@ export {
   type CellRangeValuetype,
   isCellRangeValuetype,
 } from './cell-range-valuetype';
-export {
-  type CollectionValuetype,
-  isCollectionValuetype,
-} from './collection-valuetype';
 export {
   type ConstraintValuetype,
   isConstraintValuetype,

@@ -2,7 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { InternalValueRepresentation } from '@jvalue/jayvee-language-server';
+import {
+  InternalValueRepresentation,
+  PrimitiveValuetypes,
+} from '@jvalue/jayvee-language-server';
 
 import { ExecutionContext } from '../../execution-context';
 import { implementsStatic } from '../../util/implements-static-decorator';
@@ -21,7 +24,7 @@ export class RegexConstraintExecutor implements ConstraintExecutor {
       return false;
     }
 
-    const regex = context.getRegexPropertyValue('regex');
+    const regex = context.getPropertyValue('regex', PrimitiveValuetypes.Regex);
     return regex.test(value);
   }
 }

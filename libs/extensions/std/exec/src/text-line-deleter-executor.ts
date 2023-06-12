@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'assert';
-
 import * as R from '@jvalue/jayvee-execution';
 import {
   BlockExecutor,
@@ -13,9 +11,9 @@ import {
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import {
+  CollectionValuetype,
   IOType,
   PrimitiveValuetypes,
-  evaluatePropertyValueExpression,
 } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
@@ -31,30 +29,29 @@ export class TextLineDeleterExecutor
     file: TextFile,
     context: ExecutionContext,
   ): Promise<R.Result<TextFile>> {
-    const lineExpressions =
-      context.getExpressionCollectionPropertyValue('lines');
-    const lineEntries = lineExpressions.map((expression) => {
-      const value = evaluatePropertyValueExpression(
-        expression,
-        context.evaluationContext,
-        PrimitiveValuetypes.Integer,
-      );
-      assert(value !== undefined);
-      return { lineNumber: value, astNode: expression };
-    });
+    const lines = context.getPropertyValue(
+      'lines',
+      new CollectionValuetype(PrimitiveValuetypes.Integer),
+    );
     const numberOfLines = file.content.length;
 
-    for (const lineEntry of lineEntries) {
-      const lineNumber = lineEntry.lineNumber;
+    let lineIndex = 0;
+    for (const lineNumber of lines) {
       if (lineNumber > numberOfLines) {
         return R.err({
           message: `Line ${lineNumber} does not exist in the text file, only ${file.content.length} line(s) are present`,
-          diagnostic: { node: lineEntry.astNode },
+          diagnostic: {
+            node: context.getOrFailProperty('lines').value,
+            property: 'values',
+            index: lineIndex,
+          },
         });
       }
+
+      ++lineIndex;
     }
 
-    const distinctLines = new Set(lineEntries.map((e) => e.lineNumber));
+    const distinctLines = new Set(lines);
     const sortedLines = [...distinctLines].sort((a, b) => a - b);
 
     context.logger.logDebug(`Deleting line(s) ${sortedLines.join(', ')}`);

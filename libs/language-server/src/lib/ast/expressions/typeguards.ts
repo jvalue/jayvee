@@ -35,3 +35,9 @@ export const REGEXP_TYPEGUARD: InternalValueRepresentationTypeguard<RegExp> = (
 ): value is RegExp => {
   return value instanceof RegExp;
 };
+
+export function isEveryValueDefined<T>(
+  array: Array<T | undefined>,
+): array is Array<T> {
+  return array.every((value) => value !== undefined);
+}

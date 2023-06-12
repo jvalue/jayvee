@@ -9,12 +9,11 @@ import { assertUnreachable } from 'langium';
 import { RuntimeParameterProvider } from '../../services';
 import { ValidationContext } from '../../validation/validation-context';
 import {
-  CollectionLiteral,
   ConstraintDefinition,
   Expression,
   FreeVariableLiteral,
+  PropertyAssignment,
   ReferenceLiteral,
-  RuntimeParameterLiteral,
   TransformDefinition,
   ValueKeywordLiteral,
   ValueLiteral,
@@ -38,13 +37,14 @@ import {
 import { CellRangeWrapper } from '../wrappers/cell-range-wrapper';
 // eslint-disable-next-line import/no-cycle
 import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-valuetypes';
-import { Valuetype } from '../wrappers/value-type/valuetype';
+import { type Valuetype } from '../wrappers/value-type/valuetype';
 
 // eslint-disable-next-line import/no-cycle
 import {
   binaryOperatorRegistry,
   unaryOperatorRegistry,
 } from './operator-registry';
+import { isEveryValueDefined } from './typeguards';
 
 export enum EvaluationStrategy {
   EXHAUSTIVE,
@@ -52,6 +52,11 @@ export enum EvaluationStrategy {
 }
 
 export type InternalValueRepresentation =
+  | AtomicInternalValueRepresentation
+  | Array<InternalValueRepresentation>
+  | [];
+
+export type AtomicInternalValueRepresentation =
   | boolean
   | number
   | string
@@ -59,7 +64,6 @@ export type InternalValueRepresentation =
   | CellRangeWrapper
   | ConstraintDefinition
   | ValuetypeAssignment
-  | CollectionLiteral
   | TransformDefinition;
 
 export class EvaluationContext {
@@ -160,13 +164,16 @@ export type InternalValueRepresentationTypeguard<
   T extends InternalValueRepresentation,
 > = (value: InternalValueRepresentation) => value is T;
 
-export function evaluatePropertyValueExpression<
-  T extends InternalValueRepresentation,
->(
-  propertyValue: Expression | RuntimeParameterLiteral,
+export function evaluatePropertyValue<T extends InternalValueRepresentation>(
+  property: PropertyAssignment,
   evaluationContext: EvaluationContext,
   valuetype: Valuetype<T>,
 ): T | undefined {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const propertyValue = property?.value;
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  assert(propertyValue !== undefined);
+
   let result: InternalValueRepresentation | undefined;
   if (isRuntimeParameterLiteral(propertyValue)) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -193,16 +200,24 @@ export function evaluatePropertyValueExpression<
 }
 
 export function evaluateExpression(
-  expression: Expression,
+  expression: Expression | undefined,
   evaluationContext: EvaluationContext,
   context: ValidationContext | undefined = undefined,
   strategy: EvaluationStrategy = EvaluationStrategy.LAZY,
 ): InternalValueRepresentation | undefined {
+  if (expression === undefined) {
+    return undefined;
+  }
   if (isExpressionLiteral(expression)) {
     if (isFreeVariableLiteral(expression)) {
       return evaluationContext.getValueFor(expression);
     } else if (isValueLiteral(expression)) {
-      return evaluateValueLiteral(expression);
+      return evaluateValueLiteral(
+        expression,
+        evaluationContext,
+        context,
+        strategy,
+      );
     }
     assertUnreachable(expression);
   }
@@ -221,9 +236,18 @@ export function evaluateExpression(
 
 function evaluateValueLiteral(
   expression: ValueLiteral,
+  evaluationContext: EvaluationContext,
+  context: ValidationContext | undefined = undefined,
+  strategy: EvaluationStrategy = EvaluationStrategy.LAZY,
 ): InternalValueRepresentation | undefined {
   if (isCollectionLiteral(expression)) {
-    return expression;
+    const evaluatedCollection = expression.values.map((v) =>
+      evaluateExpression(v, evaluationContext, context, strategy),
+    );
+    if (!isEveryValueDefined(evaluatedCollection)) {
+      return undefined;
+    }
+    return evaluatedCollection;
   }
   if (isCellRangeLiteral(expression)) {
     if (!CellRangeWrapper.canBeWrapped(expression)) {

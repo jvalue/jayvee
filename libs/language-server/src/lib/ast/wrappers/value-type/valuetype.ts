@@ -16,6 +16,7 @@ import {
   type CollectionValuetype,
   type ConstraintValuetype,
   type DecimalValuetype,
+  type EmptyCollectionValuetype,
   type IntegerValuetype,
   type RegexValuetype,
   type TextValuetype,
@@ -139,7 +140,9 @@ export abstract class ValuetypeVisitor<R = unknown> {
   abstract visitRegex(valuetype: RegexValuetype): R;
   abstract visitConstraint(valuetype: ConstraintValuetype): R;
   abstract visitValuetypeAssignment(valuetype: ValuetypeAssignmentValuetype): R;
-  abstract visitCollection(valuetype: CollectionValuetype): R;
+  abstract visitCollection(
+    valuetype: CollectionValuetype | EmptyCollectionValuetype,
+  ): R;
   abstract visitTransform(valuetype: TransformValuetype): R;
 
   abstract visitAtomicValuetype(valuetype: AtomicValuetype): R;

@@ -13,7 +13,7 @@ import {
   TextFile,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
-import { IOType } from '@jvalue/jayvee-language-server';
+import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
 export class TextFileInterpreterExecutor
@@ -28,8 +28,14 @@ export class TextFileInterpreterExecutor
     file: BinaryFile,
     context: ExecutionContext,
   ): Promise<R.Result<TextFile>> {
-    const encoding = context.getTextPropertyValue('encoding');
-    const lineBreak = context.getRegexPropertyValue('lineBreak');
+    const encoding = context.getPropertyValue(
+      'encoding',
+      PrimitiveValuetypes.Text,
+    );
+    const lineBreak = context.getPropertyValue(
+      'lineBreak',
+      PrimitiveValuetypes.Regex,
+    );
 
     const decoder = new TextDecoder(encoding);
     context.logger.logDebug(

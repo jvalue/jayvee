@@ -8,7 +8,7 @@ import {
   BlockMetaInformation,
   IOType,
   PrimitiveValuetypes,
-  evaluatePropertyValueExpression,
+  evaluatePropertyValue,
 } from '@jvalue/jayvee-language-server';
 
 export class TextFileInterpreterMetaInformation extends BlockMetaInformation {
@@ -23,10 +23,8 @@ export class TextFileInterpreterMetaInformation extends BlockMetaInformation {
             description: 'The encoding used for decoding the file contents.',
           },
           validation: (property, validationContext, evaluationContext) => {
-            const propertyValue = property.value;
-
-            const encodingValue = evaluatePropertyValueExpression(
-              propertyValue,
+            const encodingValue = evaluatePropertyValue(
+              property,
               evaluationContext,
               PrimitiveValuetypes.Text,
             );
@@ -41,7 +39,7 @@ export class TextFileInterpreterMetaInformation extends BlockMetaInformation {
                 'error',
                 `Unknown encoding "${encodingValue}"`,
                 {
-                  node: propertyValue,
+                  node: property.value,
                 },
               );
             }

@@ -2,11 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'assert';
-
 import {
+  CollectionValuetype,
   InternalValueRepresentation,
-  evaluateExpression,
+  PrimitiveValuetypes,
 } from '@jvalue/jayvee-language-server';
 
 import { ExecutionContext } from '../../execution-context';
@@ -26,12 +25,10 @@ export class DenylistConstraintExecutor implements ConstraintExecutor {
       return false;
     }
 
-    const denylist = context.getExpressionCollectionPropertyValue('denylist');
-    const denylistValues = denylist.map((expression) => {
-      const value = evaluateExpression(expression, context.evaluationContext);
-      assert(typeof value === 'string');
-      return value;
-    });
-    return !denylistValues.includes(value);
+    const denylist = context.getPropertyValue(
+      'denylist',
+      new CollectionValuetype(PrimitiveValuetypes.Text),
+    );
+    return !denylist.includes(value);
   }
 }

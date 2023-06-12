@@ -9,7 +9,7 @@ import {
   PrimitiveValuetypes,
   PropertyAssignment,
   ValidationContext,
-  evaluatePropertyValueExpression,
+  evaluatePropertyValue,
 } from '@jvalue/jayvee-language-server';
 
 export class GtfsRTInterpreterMetaInformation extends BlockMetaInformation {
@@ -103,10 +103,8 @@ function isGtfsRTEntity(
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
 ) {
-  const propertyValue = property.value;
-
-  const entityValue = evaluatePropertyValueExpression(
-    propertyValue,
+  const entityValue = evaluatePropertyValue(
+    property,
     evaluationContext,
     PrimitiveValuetypes.Text,
   );
@@ -119,7 +117,7 @@ function isGtfsRTEntity(
       'error',
       `Entity must be "trip_update", "alert" or "vehicle"`,
       {
-        node: propertyValue,
+        node: property.value,
       },
     );
   }
