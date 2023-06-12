@@ -2,20 +2,18 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'assert';
-
 import {
   BlockMetaInformation,
   CollectionValuetype,
+  EvaluationContext,
   IOType,
   PrimitiveValuetypes,
   PropertyAssignment,
   PropertyBody,
   ValidationContext,
+  evaluatePropertyValue,
   isCollectionLiteral,
-  isReferenceLiteral,
   isTextValuetype,
-  isTransformDefinition,
 } from '@jvalue/jayvee-language-server';
 
 export class TableTransformerMetaInformation extends BlockMetaInformation {
@@ -50,8 +48,12 @@ export class TableTransformerMetaInformation extends BlockMetaInformation {
       },
       IOType.TABLE,
       IOType.TABLE,
-      (property, context) => {
-        this.checkInputColumnsMatchTransformationPorts(property, context);
+      (property, validationContext, evaluationContext) => {
+        this.checkInputColumnsMatchTransformationPorts(
+          property,
+          validationContext,
+          evaluationContext,
+        );
       },
     );
     this.docs = {
@@ -74,62 +76,46 @@ export class TableTransformerMetaInformation extends BlockMetaInformation {
 
   private checkInputColumnsMatchTransformationPorts(
     body: PropertyBody,
-    context: ValidationContext,
+    validationContext: ValidationContext,
+    evaluationContext: EvaluationContext,
   ): void {
     const useProperty = body.properties.find((x) => x.name === 'use');
-    if (useProperty === undefined) {
-      return;
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const reference = useProperty?.value;
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (reference === undefined) {
-      return;
-    }
-    assert(isReferenceLiteral(reference));
-
     const inputColumnsProperty = body.properties.find(
       (x) => x.name === 'inputColumns',
     );
-    if (inputColumnsProperty === undefined) {
+
+    if (useProperty === undefined || inputColumnsProperty === undefined) {
       return;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const inputColumns = inputColumnsProperty?.value;
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (inputColumns === undefined) {
+    const transform = evaluatePropertyValue(
+      useProperty,
+      evaluationContext,
+      PrimitiveValuetypes.Transform,
+    );
+    const inputColumns = evaluatePropertyValue(
+      inputColumnsProperty,
+      evaluationContext,
+      new CollectionValuetype(PrimitiveValuetypes.Text),
+    );
+
+    if (transform === undefined || inputColumns === undefined) {
       return;
     }
-    assert(isCollectionLiteral(inputColumns));
-
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const referencedTransform = reference?.value?.ref;
-    if (referencedTransform === undefined) {
-      return;
-    }
-    assert(isTransformDefinition(referencedTransform));
-
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const transformInputPorts = referencedTransform?.body?.ports?.filter(
+    const transformInputPorts = transform?.body?.ports?.filter(
       (x) => x.kind === 'from',
     );
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (transformInputPorts === undefined) {
-      return undefined;
+      return;
     }
 
     const numberTransformPorts = transformInputPorts.length;
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const numberInputColumns = inputColumns?.values.length;
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (numberInputColumns === undefined) {
-      return undefined;
-    }
+    const numberInputColumns = inputColumns.length;
 
     if (numberTransformPorts !== numberInputColumns) {
-      context.accept(
+      validationContext.accept(
         'error',
         `Expected ${numberTransformPorts} columns but only got ${numberInputColumns}`,
         {
