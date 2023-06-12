@@ -2,14 +2,16 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { AstNode } from 'langium';
+import { AstNode, assertUnreachable } from 'langium';
 
 import {
   EvaluationContext,
   EvaluationStrategy,
   Expression,
   evaluateExpression,
+  isBinaryExpression,
   isExpressionLiteral,
+  isFreeVariableLiteral,
   isUnaryExpression,
   isValueLiteral,
 } from '../ast';
@@ -84,29 +86,75 @@ export function checkExpressionSimplification(
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
 ): void {
-  if (isNonSimplifiableExpression(expression)) {
-    return;
-  }
-
-  const evaluatedExpression = evaluateExpression(
+  const simplifiableSubExpressions = collectSubExpressionsWithoutFreeVariables(
     expression,
-    evaluationContext,
-    validationContext,
-    EvaluationStrategy.EXHAUSTIVE,
-  );
-  if (evaluatedExpression !== undefined) {
-    validationContext.accept(
-      'info',
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      `The expression can be simplified to ${evaluatedExpression}`,
-      { node: expression },
+  ).filter(isSimplifiableExpression);
+
+  simplifiableSubExpressions.forEach((expression) => {
+    const evaluatedExpression = evaluateExpression(
+      expression,
+      evaluationContext,
+      validationContext,
+      EvaluationStrategy.EXHAUSTIVE,
     );
-  }
+    if (evaluatedExpression !== undefined) {
+      validationContext.accept(
+        'info',
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        `The expression can be simplified to ${evaluatedExpression}`,
+        { node: expression },
+      );
+    }
+  });
 }
 
-function isNonSimplifiableExpression(expression: Expression): boolean {
+function collectSubExpressionsWithoutFreeVariables(
+  expression: Expression | undefined,
+): Expression[] {
+  if (expression === undefined) {
+    return [];
+  }
+
+  if (isExpressionLiteral(expression)) {
+    if (isFreeVariableLiteral(expression)) {
+      return [];
+    }
+    return [expression];
+  } else if (isUnaryExpression(expression)) {
+    const innerExpression = expression.expression;
+    const innerSubExpressions =
+      collectSubExpressionsWithoutFreeVariables(innerExpression);
+    if (
+      innerSubExpressions.length === 1 &&
+      innerSubExpressions[0] === innerExpression
+    ) {
+      return [expression];
+    }
+    return innerSubExpressions;
+  } else if (isBinaryExpression(expression)) {
+    const leftExpression = expression.left;
+    const rightExpression = expression.right;
+    const leftSubExpressions =
+      collectSubExpressionsWithoutFreeVariables(leftExpression);
+    const rightSubExpressions =
+      collectSubExpressionsWithoutFreeVariables(rightExpression);
+
+    if (
+      leftSubExpressions.length === 1 &&
+      leftSubExpressions[0] === leftExpression &&
+      rightSubExpressions.length === 1 &&
+      rightSubExpressions[0] === rightExpression
+    ) {
+      return [expression];
+    }
+    return [...leftSubExpressions, ...rightSubExpressions];
+  }
+  assertUnreachable(expression);
+}
+
+function isSimplifiableExpression(expression: Expression): boolean {
   return (
-    isExpressionLiteral(expression) || isNegativeNumberExpression(expression)
+    !isExpressionLiteral(expression) && !isNegativeNumberExpression(expression)
   );
 }
 
