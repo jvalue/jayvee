@@ -4,9 +4,10 @@
 
 // eslint-disable-next-line import/no-cycle
 import { InternalValueRepresentation } from '../../../../expressions/evaluation';
+// eslint-disable-next-line import/no-cycle
 import { PrimitiveValuetype } from '../primitive-valuetype';
 
-type ToArray<I extends InternalValueRepresentation | undefined> =
+export type ToArray<I extends InternalValueRepresentation | undefined> =
   I extends InternalValueRepresentation ? Array<I> : [];
 
 export abstract class AbstractCollectionValuetype<

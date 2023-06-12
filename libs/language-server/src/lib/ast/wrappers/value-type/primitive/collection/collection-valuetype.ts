@@ -8,18 +8,11 @@ import {
 } from '../../../../expressions/evaluation';
 // eslint-disable-next-line import/no-cycle
 import { Valuetype, ValuetypeVisitor } from '../../valuetype';
-import { PrimitiveValuetype } from '../primitive-valuetype';
 
-type ToArrayType<I extends InternalValueRepresentation | undefined> =
-  I extends InternalValueRepresentation ? Array<I> : [];
-
-abstract class AbstractCollectionValuetype<
-  I extends InternalValueRepresentation | undefined,
-> extends PrimitiveValuetype<ToArrayType<I>> {
-  override isAllowedAsRuntimeParameter(): boolean {
-    return false;
-  }
-}
+import {
+  AbstractCollectionValuetype,
+  ToArray,
+} from './abstract-collection-valuetype';
 
 export class CollectionValuetype<
   I extends InternalValueRepresentation = InternalValueRepresentation,
@@ -45,7 +38,7 @@ export class CollectionValuetype<
 
   override isInternalValueRepresentation(
     operandValue: InternalValueRepresentation | undefined,
-  ): operandValue is ToArrayType<I> {
+  ): operandValue is ToArray<I> {
     return (
       Array.isArray(operandValue) &&
       operandValue.every((element) =>
