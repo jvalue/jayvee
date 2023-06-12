@@ -13,7 +13,9 @@ import {
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import {
+  CollectionValuetype,
   IOType,
+  PrimitiveValuetypes,
   RowWrapper,
   getRowIndex,
   isRowWrapper,
@@ -33,7 +35,10 @@ export class RowDeleterExecutor
     inputSheet: Sheet,
     context: ExecutionContext,
   ): Promise<R.Result<Sheet>> {
-    const relativeRows = context.getCellRangeCollectionPropertyValue('delete');
+    const relativeRows = context.getPropertyValue(
+      'delete',
+      new CollectionValuetype(PrimitiveValuetypes.CellRange),
+    );
     assert(relativeRows.every(isRowWrapper));
 
     let absoluteRows = relativeRows.map((row) =>

@@ -10,7 +10,11 @@ import {
   TextFile,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
-import { IOType } from '@jvalue/jayvee-language-server';
+import {
+  CollectionValuetype,
+  IOType,
+  PrimitiveValuetypes,
+} from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
 export class TextLineDeleterExecutor
@@ -25,7 +29,10 @@ export class TextLineDeleterExecutor
     file: TextFile,
     context: ExecutionContext,
   ): Promise<R.Result<TextFile>> {
-    const lines = context.getNumberCollectionPropertyValue('lines');
+    const lines = context.getPropertyValue(
+      'lines',
+      new CollectionValuetype(PrimitiveValuetypes.Integer),
+    );
     const numberOfLines = file.content.length;
 
     let lineIndex = 0;

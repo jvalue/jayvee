@@ -11,7 +11,7 @@ import {
   TransformExecutor,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
-import { IOType } from '@jvalue/jayvee-language-server';
+import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
 export class TableTransformerExecutor
@@ -26,9 +26,18 @@ export class TableTransformerExecutor
     inputTable: Table,
     context: ExecutionContext,
   ): Promise<R.Result<Table>> {
-    const inputColumnName = context.getTextPropertyValue('inputColumn');
-    const outputColumnName = context.getTextPropertyValue('outputColumn');
-    const usedTransform = context.getTransformPropertyValue('use');
+    const inputColumnName = context.getPropertyValue(
+      'inputColumn',
+      PrimitiveValuetypes.Text,
+    );
+    const outputColumnName = context.getPropertyValue(
+      'outputColumn',
+      PrimitiveValuetypes.Text,
+    );
+    const usedTransform = context.getPropertyValue(
+      'use',
+      PrimitiveValuetypes.Transform,
+    );
 
     // check input column exists
     const inputColumn = inputTable.getColumn(inputColumnName);

@@ -12,7 +12,7 @@ import {
   Table,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
-import { IOType } from '@jvalue/jayvee-language-server';
+import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 import { Client } from 'pg';
 
 @implementsStatic<BlockExecutorClass>()
@@ -27,12 +27,18 @@ export class PostgresLoaderExecutor
     input: Table,
     context: ExecutionContext,
   ): Promise<R.Result<None>> {
-    const host = context.getTextPropertyValue('host');
-    const port = context.getIntegerPropertyValue('port');
-    const user = context.getTextPropertyValue('username');
-    const password = context.getTextPropertyValue('password');
-    const database = context.getTextPropertyValue('database');
-    const table = context.getTextPropertyValue('table');
+    const host = context.getPropertyValue('host', PrimitiveValuetypes.Text);
+    const port = context.getPropertyValue('port', PrimitiveValuetypes.Integer);
+    const user = context.getPropertyValue('username', PrimitiveValuetypes.Text);
+    const password = context.getPropertyValue(
+      'password',
+      PrimitiveValuetypes.Text,
+    );
+    const database = context.getPropertyValue(
+      'database',
+      PrimitiveValuetypes.Text,
+    );
+    const table = context.getPropertyValue('table', PrimitiveValuetypes.Text);
 
     const client = new Client({
       host,
