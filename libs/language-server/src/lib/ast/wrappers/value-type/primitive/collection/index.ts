@@ -9,6 +9,6 @@ export {
 } from './collection-valuetype';
 
 export {
-  EmptyCollectionValuetype,
+  type EmptyCollectionValuetype,
   isEmptyCollectionValuetype,
 } from './empty-collection-valuetype';
