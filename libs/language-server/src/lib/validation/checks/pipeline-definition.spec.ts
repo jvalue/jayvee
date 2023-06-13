@@ -11,7 +11,6 @@ import {
   createJayveeServices,
   useExtension,
 } from '../../../lib';
-import { validatePipelineDefinition } from '../../../lib/validation/checks/pipeline-definition';
 import {
   ParseHelperOptions,
   expectNoParserAndLexerErrors,
@@ -20,6 +19,8 @@ import {
   validationAcceptorMockImpl,
 } from '../../../test';
 import { TestLangExtension } from '../../../test/extension';
+
+import { validatePipelineDefinition } from './pipeline-definition';
 
 describe('pipeline-definition validation tests', () => {
   let parse: (
