@@ -4,7 +4,6 @@
 
 pipeline Pipeline {
   block Test oftype TestProperty {
-    textProperty: '';
     unknownProperty: '';
   }
 }

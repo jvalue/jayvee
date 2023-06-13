@@ -91,55 +91,6 @@ describe('property-body validation tests', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
 
-  it('error on invalid property name', async () => {
-    const text = readJvTestAsset('property-body/invalid-unknown-property.jv');
-
-    await parseAndValidatePropertyBody(text);
-
-    expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
-      'error',
-      `Invalid property name "unknownProperty".`,
-      expect.any(Object),
-    );
-  });
-
-  describe('runtime parameter for property', () => {
-    it('should have no error on runtime parameter for text property', async () => {
-      const text = readJvTestAsset('property-body/valid-runtime-property.jv');
-
-      await parseAndValidatePropertyBody(text);
-
-      expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
-    });
-
-    it('error on runtime parameter for regex property', async () => {
-      const text = readJvTestAsset('property-body/invalid-runtime-property.jv');
-
-      await parseAndValidatePropertyBody(text);
-
-      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-      expect(validationAcceptorMock).toHaveBeenCalledWith(
-        'error',
-        `Runtime parameters are not allowed for properties of type regex`,
-        expect.any(Object),
-      );
-    });
-  });
-
-  it('error on invalid property typing', async () => {
-    const text = readJvTestAsset('property-body/invalid-property-type.jv');
-
-    await parseAndValidatePropertyBody(text);
-
-    expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
-      'error',
-      `The value needs to be of type text but is of type integer`,
-      expect.any(Object),
-    );
-  });
-
   it('error on failed property validation', async () => {
     const text = readJvTestAsset(
       'property-body/invalid-property-validation-failed.jv',
@@ -153,28 +104,5 @@ describe('property-body validation tests', () => {
       `Invalid value "invalid"`,
       expect.any(Object),
     );
-  });
-
-  it('info on simplifiable property expression', async () => {
-    const text = readJvTestAsset('property-body/valid-simplify-info.jv');
-
-    await parseAndValidatePropertyBody(text);
-
-    expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
-      'info',
-      `The expression can be simplified to 1019`,
-      expect.any(Object),
-    );
-  });
-
-  it('info on non simplifiable property expression', async () => {
-    const text = readJvTestAsset(
-      'property-body/valid-uneccessarysimplify-info.jv',
-    );
-
-    await parseAndValidatePropertyBody(text);
-
-    expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
 });
