@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /**
- * See the FAQ section of README.md for an explanation why the following ESLint rule is disabled for this file.
+ * See https://jvalue.github.io/jayvee/docs/dev/working-with-the-ast for why the following ESLint rule is disabled for this file.
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 

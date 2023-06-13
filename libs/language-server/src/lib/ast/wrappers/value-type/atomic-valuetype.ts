@@ -8,13 +8,13 @@ import {
   type InternalValueRepresentation,
   evaluateExpression,
 } from '../../expressions/evaluation';
-// eslint-disable-next-line import/no-cycle
-import { validateTypedCollection } from '../../expressions/type-inference';
 import { ConstraintDefinition, ValuetypeDefinition } from '../../generated/ast';
 import { AstNodeWrapper } from '../ast-node-wrapper';
 
+import { CollectionValuetype } from './primitive';
 import { PrimitiveValuetypes } from './primitive/primitive-valuetypes';
 import { AbstractValuetype, Valuetype, ValuetypeVisitor } from './valuetype';
+// eslint-disable-next-line import/no-cycle
 import { createValuetype } from './valuetype-util';
 
 export class AtomicValuetype
@@ -31,20 +31,15 @@ export class AtomicValuetype
 
   getConstraints(context: EvaluationContext): ConstraintDefinition[] {
     const constraintCollection = this.astNode.constraints;
-    const constraintExpressions = validateTypedCollection(
-      constraintCollection,
-      [PrimitiveValuetypes.Constraint],
-      undefined,
-    ).validItems;
+    const constraintCollectionType = new CollectionValuetype(
+      PrimitiveValuetypes.Constraint,
+    );
+    const constraints = evaluateExpression(constraintCollection, context) ?? [];
+    if (!constraintCollectionType.isInternalValueRepresentation(constraints)) {
+      return [];
+    }
 
-    return constraintExpressions
-      .map((x) => evaluateExpression(x, context))
-      .filter((x): x is ConstraintDefinition => {
-        return (
-          x !== undefined &&
-          PrimitiveValuetypes.Constraint.isInternalValueRepresentation(x)
-        );
-      });
+    return constraints;
   }
 
   override isConvertibleTo(target: Valuetype): boolean {

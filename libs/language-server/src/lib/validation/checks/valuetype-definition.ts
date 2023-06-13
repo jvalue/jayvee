@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /**
- * See the FAQ section of README.md for an explanation why the following ESLint rule is disabled for this file.
+ * See https://jvalue.github.io/jayvee/docs/dev/working-with-the-ast for why the following ESLint rule is disabled for this file.
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
@@ -12,16 +12,17 @@ import { strict as assert } from 'assert';
 import { assertUnreachable } from 'langium';
 
 import {
+  CollectionLiteral,
+  CollectionValuetype,
   ConstraintDefinition,
   EvaluationContext,
-  Expression,
   PrimitiveValuetypes,
   Valuetype,
   createValuetype,
   evaluateExpression,
+  inferExpressionType,
   isExpressionConstraintDefinition,
   isTypedConstraintDefinition,
-  validateTypedCollection,
 } from '../../ast';
 import { ValuetypeDefinition } from '../../ast/generated/ast';
 import { getMetaInformation } from '../../meta-information/meta-inf-registry';
@@ -68,38 +69,38 @@ function checkConstraintsCollectionValues(
     return;
   }
 
-  const { validItems, invalidItems } = validateTypedCollection(
+  const inferredCollectionType = inferExpressionType(
     constraintCollection,
-    [PrimitiveValuetypes.Constraint],
     validationContext,
   );
-
-  invalidItems.forEach((expression) => {
+  const expectedType = new CollectionValuetype(PrimitiveValuetypes.Constraint);
+  if (inferredCollectionType === undefined) {
+    return;
+  }
+  if (!inferredCollectionType.isConvertibleTo(expectedType)) {
     validationContext.accept(
       'error',
-      'Only constraints are allowed in this collection',
+      `The value needs to be of type ${expectedType.getName()} but is of type ${inferredCollectionType.getName()}`,
       {
-        node: expression,
+        node: constraintCollection,
       },
     );
-  });
+    return;
+  }
 
-  validItems.forEach((expression) => {
-    const constraint = evaluateExpression(
-      expression,
-      evaluationContext,
-      validationContext,
-    );
-    if (constraint === undefined) {
-      return;
-    }
-    assert(
-      PrimitiveValuetypes.Constraint.isInternalValueRepresentation(constraint),
-    );
+  const constraints = evaluateExpression(
+    constraintCollection,
+    evaluationContext,
+    validationContext,
+  );
+  assert(expectedType.isInternalValueRepresentation(constraints));
+
+  constraints.forEach((constraint, index) => {
     checkConstraintMatchesValuetype(
       valuetype,
       constraint,
-      expression,
+      constraintCollection,
+      index,
       validationContext,
     );
   });
@@ -108,7 +109,8 @@ function checkConstraintsCollectionValues(
 function checkConstraintMatchesValuetype(
   valuetypeDefinition: ValuetypeDefinition,
   constraint: ConstraintDefinition,
-  diagnosticNode: Expression,
+  diagnosticNode: CollectionLiteral,
+  diagnosticIndex: number,
   context: ValidationContext,
 ): void {
   const actualValuetype = createValuetype(valuetypeDefinition);
@@ -126,6 +128,8 @@ function checkConstraintMatchesValuetype(
       }"`,
       {
         node: diagnosticNode,
+        property: 'values',
+        index: diagnosticIndex,
       },
     );
   }

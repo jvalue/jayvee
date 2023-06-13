@@ -2,8 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+/**
+ * See https://jvalue.github.io/jayvee/docs/dev/working-with-the-ast for why the following ESLint rule is disabled for this file.
+ */
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
+
 import { EvaluationContext } from '../../ast/expressions/evaluation';
-import { PropertyBody } from '../../ast/generated/ast';
+import { PropertyAssignment, PropertyBody } from '../../ast/generated/ast';
 import { MetaInformation } from '../../meta-information/meta-inf';
 import { getMetaInformation } from '../../meta-information/meta-inf-registry';
 import { ValidationContext } from '../validation-context';
@@ -16,14 +21,20 @@ export function validatePropertyBody(
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
 ): void {
-  checkUniqueNames(propertyBody.properties, validationContext);
+  const properties = propertyBody?.properties ?? [];
+  checkUniqueNames(properties, validationContext);
 
   const metaInf = inferMetaInformation(propertyBody);
   if (metaInf === undefined) {
     return;
   }
 
-  checkPropertyCompleteness(propertyBody, metaInf, validationContext);
+  checkPropertyCompleteness(
+    propertyBody,
+    properties,
+    metaInf,
+    validationContext,
+  );
   for (const property of propertyBody.properties) {
     validatePropertyAssignment(
       property,
@@ -47,18 +58,17 @@ export function validatePropertyBody(
 function inferMetaInformation(
   propertyBody: PropertyBody,
 ): MetaInformation | undefined {
-  const type = propertyBody.$container.type;
+  const type = propertyBody.$container?.type;
   return getMetaInformation(type);
 }
 
 function checkPropertyCompleteness(
   propertyBody: PropertyBody,
+  properties: PropertyAssignment[],
   metaInf: MetaInformation,
   context: ValidationContext,
 ): void {
-  const presentPropertyNames = propertyBody.properties.map(
-    (property) => property.name,
-  );
+  const presentPropertyNames = properties.map((property) => property.name);
   const missingRequiredPropertyNames = metaInf.getPropertyNames(
     'required',
     presentPropertyNames,
