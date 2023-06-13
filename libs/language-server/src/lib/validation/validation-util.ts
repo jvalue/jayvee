@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
+
 import { AstNode, assertUnreachable } from 'langium';
 
 import {
@@ -97,14 +99,14 @@ export function checkExpressionSimplification(
       validationContext,
       EvaluationStrategy.EXHAUSTIVE,
     );
-    if (evaluatedExpression !== undefined) {
-      validationContext.accept(
-        'info',
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        `The expression can be simplified to ${evaluatedExpression}`,
-        { node: expression },
-      );
-    }
+    assert(evaluatedExpression !== undefined);
+
+    validationContext.accept(
+      'info',
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      `The expression can be simplified to ${evaluatedExpression}`,
+      { node: expression },
+    );
   });
 }
 
@@ -124,10 +126,12 @@ function collectSubExpressionsWithoutFreeVariables(
     const innerExpression = expression.expression;
     const innerSubExpressions =
       collectSubExpressionsWithoutFreeVariables(innerExpression);
-    if (
+
+    const innerExpressionHasNoFreeVariables =
       innerSubExpressions.length === 1 &&
-      innerSubExpressions[0] === innerExpression
-    ) {
+      innerSubExpressions[0] === innerExpression;
+
+    if (innerExpressionHasNoFreeVariables) {
       return [expression];
     }
     return innerSubExpressions;
@@ -139,12 +143,14 @@ function collectSubExpressionsWithoutFreeVariables(
     const rightSubExpressions =
       collectSubExpressionsWithoutFreeVariables(rightExpression);
 
-    if (
+    const leftExpressionHasNoFreeVariables =
       leftSubExpressions.length === 1 &&
-      leftSubExpressions[0] === leftExpression &&
+      leftSubExpressions[0] === leftExpression;
+    const rightExpressionHasNoFreeVariables =
       rightSubExpressions.length === 1 &&
-      rightSubExpressions[0] === rightExpression
-    ) {
+      rightSubExpressions[0] === rightExpression;
+
+    if (leftExpressionHasNoFreeVariables && rightExpressionHasNoFreeVariables) {
       return [expression];
     }
     return [...leftSubExpressions, ...rightSubExpressions];
