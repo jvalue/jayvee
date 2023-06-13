@@ -13,7 +13,6 @@ import {
   createJayveeServices,
   useExtension,
 } from '../../../lib';
-import { validatePropertyBody } from '../../../lib/validation/checks/property-body';
 import {
   ParseHelperOptions,
   expectNoParserAndLexerErrors,
@@ -22,6 +21,8 @@ import {
   validationAcceptorMockImpl,
 } from '../../../test';
 import { TestLangExtension } from '../../../test/extension';
+
+import { validatePropertyBody } from './property-body';
 
 describe('property-body validation tests', () => {
   let parse: (

@@ -11,7 +11,6 @@ import {
   createJayveeServices,
   useExtension,
 } from '../../../lib';
-import { validateColumnId } from '../../../lib/validation/checks/column-id';
 import {
   ParseHelperOptions,
   expectNoParserAndLexerErrors,
@@ -20,6 +19,8 @@ import {
   validationAcceptorMockImpl,
 } from '../../../test';
 import { TestLangExtension } from '../../../test/extension';
+
+import { validateColumnId } from './column-id';
 
 describe('column-id validation tests', () => {
   let parse: (

@@ -11,7 +11,6 @@ import {
   createJayveeServices,
   useExtension,
 } from '../../../lib';
-import { validatePipeDefinition } from '../../../lib/validation/checks/pipe-definition';
 import {
   ParseHelperOptions,
   expectNoParserAndLexerErrors,
@@ -20,6 +19,8 @@ import {
   validationAcceptorMockImpl,
 } from '../../../test';
 import { TestLangExtension } from '../../../test/extension';
+
+import { validatePipeDefinition } from './pipe-definition';
 
 describe('pipe-definition validation tests', () => {
   let parse: (
