@@ -22,7 +22,7 @@ import { TestLangExtension } from '../../../test/extension';
 
 import { validateJayveeModel } from './jayvee-model';
 
-describe('jayvee-model validation tests', () => {
+describe('Validation of JayveeModel', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
@@ -61,7 +61,7 @@ describe('jayvee-model validation tests', () => {
     validationAcceptorMock.mockReset();
   });
 
-  it('error on non unique pipelines', async () => {
+  it('should diagnose error on non unique pipelines', async () => {
     const text = readJvTestAsset(
       'jayvee-model/invalid-non-unique-pipelines.jv',
     );
@@ -76,7 +76,7 @@ describe('jayvee-model validation tests', () => {
     );
   });
 
-  it('error on non unique transforms', async () => {
+  it('should diagnose error on non unique transforms', async () => {
     const text = readJvTestAsset(
       'jayvee-model/invalid-non-unique-transforms.jv',
     );
@@ -91,7 +91,7 @@ describe('jayvee-model validation tests', () => {
     );
   });
 
-  it('error on non unique valuetypes', async () => {
+  it('should diagnose error on non unique valuetypes', async () => {
     const text = readJvTestAsset(
       'jayvee-model/invalid-non-unique-valuetypes.jv',
     );
@@ -106,7 +106,7 @@ describe('jayvee-model validation tests', () => {
     );
   });
 
-  it('error on non unique constraints', async () => {
+  it('should diagnose error on non unique constraints', async () => {
     const text = readJvTestAsset(
       'jayvee-model/invalid-non-unique-constraints.jv',
     );

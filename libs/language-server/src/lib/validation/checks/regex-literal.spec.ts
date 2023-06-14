@@ -22,7 +22,7 @@ import { TestLangExtension } from '../../../test/extension';
 
 import { validateRegexLiteral } from './regex-literal';
 
-describe('regex-literal validation tests', () => {
+describe('Validation of RegexLiteral', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
@@ -75,7 +75,7 @@ describe('regex-literal validation tests', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
 
-  it('error on regex syntax error', async () => {
+  it('should diagnose error on regex syntax error', async () => {
     const text = readJvTestAsset(
       'regex-literal/invalid-regex-literal-syntax-error.jv',
     );

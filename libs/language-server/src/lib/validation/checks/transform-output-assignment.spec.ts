@@ -24,7 +24,7 @@ import { TestLangExtension } from '../../../test/extension';
 
 import { validateTransformOutputAssignment } from './transform-output-assigment';
 
-describe('transform-body validation tests', () => {
+describe('Validation of TransformOutputAssignment', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
@@ -81,7 +81,7 @@ describe('transform-body validation tests', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
 
-  it('error on invalid type', async () => {
+  it('should diagnose error on invalid type', async () => {
     const text = readJvTestAsset(
       'transform-output-assignment/invalid-invalid-type.jv',
     );
@@ -96,7 +96,7 @@ describe('transform-body validation tests', () => {
     );
   });
 
-  it('error on output port used in assignment', async () => {
+  it('should diagnose error on output port used in assignment', async () => {
     const text = readJvTestAsset(
       'transform-output-assignment/invalid-output-port-in-assignment.jv',
     );

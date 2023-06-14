@@ -21,7 +21,7 @@ import {
 } from '../../test';
 import { TestLangExtension } from '../../test/extension';
 
-describe('validation-utils tests', () => {
+describe('Validation of validation-utils', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
@@ -56,7 +56,7 @@ describe('validation-utils tests', () => {
     parse = parseHelper(services);
   });
 
-  describe('checkUniqueNames tests', () => {
+  describe('Validation of checkUniqueNames', () => {
     const validationAcceptorMock = jest.fn(validationAcceptorMockImpl);
 
     afterEach(() => {
@@ -80,7 +80,7 @@ describe('validation-utils tests', () => {
       expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
     });
 
-    it('error on duplicate property names', async () => {
+    it('should diagnose error on duplicate property names', async () => {
       const text = readJvTestAsset(
         'validation-utils/invalid-duplicate-property-names.jv',
       );

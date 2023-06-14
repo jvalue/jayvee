@@ -24,7 +24,7 @@ import { TestLangExtension } from '../../../test/extension';
 
 import { validatePropertyBody } from './property-body';
 
-describe('property-body validation tests', () => {
+describe('Validation PropertyBody', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
@@ -70,7 +70,7 @@ describe('property-body validation tests', () => {
     validationAcceptorMock.mockReset();
   });
 
-  it('error on missing properties', async () => {
+  it('should diagnose error on missing properties', async () => {
     const text = readJvTestAsset('property-body/invalid-missing-property.jv');
 
     await parseAndValidatePropertyBody(text);
@@ -91,7 +91,7 @@ describe('property-body validation tests', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
 
-  it('error on failed property validation', async () => {
+  it('should diagnose error on failed property validation', async () => {
     const text = readJvTestAsset(
       'property-body/invalid-property-validation-failed.jv',
     );

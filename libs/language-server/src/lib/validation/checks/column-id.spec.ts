@@ -22,7 +22,7 @@ import { TestLangExtension } from '../../../test/extension';
 
 import { validateColumnId } from './column-id';
 
-describe('column-id validation tests', () => {
+describe('Validation of ColumnId', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
@@ -82,7 +82,7 @@ describe('column-id validation tests', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
 
-  it('error on lower case denotion', async () => {
+  it('should diagnose error on lower case denotion', async () => {
     const text = readJvTestAsset('column-id/invalid-column-id-lower-case.jv');
 
     await parseAndValidateColumnId(text);

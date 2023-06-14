@@ -24,7 +24,7 @@ import { TestLangExtension } from '../../../test/extension';
 
 import { validateValuetypeDefinition } from './valuetype-definition';
 
-describe('valuetype-definition validation tests', () => {
+describe('Validation of ValuetypeDefinition', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
@@ -80,7 +80,7 @@ describe('valuetype-definition validation tests', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
 
-  it('error on supertype cycle', async () => {
+  it('should diagnose error on supertype cycle', async () => {
     const text = readJvTestAsset(
       'valuetype-definition/invalid-supertype-cycle.jv',
     );
@@ -95,7 +95,7 @@ describe('valuetype-definition validation tests', () => {
     );
   });
 
-  it('error on invalid constraints item', async () => {
+  it('should diagnose error on invalid constraints item', async () => {
     const text = readJvTestAsset(
       'valuetype-definition/invalid-invalid-constraints-item.jv',
     );
@@ -110,7 +110,7 @@ describe('valuetype-definition validation tests', () => {
     );
   });
 
-  it('error on invalid constraint type for valuetype', async () => {
+  it('should diagnose error on invalid constraint type for valuetype', async () => {
     const text = readJvTestAsset(
       'valuetype-definition/invalid-invalid-constraint-type-for-valuetype.jv',
     );
