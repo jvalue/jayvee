@@ -6,7 +6,9 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
+  EvaluationContext,
   ExpressionConstraintDefinition,
+  RuntimeParameterProvider,
   ValidationContext,
   createJayveeServices,
   useExtension,
@@ -50,6 +52,7 @@ describe('expression-constraint-definition validation tests', () => {
     validateExpressionConstraintDefinition(
       expressionConstraint,
       new ValidationContext(validationAcceptorMock),
+      new EvaluationContext(new RuntimeParameterProvider()),
     );
   }
 

@@ -6,6 +6,8 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
+  EvaluationContext,
+  RuntimeParameterProvider,
   TransformOutputAssignment,
   ValidationContext,
   createJayveeServices,
@@ -50,6 +52,7 @@ describe('transform-body validation tests', () => {
     validateTransformOutputAssignment(
       transformOutputAssignment,
       new ValidationContext(validationAcceptorMock),
+      new EvaluationContext(new RuntimeParameterProvider()),
     );
   }
 
