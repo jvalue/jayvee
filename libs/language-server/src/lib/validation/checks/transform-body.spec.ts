@@ -86,7 +86,7 @@ describe('transform-body validation tests', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
-      `The transform port name "Input" needs to be unique.`,
+      `The transform port name "input" needs to be unique.`,
       expect.any(Object),
     );
   });

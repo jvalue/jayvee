@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 transform Transform {
-  from Input oftype decimal;
-  from SecondInput oftype decimal;
-  to Output oftype integer;
+  from input oftype decimal;
+  from secondInput oftype decimal;
+  to output oftype integer;
 
-  Output: floor(Input);
+  output: floor(input);
 }

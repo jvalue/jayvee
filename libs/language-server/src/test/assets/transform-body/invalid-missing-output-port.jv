@@ -3,5 +3,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 transform Transform {
-  from Input oftype decimal;
+  from input oftype decimal;
 }
