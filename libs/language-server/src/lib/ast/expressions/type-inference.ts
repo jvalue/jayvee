@@ -32,7 +32,6 @@ import {
   isValueLiteral,
   isValuetypeAssignmentLiteral,
 } from '../generated/ast';
-// eslint-disable-next-line import/no-cycle
 import { getNextAstNodeContainer } from '../model-util';
 import {
   AtomicValuetype,
@@ -325,28 +324,4 @@ function inferTypeFromReferenceLiteral(
     return createValuetype(valueType);
   }
   assertUnreachable(referenced);
-}
-
-export interface TypedCollectionValidation {
-  validItems: Expression[];
-  invalidItems: Expression[];
-}
-
-export function validateTypedCollection(
-  collection: CollectionLiteral,
-  desiredTypes: Valuetype[],
-  validationContext: ValidationContext | undefined,
-): TypedCollectionValidation {
-  const validItems = collection.values.filter((value) => {
-    const valueType = inferExpressionType(value, validationContext);
-    return valueType !== undefined && desiredTypes.includes(valueType);
-  });
-  const invalidItems = collection.values.filter(
-    (value) => !validItems.includes(value),
-  );
-
-  return {
-    validItems,
-    invalidItems,
-  };
 }

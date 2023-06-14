@@ -7,8 +7,8 @@ import {
   CollectionValuetype,
   IOType,
   PrimitiveValuetypes,
+  checkUniqueNames,
   evaluatePropertyValue,
-  getNodesWithNonUniqueNames,
 } from '@jvalue/jayvee-language-server';
 
 export class TableInterpreterMetaInformation extends BlockMetaInformation {
@@ -49,18 +49,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
               return;
             }
 
-            getNodesWithNonUniqueNames(valuetypeAssignments).forEach(
-              (valuetypeAssignment) => {
-                validationContext.accept(
-                  'error',
-                  `The column name "${valuetypeAssignment.name}" needs to be unique.`,
-                  {
-                    node: valuetypeAssignment,
-                    property: 'name',
-                  },
-                );
-              },
-            );
+            checkUniqueNames(valuetypeAssignments, validationContext, 'column');
           },
           docs: {
             description:

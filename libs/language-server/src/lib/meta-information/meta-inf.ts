@@ -51,7 +51,9 @@ export abstract class MetaInformation {
     validationContext: ValidationContext,
     evaluationContext: EvaluationContext,
   ): void {
-    for (const property of propertyBody.properties) {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const properties = propertyBody?.properties ?? [];
+    for (const property of properties) {
       const propertySpecification = this.getPropertySpecification(
         property.name,
       );
@@ -67,7 +69,12 @@ export abstract class MetaInformation {
     }
   }
 
-  getPropertySpecification(name: string): PropertySpecification | undefined {
+  getPropertySpecification(
+    name: string | undefined,
+  ): PropertySpecification | undefined {
+    if (name === undefined) {
+      return undefined;
+    }
     return this.properties[name];
   }
 

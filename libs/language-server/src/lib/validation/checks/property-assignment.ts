@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /**
- * See the FAQ section of README.md for an explanation why the following ESLint rule is disabled for this file.
+ * See https://jvalue.github.io/jayvee/docs/dev/working-with-the-ast for why the following ESLint rule is disabled for this file.
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
@@ -25,7 +25,7 @@ export function validatePropertyAssignment(
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
 ): void {
-  const propertySpec = metaInf.getPropertySpecification(property.name);
+  const propertySpec = metaInf.getPropertySpecification(property?.name);
 
   checkPropertyNameValidity(property, propertySpec, validationContext);
 
@@ -46,10 +46,14 @@ function checkPropertyNameValidity(
   context: ValidationContext,
 ): void {
   if (propertySpec === undefined) {
-    context.accept('error', `Invalid property name "${property.name}".`, {
-      node: property,
-      property: 'name',
-    });
+    context.accept(
+      'error',
+      `Invalid property name "${property?.name ?? ''}".`,
+      {
+        node: property,
+        property: 'name',
+      },
+    );
   }
 }
 
@@ -60,11 +64,10 @@ function checkPropertyValueTyping(
   evaluationContext: EvaluationContext,
 ): void {
   const propertyType = propertySpec.type;
-
-  if (property.value === undefined) {
+  const propertyValue = property?.value;
+  if (propertyValue === undefined) {
     return;
   }
-  const propertyValue = property.value;
 
   if (isRuntimeParameterLiteral(propertyValue)) {
     if (!propertyType.isAllowedAsRuntimeParameter()) {
@@ -72,8 +75,7 @@ function checkPropertyValueTyping(
         'error',
         `Runtime parameters are not allowed for properties of type ${propertyType.getName()}`,
         {
-          node: property,
-          property: 'name',
+          node: propertyValue,
         },
       );
     }
@@ -89,8 +91,7 @@ function checkPropertyValueTyping(
       'error',
       `The value needs to be of type ${propertyType.getName()} but is of type ${inferredType.getName()}`,
       {
-        node: property,
-        property: 'value',
+        node: propertyValue,
       },
     );
     return;

@@ -4,7 +4,7 @@
 
 import { strict as assert } from 'assert';
 
-import { AstNode, assertUnreachable } from 'langium';
+import { AstNode, MultiMap, assertUnreachable } from 'langium';
 
 import {
   EvaluationContext,
@@ -25,62 +25,41 @@ export type NamedAstNode = AstNode & { name: string };
 export function checkUniqueNames(
   nodes: NamedAstNode[],
   context: ValidationContext,
-  nodeName?: string,
+  nodeKind?: string,
 ): void {
-  getNodesWithNonUniqueNames(nodes).forEach((node) => {
-    context.accept(
-      'error',
-      `The ${nodeName ?? node.$type.toLowerCase()} name "${
-        node.name
-      }" needs to be unique.`,
-      {
-        node,
-        property: 'name',
-      },
-    );
-  });
-}
+  const nodesByName = groupNodesByName(nodes);
 
-export function getNodesWithNonUniqueNames<N extends NamedAstNode>(
-  nodes: N[],
-): N[] {
-  const nodesByName = getNodesByName(nodes);
-
-  const resultingNodes: N[] = [];
-  for (const nodesWithSameName of Object.values(nodesByName)) {
-    if (nodesWithSameName.length > 1) {
-      resultingNodes.push(...nodesWithSameName);
+  for (const [nodeName, nodes] of nodesByName.entriesGroupedByKey()) {
+    if (nodes.length > 1) {
+      for (const node of nodes) {
+        context.accept(
+          'error',
+          `The ${
+            nodeKind ?? node.$type.toLowerCase()
+          } name "${nodeName}" needs to be unique.`,
+          {
+            node,
+            property: 'name',
+          },
+        );
+      }
     }
   }
-  return resultingNodes;
 }
 
-function getNodesByName<N extends NamedAstNode>(
-  nodes: N[],
-): Record<string, N[]> {
-  return groupBy<N, string>(nodes, (node) => node.name);
-}
+function groupNodesByName(
+  nodes: NamedAstNode[],
+): MultiMap<string, NamedAstNode> {
+  const nodesByName = new MultiMap<string, NamedAstNode>();
 
-function groupBy<T, K extends keyof never>(
-  elements: T[],
-  keyFn: (element: T) => K | undefined,
-): Record<K, T[]> {
-  const initialValue = {} as Record<K, T[]>;
-
-  return elements.reduce<Record<K, T[]>>((result, element) => {
-    const key = keyFn(element);
-    if (key === undefined) {
-      return result;
-    }
-    const array: T[] | undefined = result[key];
+  for (const node of nodes) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (array === undefined) {
-      result[key] = [];
+    if (node?.name !== undefined) {
+      nodesByName.add(node.name, node);
     }
+  }
 
-    result[key].push(element);
-    return result;
-  }, initialValue);
+  return nodesByName;
 }
 
 export function checkExpressionSimplification(
