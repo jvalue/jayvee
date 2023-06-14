@@ -6,9 +6,11 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
+  EvaluationContext,
   MetaInformation,
   PropertyAssignment,
   PropertyBody,
+  RuntimeParameterProvider,
   ValidationContext,
   createJayveeServices,
   getMetaInformation,
@@ -62,6 +64,7 @@ describe('property-assignment validation tests', () => {
       propertyAssignment,
       metaInf as MetaInformation,
       new ValidationContext(validationAcceptorMock),
+      new EvaluationContext(new RuntimeParameterProvider()),
     );
   }
 

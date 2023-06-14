@@ -6,6 +6,8 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
+  EvaluationContext,
+  RuntimeParameterProvider,
   ValidationContext,
   ValuetypeDefinition,
   createJayveeServices,
@@ -49,6 +51,7 @@ describe('valuetype-definition validation tests', () => {
     validateValuetypeDefinition(
       valuetypeDefinition,
       new ValidationContext(validationAcceptorMock),
+      new EvaluationContext(new RuntimeParameterProvider()),
     );
   }
 
