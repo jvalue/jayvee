@@ -95,4 +95,19 @@ describe('expression-constraint-definition validation tests', () => {
       expect.any(Object),
     );
   });
+
+  it('info on simplifiable expression constraint', async () => {
+    const text = readJvTestAsset(
+      'expression-constraint-definition/valid-simplify-info.jv',
+    );
+
+    await parseAndValidateExpressionConstraintDefinition(text);
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+    expect(validationAcceptorMock).toHaveBeenCalledWith(
+      'info',
+      `The expression can be simplified to 8`,
+      expect.any(Object),
+    );
+  });
 });
