@@ -153,6 +153,21 @@ describe('property-assignment validation tests', () => {
     );
   });
 
+  it('info on simplifiable property sub-expression', async () => {
+    const text = readJvTestAsset(
+      'property-assignment/valid-simplify-info-sub-expression.jv',
+    );
+
+    await parseAndValidatePropertyAssignment(text);
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+    expect(validationAcceptorMock).toHaveBeenCalledWith(
+      'info',
+      `The expression can be simplified to 30`,
+      expect.any(Object),
+    );
+  });
+
   it('info on non simplifiable property expression', async () => {
     const text = readJvTestAsset(
       'property-assignment/valid-uneccessarysimplify-info.jv',
