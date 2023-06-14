@@ -6,26 +6,20 @@ import { strict as assert } from 'assert';
 
 import {
   BlockDefinition,
-  CellRangeWrapper,
   ConstraintDefinition,
   EvaluationContext,
-  Expression,
+  InternalValueRepresentation,
   PipelineDefinition,
   PropertyAssignment,
   TransformDefinition,
-  ValuetypeAssignment,
-  evaluateExpression,
+  Valuetype,
+  evaluatePropertyValue,
   getOrFailMetaInformation,
-  isCollectionLiteral,
-  isExpression,
   isExpressionConstraintDefinition,
   isPipelineDefinition,
   isPropertyBody,
-  isRuntimeParameterLiteral,
   isTransformDefinition,
-  isValuetypeAssignment,
 } from '@jvalue/jayvee-language-server';
-import { assertUnreachable } from 'langium';
 
 import { Logger } from './logger';
 
@@ -74,90 +68,23 @@ export class ExecutionContext {
     this.logger.setLoggingContext(this.getCurrentNode().name);
   }
 
-  public getTextPropertyValue(propertyName: string): string {
-    const propertyValue = this.getPropertyValue(propertyName);
-    assert(typeof propertyValue === 'string');
-
-    return propertyValue;
-  }
-
-  public getNumericPropertyValue(propertyName: string): number {
-    const propertyValue = this.getPropertyValue(propertyName);
-    assert(typeof propertyValue === 'number');
-
-    return propertyValue;
-  }
-
-  public getBooleanPropertyValue(propertyName: string): boolean {
-    const propertyValue = this.getPropertyValue(propertyName);
-    assert(typeof propertyValue === 'boolean');
-
-    return propertyValue;
-  }
-
-  public getRegexPropertyValue(propertyName: string): RegExp {
-    const propertyValue = this.getPropertyValue(propertyName);
-    assert(propertyValue instanceof RegExp);
-
-    return propertyValue;
-  }
-
-  public getCellRangePropertyValue(propertyName: string): CellRangeWrapper {
-    const propertyValue = this.getPropertyValue(propertyName);
-    assert(propertyValue instanceof CellRangeWrapper);
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return propertyValue;
-  }
-
-  public getTransformPropertyValue(propertyName: string): TransformDefinition {
-    const propertyValue = this.getPropertyValue(propertyName);
-    assert(isTransformDefinition(propertyValue));
-
-    return propertyValue;
-  }
-
-  public getExpressionCollectionPropertyValue(
+  public getPropertyValue<I extends InternalValueRepresentation>(
     propertyName: string,
-  ): Expression[] {
-    const propertyValue = this.getPropertyValue(propertyName);
-    assert(Array.isArray(propertyValue));
-    assert(propertyValue.every(isExpression));
+    valuetype: Valuetype<I>,
+  ): I {
+    const property = this.getProperty(propertyName);
 
+    if (property === undefined) {
+      return this.getDefaultPropertyValue(propertyName, valuetype);
+    }
+
+    const propertyValue = evaluatePropertyValue(
+      property,
+      this.evaluationContext,
+      valuetype,
+    );
+    assert(propertyValue !== undefined);
     return propertyValue;
-  }
-
-  public getCellRangeCollectionPropertyValue(
-    propertyName: string,
-  ): CellRangeWrapper[] {
-    const propertyValue = this.getPropertyValue(propertyName);
-    assert(Array.isArray(propertyValue));
-    assert(propertyValue.every(isExpression));
-
-    const evaluatedExpressions = propertyValue.map((x) =>
-      evaluateExpression(x, this.evaluationContext),
-    );
-    assert(
-      evaluatedExpressions.every(
-        (x): x is CellRangeWrapper => x instanceof CellRangeWrapper,
-      ),
-    );
-
-    return evaluatedExpressions;
-  }
-
-  public getValuetypeAssignmentCollectionPropertyValue(
-    propertyName: string,
-  ): ValuetypeAssignment[] {
-    const propertyValue = this.getPropertyValue(propertyName);
-    assert(Array.isArray(propertyValue));
-    assert(propertyValue.every(isExpression));
-
-    const evaluatedExpressions = propertyValue.map((x) =>
-      evaluateExpression(x, this.evaluationContext),
-    );
-    assert(evaluatedExpressions.every(isValuetypeAssignment));
-    return evaluatedExpressions;
   }
 
   public getProperty(propertyName: string): PropertyAssignment | undefined {
@@ -184,34 +111,14 @@ export class ExecutionContext {
     return property;
   }
 
-  private getPropertyValue(propertyName: string): unknown {
-    const property = this.getProperty(propertyName);
-
-    if (property === undefined) {
-      return this.getDefaultPropertyValue(propertyName);
-    }
-    const propertyValue = property.value;
-
-    if (isRuntimeParameterLiteral(propertyValue)) {
-      return this.evaluationContext.getValueForRuntimeParameter(propertyValue);
-    }
-    if (isCollectionLiteral(propertyValue)) {
-      return propertyValue.values;
-    }
-    if (isExpression(propertyValue)) {
-      return evaluateExpression(propertyValue, this.evaluationContext);
-    }
-    assertUnreachable(propertyValue);
-  }
-
-  private getDefaultPropertyValue(propertyName: string): unknown {
+  private getDefaultPropertyValue<I extends InternalValueRepresentation>(
+    propertyName: string,
+    valuetype: Valuetype<I>,
+  ): I {
     const currentNode = this.getCurrentNode();
     assert(!isPipelineDefinition(currentNode));
     assert(!isExpressionConstraintDefinition(currentNode));
-
-    if (isTransformDefinition(currentNode)) {
-      return undefined;
-    }
+    assert(!isTransformDefinition(currentNode));
 
     const metaInf = getOrFailMetaInformation(currentNode.type);
     const propertySpec = metaInf.getPropertySpecification(propertyName);
@@ -219,6 +126,7 @@ export class ExecutionContext {
 
     const defaultValue = propertySpec.defaultValue;
     assert(defaultValue !== undefined);
+    assert(valuetype.isInternalValueRepresentation(defaultValue));
 
     return defaultValue;
   }

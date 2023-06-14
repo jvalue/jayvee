@@ -8,10 +8,8 @@ import {
   IOType,
   PrimitiveValuetypes,
   PropertyAssignment,
-  STRING_TYPEGUARD,
   ValidationContext,
-  evaluatePropertyValueExpression,
-  isRuntimeParameterLiteral,
+  evaluatePropertyValue,
 } from '@jvalue/jayvee-language-server';
 
 export class GtfsRTInterpreterMetaInformation extends BlockMetaInformation {
@@ -102,27 +100,24 @@ const blockExampleUsage = `block GtfsRTTripUpdateInterpreter oftype GtfsRTInterp
 
 function isGtfsRTEntity(
   property: PropertyAssignment,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ) {
-  const propertyValue = property.value;
-
-  if (isRuntimeParameterLiteral(propertyValue)) {
-    // We currently ignore runtime parameters during validation.
+  const entityValue = evaluatePropertyValue(
+    property,
+    evaluationContext,
+    PrimitiveValuetypes.Text,
+  );
+  if (entityValue === undefined) {
     return;
   }
 
-  const entityValue = evaluatePropertyValueExpression(
-    propertyValue,
-    new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
-    STRING_TYPEGUARD,
-  );
-
   if (!['trip_update', 'alert', 'vehicle'].includes(entityValue)) {
-    context.accept(
+    validationContext.accept(
       'error',
       `Entity must be "trip_update", "alert" or "vehicle"`,
       {
-        node: propertyValue,
+        node: property.value,
       },
     );
   }

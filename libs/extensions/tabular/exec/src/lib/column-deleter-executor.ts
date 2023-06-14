@@ -13,8 +13,10 @@ import {
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import {
+  CollectionValuetype,
   ColumnWrapper,
   IOType,
+  PrimitiveValuetypes,
   columnIndexToString,
   getColumnIndex,
   isColumnWrapper,
@@ -33,8 +35,10 @@ export class ColumnDeleterExecutor
     inputSheet: Sheet,
     context: ExecutionContext,
   ): Promise<R.Result<Sheet>> {
-    const relativeColumns =
-      context.getCellRangeCollectionPropertyValue('delete');
+    const relativeColumns = context.getPropertyValue(
+      'delete',
+      new CollectionValuetype(PrimitiveValuetypes.CellRange),
+    );
     assert(relativeColumns.every(isColumnWrapper));
 
     let absoluteColumns = relativeColumns.map((column) =>

@@ -3,10 +3,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /**
- * See the FAQ section of README.md for an explanation why the following ESLint rule is disabled for this file.
+ * See https://jvalue.github.io/jayvee/docs/dev/working-with-the-ast for why the following ESLint rule is disabled for this file.
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
+import { EvaluationContext } from '../../ast/expressions/evaluation';
 import { inferExpressionType } from '../../ast/expressions/type-inference';
 import { ExpressionConstraintDefinition } from '../../ast/generated/ast';
 import { PrimitiveValuetypes } from '../../ast/wrappers/value-type/primitive/primitive-valuetypes';
@@ -15,24 +16,26 @@ import { checkExpressionSimplification } from '../validation-util';
 
 export function validateExpressionConstraintDefinition(
   constraint: ExpressionConstraintDefinition,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ): void {
-  checkConstraintExpression(constraint, context);
+  checkConstraintExpression(constraint, validationContext, evaluationContext);
 }
 
 function checkConstraintExpression(
   constraint: ExpressionConstraintDefinition,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ): void {
   const expression = constraint?.expression;
-  const inferredType = inferExpressionType(expression, context);
+  const inferredType = inferExpressionType(expression, validationContext);
   if (inferredType === undefined) {
     return;
   }
 
   const expectedType = PrimitiveValuetypes.Boolean;
   if (!inferredType.isConvertibleTo(expectedType)) {
-    context.accept(
+    validationContext.accept(
       'error',
       `The value needs to be of type ${expectedType.getName()} but is of type ${inferredType.getName()}`,
       {
@@ -42,5 +45,9 @@ function checkConstraintExpression(
     return;
   }
 
-  checkExpressionSimplification(expression, context);
+  checkExpressionSimplification(
+    expression,
+    validationContext,
+    evaluationContext,
+  );
 }

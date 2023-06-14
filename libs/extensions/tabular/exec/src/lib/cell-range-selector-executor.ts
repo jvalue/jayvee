@@ -10,7 +10,7 @@ import {
   Sheet,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
-import { IOType } from '@jvalue/jayvee-language-server';
+import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
 export class CellRangeSelectorExecutor
@@ -25,7 +25,10 @@ export class CellRangeSelectorExecutor
     inputSheet: Sheet,
     context: ExecutionContext,
   ): Promise<R.Result<Sheet>> {
-    const relativeRange = context.getCellRangePropertyValue('select');
+    const relativeRange = context.getPropertyValue(
+      'select',
+      PrimitiveValuetypes.CellRange,
+    );
 
     const absoluteRange = inputSheet.resolveRelativeIndexes(relativeRange);
 

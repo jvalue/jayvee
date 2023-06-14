@@ -3,12 +3,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /**
- * See the FAQ section of README.md for an explanation why the following ESLint rule is disabled for this file.
+ * See https://jvalue.github.io/jayvee/docs/dev/working-with-the-ast for why the following ESLint rule is disabled for this file.
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
 import { assertUnreachable } from 'langium';
 
+import { EvaluationContext } from '../../ast/expressions/evaluation';
 import {
   TransformBody,
   TransformPortDefinition,
@@ -26,18 +27,23 @@ import {
 
 export function validateTransformBody(
   transformBody: TransformBody,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ): void {
-  checkUniqueNames(transformBody.ports, context, 'transform port');
-  checkUniqueOutputAssignments(transformBody, context);
+  checkUniqueNames(transformBody.ports, validationContext, 'transform port');
+  checkUniqueOutputAssignments(transformBody, validationContext);
 
-  checkSinglePortOfKind(transformBody, 'from', context);
-  checkSinglePortOfKind(transformBody, 'to', context);
+  checkSinglePortOfKind(transformBody, 'from', validationContext);
+  checkSinglePortOfKind(transformBody, 'to', validationContext);
 
-  checkAreInputsUsed(transformBody, context);
+  checkAreInputsUsed(transformBody, validationContext);
 
   for (const property of transformBody.outputAssignments) {
-    validateTransformOutputAssignment(property, context);
+    validateTransformOutputAssignment(
+      property,
+      validationContext,
+      evaluationContext,
+    );
   }
 }
 

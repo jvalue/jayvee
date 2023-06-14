@@ -17,7 +17,7 @@ import {
   None,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
-import { IOType } from '@jvalue/jayvee-language-server';
+import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 
 import {
   inferFileExtensionFromContentTypeString,
@@ -39,7 +39,7 @@ export class HttpExtractorExecutor
     input: None,
     context: ExecutionContext,
   ): Promise<R.Result<BinaryFile>> {
-    const url = context.getTextPropertyValue('url');
+    const url = context.getPropertyValue('url', PrimitiveValuetypes.Text);
 
     const file = await this.fetchRawDataAsFile(url, context);
 
@@ -99,7 +99,11 @@ export class HttpExtractorExecutor
 
           // Infer FileName and FileExtension from url, if not inferrable, then default to None
           // Get last element of URL assuming this is a filename
-          const url = new URL(context.getTextPropertyValue('url'));
+          const urlString = context.getPropertyValue(
+            'url',
+            PrimitiveValuetypes.Text,
+          );
+          const url = new URL(urlString);
           let fileName = url.pathname.split('/').pop();
           if (fileName === undefined) {
             fileName = url.pathname.replace('/', '-');

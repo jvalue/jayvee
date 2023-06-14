@@ -6,12 +6,10 @@ import {
   BlockMetaInformation,
   EvaluationContext,
   IOType,
-  NUMBER_TYPEGUARD,
   PrimitiveValuetypes,
   PropertyAssignment,
   ValidationContext,
-  evaluatePropertyValueExpression,
-  isRuntimeParameterLiteral,
+  evaluatePropertyValue,
 } from '@jvalue/jayvee-language-server';
 
 export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
@@ -36,7 +34,7 @@ export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
       // Output type:
       IOType.TEXT_FILE,
 
-      (propertyBody, context) => {
+      (propertyBody, validationContext, evaluationContext) => {
         const lineFromProperty = propertyBody.properties.find(
           (p) => p.name === 'lineFrom',
         );
@@ -48,28 +46,23 @@ export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
           return;
         }
 
-        if (
-          isRuntimeParameterLiteral(lineFromProperty.value) ||
-          isRuntimeParameterLiteral(lineToProperty.value)
-        ) {
-          // We currently ignore runtime parameters during validation.
+        const lineFrom = evaluatePropertyValue(
+          lineFromProperty,
+          evaluationContext,
+          PrimitiveValuetypes.Integer,
+        );
+        const lineTo = evaluatePropertyValue(
+          lineToProperty,
+          evaluationContext,
+          PrimitiveValuetypes.Integer,
+        );
+        if (lineFrom === undefined || lineTo === undefined) {
           return;
         }
 
-        const lineFrom = evaluatePropertyValueExpression(
-          lineFromProperty.value,
-          new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
-          NUMBER_TYPEGUARD,
-        );
-        const lineTo = evaluatePropertyValueExpression(
-          lineToProperty.value,
-          new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
-          NUMBER_TYPEGUARD,
-        );
-
         if (lineFrom > lineTo) {
           [lineFromProperty, lineToProperty].forEach((property) => {
-            context.accept(
+            validationContext.accept(
               'error',
               'The lower line number needs to be smaller or equal to the upper line number',
               { node: property.value },
@@ -84,23 +77,25 @@ export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
 
 function greaterThanZeroValidation(
   property: PropertyAssignment,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ) {
-  const propertyValue = property.value;
-
-  if (isRuntimeParameterLiteral(propertyValue)) {
-    // We currently ignore runtime parameters during validation.
+  const value = evaluatePropertyValue(
+    property,
+    evaluationContext,
+    PrimitiveValuetypes.Integer,
+  );
+  if (value === undefined) {
     return;
   }
-  const value = evaluatePropertyValueExpression(
-    propertyValue,
-    new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
-    NUMBER_TYPEGUARD,
-  );
 
   if (value <= 0) {
-    context.accept('error', `Line numbers need to be greater than zero`, {
-      node: propertyValue,
-    });
+    validationContext.accept(
+      'error',
+      `Line numbers need to be greater than zero`,
+      {
+        node: property.value,
+      },
+    );
   }
 }

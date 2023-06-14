@@ -214,13 +214,14 @@ import {
   Sheet,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
+import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
 export class MyExtractorExecutor
-        implements BlockExecutor<IOType.NONE, IOType.SHEET>
+  implements BlockExecutor<IOType.NONE, IOType.SHEET>
 {
   // Needs to match the type in meta information:
-  public static readonly type = 'CellRangeSelector';
+  public static readonly type = 'MyExtractor';
   
   public readonly inputType = IOType.NONE;
   public readonly outputType = IOType.SHEET;
@@ -230,8 +231,14 @@ export class MyExtractorExecutor
     context: ExecutionContext,
   ): Promise<R.Result<Sheet>> {
     // Accessing property values by their name:
-    const url = context.getTextPropertyValue('url');
-    const limit = context.getNumericPropertyValue('limit');
+    const url = context.getPropertyValue(
+      'url',
+      PrimitiveValuetypes.Text,
+    );
+    const limit = context.getPropertyValue(
+      'limit',
+      PrimitiveValuetypes.Integer,
+    );
     
     // ...
 

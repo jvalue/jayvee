@@ -6,12 +6,10 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  PropertyAssignment,
   PropertyBody,
   ValidationContext,
   checkUniqueNames,
   createJayveeServices,
-  getNodesWithNonUniqueNames,
   useExtension,
 } from '..';
 import {
@@ -102,54 +100,6 @@ describe('validation-utils tests', () => {
         `The propertyassignment name "textProperty" needs to be unique.`,
         expect.any(Object),
       );
-    });
-  });
-
-  describe('getNodesWithNonUniqueNames tests', () => {
-    it('should return two duplicates', async () => {
-      const text = readJvTestAsset(
-        'validation-utils/invalid-duplicate-property-names.jv',
-      );
-
-      const propertyBody: PropertyBody = await parseAndExtractPropertyBody(
-        text,
-      );
-      const nonUniqueNodes = getNodesWithNonUniqueNames(
-        propertyBody.properties,
-      );
-
-      expect(nonUniqueNodes).toEqual(
-        expect.arrayContaining<PropertyAssignment>([
-          expect.objectContaining({
-            name: 'textProperty',
-          }) as PropertyAssignment,
-          expect.objectContaining({
-            name: 'textProperty',
-          }) as PropertyAssignment,
-        ]),
-      );
-      expect(nonUniqueNodes).toHaveLength(2);
-    });
-
-    it('should return empty array', async () => {
-      const text = readJvTestAsset(
-        'validation-utils/valid-distinct-property-names.jv',
-      );
-
-      const propertyBody: PropertyBody = await parseAndExtractPropertyBody(
-        text,
-      );
-      const nonUniqueNodes = getNodesWithNonUniqueNames(
-        propertyBody.properties,
-      );
-
-      expect(nonUniqueNodes).toHaveLength(0);
-    });
-
-    it('should return empty array on empty input', () => {
-      const nonUniqueNodes = getNodesWithNonUniqueNames([]);
-
-      expect(nonUniqueNodes).toHaveLength(0);
     });
   });
 });

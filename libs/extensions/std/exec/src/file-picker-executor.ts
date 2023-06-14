@@ -13,7 +13,7 @@ import {
   FileSystem,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
-import { IOType } from '@jvalue/jayvee-language-server';
+import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
 export class FilePickerExecutor
@@ -28,7 +28,8 @@ export class FilePickerExecutor
     fileSystem: FileSystem,
     context: ExecutionContext,
   ): Promise<R.Result<BinaryFile | null>> {
-    const file = fileSystem.getFile(context.getTextPropertyValue('path'));
+    const path = context.getPropertyValue('path', PrimitiveValuetypes.Text);
+    const file = fileSystem.getFile(path);
     assert(file instanceof BinaryFile);
     return R.ok(file);
   }

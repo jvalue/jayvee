@@ -2,8 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { PropertyBody } from '../ast/generated/ast';
 // eslint-disable-next-line import/no-cycle
+import { EvaluationContext } from '../ast/expressions/evaluation';
+import { PropertyBody } from '../ast/generated/ast';
 import { IOType } from '../ast/model-util';
 import { ValidationContext } from '../validation/validation-context';
 
@@ -22,7 +23,11 @@ export abstract class BlockMetaInformation extends MetaInformation {
     properties: Record<string, PropertySpecification>,
     public readonly inputType: IOType,
     public readonly outputType: IOType,
-    validation?: (property: PropertyBody, context: ValidationContext) => void,
+    validation?: (
+      property: PropertyBody,
+      validationContext: ValidationContext,
+      evaluationContext: EvaluationContext,
+    ) => void,
   ) {
     super(blockType, properties, validation);
   }

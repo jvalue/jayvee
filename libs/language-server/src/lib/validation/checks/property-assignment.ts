@@ -3,11 +3,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /**
- * See the FAQ section of README.md for an explanation why the following ESLint rule is disabled for this file.
+ * See https://jvalue.github.io/jayvee/docs/dev/working-with-the-ast for why the following ESLint rule is disabled for this file.
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { inferExpressionType } from '../../ast';
+import { EvaluationContext, inferExpressionType } from '../../ast';
 import {
   PropertyAssignment,
   isRuntimeParameterLiteral,
@@ -22,16 +22,22 @@ import { checkExpressionSimplification } from '../validation-util';
 export function validatePropertyAssignment(
   property: PropertyAssignment,
   metaInf: MetaInformation,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ): void {
-  const propertySpec = metaInf.getPropertySpecification(property.name);
+  const propertySpec = metaInf.getPropertySpecification(property?.name);
 
-  checkPropertyNameValidity(property, propertySpec, context);
+  checkPropertyNameValidity(property, propertySpec, validationContext);
 
   if (propertySpec === undefined) {
     return;
   }
-  checkPropertyValueTyping(property, propertySpec, context);
+  checkPropertyValueTyping(
+    property,
+    propertySpec,
+    validationContext,
+    evaluationContext,
+  );
 }
 
 function checkPropertyNameValidity(
@@ -40,54 +46,60 @@ function checkPropertyNameValidity(
   context: ValidationContext,
 ): void {
   if (propertySpec === undefined) {
-    context.accept('error', `Invalid property name "${property.name}".`, {
-      node: property,
-      property: 'name',
-    });
+    context.accept(
+      'error',
+      `Invalid property name "${property?.name ?? ''}".`,
+      {
+        node: property,
+        property: 'name',
+      },
+    );
   }
 }
 
 function checkPropertyValueTyping(
   property: PropertyAssignment,
   propertySpec: PropertySpecification,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ): void {
   const propertyType = propertySpec.type;
-
-  if (property.value === undefined) {
+  const propertyValue = property?.value;
+  if (propertyValue === undefined) {
     return;
   }
-  const propertyValue = property.value;
 
   if (isRuntimeParameterLiteral(propertyValue)) {
     if (!propertyType.isAllowedAsRuntimeParameter()) {
-      context.accept(
+      validationContext.accept(
         'error',
         `Runtime parameters are not allowed for properties of type ${propertyType.getName()}`,
         {
-          node: property,
-          property: 'name',
+          node: propertyValue,
         },
       );
     }
     return;
   }
-  const inferredType = inferExpressionType(propertyValue, context);
+  const inferredType = inferExpressionType(propertyValue, validationContext);
   if (inferredType === undefined) {
     return;
   }
 
   if (!inferredType.isConvertibleTo(propertyType)) {
-    context.accept(
+    validationContext.accept(
       'error',
       `The value needs to be of type ${propertyType.getName()} but is of type ${inferredType.getName()}`,
       {
-        node: property,
-        property: 'value',
+        node: propertyValue,
       },
     );
     return;
   }
 
-  checkExpressionSimplification(propertyValue, context);
+  checkExpressionSimplification(
+    propertyValue,
+    validationContext,
+    evaluationContext,
+  );
 }

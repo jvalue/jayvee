@@ -19,12 +19,15 @@ const INTEGER_REGEX = /^[+-]?[0-9]+$/;
 const TRUE_REGEX = /^true$/i;
 const FALSE_REGEX = /^false$/i;
 
-export function parseValueToInternalRepresentation(
-  value: string,
-  valuetype: Valuetype,
-): InternalValueRepresentation | undefined {
+export function parseValueToInternalRepresentation<
+  I extends InternalValueRepresentation,
+>(value: string, valuetype: Valuetype<I>): I | undefined {
   const visitor = new InternalRepresentationParserVisitor(value);
-  return valuetype.acceptVisitor(visitor);
+  const result = valuetype.acceptVisitor(visitor);
+  if (!valuetype.isInternalValueRepresentation(result)) {
+    return undefined;
+  }
+  return result;
 }
 
 class InternalRepresentationParserVisitor extends ValuetypeVisitor<

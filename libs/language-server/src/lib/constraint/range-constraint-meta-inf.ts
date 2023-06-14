@@ -2,15 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { isRuntimeParameterLiteral } from '../ast';
-import {
-  EvaluationContext,
-  evaluatePropertyValueExpression,
-} from '../ast/expressions/evaluation';
-import {
-  BOOLEAN_TYPEGUARD,
-  NUMBER_TYPEGUARD,
-} from '../ast/expressions/typeguards';
+import { evaluatePropertyValue } from '../ast/expressions/evaluation';
 import { PrimitiveValuetypes } from '../ast/wrappers/value-type';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 
@@ -37,7 +29,7 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
         },
       },
       PrimitiveValuetypes.Decimal,
-      (propertyBody, context) => {
+      (propertyBody, validationContext, evaluationContext) => {
         const lowerBoundProperty = propertyBody.properties.find(
           (p) => p.name === 'lowerBound',
         );
@@ -52,28 +44,23 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
           return;
         }
 
-        if (
-          isRuntimeParameterLiteral(lowerBoundProperty.value) ||
-          isRuntimeParameterLiteral(upperBoundProperty.value)
-        ) {
-          // We currently ignore runtime parameters during validation.
+        const lowerBound = evaluatePropertyValue(
+          lowerBoundProperty,
+          evaluationContext,
+          PrimitiveValuetypes.Decimal,
+        );
+        const upperBound = evaluatePropertyValue(
+          upperBoundProperty,
+          evaluationContext,
+          PrimitiveValuetypes.Decimal,
+        );
+        if (lowerBound === undefined || upperBound === undefined) {
           return;
         }
 
-        const lowerBound = evaluatePropertyValueExpression(
-          lowerBoundProperty.value,
-          new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
-          NUMBER_TYPEGUARD,
-        );
-        const upperBound = evaluatePropertyValueExpression(
-          upperBoundProperty.value,
-          new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
-          NUMBER_TYPEGUARD,
-        );
-
         if (lowerBound > upperBound) {
           [lowerBoundProperty, upperBoundProperty].forEach((property) => {
-            context.accept(
+            validationContext.accept(
               'error',
               'The lower bound needs to be smaller or equal to the upper bound',
               { node: property.value },
@@ -92,42 +79,40 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
         if (lowerBound === upperBound) {
           let lowerBoundInclusive = true;
           if (lowerBoundInclusiveProperty !== undefined) {
-            if (isRuntimeParameterLiteral(lowerBoundInclusiveProperty.value)) {
-              // We currently ignore runtime parameters during validation.
+            const expressionValue = evaluatePropertyValue(
+              lowerBoundInclusiveProperty,
+              evaluationContext,
+              PrimitiveValuetypes.Boolean,
+            );
+            if (expressionValue === undefined) {
               return;
             }
-            const expressionValue = evaluatePropertyValueExpression(
-              lowerBoundInclusiveProperty.value,
-              new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
-              BOOLEAN_TYPEGUARD,
-            );
             lowerBoundInclusive = expressionValue;
           }
 
           let upperBoundInclusive = true;
           if (upperBoundInclusiveProperty !== undefined) {
-            if (isRuntimeParameterLiteral(upperBoundInclusiveProperty.value)) {
-              // We currently ignore runtime parameters during validation.
+            const expressionValue = evaluatePropertyValue(
+              upperBoundInclusiveProperty,
+              evaluationContext,
+              PrimitiveValuetypes.Boolean,
+            );
+            if (expressionValue === undefined) {
               return;
             }
-            const expressionValue = evaluatePropertyValueExpression(
-              upperBoundInclusiveProperty.value,
-              new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
-              BOOLEAN_TYPEGUARD,
-            );
             upperBoundInclusive = expressionValue;
           }
 
           const errorMessage =
             'Lower and upper bounds need to be inclusive if they are identical';
           if (!lowerBoundInclusive) {
-            context.accept('error', errorMessage, {
+            validationContext.accept('error', errorMessage, {
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               node: lowerBoundInclusiveProperty!.value,
             });
           }
           if (!upperBoundInclusive) {
-            context.accept('error', errorMessage, {
+            validationContext.accept('error', errorMessage, {
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               node: upperBoundInclusiveProperty!.value,
             });

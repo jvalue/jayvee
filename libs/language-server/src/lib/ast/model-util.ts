@@ -21,7 +21,10 @@ export function collectStartingBlocks(
   pipeline: PipelineDefinition,
 ): BlockDefinition[] {
   const result: BlockDefinition[] = [];
-  for (const block of pipeline.blocks) {
+
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const blocks = pipeline?.blocks ?? [];
+  for (const block of blocks) {
     const blockMetaInf = getMetaInformation(block.type);
     if (blockMetaInf === undefined) {
       continue;
@@ -65,6 +68,8 @@ function collectPipes(
         return semanticPipe.from === block;
       case 'ingoing':
         return semanticPipe.to === block;
+      case undefined:
+        return false;
     }
     return assertUnreachable(kind);
   });

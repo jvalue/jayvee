@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /**
- * See the FAQ section of README.md for an explanation why the following ESLint rule is disabled for this file.
+ * See https://jvalue.github.io/jayvee/docs/dev/working-with-the-ast for why the following ESLint rule is disabled for this file.
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
@@ -12,16 +12,17 @@ import { strict as assert } from 'assert';
 import { assertUnreachable } from 'langium';
 
 import {
+  CollectionLiteral,
+  CollectionValuetype,
   ConstraintDefinition,
   EvaluationContext,
-  Expression,
   PrimitiveValuetypes,
   Valuetype,
   createValuetype,
   evaluateExpression,
+  inferExpressionType,
   isExpressionConstraintDefinition,
   isTypedConstraintDefinition,
-  validateTypedCollection,
 } from '../../ast';
 import { ValuetypeDefinition } from '../../ast/generated/ast';
 import { getMetaInformation } from '../../meta-information/meta-inf-registry';
@@ -29,10 +30,15 @@ import { ValidationContext } from '../validation-context';
 
 export function validateValuetypeDefinition(
   valuetype: ValuetypeDefinition,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ): void {
-  checkSupertypeCycle(valuetype, context);
-  checkConstraintsCollectionValues(valuetype, context);
+  checkSupertypeCycle(valuetype, validationContext);
+  checkConstraintsCollectionValues(
+    valuetype,
+    validationContext,
+    evaluationContext,
+  );
 }
 
 function checkSupertypeCycle(
@@ -55,45 +61,56 @@ function checkSupertypeCycle(
 
 function checkConstraintsCollectionValues(
   valuetype: ValuetypeDefinition,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ): void {
   const constraintCollection = valuetype?.constraints;
   if (constraintCollection === undefined) {
     return;
   }
 
-  const { validItems, invalidItems } = validateTypedCollection(
+  const inferredCollectionType = inferExpressionType(
     constraintCollection,
-    [PrimitiveValuetypes.Constraint],
-    context,
+    validationContext,
   );
-
-  invalidItems.forEach((expression) => {
-    context.accept('error', 'Only constraints are allowed in this collection', {
-      node: expression,
-    });
-  });
-
-  validItems.forEach((expression) => {
-    const constraint = evaluateExpression(
-      expression,
-      new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
-      context,
+  const expectedType = new CollectionValuetype(PrimitiveValuetypes.Constraint);
+  if (inferredCollectionType === undefined) {
+    return;
+  }
+  if (!inferredCollectionType.isConvertibleTo(expectedType)) {
+    validationContext.accept(
+      'error',
+      `The value needs to be of type ${expectedType.getName()} but is of type ${inferredCollectionType.getName()}`,
+      {
+        node: constraintCollection,
+      },
     );
-    if (constraint === undefined) {
-      return;
-    }
-    assert(
-      PrimitiveValuetypes.Constraint.isInternalValueRepresentation(constraint),
+    return;
+  }
+
+  const constraints = evaluateExpression(
+    constraintCollection,
+    evaluationContext,
+    validationContext,
+  );
+  assert(expectedType.isInternalValueRepresentation(constraints));
+
+  constraints.forEach((constraint, index) => {
+    checkConstraintMatchesValuetype(
+      valuetype,
+      constraint,
+      constraintCollection,
+      index,
+      validationContext,
     );
-    checkConstraintMatchesValuetype(valuetype, constraint, expression, context);
   });
 }
 
 function checkConstraintMatchesValuetype(
   valuetypeDefinition: ValuetypeDefinition,
   constraint: ConstraintDefinition,
-  diagnosticNode: Expression,
+  diagnosticNode: CollectionLiteral,
+  diagnosticIndex: number,
   context: ValidationContext,
 ): void {
   const actualValuetype = createValuetype(valuetypeDefinition);
@@ -111,6 +128,8 @@ function checkConstraintMatchesValuetype(
       }"`,
       {
         node: diagnosticNode,
+        property: 'values',
+        index: diagnosticIndex,
       },
     );
   }

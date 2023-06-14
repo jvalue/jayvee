@@ -4,12 +4,10 @@
 
 import {
   BlockMetaInformation,
-  EvaluationContext,
+  CollectionValuetype,
   IOType,
   PrimitiveValuetypes,
-  STRING_TYPEGUARD,
-  evaluatePropertyValueExpression,
-  isRuntimeParameterLiteral,
+  evaluatePropertyValue,
 } from '../../../lib';
 
 export class TestPropertyMetaInformation extends BlockMetaInformation {
@@ -25,22 +23,16 @@ export class TestPropertyMetaInformation extends BlockMetaInformation {
         customValidationTextProperty: {
           type: PrimitiveValuetypes.Text,
           defaultValue: 'valid',
-          validation: (property, context) => {
-            const propertyValue = property.value;
-            if (isRuntimeParameterLiteral(propertyValue)) {
-              // We currently ignore runtime parameters during validation.
-              return;
-            }
-
-            const value = evaluatePropertyValueExpression(
-              propertyValue,
-              new EvaluationContext(), // we don't know values of runtime parameters or variables at this point
-              STRING_TYPEGUARD,
+          validation: (property, validationContext, evaluationContext) => {
+            const value = evaluatePropertyValue(
+              property,
+              evaluationContext,
+              PrimitiveValuetypes.Text,
             );
 
-            if (value !== 'valid') {
-              context.accept('error', `Invalid value "${value}"`, {
-                node: propertyValue,
+            if (value !== undefined && value !== 'valid') {
+              validationContext.accept('error', `Invalid value "${value}"`, {
+                node: property.value,
               });
             }
           },
@@ -61,8 +53,8 @@ export class TestPropertyMetaInformation extends BlockMetaInformation {
           type: PrimitiveValuetypes.Regex,
           defaultValue: /\r?\n/,
         },
-        collectionProperty: {
-          type: PrimitiveValuetypes.Collection,
+        textCollectionProperty: {
+          type: new CollectionValuetype(PrimitiveValuetypes.Text),
           defaultValue: [],
         },
       },
