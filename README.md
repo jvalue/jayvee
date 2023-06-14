@@ -76,28 +76,28 @@ npm run generate
 
 ### Examples
 
-#### Load data about cars into a local SQLite db
+#### Load data about cars into a local SQLite DB
 
 ```bash
 npm run example:cars
 ```
 
-#### Load GTFS data into SQLite db
+#### Load GTFS data into a local SQLite DB
 
 ```bash
 npm run example:gtfs
 ```
 
-#### Load data about german gas reserves into a postgres database
+#### Load data about electric vehicles into local Postgres and SQLite DBs
 
-1. Start postgres database
+1. Start the Postgres database locally
 
 ```bash
 docker compose -f ./example/docker-compose.example.yml up
 ```
 
-2. Run example
+2. Run the Jayvee model
 
 ```bash
-npm run example:gas
+npm run example:vehicles
 ```
