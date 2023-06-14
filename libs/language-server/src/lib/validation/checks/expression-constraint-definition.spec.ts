@@ -71,7 +71,7 @@ describe('expression-constraint-definition validation tests', () => {
     validationAcceptorMock.mockReset();
   });
 
-  it('should have no error on valid expresion constraint', async () => {
+  it('should have no error on valid expression constraint', async () => {
     const text = readJvTestAsset(
       'expression-constraint-definition/valid-text-constraint.jv',
     );
