@@ -4,6 +4,6 @@
 
 valuetype ValueType oftype text {
 	constraints: [
-    UnknownConstraint
+    10 > 9
   ];
 }

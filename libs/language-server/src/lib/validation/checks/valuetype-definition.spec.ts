@@ -87,8 +87,6 @@ describe('valuetype-definition validation tests', () => {
 
     await parseAndValidateValuetypeDefinition(text);
 
-    // TODO FIND OUT HOW THAT WORKS
-
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
@@ -97,9 +95,9 @@ describe('valuetype-definition validation tests', () => {
     );
   });
 
-  it('error on unknown constraint', async () => {
+  it('error on invalid constraints item', async () => {
     const text = readJvTestAsset(
-      'valuetype-definition/invalid-unknown-constraint.jv',
+      'valuetype-definition/invalid-invalid-constraints-item.jv',
     );
 
     await parseAndValidateValuetypeDefinition(text);
@@ -107,7 +105,7 @@ describe('valuetype-definition validation tests', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
-      `Only constraints are allowed in this collection`,
+      `The value needs to be of type collection<constraint> but is of type collection<boolean>`,
       expect.any(Object),
     );
   });
