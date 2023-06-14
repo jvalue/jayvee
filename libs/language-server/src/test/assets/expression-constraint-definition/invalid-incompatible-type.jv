@@ -2,12 +2,5 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pipeline Pipeline {
-  block Test oftype TestProperty {
-    textProperty: '';
-    integerProperty: 345 + '';
-  }
-}
-
 constraint Constraint on text:
 	value.length + 10;
