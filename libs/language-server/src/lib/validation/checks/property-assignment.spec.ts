@@ -27,7 +27,7 @@ import { TestLangExtension } from '../../../test/extension';
 
 import { validatePropertyAssignment } from './property-assignment';
 
-describe('property-assignment validation tests', () => {
+describe('Validation of PropertyAssignment', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
@@ -83,7 +83,7 @@ describe('property-assignment validation tests', () => {
     validationAcceptorMock.mockReset();
   });
 
-  it('error on invalid property name', async () => {
+  it('should diagnose error on invalid property name', async () => {
     const text = readJvTestAsset(
       'property-assignment/invalid-unknown-property.jv',
     );
@@ -98,7 +98,7 @@ describe('property-assignment validation tests', () => {
     );
   });
 
-  describe('runtime parameter for property', () => {
+  describe('Validation of RuntimeParameterLiteral assignment', () => {
     it('should have no error on runtime parameter for text property', async () => {
       const text = readJvTestAsset(
         'property-assignment/valid-runtime-property.jv',
@@ -109,7 +109,7 @@ describe('property-assignment validation tests', () => {
       expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
     });
 
-    it('error on runtime parameter for regex property', async () => {
+    it('should diagnose error on runtime parameter for regex property', async () => {
       const text = readJvTestAsset(
         'property-assignment/invalid-runtime-property.jv',
       );
@@ -125,7 +125,7 @@ describe('property-assignment validation tests', () => {
     });
   });
 
-  it('error on invalid property typing', async () => {
+  it('should diagnose error on invalid property typing', async () => {
     const text = readJvTestAsset(
       'property-assignment/invalid-property-type.jv',
     );
@@ -140,7 +140,7 @@ describe('property-assignment validation tests', () => {
     );
   });
 
-  it('info on simplifiable property expression', async () => {
+  it('should diagnose info on simplifiable property expression', async () => {
     const text = readJvTestAsset('property-assignment/valid-simplify-info.jv');
 
     await parseAndValidatePropertyAssignment(text);
@@ -153,7 +153,7 @@ describe('property-assignment validation tests', () => {
     );
   });
 
-  it('info on simplifiable property sub-expression', async () => {
+  it('should diagnose info on simplifiable property sub-expression', async () => {
     const text = readJvTestAsset(
       'property-assignment/valid-simplify-info-sub-expression.jv',
     );
@@ -168,7 +168,7 @@ describe('property-assignment validation tests', () => {
     );
   });
 
-  it('info on non simplifiable property expression', async () => {
+  it('should diagnose info on non simplifiable property expression', async () => {
     const text = readJvTestAsset(
       'property-assignment/valid-uneccessarysimplify-info.jv',
     );

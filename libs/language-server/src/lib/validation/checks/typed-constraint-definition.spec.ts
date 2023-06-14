@@ -22,7 +22,7 @@ import { TestLangExtension } from '../../../test/extension';
 
 import { validateTypedConstraintDefinition } from './typed-constraint-definition';
 
-describe('typed-constraint-definition validation tests', () => {
+describe('Validation of ConstraintDefinition (typed syntax)', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
@@ -77,7 +77,7 @@ describe('typed-constraint-definition validation tests', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
 
-  it('error on unknown constraint type', async () => {
+  it('should diagnose error on unknown constraint type', async () => {
     const text = readJvTestAsset(
       'typed-constraint-definition/invalid-unknown-constraint-type.jv',
     );

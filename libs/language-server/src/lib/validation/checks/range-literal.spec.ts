@@ -22,7 +22,7 @@ import { TestLangExtension } from '../../../test/extension';
 
 import { validateRangeLiteral } from './range-literal';
 
-describe('range-literal validation tests', () => {
+describe('Validation of RangeLiteral', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
@@ -75,7 +75,7 @@ describe('range-literal validation tests', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
 
-  it('error on wrong range direction', async () => {
+  it('should diagnose error on wrong range direction', async () => {
     const text = readJvTestAsset(
       'range-literal/invalid-range-literal-start-after-end.jv',
     );

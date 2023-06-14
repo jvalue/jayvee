@@ -22,7 +22,7 @@ import { TestLangExtension } from '../../../test/extension';
 
 import { validatePipeDefinition } from './pipe-definition';
 
-describe('pipe-definition validation tests', () => {
+describe('Validation of PipeDefinition', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
@@ -64,7 +64,7 @@ describe('pipe-definition validation tests', () => {
     validationAcceptorMock.mockReset();
   });
 
-  describe('single pipe', () => {
+  describe('SinglePipeDefinition syntax', () => {
     // This test should succeed, because the error is thrown by langium during linking, not during validation!
     it('should have no error even if pipe references non existing block', async () => {
       const text = readJvTestAsset(
@@ -86,7 +86,7 @@ describe('pipe-definition validation tests', () => {
       expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
     });
 
-    it('error on unsupported pipe between Blocktypes', async () => {
+    it('should diagnose error on unsupported pipe between Blocktypes', async () => {
       const text = readJvTestAsset(
         'pipe-definition/single/invalid-pipe-between-blocktypes.jv',
       );
@@ -103,7 +103,7 @@ describe('pipe-definition validation tests', () => {
     });
   });
 
-  describe('chained pipe', () => {
+  describe('ChainedPipeDefinition syntax', () => {
     // This test should succeed, because the error is thrown by langium during linking, not during validation!
     it('should have no error even if pipe references non existing block', async () => {
       const text = readJvTestAsset(
@@ -125,7 +125,7 @@ describe('pipe-definition validation tests', () => {
       expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
     });
 
-    it('error on unsupported pipe between Blocktypes', async () => {
+    it('should diagnose error on unsupported pipe between Blocktypes', async () => {
       const text = readJvTestAsset(
         'pipe-definition/chained/invalid-pipe-between-blocktypes.jv',
       );

@@ -22,7 +22,7 @@ import { TestLangExtension } from '../../../test/extension';
 
 import { validateBlockDefinition } from './block-definition';
 
-describe('block-definition validation tests', () => {
+describe('Validation of BlockDefinition', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
@@ -67,7 +67,7 @@ describe('block-definition validation tests', () => {
     validationAcceptorMock.mockReset();
   });
 
-  it('error on unknown block type', async () => {
+  it('should diagnose error on unknown block type', async () => {
     const text = readJvTestAsset('block-definition/invalid-unknown-block.jv');
 
     await parseAndValidateBlock(text);
@@ -80,7 +80,7 @@ describe('block-definition validation tests', () => {
     );
   });
 
-  it('error on block without pipe', async () => {
+  it('should diagnose error on block without pipe', async () => {
     const text = readJvTestAsset('block-definition/invalid-missing-pipe.jv');
 
     await parseAndValidateBlock(text);
@@ -93,7 +93,7 @@ describe('block-definition validation tests', () => {
     );
   });
 
-  it('error on block as output without output', async () => {
+  it('should diagnose error on block as output without having an output', async () => {
     const text = readJvTestAsset(
       'block-definition/invalid-output-block-as-input.jv',
     );
@@ -108,7 +108,7 @@ describe('block-definition validation tests', () => {
     );
   });
 
-  it('error on block as input for multiple pipes', async () => {
+  it('should diagnose error on block as input for multiple pipes', async () => {
     const text = readJvTestAsset(
       'block-definition/invalid-block-as-multiple-pipe-inputs.jv',
     );

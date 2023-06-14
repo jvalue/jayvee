@@ -24,7 +24,7 @@ import { TestLangExtension } from '../../../test/extension';
 
 import { validateExpressionConstraintDefinition } from './expression-constraint-definition';
 
-describe('expression-constraint-definition validation tests', () => {
+describe('Validation of ConstraintDefinition (expression syntax)', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
@@ -81,7 +81,7 @@ describe('expression-constraint-definition validation tests', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
 
-  it('error on incompatible type', async () => {
+  it('should diagnose error on incompatible type', async () => {
     const text = readJvTestAsset(
       'expression-constraint-definition/invalid-incompatible-type.jv',
     );

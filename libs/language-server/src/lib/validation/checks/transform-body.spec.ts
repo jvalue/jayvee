@@ -24,7 +24,7 @@ import { TestLangExtension } from '../../../test/extension';
 
 import { validateTransformBody } from './transform-body';
 
-describe('transform-body validation tests', () => {
+describe('Validation of TransformBody', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
@@ -78,7 +78,7 @@ describe('transform-body validation tests', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
 
-  it('error on duplicate port names', async () => {
+  it('should diagnose error on duplicate port names', async () => {
     const text = readJvTestAsset('transform-body/invalid-duplicate-ports.jv');
 
     await parseAndValidateTransformBody(text);
@@ -91,7 +91,7 @@ describe('transform-body validation tests', () => {
     );
   });
 
-  it('error on missing output assignment', async () => {
+  it('should diagnose error on missing output assignment', async () => {
     const text = readJvTestAsset(
       'transform-body/invalid-missing-output-assignment.jv',
     );
@@ -111,7 +111,7 @@ describe('transform-body validation tests', () => {
     );
   });
 
-  it('error on multiple output assignments', async () => {
+  it('should diagnose error on multiple output assignments', async () => {
     const text = readJvTestAsset(
       'transform-body/invalid-multiple-output-assignments.jv',
     );
@@ -126,7 +126,7 @@ describe('transform-body validation tests', () => {
     );
   });
 
-  it('error on multiple output ports', async () => {
+  it('should diagnose error on multiple output ports', async () => {
     const text = readJvTestAsset(
       'transform-body/invalid-multiple-output-ports.jv',
     );
@@ -141,7 +141,7 @@ describe('transform-body validation tests', () => {
     );
   });
 
-  it('error on missing output ports', async () => {
+  it('should diagnose error on missing output ports', async () => {
     const text = readJvTestAsset(
       'transform-body/invalid-missing-output-port.jv',
     );
@@ -156,7 +156,7 @@ describe('transform-body validation tests', () => {
     );
   });
 
-  it('error on multiple input ports', async () => {
+  it('should diagnose error on multiple input ports', async () => {
     const text = readJvTestAsset(
       'transform-body/invalid-multiple-input-ports.jv',
     );
@@ -176,7 +176,7 @@ describe('transform-body validation tests', () => {
     );
   });
 
-  it('error on missing input ports', async () => {
+  it('should diagnose error on missing input ports', async () => {
     const text = readJvTestAsset(
       'transform-body/invalid-missing-input-port.jv',
     );

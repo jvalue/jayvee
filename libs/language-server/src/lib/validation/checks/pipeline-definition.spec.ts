@@ -22,7 +22,7 @@ import { TestLangExtension } from '../../../test/extension';
 
 import { validatePipelineDefinition } from './pipeline-definition';
 
-describe('pipeline-definition validation tests', () => {
+describe('Validation of PipelineDefinition', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
@@ -67,7 +67,7 @@ describe('pipeline-definition validation tests', () => {
     validationAcceptorMock.mockReset();
   });
 
-  it('error on missing extractor block', async () => {
+  it('should diagnose error on missing extractor block', async () => {
     const text = readJvTestAsset(
       'pipeline-definition/invalid-empty-pipeline.jv',
     );
