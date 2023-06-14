@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 transform Transform {
-  to Output oftype integer;
+  to output oftype integer;
 
-  Output: floor(Input);
+  output: floor(input);
 }
