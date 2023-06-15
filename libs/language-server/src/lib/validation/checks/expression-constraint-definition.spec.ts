@@ -96,7 +96,7 @@ describe('Validation of ConstraintDefinition (expression syntax)', () => {
     );
   });
 
-  it('info on simplifiable expression constraint', async () => {
+  it('should diagnose info on simplifiable expression constraint', async () => {
     const text = readJvTestAsset(
       'expression-constraint-definition/valid-simplify-info.jv',
     );
