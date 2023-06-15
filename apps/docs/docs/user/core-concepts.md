@@ -116,3 +116,6 @@ valuetype GasFillLevel oftype integer {
     constraints: [ GasFillLevelRange ];
 }
 ```
+
+### Transforms
+`Transforms` are used to transform data from one `ValueType` to a different one. For more details, see [Transforms](./transforms.md)
