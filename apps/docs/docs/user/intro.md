@@ -14,6 +14,19 @@ Install the interpreter via `npm`. You will need a **nodejs version >= 17.0.0**.
 npm install -g @jvalue/jayvee-interpreter
 ```
 
+You can install a specific version using the `@`-syntax, e.g., version `0.0.16`:
+```bash
+npm install -g @jvalue/jayvee-interpreter@0.0.16
+```
+
+## Update
+
+Updating the interpreter is done by reinstalling it using `npm`. Make sure to also update the [VSCode plugin](#vscode-plugin) to match the installed interpreter if you use it.
+
+```bash
+npm install -g @jvalue/jayvee-interpreter
+```
+
 ## Usage
 
 ### Show help
