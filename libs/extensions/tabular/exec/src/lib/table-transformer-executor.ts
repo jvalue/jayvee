@@ -9,6 +9,7 @@ import {
   BlockExecutor,
   BlockExecutorClass,
   ExecutionContext,
+  PortDetails,
   Table,
   TransformExecutor,
   implementsStatic,
@@ -45,28 +46,61 @@ export class TableTransformerExecutor
       PrimitiveValuetypes.Transform,
     );
 
-    // check input columns exist
-    let i = 0;
-    for (const inputColumnName of inputColumnNames) {
-      const inputColumn = inputTable.getColumn(inputColumnName);
-      if (inputColumn === undefined) {
-        return R.err({
-          message: `The specified input column "${inputColumnName}" does not exist in the given table`,
-          diagnostic: {
-            node: context.getOrFailProperty('inputColumns').value,
-            property: 'values',
-            index: i,
-          },
-        });
-      }
-      ++i;
+    const checkInputColumnsExistResult = this.checkInputColumnsExist(
+      inputColumnNames,
+      inputTable,
+      context,
+    );
+    if (R.isErr(checkInputColumnsExistResult)) {
+      return checkInputColumnsExistResult;
     }
 
     const executor = new TransformExecutor(usedTransform);
     const transformInputDetailsList = executor.getInputDetails();
     const transformOutputDetails = executor.getOutputDetails();
 
-    // check input column types match transform input types
+    const checkInputColumnsMatchTransformInputTypesResult =
+      this.checkInputColumnsMatchTransformInputTypes(
+        inputColumnNames,
+        inputTable,
+        transformInputDetailsList,
+        context,
+      );
+    if (R.isErr(checkInputColumnsMatchTransformInputTypesResult)) {
+      return checkInputColumnsMatchTransformInputTypesResult;
+    }
+    const variableToColumnMap = R.okData(
+      checkInputColumnsMatchTransformInputTypesResult,
+    );
+
+    this.logColumnOverwriteStatus(
+      inputTable,
+      outputColumnName,
+      context,
+      transformOutputDetails,
+    );
+
+    const transformResult = executor.executeTransform(
+      variableToColumnMap,
+      inputTable.getNumberOfRows(),
+      context,
+    );
+
+    const outputTable = this.createOutputTable(
+      inputTable,
+      transformResult,
+      outputColumnName,
+    );
+
+    return R.ok(outputTable);
+  }
+
+  checkInputColumnsMatchTransformInputTypes(
+    inputColumnNames: string[],
+    inputTable: R.Table,
+    transformInputDetailsList: PortDetails[],
+    context: R.ExecutionContext,
+  ): R.Result<Map<string, R.TableColumn>> {
     const variableToColumnMap: Map<string, R.TableColumn> = new Map();
     for (let i = 0; i < inputColumnNames.length; ++i) {
       const inputColumnName = inputColumnNames[i];
@@ -83,16 +117,62 @@ export class TableTransformerExecutor
         return R.err({
           message: `Type ${inputColumn.valuetype.getName()} of column "${inputColumnName}" is not convertible to type ${matchingInputDetails.valuetype.getName()}`,
           diagnostic: {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            node: context.getProperty('use')!,
+            node: context.getOrFailProperty('use'),
           },
         });
       }
       const variableName = matchingInputDetails.port.name;
       variableToColumnMap.set(variableName, inputColumn);
     }
+    return R.ok(variableToColumnMap);
+  }
 
-    // log if output column is overwritten
+  checkInputColumnsExist(
+    inputColumnNames: string[],
+    inputTable: R.Table,
+    context: R.ExecutionContext,
+  ): R.Result<undefined> {
+    // check input columns exist
+    let i = 0;
+    for (const inputColumnName of inputColumnNames) {
+      const inputColumn = inputTable.getColumn(inputColumnName);
+      if (inputColumn === undefined) {
+        return R.err({
+          message: `The specified input column "${inputColumnName}" does not exist in the given table`,
+          diagnostic: {
+            node: context.getOrFailProperty('inputColumns').value,
+            property: 'values',
+            index: i,
+          },
+        });
+      }
+      ++i;
+    }
+    return R.ok(undefined);
+  }
+
+  private createOutputTable(
+    inputTable: R.Table,
+    transformResult: {
+      resultingColumn: R.TableColumn<
+        import('/home/georgschwarz/dev/jvalue/jayvee/libs/language-server/src/index').InternalValueRepresentation
+      >;
+      rowsToDelete: number[];
+    },
+    outputColumnName: string,
+  ) {
+    const outputTable = inputTable.clone();
+    outputTable.dropRows(transformResult.rowsToDelete);
+    outputTable.addColumn(outputColumnName, transformResult.resultingColumn);
+    return outputTable;
+  }
+
+  private logColumnOverwriteStatus(
+    inputTable: R.Table,
+    outputColumnName: string,
+    context: R.ExecutionContext,
+    transformOutputDetails: PortDetails,
+  ) {
     const outputColumn = inputTable.getColumn(outputColumnName);
     if (outputColumn !== undefined) {
       context.logger.logInfo(
@@ -106,19 +186,5 @@ export class TableTransformerExecutor
         );
       }
     }
-
-    // perform transformation
-    const transformResult = executor.executeTransform(
-      variableToColumnMap,
-      inputTable.getNumberOfRows(),
-      context,
-    );
-
-    // construct output table
-    const outputTable = inputTable.clone();
-    outputTable.dropRows(transformResult.rowsToDelete);
-    outputTable.addColumn(outputColumnName, transformResult.resultingColumn);
-
-    return R.ok(outputTable);
   }
 }
