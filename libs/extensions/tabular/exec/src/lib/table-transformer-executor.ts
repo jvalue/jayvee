@@ -17,6 +17,7 @@ import {
 import {
   CollectionValuetype,
   IOType,
+  InternalValueRepresentation,
   PrimitiveValuetypes,
 } from '@jvalue/jayvee-language-server';
 
@@ -154,9 +155,7 @@ export class TableTransformerExecutor
   private createOutputTable(
     inputTable: R.Table,
     transformResult: {
-      resultingColumn: R.TableColumn<
-        import('/home/georgschwarz/dev/jvalue/jayvee/libs/language-server/src/index').InternalValueRepresentation
-      >;
+      resultingColumn: R.TableColumn<InternalValueRepresentation>;
       rowsToDelete: number[];
     },
     outputColumnName: string,
