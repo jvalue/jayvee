@@ -5,7 +5,7 @@ sidebar_position: 4
 # Transforms
 
 Transforms are a concept in Jayvee to define the transformation of individual values.
-They are similar to functions in programming languages, i.e. they perform computations on some input values and produce output values.
+They are similar to functions in programming languages, i.e. they perform computations on some input values and produce output values. Transform work by mapping input values to outputs using [expressions](./expressions.md).
 
 :::info Important
 
@@ -37,7 +37,7 @@ Next, they are given a name and, after the `oftype` keyword, typed with a valuet
 Below, there needs to be an output assignment for each output port.
 The output assignment defines how a particular output value is computed.
 They consist of the name of an output port, followed by a `:`.
-Next, an expression specifies how the output value shall be computed.
+Next, an [expression](./expressions.md) specifies how the output value shall be computed.
 Names of input ports can be used in such an expression to refer to input values.
 
 ### Example
@@ -50,6 +50,17 @@ transform CelsiusToKelvin {
   to tempKelvin oftype decimal;
 
   tempKelvin: tempCelsius + 273.15;
+}
+```
+
+The following transform converts a text based status into a boolean value, `true` if the text is `Active`, `false` for any other value:
+
+```jayvee
+transform StatusToBoolean {
+  from statusText oftype text;
+  to statusBoolean oftype boolean;
+
+  statusBoolean: statusText == "Active";
 }
 ```
 

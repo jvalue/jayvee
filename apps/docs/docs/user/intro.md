@@ -41,6 +41,12 @@ jv -h
 jv <file>
 ```
 
+Run with **additional debug output**:
+
+```console
+jv <file> -d
+```
+
 With runtime parameters:
 
 ```console
