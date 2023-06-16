@@ -46,17 +46,20 @@ export class TableTransformerExecutor
     );
 
     // check input columns exist
+    let i = 0;
     for (const inputColumnName of inputColumnNames) {
       const inputColumn = inputTable.getColumn(inputColumnName);
       if (inputColumn === undefined) {
         return R.err({
           message: `The specified input column "${inputColumnName}" does not exist in the given table`,
           diagnostic: {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            node: context.getProperty('inputColumns')!,
+            node: context.getOrFailProperty('inputColumns').value,
+            property: 'values',
+            index: i,
           },
         });
       }
+      ++i;
     }
 
     const executor = new TransformExecutor(usedTransform);
