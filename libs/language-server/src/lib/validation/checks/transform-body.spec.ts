@@ -156,19 +156,14 @@ describe('Validation of TransformBody', () => {
     );
   });
 
-  it('should diagnose error on multiple input ports', async () => {
+  it('should not diagnose on multiple input ports', async () => {
     const text = readJvTestAsset(
-      'transform-body/invalid-multiple-input-ports.jv',
+      'transform-body/valid-multiple-input-ports.jv',
     );
 
     await parseAndValidateTransformBody(text);
 
-    expect(validationAcceptorMock).toHaveBeenCalledTimes(3);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
-      'error',
-      `More than one input port is defined`,
-      expect.any(Object),
-    );
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'warning',
       `This input port is never used`,
@@ -176,18 +171,11 @@ describe('Validation of TransformBody', () => {
     );
   });
 
-  it('should diagnose error on missing input ports', async () => {
-    const text = readJvTestAsset(
-      'transform-body/invalid-missing-input-port.jv',
-    );
+  it('should not diagnose on missing input ports', async () => {
+    const text = readJvTestAsset('transform-body/valid-missing-input-port.jv');
 
     await parseAndValidateTransformBody(text);
 
-    expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
-      'error',
-      `There has to be a single input port`,
-      expect.any(Object),
-    );
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
 });
