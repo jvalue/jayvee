@@ -8,12 +8,9 @@ import {
   EvaluationContext,
   IOType,
   PrimitiveValuetypes,
-  PropertyAssignment,
   PropertyBody,
   ValidationContext,
   evaluatePropertyValue,
-  isCollectionLiteral,
-  isTextValuetype,
 } from '@jvalue/jayvee-language-server';
 
 export class TableTransformerMetaInformation extends BlockMetaInformation {
@@ -26,9 +23,6 @@ export class TableTransformerMetaInformation extends BlockMetaInformation {
           docs: {
             description:
               "The names of the input columns. The columns have to be present in the table and match with the transform's input port types.",
-          },
-          validation: (property, context) => {
-            this.checkInputColumnsType(property, context);
           },
         },
         outputColumn: {
@@ -123,28 +117,6 @@ export class TableTransformerMetaInformation extends BlockMetaInformation {
         },
       );
     }
-  }
-
-  private checkInputColumnsType(
-    property: PropertyAssignment,
-    context: ValidationContext,
-  ) {
-    const propertyValue = property.value;
-    if (!isCollectionLiteral(propertyValue)) {
-      return;
-    }
-
-    propertyValue.values
-      .filter((x) => !isTextValuetype(x))
-      .forEach((invalidValue) =>
-        context.accept(
-          'error',
-          'Only column names are allowed in this collection',
-          {
-            node: invalidValue,
-          },
-        ),
-      );
   }
 }
 
