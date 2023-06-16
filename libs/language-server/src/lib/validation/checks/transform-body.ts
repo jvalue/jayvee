@@ -33,7 +33,7 @@ export function validateTransformBody(
   checkUniqueNames(transformBody.ports, validationContext, 'transform port');
   checkUniqueOutputAssignments(transformBody, validationContext);
 
-  checkSingleOutputPort(transformBody, context);
+  checkSingleOutputPort(transformBody, validationContext);
 
   checkAreInputsUsed(transformBody, validationContext);
 
