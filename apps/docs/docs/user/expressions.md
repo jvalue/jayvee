@@ -6,7 +6,7 @@ sidebar_position: 5
 
 Expressions in Jayvee are arbitrarily nested statements. They consist of:
 - literals (e.g., numbers `5` or strings `"Example"`)
-- variables (e.g., assigned by `from` properties in [Transforms](./transforms.md))
+- variables (e.g., declared by `from` properties in [Transforms](./transforms.md))
 - operators (e.g., `*` or `sqrt`)
 
 Expressions get evaluated at runtime by the interpreter to a [Built-in ValueType](./core-concepts.md#valuetypes).
