@@ -121,13 +121,13 @@ export class TableTransformerMetaInformation extends BlockMetaInformation {
 }
 
 const blockExampleOverwrite = `block CelsiusToFahrenheitTransformer oftype TableTransformer {
-  inputColumn: ['temperature'];
+  inputColumns: ['temperature'];
   outputColumn: 'temperature';
   use: CelsiusToFahrenheit;
 }`;
 
 const blockExampleNewCol = `block CelsiusToFahrenheitTransformer oftype TableTransformer {
-  inputColumn: ['temperatureCelsius'];
+  inputColumns: ['temperatureCelsius'];
   outputColumn: 'temperatureFahrenheit';
   use: CelsiusToFahrenheit;
 }`;

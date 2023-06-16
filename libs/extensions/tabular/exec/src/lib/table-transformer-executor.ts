@@ -66,7 +66,7 @@ export class TableTransformerExecutor
     const transformInputDetailsList = executor.getInputDetails();
     const transformOutputDetails = executor.getOutputDetails();
 
-    // check input column types matche transform input types
+    // check input column types match transform input types
     const variableToColumnMap: Map<string, R.TableColumn> = new Map();
     for (let i = 0; i < inputColumnNames.length; ++i) {
       const inputColumnName = inputColumnNames[i];
