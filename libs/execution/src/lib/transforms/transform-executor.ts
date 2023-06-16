@@ -18,7 +18,7 @@ import { ExecutionContext } from '../execution-context';
 import { isValidValueRepresentation } from '../types';
 import { TableColumn } from '../types/io-types/table';
 
-interface PortDetails {
+export interface PortDetails {
   port: TransformPortDefinition;
   valuetype: Valuetype;
 }
