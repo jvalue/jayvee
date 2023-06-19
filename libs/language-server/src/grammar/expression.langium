@@ -26,7 +26,10 @@ EqualityExpression infers Expression:
   MatchesExpression ({infer BinaryExpression.left=current} operator=('==' | '!=') right=MatchesExpression)*;
 
 MatchesExpression infers Expression:
-  RelationalExpression ({infer BinaryExpression.left=current} operator='matches' right=RelationalExpression)*;
+  InExpression ({infer BinaryExpression.left=current} operator='matches' right=InExpression)*;
+
+InExpression infers Expression:
+  RelationalExpression ({infer BinaryExpression.left=current} operator='in' right=RelationalExpression)*;
 
 RelationalExpression infers Expression:
   AdditiveExpression ({infer BinaryExpression.left=current} operator=('<' | '<=' | '>' | '>=') right=AdditiveExpression)*;

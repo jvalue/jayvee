@@ -2,22 +2,27 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
+
 import { ValidationContext } from '../../../validation/validation-context';
 import { BinaryExpression } from '../../generated/ast';
-import { type Valuetype } from '../../wrappers/value-type';
 // eslint-disable-next-line import/no-cycle
+import {
+  CollectionValuetype,
+  type Valuetype,
+  isCollectionValuetype,
+} from '../../wrappers/value-type';
 import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/primitive-valuetypes';
 import { BinaryOperatorTypeComputer } from '../operator-type-computer';
 
-export class EqualityOperatorTypeComputer
-  implements BinaryOperatorTypeComputer
-{
-  private readonly ALLOWED_OPERAND_TYPES: Valuetype[] = [
-    PrimitiveValuetypes.Boolean,
+export class InOperatorTypeComputer implements BinaryOperatorTypeComputer {
+  private readonly ALLOWED_LEFT_OPERAND_TYPES: Valuetype[] = [
     PrimitiveValuetypes.Text,
     PrimitiveValuetypes.Integer,
     PrimitiveValuetypes.Decimal,
   ];
+  private readonly ALLOWED_RIGHT_OPERAND_TYPES: CollectionValuetype[] =
+    this.ALLOWED_LEFT_OPERAND_TYPES.map((v) => new CollectionValuetype(v));
 
   computeType(
     leftOperandType: Valuetype,
@@ -26,9 +31,10 @@ export class EqualityOperatorTypeComputer
     context: ValidationContext | undefined,
   ): Valuetype | undefined {
     const isLeftOperandTypeValid =
-      this.ALLOWED_OPERAND_TYPES.includes(leftOperandType);
-    const isRightOperandTypeValid =
-      this.ALLOWED_OPERAND_TYPES.includes(rightOperandType);
+      this.ALLOWED_LEFT_OPERAND_TYPES.includes(leftOperandType);
+    const isRightOperandTypeValid = this.ALLOWED_RIGHT_OPERAND_TYPES.some((v) =>
+      v.equals(rightOperandType),
+    );
     if (!isLeftOperandTypeValid || !isRightOperandTypeValid) {
       if (!isLeftOperandTypeValid) {
         context?.accept(
@@ -50,14 +56,19 @@ export class EqualityOperatorTypeComputer
       }
       return undefined;
     }
+    assert(
+      isCollectionValuetype(rightOperandType, PrimitiveValuetypes.Decimal) ||
+        isCollectionValuetype(rightOperandType, PrimitiveValuetypes.Integer) ||
+        isCollectionValuetype(rightOperandType, PrimitiveValuetypes.Text),
+    );
 
     if (
-      !leftOperandType.isConvertibleTo(rightOperandType) &&
-      !rightOperandType.isConvertibleTo(leftOperandType)
+      !leftOperandType.isConvertibleTo(rightOperandType.elementType) &&
+      !rightOperandType.elementType.isConvertibleTo(leftOperandType)
     ) {
       context?.accept(
         'error',
-        `The types of the operands need to be equal but they differ (left: ${leftOperandType.getName()}, right: ${rightOperandType.getName()})`,
+        `The type of the left operand needs to be compatible to the collection element type of the right operand but they differ (left: ${leftOperandType.getName()}, right: ${rightOperandType.elementType.getName()})`,
         { node: expression },
       );
       return undefined;
