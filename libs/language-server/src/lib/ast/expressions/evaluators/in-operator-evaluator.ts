@@ -18,8 +18,8 @@ export class InOperatorEvaluator extends DefaultBinaryOperatorEvaluator<
   constructor() {
     super(
       'in',
-      isLeftOperandMatchingValuePreresentationTypeguard,
-      isRightOperandMatchingValuePreresentationTypeguard,
+      isLeftOperandMatchingValueRepresentationTypeguard,
+      isRightOperandMatchingValueRepresentationTypeguard,
     );
   }
   override doEvaluate(
@@ -30,17 +30,17 @@ export class InOperatorEvaluator extends DefaultBinaryOperatorEvaluator<
   }
 }
 
-const isLeftOperandMatchingValuePreresentationTypeguard: InternalValueRepresentationTypeguard<
+const isLeftOperandMatchingValueRepresentationTypeguard: InternalValueRepresentationTypeguard<
   string | number
 > = (value: InternalValueRepresentation): value is string | number => {
   return STRING_TYPEGUARD(value) || NUMBER_TYPEGUARD(value);
 };
 
-const isRightOperandMatchingValuePreresentationTypeguard: InternalValueRepresentationTypeguard<
+const isRightOperandMatchingValueRepresentationTypeguard: InternalValueRepresentationTypeguard<
   Array<string | number>
 > = (value: InternalValueRepresentation): value is Array<string | number> => {
   return (
     Array.isArray(value) &&
-    value.every(isLeftOperandMatchingValuePreresentationTypeguard)
+    value.every(isLeftOperandMatchingValueRepresentationTypeguard)
   );
 };
