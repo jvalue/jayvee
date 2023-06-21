@@ -67,7 +67,14 @@ TextLiteral:
   value=STRING;
 
 NumericLiteral:
-  value=(INTEGER | DECIMAL);
+  IntegerLiteral
+  | DecimalLiteral;
+
+IntegerLiteral:
+  value=(INTEGER);
+
+DecimalLiteral:
+  value=(DECIMAL);
 
 BooleanLiteral:
   value?='true' | 'false';

@@ -11,6 +11,7 @@ import {
   CollectionLiteral,
   Expression,
   ExpressionLiteral,
+  NumericLiteral,
   ReferenceLiteral,
   ValueKeywordLiteral,
   isBinaryExpression,
@@ -18,9 +19,11 @@ import {
   isCellRangeLiteral,
   isCollectionLiteral,
   isConstraintDefinition,
+  isDecimalLiteral,
   isExpressionConstraintDefinition,
   isExpressionLiteral,
   isFreeVariableLiteral,
+  isIntegerLiteral,
   isNumericLiteral,
   isReferenceLiteral,
   isRegexLiteral,
@@ -97,10 +100,7 @@ function inferTypeFromExpressionLiteral(
     } else if (isBooleanLiteral(expression)) {
       return PrimitiveValuetypes.Boolean;
     } else if (isNumericLiteral(expression)) {
-      if (Number.isInteger(expression.value)) {
-        return PrimitiveValuetypes.Integer;
-      }
-      return PrimitiveValuetypes.Decimal;
+      return inferNumericType(expression);
     } else if (isCellRangeLiteral(expression)) {
       return PrimitiveValuetypes.CellRange;
     } else if (isRegexLiteral(expression)) {
@@ -118,6 +118,16 @@ function inferTypeFromExpressionLiteral(
       return inferTypeFromReferenceLiteral(expression);
     }
     assertUnreachable(expression);
+  }
+  assertUnreachable(expression);
+}
+
+function inferNumericType(expression: NumericLiteral): Valuetype {
+  if (isIntegerLiteral(expression)) {
+    return PrimitiveValuetypes.Integer;
+  }
+  if (isDecimalLiteral(expression)) {
+    return PrimitiveValuetypes.Decimal;
   }
   assertUnreachable(expression);
 }
