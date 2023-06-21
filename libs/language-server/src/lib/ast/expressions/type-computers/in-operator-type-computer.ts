@@ -62,10 +62,7 @@ export class InOperatorTypeComputer implements BinaryOperatorTypeComputer {
         isCollectionValuetype(rightOperandType, PrimitiveValuetypes.Text),
     );
 
-    if (
-      !leftOperandType.isConvertibleTo(rightOperandType.elementType) &&
-      !rightOperandType.elementType.isConvertibleTo(leftOperandType)
-    ) {
+    if (!leftOperandType.isConvertibleTo(rightOperandType.elementType)) {
       context?.accept(
         'error',
         `The type of the left operand needs to be compatible to the collection element type of the right operand but they differ (left: ${leftOperandType.getName()}, right: ${rightOperandType.elementType.getName()})`,
