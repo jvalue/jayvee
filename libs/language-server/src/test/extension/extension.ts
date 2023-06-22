@@ -17,10 +17,10 @@ export class TestLangExtension implements JayveeLangExtension {
     return [
       TestPropertyMetaInformation,
       ...ioTypes.map((ioType) =>
-        this.constructMetaInformationFromIOType(ioType, 'input'),
+        this.constructBlockMetaInformationFromIOType(ioType, 'input'),
       ),
       ...ioTypes.map((ioType) =>
-        this.constructMetaInformationFromIOType(ioType, 'output'),
+        this.constructBlockMetaInformationFromIOType(ioType, 'output'),
       ),
     ];
   }
@@ -33,11 +33,11 @@ export class TestLangExtension implements JayveeLangExtension {
    * @param io specifies whether the given ioType param is the input or output of the block
    * @returns ConstructorClass<BlockMetaInformation>
    */
-  constructMetaInformationFromIOType(
+  constructBlockMetaInformationFromIOType(
     ioType: IOType,
     io: 'input' | 'output',
   ): ConstructorClass<BlockMetaInformation> {
-    return class TestMetaInformation extends BlockMetaInformation {
+    return class TestBlockMetaInformation extends BlockMetaInformation {
       constructor() {
         super(
           `Test${ioType}${io === 'input' ? 'Loader' : 'Extractor'}`,

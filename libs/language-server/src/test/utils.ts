@@ -50,6 +50,9 @@ export function getTestExtensionBlockForIOType(
   ioType: IOType,
   io: 'input' | 'output',
 ): BlockMetaInformation {
-  const metaInf = testExtension.constructMetaInformationFromIOType(ioType, io);
+  const metaInf = testExtension.constructBlockMetaInformationFromIOType(
+    ioType,
+    io,
+  );
   return new metaInf();
 }
