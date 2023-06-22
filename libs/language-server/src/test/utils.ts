@@ -7,6 +7,10 @@ import * as path from 'path';
 
 import { AstNode, LangiumDocument, ValidationAcceptor } from 'langium';
 
+import { BlockMetaInformation, IOType } from '../lib';
+
+import { TestLangExtension } from './extension';
+
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export const validationAcceptorMockImpl: ValidationAcceptor = () => {};
 
@@ -39,4 +43,16 @@ export function expectNoParserAndLexerErrors(
 ) {
   expect(document.parseResult.parserErrors).toHaveLength(0);
   expect(document.parseResult.lexerErrors).toHaveLength(0);
+}
+
+export function getTestExtensionBlockForIOType(
+  testExtension: TestLangExtension,
+  ioType: IOType,
+  io: 'input' | 'output',
+): BlockMetaInformation {
+  const metaInf = testExtension.constructBlockMetaInformationFromIOType(
+    ioType,
+    io,
+  );
+  return new metaInf();
 }
