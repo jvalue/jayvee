@@ -120,10 +120,9 @@ describe('Validation of builtin examples of BlockMetaInformation', () => {
       for (const example of blockMetaInf.docs.examples ?? []) {
         const text = await generateFullJvExample(blockMetaInf, example.code);
 
-        // Validate input
         const validationResult = await validate(text);
         const diagnostics = validationResult.diagnostics;
-        // Expect 0 errors
+
         expect(diagnostics).toHaveLength(0);
       }
     },
