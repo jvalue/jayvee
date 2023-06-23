@@ -125,14 +125,15 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
         'Limits the range of a number value with an upper and/or lower boundary which can be inclusive or exclusive. Only values within the given range are considered valid.',
       examples: [
         {
-          description: 'A scale between 1 and 100.',
+          description: 'A scale between (and including) 1 and 100.',
           code: `constraint HundredScale oftype RangeConstraint {
   lowerBound: 1;
   upperBound: 100;		
 }`,
         },
         {
-          description: 'A scale between 0 (excluded) and 100.',
+          description:
+            'A scale for numbers strictly larger than 1 and less or equal to 100.',
           code: `constraint HundredScale oftype RangeConstraint {
   lowerBound: 1;
   lowerBoundInclusive: false;
