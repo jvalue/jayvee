@@ -10,7 +10,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 |-------------|----------------------|
 | Feature Tag | `builtin-blocktypes` |
 | Status      | `ACCEPTED`              | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED -->
-| Responsible | `@rhazn` (written by `@felix-oq`)         |
+| Responsible | `@rhazn` (written by @felix-oq)         |
 <!-- 
   Status Overview:
   - DRAFT: The RFC is not ready for a review and currently under change. Feel free to already ask for feedback on the structure and contents at this stage.
