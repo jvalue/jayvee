@@ -19,7 +19,8 @@ export class FilePickerMetaInformation extends BlockMetaInformation {
         path: {
           type: PrimitiveValuetypes.Text,
           docs: {
-            description: 'The path of the file to get',
+            description:
+              'The path of the file to select, relative to the root of the provided `FileSystem`.',
           },
         },
       },
@@ -30,17 +31,16 @@ export class FilePickerMetaInformation extends BlockMetaInformation {
       IOType.FILE,
     );
 
-    this.docs.description = 'Picks an File out of an FileSystem and outputs it';
+    this.docs.description =
+      'Selects one `File` from a `FileSystem` based on its relative path to the root of the `FileSystem`. If no file matches the relative path, no output is created and the execution of the pipeline is aborted.';
     this.docs.examples = [
       {
-        code: blockExampleUsage,
+        code: `block AgencyFilePicker oftype FilePicker {
+  path: "./agency.txt";
+}`,
         description:
-          'The block receives a Filesystem and gets the file specified in path-property',
+          'Tries to pick the file `agency.txt` from the root of the provided `FileSystem`. If `agency.txt` exists it is passed on as `File`, if it does not exist the execution of the pipeline is aborted.',
       },
     ];
   }
 }
-
-const blockExampleUsage = `block AgencyFilePicker oftype FilePicker {
-  path: "./Agencies.txt";
-}`;

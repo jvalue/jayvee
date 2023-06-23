@@ -23,7 +23,7 @@ export class SQLiteLoaderMetaInformation extends BlockMetaInformation {
           type: PrimitiveValuetypes.Text,
           docs: {
             description:
-              'The path to the SQLite file that will be created. Usual file extensions are `.sqlite` and `.db`.',
+              'The path to a SQLite file that will be created if it does not exist. Usual file extensions are `.sqlite` and `.db`.',
           },
         },
         dropTable: {
@@ -31,7 +31,7 @@ export class SQLiteLoaderMetaInformation extends BlockMetaInformation {
           defaultValue: true,
           docs: {
             description:
-              'Indicates, whether to drop the table before loading data into it. Can be used for appending data by executing pipelines periodically.',
+              'Indicates, whether to drop the table before loading data into it. If `false`, data is appended to the table instead of dropping it.',
           },
         },
       },
@@ -43,13 +43,13 @@ export class SQLiteLoaderMetaInformation extends BlockMetaInformation {
       {
         code: blockExampleUsage,
         description:
-          'A local SQLite file is created at the given path and filled with table data about cars.',
+          'A SQLite file `cars.db` is created in the working directory. Incoming data is written to the table `cars`.',
       },
     ];
   }
 }
 
 const blockExampleUsage = `block CarsLoader oftype SQLiteLoader {
-  table: "Cars";
+  table: "cars";
   file: "./cars.db";
 }`;
