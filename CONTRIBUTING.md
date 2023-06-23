@@ -36,8 +36,7 @@ We appreciate any input you have to offer.
 
 ### Designing an RFC
 
-We use an RFC process to design new language features. Please find the previous RFCs [here](/rfc/). 
-If you want to contribute an RFC, please use the [RFC template](/rfc/0000-rfc-template.md) for guidance and to ensure consistent structure across RFCs. 
+We use an RFC process to design new language features. Please read about our current RFC process in the documentation: [Language Design Process (RFCs)](https://jvalue.github.io/jayvee/docs/dev/rfc-process). You can find previous RFCs [here](/rfc/).
 
 
 ### Writing Code
