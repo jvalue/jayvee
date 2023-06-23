@@ -14,7 +14,13 @@
         "main": "apps/interpreter/src/index.ts",
         "tsConfig": "apps/interpreter/tsconfig.app.json",
         "generatePackageJson": true
-      }
+      },
+      "configurations": {
+        // https://nx.dev/recipes/executors/use-executor-configurations
+        "dev": {},
+        "prod": {}
+      },
+      "defaultConfiguration": "dev"
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
@@ -27,7 +33,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
-        "commands": ["node dist/apps/interpreter/main.js"]
+        "commands": ["node --enable-source-maps dist/apps/interpreter/main.js"]
       }
     },
     "test": {
@@ -44,7 +50,8 @@
       "options": {
         "commands": [
           "node tools/scripts/interpreter/prepend-shebang.mjs interpreter main.js",
-          "node tools/scripts/add-package-json-version.mjs interpreter"
+          "node tools/scripts/add-package-json-version.mjs interpreter",
+          "node tools/scripts/interpreter/rewrite-version-mainjs.mjs interpreter"
         ]
       }
     },

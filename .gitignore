@@ -36,6 +36,8 @@ node_modules
 !.vscode/launch.json.license
 !.vscode/extensions.json
 !.vscode/extensions.json.license
+# VSCode - local history extension
+.history/*
 
 # misc
 /.sass-cache

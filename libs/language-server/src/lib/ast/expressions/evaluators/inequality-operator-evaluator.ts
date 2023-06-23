@@ -3,19 +3,26 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 // eslint-disable-next-line import/no-cycle
-import { OperandValue } from '../evaluation';
+import { InternalValueRepresentation } from '../evaluation';
 import { DefaultBinaryOperatorEvaluator } from '../operator-evaluator';
-import { OPERAND_VALUE_TYPEGUARD } from '../typeguards';
+import { INTERNAL_VALUE_REPRESENTATION_TYPEGUARD } from '../typeguards';
 
 export class InequalityOperatorEvaluator extends DefaultBinaryOperatorEvaluator<
-  OperandValue,
-  OperandValue,
+  InternalValueRepresentation,
+  InternalValueRepresentation,
   boolean
 > {
   constructor() {
-    super('!=', OPERAND_VALUE_TYPEGUARD, OPERAND_VALUE_TYPEGUARD);
+    super(
+      '!=',
+      INTERNAL_VALUE_REPRESENTATION_TYPEGUARD,
+      INTERNAL_VALUE_REPRESENTATION_TYPEGUARD,
+    );
   }
-  override doEvaluate(left: OperandValue, right: OperandValue): boolean {
+  override doEvaluate(
+    left: InternalValueRepresentation,
+    right: InternalValueRepresentation,
+  ): boolean {
     return left !== right;
   }
 }

@@ -3,80 +3,146 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /**
- * See the FAQ section of README.md for an explanation why the following ESLint rule is disabled for this file.
+ * See https://jvalue.github.io/jayvee/docs/dev/working-with-the-ast for why the following ESLint rule is disabled for this file.
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
+import { strict as assert } from 'assert';
+
+import { assertUnreachable } from 'langium';
+
 import {
-  ValuetypeDefinition,
-  isConstraintReferenceLiteral,
-} from '../../ast/generated/ast';
-// eslint-disable-next-line import/no-cycle
-import { PropertyValuetype, inferTypeFromValue } from '../../ast/model-util';
+  CollectionLiteral,
+  CollectionValuetype,
+  ConstraintDefinition,
+  EvaluationContext,
+  PrimitiveValuetypes,
+  Valuetype,
+  createValuetype,
+  evaluateExpression,
+  inferExpressionType,
+  isExpressionConstraintDefinition,
+  isTypedConstraintDefinition,
+} from '../../ast';
+import { ValuetypeDefinition } from '../../ast/generated/ast';
 import { getMetaInformation } from '../../meta-information/meta-inf-registry';
 import { ValidationContext } from '../validation-context';
 
 export function validateValuetypeDefinition(
   valuetype: ValuetypeDefinition,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
+): void {
+  checkSupertypeCycle(valuetype, validationContext);
+  checkConstraintsCollectionValues(
+    valuetype,
+    validationContext,
+    evaluationContext,
+  );
+}
+
+function checkSupertypeCycle(
+  valuetypeDefinition: ValuetypeDefinition,
   context: ValidationContext,
 ): void {
-  checkConstraintsCollectionValues(valuetype, context);
-  checkConstraintsMatchPrimitiveValuetype(valuetype, context);
+  const hasCycle =
+    createValuetype(valuetypeDefinition)?.hasSupertypeCycle() ?? false;
+  if (hasCycle) {
+    context.accept(
+      'error',
+      'Could not construct this valuetype since there is a cycle in the (transitive) "oftype" relation.',
+      {
+        node: valuetypeDefinition,
+        property: 'type',
+      },
+    );
+  }
 }
 
 function checkConstraintsCollectionValues(
   valuetype: ValuetypeDefinition,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ): void {
-  const constraints = valuetype.constraints;
-  constraints.values.forEach((collectionValue) => {
-    const type = inferTypeFromValue(collectionValue);
-    if (type !== PropertyValuetype.CONSTRAINT) {
-      context.accept(
-        'error',
-        'Only constraints are allowed in this collection',
-        {
-          node: collectionValue,
-        },
-      );
-    }
-  });
-}
-
-function checkConstraintsMatchPrimitiveValuetype(
-  valuetype: ValuetypeDefinition,
-  context: ValidationContext,
-): void {
-  if (valuetype.type === undefined) {
+  const constraintCollection = valuetype?.constraints;
+  if (constraintCollection === undefined) {
     return;
   }
 
-  const constraintReferences = valuetype?.constraints?.values.filter(
-    isConstraintReferenceLiteral,
+  const inferredCollectionType = inferExpressionType(
+    constraintCollection,
+    validationContext,
   );
-  for (const constraintReference of constraintReferences) {
-    const constraint = constraintReference?.value.ref;
-    const constraintType = constraint?.type;
-
-    if (constraintType === undefined) {
-      continue;
-    }
-
-    const metaInf = getMetaInformation(constraintType);
-    if (metaInf === undefined) {
-      continue;
-    }
-
-    if (
-      !metaInf.compatiblePrimitiveValuetypes.includes(valuetype.type.keyword)
-    ) {
-      context.accept(
-        'error',
-        `Only constraints for type "${valuetype.type.keyword}" are allowed in this collection`,
-        {
-          node: constraintReference,
-        },
-      );
-    }
+  const expectedType = new CollectionValuetype(PrimitiveValuetypes.Constraint);
+  if (inferredCollectionType === undefined) {
+    return;
   }
+  if (!inferredCollectionType.isConvertibleTo(expectedType)) {
+    validationContext.accept(
+      'error',
+      `The value needs to be of type ${expectedType.getName()} but is of type ${inferredCollectionType.getName()}`,
+      {
+        node: constraintCollection,
+      },
+    );
+    return;
+  }
+
+  const constraints = evaluateExpression(
+    constraintCollection,
+    evaluationContext,
+    validationContext,
+  );
+  assert(expectedType.isInternalValueRepresentation(constraints));
+
+  constraints.forEach((constraint, index) => {
+    checkConstraintMatchesValuetype(
+      valuetype,
+      constraint,
+      constraintCollection,
+      index,
+      validationContext,
+    );
+  });
+}
+
+function checkConstraintMatchesValuetype(
+  valuetypeDefinition: ValuetypeDefinition,
+  constraint: ConstraintDefinition,
+  diagnosticNode: CollectionLiteral,
+  diagnosticIndex: number,
+  context: ValidationContext,
+): void {
+  const actualValuetype = createValuetype(valuetypeDefinition);
+  const compatibleValuetype = getCompatibleValuetype(constraint);
+
+  if (actualValuetype === undefined || compatibleValuetype === undefined) {
+    return;
+  }
+
+  if (!actualValuetype.isConvertibleTo(compatibleValuetype)) {
+    context.accept(
+      'error',
+      `This valuetype ${actualValuetype.getName()} is not convertible to the type ${compatibleValuetype.getName()} of the constraint "${
+        constraint.name
+      }"`,
+      {
+        node: diagnosticNode,
+        property: 'values',
+        index: diagnosticIndex,
+      },
+    );
+  }
+}
+
+function getCompatibleValuetype(
+  constraint: ConstraintDefinition,
+): Valuetype | undefined {
+  if (isTypedConstraintDefinition(constraint)) {
+    const constraintMetaInf = getMetaInformation(constraint?.type);
+    return constraintMetaInf?.compatibleValuetype;
+  } else if (isExpressionConstraintDefinition(constraint)) {
+    return createValuetype(constraint?.valuetype);
+  }
+  assertUnreachable(constraint);
 }

@@ -4,12 +4,10 @@
 
 import {
   BlockMetaInformation,
-  CellRangeWrapper,
+  CollectionValuetype,
   IOType,
-  PropertyValuetype,
-  isCellRangeLiteral,
-  isCollectionLiteral,
-  validateTypedCollection,
+  PrimitiveValuetypes,
+  evaluatePropertyValue,
 } from '@jvalue/jayvee-language-server';
 
 export class CellWriterMetaInformation extends BlockMetaInformation {
@@ -18,7 +16,7 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
       'CellWriter',
       {
         write: {
-          type: PropertyValuetype.COLLECTION,
+          type: new CollectionValuetype(PrimitiveValuetypes.Text),
           docs: {
             description: 'The values to write.',
             examples: [
@@ -35,23 +33,23 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
           },
         },
         at: {
-          type: PropertyValuetype.CELL_RANGE,
-          validation: (property, context) => {
-            const propertyValue = property.value;
-            if (!isCellRangeLiteral(propertyValue)) {
+          type: PrimitiveValuetypes.CellRange,
+          validation: (property, validationContext, evaluationContext) => {
+            const cellRange = evaluatePropertyValue(
+              property,
+              evaluationContext,
+              PrimitiveValuetypes.CellRange,
+            );
+            if (cellRange === undefined) {
               return;
             }
 
-            if (!CellRangeWrapper.canBeWrapped(propertyValue)) {
-              return;
-            }
-            const semanticCellRange = new CellRangeWrapper(propertyValue);
-            if (!semanticCellRange.isOneDimensional()) {
-              context.accept(
+            if (!cellRange.isOneDimensional()) {
+              validationContext.accept(
                 'error',
                 'The cell range needs to be one-dimensional',
                 {
-                  node: semanticCellRange.astNode,
+                  node: cellRange.astNode,
                 },
               );
             }
@@ -74,7 +72,7 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
       },
       IOType.SHEET,
       IOType.SHEET,
-      (propertyBody, context) => {
+      (propertyBody, validationContext, evaluationContext) => {
         const writeProperty = propertyBody.properties.find(
           (p) => p.name === 'write',
         );
@@ -84,41 +82,28 @@ export class CellWriterMetaInformation extends BlockMetaInformation {
           return;
         }
 
-        if (!isCollectionLiteral(writeProperty.value)) {
-          return;
-        }
-        const { invalidItems } = validateTypedCollection(writeProperty.value, [
-          PropertyValuetype.TEXT,
-        ]);
-
-        invalidItems.forEach((invalidValue) =>
-          context.accept(
-            'error',
-            'Only text values are allowed in this collection',
-            {
-              node: invalidValue,
-            },
-          ),
+        const writeValues = evaluatePropertyValue(
+          writeProperty,
+          evaluationContext,
+          new CollectionValuetype(PrimitiveValuetypes.Text),
         );
-        if (invalidItems.length > 0) {
+
+        const atValue = evaluatePropertyValue(
+          atProperty,
+          evaluationContext,
+          PrimitiveValuetypes.CellRange,
+        );
+
+        if (writeValues === undefined || atValue === undefined) {
           return;
         }
 
-        if (!isCellRangeLiteral(atProperty.value)) {
-          return;
-        }
-
-        const numberOfValuesToWrite = writeProperty.value.values.length;
-
-        if (!CellRangeWrapper.canBeWrapped(atProperty.value)) {
-          return;
-        }
-        const semanticCellRange = new CellRangeWrapper(atProperty.value);
-        const numberOfCells = semanticCellRange.numberOfCells();
+        const numberOfValuesToWrite = writeValues.length;
+        const numberOfCells = atValue.numberOfCells();
 
         if (numberOfCells !== numberOfValuesToWrite) {
           [writeProperty, atProperty].forEach((propertyNode) => {
-            context.accept(
+            validationContext.accept(
               'warning',
               `The number of values to write (${numberOfValuesToWrite}) does not match the number of cells (${numberOfCells})`,
               { node: propertyNode.value },

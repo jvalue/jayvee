@@ -4,12 +4,12 @@
 
 import {
   BlockMetaInformation,
+  EvaluationContext,
   IOType,
-  NUMBER_TYPEGUARD,
+  PrimitiveValuetypes,
   PropertyAssignment,
-  PropertyValuetype,
   ValidationContext,
-  evaluatePropertyValueExpression,
+  evaluatePropertyValue,
 } from '@jvalue/jayvee-language-server';
 
 export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
@@ -18,12 +18,12 @@ export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
       'TextRangeSelector',
       {
         lineFrom: {
-          type: PropertyValuetype.INTEGER,
+          type: PrimitiveValuetypes.Integer,
           defaultValue: 1,
           validation: greaterThanZeroValidation,
         },
         lineTo: {
-          type: PropertyValuetype.INTEGER,
+          type: PrimitiveValuetypes.Integer,
           defaultValue: Number.POSITIVE_INFINITY,
           validation: greaterThanZeroValidation,
         },
@@ -34,7 +34,7 @@ export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
       // Output type:
       IOType.TEXT_FILE,
 
-      (propertyBody, context) => {
+      (propertyBody, validationContext, evaluationContext) => {
         const lineFromProperty = propertyBody.properties.find(
           (p) => p.name === 'lineFrom',
         );
@@ -46,18 +46,23 @@ export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
           return;
         }
 
-        const lineFrom = evaluatePropertyValueExpression(
-          lineFromProperty.value,
-          NUMBER_TYPEGUARD,
+        const lineFrom = evaluatePropertyValue(
+          lineFromProperty,
+          evaluationContext,
+          PrimitiveValuetypes.Integer,
         );
-        const lineTo = evaluatePropertyValueExpression(
-          lineToProperty.value,
-          NUMBER_TYPEGUARD,
+        const lineTo = evaluatePropertyValue(
+          lineToProperty,
+          evaluationContext,
+          PrimitiveValuetypes.Integer,
         );
+        if (lineFrom === undefined || lineTo === undefined) {
+          return;
+        }
 
         if (lineFrom > lineTo) {
           [lineFromProperty, lineToProperty].forEach((property) => {
-            context.accept(
+            validationContext.accept(
               'error',
               'The lower line number needs to be smaller or equal to the upper line number',
               { node: property.value },
@@ -72,18 +77,25 @@ export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
 
 function greaterThanZeroValidation(
   property: PropertyAssignment,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ) {
-  const propertyValue = property.value;
-
-  const value = evaluatePropertyValueExpression(
-    propertyValue,
-    NUMBER_TYPEGUARD,
+  const value = evaluatePropertyValue(
+    property,
+    evaluationContext,
+    PrimitiveValuetypes.Integer,
   );
+  if (value === undefined) {
+    return;
+  }
 
   if (value <= 0) {
-    context.accept('error', `Line numbers need to be greater than zero`, {
-      node: propertyValue,
-    });
+    validationContext.accept(
+      'error',
+      `Line numbers need to be greater than zero`,
+      {
+        node: property.value,
+      },
+    );
   }
 }

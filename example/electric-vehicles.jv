@@ -1,0 +1,112 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+valuetype VehicleIdentificationNumber10 oftype text {
+	constraints: [
+		OnlyCapitalLettersAndDigits,
+		ExactlyTenCharacters,
+	];
+}
+
+constraint OnlyCapitalLettersAndDigits on text:
+	value matches /^[A-Z0-9]*$/;
+
+constraint ExactlyTenCharacters on text:
+	value.length == 10;
+
+valuetype UsStateCode oftype text {
+	constraints: [
+		UsStateCodeAllowlist,
+	];
+}
+
+constraint UsStateCodeAllowlist oftype AllowlistConstraint {
+	allowlist: [
+		"AL", "AK", "AZ", "AR", "AS", "CA", "CO", "CT", "DE", "DC",
+		"FL", "GA", "GU", "HI", "ID", "IL", "IN", "IA", "KS", "KY",
+		"LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE",
+		"NV", "NH", "NJ", "NM", "NY", "NC", "ND", "MP", "OH", "OK",
+		"OR", "PA", "PR", "RI", "SC", "SD", "TN", "TX", "TT", "UT",
+		"VT", "VA", "VI", "WA", "WV", "WI", "WY",
+	];
+}
+
+// https://catalog.data.gov/dataset/electric-vehicle-population-data/resource/fa51be35-691f-45d2-9f3e-535877965e69
+
+pipeline ElectricVehiclesPipeline {
+
+    ElectricVehiclesHttpExtractor
+		-> ElectricVehiclesTextFileInterpreter
+		-> ElectricVehiclesCSVInterpreter
+		-> ElectricVehiclesTableInterpreter
+		-> ElectricRangeTransformer;
+	
+	ElectricRangeTransformer
+		-> ElectricVehiclesSQLiteLoader;
+	
+	ElectricRangeTransformer
+		-> ElectricVehiclesPostgresLoader;
+
+	block ElectricVehiclesHttpExtractor oftype HttpExtractor {
+		url: "https://data.wa.gov/api/views/f6w7-q2d2/rows.csv?accessType=DOWNLOAD";
+	}
+
+	block ElectricVehiclesTextFileInterpreter oftype TextFileInterpreter {
+
+	}
+
+	block ElectricVehiclesCSVInterpreter oftype CSVInterpreter {
+
+	}
+
+	block ElectricVehiclesTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns: [
+    		"VIN (1-10)" oftype VehicleIdentificationNumber10,
+			"County" oftype text,
+			"City" oftype text,
+			"State" oftype UsStateCode,
+			"Postal Code" oftype text,
+			"Model Year" oftype integer,
+			"Make" oftype text,
+			"Model" oftype text,
+			"Electric Vehicle Type" oftype text,
+			"Clean Alternative Fuel Vehicle (CAFV) Eligibility" oftype text,
+			"Electric Range" oftype integer,
+			"Base MSRP" oftype integer,
+			"Legislative District" oftype text,
+			"DOL Vehicle ID" oftype integer,
+			"Vehicle Location" oftype text,
+			"Electric Utility" oftype text,
+			"2020 Census Tract" oftype text,
+    	];
+	}
+
+	block ElectricRangeTransformer oftype TableTransformer {
+		inputColumn: "Electric Range";
+		outputColumn: "Electric Range (km)";
+		use: MilesToKilometers;
+	}
+
+	transform MilesToKilometers {
+		from miles oftype decimal;
+		to kilometers oftype integer;
+
+		kilometers: round (miles * 1.609344);
+	}
+
+	block ElectricVehiclesSQLiteLoader oftype SQLiteLoader {
+		table: "ElectricVehiclePopulationData";
+		file: "./electric-vehicles.sqlite";
+	}
+
+	block ElectricVehiclesPostgresLoader oftype PostgresLoader {
+		host: requires DB_HOST;
+		port: requires DB_PORT;
+		username: requires DB_USERNAME;
+		password: requires DB_PASSWORD;
+		database: requires DB_DATABASE;
+		table: "ElectricVehiclePopulationData";
+	}
+}

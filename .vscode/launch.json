@@ -45,6 +45,12 @@
       "command": "npm run example:gas",
       "request": "launch",
       "type": "node-terminal"
+    },
+    {
+      "name": "Run GTFS Example",
+      "command": "npm run example:gtfs",
+      "request": "launch",
+      "type": "node-terminal"
     }
   ]
 }

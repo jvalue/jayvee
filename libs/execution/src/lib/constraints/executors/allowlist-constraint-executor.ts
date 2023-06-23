@@ -2,30 +2,33 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'assert';
-
-import { evaluateExpression } from '@jvalue/jayvee-language-server';
+import {
+  CollectionValuetype,
+  InternalValueRepresentation,
+  PrimitiveValuetypes,
+} from '@jvalue/jayvee-language-server';
 
 import { ExecutionContext } from '../../execution-context';
 import { implementsStatic } from '../../util/implements-static-decorator';
 import { ConstraintExecutor } from '../constraint-executor';
-import { ConstraintExecutorClass } from '../constraint-executor-class';
+import { TypedConstraintExecutorClass } from '../typed-constraint-executor-class';
 
-@implementsStatic<ConstraintExecutorClass>()
+@implementsStatic<TypedConstraintExecutorClass>()
 export class AllowlistConstraintExecutor implements ConstraintExecutor {
   public static readonly type = 'AllowlistConstraint';
 
-  isValid(value: unknown, context: ExecutionContext): boolean {
+  isValid(
+    value: InternalValueRepresentation,
+    context: ExecutionContext,
+  ): boolean {
     if (typeof value !== 'string') {
       return false;
     }
 
-    const allowlist = context.getExpressionCollectionPropertyValue('allowlist');
-    const allowlistValues = allowlist.map((expression) => {
-      const value = evaluateExpression(expression);
-      assert(typeof value === 'string');
-      return value;
-    });
-    return allowlistValues.includes(value);
+    const allowlist = context.getPropertyValue(
+      'allowlist',
+      new CollectionValuetype(PrimitiveValuetypes.Text),
+    );
+    return allowlist.includes(value);
   }
 }

@@ -2,17 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'assert';
-
 import {
   BlockMetaInformation,
+  CollectionValuetype,
   IOType,
-  NUMBER_TYPEGUARD,
-  PropertyValuetype,
-  evaluatePropertyValueExpression,
-  isCollectionLiteral,
-  isExpression,
-  validateTypedCollection,
+  PrimitiveValuetypes,
+  evaluatePropertyValue,
 } from '@jvalue/jayvee-language-server';
 
 export class TextLineDeleterMetaInformation extends BlockMetaInformation {
@@ -21,44 +16,26 @@ export class TextLineDeleterMetaInformation extends BlockMetaInformation {
       'TextLineDeleter',
       {
         lines: {
-          type: PropertyValuetype.COLLECTION,
-          validation: (property, context) => {
-            const propertyValue = property.value;
-            assert(isCollectionLiteral(propertyValue));
-
-            const { validItems, invalidItems } = validateTypedCollection(
-              propertyValue,
-              [PropertyValuetype.INTEGER],
+          type: new CollectionValuetype(PrimitiveValuetypes.Integer),
+          validation: (property, validationContext, evaluationContext) => {
+            const lines = evaluatePropertyValue(
+              property,
+              evaluationContext,
+              new CollectionValuetype(PrimitiveValuetypes.Integer),
             );
-
-            invalidItems.forEach((invalidValue) =>
-              context.accept(
-                'error',
-                'Only integers are allowed in this collection',
-                {
-                  node: invalidValue,
-                },
-              ),
-            );
-
-            assert(validItems.every(isExpression));
-
-            for (const expression of validItems) {
-              const value = evaluatePropertyValueExpression(
-                expression,
-                NUMBER_TYPEGUARD,
-              );
-
+            lines?.forEach((value, index) => {
               if (value <= 0) {
-                context.accept(
+                validationContext.accept(
                   'error',
                   `Line numbers need to be greater than zero`,
                   {
-                    node: expression,
+                    node: property.value,
+                    property: 'values',
+                    index: index,
                   },
                 );
               }
-            }
+            });
           },
           docs: {
             description: 'The line numbers to delete.',

@@ -4,16 +4,18 @@
 
 grammar Jayvee
 
-import 'terminal'
-import 'property'
-import 'valuetype'
-import 'constraint'
+import './terminal'
+import './property'
+import './valuetype'
+import './constraint'
+import './transform'
 
 entry JayveeModel:
   (
     pipelines+=PipelineDefinition
     | valuetypes+=ValuetypeDefinition
     | constraints+=ConstraintDefinition
+    | transforms+=TransformDefinition
   )*;
 
 PipelineDefinition:
@@ -23,6 +25,7 @@ PipelineDefinition:
       | pipes+=PipeDefinition
       | valuetypes+=ValuetypeDefinition
       | constraints+=ConstraintDefinition
+      | transforms+=TransformDefinition
     )*
   '}';
 

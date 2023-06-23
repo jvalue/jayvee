@@ -12,7 +12,7 @@ A `Pipeline` is a sequence of different computing steps, the `Blocks`.
 The default output of a block becomes the default input of the next block, building a chain of computing steps.
 In the scope of a `Pipeline`, you can connect these blocks via the `pipe` syntax:
 
-```javascript
+```jayvee
 pipeline CarsPipeline {
     // Assumption: blocks "GasReserveHttpExtractor", "GasReserveCSVInterpreter", "GasReserveTableInterpreter", and "GasReserveLoader" are defined
 
@@ -26,7 +26,7 @@ pipeline CarsPipeline {
 
 Alternatively, you can use a slightly longer syntax for pipes:
 
-```javascript
+```jayvee
 pipeline CarsPipeline {
     // Assumption: blocks "GasReserveHttpExtractor", "GasReserveCSVInterpreter", "GasReserveTableInterpreter", and "GasReserveLoader" are defined
 
@@ -67,7 +67,7 @@ flowchart LR
 The common syntax of blocks is at its core a key-value map to provide configuration to the block.
 The availability of property keys and their respective `ValueTypes` is determined by the type of the `Block` - indicated by the identifier after the keyword `oftype`:
 
-```javascript
+```jayvee
 block GasReserveHttpExtractor oftype HttpExtractor {
     // key: value
     url: "https://www.bundesnetzagentur.de/_tools/SVG/js2/_functions/csv_export.html?view=renderCSV&id=1089590";
@@ -93,7 +93,7 @@ We differentiate the following types of `ValueTypes`:
 The syntax of `Constraints` is similar to the syntax of `Blocks`.
 The availability of property keys and their respective `ValueTypes` is determined by the type of the `Constraint` - indicated by the identifier after the keyword `oftype`:
 
-```javascript
+```jayvee
 constraint GasFillLevelRange oftype RangeConstraint {
     lowerBound: 0;
     lowerBoundInclusive: true;
@@ -111,8 +111,11 @@ For instance, a `RangeConstraint` can only be applied to the numerical types `in
 Such constraints are implicitly connected via a logical `AND` relation.
 Note that the `Constraints` need to be applicable to the base-type of the `ValueType` - indicated by the identifier after the keyword `oftype`:
 
-```javascript
+```jayvee
 valuetype GasFillLevel oftype integer {
     constraints: [ GasFillLevelRange ];
 }
 ```
+
+### Transforms
+`Transforms` are used to transform data from one `ValueType` to a different one. For more details, see [Transforms](./transforms.md)

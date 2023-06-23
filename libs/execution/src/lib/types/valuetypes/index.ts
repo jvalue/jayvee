@@ -2,9 +2,5 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-export * from './primitive';
-export * from './visitors';
-
-export * from './atomic-valuetype';
-export * from './valuetype';
-export * from './valuetype-util';
+export * from './internal-representation-parsing';
+export * from './value-representation-validity';

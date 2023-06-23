@@ -2,17 +2,24 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { PropertyAssignment, PropertyBody } from '../ast/generated/ast';
 // eslint-disable-next-line import/no-cycle
-import { PropertyValuetype } from '../ast/model-util';
+import {
+  EvaluationContext,
+  InternalValueRepresentation,
+} from '../ast/expressions/evaluation';
+import { PropertyAssignment, PropertyBody } from '../ast/generated/ast';
+import { Valuetype } from '../ast/wrappers/value-type';
 import { ValidationContext } from '../validation/validation-context';
 
-export interface PropertySpecification {
-  type: PropertyValuetype;
-  defaultValue?: unknown;
+export interface PropertySpecification<
+  I extends InternalValueRepresentation = InternalValueRepresentation,
+> {
+  type: Valuetype<I>;
+  defaultValue?: I;
   validation?: (
     property: PropertyAssignment,
-    context: ValidationContext,
+    validationContext: ValidationContext,
+    evaluationContext: EvaluationContext,
   ) => void;
   docs?: PropertyDocs;
 }
@@ -34,12 +41,19 @@ export abstract class MetaInformation {
     private readonly properties: Record<string, PropertySpecification>,
     private readonly validation?: (
       property: PropertyBody,
-      context: ValidationContext,
+      validationContext: ValidationContext,
+      evaluationContext: EvaluationContext,
     ) => void,
   ) {}
 
-  validate(propertyBody: PropertyBody, context: ValidationContext): void {
-    for (const property of propertyBody.properties) {
+  validate(
+    propertyBody: PropertyBody,
+    validationContext: ValidationContext,
+    evaluationContext: EvaluationContext,
+  ): void {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const properties = propertyBody?.properties ?? [];
+    for (const property of properties) {
       const propertySpecification = this.getPropertySpecification(
         property.name,
       );
@@ -47,15 +61,20 @@ export abstract class MetaInformation {
       if (propertyValidationFn === undefined) {
         continue;
       }
-      propertyValidationFn(property, context);
+      propertyValidationFn(property, validationContext, evaluationContext);
     }
 
     if (this.validation !== undefined) {
-      this.validation(propertyBody, context);
+      this.validation(propertyBody, validationContext, evaluationContext);
     }
   }
 
-  getPropertySpecification(name: string): PropertySpecification | undefined {
+  getPropertySpecification(
+    name: string | undefined,
+  ): PropertySpecification | undefined {
+    if (name === undefined) {
+      return undefined;
+    }
     return this.properties[name];
   }
 

@@ -18,7 +18,7 @@ import {
   err,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
-import { IOType } from '@jvalue/jayvee-language-server';
+import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 import * as JSZip from 'jszip';
 
 import {
@@ -38,7 +38,11 @@ export class ArchiveInterpreterExecutor
     archiveFile: BinaryFile,
     context: ExecutionContext,
   ): Promise<R.Result<FileSystem>> {
-    if (context.getTextPropertyValue('archiveType') === 'zip') {
+    const archiveType = context.getPropertyValue(
+      'archiveType',
+      PrimitiveValuetypes.Text,
+    );
+    if (archiveType === 'zip') {
       const fs = await this.loadZipFileToInMemoryFileSystem(
         archiveFile,
         context,

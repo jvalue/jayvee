@@ -13,7 +13,7 @@ import {
   TextFile,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
-import { IOType } from '@jvalue/jayvee-language-server';
+import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 import * as E from 'fp-ts/lib/Either';
 import { Either, isLeft } from 'fp-ts/lib/Either';
 
@@ -29,9 +29,18 @@ export class CSVInterpreterExecutor
     file: TextFile,
     context: ExecutionContext,
   ): Promise<R.Result<Sheet>> {
-    const delimiter = context.getTextPropertyValue('delimiter');
-    const enclosing = context.getTextPropertyValue('enclosing');
-    const enclosingEscape = context.getTextPropertyValue('enclosingEscape');
+    const delimiter = context.getPropertyValue(
+      'delimiter',
+      PrimitiveValuetypes.Text,
+    );
+    const enclosing = context.getPropertyValue(
+      'enclosing',
+      PrimitiveValuetypes.Text,
+    );
+    const enclosingEscape = context.getPropertyValue(
+      'enclosingEscape',
+      PrimitiveValuetypes.Text,
+    );
 
     context.logger.logDebug(
       `Parsing raw data as CSV using delimiter "${delimiter}"`,

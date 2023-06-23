@@ -2,9 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { validateTypedCollection } from '../ast/collection-util';
-import { isCollectionLiteral } from '../ast/generated/ast';
-import { PropertyValuetype } from '../ast/model-util';
+import {
+  CollectionValuetype,
+  PrimitiveValuetypes,
+} from '../ast/wrappers/value-type';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 
 export class DenylistConstraintMetaInformation extends ConstraintMetaInformation {
@@ -13,30 +14,10 @@ export class DenylistConstraintMetaInformation extends ConstraintMetaInformation
       'DenylistConstraint',
       {
         denylist: {
-          type: PropertyValuetype.COLLECTION,
-          validation: (property, context) => {
-            const propertyValue = property.value;
-            if (!isCollectionLiteral(propertyValue)) {
-              return;
-            }
-
-            const { invalidItems } = validateTypedCollection(propertyValue, [
-              PropertyValuetype.TEXT,
-            ]);
-
-            invalidItems.forEach((invalidValue) =>
-              context.accept(
-                'error',
-                'Only text values are allowed in this collection',
-                {
-                  node: invalidValue,
-                },
-              ),
-            );
-          },
+          type: new CollectionValuetype(PrimitiveValuetypes.Text),
         },
       },
-      ['text'],
+      PrimitiveValuetypes.Text,
     );
     super.docs = {
       description:

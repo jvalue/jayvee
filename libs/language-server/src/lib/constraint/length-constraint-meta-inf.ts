@@ -2,10 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { evaluatePropertyValueExpression } from '../ast/expressions/evaluation';
-import { NUMBER_TYPEGUARD } from '../ast/expressions/typeguards';
+import {
+  EvaluationContext,
+  evaluatePropertyValue,
+} from '../ast/expressions/evaluation';
 import { PropertyAssignment } from '../ast/generated/ast';
-import { PropertyValuetype } from '../ast/model-util';
+import { PrimitiveValuetypes } from '../ast/wrappers/value-type';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 import { ValidationContext } from '../validation/validation-context';
 
@@ -15,18 +17,18 @@ export class LengthConstraintMetaInformation extends ConstraintMetaInformation {
       'LengthConstraint',
       {
         minLength: {
-          type: PropertyValuetype.INTEGER,
+          type: PrimitiveValuetypes.Integer,
           defaultValue: 0,
           validation: nonNegativeValidation,
         },
         maxLength: {
-          type: PropertyValuetype.INTEGER,
+          type: PrimitiveValuetypes.Integer,
           defaultValue: Number.POSITIVE_INFINITY,
           validation: nonNegativeValidation,
         },
       },
-      ['text'],
-      (propertyBody, context) => {
+      PrimitiveValuetypes.Text,
+      (propertyBody, validationContext, evaluationContext) => {
         const minLengthProperty = propertyBody.properties.find(
           (p) => p.name === 'minLength',
         );
@@ -41,18 +43,23 @@ export class LengthConstraintMetaInformation extends ConstraintMetaInformation {
           return;
         }
 
-        const minLength = evaluatePropertyValueExpression(
-          minLengthProperty.value,
-          NUMBER_TYPEGUARD,
+        const minLength = evaluatePropertyValue(
+          minLengthProperty,
+          evaluationContext,
+          PrimitiveValuetypes.Integer,
         );
-        const maxLength = evaluatePropertyValueExpression(
-          maxLengthProperty.value,
-          NUMBER_TYPEGUARD,
+        const maxLength = evaluatePropertyValue(
+          maxLengthProperty,
+          evaluationContext,
+          PrimitiveValuetypes.Integer,
         );
+        if (minLength === undefined || maxLength === undefined) {
+          return;
+        }
 
         if (minLength > maxLength) {
           [minLengthProperty, maxLengthProperty].forEach((property) => {
-            context.accept(
+            validationContext.accept(
               'error',
               'The minimum length needs to be smaller or equal to the maximum length',
               { node: property.value },
@@ -79,20 +86,24 @@ export class LengthConstraintMetaInformation extends ConstraintMetaInformation {
 
 function nonNegativeValidation(
   property: PropertyAssignment,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ) {
-  const propertyValue = property.value;
-  const value = evaluatePropertyValueExpression(
-    propertyValue,
-    NUMBER_TYPEGUARD,
+  const value = evaluatePropertyValue(
+    property,
+    evaluationContext,
+    PrimitiveValuetypes.Integer,
   );
+  if (value === undefined) {
+    return;
+  }
 
   if (value < 0) {
-    context.accept(
+    validationContext.accept(
       'error',
       `Bounds for length need to be equal or greater than zero`,
       {
-        node: propertyValue,
+        node: property.value,
       },
     );
   }

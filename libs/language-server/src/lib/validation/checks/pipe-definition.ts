@@ -2,9 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+/**
+ * See https://jvalue.github.io/jayvee/docs/dev/working-with-the-ast for why the following ESLint rule is disabled for this file.
+ */
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
+
 import { PipeDefinition } from '../../ast/generated/ast';
 import { createSemanticPipes } from '../../ast/wrappers/pipe-wrapper';
-// eslint-disable-next-line import/no-cycle
 import { getMetaInformation } from '../../meta-information/meta-inf-registry';
 import { ValidationContext } from '../validation-context';
 
@@ -21,8 +25,8 @@ function checkBlockCompatibility(
 ): void {
   const semanticPipes = createSemanticPipes(pipe);
   for (const semanticPipe of semanticPipes) {
-    const fromBlockType = semanticPipe.from.type;
-    const toBlockType = semanticPipe.to.type;
+    const fromBlockType = semanticPipe.from?.type;
+    const toBlockType = semanticPipe.to?.type;
 
     const fromBlockMetaInf = getMetaInformation(fromBlockType);
     const toBlockMetaInf = getMetaInformation(toBlockType);

@@ -2,22 +2,36 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import {
+  InternalValueRepresentation,
+  PrimitiveValuetypes,
+} from '@jvalue/jayvee-language-server';
+
 import { ExecutionContext } from '../../execution-context';
 import { implementsStatic } from '../../util/implements-static-decorator';
 import { ConstraintExecutor } from '../constraint-executor';
-import { ConstraintExecutorClass } from '../constraint-executor-class';
+import { TypedConstraintExecutorClass } from '../typed-constraint-executor-class';
 
-@implementsStatic<ConstraintExecutorClass>()
+@implementsStatic<TypedConstraintExecutorClass>()
 export class LengthConstraintExecutor implements ConstraintExecutor {
   public static readonly type = 'LengthConstraint';
 
-  isValid(value: unknown, context: ExecutionContext): boolean {
+  isValid(
+    value: InternalValueRepresentation,
+    context: ExecutionContext,
+  ): boolean {
     if (typeof value !== 'string') {
       return false;
     }
 
-    const minLength = context.getNumericPropertyValue('minLength');
-    const maxLength = context.getNumericPropertyValue('maxLength');
+    const minLength = context.getPropertyValue(
+      'minLength',
+      PrimitiveValuetypes.Integer,
+    );
+    const maxLength = context.getPropertyValue(
+      'maxLength',
+      PrimitiveValuetypes.Integer,
+    );
 
     return minLength <= value.length && value.length <= maxLength;
   }

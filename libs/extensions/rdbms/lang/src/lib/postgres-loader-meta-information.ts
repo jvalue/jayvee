@@ -5,7 +5,7 @@
 import {
   BlockMetaInformation,
   IOType,
-  PropertyValuetype,
+  PrimitiveValuetypes,
 } from '@jvalue/jayvee-language-server';
 
 export class PostgresLoaderMetaInformation extends BlockMetaInformation {
@@ -14,37 +14,37 @@ export class PostgresLoaderMetaInformation extends BlockMetaInformation {
       'PostgresLoader',
       {
         host: {
-          type: PropertyValuetype.TEXT,
+          type: PrimitiveValuetypes.Text,
           docs: {
             description: 'The hostname or IP address of the Postgres database.',
           },
         },
         port: {
-          type: PropertyValuetype.INTEGER,
+          type: PrimitiveValuetypes.Integer,
           docs: {
             description: 'The port of the Postgres database.',
           },
         },
         username: {
-          type: PropertyValuetype.TEXT,
+          type: PrimitiveValuetypes.Text,
           docs: {
             description: 'The username to login to the Postgres database.',
           },
         },
         password: {
-          type: PropertyValuetype.TEXT,
+          type: PrimitiveValuetypes.Text,
           docs: {
             description: 'The password to login to the Postgres database.',
           },
         },
         database: {
-          type: PropertyValuetype.TEXT,
+          type: PrimitiveValuetypes.Text,
           docs: {
             description: 'The database to use.',
           },
         },
         table: {
-          type: PropertyValuetype.TEXT,
+          type: PrimitiveValuetypes.Text,
           docs: {
             description: 'The name of the table to write into.',
           },

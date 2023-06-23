@@ -7,9 +7,8 @@ import { TextDecoder } from 'util';
 import {
   BlockMetaInformation,
   IOType,
-  PropertyValuetype,
-  STRING_TYPEGUARD,
-  evaluatePropertyValueExpression,
+  PrimitiveValuetypes,
+  evaluatePropertyValue,
 } from '@jvalue/jayvee-language-server';
 
 export class TextFileInterpreterMetaInformation extends BlockMetaInformation {
@@ -18,30 +17,37 @@ export class TextFileInterpreterMetaInformation extends BlockMetaInformation {
       'TextFileInterpreter',
       {
         encoding: {
-          type: PropertyValuetype.TEXT,
+          type: PrimitiveValuetypes.Text,
           defaultValue: 'utf-8',
           docs: {
             description: 'The encoding used for decoding the file contents.',
           },
-          validation: (property, context) => {
-            const propertyValue = property.value;
-            const encodingValue = evaluatePropertyValueExpression(
-              propertyValue,
-              STRING_TYPEGUARD,
+          validation: (property, validationContext, evaluationContext) => {
+            const encodingValue = evaluatePropertyValue(
+              property,
+              evaluationContext,
+              PrimitiveValuetypes.Text,
             );
+            if (encodingValue === undefined) {
+              return;
+            }
 
             try {
               new TextDecoder(encodingValue);
             } catch (error) {
-              context.accept('error', `Unknown encoding "${encodingValue}"`, {
-                node: propertyValue,
-              });
+              validationContext.accept(
+                'error',
+                `Unknown encoding "${encodingValue}"`,
+                {
+                  node: property.value,
+                },
+              );
             }
           },
         },
         lineBreak: {
-          type: PropertyValuetype.REGEX,
-          defaultValue: '\r?\n',
+          type: PrimitiveValuetypes.Regex,
+          defaultValue: /\r?\n/,
           docs: {
             description: 'The regex for identifying line breaks.',
           },

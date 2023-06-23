@@ -2,7 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import 'terminal'
+import './cellrange'
+import './constraint'
+import './valuetype'
+import './terminal'
+import './transform'
 
 Expression:
   OrExpression;
@@ -19,7 +23,10 @@ XorExpression infers Expression:
   EqualityExpression ({infer BinaryExpression.left=current} operator='xor' right=EqualityExpression)*;
 
 EqualityExpression infers Expression:
-  RelationalExpression ({infer BinaryExpression.left=current} operator=('==' | '!=') right=RelationalExpression)*;
+  MatchesExpression ({infer BinaryExpression.left=current} operator=('==' | '!=') right=MatchesExpression)*;
+
+MatchesExpression infers Expression:
+  RelationalExpression ({infer BinaryExpression.left=current} operator='matches' right=RelationalExpression)*;
 
 RelationalExpression infers Expression:
   AdditiveExpression ({infer BinaryExpression.left=current} operator=('<' | '<=' | '>' | '>=') right=AdditiveExpression)*;
@@ -42,9 +49,16 @@ UnaryExpression:
   operator=('not' | '+' | '-' | 'sqrt' | 'floor' | 'ceil' | 'round') expression=PrimaryExpression;
 
 ExpressionLiteral:
+  ValueLiteral | FreeVariableLiteral;
+
+ValueLiteral:
   TextLiteral
   | NumericLiteral
-  | BooleanLiteral;
+  | BooleanLiteral
+  | RegexLiteral
+  | CellRangeLiteral
+  | ValuetypeAssignmentLiteral
+  | CollectionLiteral;
 
 TextLiteral:
   value=STRING;
@@ -54,3 +68,23 @@ NumericLiteral:
 
 BooleanLiteral:
   value?='true' | 'false';
+
+RegexLiteral:
+  value=REGEX;
+
+CollectionLiteral:
+  '[' (values+=(Expression) (',' values+=(Expression))*)? ','? ']';
+
+FreeVariableLiteral:
+  ValueKeywordLiteral | ReferenceLiteral;
+
+ValueKeywordLiteral:
+  'value' ('.' lengthAccess?='length')?;
+
+ReferenceLiteral:
+  value=[Referencable];
+
+Referencable:
+  ConstraintDefinition
+  | TransformDefinition
+  | TransformPortDefinition;

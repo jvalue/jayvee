@@ -2,12 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { evaluatePropertyValueExpression } from '../ast/expressions/evaluation';
-import {
-  BOOLEAN_TYPEGUARD,
-  NUMBER_TYPEGUARD,
-} from '../ast/expressions/typeguards';
-import { PropertyValuetype } from '../ast/model-util';
+import { evaluatePropertyValue } from '../ast/expressions/evaluation';
+import { PrimitiveValuetypes } from '../ast/wrappers/value-type';
 import { ConstraintMetaInformation } from '../meta-information/constraint-meta-inf';
 
 export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
@@ -16,24 +12,24 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
       'RangeConstraint',
       {
         lowerBound: {
-          type: PropertyValuetype.DECIMAL,
+          type: PrimitiveValuetypes.Decimal,
           defaultValue: Number.NEGATIVE_INFINITY,
         },
         lowerBoundInclusive: {
-          type: PropertyValuetype.BOOLEAN,
+          type: PrimitiveValuetypes.Boolean,
           defaultValue: true,
         },
         upperBound: {
-          type: PropertyValuetype.DECIMAL,
+          type: PrimitiveValuetypes.Decimal,
           defaultValue: Number.POSITIVE_INFINITY,
         },
         upperBoundInclusive: {
-          type: PropertyValuetype.BOOLEAN,
+          type: PrimitiveValuetypes.Boolean,
           defaultValue: true,
         },
       },
-      ['integer', 'decimal'],
-      (propertyBody, context) => {
+      PrimitiveValuetypes.Decimal,
+      (propertyBody, validationContext, evaluationContext) => {
         const lowerBoundProperty = propertyBody.properties.find(
           (p) => p.name === 'lowerBound',
         );
@@ -48,58 +44,75 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
           return;
         }
 
-        const lowerBound = evaluatePropertyValueExpression(
-          lowerBoundProperty.value,
-          NUMBER_TYPEGUARD,
+        const lowerBound = evaluatePropertyValue(
+          lowerBoundProperty,
+          evaluationContext,
+          PrimitiveValuetypes.Decimal,
         );
-        const upperBound = evaluatePropertyValueExpression(
-          upperBoundProperty.value,
-          NUMBER_TYPEGUARD,
+        const upperBound = evaluatePropertyValue(
+          upperBoundProperty,
+          evaluationContext,
+          PrimitiveValuetypes.Decimal,
         );
+        if (lowerBound === undefined || upperBound === undefined) {
+          return;
+        }
 
         if (lowerBound > upperBound) {
           [lowerBoundProperty, upperBoundProperty].forEach((property) => {
-            context.accept(
+            validationContext.accept(
               'error',
               'The lower bound needs to be smaller or equal to the upper bound',
               { node: property.value },
             );
           });
-        } else if (lowerBound === upperBound) {
-          const lowerBoundInclusiveProperty = propertyBody.properties.find(
-            (p) => p.name === 'lowerBoundInclusive',
-          );
+          return;
+        }
+
+        const lowerBoundInclusiveProperty = propertyBody.properties.find(
+          (p) => p.name === 'lowerBoundInclusive',
+        );
+        const upperBoundInclusiveProperty = propertyBody.properties.find(
+          (p) => p.name === 'upperBoundInclusive',
+        );
+
+        if (lowerBound === upperBound) {
           let lowerBoundInclusive = true;
           if (lowerBoundInclusiveProperty !== undefined) {
-            const expressionValue = evaluatePropertyValueExpression(
-              lowerBoundInclusiveProperty.value,
-              BOOLEAN_TYPEGUARD,
+            const expressionValue = evaluatePropertyValue(
+              lowerBoundInclusiveProperty,
+              evaluationContext,
+              PrimitiveValuetypes.Boolean,
             );
+            if (expressionValue === undefined) {
+              return;
+            }
             lowerBoundInclusive = expressionValue;
           }
 
-          const upperBoundInclusiveProperty = propertyBody.properties.find(
-            (p) => p.name === 'upperBoundInclusive',
-          );
           let upperBoundInclusive = true;
           if (upperBoundInclusiveProperty !== undefined) {
-            const expressionValue = evaluatePropertyValueExpression(
-              upperBoundInclusiveProperty.value,
-              BOOLEAN_TYPEGUARD,
+            const expressionValue = evaluatePropertyValue(
+              upperBoundInclusiveProperty,
+              evaluationContext,
+              PrimitiveValuetypes.Boolean,
             );
+            if (expressionValue === undefined) {
+              return;
+            }
             upperBoundInclusive = expressionValue;
           }
 
           const errorMessage =
             'Lower and upper bounds need to be inclusive if they are identical';
           if (!lowerBoundInclusive) {
-            context.accept('error', errorMessage, {
+            validationContext.accept('error', errorMessage, {
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               node: lowerBoundInclusiveProperty!.value,
             });
           }
           if (!upperBoundInclusive) {
-            context.accept('error', errorMessage, {
+            validationContext.accept('error', errorMessage, {
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               node: upperBoundInclusiveProperty!.value,
             });

@@ -4,12 +4,12 @@
 
 import {
   BlockMetaInformation,
+  EvaluationContext,
   IOType,
+  PrimitiveValuetypes,
   PropertyAssignment,
-  PropertyValuetype,
-  STRING_TYPEGUARD,
   ValidationContext,
-  evaluatePropertyValueExpression,
+  evaluatePropertyValue,
 } from '@jvalue/jayvee-language-server';
 
 export class GtfsRTInterpreterMetaInformation extends BlockMetaInformation {
@@ -21,7 +21,7 @@ export class GtfsRTInterpreterMetaInformation extends BlockMetaInformation {
       // Attribute definitions:
       {
         entity: {
-          type: PropertyValuetype.TEXT,
+          type: PrimitiveValuetypes.Text,
           validation: isGtfsRTEntity,
           docs: {
             description: `Entity to process from GTFS-RT-feed (\`trip_update\`, \`alert\` or \`vehicle\`).
@@ -100,20 +100,24 @@ const blockExampleUsage = `block GtfsRTTripUpdateInterpreter oftype GtfsRTInterp
 
 function isGtfsRTEntity(
   property: PropertyAssignment,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
 ) {
-  const propertyValue = property.value;
-  const entityValue = evaluatePropertyValueExpression(
-    propertyValue,
-    STRING_TYPEGUARD,
+  const entityValue = evaluatePropertyValue(
+    property,
+    evaluationContext,
+    PrimitiveValuetypes.Text,
   );
+  if (entityValue === undefined) {
+    return;
+  }
 
   if (!['trip_update', 'alert', 'vehicle'].includes(entityValue)) {
-    context.accept(
+    validationContext.accept(
       'error',
       `Entity must be "trip_update", "alert" or "vehicle"`,
       {
-        node: propertyValue,
+        node: property.value,
       },
     );
   }

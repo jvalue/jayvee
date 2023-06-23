@@ -1,0 +1,12 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+constraint Constraint on integer:
+	value > 10;
+
+valuetype ValueType oftype text {
+	constraints: [
+		Constraint
+	];
+}

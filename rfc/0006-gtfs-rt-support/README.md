@@ -9,8 +9,9 @@ SPDX-License-Identifier: AGPL-3.0-only
 | | |
 |---|---|
 | Feature Tag | `gtfs-rt-support` | 
-| Status | `DISCUSSION` | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED -->
+| Status | `ACCEPTED` | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED -->
 | Responsible | `@schlingling` |
+| Implemented via | [#219](https://github.com/jvalue/jayvee/issues/219) |
 <!-- 
   Status Overview:
   - DRAFT: The RFC is not ready for a review and currently under change. Feel free to already ask for feedback on the structure and contents at this stage.

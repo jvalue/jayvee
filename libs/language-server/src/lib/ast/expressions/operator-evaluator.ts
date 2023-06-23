@@ -13,9 +13,10 @@ import {
 } from '../model-util';
 
 import {
+  EvaluationContext,
   EvaluationStrategy,
-  OperandValue,
-  OperandValueTypeguard,
+  InternalValueRepresentation,
+  InternalValueRepresentationTypeguard,
   evaluateExpression,
 } from './evaluation';
 
@@ -29,19 +30,20 @@ export interface OperatorEvaluator<
    */
   evaluate(
     expression: E,
+    evaluationContext: EvaluationContext,
     strategy: EvaluationStrategy,
-    context: ValidationContext | undefined,
-  ): OperandValue | undefined;
+    validationContext: ValidationContext | undefined,
+  ): InternalValueRepresentation | undefined;
 }
 
 export abstract class DefaultUnaryOperatorEvaluator<
-  O extends OperandValue,
-  T extends OperandValue,
+  O extends InternalValueRepresentation,
+  T extends InternalValueRepresentation,
 > implements OperatorEvaluator<UnaryExpression>
 {
   constructor(
     public readonly operator: UnaryExpressionOperator,
-    private readonly operandValueTypeguard: OperandValueTypeguard<O>,
+    private readonly operandValueTypeguard: InternalValueRepresentationTypeguard<O>,
   ) {}
 
   protected abstract doEvaluate(
@@ -52,14 +54,16 @@ export abstract class DefaultUnaryOperatorEvaluator<
 
   evaluate(
     expression: UnaryExpression,
+    evaluationContext: EvaluationContext,
     strategy: EvaluationStrategy,
-    context: ValidationContext | undefined,
+    validationContext: ValidationContext | undefined,
   ): T | undefined {
     assert(expression.operator === this.operator);
     const operandValue = evaluateExpression(
       expression.expression,
+      evaluationContext,
+      validationContext,
       strategy,
-      context,
     );
     if (operandValue === undefined) {
       return undefined;
@@ -67,20 +71,20 @@ export abstract class DefaultUnaryOperatorEvaluator<
 
     assert(this.operandValueTypeguard(operandValue));
 
-    return this.doEvaluate(operandValue, expression, context);
+    return this.doEvaluate(operandValue, expression, validationContext);
   }
 }
 
 export abstract class DefaultBinaryOperatorEvaluator<
-  L extends OperandValue,
-  R extends OperandValue,
-  T extends OperandValue,
+  L extends InternalValueRepresentation,
+  R extends InternalValueRepresentation,
+  T extends InternalValueRepresentation,
 > implements OperatorEvaluator<BinaryExpression>
 {
   constructor(
     public readonly operator: BinaryExpressionOperator,
-    private readonly leftValueTypeguard: OperandValueTypeguard<L>,
-    private readonly rightValueTypeguard: OperandValueTypeguard<R>,
+    private readonly leftValueTypeguard: InternalValueRepresentationTypeguard<L>,
+    private readonly rightValueTypeguard: InternalValueRepresentationTypeguard<R>,
   ) {}
 
   protected abstract doEvaluate(
@@ -92,15 +96,26 @@ export abstract class DefaultBinaryOperatorEvaluator<
 
   evaluate(
     expression: BinaryExpression,
+    evaluationContext: EvaluationContext,
     strategy: EvaluationStrategy,
-    context: ValidationContext | undefined,
+    validationContext: ValidationContext | undefined,
   ): T | undefined {
     assert(expression.operator === this.operator);
-    const leftValue = evaluateExpression(expression.left, strategy, context);
+    const leftValue = evaluateExpression(
+      expression.left,
+      evaluationContext,
+      validationContext,
+      strategy,
+    );
     if (strategy === EvaluationStrategy.LAZY && leftValue === undefined) {
       return undefined;
     }
-    const rightValue = evaluateExpression(expression.right, strategy, context);
+    const rightValue = evaluateExpression(
+      expression.right,
+      evaluationContext,
+      validationContext,
+      strategy,
+    );
     if (leftValue === undefined || rightValue === undefined) {
       return undefined;
     }
@@ -108,7 +123,12 @@ export abstract class DefaultBinaryOperatorEvaluator<
     assert(this.leftValueTypeguard(leftValue));
     assert(this.rightValueTypeguard(rightValue));
 
-    return this.doEvaluate(leftValue, rightValue, expression, context);
+    return this.doEvaluate(
+      leftValue,
+      rightValue,
+      expression,
+      validationContext,
+    );
   }
 }
 
@@ -132,11 +152,17 @@ export abstract class BooleanShortCircuitOperatorEvaluator
 
   evaluate(
     expression: BinaryExpression,
+    evaluationContext: EvaluationContext,
     strategy: EvaluationStrategy,
-    context: ValidationContext | undefined,
+    validationContext: ValidationContext | undefined,
   ): boolean | undefined {
     assert(expression.operator === this.operator);
-    const leftValue = evaluateExpression(expression.left, strategy, context);
+    const leftValue = evaluateExpression(
+      expression.left,
+      evaluationContext,
+      validationContext,
+      strategy,
+    );
     assert(leftValue === undefined || typeof leftValue === 'boolean');
     if (strategy === EvaluationStrategy.LAZY) {
       if (leftValue === undefined) {
@@ -147,7 +173,12 @@ export abstract class BooleanShortCircuitOperatorEvaluator
       }
     }
 
-    const rightValue = evaluateExpression(expression.right, strategy, context);
+    const rightValue = evaluateExpression(
+      expression.right,
+      evaluationContext,
+      validationContext,
+      strategy,
+    );
     if (leftValue === undefined || rightValue === undefined) {
       return undefined;
     }

@@ -2,16 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'assert';
-
 import {
   BlockMetaInformation,
+  CollectionValuetype,
   IOType,
-  PropertyValuetype,
-  getNodesWithNonUniqueNames,
-  isCollectionLiteral,
-  isValuetypeAssignmentLiteral,
-  validateTypedCollection,
+  PrimitiveValuetypes,
+  checkUniqueNames,
+  evaluatePropertyValue,
 } from '@jvalue/jayvee-language-server';
 
 export class TableInterpreterMetaInformation extends BlockMetaInformation {
@@ -20,7 +17,7 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
       'TableInterpreter',
       {
         header: {
-          type: PropertyValuetype.BOOLEAN,
+          type: PrimitiveValuetypes.Boolean,
           docs: {
             description:
               'Whether the first row should be interpreted as header row.',
@@ -39,52 +36,27 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
           },
         },
         columns: {
-          type: PropertyValuetype.COLLECTION,
-          validation: (property, context) => {
-            const propertyValue = property.value;
-            if (!isCollectionLiteral(propertyValue)) {
+          type: new CollectionValuetype(
+            PrimitiveValuetypes.ValuetypeAssignment,
+          ),
+          validation: (property, validationContext, evaluationContext) => {
+            const valuetypeAssignments = evaluatePropertyValue(
+              property,
+              evaluationContext,
+              new CollectionValuetype(PrimitiveValuetypes.ValuetypeAssignment),
+            );
+            if (valuetypeAssignments === undefined) {
               return;
             }
 
-            const { validItems, invalidItems } = validateTypedCollection(
-              propertyValue,
-              [PropertyValuetype.VALUETYPE_ASSIGNMENT],
-            );
-
-            invalidItems.forEach((invalidValue) =>
-              context.accept(
-                'error',
-                'Only type assignments are allowed in this collection',
-                {
-                  node: invalidValue,
-                },
-              ),
-            );
-
-            assert(validItems.every(isValuetypeAssignmentLiteral));
-
-            const valuetypeAssignments = validItems.map(
-              (assignment) => assignment.value,
-            );
-            getNodesWithNonUniqueNames(valuetypeAssignments).forEach(
-              (valuetypeAssignment) => {
-                context.accept(
-                  'error',
-                  `The column name "${valuetypeAssignment.name}" needs to be unique.`,
-                  {
-                    node: valuetypeAssignment,
-                    property: 'name',
-                  },
-                );
-              },
-            );
+            checkUniqueNames(valuetypeAssignments, validationContext, 'column');
           },
           docs: {
             description:
               'Collection of valuetype assignments. Uses column names (potentially matched with the header or by sequence depending on the `header` property) to assign a primitive valuetype to each column.',
             examples: [
               {
-                code: 'columns: [ "name" typed text ]',
+                code: 'columns: [ "name" oftype text ]',
                 description:
                   'There is one column with the header "name". All values in this colum are typed as text.',
               },
@@ -117,17 +89,17 @@ export class TableInterpreterMetaInformation extends BlockMetaInformation {
 const blockExampleWithHeader = `block CarsTableInterpreter oftype TableInterpreter {
   header: true;
   columns: [
-    "name" typed text,
-    "mpg" typed decimal,
-    "cyl" typed integer,
+    "name" oftype text,
+    "mpg" oftype decimal,
+    "cyl" oftype integer,
   ];
 }`;
 
 const blockExampleWithoutHeader = `block CarsTableInterpreter oftype TableInterpreter {
   header: false;
   columns: [
-    "name" typed text,
-    "mpg" typed decimal,
-    "cyl" typed integer,
+    "name" oftype text,
+    "mpg" oftype decimal,
+    "cyl" oftype integer,
   ];
 }`;

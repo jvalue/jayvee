@@ -2,10 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { PrimitiveValuetypeKeyword, PropertyBody } from '../ast/generated/ast';
+// eslint-disable-next-line import/no-cycle
+import { EvaluationContext } from '../ast/expressions/evaluation';
+import { PropertyBody } from '../ast/generated/ast';
+import { Valuetype } from '../ast/wrappers/value-type/valuetype';
 import { ValidationContext } from '../validation/validation-context';
 
-// eslint-disable-next-line import/no-cycle
 import { ExampleDoc, MetaInformation, PropertySpecification } from './meta-inf';
 
 interface ConstraintDocs {
@@ -18,8 +20,12 @@ export abstract class ConstraintMetaInformation extends MetaInformation {
   protected constructor(
     constraintType: string,
     properties: Record<string, PropertySpecification>,
-    public readonly compatiblePrimitiveValuetypes: PrimitiveValuetypeKeyword[],
-    validation?: (property: PropertyBody, context: ValidationContext) => void,
+    public readonly compatibleValuetype: Valuetype,
+    validation?: (
+      property: PropertyBody,
+      validationContext: ValidationContext,
+      evaluationContext: EvaluationContext,
+    ) => void,
   ) {
     super(constraintType, properties, validation);
   }

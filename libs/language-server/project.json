@@ -23,7 +23,13 @@
         "outputPath": "dist/libs/language-server",
         "main": "libs/language-server/src/index.ts",
         "tsConfig": "libs/language-server/tsconfig.lib.json"
-      }
+      },
+      "configurations": {
+        // https://nx.dev/recipes/executors/use-executor-configurations
+        "dev": {},
+        "prod": {}
+      },
+      "defaultConfiguration": "dev"
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
@@ -37,7 +43,7 @@
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "libs/language-server/jest.config.ts",
-        "passWithNoTests": true
+        "passWithNoTests": false
       }
     },
     "pre-publish": {
@@ -54,18 +60,14 @@
       "executor": "nx:run-commands",
       "dependsOn": ["pre-publish"],
       "options": {
-        "commands": [
-          "node tools/scripts/publish.mjs language-server"
-        ]
+        "commands": ["node tools/scripts/publish.mjs language-server"]
       }
     },
     "pack": {
       "executor": "nx:run-commands",
       "dependsOn": ["pre-publish"],
       "options": {
-        "commands": [
-          "node tools/scripts/pack.mjs language-server"
-        ]
+        "commands": ["node tools/scripts/pack.mjs language-server"]
       }
     }
   },

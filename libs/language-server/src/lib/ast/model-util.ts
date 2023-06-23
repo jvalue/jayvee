@@ -8,26 +8,12 @@ import { AstNode, assertUnreachable } from 'langium';
 
 // eslint-disable-next-line import/no-cycle
 import { getMetaInformation } from '../meta-information/meta-inf-registry';
-// eslint-disable-next-line import/no-cycle
-import { ValidationContext } from '../validation';
 
-// eslint-disable-next-line import/no-cycle
-import { inferExpressionType } from './expressions/type-inference';
 import {
   BinaryExpression,
   BlockDefinition,
   PipelineDefinition,
-  PrimitiveValuetypeKeywordLiteral,
-  PropertyValueLiteral,
   UnaryExpression,
-  ValuetypeDefinitionReference,
-  isCellRangeLiteral,
-  isCollectionLiteral,
-  isConstraintReferenceLiteral,
-  isExpression,
-  isRegexLiteral,
-  isValuetypeAssignmentLiteral,
-  isValuetypeDefinitionReference,
 } from './generated/ast';
 import { PipeWrapper, createSemanticPipes } from './wrappers/pipe-wrapper';
 
@@ -35,7 +21,10 @@ export function collectStartingBlocks(
   pipeline: PipelineDefinition,
 ): BlockDefinition[] {
   const result: BlockDefinition[] = [];
-  for (const block of pipeline.blocks) {
+
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const blocks = pipeline?.blocks ?? [];
+  for (const block of blocks) {
     const blockMetaInf = getMetaInformation(block.type);
     if (blockMetaInf === undefined) {
       continue;
@@ -79,6 +68,8 @@ function collectPipes(
         return semanticPipe.from === block;
       case 'ingoing':
         return semanticPipe.to === block;
+      case undefined:
+        return false;
     }
     return assertUnreachable(kind);
   });
@@ -157,88 +148,29 @@ export enum IOType {
   TABLE = 'Table',
 }
 
-export enum PropertyValuetype {
-  TEXT = 'text',
-  INTEGER = 'integer',
-  DECIMAL = 'decimal',
-  BOOLEAN = 'boolean',
-  CELL_RANGE = 'cell-range',
-  REGEX = 'regex',
-  COLLECTION = 'collection',
-  VALUETYPE_ASSIGNMENT = 'valuetype-assignment',
-  CONSTRAINT = 'constraint',
-}
-
-export function runtimeParameterAllowedForType(
-  type: PropertyValuetype,
-): boolean {
-  switch (type) {
-    case PropertyValuetype.CELL_RANGE:
-    case PropertyValuetype.REGEX:
-    case PropertyValuetype.VALUETYPE_ASSIGNMENT:
-    case PropertyValuetype.COLLECTION:
-    case PropertyValuetype.CONSTRAINT:
-      return false;
-    case PropertyValuetype.TEXT:
-    case PropertyValuetype.INTEGER:
-    case PropertyValuetype.DECIMAL:
-    case PropertyValuetype.BOOLEAN:
-      return true;
-    default:
-      assertUnreachable(type);
-  }
-}
-
 export type UnaryExpressionOperator = UnaryExpression['operator'];
 export type BinaryExpressionOperator = BinaryExpression['operator'];
-
-export const numericTypes = [
-  PropertyValuetype.INTEGER,
-  PropertyValuetype.DECIMAL,
-];
-export function isNumericType(
-  type: PropertyValuetype | undefined,
-): type is PropertyValuetype.INTEGER | PropertyValuetype.DECIMAL {
-  if (type === undefined) {
-    return false;
-  }
-  return numericTypes.includes(type);
-}
-
-export function inferTypeFromValue(
-  value: PropertyValueLiteral,
-  context?: ValidationContext,
-): PropertyValuetype | undefined {
-  if (isCollectionLiteral(value)) {
-    return PropertyValuetype.COLLECTION;
-  }
-  if (isCellRangeLiteral(value)) {
-    return PropertyValuetype.CELL_RANGE;
-  }
-  if (isRegexLiteral(value)) {
-    return PropertyValuetype.REGEX;
-  }
-  if (isValuetypeAssignmentLiteral(value)) {
-    return PropertyValuetype.VALUETYPE_ASSIGNMENT;
-  }
-  if (isConstraintReferenceLiteral(value)) {
-    return PropertyValuetype.CONSTRAINT;
-  }
-  if (isExpression(value)) {
-    return inferExpressionType(value, context);
-  }
-  assertUnreachable(value);
-}
-
-export function getValuetypeName(
-  valuetype: PrimitiveValuetypeKeywordLiteral | ValuetypeDefinitionReference,
-): string {
-  if (isValuetypeDefinitionReference(valuetype)) {
-    return valuetype.reference.$refText;
-  }
-  return valuetype.keyword;
-}
 
 export type AstTypeGuard<T extends AstNode = AstNode> = (
   obj: unknown,
 ) => obj is T;
+
+/**
+ * Recursively goes upwards through the AST until it finds an AST node that satisfies the given type guard.
+ * The entered AST node itself cannot be the result.
+ * @param node The current AST node to start the search from.
+ * @param guard The type guard function to check if a container matches the desired type.
+ * @returns The desired container node that satisfies the type guard, or undefined if not found.
+ */
+export function getNextAstNodeContainer<T extends AstNode>(
+  node: AstNode,
+  guard: AstTypeGuard<T>,
+): T | undefined {
+  if (node.$container === undefined) {
+    return undefined;
+  }
+  if (guard(node.$container)) {
+    return node.$container;
+  }
+  return getNextAstNodeContainer(node.$container, guard);
+}

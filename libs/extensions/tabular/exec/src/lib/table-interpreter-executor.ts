@@ -8,19 +8,22 @@ import * as R from '@jvalue/jayvee-execution';
 import {
   BlockExecutor,
   BlockExecutorClass,
-  ColumnInformation,
   ExecutionContext,
   Sheet,
   Table,
-  Valuetype,
-  createValuetype,
   implementsStatic,
+  isValidValueRepresentation,
+  parseValueToInternalRepresentation,
 } from '@jvalue/jayvee-execution';
 import {
   CellIndex,
+  CollectionValuetype,
   IOType,
+  InternalValueRepresentation,
+  PrimitiveValuetypes,
+  Valuetype,
   ValuetypeAssignment,
-  getValuetypeName,
+  createValuetype,
   rowIndexToString,
 } from '@jvalue/jayvee-language-server';
 
@@ -44,9 +47,14 @@ export class TableInterpreterExecutor
     inputSheet: Sheet,
     context: ExecutionContext,
   ): Promise<R.Result<Table>> {
-    const header = context.getBooleanPropertyValue('header');
-    const columnDefinitions =
-      context.getValuetypeAssignmentCollectionPropertyValue('columns');
+    const header = context.getPropertyValue(
+      'header',
+      PrimitiveValuetypes.Boolean,
+    );
+    const columnDefinitions = context.getPropertyValue(
+      'columns',
+      new CollectionValuetype(PrimitiveValuetypes.ValuetypeAssignment),
+    );
 
     let columnEntries: ColumnDefinitionEntry[];
 
@@ -90,34 +98,35 @@ export class TableInterpreterExecutor
       `Validating ${numberOfTableRows} row(s) according to the column types`,
     );
 
-    const tableData = this.constructAndValidateTableData(
+    const resultingTable = this.constructAndValidateTable(
       inputSheet,
       header,
       columnEntries,
       context,
     );
-
     context.logger.logDebug(
-      `Validation completed, the resulting table has ${tableData.length} row(s) and ${columnEntries.length} column(s)`,
+      `Validation completed, the resulting table has ${resultingTable.getNumberOfRows()} row(s) and ${resultingTable.getNumberOfColumns()} column(s)`,
     );
-
-    const columnInformation = columnEntries.map<ColumnInformation>(
-      (columnEntry) => ({
-        name: columnEntry.columnName,
-        type: columnEntry.valuetype,
-      }),
-    );
-    const resultingTable = new Table(columnInformation, tableData);
     return R.ok(resultingTable);
   }
 
-  private constructAndValidateTableData(
+  private constructAndValidateTable(
     sheet: Sheet,
     header: boolean,
     columnEntries: ColumnDefinitionEntry[],
     context: ExecutionContext,
-  ): string[][] {
-    const tableData: string[][] = [];
+  ): Table {
+    const table = new Table();
+
+    // add columns
+    columnEntries.forEach((columnEntry) => {
+      table.addColumn(columnEntry.columnName, {
+        values: [],
+        valuetype: columnEntry.valuetype,
+      });
+    });
+
+    // add rows
     sheet.iterateRows((sheetRow, sheetRowIndex) => {
       if (header && sheetRowIndex === 0) {
         return;
@@ -133,11 +142,11 @@ export class TableInterpreterExecutor
         context.logger.logDebug(
           `Omitting row ${rowIndexToString(sheetRowIndex)}`,
         );
-      } else {
-        tableData.push(tableRow);
+        return;
       }
+      table.addRow(tableRow);
     });
-    return tableData;
+    return table;
   }
 
   private constructAndValidateTableRow(
@@ -145,44 +154,66 @@ export class TableInterpreterExecutor
     sheetRowIndex: number,
     columnEntries: ColumnDefinitionEntry[],
     context: ExecutionContext,
-  ): string[] | undefined {
+  ): R.TableRow | undefined {
     let invalidRow = false;
-    const tableRow: string[] = [];
-    columnEntries.forEach((columnEntry, tableColumnIndex) => {
+    const tableRow: R.TableRow = {};
+    columnEntries.forEach((columnEntry) => {
       const sheetColumnIndex = columnEntry.sheetColumnIndex;
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const value = sheetRow[sheetColumnIndex]!;
-      if (!columnEntry.valuetype.isValid(value, context)) {
-        const cellIndex = new CellIndex(sheetColumnIndex, sheetRowIndex);
+      const valuetype = columnEntry.valuetype;
+
+      const parsedValue = this.parseAndValidateValue(value, valuetype, context);
+      if (parsedValue === undefined) {
+        const currentCellIndex = new CellIndex(sheetColumnIndex, sheetRowIndex);
         context.logger.logDebug(
-          `Invalid value at cell ${cellIndex.toString()}: "${value}" does not match the type ${getValuetypeName(
-            columnEntry.astNode.type,
-          )}`,
+          `Invalid value at cell ${currentCellIndex.toString()}: "${value}" does not match the type ${columnEntry.valuetype.getName()}`,
         );
         invalidRow = true;
         return;
       }
-      tableRow[tableColumnIndex] = value;
+
+      tableRow[columnEntry.columnName] = parsedValue;
     });
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (invalidRow) {
       return undefined;
     }
 
-    assert(tableRow.length === columnEntries.length);
+    assert(Object.keys(tableRow).length === columnEntries.length);
     return tableRow;
+  }
+
+  private parseAndValidateValue(
+    value: string,
+    valuetype: Valuetype,
+    context: ExecutionContext,
+  ): InternalValueRepresentation | undefined {
+    const parsedValue = parseValueToInternalRepresentation(value, valuetype);
+    if (parsedValue === undefined) {
+      return undefined;
+    }
+
+    if (!isValidValueRepresentation(parsedValue, valuetype, context)) {
+      return undefined;
+    }
+    return parsedValue;
   }
 
   private deriveColumnDefinitionEntriesWithoutHeader(
     columnDefinitions: ValuetypeAssignment[],
   ): ColumnDefinitionEntry[] {
     return columnDefinitions.map<ColumnDefinitionEntry>(
-      (columnDefinition, columnDefinitionIndex) => ({
-        sheetColumnIndex: columnDefinitionIndex,
-        columnName: columnDefinition.name,
-        valuetype: createValuetype(columnDefinition.type),
-        astNode: columnDefinition,
-      }),
+      (columnDefinition, columnDefinitionIndex) => {
+        const columnValuetype = createValuetype(columnDefinition.type);
+        assert(columnValuetype !== undefined);
+        return {
+          sheetColumnIndex: columnDefinitionIndex,
+          columnName: columnDefinition.name,
+          valuetype: columnValuetype,
+          astNode: columnDefinition,
+        };
+      },
     );
   }
 
@@ -204,10 +235,13 @@ export class TableInterpreterExecutor
         );
         continue;
       }
+      const columnValuetype = createValuetype(columnDefinition.type);
+      assert(columnValuetype !== undefined);
+
       columnEntries.push({
         sheetColumnIndex: indexOfMatchingHeader,
         columnName: columnDefinition.name,
-        valuetype: createValuetype(columnDefinition.type),
+        valuetype: columnValuetype,
         astNode: columnDefinition,
       });
     }

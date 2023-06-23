@@ -4,11 +4,24 @@ sidebar_position: 1
 
 # Introduction to Jayvee
 
-Jayvee is a domain-specific language (DSL) data engineering - the cleaning and preprocessing of data for later activities like data science or machine learning. You can use Jayvee to **model an ETL pipeline** and the command-line interpreter to **run the ETL pipeline** on your local machine. 
+Jayvee is a domain-specific language (DSL) for data engineering - the cleaning and preprocessing of data for later activities like data science or machine learning. You can use Jayvee to **model an ETL pipeline** and the command-line interpreter to **run the ETL pipeline** on your local machine. 
 
 ## Installation
 
 Install the interpreter via `npm`. You will need a **nodejs version >= 17.0.0**.
+
+```bash
+npm install -g @jvalue/jayvee-interpreter
+```
+
+You can install a specific version using the `@`-syntax, e.g., version `0.0.16`:
+```bash
+npm install -g @jvalue/jayvee-interpreter@0.0.16
+```
+
+## Update
+
+Updating the interpreter is done by reinstalling it using `npm`. Make sure to also update the [VSCode plugin](#vscode-plugin) to match the installed interpreter if you use it.
 
 ```bash
 npm install -g @jvalue/jayvee-interpreter
@@ -26,6 +39,12 @@ jv -h
 
 ```console
 jv <file>
+```
+
+Run with **additional debug output**:
+
+```console
+jv <file> -d
 ```
 
 With runtime parameters:

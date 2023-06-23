@@ -6,26 +6,27 @@ import { strict as assert } from 'assert';
 
 import {
   BlockDefinition,
-  CellRangeWrapper,
   ConstraintDefinition,
-  Expression,
+  EvaluationContext,
+  InternalValueRepresentation,
   PipelineDefinition,
   PropertyAssignment,
-  ValuetypeAssignment,
-  evaluateExpression,
+  TransformDefinition,
+  Valuetype,
+  evaluatePropertyValue,
   getOrFailMetaInformation,
-  isCellRangeLiteral,
-  isCollectionLiteral,
-  isExpression,
+  isExpressionConstraintDefinition,
   isPipelineDefinition,
-  isRuntimeParameterLiteral,
-  isValuetypeAssignmentLiteral,
+  isPropertyBody,
+  isTransformDefinition,
 } from '@jvalue/jayvee-language-server';
-import { isReference } from 'langium';
 
 import { Logger } from './logger';
 
-export type StackNode = BlockDefinition | ConstraintDefinition;
+export type StackNode =
+  | BlockDefinition
+  | ConstraintDefinition
+  | TransformDefinition;
 
 export class ExecutionContext {
   private readonly stack: StackNode[] = [];
@@ -33,7 +34,7 @@ export class ExecutionContext {
   constructor(
     public readonly pipeline: PipelineDefinition,
     public readonly logger: Logger,
-    public readonly runtimeParameters: Map<string, string | number | boolean>,
+    public readonly evaluationContext: EvaluationContext,
   ) {
     logger.setLoggingContext(pipeline.name);
   }
@@ -51,6 +52,9 @@ export class ExecutionContext {
     this.updateLoggingContext();
   }
 
+  /**
+   * @returns the latest stack node. Returns the pipeline if the stack is empty.
+   */
   public getCurrentNode(): StackNode | PipelineDefinition {
     const currentNode = this.stack[this.stack.length - 1];
     if (currentNode === undefined) {
@@ -64,79 +68,40 @@ export class ExecutionContext {
     this.logger.setLoggingContext(this.getCurrentNode().name);
   }
 
-  public getTextPropertyValue(propertyName: string): string {
-    const propertyValue = this.getPropertyValue(propertyName);
-    assert(typeof propertyValue === 'string');
-
-    return propertyValue;
-  }
-
-  public getNumericPropertyValue(propertyName: string): number {
-    const propertyValue = this.getPropertyValue(propertyName);
-    assert(typeof propertyValue === 'number');
-
-    return propertyValue;
-  }
-
-  public getBooleanPropertyValue(propertyName: string): boolean {
-    const propertyValue = this.getPropertyValue(propertyName);
-    assert(typeof propertyValue === 'boolean');
-
-    return propertyValue;
-  }
-
-  public getRegexPropertyValue(propertyName: string): RegExp {
-    const propertyValue = this.getPropertyValue(propertyName);
-    assert(typeof propertyValue === 'string');
-
-    return new RegExp(propertyValue);
-  }
-
-  public getCellRangePropertyValue(propertyName: string): CellRangeWrapper {
-    const propertyValue = this.getPropertyValue(propertyName);
-    assert(isCellRangeLiteral(propertyValue));
-
-    return new CellRangeWrapper(propertyValue);
-  }
-
-  public getExpressionCollectionPropertyValue(
+  public getPropertyValue<I extends InternalValueRepresentation>(
     propertyName: string,
-  ): Expression[] {
-    const propertyValue = this.getPropertyValue(propertyName);
-    assert(Array.isArray(propertyValue));
-    assert(propertyValue.every(isExpression));
+    valuetype: Valuetype<I>,
+  ): I {
+    const property = this.getProperty(propertyName);
 
+    if (property === undefined) {
+      return this.getDefaultPropertyValue(propertyName, valuetype);
+    }
+
+    const propertyValue = evaluatePropertyValue(
+      property,
+      this.evaluationContext,
+      valuetype,
+    );
+    assert(propertyValue !== undefined);
     return propertyValue;
-  }
-
-  public getCellRangeCollectionPropertyValue(
-    propertyName: string,
-  ): CellRangeWrapper[] {
-    const propertyValue = this.getPropertyValue(propertyName);
-    assert(Array.isArray(propertyValue));
-    assert(propertyValue.every(isCellRangeLiteral));
-
-    return propertyValue.map((cellRange) => new CellRangeWrapper(cellRange));
-  }
-
-  public getValuetypeAssignmentCollectionPropertyValue(
-    propertyName: string,
-  ): ValuetypeAssignment[] {
-    const propertyValue = this.getPropertyValue(propertyName);
-    assert(Array.isArray(propertyValue));
-    assert(propertyValue.every(isValuetypeAssignmentLiteral));
-
-    return propertyValue.map((assignment) => assignment.value);
   }
 
   public getProperty(propertyName: string): PropertyAssignment | undefined {
     const currentNode = this.getCurrentNode();
-    if (isPipelineDefinition(currentNode)) {
+    if (
+      isPipelineDefinition(currentNode) ||
+      isExpressionConstraintDefinition(currentNode)
+    ) {
       return undefined;
     }
-    return currentNode.body.properties.find(
-      (property) => property.name === propertyName,
-    );
+
+    const body = currentNode.body;
+    if (!isPropertyBody(body)) {
+      return undefined;
+    }
+
+    return body.properties.find((property) => property.name === propertyName);
   }
 
   public getOrFailProperty(propertyName: string): PropertyAssignment {
@@ -146,39 +111,14 @@ export class ExecutionContext {
     return property;
   }
 
-  private getPropertyValue(propertyName: string): unknown {
-    const property = this.getProperty(propertyName);
-
-    if (property === undefined) {
-      return this.getDefaultPropertyValue(propertyName);
-    }
-    const propertyValue = property.value;
-
-    if (isRuntimeParameterLiteral(propertyValue)) {
-      return this.runtimeParameters.get(propertyValue.name);
-    }
-    if (isCollectionLiteral(propertyValue)) {
-      return propertyValue.values;
-    }
-    if (isCellRangeLiteral(propertyValue)) {
-      return propertyValue;
-    }
-    if (isExpression(propertyValue)) {
-      return evaluateExpression(propertyValue);
-    }
-    const value = propertyValue.value;
-    if (isReference(value)) {
-      const reference = value.ref;
-      assert(reference !== undefined);
-
-      return reference;
-    }
-    return value;
-  }
-
-  private getDefaultPropertyValue(propertyName: string): unknown {
+  private getDefaultPropertyValue<I extends InternalValueRepresentation>(
+    propertyName: string,
+    valuetype: Valuetype<I>,
+  ): I {
     const currentNode = this.getCurrentNode();
     assert(!isPipelineDefinition(currentNode));
+    assert(!isExpressionConstraintDefinition(currentNode));
+    assert(!isTransformDefinition(currentNode));
 
     const metaInf = getOrFailMetaInformation(currentNode.type);
     const propertySpec = metaInf.getPropertySpecification(propertyName);
@@ -186,6 +126,7 @@ export class ExecutionContext {
 
     const defaultValue = propertySpec.defaultValue;
     assert(defaultValue !== undefined);
+    assert(valuetype.isInternalValueRepresentation(defaultValue));
 
     return defaultValue;
   }

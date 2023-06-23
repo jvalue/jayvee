@@ -43,7 +43,7 @@ export class UserDocGenerator
     const builder = new UserDocMarkdownBuilder()
       .docTitle(metaInf.type)
       .generationComment()
-      .compatibleValueTypes(metaInf.compatiblePrimitiveValuetypes)
+      .compatibleValueType(metaInf.compatibleValuetype.getName())
       .description(metaInf.docs.description)
       .examples(metaInf.docs.examples);
 
@@ -90,7 +90,7 @@ class UserDocMarkdownBuilder {
   }
 
   propertySpec(propertySpec: PropertySpecification): UserDocMarkdownBuilder {
-    this.markdownBuilder.line(`Type \`${propertySpec.type}\``);
+    this.markdownBuilder.line(`Type \`${propertySpec.type.getName()}\``);
     if (propertySpec.defaultValue !== undefined) {
       this.markdownBuilder
         .newLine()
@@ -109,9 +109,8 @@ class UserDocMarkdownBuilder {
     return this;
   }
 
-  compatibleValueTypes(types: string[]): UserDocMarkdownBuilder {
-    this.markdownBuilder.line(`Compatible ValueTypes:`);
-    this.markdownBuilder.line(types.map((type) => `\`${type}\``).join(', '));
+  compatibleValueType(type: string): UserDocMarkdownBuilder {
+    this.markdownBuilder.line(`Compatible ValueType: ${type}`);
     this.markdownBuilder.newLine();
     return this;
   }
@@ -144,7 +143,7 @@ class UserDocMarkdownBuilder {
     for (const [index, example] of examples.entries()) {
       this.markdownBuilder
         .heading(`Example ${index + 1}`, depth)
-        .code(example.code)
+        .code(example.code, 'jayvee')
         .line(example.description)
         .newLine();
     }
