@@ -5,6 +5,7 @@
 import {
   BlockDefinition,
   BlockMetaInformation,
+  IOType,
   JayveeServices,
   createJayveeServices,
   useExtension,
@@ -36,6 +37,28 @@ describe('Validation of builtin examples of BlockMetaInformation', () => {
   const testExtension = new TestLangExtension();
   const stdExtension = new StdLangExtension();
 
+  function generateBlockWithPipeForIOType(
+    io: IOType,
+    ioType: 'input' | 'output',
+    blockName: string,
+  ): string {
+    const ioBlockMetaInf = getTestExtensionBlockForIOType(
+      testExtension,
+      io,
+      ioType,
+    );
+    // Generate block
+    const ioBlockName =
+      ioType === 'input' ? 'TestLoaderBlock' : 'TestExtractorBlock';
+    const ioBlock = `block ${ioBlockName} oftype ${ioBlockMetaInf.type} {}`;
+    // generate pipe
+    const pipe =
+      ioType === 'input'
+        ? `${blockName} -> ${ioBlockName};`
+        : `${ioBlockName} -> ${blockName};`;
+    return `\n${ioBlock}\n${pipe}`;
+  }
+
   async function generateFullJvExample(
     blockMetaInf: BlockMetaInformation,
     blockExample: string,
@@ -53,31 +76,19 @@ describe('Validation of builtin examples of BlockMetaInformation', () => {
     let pipelineContent = `${blockExample}`;
     // Generate extractor block and pipe
     if (blockMetaInf.hasInput()) {
-      // Get Extractor block for this blockMetaInf.inputType
-      const inputBlockMetaInf = getTestExtensionBlockForIOType(
-        testExtension,
+      pipelineContent += generateBlockWithPipeForIOType(
         blockMetaInf.inputType,
         'output',
+        blockName,
       );
-      // Generate block
-      const extractorBlock = `block TestExtractorBlock oftype ${inputBlockMetaInf.type} {}`;
-      // generate pipe
-      const pipe = `TestExtractorBlock -> ${blockName};`;
-      pipelineContent += `\n${extractorBlock}\n${pipe}`;
     }
     // Generate loader block and pipe
     if (blockMetaInf.hasOutput()) {
-      // Get Loader block for this blockMetaInf.outputType
-      const outputBlockMetaInf = getTestExtensionBlockForIOType(
-        testExtension,
+      pipelineContent += generateBlockWithPipeForIOType(
         blockMetaInf.outputType,
         'input',
+        blockName,
       );
-      // Generate block
-      const loaderBlock = `block TestLoaderBlock oftype ${outputBlockMetaInf.type} {}`;
-      // generate pipe
-      const pipe = `${blockName} -> TestLoaderBlock;`;
-      pipelineContent += `\n${loaderBlock}\n${pipe}`;
     }
     return `pipeline Test {
       ${pipelineContent}
