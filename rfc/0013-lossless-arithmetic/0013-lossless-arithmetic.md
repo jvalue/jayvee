@@ -30,9 +30,19 @@ Jayvee is a language to model data pipelines and will therefore handle numeric d
 
 ## Explanation
 
+The Jayvee interpreter should correctly compare numbers. The Jayvee expression `3.00000000000000000000000000000001 == 3` must evaluate to `false`, not `true`. 
+
+Due to the use of javascript for the interpreter, it will evaluate to `true` without special handling.
+
+```javascript
+3.00000000000000000000000000000001 === 3
+true
+```
+
 ### Use appropriate data types for numbers
 
-[BigInt](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt) should be used for `integer`s instead of numbers.
+- Jayvee `integer` should behave as [Integer \mathbb {Z}](https://en.wikipedia.org/wiki/Integer)
+- Jayvee `decimal` should behave as [Rational number \mathbb {Q}](https://en.wikipedia.org/wiki/Rational_number)
 
 ## Drawbacks
 
@@ -43,7 +53,11 @@ Jayvee is a language to model data pipelines and will therefore handle numeric d
 - Accept limitations of the interpreter implementation
 
 ## Possible Future Changes/Enhancements
+- Jayvee should implement a value type for [Real numbers \mathbb {R}](https://en.wikipedia.org/wiki/Real_number) to correctly handle irrational numbers like `sqrt(2)` which can already be created in expressions
+- User experiments should be done for an intuitive naming of built-in numberic value types, consider renaming `decimal` to `rational`.
 
+## Implementation notes
 - Find an appropriate library for decimal handling
   - Consider [decimal.js](https://github.com/MikeMcl/decimal.js/) and [mathjs](https://github.com/josdejong/mathjs)
+- Research if [BigInt](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt) should be used for `integer`s instead of numbers
 - Delay expression evaluation as to as late as possible
