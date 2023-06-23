@@ -41,8 +41,8 @@ true
 
 ### Use appropriate data types for numbers
 
-- Jayvee `integer` should behave as [Integer \mathbb {Z}](https://en.wikipedia.org/wiki/Integer)
-- Jayvee `decimal` should behave as [Rational number \mathbb {Q}](https://en.wikipedia.org/wiki/Rational_number)
+- Jayvee `integer` should behave as [Integer](https://en.wikipedia.org/wiki/Integer)
+- Jayvee `decimal` should behave as [Rational number](https://en.wikipedia.org/wiki/Rational_number)
 
 ## Drawbacks
 
@@ -53,7 +53,7 @@ true
 - Accept limitations of the interpreter implementation
 
 ## Possible Future Changes/Enhancements
-- Jayvee should implement a value type for [Real numbers \mathbb {R}](https://en.wikipedia.org/wiki/Real_number) to correctly handle irrational numbers like `sqrt(2)` which can already be created in expressions
+- Jayvee should implement a value type for [Real numbers](https://en.wikipedia.org/wiki/Real_number) to correctly handle irrational numbers like `sqrt(2)` which can already be created in expressions
 - User experiments should be done for an intuitive naming of built-in numberic value types, consider renaming `decimal` to `rational`.
 
 ## Implementation notes
