@@ -19,11 +19,9 @@ import {
   isCellRangeLiteral,
   isCollectionLiteral,
   isConstraintDefinition,
-  isDecimalLiteral,
   isExpressionConstraintDefinition,
   isExpressionLiteral,
   isFreeVariableLiteral,
-  isIntegerLiteral,
   isNumericLiteral,
   isReferenceLiteral,
   isRegexLiteral,
@@ -122,14 +120,16 @@ function inferTypeFromExpressionLiteral(
   assertUnreachable(expression);
 }
 
+/**
+ * Infers the numeric type dependent on the value parsed to TypeScript.
+ * Thus, the inferred type might differ from the literal type.
+ * E.g., 3.0 is currently interpreted as integer but is a DecimalLiteral.
+ */
 function inferNumericType(expression: NumericLiteral): Valuetype {
-  if (isIntegerLiteral(expression)) {
+  if (Number.isInteger(expression.value)) {
     return PrimitiveValuetypes.Integer;
   }
-  if (isDecimalLiteral(expression)) {
-    return PrimitiveValuetypes.Decimal;
-  }
-  assertUnreachable(expression);
+  return PrimitiveValuetypes.Decimal;
 }
 
 function inferCollectionType(
