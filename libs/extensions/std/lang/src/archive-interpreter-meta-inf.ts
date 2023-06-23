@@ -30,6 +30,16 @@ export class ArchiveInterpreterMetaInformation extends BlockMetaInformation {
       IOType.FILE_SYSTEM,
     );
     this.docs.description =
-      'Interprets an archive file of type `File` as a `FileSystem`.';
+      'Interprets a `File` as an archive file and converts it to a `FileSystem`. The archive file root is considered the root of the `FileSystem`.';
+
+    this.docs.examples = [
+      {
+        code: `block ZipArchiveInterpreter oftype ArchiveInterpreter {
+  archiveType: "zip";
+}`,
+        description:
+          'Interprets a `File` as a ZIP-archive and creates a `FileSystem` of its extracted contents.',
+      },
+    ];
   }
 }
