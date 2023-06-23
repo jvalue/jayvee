@@ -58,6 +58,23 @@ The following expression is evaluated to the `boolean` `true`: `"Example" == "Ex
 - `matches` for a regex match, e.g., `"A07" matches /^[A-Z0-9]*$/` evaluates to `true`
 - `in` for inclusion in an array, e.g., `"a" in ["a", "b", "c"]` evaluates to `true`
 
+### Operator Details
+
+#### `in` Operator
+
+The `in` operator checks whether a value is included in a collection of values. For example:
+
+```jayvee
+4.5 in [3, 6.5] // evaluates to false
+3 in [3.0, 6.5] // evaluates to true
+"a" in ["a", "b", "c"] // evaluates to true
+```
+
+The operator supports `text`, `integer` and `decimal` values as operands. The compatibility of left and right operand types follows these rules:
+- For the `in` operator we have a type for the needle (left operand) and a type for the elements in the haystack (right operand).
+- There is an automated type conversion as long as it is lossless and clearly defined (integer to decimal as of now).
+- We allow any combination of operands that has either: (i) An automated type conversion from needle type (left operand) to the type of the elements in the haystack (right operand), or (ii) the other way around.
+
 
 ### Further reading
 For a deeper documentation of how expressions and operators work internally, refer to the [developer docs](../dev/09-expressions-and-operators.md).
