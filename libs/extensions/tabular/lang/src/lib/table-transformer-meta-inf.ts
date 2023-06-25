@@ -120,13 +120,29 @@ export class TableTransformerMetaInformation extends BlockMetaInformation {
   }
 }
 
-const blockExampleOverwrite = `block CelsiusToFahrenheitTransformer oftype TableTransformer {
+const blockExampleOverwrite = `
+transform CelsiusToFahrenheit {
+  from Celsius oftype decimal;
+  to Fahrenheit oftype decimal;
+
+  Fahrenheit: (Celsius * 9/5) + 32;
+}
+
+block CelsiusToFahrenheitTransformer oftype TableTransformer {
   inputColumns: ['temperature'];
   outputColumn: 'temperature';
   use: CelsiusToFahrenheit;
 }`;
 
-const blockExampleNewCol = `block CelsiusToFahrenheitTransformer oftype TableTransformer {
+const blockExampleNewCol = `
+transform CelsiusToFahrenheit {
+  from Celsius oftype decimal;
+  to Fahrenheit oftype decimal;
+
+  Fahrenheit: (Celsius * 9/5) + 32;
+}
+
+block CelsiusToFahrenheitTransformer oftype TableTransformer {
   inputColumns: ['temperatureCelsius'];
   outputColumn: 'temperatureFahrenheit';
   use: CelsiusToFahrenheit;
