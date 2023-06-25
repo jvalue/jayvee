@@ -59,19 +59,24 @@ describe('Validation of builtin examples of BlockMetaInformation', () => {
     return `\n${ioBlock}\n${pipe}`;
   }
 
-  async function generateFullJvExample(
-    blockMetaInf: BlockMetaInformation,
+  async function getBlockNameFromExample(
     blockExample: string,
   ): Promise<string> {
-    // Get name of block in example
     const parsedExample = await parse(`pipeline Test {${blockExample}}`);
     expectNoParserAndLexerErrors(parsedExample);
-    const blockName: string = (
+    return (
       locator.getAstNode<BlockDefinition>(
         parsedExample.parseResult.value,
         'pipelines@0/blocks@0',
       ) as BlockDefinition
     ).name;
+  }
+
+  async function generateFullJvExample(
+    blockMetaInf: BlockMetaInformation,
+    blockExample: string,
+  ): Promise<string> {
+    const blockName = await getBlockNameFromExample(blockExample);
 
     let pipelineContent = `${blockExample}`;
     // Generate extractor block and pipe
