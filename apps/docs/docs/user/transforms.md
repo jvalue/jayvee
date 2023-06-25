@@ -9,10 +9,17 @@ They are similar to functions in programming languages, i.e. they perform comput
 
 :::info Important
 
-In its current state, Jayvee only supports a single input and a single output for transforms.
-For the future, it is planned to support arbitrary numbers of inputs and outputs.
+Up to version `0.0.16`, we only supported a single input for transformers!
 
 :::
+
+:::info Important
+
+In its current state, Jayvee only supports a arbitrary numbers of inputs and a single output for transforms.
+For the future, it is planned to support arbitrary numbers for outputs as well.
+
+:::
+
 
 ## Syntax
 

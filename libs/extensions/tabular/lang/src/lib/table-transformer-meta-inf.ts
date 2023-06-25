@@ -4,8 +4,13 @@
 
 import {
   BlockMetaInformation,
+  CollectionValuetype,
+  EvaluationContext,
   IOType,
   PrimitiveValuetypes,
+  PropertyBody,
+  ValidationContext,
+  evaluatePropertyValue,
 } from '@jvalue/jayvee-language-server';
 
 export class TableTransformerMetaInformation extends BlockMetaInformation {
@@ -13,11 +18,11 @@ export class TableTransformerMetaInformation extends BlockMetaInformation {
     super(
       'TableTransformer',
       {
-        inputColumn: {
-          type: PrimitiveValuetypes.Text,
+        inputColumns: {
+          type: new CollectionValuetype(PrimitiveValuetypes.Text),
           docs: {
             description:
-              "The name of the input column. Has to be present in the table and match with the transform's input port type.",
+              "The names of the input columns. The columns have to be present in the table and match with the transform's input port types.",
           },
         },
         outputColumn: {
@@ -37,6 +42,13 @@ export class TableTransformerMetaInformation extends BlockMetaInformation {
       },
       IOType.TABLE,
       IOType.TABLE,
+      (property, validationContext, evaluationContext) => {
+        this.checkInputColumnsMatchTransformationPorts(
+          property,
+          validationContext,
+          evaluationContext,
+        );
+      },
     );
     this.docs = {
       description:
@@ -55,6 +67,57 @@ export class TableTransformerMetaInformation extends BlockMetaInformation {
       ],
     };
   }
+
+  private checkInputColumnsMatchTransformationPorts(
+    body: PropertyBody,
+    validationContext: ValidationContext,
+    evaluationContext: EvaluationContext,
+  ): void {
+    const useProperty = body.properties.find((x) => x.name === 'use');
+    const inputColumnsProperty = body.properties.find(
+      (x) => x.name === 'inputColumns',
+    );
+
+    if (useProperty === undefined || inputColumnsProperty === undefined) {
+      return;
+    }
+
+    const transform = evaluatePropertyValue(
+      useProperty,
+      evaluationContext,
+      PrimitiveValuetypes.Transform,
+    );
+    const inputColumns = evaluatePropertyValue(
+      inputColumnsProperty,
+      evaluationContext,
+      new CollectionValuetype(PrimitiveValuetypes.Text),
+    );
+
+    if (transform === undefined || inputColumns === undefined) {
+      return;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const transformInputPorts = transform?.body?.ports?.filter(
+      (x) => x.kind === 'from',
+    );
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (transformInputPorts === undefined) {
+      return;
+    }
+
+    const numberTransformPorts = transformInputPorts.length;
+    const numberInputColumns = inputColumns.length;
+
+    if (numberTransformPorts !== numberInputColumns) {
+      validationContext.accept(
+        'error',
+        `Expected ${numberTransformPorts} columns but only got ${numberInputColumns}`,
+        {
+          node: inputColumnsProperty,
+        },
+      );
+    }
+  }
 }
 
 const blockExampleOverwrite = `
@@ -66,7 +129,7 @@ transform CelsiusToFahrenheit {
 }
 
 block CelsiusToFahrenheitTransformer oftype TableTransformer {
-  inputColumn: 'temperature';
+  inputColumns: ['temperature'];
   outputColumn: 'temperature';
   use: CelsiusToFahrenheit;
 }`;
@@ -80,7 +143,7 @@ transform CelsiusToFahrenheit {
 }
 
 block CelsiusToFahrenheitTransformer oftype TableTransformer {
-  inputColumn: 'temperatureCelsius';
+  inputColumns: ['temperatureCelsius'];
   outputColumn: 'temperatureFahrenheit';
   use: CelsiusToFahrenheit;
 }`;
