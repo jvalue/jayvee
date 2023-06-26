@@ -37,11 +37,31 @@ import { ExitCode, extractAstNode } from './cli-util';
 import { LoggerFactory } from './logging/logger-factory';
 import { validateRuntimeParameterLiteral } from './validation-checks/runtime-parameter-literal';
 
+interface RunOptions {
+  debugGranularity: 'exhaustive' | 'peek';
+  debug: boolean;
+}
+
 export async function runAction(
   fileName: string,
-  options: { env: Map<string, string>; debug: boolean },
+  options: {
+    env: Map<string, string>;
+    debug: boolean;
+    debugGranularity: string;
+  },
 ): Promise<void> {
   const loggerFactory = new LoggerFactory(options.debug);
+  if (
+    options.debugGranularity !== 'exhaustive' &&
+    options.debugGranularity !== 'peek'
+  ) {
+    loggerFactory
+      .createLogger()
+      .logErr(
+        `Unknown value "${options.debugGranularity}" for debug granularity option.`,
+      );
+    process.exit(1);
+  }
 
   useStdExtension();
   registerDefaultConstraintExecutors();
@@ -59,6 +79,10 @@ export async function runAction(
     model,
     services.RuntimeParameterProvider,
     loggerFactory,
+    {
+      debug: options.debug,
+      debugGranularity: options.debugGranularity,
+    },
   );
   process.exit(interpretationExitCode);
 }
@@ -97,10 +121,16 @@ async function interpretJayveeModel(
   model: JayveeModel,
   runtimeParameterProvider: RuntimeParameterProvider,
   loggerFactory: LoggerFactory,
+  runOptions: RunOptions,
 ): Promise<ExitCode> {
   const pipelineRuns: Array<Promise<ExitCode>> = model.pipelines.map(
     (pipeline) => {
-      return runPipeline(pipeline, runtimeParameterProvider, loggerFactory);
+      return runPipeline(
+        pipeline,
+        runtimeParameterProvider,
+        loggerFactory,
+        runOptions,
+      );
     },
   );
   const exitCodes = await Promise.all(pipelineRuns);
@@ -115,6 +145,7 @@ async function runPipeline(
   pipeline: PipelineDefinition,
   runtimeParameterProvider: RuntimeParameterProvider,
   loggerFactory: LoggerFactory,
+  runOptions: RunOptions,
 ): Promise<ExitCode> {
   const executionContext = new ExecutionContext(
     pipeline,
@@ -135,7 +166,11 @@ async function runPipeline(
       return { block: block, value: NONE };
     },
   );
-  const exitCode = await executeBlocks(executionContext, executionOrder);
+  const exitCode = await executeBlocks(
+    executionContext,
+    executionOrder,
+    runOptions,
+  );
 
   logExecutionDuration(startTime, executionContext.logger);
   return exitCode;
@@ -149,6 +184,7 @@ interface ExecutionOrderItem {
 async function executeBlocks(
   executionContext: ExecutionContext,
   executionOrder: ExecutionOrderItem[],
+  runOptions: RunOptions,
 ): Promise<ExitCode> {
   let abortExecution = false;
   for (const blockData of executionOrder) {
@@ -176,9 +212,13 @@ async function executeBlocks(
     } else {
       const blockResultData = executionResult.right;
       blockData.value = blockResultData;
-      console.log(
-        blockResultData?.acceptVisitor(new DebugStringVisitor('peek')),
-      );
+      if (runOptions.debug) {
+        console.log(
+          blockResultData?.acceptVisitor(
+            new DebugStringVisitor(runOptions.debugGranularity),
+          ),
+        );
+      }
     }
 
     executionContext.exitNode(block);
