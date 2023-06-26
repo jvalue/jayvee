@@ -176,7 +176,9 @@ async function executeBlocks(
     } else {
       const blockResultData = executionResult.right;
       blockData.value = blockResultData;
-      console.log(blockResultData?.acceptVisitor(new DebugStringVisitor()));
+      console.log(
+        blockResultData?.acceptVisitor(new DebugStringVisitor('peek')),
+      );
     }
 
     executionContext.exitNode(block);
