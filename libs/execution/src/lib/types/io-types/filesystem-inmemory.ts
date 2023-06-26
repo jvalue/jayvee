@@ -80,4 +80,8 @@ export class InMemoryFileSystem implements FileSystem {
     // Add path part for root to processedParts and return
     return ['', ...processedParts];
   }
+
+  toDebugString(): string {
+    return this.rootDirectory.toString();
+  }
 }

@@ -15,10 +15,12 @@ import {
 import {
   EvaluationContext,
   EvaluationStrategy,
-  InternalValueRepresentation,
-  InternalValueRepresentationTypeguard,
   evaluateExpression,
 } from './evaluation';
+import {
+  InternalValueRepresentation,
+  InternalValueRepresentationTypeguard,
+} from './internal-value-representation';
 
 export interface OperatorEvaluator<
   E extends UnaryExpression | BinaryExpression,

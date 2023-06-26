@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../../expressions';
+import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
 // eslint-disable-next-line import/no-cycle
 import { AbstractValuetype, Valuetype } from '../valuetype';
 

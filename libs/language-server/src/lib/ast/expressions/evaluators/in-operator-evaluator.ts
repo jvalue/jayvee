@@ -6,7 +6,7 @@
 import {
   InternalValueRepresentation,
   InternalValueRepresentationTypeguard,
-} from '../evaluation';
+} from '../internal-value-representation';
 import { DefaultBinaryOperatorEvaluator } from '../operator-evaluator';
 import { NUMBER_TYPEGUARD, STRING_TYPEGUARD } from '../typeguards';
 

@@ -5,9 +5,9 @@
 // eslint-disable-next-line import/no-cycle
 import {
   EvaluationContext,
-  type InternalValueRepresentation,
   evaluateExpression,
 } from '../../expressions/evaluation';
+import { type InternalValueRepresentation } from '../../expressions/internal-value-representation';
 import { ConstraintDefinition, ValuetypeDefinition } from '../../generated/ast';
 import { AstNodeWrapper } from '../ast-node-wrapper';
 
