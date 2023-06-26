@@ -12,4 +12,8 @@ export class BinaryFile
   implements IOTypeImplementation<IOType.FILE>
 {
   public readonly ioType = IOType.FILE;
+
+  toDebugString(): string {
+    return '<binary>';
+  }
 }

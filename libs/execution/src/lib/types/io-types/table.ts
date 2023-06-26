@@ -8,6 +8,7 @@ import {
   IOType,
   InternalValueRepresentation,
   Valuetype,
+  internalValueToString,
 } from '@jvalue/jayvee-language-server';
 
 import { SQLColumnTypeVisitor } from '../valuetypes/visitors/sql-column-type-visitor';
@@ -96,6 +97,23 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     return this.columns.get(name);
   }
 
+  getRow(rowId: number): Map<string, InternalValueRepresentation> {
+    const numberOfRows = this.getNumberOfRows();
+    if (rowId >= numberOfRows) {
+      throw new Error(
+        `Trying to access table row ${rowId} (of ${numberOfRows} rows)`,
+      );
+    }
+
+    const row: Map<string, InternalValueRepresentation> = new Map();
+    [...this.columns.entries()].forEach(([columnName, column]) => {
+      const value = column.values[rowId];
+      assert(value !== undefined);
+      row.set(columnName, value);
+    });
+    return row;
+  }
+
   static generateDropTableStatement(tableName: string): string {
     return `DROP TABLE IF EXISTS "${tableName}";`;
   }
@@ -153,5 +171,36 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     });
 
     return cloned;
+  }
+
+  toDebugString(): string {
+    const numberOfRows = this.getNumberOfRows();
+    const metaData =
+      `rows: ${numberOfRows}\n` + `columns: ${this.getNumberOfColumns()}\n`;
+    let data = '';
+    for (let i = 0; i < numberOfRows; ++i) {
+      const row = this.getRow(i);
+      data += [...row.values()]
+        .map((cell) => internalValueToString(cell))
+        .join(' | ');
+    }
+    const dataHeader = [...this.columns.entries()]
+      .map(([columnName, column]) => {
+        return `${columnName} (${column.valuetype.getName()})`;
+      })
+      .join(' | ');
+    return (
+      '====================\n' +
+      'Data (Table)\n' +
+      '====================\n' +
+      dataHeader +
+      '\n' +
+      data +
+      '\n\n' +
+      '====================\n' +
+      'Meta Data (Table)\n' +
+      '====================\n' +
+      metaData
+    );
   }
 }

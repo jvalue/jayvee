@@ -6,4 +6,6 @@ import { IOType } from '@jvalue/jayvee-language-server';
 
 export interface IOTypeImplementation<T extends IOType = IOType> {
   ioType: T;
+
+  toDebugString(): string;
 }

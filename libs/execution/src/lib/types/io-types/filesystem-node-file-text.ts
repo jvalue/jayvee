@@ -12,4 +12,8 @@ export class TextFile
   implements IOTypeImplementation<IOType.TEXT_FILE>
 {
   public readonly ioType = IOType.TEXT_FILE;
+
+  toDebugString(): string {
+    return this.content.join('\n');
+  }
 }

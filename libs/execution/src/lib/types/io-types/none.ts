@@ -19,6 +19,10 @@ export class None implements IOTypeImplementation<IOType.NONE> {
     }
     return this._instance;
   }
+
+  toDebugString(): string {
+    return '<None>';
+  }
 }
 
 export const NONE = None.singletonInstance;

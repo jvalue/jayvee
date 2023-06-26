@@ -9,7 +9,6 @@ import { PrimitiveValuetypeKeywordLiteral } from '../../../generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { Boolean, BooleanValuetype } from './boolean-valuetype';
 import { CellRange, CellRangeValuetype } from './cell-range-valuetype';
-// eslint-disable-next-line import/no-cycle
 import {
   EmptyCollection,
   EmptyCollectionValuetype,
