@@ -5,7 +5,7 @@
 import { IOType } from '@jvalue/jayvee-language-server';
 
 import { FileSystemFile } from './filesystem-node-file';
-import { IOTypeImplementation } from './io-type-implementation';
+import { IOTypeImplementation, IoTypeVisitor } from './io-type-implementation';
 
 export class BinaryFile
   extends FileSystemFile<ArrayBuffer>
@@ -13,7 +13,7 @@ export class BinaryFile
 {
   public readonly ioType = IOType.FILE;
 
-  toDebugString(): string {
-    return '<binary>';
+  acceptVisitor<R>(visitor: IoTypeVisitor<R>): R {
+    return visitor.visitBinaryFile(this);
   }
 }
