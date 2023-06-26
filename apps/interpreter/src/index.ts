@@ -42,6 +42,11 @@ program
     new Map<string, string>(),
   )
   .option('-d, --debug', 'enable debug logging', false)
+  .option(
+    '-dg, --debug-granularity <granularity>',
+    'sets the granularity of block debug logging ("peek" or "exhaustive")',
+    'peek',
+  )
   .description('Run a Jayvee file')
   .action(runAction);
 
