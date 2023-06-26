@@ -6,18 +6,29 @@ import { IoTypeVisitor } from '../io-type-implementation';
 import { Sheet } from '../sheet';
 import { Table } from '../table';
 
+type DebugGranularity = 'peek' | 'exhaustive';
+
 export class DebugStringVisitor implements IoTypeVisitor {
+  constructor(private debugGranularity: DebugGranularity) {}
+
   visitTable(table: Table): unknown {
+    const PEEK_NUMBER_OF_ROWS = 10;
     const numberOfRows = table.getNumberOfRows();
     const metaData =
       `rows: ${numberOfRows}\n` + `columns: ${table.getNumberOfColumns()}\n`;
     let data = '';
     for (let i = 0; i < numberOfRows; ++i) {
+      if (this.debugGranularity === 'peek' && i >= PEEK_NUMBER_OF_ROWS) {
+        break;
+      }
+
       const row = table.getRow(i);
       data += [...row.values()]
         .map((cell) => internalValueToString(cell))
         .join(' | ');
     }
+    data += this.getPeekComment();
+
     const dataHeader = [...table.getColumns().entries()]
       .map(([columnName, column]) => {
         return `${columnName} (${column.valuetype.getName()})`;
@@ -39,13 +50,22 @@ export class DebugStringVisitor implements IoTypeVisitor {
   }
 
   visitSheet(sheet: Sheet): unknown {
+    const PEEK_NUMBER_OF_ROWS = 10;
     const metaData =
       `rows: ${sheet.getNumberOfRows()}\n` +
       `columns: ${sheet.getNumberOfColumns()}\n`;
-    const tableData = sheet
+    let tableData = sheet
       .getData()
+      .filter((_, rowIndex) => {
+        if (this.debugGranularity === 'peek') {
+          return rowIndex < PEEK_NUMBER_OF_ROWS;
+        }
+        return true;
+      })
       .map((row) => `${row.map((cell) => `"${cell}"`).join(', ')}`)
       .join(`\n`);
+    tableData += this.getPeekComment();
+
     return (
       '====================\n' +
       'Data (Sheet)\n' +
@@ -73,5 +93,13 @@ export class DebugStringVisitor implements IoTypeVisitor {
 
   visitTextFile(binaryFile: TextFile): unknown {
     return binaryFile.content.join('\n');
+  }
+
+  private getPeekComment(): string {
+    if (this.debugGranularity !== 'peek') {
+      return '';
+    }
+
+    return '\n' + '... (omitted in peek mode)';
   }
 }
