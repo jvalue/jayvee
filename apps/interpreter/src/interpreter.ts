@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
+  DebugStringVisitor,
   ExecutionContext,
   IOTypeImplementation,
   Logger,
@@ -173,7 +174,9 @@ async function executeBlocks(
         diagnosticError.diagnostic,
       );
     } else {
-      blockData.value = executionResult.right;
+      const blockResultData = executionResult.right;
+      blockData.value = blockResultData;
+      console.log(blockResultData?.acceptVisitor(new DebugStringVisitor()));
     }
 
     executionContext.exitNode(block);

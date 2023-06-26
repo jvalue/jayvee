@@ -16,7 +16,7 @@ import {
   getRowIndex,
 } from '@jvalue/jayvee-language-server';
 
-import { IOTypeImplementation } from './io-type-implementation';
+import { IOTypeImplementation, IoTypeVisitor } from './io-type-implementation';
 
 export class Sheet implements IOTypeImplementation<IOType.SHEET> {
   public readonly ioType = IOType.SHEET;
@@ -27,6 +27,10 @@ export class Sheet implements IOTypeImplementation<IOType.SHEET> {
     this.numberOfColumns = data.reduce((prev, curr) => {
       return curr.length > prev ? curr.length : prev;
     }, 0);
+  }
+
+  getData(): ReadonlyArray<ReadonlyArray<string>> {
+    return this.data;
   }
 
   getNumberOfRows(): number {
@@ -144,23 +148,7 @@ export class Sheet implements IOTypeImplementation<IOType.SHEET> {
     };
   }
 
-  toDebugString(): string {
-    const metaData =
-      `rows: ${this.getNumberOfRows()}\n` +
-      `columns: ${this.getNumberOfColumns()}\n`;
-    const tableData = this.data
-      .map((row) => `${row.map((cell) => `"${cell}"`).join(', ')}`)
-      .join(`\n`);
-    return (
-      '====================\n' +
-      'Data (Sheet)\n' +
-      '====================\n' +
-      tableData +
-      '\n\n' +
-      '====================\n' +
-      'Meta Data (Sheet)\n' +
-      '====================\n' +
-      metaData
-    );
+  acceptVisitor<R>(visitor: IoTypeVisitor<R>): R {
+    return visitor.visitSheet(this);
   }
 }

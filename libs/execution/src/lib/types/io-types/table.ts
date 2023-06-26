@@ -8,13 +8,12 @@ import {
   IOType,
   InternalValueRepresentation,
   Valuetype,
-  internalValueToString,
 } from '@jvalue/jayvee-language-server';
 
 import { SQLColumnTypeVisitor } from '../valuetypes/visitors/sql-column-type-visitor';
 import { SQLValueRepresentationVisitor } from '../valuetypes/visitors/sql-value-representation-visitor';
 
-import { IOTypeImplementation } from './io-type-implementation';
+import { IOTypeImplementation, IoTypeVisitor } from './io-type-implementation';
 
 export interface TableColumn<
   T extends InternalValueRepresentation = InternalValueRepresentation,
@@ -91,6 +90,10 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
 
   hasColumn(name: string): boolean {
     return this.columns.has(name);
+  }
+
+  getColumns(): ReadonlyMap<string, TableColumn> {
+    return this.columns;
   }
 
   getColumn(name: string): TableColumn | undefined {
@@ -173,34 +176,7 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     return cloned;
   }
 
-  toDebugString(): string {
-    const numberOfRows = this.getNumberOfRows();
-    const metaData =
-      `rows: ${numberOfRows}\n` + `columns: ${this.getNumberOfColumns()}\n`;
-    let data = '';
-    for (let i = 0; i < numberOfRows; ++i) {
-      const row = this.getRow(i);
-      data += [...row.values()]
-        .map((cell) => internalValueToString(cell))
-        .join(' | ');
-    }
-    const dataHeader = [...this.columns.entries()]
-      .map(([columnName, column]) => {
-        return `${columnName} (${column.valuetype.getName()})`;
-      })
-      .join(' | ');
-    return (
-      '====================\n' +
-      'Data (Table)\n' +
-      '====================\n' +
-      dataHeader +
-      '\n' +
-      data +
-      '\n\n' +
-      '====================\n' +
-      'Meta Data (Table)\n' +
-      '====================\n' +
-      metaData
-    );
+  acceptVisitor<R>(visitor: IoTypeVisitor<R>): R {
+    return visitor.visitTable(this);
   }
 }

@@ -4,7 +4,7 @@
 
 import { IOType } from '@jvalue/jayvee-language-server';
 
-import { IOTypeImplementation } from './io-type-implementation';
+import { IOTypeImplementation, IoTypeVisitor } from './io-type-implementation';
 
 export class None implements IOTypeImplementation<IOType.NONE> {
   public readonly ioType = IOType.NONE;
@@ -20,8 +20,8 @@ export class None implements IOTypeImplementation<IOType.NONE> {
     return this._instance;
   }
 
-  toDebugString(): string {
-    return '<None>';
+  acceptVisitor<R>(visitor: IoTypeVisitor<R>): R {
+    return visitor.visitNone(this);
   }
 }
 
