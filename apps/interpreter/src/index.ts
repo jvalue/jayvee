@@ -44,8 +44,8 @@ program
   .option('-d, --debug', 'enable debug logging', false)
   .option(
     '-dg, --debug-granularity <granularity>',
-    'sets the granularity of block debug logging ("peek" or "exhaustive")',
-    'peek',
+    'sets the granularity of block debug logging. Can have values "peek", "exhaustive" or "skip" (default).',
+    'skip',
   )
   .description('Run a Jayvee file')
   .action(runAction);

@@ -7,7 +7,10 @@ import { IoTypeVisitor } from '../io-type-implementation';
 import { Sheet } from '../sheet';
 import { Table } from '../table';
 
-type DebugGranularity = 'peek' | 'exhaustive' | 'skip';
+export type DebugGranularity = 'peek' | 'exhaustive' | 'skip';
+export function isDebugGranularity(obj: unknown): obj is DebugGranularity {
+  return obj === 'exhaustive' || obj === 'peek' || obj === 'skip';
+}
 
 export class DebugLogVisitor implements IoTypeVisitor<void> {
   constructor(
