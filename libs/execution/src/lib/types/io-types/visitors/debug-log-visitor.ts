@@ -2,6 +2,7 @@ import { internalValueToString } from '@jvalue/jayvee-language-server';
 
 import { Logger } from '../../../logger';
 import { FileSystem } from '../filesystem';
+import { BinaryFile } from '../filesystem-node-file-binary';
 import { TextFile } from '../filesystem-node-file-text';
 import { IoTypeVisitor } from '../io-type-implementation';
 import { Sheet } from '../sheet';
@@ -91,12 +92,18 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
     this.log(fileSystem.getFile('/')?.toString() ?? '<found no root file>');
   }
 
-  visitBinaryFile(): void {
+  visitBinaryFile(binaryFile: BinaryFile): void {
     if (this.debugGranularity === 'skip') {
       return;
     }
 
-    this.log('<binary>');
+    const PEEK_NUMBER_OF_BYTES = 100;
+    const buffer = binaryFile.content.slice(0, PEEK_NUMBER_OF_BYTES);
+    const hexString = [...new Uint8Array(buffer)]
+      .map((x) => x.toString(16).padStart(2, '0').toUpperCase())
+      .join('');
+    this.log(`<hex> ${hexString}`);
+    this.logPeekComment();
   }
 
   visitTextFile(binaryFile: TextFile): void {
@@ -104,7 +111,12 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
       return;
     }
 
-    this.log(binaryFile.content.join('\n'));
+    const PEEK_NUMBER_OF_LINES = 10;
+    const lines = binaryFile.content.splice(0, PEEK_NUMBER_OF_LINES);
+    lines.forEach((line, i) => {
+      this.log(`[Line ${i}] ${line}`);
+    });
+    this.logPeekComment();
   }
 
   private logPeekComment(): void {
