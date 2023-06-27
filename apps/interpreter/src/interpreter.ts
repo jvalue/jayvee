@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  DebugStringVisitor,
   ExecutionContext,
   IOTypeImplementation,
   Logger,
@@ -170,11 +169,7 @@ async function runPipeline(
       return { block: block, value: NONE };
     },
   );
-  const exitCode = await executeBlocks(
-    executionContext,
-    executionOrder,
-    runOptions,
-  );
+  const exitCode = await executeBlocks(executionContext, executionOrder);
 
   logExecutionDuration(startTime, executionContext.logger);
   return exitCode;
@@ -188,7 +183,6 @@ interface ExecutionOrderItem {
 async function executeBlocks(
   executionContext: ExecutionContext,
   executionOrder: ExecutionOrderItem[],
-  runOptions: RunOptions,
 ): Promise<ExitCode> {
   let abortExecution = false;
   for (const blockData of executionOrder) {
@@ -216,13 +210,6 @@ async function executeBlocks(
     } else {
       const blockResultData = executionResult.right;
       blockData.value = blockResultData;
-      if (runOptions.debug) {
-        console.log(
-          blockResultData?.acceptVisitor(
-            new DebugStringVisitor(runOptions.debugGranularity),
-          ),
-        );
-      }
     }
 
     executionContext.exitNode(block);

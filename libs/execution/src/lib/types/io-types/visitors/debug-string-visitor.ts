@@ -6,12 +6,16 @@ import { IoTypeVisitor } from '../io-type-implementation';
 import { Sheet } from '../sheet';
 import { Table } from '../table';
 
-type DebugGranularity = 'peek' | 'exhaustive';
+type DebugGranularity = 'peek' | 'exhaustive' | 'skip';
 
-export class DebugStringVisitor implements IoTypeVisitor {
+export class DebugStringVisitor implements IoTypeVisitor<string | undefined> {
   constructor(private debugGranularity: DebugGranularity) {}
 
-  visitTable(table: Table): unknown {
+  visitTable(table: Table): string | undefined {
+    if (this.debugGranularity === 'skip') {
+      return;
+    }
+
     const PEEK_NUMBER_OF_ROWS = 10;
     const numberOfRows = table.getNumberOfRows();
     const metaData =
@@ -49,7 +53,11 @@ export class DebugStringVisitor implements IoTypeVisitor {
     );
   }
 
-  visitSheet(sheet: Sheet): unknown {
+  visitSheet(sheet: Sheet): string | undefined {
+    if (this.debugGranularity === 'skip') {
+      return;
+    }
+
     const PEEK_NUMBER_OF_ROWS = 10;
     const metaData =
       `rows: ${sheet.getNumberOfRows()}\n` +
@@ -79,23 +87,43 @@ export class DebugStringVisitor implements IoTypeVisitor {
     );
   }
 
-  visitNone(): unknown {
+  visitNone(): string | undefined {
+    if (this.debugGranularity === 'skip') {
+      return;
+    }
+
     return '<None>';
   }
 
-  visitFileSystem(fileSystem: FileSystem): unknown {
+  visitFileSystem(fileSystem: FileSystem): string | undefined {
+    if (this.debugGranularity === 'skip') {
+      return;
+    }
+
     return fileSystem.getFile('/')?.toString() ?? '<found no root file>';
   }
 
-  visitBinaryFile(): unknown {
+  visitBinaryFile(): string | undefined {
+    if (this.debugGranularity === 'skip') {
+      return;
+    }
+
     return '<binary>';
   }
 
-  visitTextFile(binaryFile: TextFile): unknown {
+  visitTextFile(binaryFile: TextFile): string | undefined {
+    if (this.debugGranularity === 'skip') {
+      return;
+    }
+
     return binaryFile.content.join('\n');
   }
 
-  private getPeekComment(): string {
+  private getPeekComment(): string | undefined {
+    if (this.debugGranularity === 'skip') {
+      return;
+    }
+
     if (this.debugGranularity !== 'peek') {
       return '';
     }
