@@ -6,7 +6,7 @@ import { parseString as parseStringAsCsv } from '@fast-csv/parse';
 import { ParserOptionsArgs } from '@fast-csv/parse/build/src/ParserOptions';
 import * as R from '@jvalue/jayvee-execution';
 import {
-  BlockExecutor,
+  AbstractBlockExecutor,
   BlockExecutorClass,
   ExecutionContext,
   Sheet,
@@ -18,14 +18,17 @@ import * as E from 'fp-ts/lib/Either';
 import { Either, isLeft } from 'fp-ts/lib/Either';
 
 @implementsStatic<BlockExecutorClass>()
-export class CSVInterpreterExecutor
-  implements BlockExecutor<IOType.TEXT_FILE, IOType.SHEET>
-{
+export class CSVInterpreterExecutor extends AbstractBlockExecutor<
+  IOType.TEXT_FILE,
+  IOType.SHEET
+> {
   public static readonly type = 'CSVInterpreter';
-  public readonly inputType = IOType.TEXT_FILE;
-  public readonly outputType = IOType.SHEET;
 
-  async execute(
+  constructor() {
+    super(IOType.TEXT_FILE, IOType.SHEET);
+  }
+
+  async doExecute(
     file: TextFile,
     context: ExecutionContext,
   ): Promise<R.Result<Sheet>> {

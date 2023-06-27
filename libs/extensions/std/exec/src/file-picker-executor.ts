@@ -6,8 +6,8 @@ import { strict as assert } from 'assert';
 
 import * as R from '@jvalue/jayvee-execution';
 import {
+  AbstractBlockExecutor,
   BinaryFile,
-  BlockExecutor,
   BlockExecutorClass,
   ExecutionContext,
   FileSystem,
@@ -16,15 +16,18 @@ import {
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
-export class FilePickerExecutor
-  implements BlockExecutor<IOType.FILE_SYSTEM, IOType.FILE>
-{
+export class FilePickerExecutor extends AbstractBlockExecutor<
+  IOType.FILE_SYSTEM,
+  IOType.FILE
+> {
   public static readonly type = 'FilePicker';
-  public readonly inputType = IOType.FILE_SYSTEM;
-  public readonly outputType = IOType.FILE;
+
+  constructor() {
+    super(IOType.FILE_SYSTEM, IOType.FILE);
+  }
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  async execute(
+  async doExecute(
     fileSystem: FileSystem,
     context: ExecutionContext,
   ): Promise<R.Result<BinaryFile | null>> {

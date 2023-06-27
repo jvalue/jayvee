@@ -34,6 +34,10 @@ export class ExecutionContext {
   constructor(
     public readonly pipeline: PipelineDefinition,
     public readonly logger: Logger,
+    public readonly runOptions: {
+      isDebugMode: boolean;
+      debugGranularity: 'exhaustive' | 'peek' | 'skip';
+    },
     public readonly evaluationContext: EvaluationContext,
   ) {
     logger.setLoggingContext(pipeline.name);

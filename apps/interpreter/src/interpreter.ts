@@ -150,6 +150,10 @@ async function runPipeline(
   const executionContext = new ExecutionContext(
     pipeline,
     loggerFactory.createLogger(),
+    {
+      isDebugMode: runOptions.debug,
+      debugGranularity: runOptions.debugGranularity,
+    },
     new EvaluationContext(runtimeParameterProvider),
   );
 
