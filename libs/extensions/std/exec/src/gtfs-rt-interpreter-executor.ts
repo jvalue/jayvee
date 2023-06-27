@@ -4,8 +4,8 @@
 
 import * as R from '@jvalue/jayvee-execution';
 import {
+  AbstractBlockExecutor,
   BinaryFile,
-  BlockExecutor,
   BlockExecutorClass,
   ExecutionContext,
   Sheet,
@@ -17,14 +17,17 @@ import { Either } from 'fp-ts/lib/Either';
 import * as GtfsRealtimeBindings from 'gtfs-realtime-bindings';
 
 @implementsStatic<BlockExecutorClass>()
-export class GtfsRTInterpreterExecutor
-  implements BlockExecutor<IOType.FILE, IOType.SHEET>
-{
+export class GtfsRTInterpreterExecutor extends AbstractBlockExecutor<
+  IOType.FILE,
+  IOType.SHEET
+> {
   public static readonly type = 'GtfsRTInterpreter';
-  public readonly inputType = IOType.FILE;
-  public readonly outputType = IOType.SHEET;
 
-  async execute(
+  constructor() {
+    super(IOType.FILE, IOType.SHEET);
+  }
+
+  async doExecute(
     inputFile: BinaryFile,
     context: ExecutionContext,
   ): Promise<R.Result<Sheet>> {

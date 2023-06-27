@@ -21,3 +21,26 @@ export interface BlockExecutor<
     context: ExecutionContext,
   ): Promise<R.Result<IOTypeImplementation<O> | null>>;
 }
+
+export abstract class AbstractBlockExecutor<I extends IOType, O extends IOType>
+  implements BlockExecutor<I, O>
+{
+  constructor(public readonly inputType: I, public readonly outputType: O) {}
+
+  async execute(
+    input: IOTypeImplementation<I>,
+    context: ExecutionContext,
+  ): Promise<R.Result<IOTypeImplementation<O> | null>> {
+    const executionResult = await this.doExecute(input, context);
+
+    if (R.isOk(executionResult) && context.runOptions.isDebugMode) {
+      context.logger.logDebug('test');
+    }
+    return executionResult;
+  }
+
+  abstract doExecute(
+    input: IOTypeImplementation<I>,
+    context: ExecutionContext,
+  ): Promise<R.Result<IOTypeImplementation<O> | null>>;
+}

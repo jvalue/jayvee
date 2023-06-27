@@ -6,7 +6,7 @@ import { strict as assert } from 'assert';
 
 import * as R from '@jvalue/jayvee-execution';
 import {
-  BlockExecutor,
+  AbstractBlockExecutor,
   BlockExecutorClass,
   ExecutionContext,
   Sheet,
@@ -23,15 +23,18 @@ import {
 } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
-export class ColumnDeleterExecutor
-  implements BlockExecutor<IOType.SHEET, IOType.SHEET>
-{
+export class ColumnDeleterExecutor extends AbstractBlockExecutor<
+  IOType.SHEET,
+  IOType.SHEET
+> {
   public static readonly type = 'ColumnDeleter';
-  public readonly inputType = IOType.SHEET;
-  public readonly outputType = IOType.SHEET;
+
+  constructor() {
+    super(IOType.SHEET, IOType.SHEET);
+  }
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  async execute(
+  async doExecute(
     inputSheet: Sheet,
     context: ExecutionContext,
   ): Promise<R.Result<Sheet>> {

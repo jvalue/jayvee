@@ -8,8 +8,8 @@ import * as path from 'path';
 
 import * as R from '@jvalue/jayvee-execution';
 import {
+  AbstractBlockExecutor,
   BinaryFile,
-  BlockExecutor,
   BlockExecutorClass,
   ExecutionContext,
   FileExtension,
@@ -28,14 +28,17 @@ import {
 type HttpGetFunction = typeof http.get;
 
 @implementsStatic<BlockExecutorClass>()
-export class HttpExtractorExecutor
-  implements BlockExecutor<IOType.NONE, IOType.FILE>
-{
+export class HttpExtractorExecutor extends AbstractBlockExecutor<
+  IOType.NONE,
+  IOType.FILE
+> {
   public static readonly type = 'HttpExtractor';
-  public readonly inputType = IOType.NONE;
-  public readonly outputType = IOType.FILE;
 
-  async execute(
+  constructor() {
+    super(IOType.NONE, IOType.FILE);
+  }
+
+  async doExecute(
     input: None,
     context: ExecutionContext,
   ): Promise<R.Result<BinaryFile>> {

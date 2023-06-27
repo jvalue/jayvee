@@ -7,8 +7,8 @@ import * as path from 'path';
 
 import * as R from '@jvalue/jayvee-execution';
 import {
+  AbstractBlockExecutor,
   BinaryFile,
-  BlockExecutor,
   BlockExecutorClass,
   ExecutionContext,
   FileExtension,
@@ -27,14 +27,17 @@ import {
 } from './file-util';
 
 @implementsStatic<BlockExecutorClass>()
-export class ArchiveInterpreterExecutor
-  implements BlockExecutor<IOType.FILE, IOType.FILE_SYSTEM>
-{
+export class ArchiveInterpreterExecutor extends AbstractBlockExecutor<
+  IOType.FILE,
+  IOType.FILE_SYSTEM
+> {
   public static readonly type = 'ArchiveInterpreter';
-  public readonly inputType = IOType.FILE;
-  public readonly outputType = IOType.FILE_SYSTEM;
 
-  async execute(
+  constructor() {
+    super(IOType.FILE, IOType.FILE_SYSTEM);
+  }
+
+  async doExecute(
     archiveFile: BinaryFile,
     context: ExecutionContext,
   ): Promise<R.Result<FileSystem>> {
