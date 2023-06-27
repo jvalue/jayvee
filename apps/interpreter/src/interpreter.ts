@@ -8,6 +8,7 @@ import {
   Logger,
   NONE,
   createBlockExecutor,
+  isDebugGranularity,
   parseValueToInternalRepresentation,
   registerDefaultConstraintExecutors,
   useExtension as useExecutionExtension,
@@ -37,7 +38,7 @@ import { LoggerFactory } from './logging/logger-factory';
 import { validateRuntimeParameterLiteral } from './validation-checks/runtime-parameter-literal';
 
 interface RunOptions {
-  debugGranularity: 'exhaustive' | 'peek';
+  debugGranularity: 'exhaustive' | 'peek' | 'skip';
   debug: boolean;
 }
 
@@ -50,10 +51,7 @@ export async function runAction(
   },
 ): Promise<void> {
   const loggerFactory = new LoggerFactory(options.debug);
-  if (
-    options.debugGranularity !== 'exhaustive' &&
-    options.debugGranularity !== 'peek'
-  ) {
+  if (!isDebugGranularity(options.debugGranularity)) {
     loggerFactory
       .createLogger()
       .logErr(
