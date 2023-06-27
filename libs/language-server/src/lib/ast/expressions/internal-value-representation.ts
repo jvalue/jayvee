@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { isRegExp } from 'util';
-
 import {
   ConstraintDefinition,
   TransformDefinition,
@@ -38,7 +36,13 @@ export function internalValueToString(
   valueRepresentation: InternalValueRepresentation,
 ): string {
   if (Array.isArray(valueRepresentation)) {
-    // TODO;
+    return (
+      '[ ' +
+      valueRepresentation
+        .map((item) => internalValueToString(item))
+        .join(', ') +
+      ' ]'
+    );
   }
 
   if (typeof valueRepresentation === 'boolean') {
@@ -50,20 +54,20 @@ export function internalValueToString(
   if (typeof valueRepresentation === 'string') {
     return `"${valueRepresentation}"`;
   }
-  if (isRegExp(valueRepresentation)) {
+  if (valueRepresentation instanceof RegExp) {
     return valueRepresentation.source;
   }
   if (valueRepresentation instanceof CellRangeWrapper) {
     return valueRepresentation.toString();
   }
   if (isConstraintDefinition(valueRepresentation)) {
-    return valueRepresentation.name; // TODO: not sure if this makes sense?
+    return valueRepresentation.name;
   }
   if (isValuetypeAssignment(valueRepresentation)) {
-    return valueRepresentation.name; // TODO: not sure if this makes sense?
+    return valueRepresentation.name;
   }
   if (isTransformDefinition(valueRepresentation)) {
-    return valueRepresentation.name; // TODO: not sure if this makes sense?
+    return valueRepresentation.name;
   }
   throw new Error(
     'Convert of this InternalValueRepresentation is not implemented',
