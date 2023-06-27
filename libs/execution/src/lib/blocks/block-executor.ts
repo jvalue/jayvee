@@ -34,19 +34,31 @@ export abstract class AbstractBlockExecutor<I extends IOType, O extends IOType>
   ): Promise<R.Result<IOTypeImplementation<O> | null>> {
     const executionResult = await this.doExecute(input, context);
 
-    if (R.isOk(executionResult) && context.runOptions.isDebugMode) {
-      const blockResultData = executionResult.right;
-      if (blockResultData != null) {
-        const logMessage = blockResultData.acceptVisitor(
-          new DebugStringVisitor(context.runOptions.debugGranularity),
-        );
-
-        if (logMessage !== undefined) {
-          context.logger.logDebug(logMessage);
-        }
-      }
+    if (R.isOk(executionResult)) {
+      this.logBlockResult(executionResult.right, context);
     }
     return executionResult;
+  }
+
+  private logBlockResult(
+    result: IOTypeImplementation | null,
+    context: ExecutionContext,
+  ): void {
+    if (!context.runOptions.isDebugMode) {
+      return;
+    }
+
+    if (result == null) {
+      return;
+    }
+
+    const logMessage = result.acceptVisitor(
+      new DebugStringVisitor(context.runOptions.debugGranularity),
+    );
+
+    if (logMessage !== undefined) {
+      context.logger.logDebug(logMessage);
+    }
   }
 
   abstract doExecute(
