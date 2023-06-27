@@ -6,7 +6,7 @@ import { IOType } from '@jvalue/jayvee-language-server';
 
 import { ExecutionContext } from '../execution-context';
 import { IOTypeImplementation } from '../types/io-types/io-type-implementation';
-import { DebugStringVisitor } from '../types/io-types/visitors/debug-string-visitor';
+import { DebugLogVisitor } from '../types/io-types/visitors/debug-log-visitor';
 
 import * as R from './execution-result';
 
@@ -52,13 +52,9 @@ export abstract class AbstractBlockExecutor<I extends IOType, O extends IOType>
       return;
     }
 
-    const logMessage = result.acceptVisitor(
-      new DebugStringVisitor(context.runOptions.debugGranularity),
+    result.acceptVisitor(
+      new DebugLogVisitor(context.runOptions.debugGranularity, context.logger),
     );
-
-    if (logMessage !== undefined) {
-      context.logger.logDebug(logMessage);
-    }
   }
 
   abstract doExecute(
