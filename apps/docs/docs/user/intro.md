@@ -47,6 +47,18 @@ Run with **additional debug output**:
 jv <file> -d
 ```
 
+Run and log blog results for **debugging**:
+
+```console
+jv <file> -d -dg peek
+```
+The value of the parameter `dg` can have the following values:
+- `peek` to log the first lines of the results, 
+- `exhaustive` to log the complete results,
+- `skip` to log no results (default).
+The flag `d` needs to be enabled.
+
+
 With runtime parameters:
 
 ```console
