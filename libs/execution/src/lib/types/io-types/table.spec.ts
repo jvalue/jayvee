@@ -13,38 +13,42 @@ describe('Table', () => {
     table = new Table();
   });
 
-  it('should count number of columns', () => {
-    table.addColumn('a', { valuetype: PrimitiveValuetypes.Text, values: [] });
-    table.addColumn('b', { valuetype: PrimitiveValuetypes.Text, values: [] });
+  describe('addColumn', () => {
+    it('should increase the number of columns correctly on adding columns', () => {
+      table.addColumn('a', { valuetype: PrimitiveValuetypes.Text, values: [] });
+      table.addColumn('b', { valuetype: PrimitiveValuetypes.Text, values: [] });
 
-    expect(table.getNumberOfColumns()).toBe(2);
+      expect(table.getNumberOfColumns()).toBe(2);
+    });
   });
 
-  it('should count number of rows when added with column', () => {
-    table.addColumn('a', {
-      valuetype: PrimitiveValuetypes.Text,
-      values: [],
-    });
-    table.addRow({ a: 'a1' });
-    table.addRow({ a: 'a2' });
-    table.addRow({ a: 'a3' });
-    table.addColumn('b', {
-      valuetype: PrimitiveValuetypes.Text,
-      values: ['b1', 'b2', 'b3'],
+  describe('addRow', () => {
+    it('should increase the number of rows correctly and allow adding columns afterwards', () => {
+      table.addColumn('a', {
+        valuetype: PrimitiveValuetypes.Text,
+        values: [],
+      });
+      table.addRow({ a: 'a1' });
+      table.addRow({ a: 'a2' });
+      table.addRow({ a: 'a3' });
+      table.addColumn('b', {
+        valuetype: PrimitiveValuetypes.Text,
+        values: ['b1', 'b2', 'b3'],
+      });
+
+      expect(table.getNumberOfRows()).toBe(3);
     });
 
-    expect(table.getNumberOfRows()).toBe(3);
-  });
+    it('should increase the number of rows correctly on adding a row and a given column structure', () => {
+      table.addColumn('a', {
+        valuetype: PrimitiveValuetypes.Text,
+        values: [],
+      });
+      table.addRow({ a: 'a1' });
+      table.addRow({ a: 'a2' });
+      table.addRow({ a: 'a3' });
 
-  it('should count number of rows when added without column', () => {
-    table.addColumn('a', {
-      valuetype: PrimitiveValuetypes.Text,
-      values: [],
+      expect(table.getNumberOfRows()).toBe(3);
     });
-    table.addRow({ a: 'a1' });
-    table.addRow({ a: 'a2' });
-    table.addRow({ a: 'a3' });
-
-    expect(table.getNumberOfRows()).toBe(3);
   });
 });
