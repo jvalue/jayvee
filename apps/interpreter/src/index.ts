@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { DebugGranularityValues } from '@jvalue/jayvee-execution';
 import { Command } from 'commander';
 
 import { version as packageJsonVersion } from '../package.json';
@@ -44,7 +45,9 @@ program
   .option('-d, --debug', 'enable debug logging', false)
   .option(
     '-dg, --debug-granularity <granularity>',
-    'Sets the granularity of block debug logging. Can have values "peek", "exhaustive" or "skip" (default).',
+    `Sets the granularity of block debug logging. Can have values ${DebugGranularityValues.join(
+      ', ',
+    )} (default).`,
     'skip',
   )
   .description('Run a Jayvee file')
