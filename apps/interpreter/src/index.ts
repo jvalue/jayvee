@@ -48,7 +48,12 @@ program
     `Sets the granularity of block debug logging. Can have values ${DebugGranularityValues.join(
       ', ',
     )} (default).`,
-    'skip',
+    DebugGranularityValues[DebugGranularityValues.length - 1],
+  )
+  .option(
+    '-dt, --debug-target <block name>',
+    `Sets the target blocks of the of block debug logging, separated by comma. If not given, all blocks are targeted.`,
+    undefined,
   )
   .description('Run a Jayvee file')
   .action(runAction);

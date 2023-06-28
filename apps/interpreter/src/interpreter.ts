@@ -39,6 +39,7 @@ import { validateRuntimeParameterLiteral } from './validation-checks/runtime-par
 
 interface RunOptions {
   debugGranularity: R.DebugGranularity;
+  debugTargets: R.DebugTargets;
   debug: boolean;
 }
 
@@ -48,6 +49,7 @@ export async function runAction(
     env: Map<string, string>;
     debug: boolean;
     debugGranularity: string;
+    debugTarget: string | undefined;
   },
 ): Promise<void> {
   const loggerFactory = new LoggerFactory(options.debug);
@@ -74,6 +76,7 @@ export async function runAction(
     services,
     loggerFactory.createLogger(),
   );
+  const debugTargets = getDebugTargets(options.debugTarget);
 
   const interpretationExitCode = await interpretJayveeModel(
     model,
@@ -82,6 +85,7 @@ export async function runAction(
     {
       debug: options.debug,
       debugGranularity: options.debugGranularity,
+      debugTargets: debugTargets,
     },
   );
   process.exit(interpretationExitCode);
@@ -153,6 +157,7 @@ async function runPipeline(
     {
       isDebugMode: runOptions.debug,
       debugGranularity: runOptions.debugGranularity,
+      debugTargets: runOptions.debugTargets,
     },
     new EvaluationContext(runtimeParameterProvider),
   );
@@ -298,4 +303,15 @@ export function logPipelineOverview(
     linesBuffer.push(toString(block, 1));
   }
   logger.logInfo(linesBuffer.join('\n'));
+}
+
+function getDebugTargets(
+  debugTargetsString: string | undefined,
+): R.DebugTargets {
+  const areAllBlocksTargeted = debugTargetsString === undefined;
+  if (areAllBlocksTargeted) {
+    return 'all';
+  }
+
+  return debugTargetsString.split(',');
 }
