@@ -118,10 +118,12 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
       return;
     }
 
-    const lines = binaryFile.content.splice(0, this.PEEK_NUMBER_OF_LINES);
-    lines.forEach((line, i) => {
-      this.log(`[Line ${i}] ${line}`);
-    });
+    for (let i = 0; i < binaryFile.content.length; ++i) {
+      if (i > this.PEEK_NUMBER_OF_LINES) {
+        break;
+      }
+      this.log(`[Line ${i}] ${binaryFile.content[i] ?? '<undefined>'}`);
+    }
     this.logPeekComment();
   }
 
