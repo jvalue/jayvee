@@ -53,7 +53,11 @@ export abstract class AbstractBlockExecutor<I extends IOType, O extends IOType>
     }
 
     result.acceptVisitor(
-      new DebugLogVisitor(context.runOptions.debugGranularity, context.logger),
+      new DebugLogVisitor(
+        context.runOptions.debugGranularity,
+        'Output',
+        context.logger,
+      ),
     );
   }
 
