@@ -24,6 +24,7 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
 
   constructor(
     private debugGranularity: DebugGranularity,
+    private logPrefix: string,
     private logger: Logger,
   ) {}
 
@@ -136,6 +137,6 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
   }
 
   private log(text: string): void {
-    this.logger.logDebug(`[Result] ${text}`);
+    this.logger.logDebug(`[${this.logPrefix}] ${text}`);
   }
 }
