@@ -47,7 +47,16 @@ Run with **additional debug output**:
 jv <file> -d
 ```
 
-Run and log details about block execution (including data) for **debugging**:
+
+With **runtime parameters**:
+
+```console
+jv -e <param>=<value> -e <param>=<value> ... <file>
+```
+
+### Debug a `.jv` file
+
+Currently, we only allow print debugging by the parameters `dg` and `dt`.
 
 ```console
 jv <file> -d -dg peek
@@ -58,12 +67,12 @@ The value of the parameter `dg` can have the following values:
 - `skip` to log no data (default).
 To see logs, debugging has to be enabled using the `-d` flag.
 
-
-With runtime parameters:
-
 ```console
-jv -e <param>=<value> -e <param>=<value> ... <file>
+jv <file> -d -dg peek -dt MyExtractorBlock,MySinkBlock
 ```
+The parameter `dt` allows to specify which blocks should be logged for debugging. Separate block names by comma if multiple blocks are targeted. All blocks are logged if the parameter is omitted.
+
+
 
 ## Examples
 
