@@ -9,9 +9,9 @@
     "lint": "nx run-many --target lint --max-warnings 0",
     "test": "nx run-many --target test",
     "generate": "nx run language-server:generate",
-    "example:cars": "nx run interpreter:run -d example/cars.jv",
-    "example:gtfs": "nx run interpreter:run -d example/gtfs-static-and-rt.jv",
-    "example:vehicles": "nx run interpreter:run -d -e DB_HOST=localhost -e DB_PORT=5432 -e DB_USERNAME=postgres -e DB_PASSWORD=postgres -e DB_DATABASE=postgres example/electric-vehicles.jv"
+    "example:cars": "nx run interpreter:run -d example/cars.jv -dg peek",
+    "example:gtfs": "nx run interpreter:run -d example/gtfs-static-and-rt.jv -dg peek",
+    "example:vehicles": "nx run interpreter:run -d -e DB_HOST=localhost -e DB_PORT=5432 -e DB_USERNAME=postgres -e DB_PASSWORD=postgres -e DB_DATABASE=postgres example/electric-vehicles.jv -dg peek"
   },
   "private": true,
   "dependencies": {
@@ -60,7 +60,6 @@
     "@nx-plus/docusaurus": "^15.0.0-rc.0",
     "@types/jest": "28.1.1",
     "@types/mime-types": "^2.1.1",
-    "@types/multer": "^1.4.7",
     "@types/node": "18.7.1",
     "@types/pg": "^8.6.5",
     "@types/react": "18.0.25",
