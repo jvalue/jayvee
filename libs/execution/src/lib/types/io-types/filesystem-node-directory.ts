@@ -92,7 +92,7 @@ export class FileSystemDirectory extends FileSystemNode {
 
   override toDirectoryString(indentation = 0): string {
     return (
-      ' '.repeat(indentation) +
+      '\t'.repeat(indentation) +
       this.name +
       '\n' +
       this.children
