@@ -22,7 +22,7 @@ import {
 } from '@jvalue/jayvee-language-server';
 
 import { Logger } from './logger';
-import { type DebugGranularity } from './types';
+import { type DebugGranularity, type DebugTargets } from './types';
 
 export type StackNode =
   | BlockDefinition
@@ -38,6 +38,7 @@ export class ExecutionContext {
     public readonly runOptions: {
       isDebugMode: boolean;
       debugGranularity: DebugGranularity;
+      debugTargets: DebugTargets;
     },
     public readonly evaluationContext: EvaluationContext,
   ) {

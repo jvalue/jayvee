@@ -2,7 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { IOType } from '@jvalue/jayvee-language-server';
+import { strict as assert } from 'assert';
+
+import { IOType, isBlockDefinition } from '@jvalue/jayvee-language-server';
 
 import { ExecutionContext } from '../execution-context';
 import { IOTypeImplementation } from '../types/io-types/io-type-implementation';
@@ -49,6 +51,15 @@ export abstract class AbstractBlockExecutor<I extends IOType, O extends IOType>
     }
 
     if (result == null) {
+      return;
+    }
+
+    const currentNode = context.getCurrentNode();
+    assert(isBlockDefinition(currentNode));
+    const isBlockTargeted =
+      context.runOptions.debugTargets === 'all' ||
+      context.runOptions.debugTargets.includes(currentNode.name);
+    if (!isBlockTargeted) {
       return;
     }
 

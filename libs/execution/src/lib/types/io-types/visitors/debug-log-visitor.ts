@@ -18,6 +18,8 @@ export function isDebugGranularity(obj: unknown): obj is DebugGranularity {
   return obj === 'exhaustive' || obj === 'peek' || obj === 'skip';
 }
 
+export type DebugTargets = string[] | 'all';
+
 export class DebugLogVisitor implements IoTypeVisitor<void> {
   private readonly PEEK_NUMBER_OF_ROWS = 10;
   private readonly PEEK_NUMBER_OF_BYTES = 100;
