@@ -6,9 +6,9 @@ import { strict as assert } from 'assert';
 
 import { IOType, isBlockDefinition } from '@jvalue/jayvee-language-server';
 
+import { DebugLogVisitor } from '../debugging/debug-log-visitor';
 import { ExecutionContext } from '../execution-context';
 import { IOTypeImplementation } from '../types/io-types/io-type-implementation';
-import { DebugLogVisitor } from '../types/io-types/visitors/debug-log-visitor';
 
 import * as R from './execution-result';
 
