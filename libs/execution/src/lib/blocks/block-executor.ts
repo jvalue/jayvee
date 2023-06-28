@@ -6,6 +6,7 @@ import { strict as assert } from 'assert';
 
 import { IOType, isBlockDefinition } from '@jvalue/jayvee-language-server';
 
+import { isBlockTargetedForDebugLogging } from '../debugging/debug-configuration';
 import { DebugLogVisitor } from '../debugging/debug-log-visitor';
 import { ExecutionContext } from '../execution-context';
 import { IOTypeImplementation } from '../types/io-types/io-type-implementation';
@@ -56,9 +57,10 @@ export abstract class AbstractBlockExecutor<I extends IOType, O extends IOType>
 
     const currentNode = context.getCurrentNode();
     assert(isBlockDefinition(currentNode));
-    const isBlockTargeted =
-      context.runOptions.debugTargets === 'all' ||
-      context.runOptions.debugTargets.includes(currentNode.name);
+    const isBlockTargeted = isBlockTargetedForDebugLogging(
+      currentNode,
+      context,
+    );
     if (!isBlockTargeted) {
       return;
     }
