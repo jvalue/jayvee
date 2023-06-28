@@ -18,6 +18,10 @@ export function isDebugGranularity(obj: unknown): obj is DebugGranularity {
 }
 
 export class DebugLogVisitor implements IoTypeVisitor<void> {
+  private readonly PEEK_NUMBER_OF_ROWS = 10;
+  private readonly PEEK_NUMBER_OF_BYTES = 100;
+  private readonly PEEK_NUMBER_OF_LINES = 10;
+
   constructor(
     private debugGranularity: DebugGranularity,
     private logger: Logger,
@@ -28,7 +32,6 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
       return;
     }
 
-    const PEEK_NUMBER_OF_ROWS = 10;
     const numberOfRows = table.getNumberOfRows();
     this.log(
       `Table with ${numberOfRows} rows and ${table.getNumberOfColumns()} columns.`,
@@ -42,7 +45,7 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
     this.log(`[Header] ${headers}`);
 
     for (let i = 0; i < numberOfRows; ++i) {
-      if (this.debugGranularity === 'peek' && i >= PEEK_NUMBER_OF_ROWS) {
+      if (this.debugGranularity === 'peek' && i >= this.PEEK_NUMBER_OF_ROWS) {
         break;
       }
 
@@ -60,7 +63,6 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
       return;
     }
 
-    const PEEK_NUMBER_OF_ROWS = 10;
     this.log(
       `Sheet with ${sheet.getNumberOfRows()} rows and ${sheet.getNumberOfColumns()} columns.`,
     );
@@ -68,7 +70,7 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
       .getData()
       .filter((_, rowIndex) => {
         if (this.debugGranularity === 'peek') {
-          return rowIndex < PEEK_NUMBER_OF_ROWS;
+          return rowIndex < this.PEEK_NUMBER_OF_ROWS;
         }
         return true;
       })
@@ -101,8 +103,7 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
       return;
     }
 
-    const PEEK_NUMBER_OF_BYTES = 100;
-    const buffer = binaryFile.content.slice(0, PEEK_NUMBER_OF_BYTES);
+    const buffer = binaryFile.content.slice(0, this.PEEK_NUMBER_OF_BYTES);
     const hexString = [...new Uint8Array(buffer)]
       .map((x) => x.toString(16).padStart(2, '0').toUpperCase())
       .join('');
@@ -115,8 +116,7 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
       return;
     }
 
-    const PEEK_NUMBER_OF_LINES = 10;
-    const lines = binaryFile.content.splice(0, PEEK_NUMBER_OF_LINES);
+    const lines = binaryFile.content.splice(0, this.PEEK_NUMBER_OF_LINES);
     lines.forEach((line, i) => {
       this.log(`[Line ${i}] ${line}`);
     });
