@@ -2,10 +2,30 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-export const DebugGranularityValues = ['peek', 'exhaustive', 'skip'] as const; // convention: last item is the default value
+import { BlockDefinition } from '@jvalue/jayvee-language-server';
+
+import { type ExecutionContext } from '../execution-context';
+
+export const DefaultGranularityValue = 'skip';
+export const DebugGranularityValues = [
+  'peek',
+  'exhaustive',
+  DefaultGranularityValue,
+] as const;
 export type DebugGranularity = (typeof DebugGranularityValues)[number];
 export function isDebugGranularity(obj: unknown): obj is DebugGranularity {
   return obj === 'exhaustive' || obj === 'peek' || obj === 'skip';
 }
 
-export type DebugTargets = string[] | 'all';
+export const DefaultDebugTargetsValue = 'all';
+export type DebugTargets = string[] | typeof DefaultDebugTargetsValue;
+
+export function isBlockTargetedForDebugLogging(
+  block: BlockDefinition,
+  context: ExecutionContext,
+): boolean {
+  return (
+    context.runOptions.debugTargets === DefaultDebugTargetsValue ||
+    context.runOptions.debugTargets.includes(block.name)
+  );
+}

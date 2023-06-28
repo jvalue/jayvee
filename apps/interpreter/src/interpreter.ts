@@ -310,8 +310,8 @@ function getDebugTargets(
 ): R.DebugTargets {
   const areAllBlocksTargeted = debugTargetsString === undefined;
   if (areAllBlocksTargeted) {
-    return 'all';
+    return R.DefaultDebugTargetsValue;
   }
 
-  return debugTargetsString.split(',');
+  return debugTargetsString.split(',').map((target) => target.trim());
 }
