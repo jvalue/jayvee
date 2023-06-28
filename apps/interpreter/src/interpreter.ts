@@ -38,7 +38,7 @@ import { LoggerFactory } from './logging/logger-factory';
 import { validateRuntimeParameterLiteral } from './validation-checks/runtime-parameter-literal';
 
 interface RunOptions {
-  debugGranularity: 'exhaustive' | 'peek' | 'skip';
+  debugGranularity: R.DebugGranularity;
   debug: boolean;
 }
 
