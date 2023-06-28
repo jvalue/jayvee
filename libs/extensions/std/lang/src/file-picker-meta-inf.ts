@@ -36,7 +36,7 @@ export class FilePickerMetaInformation extends BlockMetaInformation {
     this.docs.examples = [
       {
         code: `block AgencyFilePicker oftype FilePicker {
-  path: "./agency.txt";
+  path: "/agency.txt";
 }`,
         description:
           'Tries to pick the file `agency.txt` from the root of the provided `FileSystem`. If `agency.txt` exists it is passed on as `File`, if it does not exist the execution of the pipeline is aborted.',
