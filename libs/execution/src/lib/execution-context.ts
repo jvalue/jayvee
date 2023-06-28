@@ -21,8 +21,11 @@ import {
   isTransformDefinition,
 } from '@jvalue/jayvee-language-server';
 
+import {
+  DebugGranularity,
+  DebugTargets,
+} from './debugging/debug-configuration';
 import { Logger } from './logger';
-import { type DebugGranularity, type DebugTargets } from './types';
 
 export type StackNode =
   | BlockDefinition

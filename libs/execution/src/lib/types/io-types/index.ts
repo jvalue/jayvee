@@ -13,5 +13,3 @@ export * from './filesystem-node-file';
 export * from './filesystem-node-file-text';
 export * from './filesystem-node';
 export * from './filesystem-node-directory';
-
-export * from './visitors';
