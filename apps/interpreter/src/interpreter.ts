@@ -55,7 +55,10 @@ export async function runAction(
     loggerFactory
       .createLogger()
       .logErr(
-        `Unknown value "${options.debugGranularity}" for debug granularity option.`,
+        `Unknown value "${options.debugGranularity}" for debug granularity option: -dg --debug-granularity.\n` +
+          `Please use one of the following values: ${R.DebugGranularityValues.join(
+            ', ',
+          )}.`,
       );
     process.exit(1);
   }

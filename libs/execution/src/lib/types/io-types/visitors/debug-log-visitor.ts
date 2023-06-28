@@ -12,7 +12,8 @@ import { IoTypeVisitor } from '../io-type-implementation';
 import { Sheet } from '../sheet';
 import { Table } from '../table';
 
-export type DebugGranularity = 'peek' | 'exhaustive' | 'skip';
+export const DebugGranularityValues = ['peek', 'exhaustive', 'skip'] as const; // convention: last item is the default value
+export type DebugGranularity = (typeof DebugGranularityValues)[number];
 export function isDebugGranularity(obj: unknown): obj is DebugGranularity {
   return obj === 'exhaustive' || obj === 'peek' || obj === 'skip';
 }
