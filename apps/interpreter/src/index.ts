@@ -7,7 +7,7 @@ import { Command } from 'commander';
 
 import { version as packageJsonVersion } from '../package.json';
 
-import { runAction } from './interpreter';
+import { runAction } from './run-action';
 
 const runtimeParameterRegex = /^([_a-zA-Z][\w_]*)=(.*)$/;
 function collectRuntimeParameters(
