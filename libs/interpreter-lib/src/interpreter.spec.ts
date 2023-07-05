@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { readJvTestAssetHelper } from '@jvalue/jayvee-language-server/test';
 
 import { ExitCode } from './cli-util';
