@@ -26,7 +26,7 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
   ) {}
 
   visitTable(table: Table): void {
-    if (this.debugGranularity === 'skip') {
+    if (this.debugGranularity === 'minimal') {
       return;
     }
 
@@ -57,7 +57,7 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
   }
 
   visitSheet(sheet: Sheet): void {
-    if (this.debugGranularity === 'skip') {
+    if (this.debugGranularity === 'minimal') {
       return;
     }
 
@@ -81,7 +81,7 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
   }
 
   visitNone(): void {
-    if (this.debugGranularity === 'skip') {
+    if (this.debugGranularity === 'minimal') {
       return;
     }
 
@@ -89,7 +89,7 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
   }
 
   visitFileSystem(fileSystem: FileSystem): void {
-    if (this.debugGranularity === 'skip') {
+    if (this.debugGranularity === 'minimal') {
       return;
     }
 
@@ -97,7 +97,7 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
   }
 
   visitBinaryFile(binaryFile: BinaryFile): void {
-    if (this.debugGranularity === 'skip') {
+    if (this.debugGranularity === 'minimal') {
       return;
     }
 
@@ -110,7 +110,7 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
   }
 
   visitTextFile(binaryFile: TextFile): void {
-    if (this.debugGranularity === 'skip') {
+    if (this.debugGranularity === 'minimal') {
       return;
     }
 
@@ -124,7 +124,7 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
   }
 
   private logPeekComment(): void {
-    if (this.debugGranularity === 'skip') {
+    if (this.debugGranularity === 'minimal') {
       return;
     }
 

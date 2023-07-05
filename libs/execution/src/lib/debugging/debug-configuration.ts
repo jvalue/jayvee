@@ -6,7 +6,7 @@ import { BlockDefinition } from '@jvalue/jayvee-language-server';
 
 import { type ExecutionContext } from '../execution-context';
 
-export const DefaultGranularityValue = 'skip';
+export const DefaultGranularityValue = 'minimal';
 export const DebugGranularityValues = [
   'peek',
   'exhaustive',
@@ -14,7 +14,7 @@ export const DebugGranularityValues = [
 ] as const;
 export type DebugGranularity = (typeof DebugGranularityValues)[number];
 export function isDebugGranularity(obj: unknown): obj is DebugGranularity {
-  return obj === 'exhaustive' || obj === 'peek' || obj === 'skip';
+  return obj === 'exhaustive' || obj === 'peek' || obj === 'minimal';
 }
 
 export const DefaultDebugTargetsValue = 'all';
