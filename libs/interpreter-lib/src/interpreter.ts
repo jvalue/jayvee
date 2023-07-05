@@ -33,11 +33,7 @@ import {
 import * as chalk from 'chalk';
 import { NodeFileSystem } from 'langium/node';
 
-import {
-  ExitCode,
-  extractAstNodeFromFile,
-  extractAstNodeFromString,
-} from './cli-util';
+import { ExitCode, extractAstNodeFromString } from './cli-util';
 import { LoggerFactory } from './logging/logger-factory';
 import { validateRuntimeParameterLiteral } from './validation-checks/runtime-parameter-literal';
 
@@ -47,28 +43,11 @@ interface InterpreterOptions {
   debug: boolean;
 }
 
-interface RunOptions {
+export interface RunOptions {
   env: Map<string, string>;
   debug: boolean;
   debugGranularity: string;
   debugTarget: string | undefined;
-}
-
-export async function runAction(
-  fileName: string,
-  options: RunOptions,
-): Promise<void> {
-  const extractAstNodeFn = async (
-    services: JayveeServices,
-    loggerFactory: LoggerFactory,
-  ) =>
-    await extractAstNodeFromFile<JayveeModel>(
-      fileName,
-      services,
-      loggerFactory.createLogger(),
-    );
-  const exitCode = await interpretModel(extractAstNodeFn, options);
-  process.exit(exitCode);
 }
 
 export async function interpretString(
@@ -87,7 +66,7 @@ export async function interpretString(
   return await interpretModel(extractAstNodeFn, options);
 }
 
-async function interpretModel(
+export async function interpretModel(
   extractAstNodeFn: (
     services: JayveeServices,
     loggerFactory: LoggerFactory,
