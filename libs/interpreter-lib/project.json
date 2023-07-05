@@ -4,6 +4,16 @@
   "sourceRoot": "libs/interpreter-lib/src",
   "projectType": "library",
   "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/interpreter-lib",
+        "main": "libs/interpreter-lib/src/index.ts",
+        "tsConfig": "libs/interpreter-lib/tsconfig.lib.json",
+        "assets": ["libs/interpreter-lib/*.md"]
+      }
+    },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
