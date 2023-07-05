@@ -37,20 +37,41 @@ import { ExitCode, extractAstNodeFromFile } from './cli-util';
 import { LoggerFactory } from './logging/logger-factory';
 import { validateRuntimeParameterLiteral } from './validation-checks/runtime-parameter-literal';
 
-interface RunOptions {
+interface InterpreterOptions {
   debugGranularity: R.DebugGranularity;
   debugTargets: R.DebugTargets;
   debug: boolean;
 }
 
+interface RunOptions {
+  env: Map<string, string>;
+  debug: boolean;
+  debugGranularity: string;
+  debugTarget: string | undefined;
+}
+
 export async function runAction(
   fileName: string,
-  options: {
-    env: Map<string, string>;
-    debug: boolean;
-    debugGranularity: string;
-    debugTarget: string | undefined;
-  },
+  options: RunOptions,
+): Promise<void> {
+  const extractAstNodeFn = async (
+    services: JayveeServices,
+    loggerFactory: LoggerFactory,
+  ) =>
+    await extractAstNodeFromFile<JayveeModel>(
+      fileName,
+      services,
+      loggerFactory.createLogger(),
+    );
+  await interpretModel(extractAstNodeFn, options);
+}
+
+export async function interpretModel(
+  extractAstNodeFn: (
+    services: JayveeServices,
+    loggerFactory: LoggerFactory,
+  ) => Promise<JayveeModel>,
+  options: RunOptions,
 ): Promise<void> {
   const loggerFactory = new LoggerFactory(options.debug);
   if (!isDebugGranularity(options.debugGranularity)) {
@@ -71,11 +92,7 @@ export async function runAction(
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   setupJayveeServices(services, options.env);
 
-  const model = await extractAstNodeFromFile<JayveeModel>(
-    fileName,
-    services,
-    loggerFactory.createLogger(),
-  );
+  const model = await extractAstNodeFn(services, loggerFactory);
   const debugTargets = getDebugTargets(options.debugTarget);
 
   const interpretationExitCode = await interpretJayveeModel(
@@ -125,7 +142,7 @@ async function interpretJayveeModel(
   model: JayveeModel,
   runtimeParameterProvider: RuntimeParameterProvider,
   loggerFactory: LoggerFactory,
-  runOptions: RunOptions,
+  runOptions: InterpreterOptions,
 ): Promise<ExitCode> {
   const pipelineRuns: Array<Promise<ExitCode>> = model.pipelines.map(
     (pipeline) => {
@@ -149,7 +166,7 @@ async function runPipeline(
   pipeline: PipelineDefinition,
   runtimeParameterProvider: RuntimeParameterProvider,
   loggerFactory: LoggerFactory,
-  runOptions: RunOptions,
+  runOptions: InterpreterOptions,
 ): Promise<ExitCode> {
   const executionContext = new ExecutionContext(
     pipeline,
