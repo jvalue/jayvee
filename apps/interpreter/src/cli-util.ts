@@ -93,3 +93,12 @@ export async function extractAstNodeFromFile<T extends AstNode>(
   return (await extractDocumentFromFile(fileName, services, logger)).parseResult
     .value as T;
 }
+
+export async function extractAstNodeFromString<T extends AstNode>(
+  modelString: string,
+  services: LangiumServices,
+  logger: Logger,
+): Promise<T> {
+  return (await extractDocumentFromString(modelString, services, logger))
+    .parseResult.value as T;
+}

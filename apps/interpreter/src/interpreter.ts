@@ -33,7 +33,11 @@ import {
 import * as chalk from 'chalk';
 import { NodeFileSystem } from 'langium/node';
 
-import { ExitCode, extractAstNodeFromFile } from './cli-util';
+import {
+  ExitCode,
+  extractAstNodeFromFile,
+  extractAstNodeFromString,
+} from './cli-util';
 import { LoggerFactory } from './logging/logger-factory';
 import { validateRuntimeParameterLiteral } from './validation-checks/runtime-parameter-literal';
 
@@ -63,16 +67,33 @@ export async function runAction(
       services,
       loggerFactory.createLogger(),
     );
-  await interpretModel(extractAstNodeFn, options);
+  const exitCode = await interpretModel(extractAstNodeFn, options);
+  process.exit(exitCode);
 }
 
-export async function interpretModel(
+export async function interpretString(
+  modelString: string,
+  options: RunOptions,
+): Promise<ExitCode> {
+  const extractAstNodeFn = async (
+    services: JayveeServices,
+    loggerFactory: LoggerFactory,
+  ) =>
+    await extractAstNodeFromString<JayveeModel>(
+      modelString,
+      services,
+      loggerFactory.createLogger(),
+    );
+  return await interpretModel(extractAstNodeFn, options);
+}
+
+async function interpretModel(
   extractAstNodeFn: (
     services: JayveeServices,
     loggerFactory: LoggerFactory,
   ) => Promise<JayveeModel>,
   options: RunOptions,
-): Promise<void> {
+): Promise<ExitCode> {
   const loggerFactory = new LoggerFactory(options.debug);
   if (!isDebugGranularity(options.debugGranularity)) {
     loggerFactory
@@ -83,7 +104,7 @@ export async function interpretModel(
             ', ',
           )}.`,
       );
-    process.exit(1);
+    process.exit(ExitCode.FAILURE);
   }
 
   useStdExtension();
@@ -105,7 +126,7 @@ export async function interpretModel(
       debugTargets: debugTargets,
     },
   );
-  process.exit(interpretationExitCode);
+  return interpretationExitCode;
 }
 
 function setupJayveeServices(
