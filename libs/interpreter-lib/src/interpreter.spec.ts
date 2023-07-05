@@ -4,8 +4,8 @@
 
 import { readJvTestAssetHelper } from '@jvalue/jayvee-language-server/test';
 
-import { ExitCode } from './cli-util';
 import { interpretString } from './interpreter';
+import { ExitCode } from './parsing-util';
 
 describe('Interpreter', () => {
   const readJvTestAsset = readJvTestAssetHelper(__dirname, '../../../');

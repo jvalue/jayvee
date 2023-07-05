@@ -33,8 +33,8 @@ import {
 import * as chalk from 'chalk';
 import { NodeFileSystem } from 'langium/node';
 
-import { ExitCode, extractAstNodeFromString } from './cli-util';
 import { LoggerFactory } from './logging/logger-factory';
+import { ExitCode, extractAstNodeFromString } from './parsing-util';
 import { validateRuntimeParameterLiteral } from './validation-checks/runtime-parameter-literal';
 
 interface InterpreterOptions {
