@@ -15,7 +15,7 @@ export enum ExitCode {
   FAILURE = 1,
 }
 
-export async function extractDocument(
+export async function extractDocumentFromFile(
   fileName: string,
   services: LangiumServices,
   logger: Logger,
@@ -39,6 +39,26 @@ export async function extractDocument(
     services.shared.workspace.LangiumDocuments.getOrCreateDocument(
       URI.file(path.resolve(fileName)),
     );
+  return await validateDocument(document, services, logger);
+}
+
+export async function extractDocumentFromString(
+  modelString: string,
+  services: LangiumServices,
+  logger: Logger,
+): Promise<LangiumDocument> {
+  const document = services.shared.workspace.LangiumDocumentFactory.fromString(
+    modelString,
+    URI.parse('memory://jayvee.document'),
+  );
+  return await validateDocument(document, services, logger);
+}
+
+export async function validateDocument(
+  document: LangiumDocument,
+  services: LangiumServices,
+  logger: Logger,
+): Promise<LangiumDocument> {
   await services.shared.workspace.DocumentBuilder.build([document], {
     validationChecks: 'all',
   });
@@ -65,11 +85,11 @@ export async function extractDocument(
   return document;
 }
 
-export async function extractAstNode<T extends AstNode>(
+export async function extractAstNodeFromFile<T extends AstNode>(
   fileName: string,
   services: LangiumServices,
   logger: Logger,
 ): Promise<T> {
-  return (await extractDocument(fileName, services, logger)).parseResult
+  return (await extractDocumentFromFile(fileName, services, logger)).parseResult
     .value as T;
 }

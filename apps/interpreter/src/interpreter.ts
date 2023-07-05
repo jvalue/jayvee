@@ -33,7 +33,7 @@ import {
 import * as chalk from 'chalk';
 import { NodeFileSystem } from 'langium/node';
 
-import { ExitCode, extractAstNode } from './cli-util';
+import { ExitCode, extractAstNodeFromFile } from './cli-util';
 import { LoggerFactory } from './logging/logger-factory';
 import { validateRuntimeParameterLiteral } from './validation-checks/runtime-parameter-literal';
 
@@ -71,7 +71,7 @@ export async function runAction(
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   setupJayveeServices(services, options.env);
 
-  const model = await extractAstNode<JayveeModel>(
+  const model = await extractAstNodeFromFile<JayveeModel>(
     fileName,
     services,
     loggerFactory.createLogger(),
