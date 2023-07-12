@@ -80,6 +80,7 @@
     "jest": "28.1.1",
     "jest-environment-jsdom": "28.1.1",
     "langium-cli": "^1.2.0",
+    "nock": "13.3.1",
     "nx": "15.3.0",
     "prettier": "^2.8.7",
     "ts-jest": "28.0.5",
