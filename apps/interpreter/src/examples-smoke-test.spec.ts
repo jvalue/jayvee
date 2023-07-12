@@ -1,0 +1,306 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+import * as path from 'path';
+
+import {
+  clearBlockExecutorRegistry,
+  clearConstraintExecutorRegistry,
+} from '@jvalue/jayvee-execution/test';
+import {
+  PostgresLoaderExecutorMock,
+  SQLiteLoaderExecutorMock,
+} from '@jvalue/jayvee-extensions/rdbms/test';
+import { HttpExtractorExecutorMock } from '@jvalue/jayvee-extensions/std/test';
+import { clearMetaInfRegistry } from '@jvalue/jayvee-language-server/test';
+import * as nock from 'nock';
+
+import { runAction } from './interpreter';
+
+// Mock global imports
+jest.mock('pg', () => {
+  const mClient = {
+    connect: jest.fn(),
+    query: jest.fn(),
+    end: jest.fn(),
+  };
+  return { Client: jest.fn(() => mClient) };
+});
+jest.mock('sqlite3', () => {
+  const mockDB = {
+    close: jest.fn(),
+    run: jest.fn(),
+  };
+  return { Database: jest.fn(() => mockDB) };
+});
+
+describe('jv example smoke tests', () => {
+  const baseDir = path.resolve(__dirname, '../../../example/');
+
+  const defaultOptions = {
+    env: new Map<string, string>(),
+    debug: false,
+    debugGranularity: 'minimal',
+    debugTarget: undefined,
+  };
+
+  let exitSpy: jest.SpyInstance;
+  let httpExtractorMock: HttpExtractorExecutorMock;
+  let postgresLoaderMock: PostgresLoaderExecutorMock;
+  let sqliteLoaderMock: SQLiteLoaderExecutorMock;
+
+  beforeAll(() => {
+    exitSpy = jest
+      .spyOn(process, 'exit')
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      .mockImplementation((code?: number) => undefined as never);
+    httpExtractorMock = new HttpExtractorExecutorMock();
+    postgresLoaderMock = new PostgresLoaderExecutorMock();
+    sqliteLoaderMock = new SQLiteLoaderExecutorMock();
+  });
+
+  afterEach(() => {
+    httpExtractorMock.restore();
+    postgresLoaderMock.restore();
+    sqliteLoaderMock.restore();
+
+    // Clear registries
+    clearMetaInfRegistry();
+    clearBlockExecutorRegistry();
+    clearConstraintExecutorRegistry();
+  });
+
+  it('should have no errors when executing cars.jv example', async () => {
+    // Prepare mocks
+    httpExtractorMock.setup(() => {
+      return [
+        nock('https://gist.githubusercontent.com')
+          .get(
+            '/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv',
+          )
+          .replyWithFile(
+            200,
+            path.resolve(__dirname, '../test/assets/cars.csv'),
+            {
+              'Content-Type': 'text/csv',
+            },
+          ),
+      ];
+    });
+    sqliteLoaderMock.setup();
+
+    await runAction(path.resolve(baseDir, 'cars.jv'), {
+      ...defaultOptions,
+    });
+
+    expect(httpExtractorMock.nockScopes.every((scope) => scope.isDone()));
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(sqliteLoaderMock.sqliteClient.run).toBeCalledTimes(3);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(sqliteLoaderMock.sqliteClient.close).toBeCalledTimes(1);
+
+    expect(exitSpy).toHaveBeenCalledWith(0);
+  });
+
+  it('should have no errors when executing electric-vehicles.jv example', async () => {
+    // Prepare mocks
+    httpExtractorMock.setup(() => {
+      return [
+        nock('https://data.wa.gov')
+          .get('/api/views/f6w7-q2d2/rows.csv?accessType=DOWNLOAD')
+          .replyWithFile(
+            200,
+            path.resolve(
+              __dirname,
+              '../test/assets/Electric_Vehicle_Test_Data.csv',
+            ),
+            {
+              'Content-Type': 'text/csv',
+            },
+          ),
+      ];
+    });
+    postgresLoaderMock.setup();
+    sqliteLoaderMock.setup();
+
+    await runAction(path.resolve(baseDir, 'electric-vehicles.jv'), {
+      ...defaultOptions,
+      env: new Map<string, string>([
+        ['DB_HOST', 'mock'],
+        ['DB_DATABASE', 'mock'],
+        ['DB_PASSWORD', 'mock'],
+        ['DB_USERNAME', 'mock'],
+        ['DB_PORT', '5432'],
+      ]),
+    });
+
+    expect(httpExtractorMock.nockScopes.every((scope) => scope.isDone()));
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(postgresLoaderMock.pgClient.connect).toBeCalledTimes(1);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(postgresLoaderMock.pgClient.query).toBeCalledTimes(3);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(postgresLoaderMock.pgClient.end).toBeCalledTimes(1);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(sqliteLoaderMock.sqliteClient.run).toBeCalledTimes(3);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(sqliteLoaderMock.sqliteClient.close).toBeCalledTimes(1);
+
+    expect(exitSpy).toHaveBeenCalledWith(0);
+  });
+
+  it('should have no errors when executing gtfs-rt-simple.jv example', async () => {
+    // Prepare mocks
+    httpExtractorMock.setup(() => {
+      return [
+        nock('https://proxy.transport.data.gouv.fr')
+          .get('/resource/bibus-brest-gtfs-rt-trip-update')
+          .replyWithFile(
+            200,
+            path.resolve(
+              __dirname,
+              '../test/assets/bibus-brest-gtfs-rt-trip-update',
+            ),
+            {
+              'Content-Type': 'application/octet-stream',
+            },
+          )
+          .get('/resource/bibus-brest-gtfs-rt-vehicle-position')
+          .replyWithFile(
+            200,
+            path.resolve(
+              __dirname,
+              '../test/assets/bibus-brest-gtfs-rt-vehicle-position',
+            ),
+            {
+              'Content-Type': 'application/octet-stream',
+            },
+          )
+          .get('/resource/bibus-brest-gtfs-rt-alerts')
+          .replyWithFile(
+            200,
+            path.resolve(
+              __dirname,
+              '../test/assets/bibus-brest-gtfs-rt-alerts.json',
+            ),
+            {
+              'Content-Type': 'application/json',
+            },
+          ),
+      ];
+    });
+    sqliteLoaderMock.setup();
+
+    await runAction(path.resolve(baseDir, 'gtfs-rt-simple.jv'), {
+      ...defaultOptions,
+    });
+
+    expect(httpExtractorMock.nockScopes.every((scope) => scope.isDone()));
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(sqliteLoaderMock.sqliteClient.run).toBeCalledTimes(6);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(sqliteLoaderMock.sqliteClient.close).toBeCalledTimes(3);
+
+    expect(exitSpy).toHaveBeenCalledWith(0);
+  });
+
+  it('should have no errors when executing gtfs-static-and-rt.jv example', async () => {
+    // Prepare mocks
+    httpExtractorMock.setup(() => {
+      // TODO VALIDATE Other option for input:
+      // // Each host can have unlimited number of paths and each of these paths has one mock
+      // type HttpConfig = Map<string, Array<Map<string, (interceptor: nock.Interceptor) => nock.Scope>>>;
+      return [
+        nock(
+          'https://ratpdev-mosaic-prod-bucket-raw.s3-eu-west-1.amazonaws.com',
+        )
+          .get('/11/exports/1/gtfs.zip')
+          .replyWithFile(
+            200,
+            path.resolve(__dirname, '../test/assets/gtfs.zip'),
+            {
+              'Content-Type': 'application/octet-stream',
+            },
+          ),
+        nock('https://proxy.transport.data.gouv.fr')
+          .get('/resource/bibus-brest-gtfs-rt-trip-update')
+          .replyWithFile(
+            200,
+            path.resolve(
+              __dirname,
+              '../test/assets/bibus-brest-gtfs-rt-trip-update',
+            ),
+            {
+              'Content-Type': 'application/octet-stream',
+            },
+          )
+          .get('/resource/bibus-brest-gtfs-rt-vehicle-position')
+          .replyWithFile(
+            200,
+            path.resolve(
+              __dirname,
+              '../test/assets/bibus-brest-gtfs-rt-vehicle-position',
+            ),
+            {
+              'Content-Type': 'application/octet-stream',
+            },
+          )
+          .get('/resource/bibus-brest-gtfs-rt-alerts')
+          .replyWithFile(
+            200,
+            path.resolve(
+              __dirname,
+              '../test/assets/bibus-brest-gtfs-rt-alerts.json',
+            ),
+            {
+              'Content-Type': 'application/json',
+            },
+          ),
+      ];
+    });
+    sqliteLoaderMock.setup();
+
+    await runAction(path.resolve(baseDir, 'gtfs-static-and-rt.jv'), {
+      ...defaultOptions,
+    });
+
+    expect(httpExtractorMock.nockScopes.every((scope) => scope.isDone()));
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(sqliteLoaderMock.sqliteClient.run).toBeCalledTimes(33);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(sqliteLoaderMock.sqliteClient.close).toBeCalledTimes(12);
+
+    expect(exitSpy).toHaveBeenCalledWith(0);
+  }, 20000);
+
+  it('should have no errors when executing gtfs-static.jv example', async () => {
+    // Prepare mocks
+    httpExtractorMock.setup(() => {
+      return [
+        nock('https://developers.google.com')
+          .get('/static/transit/gtfs/examples/sample-feed.zip')
+          .replyWithFile(
+            200,
+            path.resolve(__dirname, '../test/assets/sample-feed.zip'),
+            {
+              'Content-Type': 'application/zip',
+            },
+          ),
+      ];
+    });
+    sqliteLoaderMock.setup();
+
+    await runAction(path.resolve(baseDir, 'gtfs-static.jv'), {
+      ...defaultOptions,
+    });
+
+    expect(httpExtractorMock.nockScopes.every((scope) => scope.isDone()));
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(sqliteLoaderMock.sqliteClient.run).toBeCalledTimes(33);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(sqliteLoaderMock.sqliteClient.close).toBeCalledTimes(11);
+
+    expect(exitSpy).toHaveBeenCalledWith(0);
+  });
+});
