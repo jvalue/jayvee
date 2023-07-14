@@ -8,7 +8,7 @@
       "executor": "@nrwl/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "external": "none", // bundle dependencies to make usable externally
+        "external": "none",
         "outputPath": "dist/libs/interpreter-lib",
         "main": "libs/interpreter-lib/src/index.ts",
         "tsConfig": "libs/interpreter-lib/tsconfig.lib.json",
