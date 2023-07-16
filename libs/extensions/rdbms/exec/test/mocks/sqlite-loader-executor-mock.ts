@@ -7,10 +7,12 @@ import assert = require('assert');
 import { BlockExecutorMock } from '@jvalue/jayvee-execution/test';
 import * as sqlite3 from 'sqlite3';
 
-export class SQLiteLoaderExecutorMock implements BlockExecutorMock {
-  private _sqliteClient: sqlite3.Database | undefined;
+type MockedSqlite3Database = jest.Mocked<Partial<sqlite3.Database>>;
 
-  get sqliteClient(): sqlite3.Database {
+export class SQLiteLoaderExecutorMock implements BlockExecutorMock {
+  private _sqliteClient: MockedSqlite3Database | undefined;
+
+  get sqliteClient(): MockedSqlite3Database {
     assert(
       this._sqliteClient !== undefined,
       'Client not initialized - please call setup() first!',
@@ -20,7 +22,7 @@ export class SQLiteLoaderExecutorMock implements BlockExecutorMock {
 
   setup(
     registerMocks: (
-      sqliteClient: sqlite3.Database,
+      sqliteClient: MockedSqlite3Database,
     ) => void = defaultSQLiteMockRegistration,
   ) {
     // setup sqlite3 mock
@@ -33,8 +35,10 @@ export class SQLiteLoaderExecutorMock implements BlockExecutorMock {
   }
 }
 
-export function defaultSQLiteMockRegistration(sqliteClient: sqlite3.Database) {
-  (sqliteClient.run as unknown as jest.Mock).mockImplementation(
+export function defaultSQLiteMockRegistration(
+  sqliteClient: MockedSqlite3Database,
+) {
+  (sqliteClient.run as jest.Mock).mockImplementation(
     (query: string, callback: (result: unknown, err: Error | null) => void) =>
       callback('Success', null),
   );

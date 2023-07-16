@@ -95,9 +95,7 @@ describe('jv example smoke tests', () => {
     });
 
     expect(httpExtractorMock.nockScopes.every((scope) => scope.isDone()));
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(sqliteLoaderMock.sqliteClient.run).toBeCalledTimes(3);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(sqliteLoaderMock.sqliteClient.close).toBeCalledTimes(1);
 
     expect(exitSpy).toHaveBeenCalledWith(0);
@@ -136,15 +134,10 @@ describe('jv example smoke tests', () => {
     });
 
     expect(httpExtractorMock.nockScopes.every((scope) => scope.isDone()));
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(postgresLoaderMock.pgClient.connect).toBeCalledTimes(1);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(postgresLoaderMock.pgClient.query).toBeCalledTimes(3);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(postgresLoaderMock.pgClient.end).toBeCalledTimes(1);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(sqliteLoaderMock.sqliteClient.run).toBeCalledTimes(3);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(sqliteLoaderMock.sqliteClient.close).toBeCalledTimes(1);
 
     expect(exitSpy).toHaveBeenCalledWith(0);
@@ -197,9 +190,7 @@ describe('jv example smoke tests', () => {
     });
 
     expect(httpExtractorMock.nockScopes.every((scope) => scope.isDone()));
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(sqliteLoaderMock.sqliteClient.run).toBeCalledTimes(6);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(sqliteLoaderMock.sqliteClient.close).toBeCalledTimes(3);
 
     expect(exitSpy).toHaveBeenCalledWith(0);
@@ -266,9 +257,7 @@ describe('jv example smoke tests', () => {
     });
 
     expect(httpExtractorMock.nockScopes.every((scope) => scope.isDone()));
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(sqliteLoaderMock.sqliteClient.run).toBeCalledTimes(33);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(sqliteLoaderMock.sqliteClient.close).toBeCalledTimes(12);
 
     expect(exitSpy).toHaveBeenCalledWith(0);
@@ -296,9 +285,7 @@ describe('jv example smoke tests', () => {
     });
 
     expect(httpExtractorMock.nockScopes.every((scope) => scope.isDone()));
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(sqliteLoaderMock.sqliteClient.run).toBeCalledTimes(33);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(sqliteLoaderMock.sqliteClient.close).toBeCalledTimes(11);
 
     expect(exitSpy).toHaveBeenCalledWith(0);

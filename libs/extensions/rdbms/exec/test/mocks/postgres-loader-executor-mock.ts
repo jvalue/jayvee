@@ -7,10 +7,12 @@ import assert = require('assert');
 import { BlockExecutorMock } from '@jvalue/jayvee-execution/test';
 import { Client } from 'pg';
 
-export class PostgresLoaderExecutorMock implements BlockExecutorMock {
-  private _pgClient: Client | undefined;
+type MockedPgClient = jest.Mocked<Partial<Client>>;
 
-  get pgClient(): Client {
+export class PostgresLoaderExecutorMock implements BlockExecutorMock {
+  private _pgClient: MockedPgClient | undefined;
+
+  get pgClient(): MockedPgClient {
     assert(
       this._pgClient !== undefined,
       'Client not initialized - please call setup() first!',
@@ -19,7 +21,9 @@ export class PostgresLoaderExecutorMock implements BlockExecutorMock {
   }
 
   setup(
-    registerMocks: (pgClient: Client) => void = defaultPostgresMockRegistration,
+    registerMocks: (
+      pgClient: MockedPgClient,
+    ) => void = defaultPostgresMockRegistration,
   ) {
     // setup pg mock
     this._pgClient = new Client();
@@ -31,6 +35,6 @@ export class PostgresLoaderExecutorMock implements BlockExecutorMock {
   }
 }
 
-export function defaultPostgresMockRegistration(pgClient: Client) {
-  (pgClient.query as unknown as jest.Mock).mockResolvedValue('Success');
+export function defaultPostgresMockRegistration(pgClient: MockedPgClient) {
+  (pgClient.query as jest.Mock).mockResolvedValue('Success');
 }
