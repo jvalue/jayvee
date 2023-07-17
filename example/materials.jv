@@ -4,7 +4,7 @@
 
 pipeline MaterialsDatabasePipeline {
 
-    block MaterialsDatabaseExtractor oftype HttpExtractor {
+	block MaterialsDatabaseExtractor oftype HttpExtractor {
 		url: "https://figshare.com/ndownloader/files/31626647";
 		followRedirect: false;
 	}
@@ -45,6 +45,7 @@ pipeline MaterialsDatabasePipeline {
 		table: "MaterialsDatabase";
 		file: "./MaterialsDatabase.sqlite";
 	}
+
 	MaterialsDatabaseExtractor
 		-> ZipArchiveInterpreter
 		-> MaterialsDatabaseCSVPicker
