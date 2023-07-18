@@ -20,6 +20,10 @@ import {
 } from '@jvalue/jayvee-execution';
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 import * as JSZip from 'jszip';
+import * as zlib from 'node:zlib';
+import { createGunzip } from 'node:zlib';
+import { createReadStream, createWriteStream, readFile } from 'fs';
+
 
 import {
   inferFileExtensionFromFileExtensionString,
@@ -42,6 +46,7 @@ export class ArchiveInterpreterExecutor
       'archiveType',
       PrimitiveValuetypes.Text,
     );
+    console.log(archiveFile);
     if (archiveType === 'zip') {
       const fs = await this.loadZipFileToInMemoryFileSystem(
         archiveFile,
@@ -52,11 +57,52 @@ export class ArchiveInterpreterExecutor
       }
       return R.ok(fs.right);
     }
+    if (archiveType === 'gz') {
+      const fs = await this.loadGZipFileToInMemoryFileSystem(
+        archiveFile,
+        context,
+      );
+      if (R.isErr(fs)) {
+        return fs;
+      }
+      return R.ok(fs.right);
+    }
+
     return R.err({
       message: `Archive is not a zip-archive`,
       diagnostic: { node: context.getCurrentNode(), property: 'name' },
     });
   }
+
+  private async loadGZipFileToInMemoryFileSystem(
+    archiveFile: BinaryFile,
+    context: ExecutionContext,
+  ): Promise<R.Result<FileSystem>> {
+    context.logger.logDebug(`Loading zip file from binary content`);
+    try {
+
+      const fs = new InMemoryFileSystem();
+      console.log(archiveFile);
+      
+      zlib.gunzip(archiveFile.content, function(error, result) {
+        console.log(result);
+        fs.putFile(
+          InMemoryFileSystem.getPathSeparator(),
+          archiveFile,
+        );
+      });
+      return R.ok(fs);
+    }
+    catch (error: unknown) {
+      return R.err({
+        message: `Unexpected Error ${
+          error instanceof Error ? error.message : JSON.stringify(err)
+        } occured during processing`,
+        diagnostic: { node: context.getCurrentNode(), property: 'name' },
+      });
+    }
+  }
+
 
   private async loadZipFileToInMemoryFileSystem(
     archiveFile: BinaryFile,

@@ -1,0 +1,89 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+pipeline ThermoelectricMaterialsPipeline {
+
+	block ThermoelectricMaterialsExtractor oftype HttpExtractor {
+		url: "https://figshare.com/ndownloader/files/28333845";
+	}	
+	
+	pipe  {
+		from: ThermoelectricMaterialsExtractor;
+		to: ThermoelectricMaterialsArchiveInterpreter;
+	}
+
+	block ThermoelectricMaterialsArchiveInterpreter oftype ArchiveInterpreter {
+		archiveType: "gz";
+	}
+
+	pipe {
+		from: ThermoelectricMaterialsArchiveInterpreter;
+		to: ThermoelectricMaterialsFilePicker;
+	}
+
+	block ThermoelectricMaterialsFilePicker oftype FilePicker {
+		path: "/test";
+	}
+
+	pipe {
+		from: ThermoelectricMaterialsFilePicker;
+		to: ThermoelectricMaterialsTextFileInterpreter;
+	}
+
+	block ThermoelectricMaterialsTextFileInterpreter oftype TextFileInterpreter {
+
+	}
+
+	pipe {
+		from: ThermoelectricMaterialsTextFileInterpreter;
+		to: ThermoelectricMaterialsCSVInterpreter;
+	}
+
+	block ThermoelectricMaterialsCSVInterpreter oftype CSVInterpreter {
+		enclosing: '"';
+	}
+
+	pipe {
+		from: ThermoelectricMaterialsCSVInterpreter;
+		to: NameHeaderWriter;
+	}
+
+	block NameHeaderWriter oftype CellWriter {
+		at: cell A1;
+		write: ["name"];
+	}
+
+	pipe {
+	   	from: NameHeaderWriter;
+	   	to: ThermoelectricMaterialsTableInterpreter;
+	}
+
+	block ThermoelectricMaterialsTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns: [
+			"name" oftype text,
+			"mpg" oftype decimal,
+			"cyl" oftype integer,
+			"disp" oftype decimal,
+			"hp" oftype integer,
+			"drat" oftype decimal,
+			"wt" oftype decimal,
+			"qsec" oftype decimal,
+			"vs" oftype integer,
+			"am" oftype integer,
+			"gear" oftype integer,
+			"carb" oftype integer
+		];
+	}
+
+	pipe {
+		from: ThermoelectricMaterialsTableInterpreter;
+		to: ThermoelectricMaterialsLoader;
+	}
+
+	block ThermoelectricMaterialsLoader oftype SQLiteLoader {
+		table: "ThermoelectricMaterials";
+		file: "./ThermoelectricMaterials.sqlite";
+	}
+}
