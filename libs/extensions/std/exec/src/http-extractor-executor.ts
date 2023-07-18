@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// import * as http from 'http';
-// import * as https from 'https';
 import * as path from 'path';
 import { http, https } from 'follow-redirects';
 
