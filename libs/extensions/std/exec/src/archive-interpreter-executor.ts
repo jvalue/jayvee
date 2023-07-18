@@ -97,6 +97,7 @@ export class ArchiveInterpreterExecutor
         mimeType,
         archivedObject,
       );
+      
       const addedFile = fs.putFile(
         InMemoryFileSystem.getPathSeparator() + fileName,
         file,
