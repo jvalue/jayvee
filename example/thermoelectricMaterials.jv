@@ -6,84 +6,43 @@ pipeline ThermoelectricMaterialsPipeline {
 
 	block ThermoelectricMaterialsExtractor oftype HttpExtractor {
 		url: "https://figshare.com/ndownloader/files/28333845";
+		followRedirects: true;
 	}	
-	
-	pipe  {
-		from: ThermoelectricMaterialsExtractor;
-		to: ThermoelectricMaterialsArchiveInterpreter;
-	}
 
 	block ThermoelectricMaterialsArchiveInterpreter oftype ArchiveInterpreter {
 		archiveType: "gz";
 	}
 
-	pipe {
-		from: ThermoelectricMaterialsArchiveInterpreter;
-		to: ThermoelectricMaterialsFilePicker;
-	}
-
 	block ThermoelectricMaterialsFilePicker oftype FilePicker {
-		path: "/test";
-	}
-
-	pipe {
-		from: ThermoelectricMaterialsFilePicker;
-		to: ThermoelectricMaterialsTextFileInterpreter;
+		path: "/ucsb_thermoelectrics.json";
 	}
 
 	block ThermoelectricMaterialsTextFileInterpreter oftype TextFileInterpreter {
 
 	}
 
-	pipe {
-		from: ThermoelectricMaterialsTextFileInterpreter;
-		to: ThermoelectricMaterialsCSVInterpreter;
-	}
-
-	block ThermoelectricMaterialsCSVInterpreter oftype CSVInterpreter {
+	// Not working from here on forward, as json file is received and json interpreter is not yet implemented
+	block ThermoelectricMaterialsJSONInterpreter oftype CSVInterpreter {
 		enclosing: '"';
-	}
-
-	pipe {
-		from: ThermoelectricMaterialsCSVInterpreter;
-		to: NameHeaderWriter;
-	}
-
-	block NameHeaderWriter oftype CellWriter {
-		at: cell A1;
-		write: ["name"];
-	}
-
-	pipe {
-	   	from: NameHeaderWriter;
-	   	to: ThermoelectricMaterialsTableInterpreter;
 	}
 
 	block ThermoelectricMaterialsTableInterpreter oftype TableInterpreter {
 		header: true;
 		columns: [
-			"name" oftype text,
-			"mpg" oftype decimal,
-			"cyl" oftype integer,
-			"disp" oftype decimal,
-			"hp" oftype integer,
-			"drat" oftype decimal,
-			"wt" oftype decimal,
-			"qsec" oftype decimal,
-			"vs" oftype integer,
-			"am" oftype integer,
-			"gear" oftype integer,
-			"carb" oftype integer
+			
 		];
-	}
-
-	pipe {
-		from: ThermoelectricMaterialsTableInterpreter;
-		to: ThermoelectricMaterialsLoader;
 	}
 
 	block ThermoelectricMaterialsLoader oftype SQLiteLoader {
 		table: "ThermoelectricMaterials";
 		file: "./ThermoelectricMaterials.sqlite";
 	}
+
+	ThermoelectricMaterialsExtractor
+		-> ThermoelectricMaterialsArchiveInterpreter
+		-> ThermoelectricMaterialsFilePicker
+		-> ThermoelectricMaterialsTextFileInterpreter
+		-> ThermoelectricMaterialsJSONInterpreter
+		-> ThermoelectricMaterialsTableInterpreter
+		-> ThermoelectricMaterialsLoader;
 }

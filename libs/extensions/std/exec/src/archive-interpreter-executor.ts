@@ -21,8 +21,6 @@ import {
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 import * as JSZip from 'jszip';
 import * as zlib from 'node:zlib';
-import { createGunzip } from 'node:zlib';
-import { createReadStream, createWriteStream, readFile } from 'fs';
 
 
 import {
@@ -46,7 +44,6 @@ export class ArchiveInterpreterExecutor
       'archiveType',
       PrimitiveValuetypes.Text,
     );
-    console.log(archiveFile);
     if (archiveType === 'zip') {
       const fs = await this.loadZipFileToInMemoryFileSystem(
         archiveFile,
@@ -82,15 +79,31 @@ export class ArchiveInterpreterExecutor
     try {
 
       const fs = new InMemoryFileSystem();
-      console.log(archiveFile);
+      const archivedObject = zlib.gunzipSync(archiveFile.content);
       
-      zlib.gunzip(archiveFile.content, function(error, result) {
-        console.log(result);
-        fs.putFile(
-          InMemoryFileSystem.getPathSeparator(),
-          archiveFile,
-        );
-      });
+      const extNameArchive = path.extname(archiveFile.name);
+      const fileName = path.basename(archiveFile.name, extNameArchive);
+      const extName = path.extname(fileName);
+
+      const mimeType =
+        inferMimeTypeFromContentTypeString(extName) ||
+        MimeType.APPLICATION_OCTET_STREAM;
+      const fileExtension =
+        inferFileExtensionFromFileExtensionString(extName) ||
+        FileExtension.NONE;
+      const file = new BinaryFile(
+        fileName,
+        fileExtension,
+        mimeType,
+        archivedObject,
+      );
+      const addedFile = fs.putFile(
+        InMemoryFileSystem.getPathSeparator() + fileName,
+        file,
+      );
+
+      assert(addedFile != null);
+
       return R.ok(fs);
     }
     catch (error: unknown) {

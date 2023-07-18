@@ -116,7 +116,7 @@ export class HttpExtractorExecutor
             'url',
             PrimitiveValuetypes.Text,
           );
-          const url = new URL(urlString);
+          const url = new URL(response.responseUrl);
           let fileName = url.pathname.split('/').pop();
           if (fileName === undefined) {
             fileName = url.pathname.replace('/', '-');
