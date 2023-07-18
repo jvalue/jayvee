@@ -20,6 +20,8 @@ import {
 } from '@jvalue/jayvee-execution';
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 import * as JSZip from 'jszip';
+import * as zlib from 'node:zlib';
+
 
 import {
   inferFileExtensionFromFileExtensionString,
@@ -52,11 +54,69 @@ export class ArchiveInterpreterExecutor
       }
       return R.ok(fs.right);
     }
+    if (archiveType === 'gz') {
+      const fs = await this.loadGZipFileToInMemoryFileSystem(
+        archiveFile,
+        context,
+      );
+      if (R.isErr(fs)) {
+        return fs;
+      }
+      return R.ok(fs.right);
+    }
+
     return R.err({
       message: `Archive is not a zip-archive`,
       diagnostic: { node: context.getCurrentNode(), property: 'name' },
     });
   }
+
+  private async loadGZipFileToInMemoryFileSystem(
+    archiveFile: BinaryFile,
+    context: ExecutionContext,
+  ): Promise<R.Result<FileSystem>> {
+    context.logger.logDebug(`Loading zip file from binary content`);
+    try {
+
+      const fs = new InMemoryFileSystem();
+      const archivedObject = zlib.gunzipSync(archiveFile.content);
+      
+      const extNameArchive = path.extname(archiveFile.name);
+      const fileName = path.basename(archiveFile.name, extNameArchive);
+      const extName = path.extname(fileName);
+
+      const mimeType =
+        inferMimeTypeFromContentTypeString(extName) ||
+        MimeType.APPLICATION_OCTET_STREAM;
+      const fileExtension =
+        inferFileExtensionFromFileExtensionString(extName) ||
+        FileExtension.NONE;
+      const file = new BinaryFile(
+        fileName,
+        fileExtension,
+        mimeType,
+        archivedObject,
+      );
+      
+      const addedFile = fs.putFile(
+        InMemoryFileSystem.getPathSeparator() + fileName,
+        file,
+      );
+
+      assert(addedFile != null);
+
+      return R.ok(fs);
+    }
+    catch (error: unknown) {
+      return R.err({
+        message: `Unexpected Error ${
+          error instanceof Error ? error.message : JSON.stringify(err)
+        } occured during processing`,
+        diagnostic: { node: context.getCurrentNode(), property: 'name' },
+      });
+    }
+  }
+
 
   private async loadZipFileToInMemoryFileSystem(
     archiveFile: BinaryFile,

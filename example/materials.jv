@@ -1,0 +1,56 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+pipeline MaterialsDatabasePipeline {
+
+	block MaterialsDatabaseExtractor oftype HttpExtractor {
+		url: "https://figshare.com/ndownloader/files/31626647";
+		followRedirects: true;
+	}
+
+	block ZipArchiveInterpreter oftype ArchiveInterpreter {
+		archiveType: "zip";
+	}
+
+	block MaterialsDatabaseCSVPicker oftype FilePicker {
+		path: "/Databases/Combined/Combined_YieldStrength_GrainSize_Database.csv";
+	}
+
+    block MaterialsDatabaseTextFileInterpreter oftype TextFileInterpreter {
+
+	}
+
+	block MaterialsDatabaseCSVInterpreter oftype CSVInterpreter {
+		delimiter: ",";
+        enclosing: '"';
+        enclosingEscape: '"';
+	}
+
+	block MaterialsDatabaseTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns: [
+            "Compound" oftype text,
+            "Blacklisted Compound?" oftype text,
+            "Yield Strength Value" oftype text,
+            "Yield Strength Unit" oftype text,
+            "Grain Size Value" oftype text,
+            "Grain Size Unit" oftype text,
+            "DOI" oftype text,
+            "Open Access" oftype text,
+		];
+	}
+
+	block MaterialsDatabaseLoader oftype SQLiteLoader {
+		table: "MaterialsDatabase";
+		file: "./MaterialsDatabase.sqlite";
+	}
+
+	MaterialsDatabaseExtractor
+		-> ZipArchiveInterpreter
+		-> MaterialsDatabaseCSVPicker
+		-> MaterialsDatabaseTextFileInterpreter
+		-> MaterialsDatabaseCSVInterpreter
+		-> MaterialsDatabaseTableInterpreter
+		-> MaterialsDatabaseLoader;
+}

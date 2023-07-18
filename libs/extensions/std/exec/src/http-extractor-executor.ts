@@ -2,9 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as http from 'http';
-import * as https from 'https';
 import * as path from 'path';
+import { http, https } from 'follow-redirects';
 
 import * as R from '@jvalue/jayvee-execution';
 import {
@@ -61,17 +60,29 @@ export class HttpExtractorExecutor
     } else {
       httpGetFunction = http.get;
     }
+
+    const followRedirects = context.getPropertyValue('followRedirects', PrimitiveValuetypes.Boolean);
+
     return new Promise((resolve) => {
-      httpGetFunction(url, (response) => {
+      httpGetFunction(url, { followRedirects: followRedirects }, (response) => {
         const responseCode = response.statusCode;
 
         // Catch errors
         if (responseCode === undefined || responseCode >= 400) {
           resolve(
             R.err({
-              message: `HTTP fetch failed with code ${
-                responseCode ?? 'undefined'
-              }. Please check your connection.`,
+              message: `HTTP fetch failed with code ${responseCode ?? 'undefined'
+                }. Please check your connection.`,
+              diagnostic: { node: context.getOrFailProperty('url') },
+            }),
+          );
+        }
+
+        if (responseCode === 302) {
+          resolve(
+            R.err({
+              message: `HTTP fetch was redirected with code ${responseCode
+                }. Redirects are either disabled or maximum number of redirects was exeeded.`,
               diagnostic: { node: context.getOrFailProperty('url') },
             }),
           );
@@ -103,7 +114,7 @@ export class HttpExtractorExecutor
             'url',
             PrimitiveValuetypes.Text,
           );
-          const url = new URL(urlString);
+          const url = new URL(response.responseUrl);
           let fileName = url.pathname.split('/').pop();
           if (fileName === undefined) {
             fileName = url.pathname.replace('/', '-');

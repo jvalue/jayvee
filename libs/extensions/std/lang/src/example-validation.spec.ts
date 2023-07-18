@@ -37,6 +37,9 @@ describe('jv example tests', () => {
 
   it.each([
     'cars.jv',
+    'materials.jv',
+    // TODO: implement JSON-Interpreter
+    'thermoelectricMaterials.jv',
     'electric-vehicles.jv',
     'gtfs-rt-simple.jv',
     'gtfs-static-and-rt.jv',

@@ -1,0 +1,48 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+pipeline ThermoelectricMaterialsPipeline {
+
+	block ThermoelectricMaterialsExtractor oftype HttpExtractor {
+		url: "https://figshare.com/ndownloader/files/28333845";
+		followRedirects: true;
+	}	
+
+	block ThermoelectricMaterialsArchiveInterpreter oftype ArchiveInterpreter {
+		archiveType: "gz";
+	}
+
+	block ThermoelectricMaterialsFilePicker oftype FilePicker {
+		path: "/ucsb_thermoelectrics.json";
+	}
+
+	block ThermoelectricMaterialsTextFileInterpreter oftype TextFileInterpreter {
+
+	}
+
+	// Not working from here on forward, as json file is received and json interpreter is not yet implemented
+	block ThermoelectricMaterialsJSONInterpreter oftype CSVInterpreter {
+		enclosing: '"';
+	}
+
+	block ThermoelectricMaterialsTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns: [
+			
+		];
+	}
+
+	block ThermoelectricMaterialsLoader oftype SQLiteLoader {
+		table: "ThermoelectricMaterials";
+		file: "./ThermoelectricMaterials.sqlite";
+	}
+
+	ThermoelectricMaterialsExtractor
+		-> ThermoelectricMaterialsArchiveInterpreter
+		-> ThermoelectricMaterialsFilePicker
+		-> ThermoelectricMaterialsTextFileInterpreter
+		-> ThermoelectricMaterialsJSONInterpreter
+		-> ThermoelectricMaterialsTableInterpreter
+		-> ThermoelectricMaterialsLoader;
+}
