@@ -37,6 +37,7 @@ describe('jv example tests', () => {
 
   it.each([
     'cars.jv',
+    'materials.jv',
     'electric-vehicles.jv',
     'gtfs-rt-simple.jv',
     'gtfs-static-and-rt.jv',
