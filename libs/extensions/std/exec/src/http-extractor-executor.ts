@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
 import * as http from 'http';
 import * as https from 'https';
 import * as path from 'path';
@@ -12,12 +13,14 @@ import {
   BinaryFile,
   BlockExecutorClass,
   ExecutionContext,
+  ExecutionErrorDetails,
   FileExtension,
   MimeType,
   None,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
+import { AstNode } from 'langium';
 
 import {
   inferFileExtensionFromContentTypeString,
@@ -43,14 +46,39 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
     context: ExecutionContext,
   ): Promise<R.Result<BinaryFile>> {
     const url = context.getPropertyValue('url', PrimitiveValuetypes.Text);
+    const retries = context.getPropertyValue(
+      'retries',
+      PrimitiveValuetypes.Integer,
+    );
+    const retryBackoff = context.getPropertyValue(
+      'retryBackoff',
+      PrimitiveValuetypes.Integer,
+    );
 
-    const file = await this.fetchRawDataAsFile(url, context);
+    let failure: ExecutionErrorDetails<AstNode> | undefined;
+    assert(retries >= 0); // loop executes at least once
+    for (let attempt = 0; attempt <= retries; ++attempt) {
+      const isLastAttempt = attempt === retries;
+      const file = await this.fetchRawDataAsFile(url, context);
 
-    if (R.isErr(file)) {
-      return file;
+      if (R.isOk(file)) {
+        return R.ok(file.right);
+      }
+
+      failure = file.left;
+
+      if (!isLastAttempt) {
+        context.logger.logDebug(failure.message);
+        context.logger.logDebug(
+          `Waiting ${retryBackoff}ms before trying again...`,
+        );
+        await new Promise((p) => setTimeout(p, retryBackoff));
+        continue;
+      }
     }
 
-    return R.ok(file.right);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return R.err(failure!);
   }
 
   private fetchRawDataAsFile(
