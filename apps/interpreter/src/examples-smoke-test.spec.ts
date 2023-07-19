@@ -16,7 +16,7 @@ import { HttpExtractorExecutorMock } from '@jvalue/jayvee-extensions/std/test';
 import { clearMetaInfRegistry } from '@jvalue/jayvee-language-server/test';
 import * as nock from 'nock';
 
-import { runAction } from './interpreter';
+import { runAction } from './run-action';
 
 // Mock global imports
 jest.mock('pg', () => {
@@ -199,9 +199,6 @@ describe('jv example smoke tests', () => {
   it('should have no errors when executing gtfs-static-and-rt.jv example', async () => {
     // Prepare mocks
     httpExtractorMock.setup(() => {
-      // TODO VALIDATE Other option for input:
-      // // Each host can have unlimited number of paths and each of these paths has one mock
-      // type HttpConfig = Map<string, Array<Map<string, (interceptor: nock.Interceptor) => nock.Scope>>>;
       return [
         nock(
           'https://ratpdev-mosaic-prod-bucket-raw.s3-eu-west-1.amazonaws.com',
