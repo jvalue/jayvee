@@ -33,25 +33,46 @@ import {
 import * as chalk from 'chalk';
 import { NodeFileSystem } from 'langium/node';
 
-import { ExitCode, extractAstNode } from './cli-util';
 import { LoggerFactory } from './logging/logger-factory';
+import { ExitCode, extractAstNodeFromString } from './parsing-util';
 import { validateRuntimeParameterLiteral } from './validation-checks/runtime-parameter-literal';
 
-interface RunOptions {
+interface InterpreterOptions {
   debugGranularity: R.DebugGranularity;
   debugTargets: R.DebugTargets;
   debug: boolean;
 }
 
-export async function runAction(
-  fileName: string,
-  options: {
-    env: Map<string, string>;
-    debug: boolean;
-    debugGranularity: string;
-    debugTarget: string | undefined;
-  },
-): Promise<void> {
+export interface RunOptions {
+  env: Map<string, string>;
+  debug: boolean;
+  debugGranularity: string;
+  debugTarget: string | undefined;
+}
+
+export async function interpretString(
+  modelString: string,
+  options: RunOptions,
+): Promise<ExitCode> {
+  const extractAstNodeFn = async (
+    services: JayveeServices,
+    loggerFactory: LoggerFactory,
+  ) =>
+    await extractAstNodeFromString<JayveeModel>(
+      modelString,
+      services,
+      loggerFactory.createLogger(),
+    );
+  return await interpretModel(extractAstNodeFn, options);
+}
+
+export async function interpretModel(
+  extractAstNodeFn: (
+    services: JayveeServices,
+    loggerFactory: LoggerFactory,
+  ) => Promise<JayveeModel>,
+  options: RunOptions,
+): Promise<ExitCode> {
   const loggerFactory = new LoggerFactory(options.debug);
   if (!isDebugGranularity(options.debugGranularity)) {
     loggerFactory
@@ -62,7 +83,7 @@ export async function runAction(
             ', ',
           )}.`,
       );
-    process.exit(1);
+    process.exit(ExitCode.FAILURE);
   }
 
   useStdExtension();
@@ -71,11 +92,7 @@ export async function runAction(
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   setupJayveeServices(services, options.env);
 
-  const model = await extractAstNode<JayveeModel>(
-    fileName,
-    services,
-    loggerFactory.createLogger(),
-  );
+  const model = await extractAstNodeFn(services, loggerFactory);
   const debugTargets = getDebugTargets(options.debugTarget);
 
   const interpretationExitCode = await interpretJayveeModel(
@@ -88,7 +105,7 @@ export async function runAction(
       debugTargets: debugTargets,
     },
   );
-  process.exit(interpretationExitCode);
+  return interpretationExitCode;
 }
 
 function setupJayveeServices(
@@ -125,7 +142,7 @@ async function interpretJayveeModel(
   model: JayveeModel,
   runtimeParameterProvider: RuntimeParameterProvider,
   loggerFactory: LoggerFactory,
-  runOptions: RunOptions,
+  runOptions: InterpreterOptions,
 ): Promise<ExitCode> {
   const pipelineRuns: Array<Promise<ExitCode>> = model.pipelines.map(
     (pipeline) => {
@@ -149,7 +166,7 @@ async function runPipeline(
   pipeline: PipelineDefinition,
   runtimeParameterProvider: RuntimeParameterProvider,
   loggerFactory: LoggerFactory,
-  runOptions: RunOptions,
+  runOptions: InterpreterOptions,
 ): Promise<ExitCode> {
   const executionContext = new ExecutionContext(
     pipeline,

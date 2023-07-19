@@ -2,8 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-export const STANDARD_LIBRARY_FILENAME = 'standard.jv';
-
-export const STANDARD_LIBRARY_SOURCECODE = `
-// TBD
-`.trimLeft();
+export * from './interpreter';
+export * from './parsing-util';
+export * from './logging';
+export * from './validation-checks';
