@@ -45,11 +45,7 @@ export class StandardLibraryFileSystemProvider implements FileSystemProvider {
   }
 
   stat(uri: Uri): FileStat {
-    const libBuffer = this.libraries.get(uri.toString());
-    if (libBuffer === undefined) {
-      throw FileSystemError.FileNotFound(uri);
-    }
-
+    const libBuffer = this.getLibrary(uri);
     const date = Date.now();
     return {
       ctime: date,
@@ -60,12 +56,21 @@ export class StandardLibraryFileSystemProvider implements FileSystemProvider {
   }
 
   readFile(uri: Uri): Uint8Array {
+    const libBuffer = this.getLibrary(uri);
+    return new Uint8Array(libBuffer);
+  }
+
+  /**
+   * Fetches the library if it exists.
+   * Otherwise, throws a FileSystemError.FileNotFound.
+   * @returns the library content as Buffer
+   */
+  private getLibrary(uri: Uri) {
     const libBuffer = this.libraries.get(uri.toString());
     if (libBuffer === undefined) {
       throw FileSystemError.FileNotFound(uri);
     }
-
-    return new Uint8Array(libBuffer);
+    return libBuffer;
   }
 
   watch() {
