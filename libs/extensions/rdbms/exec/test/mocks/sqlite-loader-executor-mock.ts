@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import assert = require('assert');
+import * as assert from 'assert';
 
 import { BlockExecutorMock } from '@jvalue/jayvee-execution/test';
 import * as sqlite3 from 'sqlite3';
