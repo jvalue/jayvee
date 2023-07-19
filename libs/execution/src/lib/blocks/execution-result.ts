@@ -5,7 +5,7 @@
 import * as E from 'fp-ts/lib/Either';
 import { AstNode, DiagnosticInfo } from 'langium';
 
-interface ExecutionErrorDetails<N extends AstNode = AstNode> {
+export interface ExecutionErrorDetails<N extends AstNode = AstNode> {
   message: string;
   diagnostic: DiagnosticInfo<N>;
 }
