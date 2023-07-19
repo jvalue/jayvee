@@ -14,7 +14,9 @@ export class HttpExtractorExecutorMock implements BlockExecutorMock {
 
   setup(registerMocks: () => Array<nock.Scope>) {
     // setup nock
-    if (!nock.isActive()) nock.activate();
+    if (!nock.isActive()) {
+      nock.activate();
+    }
     this._nockScopes = registerMocks();
   }
   restore() {
