@@ -51,7 +51,7 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
       PrimitiveValuetypes.Integer,
     );
     const retryBackoff = context.getPropertyValue(
-      'retryBackoff',
+      'retryBackoffMilliseconds',
       PrimitiveValuetypes.Integer,
     );
 
