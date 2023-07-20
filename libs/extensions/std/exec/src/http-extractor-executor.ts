@@ -69,6 +69,7 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
       const file = await this.fetchRawDataAsFile(url, context);
 
       if (R.isOk(file)) {
+        context.logger.logDebug(`Successfully fetched raw data`);
         return R.ok(file.right);
       }
 
@@ -130,7 +131,6 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
 
         // When all data is downloaded, create file
         response.on('end', () => {
-          context.logger.logDebug(`Successfully fetched raw data`);
           response.headers;
 
           // Infer Mimetype from HTTP-Header, if not inferrable, then default to application/octet-stream
