@@ -67,7 +67,7 @@ export class HttpExtractorMetaInformation extends BlockMetaInformation {
         },
         retryBackoffMilliseconds: {
           type: PrimitiveValuetypes.Integer,
-          defaultValue: 1000,
+          defaultValue: 2000,
           docs: {
             description:
               'Configures the wait time in milliseconds before executing a retry.',
