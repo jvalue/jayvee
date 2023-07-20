@@ -3,10 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { type InternalValueRepresentation } from '../../expressions/internal-value-representation';
-import {
-  PrimitiveValuetypeKeywordLiteral,
-  ValuetypeDefinition,
-} from '../../generated/ast';
+import { ValuetypeDefinition } from '../../generated/ast';
 
 // eslint-disable-next-line import/no-cycle
 import { AtomicValuetype } from './atomic-valuetype';
@@ -24,9 +21,7 @@ import {
   type ValuetypeAssignmentValuetype,
 } from './primitive';
 
-export type ValuetypeAstNode =
-  | PrimitiveValuetypeKeywordLiteral
-  | ValuetypeDefinition;
+export type ValuetypeAstNode = ValuetypeDefinition;
 
 export interface VisitableValuetype {
   acceptVisitor(visitor: ValuetypeVisitor): void;

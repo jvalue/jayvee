@@ -48,6 +48,7 @@ function checkSupertypeCycle(
   const hasCycle =
     createValuetype(valuetypeDefinition)?.hasSupertypeCycle() ?? false;
   if (hasCycle) {
+    assert(!valuetypeDefinition.isBuiltin);
     context.accept(
       'error',
       'Could not construct this valuetype since there is a cycle in the (transitive) "oftype" relation.',

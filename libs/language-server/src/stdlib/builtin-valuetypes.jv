@@ -1,0 +1,4 @@
+builtin valuetype text;
+builtin valuetype decimal;
+builtin valuetype integer;
+builtin valuetype boolean;

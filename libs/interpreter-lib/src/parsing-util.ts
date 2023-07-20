@@ -6,11 +6,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { Logger } from '@jvalue/jayvee-execution';
+import { initializeWorkspace } from '@jvalue/jayvee-language-server';
 import { AstNode, LangiumDocument, LangiumServices } from 'langium';
-import {
-  DiagnosticSeverity,
-  WorkspaceFolder,
-} from 'vscode-languageserver-protocol';
+import { DiagnosticSeverity } from 'vscode-languageserver-protocol';
 import { URI } from 'vscode-uri';
 
 export enum ExitCode {
@@ -61,17 +59,6 @@ export async function extractDocumentFromString(
   await initializeWorkspace(services);
 
   return await validateDocument(document, services, logger);
-}
-
-/**
- * Initializes the workspace with all workspace folders.
- * Also loads additional required files, e.g., the standard library
- */
-async function initializeWorkspace(services: LangiumServices): Promise<void> {
-  const workspaceFolders: WorkspaceFolder[] = [];
-  await services.shared.workspace.WorkspaceManager.initializeWorkspace(
-    workspaceFolders,
-  );
 }
 
 export async function validateDocument(

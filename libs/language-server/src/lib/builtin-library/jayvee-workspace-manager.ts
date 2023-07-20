@@ -6,6 +6,7 @@ import {
   DefaultWorkspaceManager,
   LangiumDocument,
   LangiumDocumentFactory,
+  LangiumServices,
   LangiumSharedServices,
 } from 'langium';
 import { WorkspaceFolder } from 'vscode-languageserver';
@@ -31,4 +32,17 @@ export class JayveeWorkspaceManager extends DefaultWorkspaceManager {
       collector(this.documentFactory.fromString(libCode, URI.parse(libName)));
     });
   }
+}
+
+/**
+ * Initializes the workspace with all workspace folders.
+ * Also loads additional required files, e.g., the standard library
+ */
+export async function initializeWorkspace(
+  services: LangiumServices,
+): Promise<void> {
+  const workspaceFolders: WorkspaceFolder[] = [];
+  await services.shared.workspace.WorkspaceManager.initializeWorkspace(
+    workspaceFolders,
+  );
 }
