@@ -102,6 +102,51 @@ export class HttpExtractorMetaInformation extends BlockMetaInformation {
             }
           },
         },
+        retryBackoffStrategy: {
+          type: PrimitiveValuetypes.Text,
+          defaultValue: 'exponential',
+          docs: {
+            description:
+              'Configures the wait strategy before executing a retry. Can have values "exponential" or "linear".',
+            examples: [
+              {
+                code: 'retryBackoffStrategy: "linear"',
+                description:
+                  'Waits always the same amount of time before executing a retry.',
+              },
+              {
+                code: 'retryBackoffStrategy: "exponential"',
+                description:
+                  'Exponentially increases the wait time before executing a retry.',
+              },
+            ],
+          },
+          validation: (property, validationContext, evaluationContext) => {
+            const allowedValues = ['exponential', 'linear'];
+
+            const encodingValue = evaluatePropertyValue(
+              property,
+              evaluationContext,
+              PrimitiveValuetypes.Text,
+            );
+            if (encodingValue === undefined) {
+              return;
+            }
+
+            if (!allowedValues.includes(encodingValue)) {
+              validationContext.accept(
+                'error',
+                `Only the following values are allowed: ${allowedValues
+                  .map((v) => `"${v}"`)
+                  .join(', ')}`,
+                {
+                  node: property,
+                  property: 'value',
+                },
+              );
+            }
+          },
+        },
       },
 
       // Input type:
