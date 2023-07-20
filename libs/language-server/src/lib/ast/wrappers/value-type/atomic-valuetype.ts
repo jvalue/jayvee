@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
+
 // eslint-disable-next-line import/no-cycle
 import {
   EvaluationContext,
@@ -30,7 +32,9 @@ export class AtomicValuetype
   }
 
   getConstraints(context: EvaluationContext): ConstraintDefinition[] {
-    const constraintCollection = this.astNode.constraints;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const constraintCollection = this.astNode?.constraints;
+    assert(constraintCollection !== undefined);
     const constraintCollectionType = new CollectionValuetype(
       PrimitiveValuetypes.Constraint,
     );

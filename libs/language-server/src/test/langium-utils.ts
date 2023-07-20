@@ -15,6 +15,8 @@ import {
 import { Diagnostic } from 'vscode-languageserver';
 import { URI } from 'vscode-uri';
 
+import { initializeWorkspace } from '../lib/builtin-library/jayvee-workspace-manager';
+
 export interface ParseHelperOptions extends BuildOptions {
   documentUri?: string;
 }
@@ -39,6 +41,7 @@ export function parseHelper<T extends AstNode = AstNode>(
         uri,
       );
     services.shared.workspace.LangiumDocuments.addDocument(document);
+    await initializeWorkspace(services);
     await documentBuilder.build([document], options);
     return document;
   };
