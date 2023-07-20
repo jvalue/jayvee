@@ -28,8 +28,8 @@ import {
   inferMimeTypeFromContentTypeString,
 } from './file-util';
 import {
-  BackoffStrategy,
-  LinearBackoffStrategy,
+  createBackoffStrategy,
+  isBackoffStrategyHandle,
 } from './util/backoff-strategy';
 
 type HttpGetFunction = typeof http.get;
@@ -54,16 +54,22 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
       'retries',
       PrimitiveValuetypes.Integer,
     );
-    const retryBackoff = context.getPropertyValue(
+    assert(retries >= 0); // loop executes at least once
+    const retryBackoffMilliseconds = context.getPropertyValue(
       'retryBackoffMilliseconds',
       PrimitiveValuetypes.Integer,
     );
-    const backoffStrategy: BackoffStrategy = new LinearBackoffStrategy(
-      retryBackoff,
+    const retryBackoffStrategy = context.getPropertyValue(
+      'retryBackoffStrategy',
+      PrimitiveValuetypes.Text,
+    );
+    assert(isBackoffStrategyHandle(retryBackoffStrategy));
+    const backoffStrategy = createBackoffStrategy(
+      retryBackoffStrategy,
+      retryBackoffMilliseconds,
     );
 
     let failure: ExecutionErrorDetails<AstNode> | undefined;
-    assert(retries >= 0); // loop executes at least once
     for (let attempt = 0; attempt <= retries; ++attempt) {
       const isLastAttempt = attempt === retries;
       const file = await this.fetchRawDataAsFile(url, context);
