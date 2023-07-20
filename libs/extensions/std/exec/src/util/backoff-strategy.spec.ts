@@ -13,14 +13,14 @@ describe('BackoffStrategy', () => {
     describe('getBackoffMilliseconds', () => {
       it('should calculate exponential backoff correctly with 5 retries', () => {
         const backoffStrategy: BackoffStrategy = new ExponentialBackoffStrategy(
-          2,
+          2000,
         );
 
-        expect(backoffStrategy.getBackoffMilliseconds(1)).toEqual(2);
-        expect(backoffStrategy.getBackoffMilliseconds(2)).toEqual(4);
-        expect(backoffStrategy.getBackoffMilliseconds(3)).toEqual(8);
-        expect(backoffStrategy.getBackoffMilliseconds(4)).toEqual(16);
-        expect(backoffStrategy.getBackoffMilliseconds(5)).toEqual(32);
+        expect(backoffStrategy.getBackoffMilliseconds(1)).toEqual(2000);
+        expect(backoffStrategy.getBackoffMilliseconds(2)).toEqual(4000);
+        expect(backoffStrategy.getBackoffMilliseconds(3)).toEqual(8000);
+        expect(backoffStrategy.getBackoffMilliseconds(4)).toEqual(16000);
+        expect(backoffStrategy.getBackoffMilliseconds(5)).toEqual(32000);
       });
     });
   });
@@ -28,13 +28,15 @@ describe('BackoffStrategy', () => {
   describe('LinearBackoffStrategy', () => {
     describe('getNextBackoffMilliseconds', () => {
       it('should calculate exponential backoff correctly with 5 retries', () => {
-        const backoffStrategy: BackoffStrategy = new LinearBackoffStrategy(2);
+        const backoffStrategy: BackoffStrategy = new LinearBackoffStrategy(
+          2000,
+        );
 
-        expect(backoffStrategy.getBackoffMilliseconds(1)).toEqual(2);
-        expect(backoffStrategy.getBackoffMilliseconds(2)).toEqual(2);
-        expect(backoffStrategy.getBackoffMilliseconds(3)).toEqual(2);
-        expect(backoffStrategy.getBackoffMilliseconds(4)).toEqual(2);
-        expect(backoffStrategy.getBackoffMilliseconds(5)).toEqual(2);
+        expect(backoffStrategy.getBackoffMilliseconds(1)).toEqual(2000);
+        expect(backoffStrategy.getBackoffMilliseconds(2)).toEqual(2000);
+        expect(backoffStrategy.getBackoffMilliseconds(3)).toEqual(2000);
+        expect(backoffStrategy.getBackoffMilliseconds(4)).toEqual(2000);
+        expect(backoffStrategy.getBackoffMilliseconds(5)).toEqual(2000);
       });
     });
   });
