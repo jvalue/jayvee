@@ -27,6 +27,10 @@ import {
   inferFileExtensionFromFileExtensionString,
   inferMimeTypeFromContentTypeString,
 } from './file-util';
+import {
+  BackoffStrategy,
+  LinearBackoffStrategy,
+} from './util/backoff-strategy';
 
 type HttpGetFunction = typeof http.get;
 
@@ -54,6 +58,9 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
       'retryBackoffMilliseconds',
       PrimitiveValuetypes.Integer,
     );
+    const backoffStrategy: BackoffStrategy = new LinearBackoffStrategy(
+      retryBackoff,
+    );
 
     let failure: ExecutionErrorDetails<AstNode> | undefined;
     assert(retries >= 0); // loop executes at least once
@@ -69,10 +76,14 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
 
       if (!isLastAttempt) {
         context.logger.logDebug(failure.message);
-        context.logger.logDebug(
-          `Waiting ${retryBackoff}ms before trying again...`,
+
+        const currentBackoff = backoffStrategy.getBackoffMilliseconds(
+          attempt + 1,
         );
-        await new Promise((p) => setTimeout(p, retryBackoff));
+        context.logger.logDebug(
+          `Waiting ${currentBackoff}ms before trying again...`,
+        );
+        await new Promise((p) => setTimeout(p, currentBackoff));
         continue;
       }
     }
