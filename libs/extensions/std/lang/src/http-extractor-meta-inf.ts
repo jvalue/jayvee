@@ -65,7 +65,7 @@ export class HttpExtractorMetaInformation extends BlockMetaInformation {
             }
           },
         },
-        retryBackoff: {
+        retryBackoffMilliseconds: {
           type: PrimitiveValuetypes.Integer,
           defaultValue: 1000,
           docs: {
@@ -79,6 +79,8 @@ export class HttpExtractorMetaInformation extends BlockMetaInformation {
             ],
           },
           validation: (property, validationContext, evaluationContext) => {
+            const minBockoffValue = 1000;
+
             const encodingValue = evaluatePropertyValue(
               property,
               evaluationContext,
@@ -88,10 +90,10 @@ export class HttpExtractorMetaInformation extends BlockMetaInformation {
               return;
             }
 
-            if (encodingValue < 0) {
+            if (encodingValue < minBockoffValue) {
               validationContext.accept(
                 'error',
-                'Only not negative integers allowed',
+                `Only integers larger or equal to ${minBockoffValue} are allowed`,
                 {
                   node: property,
                   property: 'value',
