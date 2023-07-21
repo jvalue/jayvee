@@ -1,0 +1,16 @@
+{
+  "name": "@jvalue/jayvee-interpreter-lib",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/jvalue/jayvee/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jvalue/jayvee.git"
+  },
+  "homepage": "https://github.com/jvalue/jayvee",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  }
+}

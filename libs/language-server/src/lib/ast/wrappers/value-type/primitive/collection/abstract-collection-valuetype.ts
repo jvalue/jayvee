@@ -2,8 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line import/no-cycle
-import { InternalValueRepresentation } from '../../../../expressions/evaluation';
+import { type InternalValueRepresentation } from '../../../../expressions/internal-value-representation';
 // eslint-disable-next-line import/no-cycle
 import { PrimitiveValuetype } from '../primitive-valuetype';
 

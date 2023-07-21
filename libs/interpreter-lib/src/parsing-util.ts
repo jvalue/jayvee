@@ -7,7 +7,10 @@ import * as path from 'path';
 
 import { Logger } from '@jvalue/jayvee-execution';
 import { AstNode, LangiumDocument, LangiumServices } from 'langium';
-import { DiagnosticSeverity } from 'vscode-languageserver-protocol';
+import {
+  DiagnosticSeverity,
+  WorkspaceFolder,
+} from 'vscode-languageserver-protocol';
 import { URI } from 'vscode-uri';
 
 export enum ExitCode {
@@ -15,7 +18,7 @@ export enum ExitCode {
   FAILURE = 1,
 }
 
-export async function extractDocument(
+export async function extractDocumentFromFile(
   fileName: string,
   services: LangiumServices,
   logger: Logger,
@@ -39,6 +42,43 @@ export async function extractDocument(
     services.shared.workspace.LangiumDocuments.getOrCreateDocument(
       URI.file(path.resolve(fileName)),
     );
+
+  await initializeWorkspace(services);
+
+  return await validateDocument(document, services, logger);
+}
+
+export async function extractDocumentFromString(
+  modelString: string,
+  services: LangiumServices,
+  logger: Logger,
+): Promise<LangiumDocument> {
+  const document = services.shared.workspace.LangiumDocumentFactory.fromString(
+    modelString,
+    URI.parse('memory://jayvee.document'),
+  );
+
+  await initializeWorkspace(services);
+
+  return await validateDocument(document, services, logger);
+}
+
+/**
+ * Initializes the workspace with all workspace folders.
+ * Also loads additional required files, e.g., the standard library
+ */
+async function initializeWorkspace(services: LangiumServices): Promise<void> {
+  const workspaceFolders: WorkspaceFolder[] = [];
+  await services.shared.workspace.WorkspaceManager.initializeWorkspace(
+    workspaceFolders,
+  );
+}
+
+export async function validateDocument(
+  document: LangiumDocument,
+  services: LangiumServices,
+  logger: Logger,
+): Promise<LangiumDocument> {
   await services.shared.workspace.DocumentBuilder.build([document], {
     validationChecks: 'all',
   });
@@ -65,11 +105,20 @@ export async function extractDocument(
   return document;
 }
 
-export async function extractAstNode<T extends AstNode>(
+export async function extractAstNodeFromFile<T extends AstNode>(
   fileName: string,
   services: LangiumServices,
   logger: Logger,
 ): Promise<T> {
-  return (await extractDocument(fileName, services, logger)).parseResult
+  return (await extractDocumentFromFile(fileName, services, logger)).parseResult
     .value as T;
+}
+
+export async function extractAstNodeFromString<T extends AstNode>(
+  modelString: string,
+  services: LangiumServices,
+  logger: Logger,
+): Promise<T> {
+  return (await extractDocumentFromString(modelString, services, logger))
+    .parseResult.value as T;
 }

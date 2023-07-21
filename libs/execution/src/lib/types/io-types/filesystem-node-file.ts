@@ -42,6 +42,10 @@ export abstract class FileSystemFile<T> extends FileSystemNode {
   override putNode(path: string[]): FileSystemNode | null {
     return null;
   }
+
+  override toDirectoryString(indentation: number): string {
+    return ' '.repeat(indentation) + this.name + ` (${this.mimeType})`;
+  }
 }
 /**
  * An enumeration of common file extensions. New extensions for Files need to be registered here.

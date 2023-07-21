@@ -8,6 +8,7 @@ import {
   Logger,
   NONE,
   createBlockExecutor,
+  isDebugGranularity,
   parseValueToInternalRepresentation,
   registerDefaultConstraintExecutors,
   useExtension as useExecutionExtension,
@@ -32,15 +33,58 @@ import {
 import * as chalk from 'chalk';
 import { NodeFileSystem } from 'langium/node';
 
-import { ExitCode, extractAstNode } from './cli-util';
 import { LoggerFactory } from './logging/logger-factory';
+import { ExitCode, extractAstNodeFromString } from './parsing-util';
 import { validateRuntimeParameterLiteral } from './validation-checks/runtime-parameter-literal';
 
-export async function runAction(
-  fileName: string,
-  options: { env: Map<string, string>; debug: boolean },
-): Promise<void> {
+interface InterpreterOptions {
+  debugGranularity: R.DebugGranularity;
+  debugTargets: R.DebugTargets;
+  debug: boolean;
+}
+
+export interface RunOptions {
+  env: Map<string, string>;
+  debug: boolean;
+  debugGranularity: string;
+  debugTarget: string | undefined;
+}
+
+export async function interpretString(
+  modelString: string,
+  options: RunOptions,
+): Promise<ExitCode> {
+  const extractAstNodeFn = async (
+    services: JayveeServices,
+    loggerFactory: LoggerFactory,
+  ) =>
+    await extractAstNodeFromString<JayveeModel>(
+      modelString,
+      services,
+      loggerFactory.createLogger(),
+    );
+  return await interpretModel(extractAstNodeFn, options);
+}
+
+export async function interpretModel(
+  extractAstNodeFn: (
+    services: JayveeServices,
+    loggerFactory: LoggerFactory,
+  ) => Promise<JayveeModel>,
+  options: RunOptions,
+): Promise<ExitCode> {
   const loggerFactory = new LoggerFactory(options.debug);
+  if (!isDebugGranularity(options.debugGranularity)) {
+    loggerFactory
+      .createLogger()
+      .logErr(
+        `Unknown value "${options.debugGranularity}" for debug granularity option: -dg --debug-granularity.\n` +
+          `Please use one of the following values: ${R.DebugGranularityValues.join(
+            ', ',
+          )}.`,
+      );
+    process.exit(ExitCode.FAILURE);
+  }
 
   useStdExtension();
   registerDefaultConstraintExecutors();
@@ -48,18 +92,20 @@ export async function runAction(
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   setupJayveeServices(services, options.env);
 
-  const model = await extractAstNode<JayveeModel>(
-    fileName,
-    services,
-    loggerFactory.createLogger(),
-  );
+  const model = await extractAstNodeFn(services, loggerFactory);
+  const debugTargets = getDebugTargets(options.debugTarget);
 
   const interpretationExitCode = await interpretJayveeModel(
     model,
     services.RuntimeParameterProvider,
     loggerFactory,
+    {
+      debug: options.debug,
+      debugGranularity: options.debugGranularity,
+      debugTargets: debugTargets,
+    },
   );
-  process.exit(interpretationExitCode);
+  return interpretationExitCode;
 }
 
 function setupJayveeServices(
@@ -96,10 +142,16 @@ async function interpretJayveeModel(
   model: JayveeModel,
   runtimeParameterProvider: RuntimeParameterProvider,
   loggerFactory: LoggerFactory,
+  runOptions: InterpreterOptions,
 ): Promise<ExitCode> {
   const pipelineRuns: Array<Promise<ExitCode>> = model.pipelines.map(
     (pipeline) => {
-      return runPipeline(pipeline, runtimeParameterProvider, loggerFactory);
+      return runPipeline(
+        pipeline,
+        runtimeParameterProvider,
+        loggerFactory,
+        runOptions,
+      );
     },
   );
   const exitCodes = await Promise.all(pipelineRuns);
@@ -114,10 +166,16 @@ async function runPipeline(
   pipeline: PipelineDefinition,
   runtimeParameterProvider: RuntimeParameterProvider,
   loggerFactory: LoggerFactory,
+  runOptions: InterpreterOptions,
 ): Promise<ExitCode> {
   const executionContext = new ExecutionContext(
     pipeline,
     loggerFactory.createLogger(),
+    {
+      isDebugMode: runOptions.debug,
+      debugGranularity: runOptions.debugGranularity,
+      debugTargets: runOptions.debugTargets,
+    },
     new EvaluationContext(runtimeParameterProvider),
   );
 
@@ -173,7 +231,8 @@ async function executeBlocks(
         diagnosticError.diagnostic,
       );
     } else {
-      blockData.value = executionResult.right;
+      const blockResultData = executionResult.right;
+      blockData.value = blockResultData;
     }
 
     executionContext.exitNode(block);
@@ -261,4 +320,15 @@ export function logPipelineOverview(
     linesBuffer.push(toString(block, 1));
   }
   logger.logInfo(linesBuffer.join('\n'));
+}
+
+function getDebugTargets(
+  debugTargetsString: string | undefined,
+): R.DebugTargets {
+  const areAllBlocksTargeted = debugTargetsString === undefined;
+  if (areAllBlocksTargeted) {
+    return R.DefaultDebugTargetsValue;
+  }
+
+  return debugTargetsString.split(',').map((target) => target.trim());
 }

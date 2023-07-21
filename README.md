@@ -17,7 +17,7 @@ In case you would like to contribute to Jayvee, please have a look at our [contr
 ## Development Quickstart
 
 1. Run `npm ci` to install the dependencies.
-2. Run `npm run generate` to generate TypeScript code from the Jayvee grammar definition.
+2. Run `npm run generate` to generate TypeScript code from the Jayvee grammar definition and the standard library.
 3. Run `npm run build` to compile all projects.
 4. In Visual Studio Code, press `F5` to open a new window with the Jayvee extension loaded.
 5. Create a new file with a `.jv` file name suffix or open an existing file in the directory `example`.

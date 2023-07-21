@@ -90,6 +90,21 @@ We differentiate the following types of `ValueTypes`:
 ### Constraints
 
 `Constraints` for `ValueTypes` declare the validity criteria that each concrete value is checked against.
+
+#### Syntax 1: Expression syntax
+
+The syntax of expression-based `Constraints` uses an expression that evaluates to `true` or `false` for the given `value`. The type of the values the expression is working in is indicated ofter the keyword `on`:
+
+```jayvee
+constraint GasFillLevelRange on decimal:
+    value >= 0 and value <= 100;
+```
+
+Refer to the [Expression documentation](./expressions.md) for further reading on expressions.
+
+
+#### Syntax 2: Block-like syntax
+
 The syntax of `Constraints` is similar to the syntax of `Blocks`.
 The availability of property keys and their respective `ValueTypes` is determined by the type of the `Constraint` - indicated by the identifier after the keyword `oftype`:
 

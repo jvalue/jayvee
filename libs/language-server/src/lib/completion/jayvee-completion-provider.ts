@@ -21,12 +21,15 @@ import {
   ConstraintTypeLiteral,
   PropertyAssignment,
   PropertyBody,
+  ValuetypeReference,
   isBlockDefinition,
   isBlockTypeLiteral,
   isConstraintDefinition,
   isConstraintTypeLiteral,
+  isJayveeModel,
   isPropertyAssignment,
   isPropertyBody,
+  isValuetypeDefinition,
 } from '../ast/generated/ast';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
 import { MetaInformation } from '../meta-information/meta-inf';
@@ -58,6 +61,13 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
         next.type === ConstraintTypeLiteral;
       if (isConstraintTypeCompletion) {
         return this.completionForConstraintType(acceptor);
+      }
+
+      // valuetype MyValuetype oftype <completion>
+      const isValuetypeDefinitionCompletion =
+        isValuetypeDefinition(astNode) && next.type === ValuetypeReference;
+      if (isValuetypeDefinitionCompletion) {
+        return this.completionForValuetype(context, acceptor);
       }
 
       const isFirstPropertyCompletion =
@@ -103,6 +113,24 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
         },
         kind: CompletionItemKind.Class,
         detail: `(constraint type)`,
+      });
+    });
+  }
+
+  private completionForValuetype(
+    context: CompletionContext,
+    acceptor: CompletionAcceptor,
+  ): MaybePromise<void> {
+    const jayveeModel = context.document.parseResult.value;
+    if (!isJayveeModel(jayveeModel)) {
+      throw new Error('Expected parsed document to be a JayveeModel');
+    }
+
+    jayveeModel.valuetypes.forEach((valuetype) => {
+      acceptor({
+        label: valuetype.name,
+        kind: CompletionItemKind.Class,
+        detail: `(valuetype)`,
       });
     });
   }

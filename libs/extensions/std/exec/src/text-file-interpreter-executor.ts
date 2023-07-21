@@ -6,8 +6,8 @@ import { TextDecoder } from 'util';
 
 import * as R from '@jvalue/jayvee-execution';
 import {
+  AbstractBlockExecutor,
   BinaryFile,
-  BlockExecutor,
   BlockExecutorClass,
   ExecutionContext,
   TextFile,
@@ -16,15 +16,18 @@ import {
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
-export class TextFileInterpreterExecutor
-  implements BlockExecutor<IOType.FILE, IOType.TEXT_FILE>
-{
+export class TextFileInterpreterExecutor extends AbstractBlockExecutor<
+  IOType.FILE,
+  IOType.TEXT_FILE
+> {
   public static readonly type = 'TextFileInterpreter';
-  public readonly inputType = IOType.FILE;
-  public readonly outputType = IOType.TEXT_FILE;
+
+  constructor() {
+    super(IOType.FILE, IOType.TEXT_FILE);
+  }
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  async execute(
+  async doExecute(
     file: BinaryFile,
     context: ExecutionContext,
   ): Promise<R.Result<TextFile>> {

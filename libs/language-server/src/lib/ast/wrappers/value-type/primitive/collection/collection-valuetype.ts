@@ -5,7 +5,7 @@
 import {
   type AtomicInternalValueRepresentation,
   type InternalValueRepresentation,
-} from '../../../../expressions/evaluation';
+} from '../../../../expressions/internal-value-representation';
 // eslint-disable-next-line import/no-cycle
 import { Valuetype, ValuetypeVisitor } from '../../valuetype';
 

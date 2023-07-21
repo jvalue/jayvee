@@ -9,4 +9,5 @@ export abstract class FileSystemNode {
     pathParts: string[],
     node: FileSystemNode,
   ): FileSystemNode | null;
+  abstract toDirectoryString(indentation: number): string;
 }

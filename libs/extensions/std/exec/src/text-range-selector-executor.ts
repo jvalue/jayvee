@@ -4,7 +4,7 @@
 
 import * as R from '@jvalue/jayvee-execution';
 import {
-  BlockExecutor,
+  AbstractBlockExecutor,
   BlockExecutorClass,
   ExecutionContext,
   TextFile,
@@ -13,15 +13,18 @@ import {
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
-export class TextRangeSelectorExecutor
-  implements BlockExecutor<IOType.TEXT_FILE, IOType.TEXT_FILE>
-{
+export class TextRangeSelectorExecutor extends AbstractBlockExecutor<
+  IOType.TEXT_FILE,
+  IOType.TEXT_FILE
+> {
   public static readonly type = 'TextRangeSelector';
-  public readonly inputType = IOType.TEXT_FILE;
-  public readonly outputType = IOType.TEXT_FILE;
+
+  constructor() {
+    super(IOType.TEXT_FILE, IOType.TEXT_FILE);
+  }
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  async execute(
+  async doExecute(
     file: TextFile,
     context: ExecutionContext,
   ): Promise<R.Result<TextFile>> {

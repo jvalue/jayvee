@@ -66,7 +66,7 @@ export class PostgresLoaderMetaInformation extends BlockMetaInformation {
 
 const blockExampleUsage = `block CarsLoader oftype PostgresLoader {
   host: "localhost";
-  port: "5432";
+  port: 5432;
   username: "postgres";
   password: "postgres";
   database: "CarsDB";

@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../ast/expressions/evaluation';
+import { type InternalValueRepresentation } from '../ast/expressions/internal-value-representation';
 import { type Valuetype } from '../ast/wrappers/value-type/valuetype';
 
 export type InternalValueRepresentationParser = <

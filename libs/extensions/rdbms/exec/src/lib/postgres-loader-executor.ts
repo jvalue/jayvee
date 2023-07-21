@@ -4,7 +4,7 @@
 
 import * as R from '@jvalue/jayvee-execution';
 import {
-  BlockExecutor,
+  AbstractBlockExecutor,
   BlockExecutorClass,
   ExecutionContext,
   NONE,
@@ -16,14 +16,17 @@ import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 import { Client } from 'pg';
 
 @implementsStatic<BlockExecutorClass>()
-export class PostgresLoaderExecutor
-  implements BlockExecutor<IOType.TABLE, IOType.NONE>
-{
+export class PostgresLoaderExecutor extends AbstractBlockExecutor<
+  IOType.TABLE,
+  IOType.NONE
+> {
   public static readonly type = 'PostgresLoader';
-  public readonly inputType = IOType.TABLE;
-  public readonly outputType = IOType.NONE;
 
-  async execute(
+  constructor() {
+    super(IOType.TABLE, IOType.NONE);
+  }
+
+  async doExecute(
     input: Table,
     context: ExecutionContext,
   ): Promise<R.Result<None>> {

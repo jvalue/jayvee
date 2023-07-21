@@ -21,6 +21,10 @@ import {
   isTransformDefinition,
 } from '@jvalue/jayvee-language-server';
 
+import {
+  DebugGranularity,
+  DebugTargets,
+} from './debugging/debug-configuration';
 import { Logger } from './logger';
 
 export type StackNode =
@@ -34,6 +38,11 @@ export class ExecutionContext {
   constructor(
     public readonly pipeline: PipelineDefinition,
     public readonly logger: Logger,
+    public readonly runOptions: {
+      isDebugMode: boolean;
+      debugGranularity: DebugGranularity;
+      debugTargets: DebugTargets;
+    },
     public readonly evaluationContext: EvaluationContext,
   ) {
     logger.setLoggingContext(pipeline.name);

@@ -9,15 +9,12 @@ import { assertUnreachable } from 'langium';
 import { RuntimeParameterProvider } from '../../services';
 import { ValidationContext } from '../../validation/validation-context';
 import {
-  ConstraintDefinition,
   Expression,
   FreeVariableLiteral,
   PropertyAssignment,
   ReferenceLiteral,
-  TransformDefinition,
   ValueKeywordLiteral,
   ValueLiteral,
-  ValuetypeAssignment,
   isBinaryExpression,
   isCellRangeLiteral,
   isCollectionLiteral,
@@ -39,6 +36,7 @@ import { CellRangeWrapper } from '../wrappers/cell-range-wrapper';
 import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-valuetypes';
 import { type Valuetype } from '../wrappers/value-type/valuetype';
 
+import { type InternalValueRepresentation } from './internal-value-representation';
 // eslint-disable-next-line import/no-cycle
 import {
   binaryOperatorRegistry,
@@ -50,21 +48,6 @@ export enum EvaluationStrategy {
   EXHAUSTIVE,
   LAZY,
 }
-
-export type InternalValueRepresentation =
-  | AtomicInternalValueRepresentation
-  | Array<InternalValueRepresentation>
-  | [];
-
-export type AtomicInternalValueRepresentation =
-  | boolean
-  | number
-  | string
-  | RegExp
-  | CellRangeWrapper
-  | ConstraintDefinition
-  | ValuetypeAssignment
-  | TransformDefinition;
 
 export class EvaluationContext {
   private readonly variableValues = new Map<
@@ -159,10 +142,6 @@ export class EvaluationContext {
     return this.valueKeywordValue;
   }
 }
-
-export type InternalValueRepresentationTypeguard<
-  T extends InternalValueRepresentation,
-> = (value: InternalValueRepresentation) => value is T;
 
 export function evaluatePropertyValue<T extends InternalValueRepresentation>(
   property: PropertyAssignment,

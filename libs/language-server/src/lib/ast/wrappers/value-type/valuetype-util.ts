@@ -15,7 +15,6 @@ import {
 
 // eslint-disable-next-line import/no-cycle
 import { AtomicValuetype } from './atomic-valuetype';
-// eslint-disable-next-line import/no-cycle
 import { createPrimitiveValuetype } from './primitive';
 import { Valuetype } from './valuetype';
 
