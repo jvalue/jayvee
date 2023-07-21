@@ -6,6 +6,7 @@ pipeline MaterialsDatabasePipeline {
 
 	block MaterialsDatabaseExtractor oftype HttpExtractor {
 		url: "https://figshare.com/ndownloader/files/31626647";
+
 		followRedirects: true;
 	}
 
@@ -30,14 +31,14 @@ pipeline MaterialsDatabasePipeline {
 	block MaterialsDatabaseTableInterpreter oftype TableInterpreter {
 		header: true;
 		columns: [
-            "Compound" oftype text,
-            "Blacklisted Compound?" oftype text,
-            "Yield Strength Value" oftype text,
-            "Yield Strength Unit" oftype text,
-            "Grain Size Value" oftype text,
-            "Grain Size Unit" oftype text,
-            "DOI" oftype text,
-            "Open Access" oftype text,
+			"Compound" oftype text,
+			"Blacklisted Compound?" oftype text,
+			"Yield Strength Value" oftype text,
+			"Yield Strength Unit" oftype text,
+			"Grain Size Value" oftype text,
+			"Grain Size Unit" oftype text,
+			"DOI" oftype text,
+			"Open Access" oftype text,
 		];
 	}
 

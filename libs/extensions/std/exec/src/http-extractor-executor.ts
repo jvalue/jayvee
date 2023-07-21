@@ -109,9 +109,7 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
     } else {
       httpGetFunction = http.get;
     }
-
     const followRedirects = context.getPropertyValue('followRedirects', PrimitiveValuetypes.Boolean);
-
     return new Promise((resolve) => {
       httpGetFunction(url, { followRedirects: followRedirects }, (response) => {
         const responseCode = response.statusCode;
@@ -120,8 +118,9 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
         if (responseCode === undefined || responseCode >= 400) {
           resolve(
             R.err({
-              message: `HTTP fetch failed with code ${responseCode ?? 'undefined'
-                }. Please check your connection.`,
+              message: `HTTP fetch failed with code ${
+                responseCode ?? 'undefined'
+              }. Please check your connection.`,
               diagnostic: { node: context.getOrFailProperty('url') },
             }),
           );
@@ -130,8 +129,9 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
         if (responseCode === 302) {
           resolve(
             R.err({
-              message: `HTTP fetch was redirected with code ${responseCode
-                }. Redirects are either disabled or maximum number of redirects was exeeded.`,
+              message: `HTTP fetch was redirected with code ${
+                responseCode ?? 'undefined'
+              }. Redirects are either disabled or maximum number of redirects was exeeded.`,
               diagnostic: { node: context.getOrFailProperty('url') },
             }),
           );

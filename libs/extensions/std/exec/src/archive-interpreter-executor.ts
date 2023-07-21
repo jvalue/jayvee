@@ -22,7 +22,6 @@ import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 import * as JSZip from 'jszip';
 import * as zlib from 'node:zlib';
 
-
 import {
   inferFileExtensionFromFileExtensionString,
   inferMimeTypeFromContentTypeString,
@@ -58,7 +57,7 @@ export class ArchiveInterpreterExecutor extends AbstractBlockExecutor<
       return R.ok(fs.right);
     }
     if (archiveType === 'gz') {
-      const fs = await this.loadGZipFileToInMemoryFileSystem(
+      const fs = await this.loadGzFileToInMemoryFileSystem(
         archiveFile,
         context,
       );
@@ -74,11 +73,11 @@ export class ArchiveInterpreterExecutor extends AbstractBlockExecutor<
     });
   }
 
-  private async loadGZipFileToInMemoryFileSystem(
+  private async loadGzFileToInMemoryFileSystem(
     archiveFile: BinaryFile,
     context: ExecutionContext,
   ): Promise<R.Result<FileSystem>> {
-    context.logger.logDebug(`Loading zip file from binary content`);
+    context.logger.logDebug(`Loading gz file from binary content`);
     try {
 
       const fs = new InMemoryFileSystem();
@@ -119,7 +118,6 @@ export class ArchiveInterpreterExecutor extends AbstractBlockExecutor<
       });
     }
   }
-
 
   private async loadZipFileToInMemoryFileSystem(
     archiveFile: BinaryFile,
