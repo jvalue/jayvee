@@ -6,7 +6,6 @@ pipeline MaterialsDatabasePipeline {
 
 	block MaterialsDatabaseExtractor oftype HttpExtractor {
 		url: "https://figshare.com/ndownloader/files/31626647";
-
 		followRedirects: true;
 	}
 
@@ -18,14 +17,14 @@ pipeline MaterialsDatabasePipeline {
 		path: "/Databases/Combined/Combined_YieldStrength_GrainSize_Database.csv";
 	}
 
-    block MaterialsDatabaseTextFileInterpreter oftype TextFileInterpreter {
+	block MaterialsDatabaseTextFileInterpreter oftype TextFileInterpreter {
 
 	}
 
 	block MaterialsDatabaseCSVInterpreter oftype CSVInterpreter {
 		delimiter: ",";
-        enclosing: '"';
-        enclosingEscape: '"';
+		enclosing: '"';
+		enclosingEscape: '"';
 	}
 
 	block MaterialsDatabaseTableInterpreter oftype TableInterpreter {
