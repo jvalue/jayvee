@@ -28,15 +28,11 @@ export function createValuetype(
   } else if (isValuetypeReference(identifier)) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const valuetype = identifier?.reference?.ref;
-    if (valuetype === undefined) {
-      return undefined;
-    }
-
-    if (valuetype.isBuiltin) {
+    return createValuetype(valuetype);
+  } else if (isValuetypeDefinition(identifier)) {
+    if (identifier.isBuiltin) {
       return createPrimitiveValuetype(identifier);
     }
-    return new AtomicValuetype(valuetype);
-  } else if (isValuetypeDefinition(identifier)) {
     return new AtomicValuetype(identifier);
   }
   assertUnreachable(identifier);

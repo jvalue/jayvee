@@ -2,7 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { ValuetypeReference } from '../../../generated/ast';
+import { strict as assert } from 'assert';
+
+import { ValuetypeDefinition } from '../../../generated/ast';
 
 // eslint-disable-next-line import/no-cycle
 import { Boolean, BooleanValuetype } from './boolean-valuetype';
@@ -50,10 +52,11 @@ export const PrimitiveValuetypes: {
 };
 
 export function createPrimitiveValuetype(
-  builtinValuetypeReference: ValuetypeReference,
+  builtinValuetype: ValuetypeDefinition,
 ): PrimitiveValuetype | undefined {
+  assert(builtinValuetype.isBuiltin);
+  const name = builtinValuetype.name;
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  const name = builtinValuetypeReference?.reference?.ref?.name;
   if (name === undefined) {
     return undefined;
   }
