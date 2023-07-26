@@ -10,7 +10,6 @@
     "test": "nx run-many --target test",
     "generate": "nx run language-server:generate",
     "example:cars": "nx run interpreter:run -d example/cars.jv",
-    "example:materials": "nx run interpreter:run -d example/materials.jv",
     "example:gtfs": "nx run interpreter:run -d example/gtfs-static-and-rt.jv",
     "example:vehicles": "nx run interpreter:run -d -e DB_HOST=localhost -e DB_PORT=5432 -e DB_USERNAME=postgres -e DB_PASSWORD=postgres -e DB_DATABASE=postgres example/electric-vehicles.jv"
   },
