@@ -11,10 +11,7 @@ import {
 import { WorkspaceFolder } from 'vscode-languageserver';
 import { URI } from 'vscode-uri';
 
-import {
-  STANDARD_LIBRARY_FILENAME,
-  STANDARD_LIBRARY_SOURCECODE,
-} from './jayvee-standard-library';
+import { StdLib } from './generated/stdlib';
 
 export class JayveeWorkspaceManager extends DefaultWorkspaceManager {
   private documentFactory: LangiumDocumentFactory;
@@ -29,11 +26,9 @@ export class JayveeWorkspaceManager extends DefaultWorkspaceManager {
     collector: (document: LangiumDocument) => void,
   ): Promise<void> {
     await super.loadAdditionalDocuments(folders, collector);
-    collector(
-      this.documentFactory.fromString(
-        STANDARD_LIBRARY_SOURCECODE,
-        URI.parse(`builtin:///${STANDARD_LIBRARY_FILENAME}`),
-      ),
-    );
+
+    Object.entries(StdLib).forEach(([libName, libCode]) => {
+      collector(this.documentFactory.fromString(libCode, URI.parse(libName)));
+    });
   }
 }

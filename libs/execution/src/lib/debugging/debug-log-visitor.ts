@@ -4,19 +4,15 @@
 
 import { internalValueToString } from '@jvalue/jayvee-language-server';
 
-import { Logger } from '../../../logger';
-import { FileSystem } from '../filesystem';
-import { BinaryFile } from '../filesystem-node-file-binary';
-import { TextFile } from '../filesystem-node-file-text';
-import { IoTypeVisitor } from '../io-type-implementation';
-import { Sheet } from '../sheet';
-import { Table } from '../table';
+import { Logger } from '../logger';
+import { FileSystem } from '../types/io-types/filesystem';
+import { BinaryFile } from '../types/io-types/filesystem-node-file-binary';
+import { TextFile } from '../types/io-types/filesystem-node-file-text';
+import { IoTypeVisitor } from '../types/io-types/io-type-implementation';
+import { Sheet } from '../types/io-types/sheet';
+import { Table } from '../types/io-types/table';
 
-export const DebugGranularityValues = ['peek', 'exhaustive', 'skip'] as const; // convention: last item is the default value
-export type DebugGranularity = (typeof DebugGranularityValues)[number];
-export function isDebugGranularity(obj: unknown): obj is DebugGranularity {
-  return obj === 'exhaustive' || obj === 'peek' || obj === 'skip';
-}
+import { DebugGranularity } from './debug-configuration';
 
 export class DebugLogVisitor implements IoTypeVisitor<void> {
   private readonly PEEK_NUMBER_OF_ROWS = 10;
@@ -30,7 +26,7 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
   ) {}
 
   visitTable(table: Table): void {
-    if (this.debugGranularity === 'skip') {
+    if (this.debugGranularity === 'minimal') {
       return;
     }
 
@@ -61,7 +57,7 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
   }
 
   visitSheet(sheet: Sheet): void {
-    if (this.debugGranularity === 'skip') {
+    if (this.debugGranularity === 'minimal') {
       return;
     }
 
@@ -85,7 +81,7 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
   }
 
   visitNone(): void {
-    if (this.debugGranularity === 'skip') {
+    if (this.debugGranularity === 'minimal') {
       return;
     }
 
@@ -93,7 +89,7 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
   }
 
   visitFileSystem(fileSystem: FileSystem): void {
-    if (this.debugGranularity === 'skip') {
+    if (this.debugGranularity === 'minimal') {
       return;
     }
 
@@ -101,7 +97,7 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
   }
 
   visitBinaryFile(binaryFile: BinaryFile): void {
-    if (this.debugGranularity === 'skip') {
+    if (this.debugGranularity === 'minimal') {
       return;
     }
 
@@ -114,7 +110,7 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
   }
 
   visitTextFile(binaryFile: TextFile): void {
-    if (this.debugGranularity === 'skip') {
+    if (this.debugGranularity === 'minimal') {
       return;
     }
 
@@ -128,7 +124,7 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
   }
 
   private logPeekComment(): void {
-    if (this.debugGranularity === 'skip') {
+    if (this.debugGranularity === 'minimal') {
       return;
     }
 
