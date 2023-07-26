@@ -126,10 +126,7 @@ export class ArchiveInterpreterExecutor extends AbstractBlockExecutor<
     const fileExtension =
       inferFileExtensionFromFileExtensionString(extName) || FileExtension.NONE;
     const file = new BinaryFile(fileName, fileExtension, mimeType, content);
-    console.log(
-      InMemoryFileSystem.getPathSeparator() +
-        String(options?.relPath ?? 'Teeeeeeeeest'),
-    );
+
     const addedFile = fs.putFile(
       InMemoryFileSystem.getPathSeparator() +
         String(options?.relPath ?? fileName),
