@@ -30,6 +30,13 @@ class DecimalValuetypeImpl extends PrimitiveValuetype<number> {
   override isUserExtendable() {
     return true;
   }
+
+  override getUserDoc(): string {
+    return `
+A decimal value.
+Example: 3.14
+`.trimStart();
+  }
 }
 
 // Only export instance to enforce singleton
