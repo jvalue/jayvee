@@ -9,13 +9,66 @@ import {
   IOType,
   JayveeBlockTypeDocGenerator,
   JayveeConstraintTypeDocGenerator,
+  JayveeValueTypesDocGenerator,
   MarkdownBuilder,
+  PrimitiveValuetype,
   PropertySpecification,
 } from '@jvalue/jayvee-language-server';
+import { strict as assert } from 'assert';
 
 export class UserDocGenerator
-  implements JayveeBlockTypeDocGenerator, JayveeConstraintTypeDocGenerator
+  implements
+    JayveeBlockTypeDocGenerator,
+    JayveeConstraintTypeDocGenerator,
+    JayveeValueTypesDocGenerator
 {
+  generateValueTypesDoc(valueTypes: {
+    [name: string]: PrimitiveValuetype;
+  }): string {
+    const builder = new UserDocMarkdownBuilder()
+      .docTitle('Built-in Valuetypes')
+      .generationComment()
+      .description(
+        `
+For an intro to valuetypes, see the [Core Concepts](./core-concepts).
+Built-in valuetypes come with the basic version of Jayvee.
+They are the basis for more restricted \`Primitive Valuetypes\`
+that fullfil [Constrains](./core-concepts#constraints).`.trim(),
+        1,
+      )
+      .heading('Available built-in valuetypes', 1);
+
+    Object.entries(valueTypes)
+      .filter(([_, valueType]) => valueType.isUserExtendable())
+      .forEach(([name, valueType]) => {
+        assert(
+          valueType.getUserDoc(),
+          `Documentation is missing for user extendable value type: ${valueType.getName()}`,
+        );
+        builder
+          .heading(name, 2)
+          .description(valueType.getUserDoc() ?? '', 3)
+          .examples(
+            [
+              {
+                code: `
+block ExampleTableInterpreter oftype TableInterpreter {
+  header: true;
+  columns: [
+    "columnName" oftype ${valueType.getName()}
+  ];
+}`.trim(),
+                description: `A block of type \`TableInterpreter\` that
+              interprets data in the column \`columnName\` as \`${valueType.getName()}\`.
+              `.trim(),
+              },
+            ],
+            3,
+          );
+      });
+
+    return builder.build();
+  }
   generateBlockTypeDoc(metaInf: BlockMetaInformation): string {
     const builder = new UserDocMarkdownBuilder()
       .docTitle(metaInf.type)
@@ -81,6 +134,11 @@ class UserDocMarkdownBuilder {
         'Do NOT change this document as it is auto-generated from the language server',
       )
       .newLine();
+    return this;
+  }
+
+  heading(heading: string, depth = 1): UserDocMarkdownBuilder {
+    this.markdownBuilder.heading(heading, depth);
     return this;
   }
 
