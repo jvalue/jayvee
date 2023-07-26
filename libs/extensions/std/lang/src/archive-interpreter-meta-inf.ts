@@ -19,7 +19,8 @@ export class ArchiveInterpreterMetaInformation extends BlockMetaInformation {
         archiveType: {
           type: PrimitiveValuetypes.Text,
           docs: {
-            description: 'The archive type to be interpreted, e.g., `"zip" or "gz`.',
+            description:
+              'The archive type to be interpreted, e.g., "zip" or "gz".',
           },
         },
       },

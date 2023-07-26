@@ -4,7 +4,6 @@
 
 import { strict as assert } from 'assert';
 import * as path from 'path';
-import { http, https } from 'follow-redirects';
 
 import * as R from '@jvalue/jayvee-execution';
 import {
@@ -19,6 +18,7 @@ import {
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
+import { http, https } from 'follow-redirects';
 import { AstNode } from 'langium';
 
 import {
@@ -105,11 +105,14 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
     context.logger.logDebug(`Fetching raw data from ${url}`);
     let httpGetFunction: HttpGetFunction;
     if (url.startsWith('https')) {
-      httpGetFunction = https.get;
+      httpGetFunction = https.get.bind(https);
     } else {
-      httpGetFunction = http.get;
+      httpGetFunction = http.get.bind(http);
     }
-    const followRedirects = context.getPropertyValue('followRedirects', PrimitiveValuetypes.Boolean);
+    const followRedirects = context.getPropertyValue(
+      'followRedirects',
+      PrimitiveValuetypes.Boolean,
+    );
     return new Promise((resolve) => {
       httpGetFunction(url, { followRedirects: followRedirects }, (response) => {
         const responseCode = response.statusCode;
@@ -124,14 +127,10 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
               diagnostic: { node: context.getOrFailProperty('url') },
             }),
           );
-        }
-
-        if (responseCode === 302) {
+        } else if (responseCode >= 301 && responseCode < 400) {
           resolve(
             R.err({
-              message: `HTTP fetch was redirected with code ${
-                responseCode ?? 'undefined'
-              }. Redirects are either disabled or maximum number of redirects was exeeded.`,
+              message: `HTTP fetch was redirected with code ${responseCode}. Redirects are either disabled or maximum number of redirects was exeeded.`,
               diagnostic: { node: context.getOrFailProperty('url') },
             }),
           );
@@ -158,10 +157,6 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
 
           // Infer FileName and FileExtension from url, if not inferrable, then default to None
           // Get last element of URL assuming this is a filename
-          const urlString = context.getPropertyValue(
-            'url',
-            PrimitiveValuetypes.Text,
-          );
           const url = new URL(response.responseUrl);
           let fileName = url.pathname.split('/').pop();
           if (fileName === undefined) {
