@@ -26,6 +26,10 @@ class TextValuetypeImpl extends PrimitiveValuetype<string> {
   ): operandValue is string {
     return typeof operandValue === 'string';
   }
+
+  override isUserExtendable() {
+    return true;
+  }
 }
 
 // Only export instance to enforce singleton

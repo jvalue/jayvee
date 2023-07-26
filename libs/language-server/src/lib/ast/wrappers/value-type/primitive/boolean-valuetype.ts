@@ -26,6 +26,10 @@ class BooleanValuetypeImpl extends PrimitiveValuetype<boolean> {
   ): operandValue is boolean {
     return typeof operandValue === 'boolean';
   }
+
+  override isUserExtendable() {
+    return true;
+  }
 }
 
 // Only export instance to enforce singleton

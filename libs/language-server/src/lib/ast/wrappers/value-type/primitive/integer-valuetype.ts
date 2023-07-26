@@ -31,6 +31,10 @@ class IntegerValuetypeImpl extends PrimitiveValuetype<number> {
   ): operandValue is number {
     return typeof operandValue === 'number' && Number.isInteger(operandValue);
   }
+
+  override isUserExtendable() {
+    return true;
+  }
 }
 
 // Only export instance to enforce singleton
