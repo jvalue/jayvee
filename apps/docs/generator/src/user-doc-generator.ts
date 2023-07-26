@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
+
 import {
   BlockMetaInformation,
   ConstraintMetaInformation,
@@ -14,7 +16,6 @@ import {
   PrimitiveValuetype,
   PropertySpecification,
 } from '@jvalue/jayvee-language-server';
-import { strict as assert } from 'assert';
 
 export class UserDocGenerator
   implements
@@ -39,6 +40,7 @@ that fullfil [Constrains](./core-concepts#constraints).`.trim(),
       .heading('Available built-in valuetypes', 1);
 
     Object.entries(valueTypes)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       .filter(([_, valueType]) => valueType.isUserExtendable())
       .forEach(([name, valueType]) => {
         assert(
