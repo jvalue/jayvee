@@ -56,4 +56,15 @@ describe('Validation of TableInterpreterMetaInformation', () => {
       ]),
     );
   });
+
+  it('should diagnose no error', async () => {
+    const text = readJvTestAsset(
+      'table-interpreter-meta-inf/valid-correct-table.jv',
+    );
+
+    const validationResult = await validate(text);
+    const diagnostics = validationResult.diagnostics;
+
+    expect(diagnostics).toHaveLength(0);
+  });
 });

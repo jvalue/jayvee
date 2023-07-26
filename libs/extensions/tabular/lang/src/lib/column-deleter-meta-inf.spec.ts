@@ -53,4 +53,15 @@ describe('Validation of ColumnDeleterMetaInformation', () => {
       ]),
     );
   });
+
+  it('should diagnose no error', async () => {
+    const text = readJvTestAsset(
+      'column-deleter-meta-inf/valid-column-delete.jv',
+    );
+
+    const validationResult = await validate(text);
+    const diagnostics = validationResult.diagnostics;
+
+    expect(diagnostics).toHaveLength(0);
+  });
 });

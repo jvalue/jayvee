@@ -53,4 +53,13 @@ describe('Validation of RowDeleterMetaInformation', () => {
       ]),
     );
   });
+
+  it('should diagnose no error', async () => {
+    const text = readJvTestAsset('row-deleter-meta-inf/valid-row-delete.jv');
+
+    const validationResult = await validate(text);
+    const diagnostics = validationResult.diagnostics;
+
+    expect(diagnostics).toHaveLength(0);
+  });
 });

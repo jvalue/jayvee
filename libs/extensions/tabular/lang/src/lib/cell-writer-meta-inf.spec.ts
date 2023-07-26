@@ -76,4 +76,15 @@ describe('Validation of CellWriterMetaInformation', () => {
       ]),
     );
   });
+
+  it('should diagnose no error', async () => {
+    const text = readJvTestAsset(
+      'cell-writer-meta-inf/valid-range-matches-array-length.jv',
+    );
+
+    const validationResult = await validate(text);
+    const diagnostics = validationResult.diagnostics;
+
+    expect(diagnostics).toHaveLength(0);
+  });
 });

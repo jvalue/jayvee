@@ -87,4 +87,15 @@ describe('Validation of TextRangeSelectorMetaInformation', () => {
       ]),
     );
   });
+
+  it('should diagnose no error', async () => {
+    const text = readJvTestAsset(
+      'text-range-selector-meta-inf/valid-correct-range.jv',
+    );
+
+    const validationResult = await validate(text);
+    const diagnostics = validationResult.diagnostics;
+
+    expect(diagnostics).toHaveLength(0);
+  });
 });

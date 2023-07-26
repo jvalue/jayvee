@@ -50,4 +50,15 @@ describe('Validation of TextLineDeleterMetaInformation', () => {
       ]),
     );
   });
+
+  it('should diagnose no error', async () => {
+    const text = readJvTestAsset(
+      'text-line-deleter-meta-inf/valid-postive-line-number.jv',
+    );
+
+    const validationResult = await validate(text);
+    const diagnostics = validationResult.diagnostics;
+
+    expect(diagnostics).toHaveLength(0);
+  });
 });
