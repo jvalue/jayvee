@@ -10,7 +10,7 @@ import { join } from "path";
 const projectName = 'language-server';
 const stdLibInputPath = 'stdlib';
 const outputDirPath = join('lib', 'builtin-library', 'generated');
-const outputFilePath = join(outputDirPath, 'stdlib.ts');
+const outputFilePath = join(outputDirPath, 'partial-stdlib.ts');
 
 // Executing this script: node path/to/generate-stdlib.mjs
 console.log('Generating stdlib...');
@@ -33,7 +33,7 @@ const stdlibOutput = `/*********************************************************
 * DO NOT EDIT MANUALLY!
 ******************************************************************************/
 
-` + 'export const StdLib = ' + JSON.stringify(libsRecord, null, 2) + ';\n';
+` + 'export const PartialStdLib = ' + JSON.stringify(libsRecord, null, 2) + ';\n';
 if (!existsSync(outputDirPath)) {
     mkdirSync(outputDirPath, {recursive: true});
 }
