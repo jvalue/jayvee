@@ -9,9 +9,9 @@
     "lint": "nx run-many --target lint --max-warnings 0",
     "test": "nx run-many --target test",
     "generate": "nx run language-server:generate",
-    "example:cars": "nx run interpreter:run -d example/cars.jv",
-    "example:gtfs": "nx run interpreter:run -d example/gtfs-static-and-rt.jv",
-    "example:vehicles": "nx run interpreter:run -d -e DB_HOST=localhost -e DB_PORT=5432 -e DB_USERNAME=postgres -e DB_PASSWORD=postgres -e DB_DATABASE=postgres example/electric-vehicles.jv"
+    "example:cars": "nx run interpreter:run -d example/cars.jv -dg peek",
+    "example:gtfs": "nx run interpreter:run -d example/gtfs-static-and-rt.jv -dg peek",
+    "example:vehicles": "nx run interpreter:run -d -e DB_HOST=localhost -e DB_PORT=5432 -e DB_USERNAME=postgres -e DB_PASSWORD=postgres -e DB_DATABASE=postgres example/electric-vehicles.jv -dg peek"
   },
   "private": true,
   "dependencies": {
