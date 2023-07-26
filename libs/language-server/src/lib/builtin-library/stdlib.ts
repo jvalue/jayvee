@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { PrimitiveValuetypes } from '../ast/wrappers/value-type/primitive/primitive-valuetypes';
 
 import { PartialStdLib } from './generated/partial-stdlib';
