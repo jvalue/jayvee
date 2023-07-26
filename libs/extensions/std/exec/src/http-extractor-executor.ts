@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
 import * as http from 'http';
 import * as https from 'https';
 import * as path from 'path';
@@ -12,18 +13,24 @@ import {
   BinaryFile,
   BlockExecutorClass,
   ExecutionContext,
+  ExecutionErrorDetails,
   FileExtension,
   MimeType,
   None,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
+import { AstNode } from 'langium';
 
 import {
   inferFileExtensionFromContentTypeString,
   inferFileExtensionFromFileExtensionString,
   inferMimeTypeFromContentTypeString,
 } from './file-util';
+import {
+  createBackoffStrategy,
+  isBackoffStrategyHandle,
+} from './util/backoff-strategy';
 
 type HttpGetFunction = typeof http.get;
 
@@ -43,14 +50,53 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
     context: ExecutionContext,
   ): Promise<R.Result<BinaryFile>> {
     const url = context.getPropertyValue('url', PrimitiveValuetypes.Text);
+    const retries = context.getPropertyValue(
+      'retries',
+      PrimitiveValuetypes.Integer,
+    );
+    assert(retries >= 0); // loop executes at least once
+    const retryBackoffMilliseconds = context.getPropertyValue(
+      'retryBackoffMilliseconds',
+      PrimitiveValuetypes.Integer,
+    );
+    const retryBackoffStrategy = context.getPropertyValue(
+      'retryBackoffStrategy',
+      PrimitiveValuetypes.Text,
+    );
+    assert(isBackoffStrategyHandle(retryBackoffStrategy));
+    const backoffStrategy = createBackoffStrategy(
+      retryBackoffStrategy,
+      retryBackoffMilliseconds,
+    );
 
-    const file = await this.fetchRawDataAsFile(url, context);
+    let failure: ExecutionErrorDetails<AstNode> | undefined;
+    for (let attempt = 0; attempt <= retries; ++attempt) {
+      const isLastAttempt = attempt === retries;
+      const file = await this.fetchRawDataAsFile(url, context);
 
-    if (R.isErr(file)) {
-      return file;
+      if (R.isOk(file)) {
+        context.logger.logDebug(`Successfully fetched raw data`);
+        return R.ok(file.right);
+      }
+
+      failure = file.left;
+
+      if (!isLastAttempt) {
+        context.logger.logDebug(failure.message);
+
+        const currentBackoff = backoffStrategy.getBackoffMilliseconds(
+          attempt + 1,
+        );
+        context.logger.logDebug(
+          `Waiting ${currentBackoff}ms before trying again...`,
+        );
+        await new Promise((p) => setTimeout(p, currentBackoff));
+        continue;
+      }
     }
 
-    return R.ok(file.right);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return R.err(failure!);
   }
 
   private fetchRawDataAsFile(
@@ -91,7 +137,6 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
 
         // When all data is downloaded, create file
         response.on('end', () => {
-          context.logger.logDebug(`Successfully fetched raw data`);
           response.headers;
 
           // Infer Mimetype from HTTP-Header, if not inferrable, then default to application/octet-stream
