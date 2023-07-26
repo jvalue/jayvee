@@ -26,6 +26,10 @@ class DecimalValuetypeImpl extends PrimitiveValuetype<number> {
   ): operandValue is number {
     return typeof operandValue === 'number' && Number.isFinite(operandValue);
   }
+
+  override isUserExtendable() {
+    return true;
+  }
 }
 
 // Only export instance to enforce singleton
