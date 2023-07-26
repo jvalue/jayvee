@@ -81,8 +81,7 @@ In the example above, the `url` property of type `text` is defined by the corres
 A `ValueType` is the definition of a data type of the processed data.
 Some `Blocks` use `ValueTypes` to define logic (like filtering or assessing the data type in a data sink).
 We differentiate the following types of `ValueTypes`:
-- `Built-in ValueTypes` come with the basic version of Jayvee.
-  Currently `text`, `decimal`, `integer`, and `boolean` are supported.
+- `Built-in ValueTypes` come with the basic version of Jayvee. See [Built-in Valuetypes](./builtin-valuetypes).
 - `Primitive ValueTypes` can be defined by the user to model domain-specific data types and represent a single value.
   `Constraints` can be added to a `Primitive ValueType` (see [below](#constraints)).
 - `Compound ValueTypes`: UPCOMING.
