@@ -51,6 +51,13 @@ export const PrimitiveValuetypes: {
   Transform: Transform,
 };
 
+export const BuiltinValuetypesLib = {
+  'builtin:///stdlib/builtin-valuetypes.jv': Object.values(PrimitiveValuetypes)
+    .filter((v) => v.isUserExtendable())
+    .map((valueType) => `builtin valuetype ${valueType.getName()};`)
+    .join('\n'),
+};
+
 export function createPrimitiveValuetype(
   builtinValuetype: ValuetypeDefinition,
 ): PrimitiveValuetype | undefined {

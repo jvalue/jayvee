@@ -12,9 +12,7 @@ import {
 import { WorkspaceFolder } from 'vscode-languageserver';
 import { URI } from 'vscode-uri';
 
-import { PrimitiveValuetypes } from '../ast';
-
-import { StdLib } from './generated/stdlib';
+import { StdLib } from './stdlib';
 
 export class JayveeWorkspaceManager extends DefaultWorkspaceManager {
   private documentFactory: LangiumDocumentFactory;
@@ -29,30 +27,10 @@ export class JayveeWorkspaceManager extends DefaultWorkspaceManager {
     collector: (document: LangiumDocument) => void,
   ): Promise<void> {
     await super.loadAdditionalDocuments(folders, collector);
-    this.loadBuiltinValuetypes(collector);
 
     Object.entries(StdLib).forEach(([libName, libCode]) => {
       collector(this.documentFactory.fromString(libCode, URI.parse(libName)));
     });
-  }
-
-  private loadBuiltinValuetypes(
-    collector: (document: LangiumDocument) => void,
-  ) {
-    const builtinValuetypeDefinitions: string[] = [];
-    Object.values(PrimitiveValuetypes)
-      .filter((v) => v.isUserExtendable())
-      .forEach((valueType) => {
-        builtinValuetypeDefinitions.push(
-          `builtin valuetype ${valueType.getName()};`,
-        );
-      });
-
-    const joinedDocument = builtinValuetypeDefinitions.join('\n');
-    const libName = 'builtin:///stdlib/builtin-valuetypes.jv';
-    collector(
-      this.documentFactory.fromString(joinedDocument, URI.parse(libName)),
-    );
   }
 }
 
