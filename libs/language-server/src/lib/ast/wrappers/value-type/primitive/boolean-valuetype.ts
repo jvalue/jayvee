@@ -30,6 +30,13 @@ class BooleanValuetypeImpl extends PrimitiveValuetype<boolean> {
   override isUserExtendable() {
     return true;
   }
+
+  override getUserDoc(): string {
+    return `
+A boolean value.
+Examples: true, false
+`.trimStart();
+  }
 }
 
 // Only export instance to enforce singleton

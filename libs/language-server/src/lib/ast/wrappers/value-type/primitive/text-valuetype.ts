@@ -30,6 +30,13 @@ class TextValuetypeImpl extends PrimitiveValuetype<string> {
   override isUserExtendable() {
     return true;
   }
+
+  override getUserDoc(): string {
+    return `
+A text value. 
+Example: "Hello World"
+`.trimStart();
+  }
 }
 
 // Only export instance to enforce singleton

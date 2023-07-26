@@ -35,6 +35,13 @@ class IntegerValuetypeImpl extends PrimitiveValuetype<number> {
   override isUserExtendable() {
     return true;
   }
+
+  override getUserDoc(): string {
+    return `
+An integer value.
+Example: 3
+`.trimStart();
+  }
 }
 
 // Only export instance to enforce singleton
