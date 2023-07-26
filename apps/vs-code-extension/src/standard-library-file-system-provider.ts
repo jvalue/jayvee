@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { PrimitiveValuetypes, StdLib } from '@jvalue/jayvee-language-server';
+import { StdLib } from '@jvalue/jayvee-language-server';
 import {
   EventEmitter,
   ExtensionContext,
@@ -23,7 +23,6 @@ export class StandardLibraryFileSystemProvider implements FileSystemProvider {
   onDidChangeFile = this.didChangeFile.event;
 
   constructor() {
-    this.registerBuiltinValuetypes();
     this.registerStdLib();
   }
 
@@ -34,26 +33,6 @@ export class StandardLibraryFileSystemProvider implements FileSystemProvider {
         Buffer.from(lib),
       );
     });
-  }
-
-  private registerBuiltinValuetypes() {
-    const builtinValuetypeDefinitions: string[] = [];
-    Object.values(PrimitiveValuetypes)
-      .filter((v) => v.isUserExtendable())
-      .forEach((valueType) => {
-        // TODO: filter the ones we support!
-        builtinValuetypeDefinitions.push(
-          `builtin valuetype ${valueType.getName()};`,
-        );
-      });
-
-    const joinedDocument = builtinValuetypeDefinitions.join('\n');
-    const libName = 'builtin:///stdlib/builtin-valuetypes.jv';
-
-    this.libraries.set(
-      Uri.parse(libName).toString(),
-      Buffer.from(joinedDocument),
-    );
   }
 
   static register(context: ExtensionContext) {
