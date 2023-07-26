@@ -46,7 +46,7 @@ export class ArchiveInterpreterExecutor extends AbstractBlockExecutor<
       'archiveType',
       PrimitiveValuetypes.Text,
     );
-    let fs;
+    let fs: R.Result<R.FileSystem>;
 
     if (archiveType === 'zip') {
       fs = await this.loadZipFileToInMemoryFileSystem(archiveFile, context);
