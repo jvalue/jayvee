@@ -4,6 +4,7 @@
 
 grammar Jayvee
 
+import './blocktype'
 import './terminal'
 import './property'
 import './valuetype'
@@ -16,6 +17,7 @@ entry JayveeModel:
     | valuetypes+=(CustomValuetypeDefinition | BuiltinValuetypeDefinition)
     | constraints+=ConstraintDefinition
     | transforms+=TransformDefinition
+    | blocktypes+=BuiltinBlocktypeDefinition
   )*;
 
 PipelineDefinition:
