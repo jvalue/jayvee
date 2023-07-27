@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { StdLib } from '@jvalue/jayvee-language-server';
+import { getStdLib } from '@jvalue/jayvee-language-server';
 import {
   EventEmitter,
   ExtensionContext,
@@ -23,11 +23,12 @@ export class StandardLibraryFileSystemProvider implements FileSystemProvider {
   onDidChangeFile = this.didChangeFile.event;
 
   constructor() {
+    // TODO: metainf registry is not initialized => cannot load documents
     this.registerStdLib();
   }
 
   private registerStdLib() {
-    Object.entries(StdLib).forEach(([libName, lib]) => {
+    Object.entries(getStdLib()).forEach(([libName, lib]) => {
       this.libraries.set(
         Uri.parse(libName).toString(), // removes slashes if missing authorities, required for matching later on
         Buffer.from(lib),

@@ -20,6 +20,7 @@ import {
   isPropertyBody,
   isTransformDefinition,
 } from '@jvalue/jayvee-language-server';
+import { isReference } from 'langium';
 
 import {
   DebugGranularity,
@@ -128,8 +129,10 @@ export class ExecutionContext {
     assert(!isPipelineDefinition(currentNode));
     assert(!isExpressionConstraintDefinition(currentNode));
     assert(!isTransformDefinition(currentNode));
+    assert(isReference(currentNode.type));
+    assert(currentNode.type.ref !== undefined);
 
-    const metaInf = getOrFailMetaInformation(currentNode.type);
+    const metaInf = getOrFailMetaInformation(currentNode.type.ref);
     const propertySpec = metaInf.getPropertySpecification(propertyName);
     assert(propertySpec !== undefined);
 

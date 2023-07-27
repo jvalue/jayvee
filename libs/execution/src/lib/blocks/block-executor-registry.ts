@@ -20,7 +20,8 @@ export function getRegisteredBlockExecutors(): BlockExecutorClass[] {
 }
 
 export function createBlockExecutor(block: BlockDefinition): BlockExecutor {
-  const blockType = block.type.name;
+  const blockType = block.type.ref?.name;
+  assert(blockType !== undefined);
   const blockExecutor = blockExecutorRegistry.get(blockType);
   assert(
     blockExecutor !== undefined,

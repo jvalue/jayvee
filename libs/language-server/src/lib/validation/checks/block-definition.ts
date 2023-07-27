@@ -6,7 +6,7 @@
  * See https://jvalue.github.io/jayvee/docs/dev/working-with-the-ast for why the following ESLint rule is disabled for this file.
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
-import { assertUnreachable } from 'langium';
+import { assertUnreachable, isReference } from 'langium';
 
 import { BlockDefinition } from '../../ast/generated/ast';
 import {
@@ -21,29 +21,8 @@ export function validateBlockDefinition(
   block: BlockDefinition,
   context: ValidationContext,
 ): void {
-  checkBlockType(block, context);
-  if (context.hasErrorOccurred()) {
-    return;
-  }
-
   checkPipesOfBlock(block, 'input', context);
   checkPipesOfBlock(block, 'output', context);
-}
-
-function checkBlockType(
-  block: BlockDefinition,
-  context: ValidationContext,
-): void {
-  if (block?.type === undefined) {
-    return;
-  }
-  const metaInf = getMetaInformation(block.type);
-  if (metaInf === undefined) {
-    context.accept('error', `Unknown block type '${block?.type?.name ?? ''}'`, {
-      node: block,
-      property: 'type',
-    });
-  }
 }
 
 function checkPipesOfBlock(
@@ -51,7 +30,9 @@ function checkPipesOfBlock(
   whatToCheck: 'input' | 'output',
   context: ValidationContext,
 ): void {
-  const blockMetaInf = getMetaInformation(block?.type);
+  const blockMetaInf = isReference(block.type)
+    ? getMetaInformation(block?.type?.ref)
+    : getMetaInformation(block?.type);
   if (blockMetaInf === undefined) {
     return;
   }

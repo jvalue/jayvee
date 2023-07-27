@@ -32,10 +32,7 @@ PipelineDefinition:
   '}';
 
 BlockDefinition:
-  'block' name=ID 'oftype' type=BlockTypeLiteral body=PropertyBody;
-
-BlockTypeLiteral:
-  name=ID;
+  'block' name=ID 'oftype' type=[BuiltinBlocktypeDefinition] body=PropertyBody;
 
 PipeDefinition:
   SinglePipeDefinition | ChainedPipeDefinition;
