@@ -40,7 +40,7 @@ class IntegerValuetypeImpl extends PrimitiveValuetype<number> {
     return `
 An integer value.
 Example: 3
-`.trimStart();
+`.trim();
   }
 }
 

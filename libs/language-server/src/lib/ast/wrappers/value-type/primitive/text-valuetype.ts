@@ -35,7 +35,7 @@ class TextValuetypeImpl extends PrimitiveValuetype<string> {
     return `
 A text value. 
 Example: "Hello World"
-`.trimStart();
+`.trim();
   }
 }
 
