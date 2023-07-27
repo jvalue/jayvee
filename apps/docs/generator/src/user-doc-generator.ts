@@ -31,10 +31,10 @@ export class UserDocGenerator
       .generationComment()
       .description(
         `
-For an intro to valuetypes, see the [Core Concepts](./core-concepts).
+For an introduction to valuetypes, see the [Core Concepts](./core-concepts).
 Built-in valuetypes come with the basic version of Jayvee.
 They are the basis for more restricted \`Primitive Valuetypes\`
-that fullfil [Constrains](./core-concepts#constraints).`.trim(),
+that fullfil [Constraints](./core-concepts#constraints).`.trim(),
         1,
       )
       .heading('Available built-in valuetypes', 1);
