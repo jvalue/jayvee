@@ -16,6 +16,7 @@ import type { JayveeServices } from '../jayvee-module';
 import { RuntimeParameterProvider } from '../services';
 
 import { validateBlockDefinition } from './checks/block-definition';
+import { validateBlocktypeDefinition } from './checks/blocktype-definition';
 import { validateColumnId } from './checks/column-id';
 import { validateExpressionConstraintDefinition } from './checks/expression-constraint-definition';
 import { validateJayveeModel } from './checks/jayvee-model';
@@ -40,6 +41,7 @@ export class JayveeValidationRegistry extends ValidationRegistry {
     this.runtimeParameterProvider = services.RuntimeParameterProvider;
 
     this.registerJayveeValidationChecks({
+      BuiltinBlocktypeDefinition: validateBlocktypeDefinition,
       BlockDefinition: validateBlockDefinition,
       ColumnId: validateColumnId,
       TypedConstraintDefinition: validateTypedConstraintDefinition,
