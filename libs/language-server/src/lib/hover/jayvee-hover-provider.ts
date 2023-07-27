@@ -2,26 +2,35 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { AstNode, AstNodeHoverProvider, MaybePromise } from 'langium';
+import {
+  AstNode,
+  AstNodeHoverProvider,
+  MaybePromise,
+  isReference,
+} from 'langium';
 import { Hover } from 'vscode-languageserver-protocol';
 
 import {
-  BlockTypeLiteral,
+  BuiltinBlocktypeDefinition,
   ConstraintTypeLiteral,
   PropertyAssignment,
-  isBlockTypeLiteral,
+  isBuiltinBlocktypeDefinition,
   isConstraintTypeLiteral,
   isPropertyAssignment,
 } from '../ast';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
-import { getMetaInformation } from '../meta-information';
+import {
+  ConstraintMetaInformation,
+  getMetaInformation,
+} from '../meta-information';
 
 export class JayveeHoverProvider extends AstNodeHoverProvider {
   override getAstNodeHoverContent(
     astNode: AstNode,
   ): MaybePromise<Hover | undefined> {
     let doc = undefined;
-    if (isBlockTypeLiteral(astNode)) {
+    if (isBuiltinBlocktypeDefinition(astNode)) {
+      // TODO: check if this rather is isReference()
       doc = this.getBlockTypeMarkdownDoc(astNode);
     }
     if (isConstraintTypeLiteral(astNode)) {
@@ -44,7 +53,7 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   }
 
   private getBlockTypeMarkdownDoc(
-    blockType: BlockTypeLiteral,
+    blockType: BuiltinBlocktypeDefinition,
   ): string | undefined {
     const blockMetaInf = getMetaInformation(blockType);
     if (blockMetaInf === undefined) {
@@ -59,7 +68,10 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
     constraintType: ConstraintTypeLiteral,
   ): string | undefined {
     const constraintMetaInf = getMetaInformation(constraintType);
-    if (constraintMetaInf === undefined) {
+    if (
+      constraintMetaInf === undefined ||
+      !(constraintMetaInf instanceof ConstraintMetaInformation) // TODO: check why this had to be changed!
+    ) {
       return;
     }
 
@@ -71,7 +83,10 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
     property: PropertyAssignment,
   ): string | undefined {
     const block = property.$container.$container;
-    const metaInf = getMetaInformation(block.type);
+    const metaInf = isReference(block.type)
+      ? // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        getMetaInformation(block.type?.ref)
+      : getMetaInformation(block.type);
     if (metaInf === undefined) {
       return;
     }

@@ -11,19 +11,19 @@ import {
   DefaultCompletionProvider,
   MaybePromise,
   NextFeature,
+  isReference,
 } from 'langium';
 import { CompletionItemKind } from 'vscode-languageserver';
 
 import {
   BlockDefinition,
-  BlockTypeLiteral,
+  BuiltinBlocktypeDefinition,
   ConstraintDefinition,
   ConstraintTypeLiteral,
   PropertyAssignment,
   PropertyBody,
   ValuetypeReference,
   isBlockDefinition,
-  isBlockTypeLiteral,
   isConstraintDefinition,
   isConstraintTypeLiteral,
   isJayveeModel,
@@ -50,8 +50,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     const astNode = context.node;
     if (astNode !== undefined) {
       const isBlockTypeCompletion =
-        (isBlockDefinition(astNode) || isBlockTypeLiteral(astNode)) &&
-        next.type === BlockTypeLiteral;
+        isBlockDefinition(astNode) && next.type === BuiltinBlocktypeDefinition;
       if (isBlockTypeCompletion) {
         return this.completionForBlockType(acceptor);
       }
@@ -85,6 +84,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
     getRegisteredBlockMetaInformation().forEach((metaInf) => {
+      // TODO: refactor this to use the builtin blocktypes?
       const lspDocBuilder = new LspDocGenerator();
       const markdownDoc = lspDocBuilder.generateBlockTypeDoc(metaInf);
       acceptor({
@@ -146,7 +146,10 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       container = astNode.$container.$container;
     }
 
-    const metaInf = getMetaInformation(container.type);
+    const metaInf = isReference(container.type)
+      ? // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        getMetaInformation(container.type?.ref)
+      : getMetaInformation(container.type);
     if (metaInf === undefined) {
       return;
     }

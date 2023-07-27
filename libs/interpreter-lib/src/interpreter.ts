@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
+
 import {
   ExecutionContext,
   IOTypeImplementation,
@@ -293,8 +295,9 @@ export function logPipelineOverview(
   logger: Logger,
 ) {
   const toString = (block: BlockDefinition, depth = 0): string => {
+    assert(block.type.ref?.name !== undefined);
     const blockString = `${'\t'.repeat(depth)} -> ${block.name} (${
-      block.type.name
+      block.type.ref.name
     })`;
     const childString = collectChildren(block)
       .map((child) => toString(child, depth + 1))
