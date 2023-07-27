@@ -31,10 +31,10 @@ export class UserDocGenerator
       .generationComment()
       .description(
         `
-For an introduction to valuetypes, see the [Core Concepts](./core-concepts).
+For an introduction to valuetypes, see the [Core Concepts](../core-concepts).
 Built-in valuetypes come with the basic version of Jayvee.
-They are the basis for more restricted \`Primitive Valuetypes\`
-that fullfil [Constraints](./core-concepts#constraints).`.trim(),
+They are the basis for more restricted [Primitive Valuetypes](./primitive-valuetypes)
+that fullfil [Constraints](./primitive-valuetypes#constraints).`.trim(),
         1,
       )
       .heading('Available built-in valuetypes', 1);
@@ -71,6 +71,7 @@ block ExampleTableInterpreter oftype TableInterpreter {
 
     return builder.build();
   }
+
   generateBlockTypeDoc(metaInf: BlockMetaInformation): string {
     const builder = new UserDocMarkdownBuilder()
       .docTitle(metaInf.type)

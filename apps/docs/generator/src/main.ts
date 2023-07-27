@@ -72,7 +72,7 @@ function generateConstraintTypeDocs(rootPath: string): void {
 }
 
 function generateValueTypeDocs(rootPath: string): void {
-  const docsPath = join(rootPath, 'apps', 'docs', 'docs', 'user');
+  const docsPath = join(rootPath, 'apps', 'docs', 'docs', 'user', 'valuetypes');
   const userDocBuilder = new UserDocGenerator();
   const valueTypeDoc =
     userDocBuilder.generateValueTypesDoc(PrimitiveValuetypes);
