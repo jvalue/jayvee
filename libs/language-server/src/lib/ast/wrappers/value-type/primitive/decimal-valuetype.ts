@@ -35,7 +35,7 @@ class DecimalValuetypeImpl extends PrimitiveValuetype<number> {
     return `
 A decimal value.
 Example: 3.14
-`.trimStart();
+`.trim();
   }
 }
 

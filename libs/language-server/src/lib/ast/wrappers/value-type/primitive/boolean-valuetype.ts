@@ -35,7 +35,7 @@ class BooleanValuetypeImpl extends PrimitiveValuetype<boolean> {
     return `
 A boolean value.
 Examples: true, false
-`.trimStart();
+`.trim();
   }
 }
 
