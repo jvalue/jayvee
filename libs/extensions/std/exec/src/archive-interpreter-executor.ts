@@ -76,9 +76,17 @@ export class ArchiveInterpreterExecutor extends AbstractBlockExecutor<
 
       const extNameArchive = path.extname(archiveFile.name);
 
-      this.createBinaryAndPutFile(fs, archiveFile.name, archivedObject, {
-        extNameArchive: extNameArchive,
-      });
+      const file = this.createFileFromArchive(
+        archiveFile.name,
+        archivedObject,
+        extNameArchive,
+      );
+
+      const addedFile = fs.putFile(
+        InMemoryFileSystem.getPathSeparator() + file.name,
+        file,
+      );
+      assert(addedFile != null);
 
       return R.ok(fs);
     } catch (error: unknown) {
@@ -100,9 +108,14 @@ export class ArchiveInterpreterExecutor extends AbstractBlockExecutor<
       )) {
         if (!archivedObject.dir) {
           const content = await archivedObject.async('arraybuffer');
-          this.createBinaryAndPutFile(fs, archivedObject.name, content, {
-            relPath: relPath,
-          });
+          
+          const file = this.createFileFromArchive(archivedObject.name, content);
+
+          const addedFile = fs.putFile(
+            InMemoryFileSystem.getPathSeparator() + relPath,
+            file,
+          );
+          assert(addedFile != null);
         }
       }
       return R.ok(fs);
@@ -111,13 +124,12 @@ export class ArchiveInterpreterExecutor extends AbstractBlockExecutor<
     }
   }
 
-  private createBinaryAndPutFile(
-    fs: InMemoryFileSystem,
+  private createFileFromArchive(
     archiveFileName: string,
     content: ArrayBuffer,
-    options?: { extNameArchive?: string; relPath?: string },
+    extNameArchive?: string,
   ) {
-    const fileName = path.basename(archiveFileName, options?.extNameArchive);
+    const fileName = path.basename(archiveFileName, extNameArchive);
     const extName = path.extname(fileName);
 
     const mimeType =
@@ -125,14 +137,8 @@ export class ArchiveInterpreterExecutor extends AbstractBlockExecutor<
       MimeType.APPLICATION_OCTET_STREAM;
     const fileExtension =
       inferFileExtensionFromFileExtensionString(extName) || FileExtension.NONE;
-    const file = new BinaryFile(fileName, fileExtension, mimeType, content);
 
-    const addedFile = fs.putFile(
-      InMemoryFileSystem.getPathSeparator() +
-        String(options?.relPath ?? fileName),
-      file,
-    );
-    assert(addedFile != null);
+    return new BinaryFile(fileName, fileExtension, mimeType, content);
   }
 
   private generateErrorObject(context: ExecutionContext, error: unknown) {
