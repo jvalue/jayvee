@@ -2,6 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-valuetype ValueType<> oftype text {
+valuetype ValueType <S, T, R, Q, P> oftype text {
     constraints: [];
-};
+}
+
+valuetype Ref oftype ValueType<text, integer, decimal, text, text> {
+    constraints: [];
+}

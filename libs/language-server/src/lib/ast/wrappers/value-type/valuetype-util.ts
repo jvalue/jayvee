@@ -31,7 +31,7 @@ export function createValuetype(
     return createValuetype(valuetype);
   } else if (isValuetypeDefinition(identifier)) {
     if (identifier.isBuiltin) {
-      if (identifier.name === 'Collection' && identifier.isGeneric) {
+      if (identifier.name === 'Collection') {
         return undefined; // TODO: implement? We don't have a valuetype for that!
       }
       return createPrimitiveValuetype(identifier);
