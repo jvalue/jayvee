@@ -14,10 +14,7 @@ import {
   isPropertyAssignment,
 } from '../ast';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
-import {
-  ConstraintMetaInformation,
-  getMetaInformation,
-} from '../meta-information';
+import { getMetaInformation } from '../meta-information';
 
 export class JayveeHoverProvider extends AstNodeHoverProvider {
   override getAstNodeHoverContent(
@@ -25,7 +22,6 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   ): MaybePromise<Hover | undefined> {
     let doc = undefined;
     if (isBuiltinBlocktypeDefinition(astNode)) {
-      // TODO: check if this rather is isReference()
       doc = this.getBlockTypeMarkdownDoc(astNode);
     }
     if (isConstraintTypeLiteral(astNode)) {
@@ -63,10 +59,7 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
     constraintType: ConstraintTypeLiteral,
   ): string | undefined {
     const constraintMetaInf = getMetaInformation(constraintType);
-    if (
-      constraintMetaInf === undefined ||
-      !(constraintMetaInf instanceof ConstraintMetaInformation) // TODO: check why this had to be changed!
-    ) {
+    if (constraintMetaInf === undefined) {
       return;
     }
 

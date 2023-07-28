@@ -82,7 +82,6 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
     getRegisteredBlockMetaInformation().forEach((metaInf) => {
-      // TODO: refactor this to use the builtin blocktypes?
       const lspDocBuilder = new LspDocGenerator();
       const markdownDoc = lspDocBuilder.generateBlockTypeDoc(metaInf);
       acceptor({
