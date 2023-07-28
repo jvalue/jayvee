@@ -56,22 +56,29 @@ function parseMetaInfToJayvee(
   metaInf: BlockMetaInformation,
 ): string {
   return `builtin blocktype ${name} {
-  ${
-    metaInf.inputType !== IOType.NONE
-      ? `input default oftype ${metaInf.inputType};`
-      : ''
-  };
-  ${
-    metaInf.outputType !== IOType.NONE
-      ? `output default oftype ${metaInf.outputType};`
-      : ''
-  };
-  
-  ${Object.entries(metaInf.getPropertySpecifications())
-    .map(([propName, propSpecification]) => {
-      return `property ${propName} oftype ${propSpecification.type.getName()};`;
-    })
-    .join('\n')}
+${praseBuiltinBlocktypeBody(metaInf)}
 }`;
   // TODO: add comments to the created blocktype definition
+}
+
+function praseBuiltinBlocktypeBody(metaInf: BlockMetaInformation): string {
+  const bodyLines: string[] = [];
+
+  if (metaInf.inputType !== IOType.NONE) {
+    bodyLines.push(`\tinput default oftype ${metaInf.inputType};`);
+  }
+  if (metaInf.outputType !== IOType.NONE) {
+    bodyLines.push(`\toutput default oftype ${metaInf.outputType};`);
+  }
+  bodyLines.push('\t');
+
+  Object.entries(metaInf.getPropertySpecifications()).forEach(
+    ([propName, propSpecification]) => {
+      bodyLines.push(
+        `\tproperty ${propName} oftype ${propSpecification.type.getName()};`,
+      );
+    },
+  );
+
+  return bodyLines.join('\n');
 }
