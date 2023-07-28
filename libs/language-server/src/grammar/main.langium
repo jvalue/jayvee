@@ -10,6 +10,7 @@ import './property'
 import './valuetype'
 import './constraint'
 import './transform'
+import './iotype'
 
 entry JayveeModel:
   (
@@ -18,6 +19,7 @@ entry JayveeModel:
     | constraints+=ConstraintDefinition
     | transforms+=TransformDefinition
     | blocktypes+=BuiltinBlocktypeDefinition
+    | iotypes+=IotypeDefinition
   )*;
 
 PipelineDefinition:
