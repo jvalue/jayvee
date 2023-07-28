@@ -16,7 +16,6 @@ import { CompletionItemKind } from 'vscode-languageserver';
 
 import {
   BlockDefinition,
-  BuiltinBlocktypeDefinition,
   ConstraintDefinition,
   ConstraintTypeLiteral,
   PropertyAssignment,
@@ -49,7 +48,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     const astNode = context.node;
     if (astNode !== undefined) {
       const isBlockTypeCompletion =
-        isBlockDefinition(astNode) && next.type === BuiltinBlocktypeDefinition;
+        isBlockDefinition(astNode) && next.property === 'type';
       if (isBlockTypeCompletion) {
         return this.completionForBlockType(acceptor);
       }
