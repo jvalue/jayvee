@@ -23,6 +23,12 @@ builtin valuetype ${valueType.getName()};`,
     .join('\n\n'),
 };
 
+export const IOtypesLib = {
+  'builtin:///stdlib/iotypes.jv': Object.values(IOType)
+    .map((iotype) => `builtin iotype ${iotype};`)
+    .join('\n\n'),
+};
+
 // Is a method since metaInformationRegistry might not be initialized when this as variable.
 export function getBulitinBlocktypesLib() {
   return {
@@ -46,6 +52,7 @@ export function getStdLib() {
   return {
     ...PartialStdLib,
     ...BuiltinValuetypesLib,
+    ...IOtypesLib,
     ...getBulitinBlocktypesLib(),
   };
 }
@@ -76,12 +83,8 @@ function parseMetaInfToJayvee(
 function praseBuiltinBlocktypeBody(metaInf: BlockMetaInformation): string {
   const bodyLines: string[] = [];
 
-  if (metaInf.inputType !== IOType.NONE) {
-    bodyLines.push(`\tinput default oftype ${metaInf.inputType};`);
-  }
-  if (metaInf.outputType !== IOType.NONE) {
-    bodyLines.push(`\toutput default oftype ${metaInf.outputType};`);
-  }
+  bodyLines.push(`\tinput default oftype ${metaInf.inputType};`);
+  bodyLines.push(`\toutput default oftype ${metaInf.outputType};`);
   bodyLines.push('\t');
 
   Object.entries(metaInf.getPropertySpecifications()).forEach(

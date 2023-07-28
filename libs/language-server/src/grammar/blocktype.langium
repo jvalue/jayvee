@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import './expression'
+import './iotype'
 import './terminal'
 import './valuetype'
 
@@ -12,10 +13,10 @@ BuiltinBlocktypeDefinition:
 '}';
 
 BlocktypeInput:
-    'input' name=ID 'oftype' iotype=[ValuetypeDefinition] ';';
+    'input' name=ID 'oftype' iotype=[IotypeDefinition] ';';
 
 BlocktypeOutput:
-    'output' name=ID 'oftype' iotype=[ValuetypeDefinition] ';';
+    'output' name=ID 'oftype' iotype=[IotypeDefinition] ';';
 
 BlocktypeProperty:
     'property' name=ID 'oftype' valuetype=[ValuetypeDefinition] (':' defaultValue=Expression)? ';';
