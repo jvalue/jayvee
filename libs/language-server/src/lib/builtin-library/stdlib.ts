@@ -55,10 +55,23 @@ function parseMetaInfToJayvee(
   name: string,
   metaInf: BlockMetaInformation,
 ): string {
-  return `builtin blocktype ${name} {
-${praseBuiltinBlocktypeBody(metaInf)}
-}`;
-  // TODO: add comments to the created blocktype definition
+  const lines: string[] = [];
+  if (metaInf.docs.description !== undefined) {
+    lines.push(parseAsComment(metaInf.docs.description));
+  }
+  if (metaInf.docs.examples !== undefined) {
+    metaInf.docs.examples.forEach((example, i) => {
+      lines.push('//');
+      lines.push(`// Example ${i + 1}: ${example.description}`);
+      lines.push(parseAsComment(example.code));
+    });
+  }
+
+  lines.push(`builtin blocktype ${name} {`);
+  lines.push(praseBuiltinBlocktypeBody(metaInf));
+  lines.push('}');
+
+  return lines.join('\n');
 }
 
 function praseBuiltinBlocktypeBody(metaInf: BlockMetaInformation): string {
@@ -74,6 +87,10 @@ function praseBuiltinBlocktypeBody(metaInf: BlockMetaInformation): string {
 
   Object.entries(metaInf.getPropertySpecifications()).forEach(
     ([propName, propSpecification]) => {
+      const propDoc = propSpecification.docs?.description;
+      if (propDoc !== undefined) {
+        bodyLines.push(parseAsComment(propDoc, 1));
+      }
       bodyLines.push(
         `\tproperty ${propName} oftype ${propSpecification.type.getName()};`,
       );
@@ -81,4 +98,12 @@ function praseBuiltinBlocktypeBody(metaInf: BlockMetaInformation): string {
   );
 
   return bodyLines.join('\n');
+}
+
+function parseAsComment(text: string, indents = 0) {
+  return text
+    .split('\n')
+    .map((l) => `// ${l}`)
+    .map((l) => '\t'.repeat(indents) + l)
+    .join('\n');
 }
