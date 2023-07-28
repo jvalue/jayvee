@@ -7,15 +7,11 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { assertUnreachable } from 'langium';
-
 import { EvaluationContext } from '../../ast/expressions/evaluation';
 import {
   TransformBody,
   TransformPortDefinition,
-  isPrimitiveValuetypeKeywordLiteral,
   isTransformPortDefinition,
-  isValuetypeDefinitionReference,
 } from '../../ast/generated/ast';
 import { ValidationContext } from '../validation-context';
 import { checkUniqueNames } from '../validation-util';
@@ -145,15 +141,10 @@ function checkAreInputsUsed(
 function isOutputPortComplete(
   portDefinition: TransformPortDefinition,
 ): boolean {
-  const valueType = portDefinition?.valueType;
+  const valueType = portDefinition?.valueType?.reference?.ref;
   if (valueType === undefined) {
     return false;
   }
 
-  if (isPrimitiveValuetypeKeywordLiteral(valueType)) {
-    return valueType?.keyword !== undefined;
-  } else if (isValuetypeDefinitionReference(valueType)) {
-    return valueType?.reference?.ref?.name !== undefined;
-  }
-  return assertUnreachable(valueType);
+  return valueType?.name !== undefined;
 }

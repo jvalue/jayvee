@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
-import { PrimitiveValuetypeKeyword } from '../../../generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { Valuetype, ValuetypeVisitor } from '../valuetype';
 
@@ -23,7 +22,7 @@ class IntegerValuetypeImpl extends PrimitiveValuetype<number> {
     return true;
   }
 
-  override getName(): PrimitiveValuetypeKeyword {
+  override getName(): 'integer' {
     return 'integer';
   }
 
@@ -31,6 +30,17 @@ class IntegerValuetypeImpl extends PrimitiveValuetype<number> {
     operandValue: InternalValueRepresentation | undefined,
   ): operandValue is number {
     return typeof operandValue === 'number' && Number.isInteger(operandValue);
+  }
+
+  override isUserExtendable() {
+    return true;
+  }
+
+  override getUserDoc(): string {
+    return `
+An integer value.
+Example: 3
+`.trim();
   }
 }
 

@@ -7,9 +7,7 @@ import { assertUnreachable } from 'langium';
 import {
   ValuetypeDefinition,
   ValuetypeReference,
-  isPrimitiveValuetypeKeywordLiteral,
   isValuetypeDefinition,
-  isValuetypeDefinitionReference,
   isValuetypeReference,
 } from '../../generated/ast';
 
@@ -28,19 +26,13 @@ export function createValuetype(
   if (identifier === undefined) {
     return undefined;
   } else if (isValuetypeReference(identifier)) {
-    if (isPrimitiveValuetypeKeywordLiteral(identifier)) {
-      return createPrimitiveValuetype(identifier);
-    } else if (isValuetypeDefinitionReference(identifier)) {
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      const referenced = identifier?.reference?.ref;
-      if (referenced === undefined) {
-        return undefined;
-      }
-
-      return new AtomicValuetype(referenced);
-    }
-    assertUnreachable(identifier);
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const valuetype = identifier?.reference?.ref;
+    return createValuetype(valuetype);
   } else if (isValuetypeDefinition(identifier)) {
+    if (identifier.isBuiltin) {
+      return createPrimitiveValuetype(identifier);
+    }
     return new AtomicValuetype(identifier);
   }
   assertUnreachable(identifier);

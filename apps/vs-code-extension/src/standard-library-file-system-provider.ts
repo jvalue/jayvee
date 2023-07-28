@@ -23,6 +23,10 @@ export class StandardLibraryFileSystemProvider implements FileSystemProvider {
   onDidChangeFile = this.didChangeFile.event;
 
   constructor() {
+    this.registerStdLib();
+  }
+
+  private registerStdLib() {
     Object.entries(StdLib).forEach(([libName, lib]) => {
       this.libraries.set(
         Uri.parse(libName).toString(), // removes slashes if missing authorities, required for matching later on
