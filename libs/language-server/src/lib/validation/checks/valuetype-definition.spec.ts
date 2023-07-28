@@ -105,7 +105,7 @@ describe('Validation of ValuetypeDefinition', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
-      `The value needs to be of type collection<constraint> but is of type collection<boolean>`,
+      `The value needs to be of type Collection<Constraint> but is of type Collection<boolean>`,
       expect.any(Object),
     );
   });
