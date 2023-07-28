@@ -108,7 +108,7 @@ export class ArchiveInterpreterExecutor extends AbstractBlockExecutor<
       )) {
         if (!archivedObject.dir) {
           const content = await archivedObject.async('arraybuffer');
-          
+
           const file = this.createFileFromArchive(archivedObject.name, content);
 
           const addedFile = fs.putFile(
