@@ -178,7 +178,7 @@ function checkPropertyDefaultValuesHasCorrectType(
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  const expectedValuetype = createValuetype(property.valuetype?.ref);
+  const expectedValuetype = createValuetype(property.valuetype?.reference?.ref);
   assert(expectedValuetype !== undefined);
 
   if (!expectedValuetype.isInternalValueRepresentation(evaluatedExpression)) {

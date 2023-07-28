@@ -51,4 +51,25 @@ describe('Parsing of ValuetypeDefinition', () => {
       "Expecting token of type ';' but found `{`.",
     );
   });
+
+  it('should diagnose error on empty generic', async () => {
+    const text = readJvTestAsset(
+      'valuetype-definition/invalid-missing-generic.jv',
+    );
+
+    const document = await parse(text);
+    expect(document.parseResult.parserErrors.length).toBeGreaterThanOrEqual(1);
+    expect(document.parseResult.parserErrors[0]?.message).toBe(
+      "Expecting token of type 'ID' but found `>`.",
+    );
+  });
+
+  it('should diagnose no error on generic', async () => {
+    const text = readJvTestAsset(
+      'valuetype-definition/valid-builtin-valuetype-generic.jv',
+    );
+
+    const document = await parse(text);
+    expect(document.parseResult.parserErrors.length).toBe(0);
+  });
 });
