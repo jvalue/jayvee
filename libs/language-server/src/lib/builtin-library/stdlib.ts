@@ -29,10 +29,16 @@ export function getBulitinBlocktypesLib() {
   return {
     'builtin:///stdlib/builtin-blocktypes.jv': metaInformationRegistry
       .getAllEntries()
-      .filter((entry) => entry.value instanceof BlockMetaInformation)
-      .map((entry) =>
-        parseMetaInfToJayvee(entry.key, entry.value as BlockMetaInformation),
-      ) // TODO: make this cleaner without a cast!
+      .reduce(
+        (filtered: { key: string; value: BlockMetaInformation }[], entry) => {
+          if (entry.value instanceof BlockMetaInformation) {
+            filtered.push({ key: entry.key, value: entry.value });
+          }
+          return filtered;
+        },
+        [],
+      )
+      .map((entry) => parseMetaInfToJayvee(entry.key, entry.value))
       .join('\n\n'),
   };
 }
