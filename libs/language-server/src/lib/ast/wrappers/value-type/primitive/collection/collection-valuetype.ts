@@ -26,7 +26,7 @@ export class CollectionValuetype<
   }
 
   override getName(): string {
-    return `collection<${this.elementType.getName()}>`;
+    return `Collection<${this.elementType.getName()}>`;
   }
 
   override equals(target: Valuetype): boolean {
