@@ -7,8 +7,6 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { isReference } from 'langium';
-
 import { EvaluationContext } from '../../ast/expressions/evaluation';
 import { PropertyAssignment, PropertyBody } from '../../ast/generated/ast';
 import { MetaInformation } from '../../meta-information/meta-inf';
@@ -61,9 +59,7 @@ function inferMetaInformation(
   propertyBody: PropertyBody,
 ): MetaInformation | undefined {
   const type = propertyBody.$container?.type;
-  return isReference(type)
-    ? getMetaInformation(type?.ref)
-    : getMetaInformation(type);
+  return getMetaInformation(type);
 }
 
 function checkPropertyCompleteness(

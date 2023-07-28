@@ -7,8 +7,6 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { isReference } from 'langium';
-
 import { PipeDefinition } from '../../ast/generated/ast';
 import { createSemanticPipes } from '../../ast/wrappers/pipe-wrapper';
 import { getMetaInformation } from '../../meta-information/meta-inf-registry';
@@ -30,13 +28,9 @@ function checkBlockCompatibility(
     const fromBlockType = semanticPipe.from?.type;
     const toBlockType = semanticPipe.to?.type;
 
-    const fromBlockMetaInf = isReference(fromBlockType)
-      ? getMetaInformation(fromBlockType.ref)
-      : getMetaInformation(fromBlockType);
+    const fromBlockMetaInf = getMetaInformation(fromBlockType);
 
-    const toBlockMetaInf = isReference(toBlockType)
-      ? getMetaInformation(toBlockType.ref)
-      : getMetaInformation(toBlockType);
+    const toBlockMetaInf = getMetaInformation(toBlockType);
 
     if (fromBlockMetaInf === undefined || toBlockMetaInf === undefined) {
       continue;

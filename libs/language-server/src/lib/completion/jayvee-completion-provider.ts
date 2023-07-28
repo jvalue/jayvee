@@ -11,7 +11,6 @@ import {
   DefaultCompletionProvider,
   MaybePromise,
   NextFeature,
-  isReference,
 } from 'langium';
 import { CompletionItemKind } from 'vscode-languageserver';
 
@@ -146,10 +145,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       container = astNode.$container.$container;
     }
 
-    const metaInf = isReference(container.type)
-      ? // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        getMetaInformation(container.type?.ref)
-      : getMetaInformation(container.type);
+    const metaInf = getMetaInformation(container.type);
     if (metaInf === undefined) {
       return;
     }

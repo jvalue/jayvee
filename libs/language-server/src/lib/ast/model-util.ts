@@ -4,7 +4,7 @@
 
 import { strict as assert } from 'assert';
 
-import { AstNode, assertUnreachable, isReference } from 'langium';
+import { AstNode, assertUnreachable } from 'langium';
 
 // eslint-disable-next-line import/no-cycle
 import { getMetaInformation } from '../meta-information/meta-inf-registry';
@@ -25,10 +25,7 @@ export function collectStartingBlocks(
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const blocks = pipeline?.blocks ?? [];
   for (const block of blocks) {
-    const blockMetaInf = isReference(block.type)
-      ? // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        getMetaInformation(block.type?.ref)
-      : getMetaInformation(block.type);
+    const blockMetaInf = getMetaInformation(block.type);
     if (blockMetaInf === undefined) {
       continue;
     }

@@ -2,12 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  AstNode,
-  AstNodeHoverProvider,
-  MaybePromise,
-  isReference,
-} from 'langium';
+import { AstNode, AstNodeHoverProvider, MaybePromise } from 'langium';
 import { Hover } from 'vscode-languageserver-protocol';
 
 import {
@@ -83,10 +78,7 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
     property: PropertyAssignment,
   ): string | undefined {
     const block = property.$container.$container;
-    const metaInf = isReference(block.type)
-      ? // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        getMetaInformation(block.type?.ref)
-      : getMetaInformation(block.type);
+    const metaInf = getMetaInformation(block.type);
     if (metaInf === undefined) {
       return;
     }
