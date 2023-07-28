@@ -11,17 +11,24 @@ import {
 
 import { PartialStdLib } from './generated/partial-stdlib';
 
-export const BuiltinValuetypesLib = {
-  'builtin:///stdlib/builtin-valuetypes.jv': Object.values(PrimitiveValuetypes)
-    .map(
-      (valueType) =>
-        `${(valueType.getUserDoc()?.trim().split('\n') ?? [])
-          .map((t) => '// ' + t)
-          .join('\n')}
+export function getBuiltinValuetypesLib() {
+  const primitiveValuetypes = Object.values(PrimitiveValuetypes).map(
+    (valueType) =>
+      `${(valueType.getUserDoc()?.trim().split('\n') ?? [])
+        .map((t) => '// ' + t)
+        .join('\n')}
 builtin valuetype ${valueType.getName()};`,
-    )
-    .join('\n\n'),
-};
+  );
+
+  const collectionValuetype = `builtin valuetype Collection<ElementType>;`;
+
+  return {
+    'builtin:///stdlib/builtin-valuetypes.jv': [
+      ...primitiveValuetypes,
+      collectionValuetype,
+    ].join('\n\n'),
+  };
+}
 
 export const IOtypesLib = {
   'builtin:///stdlib/iotypes.jv': Object.values(IOType)
@@ -51,7 +58,7 @@ export function getBulitinBlocktypesLib() {
 export function getStdLib() {
   return {
     ...PartialStdLib,
-    ...BuiltinValuetypesLib,
+    ...getBuiltinValuetypesLib(),
     ...IOtypesLib,
     ...getBulitinBlocktypesLib(),
   };

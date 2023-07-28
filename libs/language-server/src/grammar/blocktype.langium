@@ -19,4 +19,4 @@ BlocktypeOutput:
     'output' name=ID 'oftype' iotype=[IotypeDefinition] ';';
 
 BlocktypeProperty:
-    'property' name=ID 'oftype' valuetype=[ValuetypeDefinition] (':' defaultValue=Expression)? ';';
+    'property' name=ID 'oftype' valuetype=ValuetypeReference (':' defaultValue=Expression)? ';';
