@@ -130,9 +130,8 @@ export class ExecutionContext {
     assert(!isExpressionConstraintDefinition(currentNode));
     assert(!isTransformDefinition(currentNode));
     assert(isReference(currentNode.type));
-    assert(currentNode.type.ref !== undefined);
 
-    const metaInf = getOrFailMetaInformation(currentNode.type.ref);
+    const metaInf = getOrFailMetaInformation(currentNode.type);
     const propertySpec = metaInf.getPropertySpecification(propertyName);
     assert(propertySpec !== undefined);
 

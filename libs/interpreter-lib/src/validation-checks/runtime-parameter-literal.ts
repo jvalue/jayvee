@@ -11,7 +11,7 @@ import {
   ValidationContext,
   getMetaInformation,
 } from '@jvalue/jayvee-language-server';
-import { Reference, isReference } from 'langium';
+import { Reference } from 'langium';
 
 export function validateRuntimeParameterLiteral(
   runtimeParameter: RuntimeParameterLiteral,
@@ -61,7 +61,7 @@ function checkRuntimeParameterValueParsing(
   evaluationContext: EvaluationContext,
 ) {
   const enclosingPropertyBody = getEnclosingPropertyBody(runtimeParameter);
-  const typeLiteral:
+  const type:
     | Reference<BuiltinBlocktypeDefinition>
     | ConstraintTypeLiteral
     | undefined =
@@ -75,9 +75,7 @@ function checkRuntimeParameterValueParsing(
     return;
   }
 
-  const metaInf = getMetaInformation(
-    isReference(typeLiteral) ? typeLiteral.ref : typeLiteral,
-  );
+  const metaInf = getMetaInformation(type);
   const propertySpec = metaInf?.getPropertySpecification(propertyName);
   if (propertySpec === undefined) {
     return;
