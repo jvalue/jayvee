@@ -9,10 +9,6 @@ import { ValuetypeDefinition } from '../../../generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { Boolean, BooleanValuetype } from './boolean-valuetype';
 import { CellRange, CellRangeValuetype } from './cell-range-valuetype';
-import {
-  EmptyCollection,
-  EmptyCollectionValuetype,
-} from './collection/empty-collection-valuetype';
 import { Constraint, ConstraintValuetype } from './constraint-valuetype';
 import { Decimal, DecimalValuetype } from './decimal-valuetype';
 import { Integer, IntegerValuetype } from './integer-valuetype';
@@ -34,7 +30,6 @@ export const PrimitiveValuetypes: {
   CellRange: CellRangeValuetype;
   Constraint: ConstraintValuetype;
   ValuetypeAssignment: ValuetypeAssignmentValuetype;
-  EmptyCollection: EmptyCollectionValuetype;
   Transform: TransformValuetype;
 } = {
   Boolean: Boolean,
@@ -47,7 +42,6 @@ export const PrimitiveValuetypes: {
   Constraint: Constraint,
   ValuetypeAssignment: ValuetypeAssignment,
 
-  EmptyCollection: EmptyCollection,
   Transform: Transform,
 };
 

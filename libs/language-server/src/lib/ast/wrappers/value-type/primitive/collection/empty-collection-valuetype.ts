@@ -21,7 +21,7 @@ class EmptyCollectionValuetypeImpl extends AbstractCollectionValuetype<undefined
   }
 
   override getName(): string {
-    return `collection<>`;
+    return `Collection`;
   }
 
   override isInternalValueRepresentation(

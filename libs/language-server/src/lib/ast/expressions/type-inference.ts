@@ -41,6 +41,7 @@ import {
   isAtomicValuetype,
   isPrimitiveValuetype,
 } from '../wrappers';
+import { EmptyCollection } from '../wrappers/value-type/primitive/collection/empty-collection-valuetype';
 import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-valuetypes';
 import { type Valuetype } from '../wrappers/value-type/valuetype';
 import { createValuetype } from '../wrappers/value-type/valuetype-util';
@@ -144,7 +145,7 @@ function inferCollectionType(
   const stacks = elementValuetypes.map(getValuetypeHierarchyStack);
 
   if (stacks.length === 0) {
-    return PrimitiveValuetypes.EmptyCollection;
+    return EmptyCollection;
   }
   if (stacks.length === 1) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
