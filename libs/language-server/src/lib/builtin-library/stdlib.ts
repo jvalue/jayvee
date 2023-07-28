@@ -13,7 +13,6 @@ import { PartialStdLib } from './generated/partial-stdlib';
 
 export const BuiltinValuetypesLib = {
   'builtin:///stdlib/builtin-valuetypes.jv': Object.values(PrimitiveValuetypes)
-    .filter((v) => v.isUserExtendable())
     .map(
       (valueType) =>
         `${(valueType.getUserDoc()?.trim().split('\n') ?? [])

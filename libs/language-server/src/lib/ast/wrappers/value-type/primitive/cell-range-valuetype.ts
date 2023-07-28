@@ -18,8 +18,8 @@ class CellRangeValuetypeImpl extends PrimitiveValuetype<CellRangeWrapper> {
     return false;
   }
 
-  override getName(): 'cellRange' {
-    return 'cellRange';
+  override getName(): 'CellRange' {
+    return 'CellRange';
   }
 
   override isInternalValueRepresentation(

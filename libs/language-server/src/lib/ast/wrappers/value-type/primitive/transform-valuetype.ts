@@ -21,8 +21,8 @@ class TransformValuetypeImpl extends PrimitiveValuetype<TransformDefinition> {
     return false;
   }
 
-  override getName(): 'transform' {
-    return 'transform';
+  override getName(): 'Transform' {
+    return 'Transform';
   }
 
   override isInternalValueRepresentation(
