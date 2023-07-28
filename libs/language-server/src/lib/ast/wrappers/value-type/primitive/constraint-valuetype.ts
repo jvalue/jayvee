@@ -21,8 +21,8 @@ class ConstraintValuetypeImpl extends PrimitiveValuetype<ConstraintDefinition> {
     return false;
   }
 
-  override getName(): 'constraint' {
-    return 'constraint';
+  override getName(): 'Constraint' {
+    return 'Constraint';
   }
 
   override isInternalValueRepresentation(

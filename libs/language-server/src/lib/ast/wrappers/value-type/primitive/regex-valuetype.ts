@@ -17,8 +17,8 @@ class RegexValuetypeImpl extends PrimitiveValuetype<RegExp> {
     return false;
   }
 
-  override getName(): 'regex' {
-    return 'regex';
+  override getName(): 'Regex' {
+    return 'Regex';
   }
 
   override isInternalValueRepresentation(

@@ -31,6 +31,7 @@ export abstract class PrimitiveValuetype<
   isUserExtendable(): boolean {
     return false;
   }
+  // TODO: write validation and tests for this in valuetype validation
 
   /**
    * The user documentation for the value type.

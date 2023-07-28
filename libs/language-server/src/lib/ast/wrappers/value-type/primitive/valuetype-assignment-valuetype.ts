@@ -21,8 +21,8 @@ class ValuetypeAssignmentValuetypeImpl extends PrimitiveValuetype<AstValuetypeAs
     return false;
   }
 
-  override getName(): 'valuetypeAssignment' {
-    return 'valuetypeAssignment';
+  override getName(): 'ValuetypeAssignment' {
+    return 'ValuetypeAssignment';
   }
 
   override isInternalValueRepresentation(

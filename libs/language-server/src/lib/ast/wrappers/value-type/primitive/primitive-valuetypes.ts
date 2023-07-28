@@ -61,18 +61,18 @@ export function createPrimitiveValuetype(
     return undefined;
   }
 
-  switch (name) {
-    case 'boolean':
-      return Boolean;
-    case 'decimal':
-      return Decimal;
-    case 'integer':
-      return Integer;
-    case 'text':
-      return Text;
-    default:
-      throw new Error(
-        `Found no PrimitiveValuetype for builtin valuetype "${name}"`,
-      );
+  const matchingPrimitives = Object.values(PrimitiveValuetypes).filter(
+    (valuetype) => valuetype.getName() === name,
+  );
+  if (matchingPrimitives.length === 0) {
+    throw new Error(
+      `Found no PrimitiveValuetype for builtin valuetype "${name}"`,
+    );
   }
+  if (matchingPrimitives.length > 1) {
+    throw new Error(
+      `Found multiple ambiguous PrimitiveValuetype for builtin valuetype "${name}"`,
+    );
+  }
+  return matchingPrimitives[0];
 }
