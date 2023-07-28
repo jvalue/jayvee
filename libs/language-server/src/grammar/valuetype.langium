@@ -7,14 +7,13 @@ import './terminal'
 
 BuiltinValuetypeDefinition infers ValuetypeDefinition:
   isBuiltin?='builtin' 'valuetype' name=ID 
-    (isGeneric?='<' 
-      genericNames+=ID 
-      (',' generics+=ID)* 
-    '>')? 
+    (genericDefinition=ValuetypeGenericsDefinition)?
   ';';
 
 CustomValuetypeDefinition infers ValuetypeDefinition:
-  'valuetype' name=ID 'oftype' type=ValuetypeReference '{'
+  'valuetype' name=ID 
+    (genericDefinition=ValuetypeGenericsDefinition)?
+  'oftype' type=ValuetypeReference '{'
     'constraints' ':' constraints=CollectionLiteral ';'
   '}';
 
@@ -30,3 +29,11 @@ ValuetypeReference:
       genericRefs+=[ValuetypeDefinition] (',' genericRefs+=[ValuetypeDefinition])* 
     '>')?;
 
+ValuetypeGenericsDefinition:
+  '<' 
+    generics+=ValuetypeGenericDefinition
+    (',' generics+=ValuetypeGenericDefinition)* 
+  '>';
+
+ValuetypeGenericDefinition:
+  name=ID;
