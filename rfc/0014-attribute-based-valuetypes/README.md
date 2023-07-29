@@ -21,12 +21,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 ## Summary
 
-Allow the definition of single-attribute value types. In addition to the current syntax, in which an underlying value type is referenced through 'oftype', do not use instantiation/inheritance but rather composition. 
+I'd like to allow the definition of user-defined single-attribute value types. In addition to the current syntax, in which an underlying value type is referenced through 'oftype', it does not use instantiation/inheritance but rather composition. 
 
 ## Motivation
 
-The purpose of using composition is that it is (a) more similar to traditional approaches and (b) is needed anyway for multi-attribute value types.
+The purpose of using composition is that it is
 
+1. more similar to traditional approaches and
+2. is needed anyway for multi-attribute value types.
 
 ## Explanation
 
@@ -40,7 +42,7 @@ valuetype CorrelationCoefficient oftype decimal {
 }
 ```
 
-This syntax is smart in that you don't have to list and name an attribute but rather rely on an implicit 'value' attribute. Still I propose to do exactly that. New syntax would be:
+This syntax is smart in that you don't have to list and name an attribute but rather rely on an implicit 'value' attribute. Still, I propose to make that attribute explicit. New syntax would be:
 
 ```jayvee
 valuetype CorrelationCoefficient {
@@ -63,7 +65,7 @@ valuetype Money {
   ];
 }
 ```
-which we'll need anyway. Conceivably, the step to multi-attribute value types could be merged with this one, but I simply wanted to try the RFC process rather than sending email ;-)
+which we'll need anyway. Conceivably, the step to multi-attribute value types could be merged with this one, but I simply wanted to try the RFC process rather than keep sending email ;-)
 
 <!-- 
   TODO: Explain the details of the RFC. 
@@ -73,7 +75,9 @@ which we'll need anyway. Conceivably, the step to multi-attribute value types co
 
 ## Drawbacks
 
-Introduces a redundant syntax, creates extra work, maybe disruptive to how the language currently works. 
+1. Introduces a redundant syntax,
+2. Creates extra work/may be too difficult, and
+3. May be disruptive to how the language currently works. 
 
 ## Alternatives
 
