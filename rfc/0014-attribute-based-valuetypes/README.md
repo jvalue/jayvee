@@ -32,14 +32,17 @@ The purpose of using composition is that it is (a) more similar to traditional a
 
 To define a value type like CorrelationCoefficient and its range of -1 to +1, we have to write:
 
+```jayvee
 valuetype CorrelationCoefficient oftype decimal {
   constraints: [
     MinusOneToPlusOneRange,
   ];
 }
+```
 
 This syntax is smart in that you don't have to list and name an attribute but rather rely on an implicit 'value' attribute. Still I propose to do exactly that. New syntax would be:
 
+```jayvee
 valuetype CorrelationCoefficient {
   attributes: [
     value oftype decimal;
@@ -48,16 +51,18 @@ valuetype CorrelationCoefficient {
     MinusOneToPlusOneRange; // Don't know how to attach this to value attribute
   ];
 }
+```
 
 While more verbose, it prepares the way for 
 
+```jayvee
 valuetype Money {
   attributes: [
     amount oftype decimal;
     currency oftype Currency;
   ];
 }
-
+```
 which we'll need anyway. Conceivably, the step to multi-attribute value types could be merged with this one, but I simply wanted to try the RFC process rather than sending email ;-)
 
 <!-- 
