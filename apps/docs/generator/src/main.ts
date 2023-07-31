@@ -7,6 +7,7 @@ import { join } from 'path';
 
 import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
 import {
+  PrimitiveValuetypes,
   getRegisteredBlockMetaInformation,
   getRegisteredConstraintMetaInformation,
   registerConstraints,
@@ -21,6 +22,7 @@ function main(): void {
   const rootPath = join(__dirname, '..', '..', '..', '..');
   generateBlockTypeDocs(rootPath);
   generateConstraintTypeDocs(rootPath);
+  generateValueTypeDocs(rootPath);
 }
 
 function generateBlockTypeDocs(rootPath: string): void {
@@ -67,6 +69,19 @@ function generateConstraintTypeDocs(rootPath: string): void {
     });
     console.info(`Generated file ${fileName}`);
   }
+}
+
+function generateValueTypeDocs(rootPath: string): void {
+  const docsPath = join(rootPath, 'apps', 'docs', 'docs', 'user', 'valuetypes');
+  const userDocBuilder = new UserDocGenerator();
+  const valueTypeDoc =
+    userDocBuilder.generateValueTypesDoc(PrimitiveValuetypes);
+
+  const fileName = `builtin-valuetypes.md`;
+  writeFileSync(join(docsPath, fileName), valueTypeDoc, {
+    flag: 'w',
+  });
+  console.info(`Generated file ${fileName}`);
 }
 
 main();

@@ -13,7 +13,7 @@ import './transform'
 entry JayveeModel:
   (
     pipelines+=PipelineDefinition
-    | valuetypes+=ValuetypeDefinition
+    | valuetypes+=(CustomValuetypeDefinition | BuiltinValuetypeDefinition)
     | constraints+=ConstraintDefinition
     | transforms+=TransformDefinition
   )*;
@@ -23,7 +23,7 @@ PipelineDefinition:
     (
       blocks+=BlockDefinition
       | pipes+=PipeDefinition
-      | valuetypes+=ValuetypeDefinition
+      | valuetypes+=CustomValuetypeDefinition
       | constraints+=ConstraintDefinition
       | transforms+=TransformDefinition
     )*

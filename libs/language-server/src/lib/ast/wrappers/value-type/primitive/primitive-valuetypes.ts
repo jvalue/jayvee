@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { assertUnreachable } from 'langium';
+import { strict as assert } from 'assert';
 
-import { PrimitiveValuetypeKeywordLiteral } from '../../../generated/ast';
+import { ValuetypeDefinition } from '../../../generated/ast';
 
 // eslint-disable-next-line import/no-cycle
 import { Boolean, BooleanValuetype } from './boolean-valuetype';
@@ -52,16 +52,16 @@ export const PrimitiveValuetypes: {
 };
 
 export function createPrimitiveValuetype(
-  keywordLiteral: PrimitiveValuetypeKeywordLiteral,
+  builtinValuetype: ValuetypeDefinition,
 ): PrimitiveValuetype | undefined {
+  assert(builtinValuetype.isBuiltin);
+  const name = builtinValuetype.name;
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  const keyword = keywordLiteral?.keyword;
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (keyword === undefined) {
+  if (name === undefined) {
     return undefined;
   }
 
-  switch (keyword) {
+  switch (name) {
     case 'boolean':
       return Boolean;
     case 'decimal':
@@ -71,6 +71,8 @@ export function createPrimitiveValuetype(
     case 'text':
       return Text;
     default:
-      assertUnreachable(keyword);
+      throw new Error(
+        `Found no PrimitiveValuetype for builtin valuetype "${name}"`,
+      );
   }
 }

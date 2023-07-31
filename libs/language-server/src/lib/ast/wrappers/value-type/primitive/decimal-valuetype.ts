@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
-import { PrimitiveValuetypeKeyword } from '../../../generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { ValuetypeVisitor } from '../valuetype';
 
@@ -18,7 +17,7 @@ class DecimalValuetypeImpl extends PrimitiveValuetype<number> {
     return true;
   }
 
-  override getName(): PrimitiveValuetypeKeyword {
+  override getName(): 'decimal' {
     return 'decimal';
   }
 
@@ -26,6 +25,17 @@ class DecimalValuetypeImpl extends PrimitiveValuetype<number> {
     operandValue: InternalValueRepresentation | undefined,
   ): operandValue is number {
     return typeof operandValue === 'number' && Number.isFinite(operandValue);
+  }
+
+  override isUserExtendable() {
+    return true;
+  }
+
+  override getUserDoc(): string {
+    return `
+A decimal value.
+Example: 3.14
+`.trim();
   }
 }
 

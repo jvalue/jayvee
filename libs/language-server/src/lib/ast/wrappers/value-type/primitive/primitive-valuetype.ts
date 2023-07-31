@@ -24,6 +24,22 @@ export abstract class PrimitiveValuetype<
   protected override doGetSupertype(): undefined {
     return undefined;
   }
+
+  /**
+   * Flag whether an atomic value type can be based on this primitive value type.
+   */
+  isUserExtendable(): boolean {
+    return false;
+  }
+
+  /**
+   * The user documentation for the value type.
+   * Text only, no comment characters.
+   * Should be given for all user extendable value types @see isUserExtendable
+   */
+  getUserDoc(): string | undefined {
+    return undefined;
+  }
 }
 
 export function isPrimitiveValuetype(v: unknown): v is PrimitiveValuetype {

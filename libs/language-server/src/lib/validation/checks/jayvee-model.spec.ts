@@ -106,6 +106,21 @@ describe('Validation of JayveeModel', () => {
     );
   });
 
+  it('should diagnose error on non unique valuetypes (naming collision with builtin)', async () => {
+    const text = readJvTestAsset(
+      'jayvee-model/invalid-duplicate-name-with-builtin-valuetype.jv',
+    );
+
+    await parseAndValidateJayveeModel(text);
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
+    expect(validationAcceptorMock).toHaveBeenCalledWith(
+      'error',
+      `The valuetypedefinition name "DuplicateValuetype" needs to be unique.`,
+      expect.any(Object),
+    );
+  });
+
   it('should diagnose error on non unique constraints', async () => {
     const text = readJvTestAsset(
       'jayvee-model/invalid-non-unique-constraints.jv',

@@ -147,6 +147,21 @@ export class HttpExtractorMetaInformation extends BlockMetaInformation {
             }
           },
         },
+        followRedirects: {
+          type: PrimitiveValuetypes.Boolean,
+          defaultValue: true,
+          docs: {
+            description:
+              'Indicates, whether to follow redirects on get requests. If `false`, redirects are not followed. Default `true`',
+            examples: [
+              {
+                code: 'url: "tinyurl.com/4ub9spwz" \n followRedirects: true',
+                description:
+                  'Specifies the URL to fetch the data from and allows redirects.',
+              },
+            ],
+          },
+        },
       },
 
       // Input type:
