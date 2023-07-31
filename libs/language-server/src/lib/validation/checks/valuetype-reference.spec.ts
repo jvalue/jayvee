@@ -161,6 +161,4 @@ describe('Validation of ValuetypeReference', () => {
       expect.any(Object),
     );
   });
-
-  // TODO: generic with parameters of same name
 });
