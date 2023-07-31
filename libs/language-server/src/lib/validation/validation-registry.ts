@@ -28,6 +28,7 @@ import { validateRegexLiteral } from './checks/regex-literal';
 import { validateTransformBody } from './checks/transform-body';
 import { validateTypedConstraintDefinition } from './checks/typed-constraint-definition';
 import { validateValuetypeDefinition } from './checks/valuetype-definition';
+import { validateValuetypeReference } from './checks/valuetype-reference';
 import { ValidationContext } from './validation-context';
 
 /**
@@ -53,6 +54,7 @@ export class JayveeValidationRegistry extends ValidationRegistry {
       RangeLiteral: validateRangeLiteral,
       RegexLiteral: validateRegexLiteral,
       ValuetypeDefinition: validateValuetypeDefinition,
+      ValuetypeReference: validateValuetypeReference,
       TransformBody: validateTransformBody,
     });
   }
