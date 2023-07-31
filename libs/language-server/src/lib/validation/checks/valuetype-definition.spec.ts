@@ -124,4 +124,19 @@ describe('Validation of ValuetypeDefinition', () => {
       expect.any(Object),
     );
   });
+
+  it('should diagnose error on duplicate generic on valuetype', async () => {
+    const text = readJvTestAsset(
+      'valuetype-definition/invalid-duplicate-generic.jv',
+    );
+
+    await parseAndValidateValuetypeDefinition(text);
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
+    expect(validationAcceptorMock).toHaveBeenCalledWith(
+      'error',
+      `Generic parameter T is not unique`,
+      expect.any(Object),
+    );
+  });
 });
