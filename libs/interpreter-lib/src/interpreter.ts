@@ -295,10 +295,11 @@ export function logPipelineOverview(
   logger: Logger,
 ) {
   const toString = (block: BlockDefinition, depth = 0): string => {
-    assert(block.type.ref?.name !== undefined);
-    const blockString = `${'\t'.repeat(depth)} -> ${block.name} (${
-      block.type.ref.name
-    })`;
+    const blockTypeName = block.type.ref?.name;
+    assert(blockTypeName !== undefined);
+    const blockString = `${'\t'.repeat(depth)} -> ${
+      block.name
+    } (${blockTypeName})`;
     const childString = collectChildren(block)
       .map((child) => toString(child, depth + 1))
       .join('\n');
