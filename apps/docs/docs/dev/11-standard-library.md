@@ -15,7 +15,7 @@ The implementations of builtin contents are not expressed in Jayvee itself but o
 - **Builtin iotypes**: These iotypes are used to describe in inputs and outputs of blocktypes, e.g., `Sheet`, `File`.
 - **Builtin blocktypes**: These blocktypes are the very basic building blocks in Jayvee, e.g., `HttpExtractor`, `SqliteLoader`.
 
-Builtin definitions are usually generated and added to the standard library at runtime from the internal representations of the concepts.
+Builtin definitions are usually generated and added to the standard library from the internal representations of the concepts.
 
 ### User-defined Contents
 The implementations of user-defined contents are expressed in Jayvee itself. Examples:
