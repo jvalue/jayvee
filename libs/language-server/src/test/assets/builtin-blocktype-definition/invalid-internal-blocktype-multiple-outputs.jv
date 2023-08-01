@@ -5,4 +5,6 @@
 builtin blocktype TestBlock {
   output in1 oftype text;
   output in2 oftype text;
+  
+  input in1 oftype text;
 }

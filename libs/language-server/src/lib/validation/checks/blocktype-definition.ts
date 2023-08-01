@@ -20,7 +20,8 @@ export function validateBlocktypeDefinition(
 ): void {
   checkNoMultipleInputs(blocktype, validationContext);
   checkNoMultipleOutputs(blocktype, validationContext);
-  checkAtleastOneInputOrOutput(blocktype, validationContext);
+  checkOneInput(blocktype, validationContext);
+  checkOneOutput(blocktype, validationContext);
   checkNoDuplicateProperties(blocktype, validationContext);
   checkPropertiesDefaultValuesHaveCorrectType(
     blocktype,
@@ -73,19 +74,35 @@ function checkNoMultipleOutputs(
   }
 }
 
-function checkAtleastOneInputOrOutput(
+function checkOneInput(
   blocktype: BuiltinBlocktypeDefinition,
   context: ValidationContext,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const numberOfInputs = blocktype.inputs?.length ?? 0;
+
+  if (numberOfInputs < 1) {
+    context.accept(
+      'error',
+      `Found no input in blocktype '${blocktype.name}' - consider using iotype "none" if the blocktype consumes no input`,
+      {
+        node: blocktype,
+      },
+    );
+  }
+}
+
+function checkOneOutput(
+  blocktype: BuiltinBlocktypeDefinition,
+  context: ValidationContext,
+): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const numberOfOutputs = blocktype.outputs?.length ?? 0;
 
-  if (numberOfInputs + numberOfOutputs < 1) {
+  if (numberOfOutputs < 1) {
     context.accept(
       'error',
-      `Found neither input nor output definitions in blocktype '${blocktype.name}'`,
+      `Found no output in blocktype '${blocktype.name}' - consider using iotype "none" if the blocktype produces no output`,
       {
         node: blocktype,
       },
