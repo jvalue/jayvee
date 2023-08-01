@@ -34,7 +34,7 @@ export const IOtypesLib = {
 };
 
 // Is a method since metaInformationRegistry might not be initialized when this as variable.
-export function getBulitinBlocktypesLib() {
+export function getBuiltinBlocktypesLib() {
   return {
     'builtin:///stdlib/builtin-blocktypes.jv': metaInformationRegistry
       .getAllEntries()
@@ -57,7 +57,7 @@ export function getStdLib() {
     ...PartialStdLib,
     ...getBuiltinValuetypesLib(),
     ...IOtypesLib,
-    ...getBulitinBlocktypesLib(),
+    ...getBuiltinBlocktypesLib(),
   };
 }
 

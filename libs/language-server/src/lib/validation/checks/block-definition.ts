@@ -6,6 +6,7 @@
  * See https://jvalue.github.io/jayvee/docs/dev/working-with-the-ast for why the following ESLint rule is disabled for this file.
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
+
 import { assertUnreachable } from 'langium';
 
 import { BlockDefinition } from '../../ast/generated/ast';

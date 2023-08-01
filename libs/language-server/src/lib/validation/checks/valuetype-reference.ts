@@ -2,10 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-/**
- * See https://jvalue.github.io/jayvee/docs/dev/working-with-the-ast for why the following ESLint rule is disabled for this file.
- */
-
 import { createValuetype } from '../../ast';
 import {
   ValuetypeReference,
