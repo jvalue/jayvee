@@ -10,6 +10,7 @@ import { NodeFileSystem } from 'langium/node';
 import {
   ValidationContext,
   ValuetypeDefinition,
+  ValuetypeReference,
   createJayveeServices,
   useExtension,
 } from '../..';
@@ -39,9 +40,11 @@ describe('Validation of ValuetypeReference', () => {
     '../../../test/assets/',
   );
 
-  async function parseAndValidateModel(input: string) {
+  async function parseValuetypeReferencesFromValuetypes(input: string) {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
+
+    const valuetypeReferences: ValuetypeReference[] = [];
 
     let valuetypeDefinition: ValuetypeDefinition | undefined;
     let i = 0;
@@ -53,14 +56,12 @@ describe('Validation of ValuetypeReference', () => {
       if (valuetypeDefinition !== undefined) {
         const valuetypeRef = valuetypeDefinition.type;
         assert(valuetypeRef !== undefined);
-
-        validateValuetypeReference(
-          valuetypeRef,
-          new ValidationContext(validationAcceptorMock),
-        );
+        valuetypeReferences.push(valuetypeRef);
       }
       ++i;
     } while (valuetypeDefinition !== undefined);
+
+    return valuetypeReferences;
   }
 
   beforeAll(() => {
@@ -83,7 +84,14 @@ describe('Validation of ValuetypeReference', () => {
       'valuetype-reference/valid-reference-to-non-generic-valuetype.jv',
     );
 
-    await parseAndValidateModel(text);
+    (await parseValuetypeReferencesFromValuetypes(text)).forEach(
+      (valuetypeRef) => {
+        validateValuetypeReference(
+          valuetypeRef,
+          new ValidationContext(validationAcceptorMock),
+        );
+      },
+    );
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
@@ -93,7 +101,14 @@ describe('Validation of ValuetypeReference', () => {
       'valuetype-reference/valid-reference-to-single-generic-valuetype.jv',
     );
 
-    await parseAndValidateModel(text);
+    (await parseValuetypeReferencesFromValuetypes(text)).forEach(
+      (valuetypeRef) => {
+        validateValuetypeReference(
+          valuetypeRef,
+          new ValidationContext(validationAcceptorMock),
+        );
+      },
+    );
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
@@ -103,7 +118,14 @@ describe('Validation of ValuetypeReference', () => {
       'valuetype-reference/valid-reference-to-multiple-generic-valuetype.jv',
     );
 
-    await parseAndValidateModel(text);
+    (await parseValuetypeReferencesFromValuetypes(text)).forEach(
+      (valuetypeRef) => {
+        validateValuetypeReference(
+          valuetypeRef,
+          new ValidationContext(validationAcceptorMock),
+        );
+      },
+    );
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
@@ -113,7 +135,14 @@ describe('Validation of ValuetypeReference', () => {
       'valuetype-reference/invalid-reference-missing-generic.jv',
     );
 
-    await parseAndValidateModel(text);
+    (await parseValuetypeReferencesFromValuetypes(text)).forEach(
+      (valuetypeRef) => {
+        validateValuetypeReference(
+          valuetypeRef,
+          new ValidationContext(validationAcceptorMock),
+        );
+      },
+    );
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
@@ -128,7 +157,14 @@ describe('Validation of ValuetypeReference', () => {
       'valuetype-reference/invalid-reference-too-few-generic-parameters.jv',
     );
 
-    await parseAndValidateModel(text);
+    (await parseValuetypeReferencesFromValuetypes(text)).forEach(
+      (valuetypeRef) => {
+        validateValuetypeReference(
+          valuetypeRef,
+          new ValidationContext(validationAcceptorMock),
+        );
+      },
+    );
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
@@ -143,7 +179,14 @@ describe('Validation of ValuetypeReference', () => {
       'valuetype-reference/invalid-reference-too-many-generic-parameters.jv',
     );
 
-    await parseAndValidateModel(text);
+    (await parseValuetypeReferencesFromValuetypes(text)).forEach(
+      (valuetypeRef) => {
+        validateValuetypeReference(
+          valuetypeRef,
+          new ValidationContext(validationAcceptorMock),
+        );
+      },
+    );
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
@@ -158,7 +201,14 @@ describe('Validation of ValuetypeReference', () => {
       'valuetype-reference/invalid-reference-too-non-generic-with-generic-parameters.jv',
     );
 
-    await parseAndValidateModel(text);
+    (await parseValuetypeReferencesFromValuetypes(text)).forEach(
+      (valuetypeRef) => {
+        validateValuetypeReference(
+          valuetypeRef,
+          new ValidationContext(validationAcceptorMock),
+        );
+      },
+    );
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
@@ -173,7 +223,14 @@ describe('Validation of ValuetypeReference', () => {
       'valuetype-reference/invalid-reference-to-non-referenceable-valuetype-in-valuetype.jv',
     );
 
-    await parseAndValidateModel(text);
+    (await parseValuetypeReferencesFromValuetypes(text)).forEach(
+      (valuetypeRef) => {
+        validateValuetypeReference(
+          valuetypeRef,
+          new ValidationContext(validationAcceptorMock),
+        );
+      },
+    );
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
     expect(validationAcceptorMock).toHaveBeenNthCalledWith(
