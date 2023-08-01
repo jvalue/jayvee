@@ -3,5 +3,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 builtin blocktype TestBlock {
-  
+  input default oftype Sheet;
 }

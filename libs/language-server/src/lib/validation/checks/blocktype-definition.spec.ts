@@ -115,9 +115,9 @@ describe('Validation of BuiltinBlocktypeDefinition', () => {
     );
   });
 
-  it('should diagnose error on neither inputs nor outputs', async () => {
+  it('should diagnose error on missing input', async () => {
     const text = readJvTestAsset(
-      'builtin-blocktype-definition/invalid-internal-blocktype-no-input-and-no-output.jv',
+      'builtin-blocktype-definition/invalid-internal-blocktype-no-input.jv',
     );
 
     await parseAndValidateBlocktype(text);
@@ -125,7 +125,22 @@ describe('Validation of BuiltinBlocktypeDefinition', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
-      `Found neither input nor output definitions in blocktype 'TestBlock'`,
+      `Found no input in blocktype 'TestBlock' - consider using iotype "none" if the blocktype consumes no input`,
+      expect.any(Object),
+    );
+  });
+
+  it('should diagnose error on missing output', async () => {
+    const text = readJvTestAsset(
+      'builtin-blocktype-definition/invalid-internal-blocktype-no-output.jv',
+    );
+
+    await parseAndValidateBlocktype(text);
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+    expect(validationAcceptorMock).toHaveBeenCalledWith(
+      'error',
+      `Found no output in blocktype 'TestBlock' - consider using iotype "none" if the blocktype produces no output`,
       expect.any(Object),
     );
   });

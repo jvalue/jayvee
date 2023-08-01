@@ -4,4 +4,5 @@
 
 builtin blocktype TestLoaderBlock {
   input default oftype integer;
+  output default oftype none;
 }
