@@ -246,4 +246,30 @@ describe('Validation of ValuetypeReference', () => {
       expect.any(Object),
     );
   });
+
+  it('should diagnose error on reference to non-referenceable valuetype in a block', async () => {
+    const text = readJvTestAsset(
+      'valuetype-reference/invalid-reference-to-non-referenceable-valuetype-in-block.jv',
+    );
+
+    const document = await parse(text);
+    expectNoParserAndLexerErrors(document);
+    const valuetypeRef = locator.getAstNode<ValuetypeReference>(
+      document.parseResult.value,
+      `pipelines@0/blocks@0/body/properties@0/value/values@0/value/type`,
+    );
+    assert(valuetypeRef !== undefined);
+
+    validateValuetypeReference(
+      valuetypeRef,
+      new ValidationContext(validationAcceptorMock),
+    );
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+    expect(validationAcceptorMock).toHaveBeenCalledWith(
+      'error',
+      `Valuetype Constraint cannot be referenced in this context`,
+      expect.any(Object),
+    );
+  });
 });
