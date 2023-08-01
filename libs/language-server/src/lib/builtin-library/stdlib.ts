@@ -81,13 +81,13 @@ function parseMetaInfToJayvee(
   }
 
   lines.push(`builtin blocktype ${name} {`);
-  lines.push(praseBuiltinBlocktypeBody(metaInf));
+  lines.push(parseBuiltinBlocktypeBody(metaInf));
   lines.push('}');
 
   return lines.join('\n');
 }
 
-function praseBuiltinBlocktypeBody(metaInf: BlockMetaInformation): string {
+function parseBuiltinBlocktypeBody(metaInf: BlockMetaInformation): string {
   const bodyLines: string[] = [];
 
   bodyLines.push(`\tinput default oftype ${metaInf.inputType};`);
