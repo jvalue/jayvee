@@ -25,7 +25,7 @@ ValuetypeAssignment:
 
 ValuetypeReference:
   reference=[ValuetypeDefinition] 
-    (isGenericRef='<' 
+    ('<' 
       genericRefs+=[ValuetypeDefinition] (',' genericRefs+=[ValuetypeDefinition])* 
     '>')?;
 
