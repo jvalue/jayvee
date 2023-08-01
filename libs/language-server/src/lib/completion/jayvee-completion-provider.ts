@@ -9,11 +9,14 @@ import {
   CompletionContext,
   CompletionValueItem,
   DefaultCompletionProvider,
+  LangiumDocuments,
+  LangiumServices,
   MaybePromise,
   NextFeature,
 } from 'langium';
 import { CompletionItemKind } from 'vscode-languageserver';
 
+import { createValuetype } from '../ast';
 import {
   BlockDefinition,
   ConstraintDefinition,
@@ -27,7 +30,6 @@ import {
   isJayveeModel,
   isPropertyAssignment,
   isPropertyBody,
-  isValuetypeDefinition,
 } from '../ast/generated/ast';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
 import { MetaInformation } from '../meta-information/meta-inf';
@@ -40,6 +42,13 @@ import {
 const RIGHT_ARROW_SYMBOL = '\u{2192}';
 
 export class JayveeCompletionProvider extends DefaultCompletionProvider {
+  protected langiumDocumentService: LangiumDocuments;
+
+  constructor(services: LangiumServices) {
+    super(services);
+    this.langiumDocumentService = services.shared.workspace.LangiumDocuments;
+  }
+
   override completionFor(
     context: CompletionContext,
     next: NextFeature,
@@ -60,9 +69,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
         return this.completionForConstraintType(acceptor);
       }
 
-      // valuetype MyValuetype oftype <completion>
-      const isValuetypeDefinitionCompletion =
-        isValuetypeDefinition(astNode) && next.type === ValuetypeReference;
+      const isValuetypeDefinitionCompletion = next.type === ValuetypeReference;
       if (isValuetypeDefinitionCompletion) {
         return this.completionForValuetype(context, acceptor);
       }
@@ -118,18 +125,23 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     context: CompletionContext,
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
-    const jayveeModel = context.document.parseResult.value;
-    if (!isJayveeModel(jayveeModel)) {
-      throw new Error('Expected parsed document to be a JayveeModel');
-    }
-
-    jayveeModel.valuetypes.forEach((valuetype) => {
-      acceptor({
-        label: valuetype.name,
-        kind: CompletionItemKind.Class,
-        detail: `(valuetype)`,
+    this.langiumDocumentService.all
+      .map((document) => document.parseResult.value)
+      .forEach((parsedDocument) => {
+        if (!isJayveeModel(parsedDocument)) {
+          throw new Error('Expected parsed document to be a JayveeModel');
+        }
+        parsedDocument.valuetypes.forEach((valuetypeDefinition) => {
+          const valuetype = createValuetype(valuetypeDefinition);
+          if (valuetype !== undefined && valuetype.isReferenceableByUser()) {
+            acceptor({
+              label: valuetypeDefinition.name,
+              kind: CompletionItemKind.Class,
+              detail: `(valuetype)`,
+            });
+          }
+        });
       });
-    });
   }
 
   private completionForPropertyName(
