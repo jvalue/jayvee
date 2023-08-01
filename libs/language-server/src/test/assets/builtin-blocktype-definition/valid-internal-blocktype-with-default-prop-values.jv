@@ -7,5 +7,5 @@ builtin blocktype TestBlock {
   output default oftype integer;
 
   property testProp1 oftype text: 'test1';
-  property testProp2 oftype text: 'test2';
+  property testProp2 oftype decimal: 3.14;
 }
