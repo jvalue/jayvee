@@ -13,10 +13,10 @@ import { type InternalValueRepresentation } from '../../expressions/internal-val
 import { ConstraintDefinition, ValuetypeDefinition } from '../../generated/ast';
 import { AstNodeWrapper } from '../ast-node-wrapper';
 
+// eslint-disable-next-line import/no-cycle
 import { CollectionValuetype } from './primitive';
 import { PrimitiveValuetypes } from './primitive/primitive-valuetypes';
 import { AbstractValuetype, Valuetype, ValuetypeVisitor } from './valuetype';
-// eslint-disable-next-line import/no-cycle
 import { createValuetype } from './valuetype-util';
 
 export class AtomicValuetype
