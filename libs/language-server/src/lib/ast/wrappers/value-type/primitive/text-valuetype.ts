@@ -27,7 +27,7 @@ class TextValuetypeImpl extends PrimitiveValuetype<string> {
     return typeof operandValue === 'string';
   }
 
-  override isUserExtendable() {
+  override isReferenceableByUser() {
     return true;
   }
 

@@ -27,7 +27,7 @@ class BooleanValuetypeImpl extends PrimitiveValuetype<boolean> {
     return typeof operandValue === 'boolean';
   }
 
-  override isUserExtendable() {
+  override isReferenceableByUser() {
     return true;
   }
 

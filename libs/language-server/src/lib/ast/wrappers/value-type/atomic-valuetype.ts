@@ -58,6 +58,14 @@ export class AtomicValuetype
     return supertype.isConvertibleTo(target);
   }
 
+  override isReferenceableByUser(): boolean {
+    const supertype = this.getSupertype();
+    if (supertype === undefined) {
+      return false;
+    }
+    return supertype.isReferenceableByUser();
+  }
+
   override isAllowedAsRuntimeParameter(): boolean {
     const supertype = this.getSupertype();
     if (supertype === undefined) {

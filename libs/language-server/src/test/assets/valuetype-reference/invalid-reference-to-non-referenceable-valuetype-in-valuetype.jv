@@ -2,6 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-valuetype ValueType oftype Constraint {
-	constraints: [];
+valuetype ValueType1 oftype Constraint {
+    constraints: [];
+}
+
+valuetype ValueType2 oftype Regex {
+    constraints: [];
 }
