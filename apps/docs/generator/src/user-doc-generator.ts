@@ -41,7 +41,7 @@ that fullfil [Constraints](./primitive-valuetypes#constraints).`.trim(),
 
     Object.entries(valueTypes)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .filter(([_, valueType]) => valueType.isUserExtendable())
+      .filter(([_, valueType]) => valueType.isReferenceableByUser())
       .forEach(([name, valueType]) => {
         assert(
           valueType.getUserDoc(),
