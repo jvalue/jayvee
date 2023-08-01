@@ -272,4 +272,25 @@ describe('Validation of ValuetypeReference', () => {
       expect.any(Object),
     );
   });
+
+  it('should not diagnose error on reference to non-referenceable valuetype in a builtin blocktype', async () => {
+    const text = readJvTestAsset(
+      'valuetype-reference/valid-reference-to-non-referenceable-valuetype-in-builtin-blocktype.jv',
+    );
+
+    const document = await parse(text);
+    expectNoParserAndLexerErrors(document);
+    const valuetypeRef = locator.getAstNode<ValuetypeReference>(
+      document.parseResult.value,
+      `blocktypes@0/properties@0/valuetype`,
+    );
+    assert(valuetypeRef !== undefined);
+
+    validateValuetypeReference(
+      valuetypeRef,
+      new ValidationContext(validationAcceptorMock),
+    );
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
+  });
 });

@@ -7,7 +7,10 @@
  */
 
 import { createValuetype } from '../../ast';
-import { ValuetypeReference } from '../../ast/generated/ast';
+import {
+  ValuetypeReference,
+  isBuiltinBlocktypeDefinition,
+} from '../../ast/generated/ast';
 import { ValidationContext } from '../validation-context';
 
 export function validateValuetypeReference(
@@ -54,7 +57,12 @@ function checkIsValuetypeReferenceable(
     return;
   }
 
-  // TODO: whitelist builtin blocktype definitions
+  const isUsedInBuiltinBlocktype = isBuiltinBlocktypeDefinition(
+    valuetypeRef.$container.$container,
+  );
+  if (isUsedInBuiltinBlocktype) {
+    return;
+  }
 
   if (valuetype.isReferenceableByUser()) {
     return;
