@@ -35,19 +35,16 @@ export const IOtypesLib = {
 
 // Is a method since metaInformationRegistry might not be initialized when this as variable.
 export function getBuiltinBlocktypesLib() {
+  const builtinBlocktypes = metaInformationRegistry.getAllEntries();
   return {
-    'builtin:///stdlib/builtin-blocktypes.jv': metaInformationRegistry
-      .getAllEntries()
-      .reduce(
-        (filtered: { key: string; value: BlockMetaInformation }[], entry) => {
-          if (entry.value instanceof BlockMetaInformation) {
-            filtered.push({ key: entry.key, value: entry.value });
-          }
-          return filtered;
-        },
-        [],
+    'builtin:///stdlib/builtin-blocktypes.jv': builtinBlocktypes
+      .filter((entry) => entry.value instanceof BlockMetaInformation)
+      .map((entry) =>
+        parseBlockMetaInfToJayvee(
+          entry.key,
+          entry.value as BlockMetaInformation,
+        ),
       )
-      .map((entry) => parseBlockMetaInfToJayvee(entry.key, entry.value))
       .join('\n\n'),
   };
 }
