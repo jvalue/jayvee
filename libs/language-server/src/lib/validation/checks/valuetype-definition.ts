@@ -16,7 +16,6 @@ import {
   CollectionValuetype,
   ConstraintDefinition,
   EvaluationContext,
-  PrimitiveValuetype,
   PrimitiveValuetypes,
   Valuetype,
   createValuetype,
@@ -38,7 +37,6 @@ export function validateValuetypeDefinition(
   evaluationContext: EvaluationContext,
 ): void {
   checkSupertypeCycle(valuetype, validationContext);
-  checkIsSupertypeExtendable(valuetype, validationContext);
   checkConstraintsCollectionValues(
     valuetype,
     validationContext,
@@ -64,32 +62,6 @@ function checkSupertypeCycle(
       },
     );
   }
-}
-
-function checkIsSupertypeExtendable(
-  valuetypeDefinition: ValuetypeDefinition,
-  context: ValidationContext,
-): void {
-  const supertype = valuetypeDefinition.type;
-  if (supertype === undefined) {
-    return;
-  }
-  const superValuetype = createValuetype(supertype);
-  if (!(superValuetype instanceof PrimitiveValuetype)) {
-    return;
-  }
-  if (superValuetype.isUserExtendable()) {
-    return;
-  }
-
-  context.accept(
-    'error',
-    `Valuetype ${superValuetype.getName()} is not user-extendable`,
-    {
-      node: valuetypeDefinition,
-      property: 'type',
-    },
-  );
 }
 
 function checkConstraintsCollectionValues(

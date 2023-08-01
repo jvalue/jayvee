@@ -6,6 +6,7 @@
  * See https://jvalue.github.io/jayvee/docs/dev/working-with-the-ast for why the following ESLint rule is disabled for this file.
  */
 
+import { createValuetype } from '../../ast';
 import { ValuetypeReference } from '../../ast/generated/ast';
 import { ValidationContext } from '../validation-context';
 
@@ -14,6 +15,7 @@ export function validateValuetypeReference(
   validationContext: ValidationContext,
 ): void {
   checkGenericsMatchDefinition(valuetypeRef, validationContext);
+  checkIsValuetypeReferenceable(valuetypeRef, validationContext);
 }
 
 function checkGenericsMatchDefinition(
@@ -41,4 +43,28 @@ function checkGenericsMatchDefinition(
       },
     );
   }
+}
+
+function checkIsValuetypeReferenceable(
+  valuetypeRef: ValuetypeReference,
+  context: ValidationContext,
+): void {
+  const valuetype = createValuetype(valuetypeRef);
+  if (valuetype === undefined) {
+    return;
+  }
+
+  // TODO: whitelist builtin blocktype definitions
+
+  if (valuetype.isReferenceableByUser()) {
+    return;
+  }
+
+  context.accept(
+    'error',
+    `Valuetype ${valuetype.getName()} cannot be referenced in this context`,
+    {
+      node: valuetypeRef,
+    },
+  );
 }

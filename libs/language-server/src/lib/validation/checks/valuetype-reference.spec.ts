@@ -43,18 +43,24 @@ describe('Validation of ValuetypeReference', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const valuetypeDefinition = locator.getAstNode<ValuetypeDefinition>(
-      document.parseResult.value,
-      'valuetypes@1',
-    ) as ValuetypeDefinition;
+    let valuetypeDefinition: ValuetypeDefinition | undefined;
+    let i = 0;
+    do {
+      valuetypeDefinition = locator.getAstNode<ValuetypeDefinition>(
+        document.parseResult.value,
+        `valuetypes@${i}`,
+      );
+      if (valuetypeDefinition !== undefined) {
+        const valuetypeRef = valuetypeDefinition.type;
+        assert(valuetypeRef !== undefined);
 
-    const valuetypeRef = valuetypeDefinition.type;
-    assert(valuetypeRef !== undefined);
-
-    validateValuetypeReference(
-      valuetypeRef,
-      new ValidationContext(validationAcceptorMock),
-    );
+        validateValuetypeReference(
+          valuetypeRef,
+          new ValidationContext(validationAcceptorMock),
+        );
+      }
+      ++i;
+    } while (valuetypeDefinition !== undefined);
   }
 
   beforeAll(() => {
@@ -158,6 +164,28 @@ describe('Validation of ValuetypeReference', () => {
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
       `The referenced valuetype ValueType requires 0 generic parameters but found 1.`,
+      expect.any(Object),
+    );
+  });
+
+  it('should diagnose error on reference to non-referenceable valuetype', async () => {
+    const text = readJvTestAsset(
+      'valuetype-reference/invalid-reference-to-non-referenceable-valuetype-in-valuetype.jv',
+    );
+
+    await parseAndValidateModel(text);
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
+    expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+      1,
+      'error',
+      `Valuetype Constraint cannot be referenced in this context`,
+      expect.any(Object),
+    );
+    expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+      2,
+      'error',
+      `Valuetype Regex cannot be referenced in this context`,
       expect.any(Object),
     );
   });

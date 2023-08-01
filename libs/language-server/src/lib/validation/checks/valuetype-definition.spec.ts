@@ -139,19 +139,4 @@ describe('Validation of ValuetypeDefinition', () => {
       expect.any(Object),
     );
   });
-
-  it('should diagnose error on supertype being a non-extendable valuetype', async () => {
-    const text = readJvTestAsset(
-      'valuetype-definition/invalid-supertype-is-not-user-extendable.jv',
-    );
-
-    await parseAndValidateValuetypeDefinition(text);
-
-    expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
-      'error',
-      `Valuetype Constraint is not user-extendable`,
-      expect.any(Object),
-    );
-  });
 });
