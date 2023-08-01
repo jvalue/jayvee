@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { IOType } from '../ast';
+import { IOType, PrimitiveValuetype } from '../ast';
 import { PrimitiveValuetypes } from '../ast/wrappers/value-type/primitive/primitive-valuetypes';
 import {
   BlockMetaInformation,
@@ -13,14 +13,11 @@ import { PartialStdLib } from './generated/partial-stdlib';
 
 export function getBuiltinValuetypesLib() {
   const primitiveValuetypes = Object.values(PrimitiveValuetypes).map(
-    (valueType) =>
-      `${(valueType.getUserDoc()?.trim().split('\n') ?? [])
-        .map((t) => '// ' + t)
-        .join('\n')}
-builtin valuetype ${valueType.getName()};`,
+    parseBuiltinValuetypeToJayvee,
   );
 
-  const collectionValuetype = `builtin valuetype Collection<ElementType>;`;
+  const collectionValuetype = `${parseAsComment('For internal use only.')}
+builtin valuetype Collection<ElementType>;`;
 
   return {
     'builtin:///stdlib/builtin-valuetypes.jv': [
@@ -50,7 +47,7 @@ export function getBulitinBlocktypesLib() {
         },
         [],
       )
-      .map((entry) => parseMetaInfToJayvee(entry.key, entry.value))
+      .map((entry) => parseBlockMetaInfToJayvee(entry.key, entry.value))
       .join('\n\n'),
   };
 }
@@ -64,7 +61,7 @@ export function getStdLib() {
   };
 }
 
-function parseMetaInfToJayvee(
+function parseBlockMetaInfToJayvee(
   name: string,
   metaInf: BlockMetaInformation,
 ): string {
@@ -109,7 +106,22 @@ function parseBuiltinBlocktypeBody(metaInf: BlockMetaInformation): string {
   return bodyLines.join('\n');
 }
 
-function parseAsComment(text: string, indents = 0) {
+function parseBuiltinValuetypeToJayvee(valuetype: PrimitiveValuetype): string {
+  const lines: string[] = [];
+
+  const userDoc = valuetype.getUserDoc();
+  if (userDoc !== undefined) {
+    lines.push(parseAsComment(userDoc));
+  }
+  if (!valuetype.isReferenceableByUser()) {
+    lines.push(parseAsComment('For internal use only.'));
+  }
+  lines.push(`builtin valuetype ${valuetype.getName()};`);
+
+  return lines.join('\n');
+}
+
+function parseAsComment(text: string, indents = 0): string {
   return text
     .split('\n')
     .map((l) => `// ${l}`)
