@@ -5,6 +5,7 @@
 import { internalValueToString } from '@jvalue/jayvee-language-server';
 
 import { Logger } from '../logger';
+import { Workbook } from '../types';
 import { FileSystem } from '../types/io-types/filesystem';
 import { BinaryFile } from '../types/io-types/filesystem-node-file-binary';
 import { TextFile } from '../types/io-types/filesystem-node-file-text';
@@ -133,6 +134,10 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
     }
 
     this.log('... (omitted in peek mode)');
+  }
+  visitWorkbook(workbook: Workbook): void {
+    this.log('visited Workbook');
+    workbook.acceptVisitor(this);
   }
 
   private log(text: string): void {

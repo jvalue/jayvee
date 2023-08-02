@@ -145,6 +145,7 @@ export enum IOType {
   TEXT_FILE = 'TextFile',
   FILE_SYSTEM = 'FileSystem',
   SHEET = 'Sheet',
+  WORKBOOK = 'Workbook',
   TABLE = 'Table',
 }
 
