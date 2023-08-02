@@ -5,11 +5,28 @@
 import './expression'
 import './iotype'
 import './terminal'
+import './transform'
 import './valuetype'
+import './main'
+
+ReferenceableBlocktypeDefinition:
+  BuiltinBlocktypeDefinition | CompositeBlocktypeDefinition;
 
 BuiltinBlocktypeDefinition:
     'builtin' 'blocktype' name=ID '{'
         (inputs+=BlocktypeInput | outputs+=BlocktypeOutput | properties+=BlocktypeProperty)*
+'}';
+
+CompositeBlocktypeDefinition:
+    'composite' 'blocktype' name=ID '{'
+        (
+            inputs+=BlocktypeInput
+            | outputs+=BlocktypeOutput
+            | properties+=BlocktypeProperty
+            | blocks+=BlockDefinition
+            | pipes+=PipeDefinition
+            | transforms+=TransformDefinition
+        )*
 '}';
 
 BlocktypeInput:

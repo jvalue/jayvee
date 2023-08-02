@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 // eslint-disable-next-line import/no-cycle
+import { IOType } from '../ast';
 import { EvaluationContext } from '../ast/expressions/evaluation';
 import { PropertyBody } from '../ast/generated/ast';
-import { IOType } from '../ast/model-util';
 import { ValidationContext } from '../validation/validation-context';
 
 import { ExampleDoc, MetaInformation, PropertySpecification } from './meta-inf';

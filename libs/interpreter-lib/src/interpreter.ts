@@ -20,6 +20,8 @@ import { StdExecExtension } from '@jvalue/jayvee-extensions/std/exec';
 import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
 import {
   BlockDefinition,
+  CompositeBlocktypeDefinition,
+  CompositeBlocktypeMetaInformation,
   EvaluationContext,
   JayveeModel,
   JayveeServices,
@@ -30,6 +32,10 @@ import {
   collectStartingBlocks,
   createJayveeServices,
   getBlocksInTopologicalSorting,
+  getMetaInformation,
+  isCompositeBlocktypeDefinition,
+  metaInformationRegistry,
+  registerMetaInformation,
   useExtension as useLangExtension,
 } from '@jvalue/jayvee-language-server';
 import * as chalk from 'chalk';
@@ -68,6 +74,18 @@ export async function interpretString(
   return await interpretModel(extractAstNodeFn, options);
 }
 
+function registerBlockMetaInformation(model: JayveeModel): void {
+  model.blocktypes
+    .filter((block) => !isCompositeBlocktypeDefinition(block))
+    .filter((block) => !getMetaInformation(block))
+    .forEach((block) => {
+      const metaInf = new CompositeBlocktypeMetaInformation(
+        block as CompositeBlocktypeDefinition,
+      );
+      metaInformationRegistry.register(metaInf.type, metaInf);
+    });
+}
+
 export async function interpretModel(
   extractAstNodeFn: (
     services: JayveeServices,
@@ -95,6 +113,9 @@ export async function interpretModel(
   setupJayveeServices(services, options.env);
 
   const model = await extractAstNodeFn(services, loggerFactory);
+
+  registerBlockMetaInformation(model);
+
   const debugTargets = getDebugTargets(options.debugTarget);
 
   const interpretationExitCode = await interpretJayveeModel(

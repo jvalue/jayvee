@@ -12,6 +12,7 @@ import { getMetaInformation } from '../meta-information/meta-inf-registry';
 import {
   BinaryExpression,
   BlockDefinition,
+  CompositeBlocktypeDefinition,
   PipelineDefinition,
   UnaryExpression,
 } from './generated/ast';
@@ -75,9 +76,11 @@ function collectPipes(
   });
 }
 
-export function collectAllPipes(pipeline: PipelineDefinition): PipeWrapper[] {
+export function collectAllPipes(
+  container: PipelineDefinition | CompositeBlocktypeDefinition,
+): PipeWrapper[] {
   const result: PipeWrapper[] = [];
-  for (const pipe of pipeline.pipes) {
+  for (const pipe of container.pipes) {
     result.push(...createSemanticPipes(pipe));
   }
   return result;
@@ -137,15 +140,6 @@ export function getBlocksInTopologicalSorting(
   );
 
   return sortedNodes;
-}
-
-export enum IOType {
-  NONE = 'None',
-  FILE = 'File',
-  TEXT_FILE = 'TextFile',
-  FILE_SYSTEM = 'FileSystem',
-  SHEET = 'Sheet',
-  TABLE = 'Table',
 }
 
 export type UnaryExpressionOperator = UnaryExpression['operator'];
