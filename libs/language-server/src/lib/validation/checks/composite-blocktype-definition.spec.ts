@@ -2,17 +2,16 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  ParseHelperOptions,
-  validationAcceptorMockImpl,
-  readJvTestAssetHelper,
-  expectNoParserAndLexerErrors,
-  TestLangExtension,
-  parseHelper,
-} from '@jvalue/jayvee-language-server/test';
-import * as assert from 'assert';
-import { LangiumDocument, AstNode, AstNodeLocator } from 'langium';
+import { AstNode, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
+
+import { TestLangExtension } from '../../../test/extension';
+import { ParseHelperOptions, parseHelper } from '../../../test/langium-utils';
+import {
+  expectNoParserAndLexerErrors,
+  readJvTestAssetHelper,
+  validationAcceptorMockImpl,
+} from '../../../test/utils';
 import { useExtension } from '../../extension';
 import { createJayveeServices } from '../../jayvee-module';
 
@@ -23,8 +22,6 @@ describe('Validation of CompositeBlocktypeDefinition', () => {
   ) => Promise<LangiumDocument<AstNode>>;
 
   const validationAcceptorMock = jest.fn(validationAcceptorMockImpl);
-
-  let locator: AstNodeLocator;
 
   const readJvTestAsset = readJvTestAssetHelper(
     __dirname,
@@ -41,7 +38,6 @@ describe('Validation of CompositeBlocktypeDefinition', () => {
     useExtension(new TestLangExtension());
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
-    locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });
@@ -56,6 +52,6 @@ describe('Validation of CompositeBlocktypeDefinition', () => {
       'composite-blockype-definition/valid-csvextractor.jv',
     );
 
-    parseCompositeBlocktypeReferences(text);
+    await parseCompositeBlocktypeReferences(text);
   });
 });

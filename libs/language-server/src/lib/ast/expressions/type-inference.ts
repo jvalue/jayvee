@@ -33,6 +33,7 @@ import {
   isValueLiteral,
   isValuetypeAssignmentLiteral,
 } from '../generated/ast';
+// eslint-disable-next-line import/no-cycle
 import { getNextAstNodeContainer } from '../model-util';
 import {
   AtomicValuetype,

@@ -10,5 +10,6 @@ export enum IOType {
 }
 
 export function getIOType(blockIO: BlocktypeInput | BlocktypeOutput): IOType {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   return IOType[blockIO.iotype.ref?.name as keyof typeof IOType] ?? IOType.NONE;
 }

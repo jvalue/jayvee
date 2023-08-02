@@ -35,7 +35,6 @@ import {
   getMetaInformation,
   isCompositeBlocktypeDefinition,
   metaInformationRegistry,
-  registerMetaInformation,
   useExtension as useLangExtension,
 } from '@jvalue/jayvee-language-server';
 import * as chalk from 'chalk';

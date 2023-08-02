@@ -2,14 +2,18 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  BlockMetaInformation,
-  CompositeBlocktypeDefinition,
-  PropertySpecification,
-  createValuetype,
-} from '@jvalue/jayvee-language-server';
 import { strict as assert } from 'assert';
-import { getIOType } from 'libs/language-server/src/lib/ast/io-type';
+
+import {
+  BlocktypeInput,
+  BlocktypeOutput,
+  CompositeBlocktypeDefinition,
+  createValuetype,
+  getIOType,
+} from '../ast';
+
+import { BlockMetaInformation } from './block-meta-inf';
+import { PropertySpecification } from './meta-inf';
 
 export class CompositeBlocktypeMetaInformation extends BlockMetaInformation {
   constructor(blockTypeDefinition: CompositeBlocktypeDefinition) {
@@ -27,8 +31,8 @@ export class CompositeBlocktypeMetaInformation extends BlockMetaInformation {
     super(
       blockTypeDefinition.name,
       properties,
-      getIOType(blockTypeDefinition.inputs[0]!),
-      getIOType(blockTypeDefinition.outputs[0]!),
+      getIOType(blockTypeDefinition.inputs[0] as BlocktypeInput),
+      getIOType(blockTypeDefinition.outputs[0] as BlocktypeOutput),
     );
   }
 }
