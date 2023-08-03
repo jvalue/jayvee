@@ -10,7 +10,7 @@ import { type TextFile } from './filesystem-node-file-text';
 import { type None } from './none';
 import { type Sheet } from './sheet';
 import { type Table } from './table';
-import { Workbook } from './workbook';
+import { type Workbook } from './workbook';
 
 export interface IOTypeImplementation<T extends IOType = IOType> {
   ioType: T;

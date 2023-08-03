@@ -29,8 +29,8 @@ export class Sheet implements IOTypeImplementation<IOType.SHEET> {
     }, 0);
   }
 
-  getSheetName(): string | undefined {
-    return this.sheetName;
+  getSheetName(): string {
+    return this.sheetName ?? 'Sheet has no Name';
   }
 
   getData(): ReadonlyArray<ReadonlyArray<string>> {

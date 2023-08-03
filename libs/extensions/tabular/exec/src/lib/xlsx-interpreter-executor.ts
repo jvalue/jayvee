@@ -10,7 +10,6 @@ import {
   BinaryFile,
   BlockExecutorClass,
   ExecutionContext,
-  Sheet,
   Workbook,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
@@ -33,22 +32,29 @@ export class XLSXInterpreterExecutor extends AbstractBlockExecutor<
     context: ExecutionContext,
   ): Promise<R.Result<Workbook>> {
     context.logger.logDebug(`reading from xlsx file`);
-    const workSheetsFromFile = xlsx.read(file.content, { dense: true });
-    const wsName = workSheetsFromFile.SheetNames[0] ?? '';
-    const ws = workSheetsFromFile.Sheets[wsName];
-    assert(ws instanceof Sheet);
+    const workBookFromFile = xlsx.read(file.content, { dense: true });
+    const workbook = new Workbook();
+    for (const workSheetName of workBookFromFile.SheetNames) {
+      const workSheet = workBookFromFile.Sheets[workSheetName];
+      assert(workSheet !== undefined);
 
-    const wsAA = Array.prototype.map.call<xlsx.WorkSheet, any[], string[][]>(
-      ws,
-      (x: xlsx.CellObject[]): string[] => {
+      const workSheetDataArray = Array.prototype.map.call<
+        xlsx.WorkSheet,
+        [
+          callbackfn: (
+            value: xlsx.CellObject[],
+            index: number,
+            array: xlsx.WorkSheet[],
+          ) => string[],
+        ],
+        string[][]
+      >(workSheet, (x: xlsx.CellObject[]): string[] => {
         return x.map<string>((y: xlsx.CellObject) => {
           return y.v?.toString() ?? '';
         });
-      },
-    );
-    const currentSheet = new Sheet(wsAA, wsName);
-    const wb = new Workbook([currentSheet]);
-
-    return Promise.resolve(R.ok(wb));
+      });
+      workbook.addNewSheet(workSheetDataArray, workSheetName);
+    }
+    return Promise.resolve(R.ok(workbook));
   }
 }

@@ -136,8 +136,10 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
     this.log('... (omitted in peek mode)');
   }
   visitWorkbook(workbook: Workbook): void {
-    this.log('visited Workbook');
-    workbook.acceptVisitor(this);
+    this.log(`WorkSheets in WorkBook:`);
+    workbook
+      .getSheets()
+      .forEach((sheet) => console.log(`WorkSheet: ${sheet.getSheetName()}`));
   }
 
   private log(text: string): void {

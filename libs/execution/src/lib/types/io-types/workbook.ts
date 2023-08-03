@@ -11,9 +11,9 @@ import { Sheet } from './sheet';
 
 export class Workbook implements IOTypeImplementation<IOType.WORKBOOK> {
   public readonly ioType = IOType.WORKBOOK;
-  private numberOfWorksheets: number;
-  constructor(private sheets: Sheet[]) {
-    this.numberOfWorksheets = sheets.length;
+  private sheets: Sheet[];
+  constructor() {
+    this.sheets = [];
   }
 
   getSheets(): ReadonlyArray<Sheet> {
@@ -26,18 +26,15 @@ export class Workbook implements IOTypeImplementation<IOType.WORKBOOK> {
     )[0];
     assert(sheet instanceof Sheet);
     return sheet;
-    /* return Array.prototype.filter.call(this.sheets, sheet => {
-      if(sheet.getSheetName() ==sheetName) return sheetName;
-      else return null;
-    })[0];*/
   }
 
-  getNumberOfWorkbooks(): number {
-    return this.numberOfWorksheets;
+  addSheet(sheet: Sheet) {
+    this.sheets.push(sheet);
   }
 
-  clone(): Workbook {
-    return new Workbook(structuredClone(this.sheets));
+  addNewSheet(data: string[][], sheetName?: string) {
+    const sheetNameOrDefault = sheetName ?? `Sheet${this.sheets.length + 1}`;
+    this.sheets.push(new Sheet(data, sheetNameOrDefault));
   }
 
   acceptVisitor<R>(visitor: IoTypeVisitor<R>): R {
