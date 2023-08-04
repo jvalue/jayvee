@@ -14,9 +14,9 @@ Install the interpreter via `npm`. You will need a **nodejs version >= 17.0.0**.
 npm install -g @jvalue/jayvee-interpreter
 ```
 
-You can install a specific version using the `@`-syntax, e.g., version `0.0.16`:
+You can install a specific version using the `@`-syntax, e.g., version `0.0.17`:
 ```bash
-npm install -g @jvalue/jayvee-interpreter@0.0.16
+npm install -g @jvalue/jayvee-interpreter@0.0.17
 ```
 
 ## Update
