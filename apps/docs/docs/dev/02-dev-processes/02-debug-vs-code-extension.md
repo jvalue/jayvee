@@ -1,5 +1,6 @@
 ---
 title: Debugging via the VS Code extension
+sidebar_position: 2
 ---
 
 The VS Code extension of Jayvee can be used to interactively debug the language server.

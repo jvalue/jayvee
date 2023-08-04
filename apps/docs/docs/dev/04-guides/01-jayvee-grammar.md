@@ -1,5 +1,6 @@
 ---
 title: The Jayvee grammar
+sidebar_position: 1
 ---
 
 The grammar of Jayvee describes the syntax and structure of the language.

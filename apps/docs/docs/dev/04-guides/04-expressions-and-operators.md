@@ -1,5 +1,6 @@
 ---
 title: Expressions and operators
+sidebar_position: 4
 ---
 
 Jayvee supports arbitrarily nested expressions and offers a variety of different operators.

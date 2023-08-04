@@ -1,5 +1,6 @@
 ---
 title: Jayvee Extensions
+sidebar_position: 6
 ---
 
 ## Concepts

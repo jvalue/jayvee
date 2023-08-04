@@ -1,5 +1,6 @@
 ---
 title: Licensing and copyright
+sidebar_position: 3
 ---
 
 The [Jayvee repository](https://github.com/jvalue/jayvee) is REUSE compliant, meaning that it fulfills the 
