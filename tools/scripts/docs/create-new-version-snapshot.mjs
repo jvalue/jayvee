@@ -1,15 +1,11 @@
-// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
-//
-// SPDX-License-Identifier: AGPL-3.0-only
+import fs from "fs";
+import path from 'path';
+import { execSync } from 'child_process';
 
 import {
     parsePackageJson, getSourcePath
 } from '../shared-util.mjs';
 import { workspaceRoot } from "@nrwl/devkit";
-
-import fs from "fs";
-import path from 'path';
-import { execSync } from 'child_process';
 
 // Executing this script: node path/to/prepare-new-version-snapshot.mjs
 
