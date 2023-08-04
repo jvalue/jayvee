@@ -4,7 +4,7 @@ sidebar_position: 2
 ---
 
 The nodes of the Abstract Syntax Tree (AST) consist of types and interfaces generated from the language grammar.
-See [here](./06-jayvee-grammar.md) for more information on that topic.
+See [here](./01-jayvee-grammar.md) for more information on that topic.
 
 The following sections provide practical guides and tips for working with nodes of the AST.
 
