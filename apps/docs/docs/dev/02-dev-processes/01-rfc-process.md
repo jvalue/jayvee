@@ -1,5 +1,6 @@
 ---
 title: Language Design Process (RFCs)
+sidebar_position: 1
 ---
 
 We use RFCs to discuss changes to the language before implementing them. You can have a look at all closed (accepted / rejected) RFCs [here](https://github.com/jvalue/jayvee/pulls?q=is%3Apr+is%3Aclosed+RFC+), and all RFCs under discussion [here](https://github.com/jvalue/jayvee/pulls?q=is%3Apr+is%3Aopen+RFC).

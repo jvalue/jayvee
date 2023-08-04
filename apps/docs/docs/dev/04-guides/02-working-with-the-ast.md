@@ -1,5 +1,6 @@
 ---
 title: Working with the AST
+sidebar_position: 2
 ---
 
 The nodes of the Abstract Syntax Tree (AST) consist of types and interfaces generated from the language grammar.

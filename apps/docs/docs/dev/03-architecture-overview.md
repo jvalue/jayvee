@@ -1,5 +1,6 @@
 ---
 title: Architecture overview
+sidebar_position: 4
 ---
 
 Jayvee has a clear separation between the language itself and its execution.
@@ -38,5 +39,5 @@ end
 ## Jayvee Extensions
 
 Lastly, there are Jayvee extensions for adding additional features to Jayvee.
-See [here](./05-jayvee-extensions.md) for more details.
+See [here](./04-guides/06-jayvee-extensions.md) for more details.
 It is worth pointing out that extensions also follow the separation between language and execution described above.

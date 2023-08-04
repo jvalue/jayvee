@@ -1,5 +1,6 @@
 ---
 title: Working with the Standard Library
+sidebar_position: 5
 ---
 
 Jayvee ships with its own standard library on board, including the most often used valuetypes, transformations, and so on.

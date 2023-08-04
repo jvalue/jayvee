@@ -77,4 +77,4 @@ The operator supports `text`, `integer` and `decimal` values as operands. The co
 
 
 ### Further reading
-For a deeper documentation of how expressions and operators work internally, refer to the [developer docs](../dev/09-expressions-and-operators.md).
+For a deeper documentation of how expressions and operators work internally, refer to the [developer docs](../dev/04-guides/04-expressions-and-operators.md).
