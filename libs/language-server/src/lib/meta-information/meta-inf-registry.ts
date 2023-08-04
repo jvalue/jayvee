@@ -10,6 +10,7 @@ import { assertUnreachable } from 'langium/lib/utils/errors';
 import {
   ConstraintTypeLiteral,
   ReferenceableBlocktypeDefinition,
+  isCompositeBlocktypeDefinition,
   isConstraintTypeLiteral,
   isReferenceableBlocktypeDefinition,
 } from '../ast/generated/ast';
@@ -18,6 +19,7 @@ import { Registry } from '../util/registry';
 
 // eslint-disable-next-line import/no-cycle
 import { BlockMetaInformation } from './block-meta-inf';
+import { CompositeBlocktypeMetaInformation } from './composite-blocktype-meta-inf';
 import { ConstraintMetaInformation } from './constraint-meta-inf';
 import { MetaInformation } from './meta-inf';
 
@@ -56,6 +58,17 @@ export function getMetaInformation(
   const dereferencedType = isReference(type) ? type.ref : type;
   if (dereferencedType === undefined) {
     return undefined;
+  }
+
+  // Register meta information about composite blocks from jv code
+  if (
+    isCompositeBlocktypeDefinition(dereferencedType) &&
+    !metaInformationRegistry.get(dereferencedType.name)
+  ) {
+    metaInformationRegistry.register(
+      dereferencedType.name,
+      new CompositeBlocktypeMetaInformation(dereferencedType),
+    );
   }
 
   const metaInf = metaInformationRegistry.get(dereferencedType.name);

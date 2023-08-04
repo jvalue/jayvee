@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
+
 import { BlocktypeInput, BlocktypeOutput } from './generated/ast';
 
 export enum IOType {
@@ -14,6 +16,12 @@ export enum IOType {
 }
 
 export function getIOType(blockIO: BlocktypeInput | BlocktypeOutput): IOType {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  return IOType[blockIO.iotype.ref?.name as keyof typeof IOType] ?? IOType.NONE;
+  const ioName = blockIO.iotype.ref?.name as string;
+
+  assert(
+    Object.values(IOType).some((type) => type === ioName),
+    `IOType ${ioName} does not exist.`,
+  );
+
+  return ioName as IOType;
 }
