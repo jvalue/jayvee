@@ -9,7 +9,7 @@ import { BlockDefinition, Registry } from '@jvalue/jayvee-language-server';
 import { BlockExecutor } from './block-executor';
 import { BlockExecutorClass } from './block-executor-class';
 
-const blockExecutorRegistry = new Registry<BlockExecutorClass>();
+export const blockExecutorRegistry = new Registry<BlockExecutorClass>();
 
 export function registerBlockExecutor(executorClass: BlockExecutorClass) {
   blockExecutorRegistry.register(executorClass.type, executorClass);

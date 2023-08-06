@@ -28,4 +28,8 @@ export class Registry<C> {
   get(key: string): C | undefined {
     return this.registry.get(key);
   }
+
+  clear() {
+    this.registry.clear();
+  }
 }

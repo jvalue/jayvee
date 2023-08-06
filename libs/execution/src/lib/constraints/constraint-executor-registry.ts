@@ -21,7 +21,8 @@ import { RangeConstraintExecutor } from './executors/range-constraint-executor';
 import { RegexConstraintExecutor } from './executors/regex-constraint-executor';
 import { TypedConstraintExecutorClass } from './typed-constraint-executor-class';
 
-const constraintExecutorRegistry = new Registry<TypedConstraintExecutorClass>();
+export const constraintExecutorRegistry =
+  new Registry<TypedConstraintExecutorClass>();
 
 export function registerDefaultConstraintExecutors() {
   registerConstraintExecutor(AllowlistConstraintExecutor);
