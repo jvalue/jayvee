@@ -19,6 +19,12 @@ export class Registry<C> {
     return [...this.registry.values()];
   }
 
+  getAllEntries(): { key: string; value: C }[] {
+    return [...this.registry.entries()].map(([k, v]) => {
+      return { key: k, value: v };
+    });
+  }
+
   get(key: string): C | undefined {
     return this.registry.get(key);
   }

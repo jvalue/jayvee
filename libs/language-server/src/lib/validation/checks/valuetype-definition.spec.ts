@@ -105,7 +105,7 @@ describe('Validation of ValuetypeDefinition', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
-      `The value needs to be of type collection<constraint> but is of type collection<boolean>`,
+      `The value needs to be of type Collection<Constraint> but is of type Collection<boolean>`,
       expect.any(Object),
     );
   });
@@ -121,6 +121,21 @@ describe('Validation of ValuetypeDefinition', () => {
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
       `This valuetype ValueType is not convertible to the type integer of the constraint "Constraint"`,
+      expect.any(Object),
+    );
+  });
+
+  it('should diagnose error on duplicate generic on valuetype', async () => {
+    const text = readJvTestAsset(
+      'valuetype-definition/invalid-duplicate-generic.jv',
+    );
+
+    await parseAndValidateValuetypeDefinition(text);
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
+    expect(validationAcceptorMock).toHaveBeenCalledWith(
+      'error',
+      `Generic parameter T is not unique`,
       expect.any(Object),
     );
   });

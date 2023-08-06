@@ -26,16 +26,9 @@ export abstract class PrimitiveValuetype<
   }
 
   /**
-   * Flag whether an atomic value type can be based on this primitive value type.
-   */
-  isUserExtendable(): boolean {
-    return false;
-  }
-
-  /**
    * The user documentation for the value type.
    * Text only, no comment characters.
-   * Should be given for all user extendable value types @see isUserExtendable
+   * Should be given for all user-referenceable value types @see isReferenceableByUser
    */
   getUserDoc(): string | undefined {
     return undefined;

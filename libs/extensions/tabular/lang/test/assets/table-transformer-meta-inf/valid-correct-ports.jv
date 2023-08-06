@@ -4,10 +4,10 @@
 
 pipeline Pipeline {
   transform TestTransform {
-    from Input oftype decimal;
-    to Output oftype integer;
+    from inputParam oftype decimal;
+    to result oftype integer;
 
-    Output: ceil(Input);
+    result: ceil(inputParam);
   }
 
   block Test oftype TableTransformer {

@@ -2,7 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { StdLib } from '@jvalue/jayvee-language-server';
+import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
+import {
+  getStdLib,
+  useExtension as useLangExtension,
+} from '@jvalue/jayvee-language-server';
 import {
   EventEmitter,
   ExtensionContext,
@@ -27,7 +31,11 @@ export class StandardLibraryFileSystemProvider implements FileSystemProvider {
   }
 
   private registerStdLib() {
-    Object.entries(StdLib).forEach(([libName, lib]) => {
+    // The VSCode Extension needs to register the StdLangExtension,
+    // otherwise the StdLib does not include the blocktype definitions.
+    useLangExtension(new StdLangExtension());
+
+    Object.entries(getStdLib()).forEach(([libName, lib]) => {
       this.libraries.set(
         Uri.parse(libName).toString(), // removes slashes if missing authorities, required for matching later on
         Buffer.from(lib),

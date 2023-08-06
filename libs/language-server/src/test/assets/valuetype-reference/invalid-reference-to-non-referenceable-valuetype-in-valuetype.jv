@@ -2,7 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pipeline Pipeline {
-  block TestExtractor oftype UnknownBlockType {
-  }
+valuetype ValueType1 oftype Constraint {
+    constraints: [];
+}
+
+valuetype ValueType2 oftype Regex {
+    constraints: [];
 }

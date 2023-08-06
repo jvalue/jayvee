@@ -208,7 +208,7 @@ In `libs/extensions/<extension-name>/exec/src/lib/my-extractor-executor.ts`:
 ```typescript
 import * as R from '@jvalue/jayvee-execution';
 import {
-  AbstractBlockExecutor,
+  BlockExecutor,
   BlockExecutorClass,
   ExecutionContext,
   Sheet,
@@ -218,7 +218,7 @@ import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
 export class MyExtractorExecutor
-  extends AbstractBlockExecutor<IOType.NONE, IOType.SHEET>
+  implements BlockExecutor<IOType.NONE, IOType.SHEET>
 {
   // Needs to match the type in meta information:
   public static readonly type = 'MyExtractor';
@@ -226,7 +226,7 @@ export class MyExtractorExecutor
   public readonly inputType = IOType.NONE;
   public readonly outputType = IOType.SHEET;
 
-  async doExecute(
+  async execute(
     input: None,
     context: ExecutionContext,
   ): Promise<R.Result<Sheet>> {
@@ -251,11 +251,8 @@ export class MyExtractorExecutor
 }
 ```
 
-> **Info**
-> The interface `BlockExecutor<I,O>` is used as an API for block executors. The abstract class `AbstractBlockExecutor<I,O>` gives some further functionality for free, e.g., debug logging.
-
 > **Warning**
-> The generic types of `AbstractBlockExecutor<I,O>` need to match the input and output types of the corresponding `BlockMetaInformation`.
+> The generic types of `BlockExecutor<I,O>` need to match the input and output types of the corresponding `BlockMetaInformation`.
 
 #### 4. Register the new `BlockExecutor` in the execution extension
 

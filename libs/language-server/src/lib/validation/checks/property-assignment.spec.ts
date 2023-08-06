@@ -119,7 +119,7 @@ describe('Validation of PropertyAssignment', () => {
       expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
       expect(validationAcceptorMock).toHaveBeenCalledWith(
         'error',
-        `Runtime parameters are not allowed for properties of type regex`,
+        `Runtime parameters are not allowed for properties of type Regex`,
         expect.any(Object),
       );
     });

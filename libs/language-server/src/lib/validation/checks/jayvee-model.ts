@@ -14,4 +14,6 @@ export function validateJayveeModel(
   checkUniqueNames(model.transforms, context);
   checkUniqueNames(model.valuetypes, context);
   checkUniqueNames(model.constraints, context);
+  checkUniqueNames(model.blocktypes, context);
+  checkUniqueNames(model.iotypes, context);
 }

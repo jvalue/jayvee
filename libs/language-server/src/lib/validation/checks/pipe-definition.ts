@@ -29,7 +29,9 @@ function checkBlockCompatibility(
     const toBlockType = semanticPipe.to?.type;
 
     const fromBlockMetaInf = getMetaInformation(fromBlockType);
+
     const toBlockMetaInf = getMetaInformation(toBlockType);
+
     if (fromBlockMetaInf === undefined || toBlockMetaInf === undefined) {
       continue;
     }

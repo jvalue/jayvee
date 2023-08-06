@@ -49,6 +49,11 @@ const config = {
         },
         items: [
           {
+            type: 'docsVersionDropdown',
+            position: 'left',
+            dropdownActiveClassDisabled: true,
+          },
+          {
             type: 'doc',
             docId: 'user/intro',
             position: 'left',

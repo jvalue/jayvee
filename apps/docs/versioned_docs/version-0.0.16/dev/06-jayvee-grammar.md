@@ -14,7 +14,7 @@ For further information on the grammar language of Langium, visit the correspond
 
 ## Working with the grammar
 
-To run the code generation, either use `npm run generate` for solely the code generation or `npm run build` for an entire build. The code generation also generates further code, like the standard library. 
+To run the code generation, either use `npm run generate` for solely the code generation or `npm run build` for an entire build.
 
 Whenever the grammar is changed and the code generation is run during development, it is advisory to **close and reopen the IDE**, so the changes are noticed and the file indexing is updated.
 

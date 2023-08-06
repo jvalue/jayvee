@@ -6,10 +6,14 @@ import './expression'
 import './terminal'
 
 BuiltinValuetypeDefinition infers ValuetypeDefinition:
-  isBuiltin?='builtin' 'valuetype' name=ID ';';
+  isBuiltin?='builtin' 'valuetype' name=ID 
+    (genericDefinition=ValuetypeGenericsDefinition)?
+  ';';
 
 CustomValuetypeDefinition infers ValuetypeDefinition:
-  'valuetype' name=ID 'oftype' type=ValuetypeReference '{'
+  'valuetype' name=ID 
+    (genericDefinition=ValuetypeGenericsDefinition)?
+  'oftype' type=ValuetypeReference '{'
     'constraints' ':' constraints=CollectionLiteral ';'
   '}';
 
@@ -20,4 +24,16 @@ ValuetypeAssignment:
   name=STRING 'oftype' type=ValuetypeReference;
 
 ValuetypeReference:
-  reference=[ValuetypeDefinition];
+  reference=[ValuetypeDefinition] 
+    ('<' 
+      genericRefs+=[ValuetypeDefinition] (',' genericRefs+=[ValuetypeDefinition])* 
+    '>')?;
+
+ValuetypeGenericsDefinition:
+  '<' 
+    generics+=ValuetypeGenericDefinition
+    (',' generics+=ValuetypeGenericDefinition)* 
+  '>';
+
+ValuetypeGenericDefinition:
+  name=ID;

@@ -54,6 +54,14 @@ export interface Valuetype<
   isConvertibleTo(target: Valuetype): boolean;
 
   /**
+   * Flag if valuetype can be referenced by users.
+   * Examples:
+   *   - Users can (not) reference a valuetype to extend it in a valuetype definition
+   *   - Users can (not) reference a valuetype to parse values in the TableInterpreter block
+   */
+  isReferenceableByUser(): boolean;
+
+  /**
    * Typeguard to validate whether a given value is in the correct internal representation of this valuetype.
    * For example, a TextValuetype has the internal representation string.
    */
@@ -102,6 +110,10 @@ export abstract class AbstractValuetype<I extends InternalValueRepresentation>
   abstract isAllowedAsRuntimeParameter(): boolean;
 
   abstract isConvertibleTo(target: Valuetype): boolean;
+
+  isReferenceableByUser(): boolean {
+    return false;
+  }
 
   abstract isInternalValueRepresentation(
     operandValue: InternalValueRepresentation | undefined,
