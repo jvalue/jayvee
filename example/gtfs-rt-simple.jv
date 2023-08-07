@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// Example 2: GTFS Realtime Data
+// Example 3: GTFS Realtime Data
 // Learning goals:
 // - Understand the construction of a csv file with multiple tables
 // - Understand how to work with live data
