@@ -2,6 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+// Example 1: Cars
+// Learning goals:
+// - Understand the core concepts pipeline, block, and pipe
+// - Understand the general structure of a pipeline
+
 // 1. This Jayvee model describes a pipeline 
 // from a CSV file in the web 
 // to a SQLite file sink.
