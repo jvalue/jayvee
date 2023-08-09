@@ -94,7 +94,7 @@ function generateExampleDocs(rootPath: string): void {
       const exampleFilePath = join(examplesPath, file);
       const exampleModel = readFileSync(exampleFilePath);
 
-      const exampleName = file.slice(0, -3);
+      const exampleName = file.slice(0, -'.jv'.length);
       const docFileName = `${exampleName}.md`;
       const docContent = `
 ---
