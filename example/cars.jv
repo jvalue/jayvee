@@ -51,12 +51,12 @@ pipeline CarsPipeline {
 		url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
 	}
 
-	// 10. The HttpExtractor requires no input and produces a file as output.
+	// 10. The HttpExtractor requires no input and produces a binary file as output.
 	// This file has to be interpreted, e.g., as text file.
 	block CarsTextFileInterpreter oftype TextFileInterpreter { }
 
 	// 11. Next, we interpret the text file as sheet.
-	// A sheet consists of text cells that can be freely manipulated.
+	// A sheet only contains text cells and is useful for manipulating the shape of data before assigning more strict value types to cells.
 	block CarsCSVInterpreter oftype CSVInterpreter {
 		enclosing: '"';
 	}
@@ -64,7 +64,7 @@ pipeline CarsPipeline {
 	// 12. We can write into cells of a sheet using the CellWriter blocktype.
 	block NameHeaderWriter oftype CellWriter {
 		// 13. We utilize a syntax similar to spreadsheet programs.
-		// The keywords "cell", "row", "column", or "range" indicate how 
+		// Cell ranges can be described using the keywords "cell", "row", "column", or "range" that indicate which 
 		// cells are selected for the write action.
 		at: cell A1;
 
@@ -75,7 +75,7 @@ pipeline CarsPipeline {
 
 	// 15. As a next step, we interpret the sheet as a table by adding structure.
 	// We define a valuetype per column that specifies the data type of the column.
-	// Rows that don't comply with the valuetypes are dropped automatically. 
+	// Rows that include values that are not valid according to the their valuetypes are dropped automatically. 
 	block CarsTableInterpreter oftype TableInterpreter {
 		header: true;
 		columns: [

@@ -86,7 +86,7 @@ pipeline ElectricVehiclesPipeline {
 		to kilometers oftype integer;
 
 		// 7. In order to express what the transform function does, 
-		// we assign a computation to the output.
+		// we assign an expression to the output. Values from the input and output of the transform can be referred to by name.
 		kilometers: round (miles * 1.609344);
 	}
 
@@ -97,7 +97,7 @@ pipeline ElectricVehiclesPipeline {
 
 	block ElectricVehiclesPostgresLoader oftype PostgresLoader {
 		// 8. The requires keyword allows us to define runtime parameters.
-		// These values have to be provided by the cli when executing the Jayvee model.
+		// These values have to be provided as environment variables when interpreting the Jayvee model.
 		host: requires DB_HOST;
 		port: requires DB_PORT;
 		username: requires DB_USERNAME;
@@ -109,7 +109,7 @@ pipeline ElectricVehiclesPipeline {
 
 // 9. Below the pipeline, we model user-define valuetypes.
 // We give them a speaking name and provide a base valuetype
-// that this valuetype shall be built on.
+// that this valuetype builts on. User-defined valuetypes always place additional constraints on existing valuetypes.
 valuetype VehicleIdentificationNumber10 oftype text {
 	// 10. Valuetypes can be further refined by providing constraints.
 	constraints: [
