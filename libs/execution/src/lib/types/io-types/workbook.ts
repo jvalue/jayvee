@@ -34,7 +34,7 @@ export class Workbook implements IOTypeImplementation<IOType.WORKBOOK> {
 
   addNewSheet(data: string[][], sheetName?: string) {
     const sheetNameOrDefault = sheetName ?? `Sheet${this.sheets.length + 1}`;
-    this.sheets.push(new Sheet(data, sheetNameOrDefault));
+    this.addSheet(new Sheet(data, sheetNameOrDefault));
   }
 
   acceptVisitor<R>(visitor: IoTypeVisitor<R>): R {

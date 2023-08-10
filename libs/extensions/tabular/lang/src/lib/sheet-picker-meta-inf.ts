@@ -13,19 +13,12 @@ export class SheetPickerMetaInformation extends BlockMetaInformation {
     super(
       // How the block type should be called:
       'SheetPicker',
-
       // Property definitions:
       {
         sheetName: {
           type: PrimitiveValuetypes.Text,
           docs: {
             description: 'The name of the sheet to select.',
-          },
-        },
-        sheetNumber: {
-          type: PrimitiveValuetypes.Integer,
-          docs: {
-            description: 'The number of the sheet to select.',
           },
         },
       },
@@ -37,7 +30,7 @@ export class SheetPickerMetaInformation extends BlockMetaInformation {
     );
 
     this.docs.description =
-      'Selects one `Sheet` from a `xlsx-File` based on its `name`. If no sheet matches the relative path, no output is created and the execution of the pipeline is aborted.';
+      'Selects one `Sheet` from a `Workbook` based on its `sheetName`. If no sheet matches the name, no output is created and the execution of the pipeline is aborted.';
     this.docs.examples = [
       {
         code: `block AgencySheetPicker oftype SheetPicker {
