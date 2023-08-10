@@ -6,10 +6,10 @@ import { AstNode, AstNodeHoverProvider, MaybePromise } from 'langium';
 import { Hover } from 'vscode-languageserver-protocol';
 
 import {
-  BlockTypeLiteral,
+  BuiltinBlocktypeDefinition,
   ConstraintTypeLiteral,
   PropertyAssignment,
-  isBlockTypeLiteral,
+  isBuiltinBlocktypeDefinition,
   isConstraintTypeLiteral,
   isPropertyAssignment,
 } from '../ast';
@@ -21,7 +21,7 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
     astNode: AstNode,
   ): MaybePromise<Hover | undefined> {
     let doc = undefined;
-    if (isBlockTypeLiteral(astNode)) {
+    if (isBuiltinBlocktypeDefinition(astNode)) {
       doc = this.getBlockTypeMarkdownDoc(astNode);
     }
     if (isConstraintTypeLiteral(astNode)) {
@@ -44,7 +44,7 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   }
 
   private getBlockTypeMarkdownDoc(
-    blockType: BlockTypeLiteral,
+    blockType: BuiltinBlocktypeDefinition,
   ): string | undefined {
     const blockMetaInf = getMetaInformation(blockType);
     if (blockMetaInf === undefined) {

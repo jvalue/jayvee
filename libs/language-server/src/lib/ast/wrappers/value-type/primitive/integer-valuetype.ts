@@ -32,7 +32,7 @@ class IntegerValuetypeImpl extends PrimitiveValuetype<number> {
     return typeof operandValue === 'number' && Number.isInteger(operandValue);
   }
 
-  override isUserExtendable() {
+  override isReferenceableByUser() {
     return true;
   }
 

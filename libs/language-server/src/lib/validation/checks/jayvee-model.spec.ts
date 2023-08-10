@@ -135,4 +135,19 @@ describe('Validation of JayveeModel', () => {
       expect.any(Object),
     );
   });
+
+  it('should diagnose error on non unique blocktypes', async () => {
+    const text = readJvTestAsset(
+      'jayvee-model/invalid-non-unique-blocktypes.jv',
+    );
+
+    await parseAndValidateJayveeModel(text);
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
+    expect(validationAcceptorMock).toHaveBeenCalledWith(
+      'error',
+      `The builtinblocktypedefinition name "TestBlock" needs to be unique.`,
+      expect.any(Object),
+    );
+  });
 });

@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  BlockTypeLiteral,
+  BuiltinBlocktypeDefinition,
   ConstraintTypeLiteral,
   EvaluationContext,
   PropertyBody,
@@ -11,6 +11,7 @@ import {
   ValidationContext,
   getMetaInformation,
 } from '@jvalue/jayvee-language-server';
+import { Reference } from 'langium';
 
 export function validateRuntimeParameterLiteral(
   runtimeParameter: RuntimeParameterLiteral,
@@ -60,7 +61,10 @@ function checkRuntimeParameterValueParsing(
   evaluationContext: EvaluationContext,
 ) {
   const enclosingPropertyBody = getEnclosingPropertyBody(runtimeParameter);
-  const typeLiteral: BlockTypeLiteral | ConstraintTypeLiteral | undefined =
+  const type:
+    | Reference<BuiltinBlocktypeDefinition>
+    | ConstraintTypeLiteral
+    | undefined =
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     enclosingPropertyBody.$container?.type;
 
@@ -71,7 +75,7 @@ function checkRuntimeParameterValueParsing(
     return;
   }
 
-  const metaInf = getMetaInformation(typeLiteral);
+  const metaInf = getMetaInformation(type);
   const propertySpec = metaInf?.getPropertySpecification(propertyName);
   if (propertySpec === undefined) {
     return;

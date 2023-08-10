@@ -10,7 +10,7 @@ In order to contribute to the Jayvee project, please have a look at our [contrib
 
 The overall project is licensed under the `AGPL-3.0-only` license and is compliant to the [REUSE Specification](https://reuse.software/spec/) by the [Free Software Foundation Europe](https://fsfe.org/).
 Because of this, contributions are required to adhere to the license and follow that specification.
-More details on this topic can be found [here](./02-licensing-and-copyright.md).
+More details on this topic can be found [here](./02-dev-processes/03-licensing-and-copyright.md).
 
 And last but not least, please read and follow our [code of conduct](https://github.com/jvalue/jayvee/blob/main/CODE_OF_CONDUCT.md).
 
@@ -18,7 +18,7 @@ And last but not least, please read and follow our [code of conduct](https://git
 
 The Jayvee repository is located [here](https://github.com/jvalue/jayvee) on GitHub.
 It uses an [Nx mono-repository](https://nx.dev/) setup and contains all related projects, most notably the Jayvee language server and interpreter.
-Please have a look at the [architecture overview](./04-architecture-overview.md) for more details.
+Please have a look at the [architecture overview](./03-architecture-overview.md) for more details.
 
 ## Prerequisites
 

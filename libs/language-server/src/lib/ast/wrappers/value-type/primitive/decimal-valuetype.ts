@@ -27,7 +27,7 @@ class DecimalValuetypeImpl extends PrimitiveValuetype<number> {
     return typeof operandValue === 'number' && Number.isFinite(operandValue);
   }
 
-  override isUserExtendable() {
+  override isReferenceableByUser() {
     return true;
   }
 

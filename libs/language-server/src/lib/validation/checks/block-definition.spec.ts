@@ -67,19 +67,6 @@ describe('Validation of BlockDefinition', () => {
     validationAcceptorMock.mockReset();
   });
 
-  it('should diagnose error on unknown block type', async () => {
-    const text = readJvTestAsset('block-definition/invalid-unknown-block.jv');
-
-    await parseAndValidateBlock(text);
-
-    expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
-      'error',
-      `Unknown block type 'UnknownBlockType'`,
-      expect.any(Object),
-    );
-  });
-
   it('should diagnose error on block without pipe', async () => {
     const text = readJvTestAsset('block-definition/invalid-missing-pipe.jv');
 

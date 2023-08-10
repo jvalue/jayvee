@@ -1,0 +1,11 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+builtin blocktype TestBlock {
+	input default oftype text;
+}
+
+builtin blocktype TestBlock {
+	input default oftype text;
+}

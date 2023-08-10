@@ -4,11 +4,13 @@
 
 grammar Jayvee
 
+import './blocktype'
 import './terminal'
 import './property'
 import './valuetype'
 import './constraint'
 import './transform'
+import './iotype'
 
 entry JayveeModel:
   (
@@ -16,6 +18,8 @@ entry JayveeModel:
     | valuetypes+=(CustomValuetypeDefinition | BuiltinValuetypeDefinition)
     | constraints+=ConstraintDefinition
     | transforms+=TransformDefinition
+    | blocktypes+=BuiltinBlocktypeDefinition
+    | iotypes+=IotypeDefinition
   )*;
 
 PipelineDefinition:
@@ -30,10 +34,7 @@ PipelineDefinition:
   '}';
 
 BlockDefinition:
-  'block' name=ID 'oftype' type=BlockTypeLiteral body=PropertyBody;
-
-BlockTypeLiteral:
-  name=ID;
+  'block' name=ID 'oftype' type=[BuiltinBlocktypeDefinition] body=PropertyBody;
 
 PipeDefinition:
   SinglePipeDefinition | ChainedPipeDefinition;

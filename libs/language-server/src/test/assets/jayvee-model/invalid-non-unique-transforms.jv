@@ -3,15 +3,15 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 transform Transform {
-  from Input oftype decimal;
-  to Output oftype integer;
+  from inputParam oftype decimal;
+  to result oftype integer;
 
-  Output: floor(Input);
+  result: floor(inputParam);
 }
 
 transform Transform {
-  from Input oftype decimal;
-  to Output oftype integer;
+  from inputParam oftype decimal;
+  to inputParam oftype integer;
 
-  Output: ceil(Input);
+  result: ceil(inputParam);
 }

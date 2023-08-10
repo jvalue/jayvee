@@ -10,7 +10,8 @@
     "test": "nx run-many --target test",
     "generate": "nx run language-server:generate",
     "example:cars": "nx run interpreter:run -d example/cars.jv -dg peek",
-    "example:gtfs": "nx run interpreter:run -d example/gtfs-static-and-rt.jv -dg peek",
+    "example:gtfs": "nx run interpreter:run -d example/gtfs-static.jv -dg peek",
+    "example:gtfs-rt": "nx run interpreter:run -d example/gtfs-rt.jv -dg peek",
     "example:vehicles": "nx run interpreter:run -d -e DB_HOST=localhost -e DB_PORT=5432 -e DB_USERNAME=postgres -e DB_PASSWORD=postgres -e DB_DATABASE=postgres example/electric-vehicles.jv -dg peek"
   },
   "private": true,
@@ -83,6 +84,7 @@
     "jest": "28.1.1",
     "jest-environment-jsdom": "28.1.1",
     "langium-cli": "^1.2.0",
+    "nock": "13.3.1",
     "nx": "15.3.0",
     "prettier": "^2.8.7",
     "ts-jest": "28.0.5",
