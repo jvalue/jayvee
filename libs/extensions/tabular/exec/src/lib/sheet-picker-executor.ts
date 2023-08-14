@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'assert';
-
 import * as R from '@jvalue/jayvee-execution';
 import {
   AbstractBlockExecutor,
@@ -36,7 +34,6 @@ export class SheetPickerExecutor extends AbstractBlockExecutor<
       PrimitiveValuetypes.Text,
     );
     const sheet = workbook.getSheetByName(sheetName);
-    assert(sheet instanceof Sheet);
     return R.ok(sheet);
   }
 }

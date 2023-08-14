@@ -34,6 +34,10 @@ export class Workbook implements IOTypeImplementation<IOType.WORKBOOK> {
 
   addNewSheet(data: string[][], sheetName?: string) {
     const sheetNameOrDefault = sheetName ?? `Sheet${this.sheets.length + 1}`;
+    if (
+      this.sheets.some((sheet) => sheet.getSheetName() === sheetNameOrDefault)
+    )
+      return;
     this.addSheet(new Sheet(data, sheetNameOrDefault));
   }
 

@@ -48,11 +48,12 @@ export class XLSXInterpreterExecutor extends AbstractBlockExecutor<
           ) => string[],
         ],
         string[][]
-      >(workSheet, (x: xlsx.CellObject[]): string[] => {
-        return x.map<string>((y: xlsx.CellObject) => {
-          return y.v?.toString() ?? '';
+      >(workSheet, (row: xlsx.CellObject[]): string[] => {
+        return row.map<string>((cell: xlsx.CellObject) => {
+          return cell.v?.toString() ?? '';
         });
       });
+
       workbook.addNewSheet(workSheetDataArray, workSheetName);
     }
     return Promise.resolve(R.ok(workbook));
