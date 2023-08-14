@@ -53,7 +53,7 @@ export class XLSXInterpreterExecutor extends AbstractBlockExecutor<
           return cell.v?.toString() ?? '';
         });
       });
-
+   
       workbook.addNewSheet(workSheetDataArray, workSheetName);
     }
     return Promise.resolve(R.ok(workbook));
