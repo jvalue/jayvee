@@ -7,9 +7,7 @@ import { assertUnreachable } from 'langium';
 import {
   ValuetypeDefinition,
   ValuetypeReference,
-  isPrimitiveValuetypeKeywordLiteral,
   isValuetypeDefinition,
-  isValuetypeDefinitionReference,
   isValuetypeReference,
 } from '../../generated/ast';
 
@@ -17,6 +15,7 @@ import {
 import { AtomicValuetype } from './atomic-valuetype';
 // eslint-disable-next-line import/no-cycle
 import { createPrimitiveValuetype } from './primitive';
+import { createCollectionValuetype } from './primitive/collection/collection-valuetype';
 import { Valuetype } from './valuetype';
 
 /**
@@ -29,19 +28,20 @@ export function createValuetype(
   if (identifier === undefined) {
     return undefined;
   } else if (isValuetypeReference(identifier)) {
-    if (isPrimitiveValuetypeKeywordLiteral(identifier)) {
-      return createPrimitiveValuetype(identifier);
-    } else if (isValuetypeDefinitionReference(identifier)) {
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      const referenced = identifier?.reference?.ref;
-      if (referenced === undefined) {
-        return undefined;
-      }
-
-      return new AtomicValuetype(referenced);
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const valuetypeDefinition = identifier?.reference?.ref;
+    if (valuetypeDefinition?.name === 'Collection') {
+      return createCollectionValuetype(identifier);
     }
-    assertUnreachable(identifier);
+    return createValuetype(valuetypeDefinition);
   } else if (isValuetypeDefinition(identifier)) {
+    if (identifier.name === 'Collection') {
+      // We don't have an object representing a generic collection
+      return;
+    }
+    if (identifier.isBuiltin) {
+      return createPrimitiveValuetype(identifier);
+    }
     return new AtomicValuetype(identifier);
   }
   assertUnreachable(identifier);

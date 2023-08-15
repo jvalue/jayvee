@@ -2,8 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../../expressions/evaluation';
-import { PrimitiveValuetypeKeyword } from '../../../generated/ast';
+import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
 // eslint-disable-next-line import/no-cycle
 import { ValuetypeVisitor } from '../valuetype';
 
@@ -18,7 +17,7 @@ class BooleanValuetypeImpl extends PrimitiveValuetype<boolean> {
     return true;
   }
 
-  override getName(): PrimitiveValuetypeKeyword {
+  override getName(): 'boolean' {
     return 'boolean';
   }
 
@@ -26,6 +25,17 @@ class BooleanValuetypeImpl extends PrimitiveValuetype<boolean> {
     operandValue: InternalValueRepresentation | undefined,
   ): operandValue is boolean {
     return typeof operandValue === 'boolean';
+  }
+
+  override isReferenceableByUser() {
+    return true;
+  }
+
+  override getUserDoc(): string {
+    return `
+A boolean value.
+Examples: true, false
+`.trim();
   }
 }
 

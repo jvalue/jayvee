@@ -23,6 +23,10 @@ jobs:
           always-auth: true
           registry-url: 'https://registry.npmjs.org'
       - run: npm ci
+      - name: Publish interpreter-lib
+        run: npx nx run interpreter-lib:publish:prod
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish language server
         run: npx nx run language-server:publish:prod
         env:

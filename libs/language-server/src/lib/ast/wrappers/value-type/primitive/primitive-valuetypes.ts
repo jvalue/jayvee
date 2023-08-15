@@ -2,18 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { assertUnreachable } from 'langium';
+import { strict as assert } from 'assert';
 
-import { PrimitiveValuetypeKeywordLiteral } from '../../../generated/ast';
+import { ValuetypeDefinition } from '../../../generated/ast';
 
 // eslint-disable-next-line import/no-cycle
 import { Boolean, BooleanValuetype } from './boolean-valuetype';
 import { CellRange, CellRangeValuetype } from './cell-range-valuetype';
-// eslint-disable-next-line import/no-cycle
-import {
-  EmptyCollection,
-  EmptyCollectionValuetype,
-} from './collection/empty-collection-valuetype';
 import { Constraint, ConstraintValuetype } from './constraint-valuetype';
 import { Decimal, DecimalValuetype } from './decimal-valuetype';
 import { Integer, IntegerValuetype } from './integer-valuetype';
@@ -35,7 +30,6 @@ export const PrimitiveValuetypes: {
   CellRange: CellRangeValuetype;
   Constraint: ConstraintValuetype;
   ValuetypeAssignment: ValuetypeAssignmentValuetype;
-  EmptyCollection: EmptyCollectionValuetype;
   Transform: TransformValuetype;
 } = {
   Boolean: Boolean,
@@ -48,30 +42,31 @@ export const PrimitiveValuetypes: {
   Constraint: Constraint,
   ValuetypeAssignment: ValuetypeAssignment,
 
-  EmptyCollection: EmptyCollection,
   Transform: Transform,
 };
 
 export function createPrimitiveValuetype(
-  keywordLiteral: PrimitiveValuetypeKeywordLiteral,
+  builtinValuetype: ValuetypeDefinition,
 ): PrimitiveValuetype | undefined {
+  assert(builtinValuetype.isBuiltin);
+  const name = builtinValuetype.name;
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  const keyword = keywordLiteral?.keyword;
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (keyword === undefined) {
+  if (name === undefined) {
     return undefined;
   }
 
-  switch (keyword) {
-    case 'boolean':
-      return Boolean;
-    case 'decimal':
-      return Decimal;
-    case 'integer':
-      return Integer;
-    case 'text':
-      return Text;
-    default:
-      assertUnreachable(keyword);
+  const matchingPrimitives = Object.values(PrimitiveValuetypes).filter(
+    (valuetype) => valuetype.getName() === name,
+  );
+  if (matchingPrimitives.length === 0) {
+    throw new Error(
+      `Found no PrimitiveValuetype for builtin valuetype "${name}"`,
+    );
   }
+  if (matchingPrimitives.length > 1) {
+    throw new Error(
+      `Found multiple ambiguous PrimitiveValuetype for builtin valuetype "${name}"`,
+    );
+  }
+  return matchingPrimitives[0];
 }

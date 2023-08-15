@@ -18,41 +18,41 @@ import { ExecutionContext } from '../execution-context';
 import { isValidValueRepresentation } from '../types';
 import { TableColumn } from '../types/io-types/table';
 
+export interface PortDetails {
+  port: TransformPortDefinition;
+  valuetype: Valuetype;
+}
+
 export class TransformExecutor {
   constructor(private readonly transform: TransformDefinition) {}
 
-  getInputDetails(): {
-    port: TransformPortDefinition;
-    valuetype: Valuetype;
-  } {
+  getInputDetails(): PortDetails[] {
     return this.getPortDetails('from');
   }
 
-  getOutputDetails(): {
-    port: TransformPortDefinition;
-    valuetype: Valuetype;
-  } {
-    return this.getPortDetails('to');
+  getOutputDetails(): PortDetails {
+    const portDetails = this.getPortDetails('to');
+    assert(portDetails.length === 1);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return portDetails[0]!;
   }
 
   private getPortDetails(kind: TransformPortDefinition['kind']): {
     port: TransformPortDefinition;
     valuetype: Valuetype;
-  } {
-    const outputPorts = this.transform.body.ports.filter(
-      (x) => x.kind === kind,
-    );
-    assert(outputPorts.length === 1);
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const outputPort = outputPorts[0]!;
-    const outputType = outputPort.valueType;
-    const outputValuetype = createValuetype(outputType);
-    assert(outputValuetype !== undefined);
+  }[] {
+    const ports = this.transform.body.ports.filter((x) => x.kind === kind);
+    const portDetails = ports.map((port) => {
+      const valuetypeNode = port.valueType;
+      const valuetype = createValuetype(valuetypeNode);
+      assert(valuetype !== undefined);
+      return {
+        port: port,
+        valuetype: valuetype,
+      };
+    });
 
-    return {
-      port: outputPort,
-      valuetype: outputValuetype,
-    };
+    return portDetails;
   }
 
   getOutputAssignment(): TransformOutputAssignment {
@@ -63,7 +63,8 @@ export class TransformExecutor {
   }
 
   executeTransform(
-    column: TableColumn,
+    columns: Map<string, TableColumn>,
+    numberOfRows: number,
     context: ExecutionContext,
   ): {
     resultingColumn: TableColumn;
@@ -71,29 +72,29 @@ export class TransformExecutor {
   } {
     context.enterNode(this.transform);
 
-    const result = this.doExecuteTransform(column, context);
+    const result = this.doExecuteTransform(columns, numberOfRows, context);
     context.exitNode(this.transform);
 
     return result;
   }
 
   private doExecuteTransform(
-    column: TableColumn,
+    columns: Map<string, TableColumn>,
+    numberOfRows: number,
     context: ExecutionContext,
   ): {
     resultingColumn: TableColumn;
     rowsToDelete: number[];
   } {
-    const inputDetails = this.getInputDetails();
+    const inputDetailsList = this.getInputDetails();
     const outputDetails = this.getOutputDetails();
 
     const newColumn: Array<InternalValueRepresentation> = [];
     const rowsToDelete: number[] = [];
-    column.values.forEach((entry, rowIndex) => {
-      context.evaluationContext.setValueForReference(
-        inputDetails.port.name,
-        entry,
-      );
+
+    for (let rowIndex = 0; rowIndex < numberOfRows; ++rowIndex) {
+      this.addVariablesToContext(inputDetailsList, columns, rowIndex, context);
+
       const newValue = evaluateExpression(
         this.getOutputAssignment().expression,
         context.evaluationContext,
@@ -124,8 +125,8 @@ export class TransformExecutor {
         newColumn.push(newValue);
       }
 
-      context.evaluationContext.deleteValueForReference(inputDetails.port.name);
-    });
+      this.removeVariablesFromContext(inputDetailsList, context);
+    }
 
     return {
       rowsToDelete: rowsToDelete,
@@ -134,5 +135,36 @@ export class TransformExecutor {
         valuetype: outputDetails.valuetype,
       },
     };
+  }
+
+  private removeVariablesFromContext(
+    inputDetailsList: PortDetails[],
+    context: ExecutionContext,
+  ) {
+    for (const inputDetails of inputDetailsList) {
+      context.evaluationContext.deleteValueForReference(inputDetails.port.name);
+    }
+  }
+
+  private addVariablesToContext(
+    inputDetailsList: PortDetails[],
+    columns: Map<string, TableColumn<InternalValueRepresentation>>,
+    rowIndex: number,
+    context: ExecutionContext,
+  ) {
+    for (const inputDetails of inputDetailsList) {
+      const variableName = inputDetails.port.name;
+
+      const column = columns.get(variableName);
+      assert(column !== undefined);
+
+      const variableValue = column.values[rowIndex];
+      assert(variableValue !== undefined);
+
+      context.evaluationContext.setValueForReference(
+        variableName,
+        variableValue,
+      );
+    }
   }
 }

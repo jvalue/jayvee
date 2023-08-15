@@ -7,15 +7,11 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { assertUnreachable } from 'langium';
-
 import { EvaluationContext } from '../../ast/expressions/evaluation';
 import {
   TransformBody,
   TransformPortDefinition,
-  isPrimitiveValuetypeKeywordLiteral,
   isTransformPortDefinition,
-  isValuetypeDefinitionReference,
 } from '../../ast/generated/ast';
 import { ValidationContext } from '../validation-context';
 import { checkUniqueNames } from '../validation-util';
@@ -33,8 +29,7 @@ export function validateTransformBody(
   checkUniqueNames(transformBody.ports, validationContext, 'transform port');
   checkUniqueOutputAssignments(transformBody, validationContext);
 
-  checkSinglePortOfKind(transformBody, 'from', validationContext);
-  checkSinglePortOfKind(transformBody, 'to', validationContext);
+  checkSingleOutputPort(transformBody, validationContext);
 
   checkAreInputsUsed(transformBody, validationContext);
 
@@ -79,28 +74,25 @@ function checkUniqueOutputAssignments(
   }
 }
 
-function checkSinglePortOfKind(
+function checkSingleOutputPort(
   transformBody: TransformBody,
-  portKind: TransformPortDefinition['kind'],
   context: ValidationContext,
 ): void {
-  const portKindName = portKind === 'to' ? 'output' : 'input';
-
-  const ports = transformBody.ports?.filter((x) => x.kind === portKind);
+  const ports = transformBody.ports?.filter((x) => x.kind === 'to');
   if (ports === undefined) {
     return undefined;
   }
 
   if (ports.length > 1) {
     ports.forEach((port) => {
-      context.accept('error', `More than one ${portKindName} port is defined`, {
+      context.accept('error', `More than one output port is defined`, {
         node: port,
       });
     });
   }
 
   if (ports.length === 0) {
-    context.accept('error', `There has to be a single ${portKindName} port`, {
+    context.accept('error', `There has to be a single output port`, {
       node: transformBody.$container,
       property: 'name',
     });
@@ -149,15 +141,10 @@ function checkAreInputsUsed(
 function isOutputPortComplete(
   portDefinition: TransformPortDefinition,
 ): boolean {
-  const valueType = portDefinition?.valueType;
+  const valueType = portDefinition?.valueType?.reference?.ref;
   if (valueType === undefined) {
     return false;
   }
 
-  if (isPrimitiveValuetypeKeywordLiteral(valueType)) {
-    return valueType?.keyword !== undefined;
-  } else if (isValuetypeDefinitionReference(valueType)) {
-    return valueType?.reference?.ref?.name !== undefined;
-  }
-  return assertUnreachable(valueType);
+  return valueType?.name !== undefined;
 }

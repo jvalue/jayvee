@@ -9,7 +9,7 @@ import { BlockDefinition, Registry } from '@jvalue/jayvee-language-server';
 import { BlockExecutor } from './block-executor';
 import { BlockExecutorClass } from './block-executor-class';
 
-const blockExecutorRegistry = new Registry<BlockExecutorClass>();
+export const blockExecutorRegistry = new Registry<BlockExecutorClass>();
 
 export function registerBlockExecutor(executorClass: BlockExecutorClass) {
   blockExecutorRegistry.register(executorClass.type, executorClass);
@@ -20,7 +20,8 @@ export function getRegisteredBlockExecutors(): BlockExecutorClass[] {
 }
 
 export function createBlockExecutor(block: BlockDefinition): BlockExecutor {
-  const blockType = block.type.name;
+  const blockType = block.type.ref?.name;
+  assert(blockType !== undefined);
   const blockExecutor = blockExecutorRegistry.get(blockType);
   assert(
     blockExecutor !== undefined,

@@ -2,7 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { STANDARD_LIBRARY_SOURCECODE } from '@jvalue/jayvee-language-server';
+import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
+import {
+  getStdLib,
+  useExtension as useLangExtension,
+} from '@jvalue/jayvee-language-server';
 import {
   EventEmitter,
   ExtensionContext,
@@ -16,11 +20,28 @@ import {
 } from 'vscode';
 
 export class StandardLibraryFileSystemProvider implements FileSystemProvider {
-  private readonly stdLibraryBuffer = Buffer.from(STANDARD_LIBRARY_SOURCECODE);
+  private libraries = new Map<string, Buffer>();
 
   // The following class members only serve to satisfy the interface:
   private readonly didChangeFile = new EventEmitter<FileChangeEvent[]>();
   onDidChangeFile = this.didChangeFile.event;
+
+  constructor() {
+    this.registerStdLib();
+  }
+
+  private registerStdLib() {
+    // The VSCode Extension needs to register the StdLangExtension,
+    // otherwise the StdLib does not include the blocktype definitions.
+    useLangExtension(new StdLangExtension());
+
+    Object.entries(getStdLib()).forEach(([libName, lib]) => {
+      this.libraries.set(
+        Uri.parse(libName).toString(), // removes slashes if missing authorities, required for matching later on
+        Buffer.from(lib),
+      );
+    });
+  }
 
   static register(context: ExtensionContext) {
     context.subscriptions.push(
@@ -35,22 +56,33 @@ export class StandardLibraryFileSystemProvider implements FileSystemProvider {
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   stat(uri: Uri): FileStat {
+    const libBuffer = this.getLibrary(uri);
     const date = Date.now();
     return {
       ctime: date,
       mtime: date,
-      size: this.stdLibraryBuffer.length,
+      size: libBuffer.length,
       type: FileType.File,
     };
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   readFile(uri: Uri): Uint8Array {
-    // We could return different libraries based on the URI
-    // We have only one, so we always return the same
-    return new Uint8Array(this.stdLibraryBuffer);
+    const libBuffer = this.getLibrary(uri);
+    return new Uint8Array(libBuffer);
+  }
+
+  /**
+   * Fetches the library if it exists.
+   * Otherwise, throws a FileSystemError.FileNotFound.
+   * @returns the library content as Buffer
+   */
+  private getLibrary(uri: Uri) {
+    const libBuffer = this.libraries.get(uri.toString());
+    if (libBuffer === undefined) {
+      throw FileSystemError.FileNotFound(uri);
+    }
+    return libBuffer;
   }
 
   watch() {

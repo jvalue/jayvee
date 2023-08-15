@@ -2,11 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../expressions/evaluation';
-import {
-  PrimitiveValuetypeKeywordLiteral,
-  ValuetypeDefinition,
-} from '../../generated/ast';
+import { type InternalValueRepresentation } from '../../expressions/internal-value-representation';
+import { ValuetypeDefinition } from '../../generated/ast';
 
 // eslint-disable-next-line import/no-cycle
 import { AtomicValuetype } from './atomic-valuetype';
@@ -24,9 +21,7 @@ import {
   type ValuetypeAssignmentValuetype,
 } from './primitive';
 
-export type ValuetypeAstNode =
-  | PrimitiveValuetypeKeywordLiteral
-  | ValuetypeDefinition;
+export type ValuetypeAstNode = ValuetypeDefinition;
 
 export interface VisitableValuetype {
   acceptVisitor(visitor: ValuetypeVisitor): void;
@@ -57,6 +52,14 @@ export interface Valuetype<
    * Atomic value types inherit (@see isSubtypeOf) the conversion behavior of their primitive value type.
    */
   isConvertibleTo(target: Valuetype): boolean;
+
+  /**
+   * Flag if valuetype can be referenced by users.
+   * Examples:
+   *   - Users can (not) reference a valuetype to extend it in a valuetype definition
+   *   - Users can (not) reference a valuetype to parse values in the TableInterpreter block
+   */
+  isReferenceableByUser(): boolean;
 
   /**
    * Typeguard to validate whether a given value is in the correct internal representation of this valuetype.
@@ -107,6 +110,10 @@ export abstract class AbstractValuetype<I extends InternalValueRepresentation>
   abstract isAllowedAsRuntimeParameter(): boolean;
 
   abstract isConvertibleTo(target: Valuetype): boolean;
+
+  isReferenceableByUser(): boolean {
+    return false;
+  }
 
   abstract isInternalValueRepresentation(
     operandValue: InternalValueRepresentation | undefined,

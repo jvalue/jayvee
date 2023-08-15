@@ -14,9 +14,9 @@ Install the interpreter via `npm`. You will need a **nodejs version >= 17.0.0**.
 npm install -g @jvalue/jayvee-interpreter
 ```
 
-You can install a specific version using the `@`-syntax, e.g., version `0.0.16`:
+You can install a specific version using the `@`-syntax, e.g., version `0.0.17`:
 ```bash
-npm install -g @jvalue/jayvee-interpreter@0.0.16
+npm install -g @jvalue/jayvee-interpreter@0.0.17
 ```
 
 ## Update
@@ -47,11 +47,34 @@ Run with **additional debug output**:
 jv <file> -d
 ```
 
-With runtime parameters:
+
+With **runtime parameters**:
 
 ```console
 jv -e <param>=<value> -e <param>=<value> ... <file>
 ```
+
+### Debug a `.jv` file
+
+Print debugging is further configured by the parameters `--debug-granularity` and `--debug-target`.
+
+```console
+jv <file> -d -dg peek
+```
+The value of the parameter `--debug-granularity` (short `-dg`) can have the following values:
+- `peek` to log a short summary, including a small subset of data 
+- `exhaustive` to log a summary, including the full data
+- `minimal` to log a summary, including no additional data (default).
+To see logs, debugging has to be enabled using the `-d` flag.
+
+```console
+jv <file> -d --debug-granularity peek
+```
+The parameter `--debug-target` (short `-dt`) allows to specify which blocks should be logged for debugging. Separate block names by comma if multiple blocks are targeted. All blocks are logged if the parameter is omitted.
+```console
+jv <file> -d --debug-granularity peek --debug-target MyExtractorBlock,MySinkBlock
+```
+
 
 ## Examples
 

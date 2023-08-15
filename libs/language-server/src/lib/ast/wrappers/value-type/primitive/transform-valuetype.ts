@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../../expressions/evaluation';
+import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
 import {
   TransformDefinition,
   isTransformDefinition,
@@ -21,8 +21,8 @@ class TransformValuetypeImpl extends PrimitiveValuetype<TransformDefinition> {
     return false;
   }
 
-  override getName(): 'transform' {
-    return 'transform';
+  override getName(): 'Transform' {
+    return 'Transform';
   }
 
   override isInternalValueRepresentation(

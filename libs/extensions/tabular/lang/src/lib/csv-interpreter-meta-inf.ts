@@ -65,5 +65,5 @@ export class CSVInterpreterMetaInformation extends BlockMetaInformation {
   }
 }
 const blockExample = `block AgencyCSVInterpreter oftype CSVInterpreter {  
-    delimiter: ";"
+    delimiter: ";";
   }`;

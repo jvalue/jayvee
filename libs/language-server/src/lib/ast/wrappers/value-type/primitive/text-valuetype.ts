@@ -2,8 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../../expressions/evaluation';
-import { PrimitiveValuetypeKeyword } from '../../../generated/ast';
+import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
 // eslint-disable-next-line import/no-cycle
 import { ValuetypeVisitor } from '../valuetype';
 
@@ -18,7 +17,7 @@ class TextValuetypeImpl extends PrimitiveValuetype<string> {
     return true;
   }
 
-  override getName(): PrimitiveValuetypeKeyword {
+  override getName(): 'text' {
     return 'text';
   }
 
@@ -26,6 +25,17 @@ class TextValuetypeImpl extends PrimitiveValuetype<string> {
     operandValue: InternalValueRepresentation | undefined,
   ): operandValue is string {
     return typeof operandValue === 'string';
+  }
+
+  override isReferenceableByUser() {
+    return true;
+  }
+
+  override getUserDoc(): string {
+    return `
+A text value. 
+Example: "Hello World"
+`.trim();
   }
 }
 

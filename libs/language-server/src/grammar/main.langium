@@ -4,18 +4,22 @@
 
 grammar Jayvee
 
+import './blocktype'
 import './terminal'
 import './property'
 import './valuetype'
 import './constraint'
 import './transform'
+import './iotype'
 
 entry JayveeModel:
   (
     pipelines+=PipelineDefinition
-    | valuetypes+=ValuetypeDefinition
+    | valuetypes+=(CustomValuetypeDefinition | BuiltinValuetypeDefinition)
     | constraints+=ConstraintDefinition
     | transforms+=TransformDefinition
+    | blocktypes+=BuiltinBlocktypeDefinition
+    | iotypes+=IotypeDefinition
   )*;
 
 PipelineDefinition:
@@ -23,17 +27,14 @@ PipelineDefinition:
     (
       blocks+=BlockDefinition
       | pipes+=PipeDefinition
-      | valuetypes+=ValuetypeDefinition
+      | valuetypes+=CustomValuetypeDefinition
       | constraints+=ConstraintDefinition
       | transforms+=TransformDefinition
     )*
   '}';
 
 BlockDefinition:
-  'block' name=ID 'oftype' type=BlockTypeLiteral body=PropertyBody;
-
-BlockTypeLiteral:
-  name=ID;
+  'block' name=ID 'oftype' type=[BuiltinBlocktypeDefinition] body=PropertyBody;
 
 PipeDefinition:
   SinglePipeDefinition | ChainedPipeDefinition;

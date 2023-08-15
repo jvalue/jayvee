@@ -18,6 +18,7 @@ import { EqualityOperatorEvaluator } from './evaluators/equality-operator-evalua
 import { FloorOperatorEvaluator } from './evaluators/floor-operator-evaluator';
 import { GreaterEqualOperatorEvaluator } from './evaluators/greater-equal-operator-evaluator';
 import { GreaterThanOperatorEvaluator } from './evaluators/greater-than-operator-evaluator';
+import { InOperatorEvaluator } from './evaluators/in-operator-evaluator';
 import { InequalityOperatorEvaluator } from './evaluators/inequality-operator-evaluator';
 import { LessEqualOperatorEvaluator } from './evaluators/less-equal-operator-evaluator';
 import { LessThanOperatorEvaluator } from './evaluators/less-than-operator-evaluator';
@@ -43,6 +44,7 @@ import { BasicArithmeticOperatorTypeComputer } from './type-computers/basic-arit
 import { DivisionOperatorTypeComputer } from './type-computers/division-operator-type-computer';
 import { EqualityOperatorTypeComputer } from './type-computers/equality-operator-type-computer';
 import { ExponentialOperatorTypeComputer } from './type-computers/exponential-operator-type-computer';
+import { InOperatorTypeComputer } from './type-computers/in-operator-type-computer';
 import { IntegerConversionOperatorTypeComputer } from './type-computers/integer-conversion-operator-type-computer';
 import { LogicalOperatorTypeComputer } from './type-computers/logical-operator-type-computer';
 import { MatchesOperatorTypeComputer } from './type-computers/matches-operator-type-computer';
@@ -130,6 +132,10 @@ export const binaryOperatorRegistry: Record<
   matches: {
     typeInference: new MatchesOperatorTypeComputer(),
     evaluation: new MatchesOperatorEvaluator(),
+  },
+  in: {
+    typeInference: new InOperatorTypeComputer(),
+    evaluation: new InOperatorEvaluator(),
   },
   '<': {
     typeInference: new RelationalOperatorTypeComputer(),
