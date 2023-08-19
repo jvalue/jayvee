@@ -10,6 +10,7 @@
 import { EvaluationContext, inferExpressionType } from '../../ast';
 import {
   PropertyAssignment,
+  isBlocktypeProperty,
   isRuntimeParameterLiteral,
 } from '../../ast/generated/ast';
 import {
@@ -81,6 +82,11 @@ function checkPropertyValueTyping(
     }
     return;
   }
+
+  if (isBlocktypeProperty(propertyValue)) {
+    return;
+  }
+
   const inferredType = inferExpressionType(propertyValue, validationContext);
   if (inferredType === undefined) {
     return;

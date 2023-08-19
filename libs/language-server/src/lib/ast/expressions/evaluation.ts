@@ -16,6 +16,7 @@ import {
   ValueKeywordLiteral,
   ValueLiteral,
   isBinaryExpression,
+  isBlocktypeProperty,
   isCellRangeLiteral,
   isCollectionLiteral,
   isConstraintDefinition,
@@ -168,6 +169,8 @@ export function evaluatePropertyValue<T extends InternalValueRepresentation>(
     }
   } else if (isExpression(propertyValue)) {
     result = evaluateExpression(propertyValue, evaluationContext);
+  } else if (isBlocktypeProperty(propertyValue)) {
+    result = undefined;
   } else {
     assertUnreachable(propertyValue);
   }

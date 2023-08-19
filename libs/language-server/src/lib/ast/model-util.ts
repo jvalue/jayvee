@@ -15,6 +15,8 @@ import {
   CompositeBlocktypeDefinition,
   PipelineDefinition,
   UnaryExpression,
+  isInputPipeDefinition,
+  isOutputPipeDefinition,
 } from './generated/ast';
 import { PipeWrapper, createSemanticPipes } from './wrappers/pipe-wrapper';
 
@@ -81,6 +83,9 @@ export function collectAllPipes(
 ): PipeWrapper[] {
   const result: PipeWrapper[] = [];
   for (const pipe of container.pipes) {
+    if (isInputPipeDefinition(pipe) || isOutputPipeDefinition(pipe)) {
+      continue;
+    }
     result.push(...createSemanticPipes(pipe));
   }
   return result;
