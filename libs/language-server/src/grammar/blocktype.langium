@@ -24,7 +24,7 @@ CompositeBlocktypeDefinition:
             | outputs+=BlocktypeOutput
             | properties+=BlocktypeProperty
             | blocks+=BlockDefinition
-            | pipes+=PipeDefinition
+            | pipes+=BlocktypePipeline
             | transforms+=TransformDefinition
         )*
 '}';
@@ -37,3 +37,6 @@ BlocktypeOutput:
 
 BlocktypeProperty:
     'property' name=ID 'oftype' valuetype=ValuetypeReference (':' defaultValue=Expression)? ';';
+
+BlocktypePipeline:
+    input=[BlocktypeInput] '->' (blocks+=[BlockDefinition] '->')+ output=[BlocktypeOutput] ';';

@@ -102,6 +102,9 @@ export class EvaluationContext {
     if (isTransformPortDefinition(dereferenced)) {
       return this.variableValues.get(dereferenced.name);
     }
+    if (isBlocktypeProperty(dereferenced)) {
+      return this.variableValues.get(dereferenced.name);
+    }
     assertUnreachable(dereferenced);
   }
 

@@ -15,6 +15,7 @@ import {
   ReferenceLiteral,
   ValueKeywordLiteral,
   isBinaryExpression,
+  isBlocktypeProperty,
   isBooleanLiteral,
   isCellRangeLiteral,
   isCollectionLiteral,
@@ -326,9 +327,14 @@ function inferTypeFromReferenceLiteral(
   if (isTransformDefinition(referenced)) {
     return PrimitiveValuetypes.Transform;
   }
-  if (isTransformPortDefinition(referenced)) {
+  if (
+    isTransformPortDefinition(referenced) ||
+    isBlocktypeProperty(referenced)
+  ) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const valueType = referenced?.valueType;
+    const valueType = isTransformPortDefinition(referenced)
+      ? referenced?.valueType
+      : referenced.valuetype;
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (valueType === undefined) {
       return undefined;
