@@ -6,11 +6,11 @@ import { strict as assert } from 'assert';
 
 import {
   ExecutionContext,
-  IOTypeImplementation,
   Logger,
   NONE,
-  createBlockExecutor,
+  executeBlocks,
   isDebugGranularity,
+  logExecutionDuration,
   parseValueToInternalRepresentation,
   registerDefaultConstraintExecutors,
   useExtension as useExecutionExtension,
@@ -26,7 +26,6 @@ import {
   PipelineDefinition,
   RuntimeParameterProvider,
   collectChildren,
-  collectParents,
   collectStartingBlocks,
   createJayveeServices,
   getBlocksInTopologicalSorting,
@@ -195,99 +194,18 @@ async function runPipeline(
       return { block: block, value: NONE };
     },
   );
-  const exitCode = await executeBlocks(executionContext, executionOrder);
+  const executionResult = await executeBlocks(executionContext, executionOrder);
+
+  if (R.isErr(executionResult)) {
+    const diagnosticError = executionResult.left;
+    executionContext.logger.logErrDiagnostic(
+      diagnosticError.message,
+      diagnosticError.diagnostic,
+    );
+  }
 
   logExecutionDuration(startTime, executionContext.logger);
-  return exitCode;
-}
-
-interface ExecutionOrderItem {
-  block: BlockDefinition;
-  value: IOTypeImplementation | null;
-}
-
-async function executeBlocks(
-  executionContext: ExecutionContext,
-  executionOrder: ExecutionOrderItem[],
-): Promise<ExitCode> {
-  let abortExecution = false;
-  for (const blockData of executionOrder) {
-    const block = blockData.block;
-    const parentData = collectParents(block).map((parent) =>
-      executionOrder.find((blockData) => parent === blockData.block),
-    );
-    const inputValue =
-      parentData[0]?.value === undefined ? NONE : parentData[0]?.value;
-
-    executionContext.enterNode(block);
-
-    const executionResult = await executeBlock(
-      inputValue,
-      block,
-      executionContext,
-    );
-    if (R.isErr(executionResult)) {
-      abortExecution = true;
-      const diagnosticError = executionResult.left;
-      executionContext.logger.logErrDiagnostic(
-        diagnosticError.message,
-        diagnosticError.diagnostic,
-      );
-    } else {
-      const blockResultData = executionResult.right;
-      blockData.value = blockResultData;
-    }
-
-    executionContext.exitNode(block);
-
-    if (abortExecution) {
-      return ExitCode.FAILURE;
-    }
-  }
   return ExitCode.SUCCESS;
-}
-
-async function executeBlock(
-  inputValue: IOTypeImplementation | null,
-  block: BlockDefinition,
-  executionContext: ExecutionContext,
-): Promise<R.Result<IOTypeImplementation | null>> {
-  if (inputValue == null) {
-    executionContext.logger.logInfoDiagnostic(
-      `Skipped execution because parent block emitted no value.`,
-      { node: block, property: 'name' },
-    );
-    return R.ok(null);
-  }
-
-  const blockExecutor = createBlockExecutor(block);
-
-  const startTime = new Date();
-
-  let result: R.Result<IOTypeImplementation | null>;
-  try {
-    result = await blockExecutor.execute(inputValue, executionContext);
-  } catch (unexpectedError) {
-    return R.err({
-      message: `An unknown error occurred: ${
-        unexpectedError instanceof Error
-          ? unexpectedError.stack ?? unexpectedError.message
-          : JSON.stringify(unexpectedError)
-      }`,
-      diagnostic: { node: block, property: 'name' },
-    });
-  }
-  logExecutionDuration(startTime, executionContext.logger);
-
-  return result;
-}
-
-export function logExecutionDuration(startTime: Date, logger: Logger): void {
-  const endTime = new Date();
-  const executionDurationMs = Math.round(
-    endTime.getTime() - startTime.getTime(),
-  );
-  logger.logDebug(`Execution duration: ${executionDurationMs} ms.`);
 }
 
 export function logPipelineOverview(

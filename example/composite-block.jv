@@ -12,7 +12,8 @@ composite blocktype CSVExtractor {
 
 	block FileTextInterpreter oftype TextFileInterpreter {}
 
-	block FileCSVInterpreter oftype CSVInterpreter {}
+	// Todo should be property
+	block FileCSVInterpreter oftype CSVInterpreter { enclosing: '"'; }
 
     inputName
         ->FileExtractor
@@ -50,6 +51,6 @@ pipeline CarsPipeline {
 
 	block CarsLoader oftype SQLiteLoader {
 		table: "Cars";
-		file: "./cars.sqlite";
+		file: "./compositeblockstest.sqlite";
 	}
 }

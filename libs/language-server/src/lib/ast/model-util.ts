@@ -20,12 +20,12 @@ import {
 import { PipeWrapper, createSemanticPipes } from './wrappers/pipe-wrapper';
 
 export function collectStartingBlocks(
-  pipeline: PipelineDefinition,
+  container: PipelineDefinition | CompositeBlocktypeDefinition,
 ): BlockDefinition[] {
   const result: BlockDefinition[] = [];
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  const blocks = pipeline?.blocks ?? [];
+  const blocks = container?.blocks ?? [];
   for (const block of blocks) {
     const blockMetaInf = getMetaInformation(block.type);
     if (blockMetaInf === undefined) {
@@ -82,9 +82,6 @@ export function collectAllPipes(
 ): PipeWrapper[] {
   const result: PipeWrapper[] = [];
   for (const pipe of container.pipes) {
-    if (isBlocktypePipeline(pipe)) {
-      continue;
-    }
     result.push(...createSemanticPipes(pipe));
   }
   return result;
@@ -106,7 +103,7 @@ export function collectAllPipes(
  * Kahn, A. B. (1962). Topological sorting of large networks. Communications of the ACM, 5(11), 558–562.
  */
 export function getBlocksInTopologicalSorting(
-  pipeline: PipelineDefinition,
+  pipeline: PipelineDefinition | CompositeBlocktypeDefinition,
 ): BlockDefinition[] {
   const sortedNodes = [];
   const currentNodes = [...collectStartingBlocks(pipeline)];
