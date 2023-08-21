@@ -4,6 +4,7 @@
 
 import {
   BlockDefinition,
+  InternalValueRepresentation,
   TypedConstraintDefinition,
   createJayveeServices,
   useExtension,
@@ -37,7 +38,7 @@ describe('Validation of AllowlistConstraintExecutor', () => {
 
   async function parseAndValidateConstraint(
     input: string,
-    value: string,
+    value: InternalValueRepresentation,
   ): Promise<boolean> {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
