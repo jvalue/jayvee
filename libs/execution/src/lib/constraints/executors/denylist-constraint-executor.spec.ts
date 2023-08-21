@@ -22,7 +22,7 @@ import { getTestExecutionContext } from '../../../../test/utils';
 
 import { DenylistConstraintExecutor } from './denylist-constraint-executor';
 
-describe('Validation of AllowlistConstraintExecutor', () => {
+describe('Validation of DenylistConstraintExecutor', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
