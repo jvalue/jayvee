@@ -9,12 +9,14 @@ import {
   ConstraintDefinition,
   EvaluationContext,
   InternalValueRepresentation,
+  MetaInformation,
   PipelineDefinition,
   PropertyAssignment,
   TransformDefinition,
   Valuetype,
   evaluatePropertyValue,
   getOrFailMetaInformation,
+  isConstraintDefinition,
   isExpressionConstraintDefinition,
   isPipelineDefinition,
   isPropertyBody,
@@ -129,9 +131,14 @@ export class ExecutionContext {
     assert(!isPipelineDefinition(currentNode));
     assert(!isExpressionConstraintDefinition(currentNode));
     assert(!isTransformDefinition(currentNode));
-    assert(isReference(currentNode.type));
 
-    const metaInf = getOrFailMetaInformation(currentNode.type);
+    let metaInf: MetaInformation;
+    if (isConstraintDefinition(currentNode)) {
+      metaInf = getOrFailMetaInformation(currentNode.type);
+    } else {
+      assert(isReference(currentNode.type));
+      metaInf = getOrFailMetaInformation(currentNode.type);
+    }
     const propertySpec = metaInf.getPropertySpecification(propertyName);
     assert(propertySpec !== undefined);
 
