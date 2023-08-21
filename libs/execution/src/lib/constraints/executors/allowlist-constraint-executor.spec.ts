@@ -42,11 +42,11 @@ describe('Validation of AllowlistConstraintExecutor', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const allowlistUsageBlock = locator.getAstNode<BlockDefinition>(
+    const usageBlock = locator.getAstNode<BlockDefinition>(
       document.parseResult.value,
       'pipelines@0/blocks@2',
     ) as BlockDefinition;
-    const allowlistConstraint = locator.getAstNode<TypedConstraintDefinition>(
+    const constraint = locator.getAstNode<TypedConstraintDefinition>(
       document.parseResult.value,
       'constraints@0',
     ) as TypedConstraintDefinition;
@@ -54,10 +54,7 @@ describe('Validation of AllowlistConstraintExecutor', () => {
     return new AllowlistConstraintExecutor().isValid(
       value,
       // Execution context with initial stack containing usage block of constraint and constraint itself
-      getTestExecutionContext(locator, document, [
-        allowlistUsageBlock,
-        allowlistConstraint,
-      ]),
+      getTestExecutionContext(locator, document, [usageBlock, constraint]),
     );
   }
 
