@@ -9,7 +9,10 @@
 
 import { assertUnreachable } from 'langium';
 
-import { BlockDefinition } from '../../ast/generated/ast';
+import {
+  BlockDefinition,
+  isCompositeBlocktypeDefinition,
+} from '../../ast/generated/ast';
 import {
   collectIngoingPipes,
   collectOutgoingPipes,
@@ -73,13 +76,21 @@ function checkPipesOfBlock(
       );
     }
   } else if (pipes.length === 0) {
-    context.accept(
-      'warning',
-      `A pipe should be connected to the ${whatToCheck} of this block`,
-      {
-        node: block,
-        property: 'name',
-      },
-    );
+    // The last block in a composite block is connected to the output, not another block
+    if (
+      !(
+        isCompositeBlocktypeDefinition(block.$container) &&
+        block.$container.blocks.at(-1)?.name === block.name
+      )
+    ) {
+      context.accept(
+        'warning',
+        `A pipe should be connected to the ${whatToCheck} of this block`,
+        {
+          node: block,
+          property: 'name',
+        },
+      );
+    }
   }
 }
