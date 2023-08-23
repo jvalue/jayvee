@@ -70,6 +70,10 @@ export function createBlockExecutor(block: BlockDefinition): BlockExecutor {
         input: IOTypeImplementation<typeof inputType>,
         context: ExecutionContext,
       ): Promise<R.Result<IOTypeImplementation<typeof outputType> | null>> {
+        context.logger.logDebug(
+          `Executing composite block of type ${blockType}`,
+        );
+
         this.addVariablesToContext(block, blockReference.properties, context);
 
         const executionOrder = getBlocksInTopologicalSorting(

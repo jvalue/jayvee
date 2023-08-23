@@ -15,26 +15,43 @@ export class DefaultLogger extends Logger {
   constructor(
     private readonly enableDebugLogging: boolean,
     private loggingContext?: string,
+    private depth: number = 0,
   ) {
     super();
   }
 
   override logInfo(message: string): void {
-    console.log(`${chalk.bold(this.getContext())}${message}`);
+    console.log(
+      `${this.getDepthTabs()}${chalk.bold(this.getContext())}${message}`,
+    );
   }
 
   override logDebug(message: string): void {
     if (this.enableDebugLogging) {
-      console.log(`${chalk.bold(this.getContext())}${message}`);
+      console.log(
+        `${this.getDepthTabs()}${chalk.bold(this.getContext())}${message}`,
+      );
     }
   }
 
   override logErr(message: string): void {
-    console.error(`${chalk.bold(this.getContext())}${chalk.red(message)}`);
+    console.error(
+      `${this.getDepthTabs()}${chalk.bold(this.getContext())}${chalk.red(
+        message,
+      )}`,
+    );
   }
 
   override setLoggingContext(loggingContext: string | undefined) {
     this.loggingContext = loggingContext;
+  }
+
+  override setLoggingDepth(depth: number): void {
+    this.depth = depth;
+  }
+
+  private getDepthTabs(): string {
+    return '\t'.repeat(this.depth);
   }
 
   private getContext(): string {
@@ -63,7 +80,9 @@ export class DefaultLogger extends Logger {
     printFn: (message: string) => void,
     colorFn: (message: string) => string,
   ) {
-    printFn(`${chalk.bold(colorFn(severityName))}: ${message}`);
+    printFn(
+      `${this.getDepthTabs()}${chalk.bold(colorFn(severityName))}: ${message}`,
+    );
   }
 
   private logDiagnosticInfo(
@@ -91,7 +110,9 @@ export class DefaultLogger extends Logger {
     const lineNumberLength = Math.floor(Math.log10(endLineNumber)) + 1;
 
     printFn(
-      `In ${document.uri.path}:${startLineNumber}:${range.start.character + 1}`,
+      `${this.getDepthTabs()}$In ${document.uri.path}:${startLineNumber}:${
+        range.start.character + 1
+      }`,
     );
     lines.forEach((line, i) => {
       const lineNumber = startLineNumber + i;
@@ -100,10 +121,9 @@ export class DefaultLogger extends Logger {
         ' ',
       );
       printFn(
-        `${chalk.grey(`${paddedLineNumber} |`)} ${line.replace(
-          /\t/g,
-          ' '.repeat(this.TAB_TO_SPACES),
-        )}`,
+        `${this.getDepthTabs()}${chalk.grey(
+          `${paddedLineNumber} |`,
+        )} ${line.replace(/\t/g, ' '.repeat(this.TAB_TO_SPACES))}`,
       );
 
       let underlineFrom = 0;
@@ -115,6 +135,7 @@ export class DefaultLogger extends Logger {
         underlineTo = range.end.character;
       }
 
+      // Todo probably need to replace tabs with spaces? Need to think how repeatCharAccordingToString influences this
       const underlineIndent = this.repeatCharAccordingToString(
         ' ',
         line.substring(0, underlineFrom),
@@ -127,7 +148,7 @@ export class DefaultLogger extends Logger {
       );
 
       printFn(
-        `${chalk.grey(
+        `${this.getDepthTabs()}${chalk.grey(
           `${' '.repeat(lineNumberLength)} |`,
         )} ${underlineIndent}${colorFn(underline)}`,
       );
