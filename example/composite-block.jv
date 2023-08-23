@@ -4,6 +4,7 @@
 
 composite blocktype CSVExtractor {
     property url oftype text;
+    property enclosing oftype text: ',';
 
     input inputName oftype None;
     output outputName oftype Sheet;
@@ -12,8 +13,7 @@ composite blocktype CSVExtractor {
 
 	block FileTextInterpreter oftype TextFileInterpreter {}
 
-	// Todo should be property
-	block FileCSVInterpreter oftype CSVInterpreter { enclosing: '"'; }
+	block FileCSVInterpreter oftype CSVInterpreter { enclosing: enclosing; }
 
     inputName
         ->FileExtractor
@@ -29,6 +29,7 @@ pipeline CarsPipeline {
 
     block CarsCSVExtractor oftype CSVExtractor {
         url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
+		enclosing: '"';
     }
 
 	block CarsTableInterpreter oftype TableInterpreter {

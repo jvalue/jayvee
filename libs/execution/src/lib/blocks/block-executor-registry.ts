@@ -7,8 +7,14 @@ import { strict as assert } from 'assert';
 import {
   BlockDefinition,
   BlocktypeProperty,
+  EvaluationContext,
   IOType,
+  InternalValueRepresentation,
   Registry,
+  Valuetype,
+  createValuetype,
+  evaluateExpression,
+  evaluatePropertyValue,
   getBlocksInTopologicalSorting,
   getIOType,
   isCompositeBlocktypeDefinition,
@@ -64,7 +70,7 @@ export function createBlockExecutor(block: BlockDefinition): BlockExecutor {
         input: IOTypeImplementation<typeof inputType>,
         context: ExecutionContext,
       ): Promise<R.Result<IOTypeImplementation<typeof outputType> | null>> {
-        this.addVariablesToContext(blockReference.properties, context);
+        this.addVariablesToContext(block, blockReference.properties, context);
 
         const executionOrder = getBlocksInTopologicalSorting(
           blockReference,
@@ -113,30 +119,70 @@ export function createBlockExecutor(block: BlockDefinition): BlockExecutor {
 
       // TODO implement
       private addVariablesToContext(
+        block: BlockDefinition,
         properties: BlocktypeProperty[],
         context: ExecutionContext,
       ) {
-        properties.forEach((blocktypeProperty) =>
+        properties.forEach((blocktypeProperty) => {
+          const valueType = createValuetype(blocktypeProperty.valuetype);
+
+          // Todo fix or error nicely
+          assert(valueType);
+
+          const propertyValue = this.getPropertyValueFromBlockOrDefault(
+            blocktypeProperty.name,
+            valueType,
+            block,
+            properties,
+            context.evaluationContext,
+          );
+
+          // Todo fix or error nicely
+          assert(propertyValue);
+
           context.evaluationContext.setValueForReference(
             blocktypeProperty.name,
-            'https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv',
-          ),
-        );
+            propertyValue,
+          );
+        });
       }
 
-      // TODO can use something like this to get value from block or fall back to default value? see 'evaluatePropertyValue' in evaluation.ts as well, probably better there
-      /*private getPropertyValueFromBlock(name: string, block: BlockDefinition, blockTypeProperties: BlocktypeProperty[], evaluationContext: EvaluationContext,
-        valuetype: Valuetype<IOType>) {
-        const propertyFromBlock = block.body.properties.find(property => property.name === name);
+      private getPropertyValueFromBlockOrDefault(
+        name: string,
+        valueType: Valuetype,
+        block: BlockDefinition,
+        properties: BlocktypeProperty[],
+        evaluationContext: EvaluationContext,
+      ): InternalValueRepresentation | undefined {
+        const propertyFromBlock = block.body.properties.find(
+          (property) => property.name === name,
+        );
 
         if (propertyFromBlock) {
-          return evaluatePropertyValue(propertyFromBlock, evaluationContext, valuetype);
+          const value = evaluatePropertyValue(
+            propertyFromBlock,
+            evaluationContext,
+            valueType,
+          );
+
+          if (value) {
+            return value;
+          }
         }
 
-        if (!propertyFromBlock) {
-          return evaluatePropertyValue(blockTypeProperties.find(property => property.name === name)!, evaluationContext, valuetype);
+        const propertyFromBlockType = properties.find(
+          (property) => property.name === name,
+        );
+
+        if (!propertyFromBlockType || !propertyFromBlockType.defaultValue) {
+          return undefined;
         }
-      }*/
+
+        return evaluateExpression(
+          propertyFromBlockType.defaultValue,
+          evaluationContext,
+        );
+      }
     };
 
     // Todo: It seems to not know that type exists here, other executors have a
