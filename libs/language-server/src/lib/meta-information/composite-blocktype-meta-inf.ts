@@ -17,14 +17,14 @@ import { BlockMetaInformation } from './block-meta-inf';
 import { PropertySpecification } from './meta-inf';
 
 export class CompositeBlocktypeMetaInformation extends BlockMetaInformation {
-  constructor(blockTypeDefinition: CompositeBlocktypeDefinition) {
+  constructor(private blockTypeDefinition: CompositeBlocktypeDefinition) {
     const properties: Record<string, PropertySpecification> = {};
 
     for (const property of blockTypeDefinition.properties) {
       const valuetype = createValuetype(property.valuetype);
       assert(valuetype !== undefined);
 
-      // Todo should set more values in PropertySpecification here, especially default value
+      // Todo should set more values in PropertySpecification here
       properties[property.name] = {
         type: valuetype,
       };
@@ -36,5 +36,22 @@ export class CompositeBlocktypeMetaInformation extends BlockMetaInformation {
       getIOType(blockTypeDefinition.inputs[0] as BlocktypeInput),
       getIOType(blockTypeDefinition.outputs[0] as BlocktypeOutput),
     );
+  }
+
+  override getMissingRequiredPropertyNames(
+    presentPropertyNames: string[] = [],
+  ): string[] {
+    const missingRequiredPropertyNames = super.getMissingRequiredPropertyNames(
+      presentPropertyNames,
+    );
+
+    // We assume blocktype properties that have an expression as default value can be evaluated during runtime
+    return missingRequiredPropertyNames.filter((propertyName) => {
+      const blocktypeProperty = this.blockTypeDefinition.properties.find(
+        (blocktypeProperty) => blocktypeProperty.name == propertyName,
+      );
+
+      return !blocktypeProperty?.defaultValue;
+    });
   }
 }

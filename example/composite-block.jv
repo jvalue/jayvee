@@ -4,7 +4,9 @@
 
 composite blocktype CSVExtractor {
     property url oftype text;
-    property enclosing oftype text: ',';
+    property delimiter oftype text: ',';
+    property enclosing oftype text: '';
+    property enclosingEscape oftype text: '';
 
     input inputName oftype None;
     output outputName oftype Sheet;
@@ -13,7 +15,11 @@ composite blocktype CSVExtractor {
 
 	block FileTextInterpreter oftype TextFileInterpreter {}
 
-	block FileCSVInterpreter oftype CSVInterpreter { enclosing: enclosing; }
+	block FileCSVInterpreter oftype CSVInterpreter {
+		delimiter: delimiter;
+		enclosing: enclosing;
+		enclosingEscape: enclosingEscape;
+	}
 
     inputName
         ->FileExtractor

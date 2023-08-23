@@ -69,10 +69,8 @@ function checkPropertyCompleteness(
   context: ValidationContext,
 ): void {
   const presentPropertyNames = properties.map((property) => property.name);
-  const missingRequiredPropertyNames = metaInf.getPropertyNames(
-    'required',
-    presentPropertyNames,
-  );
+  const missingRequiredPropertyNames =
+    metaInf.getMissingRequiredPropertyNames(presentPropertyNames);
 
   if (missingRequiredPropertyNames.length > 0) {
     context.accept(

@@ -127,7 +127,10 @@ export function createBlockExecutor(block: BlockDefinition): BlockExecutor {
           const valueType = createValuetype(blocktypeProperty.valuetype);
 
           // Todo fix or error nicely
-          assert(valueType);
+          assert(
+            valueType,
+            `Can not create valuetype for blocktype property ${blocktypeProperty.name}`,
+          );
 
           const propertyValue = this.getPropertyValueFromBlockOrDefault(
             blocktypeProperty.name,
@@ -138,7 +141,10 @@ export function createBlockExecutor(block: BlockDefinition): BlockExecutor {
           );
 
           // Todo fix or error nicely
-          assert(propertyValue);
+          assert(
+            propertyValue !== undefined,
+            `Can not get value for blocktype property ${blocktypeProperty.name}`,
+          );
 
           context.evaluationContext.setValueForReference(
             blocktypeProperty.name,
@@ -174,7 +180,10 @@ export function createBlockExecutor(block: BlockDefinition): BlockExecutor {
           (property) => property.name === name,
         );
 
-        if (!propertyFromBlockType || !propertyFromBlockType.defaultValue) {
+        if (
+          !propertyFromBlockType ||
+          propertyFromBlockType.defaultValue == undefined
+        ) {
           return undefined;
         }
 
