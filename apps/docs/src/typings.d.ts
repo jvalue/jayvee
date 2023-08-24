@@ -4,9 +4,4 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-.features {
-  display: flex;
-  align-items: center;
-  padding: 2rem 0;
-  width: 100%;
-}
+declare module '*.module.css';
