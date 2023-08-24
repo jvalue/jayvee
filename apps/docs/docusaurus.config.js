@@ -11,7 +11,6 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Jayvee',
-  tagline: 'Data engineering made easy',
   url: 'https://jvalue.github.io',
   baseUrl: '/jayvee',
   onBrokenLinks: 'throw',
