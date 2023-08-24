@@ -48,11 +48,6 @@ const config = {
         },
         items: [
           {
-            type: 'docsVersionDropdown',
-            position: 'left',
-            dropdownActiveClassDisabled: true,
-          },
-          {
             type: 'doc',
             docId: 'user/intro',
             position: 'left',
@@ -65,9 +60,15 @@ const config = {
             label: 'Developer Docs',
           },
           {
-            href: 'https://github.com/jvalue/jayvee',
-            label: 'GitHub',
+            type: 'docsVersionDropdown',
             position: 'right',
+            dropdownActiveClassDisabled: true,
+          },
+          {
+            href: 'https://github.com/jvalue/jayvee',
+            position: 'right',
+            className: 'header-github-link',
+            'aria-label': 'GitHub repository',
           },
         ],
       },
