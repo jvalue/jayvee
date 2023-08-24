@@ -73,17 +73,25 @@ const config = {
         style: 'dark',
         links: [
           {
-            title: 'User Docs',
+            title: 'Learn',
             items: [
               {
-                label: 'Introduction to Jayvee',
+                label: 'Installation',
                 to: '/docs/user/intro',
               },
+              {
+                label: 'Core Concepts',
+                to: '/docs/user/core-concepts',
+              },
+              {
+                label: 'Examples',
+                to: '/docs/user/examples/cars',
+              },
+              {
+                label: 'Start contributing',
+                to: '/docs/dev/intro',
+              },
             ],
-          },
-          {
-            title: 'Developer Docs',
-            items: [],
           },
           {
             title: 'More',
@@ -91,6 +99,23 @@ const config = {
               {
                 label: 'GitHub',
                 href: 'https://github.com/jvalue/jayvee',
+              },
+              {
+                label: 'JValue',
+                href: 'https://jvalue.org/',
+              },
+            ],
+          },
+          {
+            title: 'Legal',
+            items: [
+              {
+                label: 'Imprint',
+                href: 'https://jvalue.org/notices/imprint/',
+              },
+              {
+                label: 'Privacy Policy',
+                href: 'https://jvalue.org/notices/privacy-policy/',
               },
             ],
           },
