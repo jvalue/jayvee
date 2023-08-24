@@ -4,6 +4,20 @@ sidebar_position: 1
 
 # Introduction for Jayvee Developers
 
+## The Jayvee Manifesto
+
+*We are uncovering better ways of modeling data pipelines by providing a domain-specific language for data engineering and making it easy for everyone to participate in it.*
+
+*Through this work we have come to value:*
+1. **Describing a goal state** over how to get there.
+2. **Explicit modeling** over hidden magic.
+3. **Composition** over inheritance.
+4. **Flat structures** over deep nesting.
+
+*That is, while there is value in the items on the right, we value the items of the left more.*
+
+-- inspired by the [Agile Manifesto](https://agilemanifesto.org/);
+
 ## How to contribute
 
 In order to contribute to the Jayvee project, please have a look at our [contribution guide](https://github.com/jvalue/jayvee/blob/main/CONTRIBUTING.md).
@@ -14,11 +28,13 @@ More details on this topic can be found [here](./02-dev-processes/03-licensing-a
 
 And last but not least, please read and follow our [code of conduct](https://github.com/jvalue/jayvee/blob/main/CODE_OF_CONDUCT.md).
 
+
 ## Project overview
 
 The Jayvee repository is located [here](https://github.com/jvalue/jayvee) on GitHub.
 It uses an [Nx mono-repository](https://nx.dev/) setup and contains all related projects, most notably the Jayvee language server and interpreter.
 Please have a look at the [architecture overview](./03-architecture-overview.md) for more details.
+
 
 ## Prerequisites
 
