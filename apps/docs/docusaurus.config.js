@@ -13,10 +13,10 @@ const config = {
   title: 'Jayvee',
   tagline: 'Data engineering made easy',
   url: 'https://jvalue.github.io',
-  baseUrl: '/jayvee/',
+  baseUrl: '/jayvee',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
-  favicon: 'img/jayvee.png',
+  favicon: '/img/jayvee.png',
   organizationName: 'jvalue', // Usually your GitHub org/user name.
   projectName: 'jayvee', // Usually your repo name.
   themes: ['@docusaurus/theme-mermaid'],
@@ -45,7 +45,7 @@ const config = {
       navbar: {
         logo: {
           alt: 'Jayvee logo',
-          src: 'img/jayvee.png',
+          src: '/img/jayvee.png',
         },
         items: [
           {
