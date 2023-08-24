@@ -42,10 +42,7 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       navbar: {
-        logo: {
-          alt: 'Jayvee logo',
-          src: '/img/jayvee.png',
-        },
+        title: 'Jayvee',
         items: [
           {
             type: 'doc',

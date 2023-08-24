@@ -45,3 +45,9 @@
 .header-github-link:hover {
   opacity: 0.6;
 }
+
+.navbar__title {
+  background: linear-gradient(45deg, var(--ifm-color-primary), var(--ifm-color-primary-lightest) 80%);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
