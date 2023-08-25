@@ -16,14 +16,21 @@ export interface ExecutionOrderItem {
 export async function executeBlocks(
   executionContext: ExecutionContext,
   executionOrder: ExecutionOrderItem[],
+  initialInputValue: IOTypeImplementation | undefined = undefined,
 ): Promise<R.Result<ExecutionOrderItem[]>> {
+  let isFirstblock = true;
+
   for (const blockData of executionOrder) {
     const block = blockData.block;
     const parentData = collectParents(block).map((parent) =>
       executionOrder.find((blockData) => parent === blockData.block),
     );
-    const inputValue =
+    let inputValue =
       parentData[0]?.value === undefined ? NONE : parentData[0]?.value;
+
+    if (isFirstblock && inputValue == NONE && initialInputValue !== undefined) {
+      inputValue = initialInputValue;
+    }
 
     executionContext.enterNode(block);
 
@@ -40,6 +47,7 @@ export async function executeBlocks(
     }
 
     executionContext.exitNode(block);
+    isFirstblock = false;
   }
   return R.ok(executionOrder);
 }

@@ -4,7 +4,7 @@
 
 import { strict as assert } from 'assert';
 
-import { AstNode, assertUnreachable } from 'langium';
+import { AstNode, Reference, assertUnreachable } from 'langium';
 
 // eslint-disable-next-line import/no-cycle
 import { getMetaInformation } from '../meta-information/meta-inf-registry';
@@ -15,13 +15,31 @@ import {
   CompositeBlocktypeDefinition,
   PipelineDefinition,
   UnaryExpression,
-  isBlocktypePipeline,
+  isCompositeBlocktypeDefinition,
 } from './generated/ast';
 import { PipeWrapper, createSemanticPipes } from './wrappers/pipe-wrapper';
 
 export function collectStartingBlocks(
   container: PipelineDefinition | CompositeBlocktypeDefinition,
 ): BlockDefinition[] {
+  // For composite blocks the first blocks of all pipelines are starting blocks as they have inputs
+  if (isCompositeBlocktypeDefinition(container)) {
+    const startingBlocks = container.pipes
+      .map((pipe) => pipe.blocks[0])
+      .map((blockRef: Reference<BlockDefinition> | undefined) => {
+        if (
+          blockRef &&
+          blockRef.ref &&
+          getMetaInformation(blockRef.ref.type) !== undefined
+        ) {
+          return blockRef.ref;
+        }
+      })
+      .filter(Boolean) as unknown as BlockDefinition[];
+
+    return startingBlocks;
+  }
+
   const result: BlockDefinition[] = [];
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

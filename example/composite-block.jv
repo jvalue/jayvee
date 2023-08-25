@@ -28,15 +28,9 @@ composite blocktype CSVExtractor {
         ->outputName;
 }
 
-pipeline CarsPipeline {
-	CarsCSVExtractor 
-	   	-> CarsTableInterpreter
-		-> CarsLoader;
-
-    block CarsCSVExtractor oftype CSVExtractor {
-        url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
-		enclosing: '"';
-    }
+composite blocktype CarsTableInterpreterForTesting {
+	input inputName oftype Sheet;
+    output outputName oftype Table;
 
 	block CarsTableInterpreter oftype TableInterpreter {
 		header: true;
@@ -56,8 +50,34 @@ pipeline CarsPipeline {
 		];
 	}
 
+	inputName->CarsTableInterpreter->outputName;
+}
+
+composite blocktype SinkTester {
+	input inputName oftype Table;
+    output outputName oftype None;
+
 	block CarsLoader oftype SQLiteLoader {
 		table: "Cars";
 		file: "./compositeblockstest.sqlite";
+	}
+
+	inputName->CarsLoader->outputName;
+}
+
+pipeline CarsPipeline {
+	CarsCSVExtractor 
+	   	-> TestCompositeWithInput
+		-> CarsLoader;
+
+    block CarsCSVExtractor oftype CSVExtractor {
+        url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
+		enclosing: '"';
+    }
+
+	block TestCompositeWithInput oftype CarsTableInterpreterForTesting {
+	}
+
+	block CarsLoader oftype SinkTester {
 	}
 }

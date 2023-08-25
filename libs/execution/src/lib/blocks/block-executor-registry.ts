@@ -82,7 +82,11 @@ export function createBlockExecutor(block: BlockDefinition): BlockExecutor {
           return { block: block, value: NONE };
         });
 
-        const executionResult = await executeBlocks(context, executionOrder);
+        const executionResult = await executeBlocks(
+          context,
+          executionOrder,
+          input,
+        );
 
         if (R.isErr(executionResult)) {
           const diagnosticError = executionResult.left;
@@ -104,7 +108,10 @@ export function createBlockExecutor(block: BlockDefinition): BlockExecutor {
             (result) => result.block.name === lastBlock?.ref?.name,
           );
 
-          assert(blockExecutionResult);
+          assert(
+            blockExecutionResult,
+            `No execution result found for composite block ${blockType}`,
+          );
 
           return R.ok(blockExecutionResult.value);
         }
