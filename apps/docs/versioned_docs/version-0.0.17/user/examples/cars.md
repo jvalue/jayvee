@@ -1,3 +1,8 @@
+---
+title: cars
+---
+
+```jayvee
 // SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
 //
 // SPDX-License-Identifier: AGPL-3.0-only
@@ -107,3 +112,4 @@ pipeline CarsPipeline {
 	// You can now use the sink for your data analysis, app, 
 	// or whatever you want to do with the cleaned data.  
 }
+```

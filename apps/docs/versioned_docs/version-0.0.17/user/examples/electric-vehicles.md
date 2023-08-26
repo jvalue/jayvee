@@ -1,3 +1,8 @@
+---
+title: electric-vehicles
+---
+
+```jayvee
 // SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
 //
 // SPDX-License-Identifier: AGPL-3.0-only
@@ -141,3 +146,5 @@ constraint UsStateCodeAllowlist on text:
 		"OR", "PA", "PR", "RI", "SC", "SD", "TN", "TX", "TT", "UT",
 		"VT", "VA", "VI", "WA", "WV", "WI", "WY",
 	];
+
+```

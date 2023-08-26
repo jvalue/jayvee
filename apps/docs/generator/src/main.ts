@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { writeFileSync } from 'fs';
+import { readFileSync, readdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
@@ -23,6 +23,7 @@ function main(): void {
   generateBlockTypeDocs(rootPath);
   generateConstraintTypeDocs(rootPath);
   generateValueTypeDocs(rootPath);
+  generateExampleDocs(rootPath);
 }
 
 function generateBlockTypeDocs(rootPath: string): void {
@@ -82,6 +83,34 @@ function generateValueTypeDocs(rootPath: string): void {
     flag: 'w',
   });
   console.info(`Generated file ${fileName}`);
+}
+
+function generateExampleDocs(rootPath: string): void {
+  const docsPath = join(rootPath, 'apps', 'docs', 'docs', 'user', 'examples');
+  const examplesPath = join(rootPath, 'example');
+
+  for (const file of readdirSync(examplesPath)) {
+    if (file.endsWith('.jv')) {
+      const exampleFilePath = join(examplesPath, file);
+      const exampleModel = readFileSync(exampleFilePath);
+
+      const exampleName = file.slice(0, -'.jv'.length);
+      const docFileName = `${exampleName}.md`;
+      const docContent = `
+---
+title: ${exampleName}
+---
+
+\`\`\`jayvee
+${exampleModel.toString()}
+\`\`\`
+      `.trim();
+      writeFileSync(join(docsPath, docFileName), docContent, {
+        flag: 'w',
+      });
+      console.info(`Generated example doc ${docFileName}`);
+    }
+  }
 }
 
 main();

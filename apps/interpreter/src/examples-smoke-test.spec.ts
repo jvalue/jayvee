@@ -143,7 +143,7 @@ describe('jv example smoke tests', () => {
     expect(exitSpy).toHaveBeenCalledWith(0);
   });
 
-  it('should have no errors when executing gtfs-rt-simple.jv example', async () => {
+  it('should have no errors when executing gtfs-rt.jv example', async () => {
     // Prepare mocks
     httpExtractorMock.setup(() => {
       return [
@@ -185,7 +185,7 @@ describe('jv example smoke tests', () => {
     });
     sqliteLoaderMock.setup();
 
-    await runAction(path.resolve(baseDir, 'gtfs-rt-simple.jv'), {
+    await runAction(path.resolve(baseDir, 'gtfs-rt.jv'), {
       ...defaultOptions,
     });
 
@@ -195,70 +195,6 @@ describe('jv example smoke tests', () => {
 
     expect(exitSpy).toHaveBeenCalledWith(0);
   });
-
-  it('should have no errors when executing gtfs-static-and-rt.jv example', async () => {
-    // Prepare mocks
-    httpExtractorMock.setup(() => {
-      return [
-        nock(
-          'https://ratpdev-mosaic-prod-bucket-raw.s3-eu-west-1.amazonaws.com',
-        )
-          .get('/11/exports/1/gtfs.zip')
-          .replyWithFile(
-            200,
-            path.resolve(__dirname, '../test/assets/gtfs.zip'),
-            {
-              'Content-Type': 'application/octet-stream',
-            },
-          ),
-        nock('https://proxy.transport.data.gouv.fr')
-          .get('/resource/bibus-brest-gtfs-rt-trip-update')
-          .replyWithFile(
-            200,
-            path.resolve(
-              __dirname,
-              '../test/assets/bibus-brest-gtfs-rt-trip-update',
-            ),
-            {
-              'Content-Type': 'application/octet-stream',
-            },
-          )
-          .get('/resource/bibus-brest-gtfs-rt-vehicle-position')
-          .replyWithFile(
-            200,
-            path.resolve(
-              __dirname,
-              '../test/assets/bibus-brest-gtfs-rt-vehicle-position',
-            ),
-            {
-              'Content-Type': 'application/octet-stream',
-            },
-          )
-          .get('/resource/bibus-brest-gtfs-rt-alerts')
-          .replyWithFile(
-            200,
-            path.resolve(
-              __dirname,
-              '../test/assets/bibus-brest-gtfs-rt-alerts.json',
-            ),
-            {
-              'Content-Type': 'application/json',
-            },
-          ),
-      ];
-    });
-    sqliteLoaderMock.setup();
-
-    await runAction(path.resolve(baseDir, 'gtfs-static-and-rt.jv'), {
-      ...defaultOptions,
-    });
-
-    expect(httpExtractorMock.nockScopes.every((scope) => scope.isDone()));
-    expect(sqliteLoaderMock.sqliteClient.run).toBeCalledTimes(33);
-    expect(sqliteLoaderMock.sqliteClient.close).toBeCalledTimes(12);
-
-    expect(exitSpy).toHaveBeenCalledWith(0);
-  }, 20000);
 
   it('should have no errors when executing gtfs-static.jv example', async () => {
     // Prepare mocks

@@ -1,8 +1,41 @@
+---
+title: gtfs-rt
+---
+
+```jayvee
 // SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+// Example 3: GTFS Realtime Data
+// Learning goals:
+// - Understand the construction of a csv file with multiple tables
+// - Understand how to work with live data
+
+// 1. This Jayvee model describes a pipeline 
+// from a GTFS RT data source in the web 
+// to a SQLite file with multiple tables.
 pipeline GtfsRTSimplePipeline {
+
+    // 2. As you can see here, we have three independent
+    // sequences of pipes in this pipeline.
+    GTFSRTTripUpdateFeedExtractor
+        ->GtfsRTTripUpdateInterpreter
+        ->TripUpdateTableInterpreter
+        ->TripUpdateLoader;
+    
+    GTFSRTVehiclePositionFeedExtractor
+        ->GtfsRTVehiclePositionInterpreter
+        ->VehiclePositionTableInterpreter
+        ->VehicleLoader;
+    
+    GTFSRTAlertFeedExtractor
+        ->GtfsRTAlertInterpreter    
+        ->AlertTableInterpreter
+        ->AlertLoader;
+
+    // 3. We define a series of HttpExtractors that each pull data
+    // from an HTTP endpoint
 	block GTFSRTTripUpdateFeedExtractor oftype HttpExtractor {
 		url: "https://proxy.transport.data.gouv.fr/resource/bibus-brest-gtfs-rt-trip-update";
 	}
@@ -15,6 +48,8 @@ pipeline GtfsRTSimplePipeline {
 		url: "https://proxy.transport.data.gouv.fr/resource/bibus-brest-gtfs-rt-alerts";
 	}
 
+    // 4. In the next step, we use the domain-specific GtfsRTInterpreter
+    // to interpret the fetched files as sheets
     block GtfsRTTripUpdateInterpreter oftype GtfsRTInterpreter {
         entity: "trip_update";
     }
@@ -26,6 +61,8 @@ pipeline GtfsRTSimplePipeline {
     block GtfsRTVehiclePositionInterpreter oftype GtfsRTInterpreter {
         entity: "vehicle";
     }
+
+    // 5. Next, we interpret the sheets as tables
     block TripUpdateTableInterpreter oftype TableInterpreter {
 		header: true;
 		columns:[
@@ -71,6 +108,10 @@ pipeline GtfsRTSimplePipeline {
         ];
 	}
 
+    // 6. Last, we load the tables into the same SQLite file.
+    // Each loader has to define a different table name.
+    // For working with live data, we use the property "dropTable: false"
+    // to append data instead of deleting the previous data.
     block TripUpdateLoader oftype SQLiteLoader {
 		table: "gtfs-rt-trip_update";
 		file: "./gtfs.sqlite";
@@ -88,19 +129,5 @@ pipeline GtfsRTSimplePipeline {
 		file: "./gtfs.sqlite";
         dropTable: false;
 	}
-
-    GTFSRTTripUpdateFeedExtractor
-        ->GtfsRTTripUpdateInterpreter
-        ->TripUpdateTableInterpreter
-        ->TripUpdateLoader;
-    
-    GTFSRTVehiclePositionFeedExtractor
-        ->GtfsRTVehiclePositionInterpreter
-        ->VehiclePositionTableInterpreter
-        ->VehicleLoader;
-    
-    GTFSRTAlertFeedExtractor
-        ->GtfsRTAlertInterpreter    
-        ->AlertTableInterpreter
-        ->AlertLoader;
 }
+```
