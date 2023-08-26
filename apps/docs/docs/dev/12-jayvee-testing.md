@@ -2,38 +2,32 @@
 title: Writing tests for Jayvee
 ---
 
-In order to ensure that Jayvee functions correctly a number of tests have been written already.  
-Additionally a few testing utils have been implemented to help writing tests and especially to avoid having to create Langium Typescript objects by hand.
+We use tests at different levels to ensure that Jayvee works as intended and to catch breaking changes by regression testing (see [here for grammar tests](#existing-tests) and [here for execution tests](#existing-tests-1)).  
+Additionally, we implemented a few testing utils to avoid creating Langium Typescript objects by hand.
 It has to be mentioned that, like Jayvee itself, the tests are split into grammar and execution tests.
-
-TODO
-- Describe what tests exist
-- Describe what kind of test utils exist (and how to use them)
-- Describe location of test .jv files
-- CREATE GITHUB ISSUES FOR MISSING TESTS
 
 ## Conventions
 All of the existing tests follow these conventions:
-1. The `<file-name>.spec.ts` file is located next to the `<file-name>.ts` file itself
-2. The `*.jv` assets are located inside a `test/assets/<file-name>` folder
-For more details take a look at one of the exisiting tests.
+1. The `<file-name>.spec.ts` file is located next to the `<file-name>.ts` file itself.
+2. The `*.jv` assets are located inside a `test/assets/<file-name>` folder.
+Take a look at one of the exisiting tests for more details.
 
 ## Grammar tests
 These kind of tests are mainly located inside the [language-server](https://github.com/jvalue/jayvee/tree/main/libs/language-server) as well as the language parts of each extension (for example [std/lang](https://github.com/jvalue/jayvee/tree/main/libs/extensions/std/lang)).
 
 ### Testing utils
-The testing utils are located inside the `language-server` inside the [test folder](https://github.com/jvalue/jayvee/tree/main/libs/language-server/src/test).  
+The testing utils are located inside the `language-server` in a dedicated [test folder](https://github.com/jvalue/jayvee/tree/main/libs/language-server/src/test).  
 These utils can be imported using `@jvalue/jayvee-language-server/test` and contain the following parts:
 
 [**langium-utils.ts**](https://github.com/jvalue/jayvee/blob/main/libs/language-server/src/test/langium-utils.ts):  
-This utils file contains two functions: `parseHelper` and `validationHelper`.  
-Both of them expect the content of a *.jv file as their input.  
-The first function simply parses the input and returns the corresponding `LangiumDocument` while the second function also tries to validate the created document.  
-Both of them were copied from the langium repository.
+This utils file contains two functions: 
+- `parseHelper` to simplify parsing the input (content of a *.jv file) and returning the corresponding `LangiumDocument`, and 
+- `validationHelper` parse and validate the created document. 
+They are kept in a separate file due to being copied from the Langium repository and thus subject to a different code license and copyright.
 
 [**utils.ts**](https://github.com/jvalue/jayvee/blob/main/libs/language-server/src/test/utils.ts):  
-This file contains the non-copied utils functions, like a function `readJvTestAssetHelper` for reading jv test assets. 
-Combined with the `langium-utils.ts#parseHelper` function the following can be used to easily convert `*.jv` test assets to their `LangiumDocument`s:
+This file contains custom testing utility utils functions, like `readJvTestAssetHelper` for reading jv test assets. 
+Example:
 ``` ts
 import * as path from 'path';
 
@@ -76,26 +70,29 @@ describe('My example test', () => {
 });
 ```
 If you want to simply validate the test assets, simply replace `parseHelper` with `validationHelper` (and adjust the types).  
-For more information about this function, as well as all the others, please take a look at the file.
+You can find detailed documentation of all the utility functions directly in the code.
 
 [**extension/**](https://github.com/jvalue/jayvee/tree/main/libs/language-server/src/test/extension):  
-This folder contains an extension for testing. If there are certain blocks required for testing a certain feature, they can be defined here. One such example is the already defined `TestProperty` block which has a multitude of different properties, each with a different type. This block is used for testing properties and property-assignments.  
-The extension also already provides simple (meaning they don't have any properties) loader and extractor blocks for all IOTypes. These blocks are automatically generated at runtime with the following naming scheme: `Test${ioType}${io === 'input' ? 'Loader' : 'Extractor'}` (Example: `TestFileExtractor`).  
+This folder contains a Jayvee extension for testing.  
+If there are certain blocks required for testing a certain feature, they can be defined here.  
+One such example is the already defined `TestProperty` block which has a multitude of different properties, each with a different type.  
+This block is used for testing properties and property-assignments.  
+The extension provides loader and extractor blocks for all IOTypes without any properties.  
+These blocks are automatically generated at runtime with the following naming scheme:  
+`Test${ioType}${io === 'input' ? 'Loader' : 'Extractor'}` (Example: `TestFileExtractor`).  
 This allows for easy (grammar) testing of non loader/extractor blocks:
 ``` jv
 pipeline Pipeline {
-  block Test oftype CellWriter {
+
+  TestExtractor -> BlockUnderTest -> TestLoader;
+
+  block BlockUnderTest oftype CellWriter {
     at: range A1:A3;
     write: ['values', 'to', 'write'];
   }
 
-  block TestExtractor oftype TestSheetExtractor {
-  }
-
-  block TestLoader oftype TestSheetLoader {
-  }
-
-  TestExtractor -> Test -> TestLoader;
+  block TestExtractor oftype TestSheetExtractor { }
+  block TestLoader oftype TestSheetLoader { }
 }
 ```
 
@@ -108,7 +105,7 @@ Currently there are already tests for the following parts:
 - Grammar validation tests for all block examples of the std extension (located [here](https://github.com/jvalue/jayvee/blob/dev/libs/extensions/std/lang/src/meta-inf-example-validation.spec.ts))
 
 ## Execution tests
-These kind of tests are mainly located inside the [interpreter](https://github.com/jvalue/jayvee/tree/main/libs/language-server), its [interpreter-lib](https://github.com/jvalue/jayvee/tree/dev/libs/interpreter-lib), the [execution lib](https://github.com/jvalue/jayvee/tree/dev/libs/execution) as well as the execution parts of each extension (for example [std/exec](https://github.com/jvalue/jayvee/tree/main/libs/extensions/std/exec)).
+These kind of tests are mainly located inside the [interpreter](https://github.com/jvalue/jayvee/tree/main/libs/language-server), the [interpreter-lib](https://github.com/jvalue/jayvee/tree/dev/libs/interpreter-lib), the [execution lib](https://github.com/jvalue/jayvee/tree/dev/libs/execution) as well as the execution parts of each extension (for example [std/exec](https://github.com/jvalue/jayvee/tree/main/libs/extensions/std/exec)).
 
 ### Testing utils
 The testing utils for execution tests are spread between the extensions, with the interfaces and base utils located inside the [execution lib](https://github.com/jvalue/jayvee/tree/dev/libs/execution).  
@@ -240,7 +237,6 @@ describe('Dummy describe', () => {
   });
 });
 ```
-For more detailed information about what `nock` can do, beyond what is shown in the usage example, please check the documentation.
 
 ### Existing tests
 Currently there are already tests for the following parts:
