@@ -112,7 +112,10 @@ The testing utils for execution tests are spread between the extensions, with th
 They can be imported using `@jvalue/jayvee-extensions/rdbms/test`, `@jvalue/jayvee-extensions/std/test` and `@jvalue/jayvee-execution/test`.
 
 [**utils.ts**](https://github.com/jvalue/jayvee/blob/dev/libs/execution/test/utils.ts):  
-At the moment this only contains two functions: `clearBlockExecutorRegistry` and `clearConstraintExecutorRegistry`. These are used to clear the corresponding registries between tests, in case the tested method initializes Jayvee itself (see [smoke test](#existing-tests-1)).
+At the moment this only contains two functions: 
+- `clearBlockExecutorRegistry` for clearing the registry containing all `BlockExecutor`s, and 
+- `clearConstraintExecutorRegistry` clearing the corresponding `ConstraintExecutor`s registry. 
+They are required in case the tested method initializes Jayvee itself (see [smoke test](#existing-tests-1)).
 
 [**block-executor-mocks.ts**](https://github.com/jvalue/jayvee/blob/dev/libs/execution/test/block-executor-mock.ts):  
 `BlockExecutorMock` interface for defining mocks for `AbstractBlockExecutor`. Generally only loader and executor blocks require mocks, because they interact with "the outside world" (i.e. `HttpExtractor` making http calls).  
