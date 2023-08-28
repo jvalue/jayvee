@@ -148,6 +148,44 @@ describe('Validation of TransformExecutor', () => {
     expect(result.resultingColumn.values).toEqual(expect.arrayContaining([21]));
   });
 
+  it('should diagnose no error on invalid value representation', async () => {
+    const text = readJvTestAsset(
+      'transform-executor/invalid-input-output-type-transform.jv',
+    );
+
+    const inputTable = constructTable(
+      [
+        {
+          columnName: 'Column1',
+          column: {
+            values: ['value 1'],
+            valuetype: PrimitiveValuetypes.Text,
+          },
+        },
+        {
+          columnName: 'Column2',
+          column: {
+            values: [20.0],
+            valuetype: PrimitiveValuetypes.Decimal,
+          },
+        },
+      ],
+      1,
+    );
+    const transformColumnNames: string[] = ['Column2'];
+
+    const result = await parseAndExecuteTransform(
+      text,
+      inputTable,
+      transformColumnNames,
+    );
+
+    expect(result.rowsToDelete).toHaveLength(1);
+    expect(result.rowsToDelete).toEqual(expect.arrayContaining([0]));
+    expect(result.resultingColumn.valuetype).toEqual(PrimitiveValuetypes.Text);
+    expect(result.resultingColumn.values).toHaveLength(0);
+  });
+
   it('should diagnose no error on valid value', async () => {
     const text = readJvTestAsset(
       'transform-executor/valid-multiple-input-transform.jv',
