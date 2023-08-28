@@ -9,12 +9,14 @@ import {
   ConstraintDefinition,
   EvaluationContext,
   InternalValueRepresentation,
+  MetaInformation,
   PipelineDefinition,
   PropertyAssignment,
   TransformDefinition,
   Valuetype,
   evaluatePropertyValue,
   getOrFailMetaInformation,
+  isConstraintDefinition,
   isExpressionConstraintDefinition,
   isPipelineDefinition,
   isPropertyBody,
@@ -125,13 +127,7 @@ export class ExecutionContext {
     propertyName: string,
     valuetype: Valuetype<I>,
   ): I {
-    const currentNode = this.getCurrentNode();
-    assert(!isPipelineDefinition(currentNode));
-    assert(!isExpressionConstraintDefinition(currentNode));
-    assert(!isTransformDefinition(currentNode));
-    assert(isReference(currentNode.type));
-
-    const metaInf = getOrFailMetaInformation(currentNode.type);
+    const metaInf = this.getMetaInformationOfCurrentNode();
     const propertySpec = metaInf.getPropertySpecification(propertyName);
     assert(propertySpec !== undefined);
 
@@ -140,5 +136,21 @@ export class ExecutionContext {
     assert(valuetype.isInternalValueRepresentation(defaultValue));
 
     return defaultValue;
+  }
+
+  private getMetaInformationOfCurrentNode() {
+    const currentNode = this.getCurrentNode();
+    assert(!isPipelineDefinition(currentNode));
+    assert(!isExpressionConstraintDefinition(currentNode));
+    assert(!isTransformDefinition(currentNode));
+
+    let metaInf: MetaInformation;
+    if (isConstraintDefinition(currentNode)) {
+      metaInf = getOrFailMetaInformation(currentNode.type);
+    } else {
+      assert(isReference(currentNode.type));
+      metaInf = getOrFailMetaInformation(currentNode.type);
+    }
+    return metaInf;
   }
 }
