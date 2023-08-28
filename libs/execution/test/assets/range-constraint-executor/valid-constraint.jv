@@ -1,0 +1,29 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+constraint TestConstraint oftype RangeConstraint {
+  lowerBound: 1;
+  upperBound: 10;
+}
+	
+valuetype ConstraintType oftype integer {
+	constraints: [
+		TestConstraint,
+	];
+}
+
+pipeline TestPipeline {
+
+  block TestExtractor oftype TestFileExtractor {
+  }
+
+  block TestLoader oftype TestTableLoader {
+  }
+
+  block TestProperty oftype TestProperty {
+		valuetypeAssignmentProperty: "test" oftype ConstraintType;
+	}
+
+  TestExtractor -> TestProperty -> TestLoader;
+}
