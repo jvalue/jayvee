@@ -35,6 +35,10 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
 
   private columns: Map<string, TableColumn> = new Map();
 
+  public constructor(numberOfRows = 0) {
+    this.numberOfRows = numberOfRows;
+  }
+
   addColumn(name: string, column: TableColumn): void {
     assert(column.values.length === this.numberOfRows);
     this.columns.set(name, column);
