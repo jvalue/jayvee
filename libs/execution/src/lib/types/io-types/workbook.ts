@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'assert';
-
 import { IOType } from '@jvalue/jayvee-language-server';
 
 import { IOTypeImplementation, IoTypeVisitor } from './io-type-implementation';
@@ -11,34 +9,36 @@ import { Sheet } from './sheet';
 
 export class Workbook implements IOTypeImplementation<IOType.WORKBOOK> {
   public readonly ioType = IOType.WORKBOOK;
-  private sheets: Sheet[];
-  constructor() {
-    this.sheets = [];
-  }
+  private sheets: Map<string, Sheet> = new Map<string, Sheet>();
 
-  getSheets(): ReadonlyArray<Sheet> {
+  getSheets(): Map<string, Sheet> {
     return this.sheets;
   }
 
-  getSheetByName(sheetName: string): Sheet {
-    const sheet = this.sheets.filter(
-      (sheet) => sheet.getSheetName() === sheetName,
-    )[0];
-    assert(sheet instanceof Sheet);
-    return sheet;
+  getSheetByName(sheetName: string): Sheet | undefined {
+    return this.sheets.get(sheetName);
   }
 
-  addSheet(sheet: Sheet) {
-    this.sheets.push(sheet);
+  getUniqueDefaultNameForNewSheet(): string {
+    let defaultSheetNumber = this.sheets.size;
+    let defaultName = `Sheet${++defaultSheetNumber}`;
+
+    while (this.getSheetByName(defaultName) !== undefined) {
+      defaultName = `Sheet${++defaultSheetNumber}`;
+    }
+    return defaultName;
   }
 
-  addNewSheet(data: string[][], sheetName?: string) {
-    const sheetNameOrDefault = sheetName ?? `Sheet${this.sheets.length + 1}`;
-    if (
-      this.sheets.some((sheet) => sheet.getSheetName() === sheetNameOrDefault)
-    )
-      return;
-    this.addSheet(new Sheet(data, sheetNameOrDefault));
+  addSheet(data: string[][], sheetName?: string): Workbook {
+    const sheetNameOrDefault =
+      sheetName ?? this.getUniqueDefaultNameForNewSheet();
+    if (this.sheets.get(sheetNameOrDefault) !== undefined) {
+      throw new Error(
+        `Sheet with name ${sheetNameOrDefault} already exists in Workbook.`,
+      );
+    }
+    this.sheets.set(sheetNameOrDefault, new Sheet(data));
+    return this;
   }
 
   acceptVisitor<R>(visitor: IoTypeVisitor<R>): R {

@@ -16,6 +16,7 @@ import { Table } from '../types/io-types/table';
 import { DebugGranularity } from './debug-configuration';
 
 export class DebugLogVisitor implements IoTypeVisitor<void> {
+  private readonly PEEK_NUMBER_OF_WORKBOOKS = 5;
   private readonly PEEK_NUMBER_OF_ROWS = 10;
   private readonly PEEK_NUMBER_OF_BYTES = 100;
   private readonly PEEK_NUMBER_OF_LINES = 10;
@@ -136,10 +137,35 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
     this.log('... (omitted in peek mode)');
   }
   visitWorkbook(workbook: Workbook): void {
+    if (this.debugGranularity === 'minimal') {
+      return;
+    }
+    const workbookSheets = workbook.getSheets();
+    const keys = Array.from(workbookSheets.keys());
+
+    const numberOfSheets = workbookSheets.size;
+    if (numberOfSheets === 0) {
+      this.log(`empty Workbook`);
+      return;
+    }
+    this.log(`Workbook with ${numberOfSheets} Sheets.`);
+
     this.log(`WorkSheets in WorkBook:`);
-    workbook
-      .getSheets()
-      .forEach((sheet) => console.log(`WorkSheet: ${sheet.getSheetName()}`));
+
+    for (let i = 0; i < numberOfSheets; ++i) {
+      if (
+        this.debugGranularity === 'peek' &&
+        i >= this.PEEK_NUMBER_OF_WORKBOOKS
+      ) {
+        break;
+      }
+      const currentWorkbookName = keys[i];
+      if (currentWorkbookName === undefined) {
+        continue;
+      }
+      this.log(`WorkSheet: ${currentWorkbookName}`);
+    }
+    this.logPeekComment();
   }
 
   private log(text: string): void {

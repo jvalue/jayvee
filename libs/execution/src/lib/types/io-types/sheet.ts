@@ -22,15 +22,11 @@ export class Sheet implements IOTypeImplementation<IOType.SHEET> {
   public readonly ioType = IOType.SHEET;
   private numberOfRows: number;
   private numberOfColumns: number;
-  constructor(private data: string[][], private sheetName?: string) {
+  constructor(private data: string[][]) {
     this.numberOfRows = data.length;
     this.numberOfColumns = data.reduce((prev, curr) => {
       return curr.length > prev ? curr.length : prev;
     }, 0);
-  }
-
-  getSheetName(): string {
-    return this.sheetName ?? '';
   }
 
   getData(): ReadonlyArray<ReadonlyArray<string>> {

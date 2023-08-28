@@ -28,12 +28,18 @@ export class SheetPickerExecutor extends AbstractBlockExecutor<
   async doExecute(
     workbook: Workbook,
     context: ExecutionContext,
-  ): Promise<R.Result<Sheet | null>> {
+  ): Promise<R.Result<Sheet>> {
     const sheetName = context.getPropertyValue(
       'sheetName',
       PrimitiveValuetypes.Text,
     );
     const sheet = workbook.getSheetByName(sheetName);
+    if (sheet === undefined) {
+      return R.err({
+        message: `Archive type is not supported`,
+        diagnostic: { node: context.getCurrentNode(), property: 'name' },
+      });
+    }
     return R.ok(sheet);
   }
 }

@@ -31,30 +31,23 @@ export class XLSXInterpreterExecutor extends AbstractBlockExecutor<
     file: BinaryFile,
     context: ExecutionContext,
   ): Promise<R.Result<Workbook>> {
-    context.logger.logDebug(`reading from xlsx file`);
-    const workBookFromFile = xlsx.read(file.content, { dense: true });
+    context.logger.logDebug(`Reading from XLSX file`);
+    const workBookFromFile = xlsx.read(file.content, {
+      dense: true,
+      raw: true,
+    });
     const workbook = new Workbook();
     for (const workSheetName of workBookFromFile.SheetNames) {
       const workSheet = workBookFromFile.Sheets[workSheetName];
       assert(workSheet !== undefined);
 
-      const workSheetDataArray = Array.prototype.map.call<
-        xlsx.WorkSheet,
-        [
-          callbackfn: (
-            value: xlsx.CellObject[],
-            index: number,
-            array: xlsx.WorkSheet[],
-          ) => string[],
-        ],
-        string[][]
-      >(workSheet, (row: xlsx.CellObject[]): string[] => {
-        return row.map<string>((cell: xlsx.CellObject) => {
-          return cell.v?.toString() ?? '';
-        });
-      });
+      /** Extract sheet into array of array structure as described in https://github.com/SheetJS/sheetjs/issues/1258#issuecomment-419129919 */
+      const workSheetDataArray: string[][] = xlsx.utils.sheet_to_json(
+        workSheet,
+        { header: 1, raw: true, rawNumbers: false, defval: '' },
+      );
 
-      workbook.addNewSheet(workSheetDataArray, workSheetName);
+      workbook.addSheet(workSheetDataArray, workSheetName);
     }
     return Promise.resolve(R.ok(workbook));
   }

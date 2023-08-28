@@ -19,12 +19,12 @@ export class XLSXInterpreterMetaInformation extends BlockMetaInformation {
     );
 
     this.docs.description =
-      "Interprets an input file as a xlsx-file and outputs a `Workbook` containing `Sheet`'s.";
+      'Interprets an input file as a XLSX-file and outputs a `Workbook` containing `Sheet`s.';
     this.docs.examples = [
       {
         code: blockExample,
         description:
-          "Interprets an input file as a xlsx-file and outputs a `Workbook` containing `Sheet`'s.",
+          'Interprets an input file as a XLSX-file and outputs a `Workbook` containing `Sheet`s.',
       },
     ];
   }
