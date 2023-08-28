@@ -28,6 +28,7 @@ export class TestLogger extends Logger {
   constructor(
     private readonly enableDebugLogging: boolean,
     private loggingContext?: string,
+    private printLogs: boolean = true,
   ) {
     super();
   }
@@ -71,21 +72,27 @@ export class TestLogger extends Logger {
   override logInfo(message: string): void {
     const msg = `${chalk.bold(this.getContext())}${message}`;
     this.infoLogs.push(msg);
-    console.log(msg);
+    if (this.printLogs) {
+      console.log(msg);
+    }
   }
 
   override logDebug(message: string): void {
     if (this.enableDebugLogging) {
       const msg = `${chalk.bold(this.getContext())}${message}`;
       this.debugLogs.push(msg);
-      console.log(msg);
+      if (this.printLogs) {
+        console.log(msg);
+      }
     }
   }
 
   override logErr(message: string): void {
     const msg = `${chalk.bold(this.getContext())}${chalk.red(message)}`;
     this.errorLogs.push(msg);
-    console.error(msg);
+    if (this.printLogs) {
+      console.error(msg);
+    }
   }
 
   override setLoggingContext(loggingContext: string | undefined) {
@@ -108,7 +115,9 @@ export class TestLogger extends Logger {
       const basePrintFn = this.inferPrintFunction(severity);
 
       this.diagnosticLogs.push(msg);
-      basePrintFn(msg);
+      if (this.printLogs) {
+        basePrintFn(msg);
+      }
     };
     const colorFn = this.inferChalkColor(severity);
 
