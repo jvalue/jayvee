@@ -10,8 +10,20 @@ import { uinteger } from 'vscode-languageserver-types';
 
 import { DiagnosticSeverity, Logger } from '../src/lib';
 
+interface ClearLogsOptions {
+  clearInfo: boolean;
+  clearError: boolean;
+  clearDebug: boolean;
+  clearDiagnostic: boolean;
+}
+
 export class TestLogger extends Logger {
   private readonly TAB_TO_SPACES = 4;
+
+  private infoLogs: string[] = [];
+  private errorLogs: string[] = [];
+  private debugLogs: string[] = [];
+  private diagnosticLogs: string[] = [];
 
   constructor(
     private readonly enableDebugLogging: boolean,
@@ -20,18 +32,60 @@ export class TestLogger extends Logger {
     super();
   }
 
+  getLogs(): {
+    infoLogs: string[];
+    errorLogs: string[];
+    debugLogs: string[];
+    diagnosticLogs: string[];
+  } {
+    return {
+      infoLogs: Array.from(this.infoLogs),
+      errorLogs: Array.from(this.errorLogs),
+      debugLogs: Array.from(this.debugLogs),
+      diagnosticLogs: Array.from(this.diagnosticLogs),
+    };
+  }
+
+  clearLogs(
+    options: ClearLogsOptions = {
+      clearInfo: true,
+      clearDebug: true,
+      clearError: true,
+      clearDiagnostic: true,
+    },
+  ): void {
+    if (options.clearInfo) {
+      this.infoLogs = [];
+    }
+    if (options.clearError) {
+      this.errorLogs = [];
+    }
+    if (options.clearDebug) {
+      this.debugLogs = [];
+    }
+    if (options.clearDiagnostic) {
+      this.diagnosticLogs = [];
+    }
+  }
+
   override logInfo(message: string): void {
-    console.log(`${chalk.bold(this.getContext())}${message}`);
+    const msg = `${chalk.bold(this.getContext())}${message}`;
+    this.infoLogs.push(msg);
+    console.log(msg);
   }
 
   override logDebug(message: string): void {
     if (this.enableDebugLogging) {
-      console.log(`${chalk.bold(this.getContext())}${message}`);
+      const msg = `${chalk.bold(this.getContext())}${message}`;
+      this.debugLogs.push(msg);
+      console.log(msg);
     }
   }
 
   override logErr(message: string): void {
-    console.error(`${chalk.bold(this.getContext())}${chalk.red(message)}`);
+    const msg = `${chalk.bold(this.getContext())}${chalk.red(message)}`;
+    this.errorLogs.push(msg);
+    console.error(msg);
   }
 
   override setLoggingContext(loggingContext: string | undefined) {
@@ -50,7 +104,12 @@ export class TestLogger extends Logger {
     range: Range,
     document: LangiumDocument,
   ) {
-    const printFn = this.inferPrintFunction(severity);
+    const printFn = (msg: string) => {
+      const basePrintFn = this.inferPrintFunction(severity);
+
+      this.diagnosticLogs.push(msg);
+      basePrintFn(msg);
+    };
     const colorFn = this.inferChalkColor(severity);
 
     this.logDiagnosticMessage(severity, message, printFn, colorFn);
