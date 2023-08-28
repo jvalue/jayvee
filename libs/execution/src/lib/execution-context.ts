@@ -127,6 +127,18 @@ export class ExecutionContext {
     propertyName: string,
     valuetype: Valuetype<I>,
   ): I {
+    const metaInf = this.getMetaInformationOfCurrentNode();
+    const propertySpec = metaInf.getPropertySpecification(propertyName);
+    assert(propertySpec !== undefined);
+
+    const defaultValue = propertySpec.defaultValue;
+    assert(defaultValue !== undefined);
+    assert(valuetype.isInternalValueRepresentation(defaultValue));
+
+    return defaultValue;
+  }
+
+  private getMetaInformationOfCurrentNode() {
     const currentNode = this.getCurrentNode();
     assert(!isPipelineDefinition(currentNode));
     assert(!isExpressionConstraintDefinition(currentNode));
@@ -139,13 +151,6 @@ export class ExecutionContext {
       assert(isReference(currentNode.type));
       metaInf = getOrFailMetaInformation(currentNode.type);
     }
-    const propertySpec = metaInf.getPropertySpecification(propertyName);
-    assert(propertySpec !== undefined);
-
-    const defaultValue = propertySpec.defaultValue;
-    assert(defaultValue !== undefined);
-    assert(valuetype.isInternalValueRepresentation(defaultValue));
-
-    return defaultValue;
+    return metaInf;
   }
 }
