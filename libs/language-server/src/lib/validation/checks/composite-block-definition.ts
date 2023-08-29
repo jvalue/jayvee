@@ -18,4 +18,39 @@ export function validateCompositeBlockTypeDefinition(
   evaluationContext: EvaluationContext,
 ): void {
   validateBlocktypeDefinition(blockType, validationContext, evaluationContext);
+  checkHasPipeline(blockType, validationContext);
+  checkExactlyOnePipeline(blockType, validationContext);
+}
+
+function checkHasPipeline(
+  blockType: CompositeBlocktypeDefinition,
+  context: ValidationContext,
+): void {
+  if (blockType.pipes.length === 0) {
+    context.accept(
+      'error',
+      `Composite blocktypes must define one pipeline '${blockType.name}'`,
+      {
+        node: blockType,
+        property: 'name',
+      },
+    );
+  }
+}
+
+function checkExactlyOnePipeline(
+  blockType: CompositeBlocktypeDefinition,
+  context: ValidationContext,
+): void {
+  if (blockType.pipes.length > 1) {
+    blockType.pipes.forEach((pipe) => {
+      context.accept(
+        'error',
+        `Found more than one pipeline definition in composite blocktype '${blockType.name}'`,
+        {
+          node: pipe,
+        },
+      );
+    });
+  }
 }

@@ -12,6 +12,7 @@ import {
   isCompositeBlocktypeDefinition,
   CompositeBlocktypeDefinition,
   getIOType,
+  BlocktypePipeline,
 } from '@jvalue/jayvee-language-server';
 import { strict as assert } from 'assert/strict';
 import { ExecutionContext } from '../execution-context';
@@ -21,9 +22,6 @@ import { AbstractBlockExecutor, BlockExecutor } from './block-executor';
 import * as R from '@jvalue/jayvee-execution';
 import { BlockExecutorClass } from '@jvalue/jayvee-execution';
 
-// Todo: It seems to not know that type exists here, other executors have a
-// @implementsStatic<BlockExecutorClass>()
-// which the anon class can not use?
 export function createCompositeBlockExecutor(
   inputType: IOType,
   outputType: IOType,
@@ -39,14 +37,13 @@ export function createCompositeBlockExecutor(
     `Blocktype is not a composite block for block ${block.name}.`,
   );
 
-  const blockReference = block.type.ref;
+  const blockTypeReference = block.type.ref;
 
   return class extends AbstractBlockExecutor<
     typeof inputType,
     typeof outputType
   > {
-    public readonly /* static TODO: this static does not work with this version of typescript? */ type =
-      blockReference.name;
+    public static readonly type = blockTypeReference.name;
 
     constructor() {
       super(inputType, outputType);
@@ -61,13 +58,13 @@ export function createCompositeBlockExecutor(
         `Executing composite block of type ${block.type}`,
       );
 
-      this.addVariablesToContext(block, blockReference.properties, context);
+      this.addVariablesToContext(block, blockTypeReference.properties, context);
 
-      const executionOrder = getBlocksInTopologicalSorting(blockReference).map(
-        (block) => {
-          return { block: block, value: NONE };
-        },
-      );
+      const executionOrder = getBlocksInTopologicalSorting(
+        blockTypeReference,
+      ).map((block) => {
+        return { block: block, value: NONE };
+      });
 
       const executionResult = await executeBlocks(
         context,
@@ -83,10 +80,10 @@ export function createCompositeBlockExecutor(
         );
       }
 
-      this.removeVariablesFromContext(blockReference.properties, context);
+      this.removeVariablesFromContext(blockTypeReference.properties, context);
 
-      // Todo unfuck this to handle: no pipeline, two pipelines, two outputs? no outputs (can not happen due to grammer?)? move them into a getOutput getLastValue etc function
-      const pipeline = blockReference.pipes[0]!;
+      const pipeline = getPipeline(blockTypeReference);
+
       if (R.isOk(executionResult) && pipeline.output) {
         // The last block always pipes into the output if it exists
         const lastBlock = pipeline.blocks.at(-1);
@@ -115,7 +112,6 @@ export function createCompositeBlockExecutor(
       );
     }
 
-    // TODO implement
     private addVariablesToContext(
       block: BlockDefinition,
       properties: BlocktypeProperty[],
@@ -124,7 +120,6 @@ export function createCompositeBlockExecutor(
       properties.forEach((blocktypeProperty) => {
         const valueType = createValuetype(blocktypeProperty.valuetype);
 
-        // Todo fix or error nicely
         assert(
           valueType,
           `Can not create valuetype for blocktype property ${blocktypeProperty.name}`,
@@ -138,7 +133,6 @@ export function createCompositeBlockExecutor(
           context.evaluationContext,
         );
 
-        // Todo fix or error nicely
         assert(
           propertyValue !== undefined,
           `Can not get value for blocktype property ${blocktypeProperty.name}`,
@@ -182,7 +176,7 @@ export function createCompositeBlockExecutor(
         !propertyFromBlockType ||
         propertyFromBlockType.defaultValue == undefined
       ) {
-        return undefined;
+        return;
       }
 
       return evaluateExpression(
@@ -190,21 +184,29 @@ export function createCompositeBlockExecutor(
         evaluationContext,
       );
     }
-  } as unknown as BlockExecutorClass<BlockExecutor<IOType, IOType>>;
+  };
 }
 
-export const getInputType = (block: CompositeBlocktypeDefinition): IOType => {
+function getPipeline(block: CompositeBlocktypeDefinition): BlocktypePipeline {
+  assert(
+    block.pipes[0],
+    `Composite block ${block.name} must have exactly one pipeline.`,
+  );
+  return block.pipes[0];
+}
+
+export function getInputType(block: CompositeBlocktypeDefinition): IOType {
   assert(
     block.inputs.length === 1,
     `Composite block ${block.name} must have exactly one input.`,
   );
   return block.inputs[0] ? getIOType(block.inputs[0]) : IOType.NONE;
-};
+}
 
-export const getOutputType = (block: CompositeBlocktypeDefinition): IOType => {
+export function getOutputType(block: CompositeBlocktypeDefinition): IOType {
   assert(
     block.outputs.length === 1,
     `Composite block ${block.name} must have exactly one output.`,
   );
   return block.outputs[0] ? getIOType(block.outputs[0]) : IOType.NONE;
-};
+}
