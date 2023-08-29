@@ -6,15 +6,15 @@ import { strict as assert } from 'assert';
 
 import {
   BlocktypeProperty,
-  BuiltinBlocktypeDefinition,
   EvaluationContext,
+  ReferenceableBlocktypeDefinition,
   createValuetype,
   evaluateExpression,
 } from '../../ast';
 import { ValidationContext } from '../validation-context';
 
 export function validateBlocktypeDefinition(
-  blocktype: BuiltinBlocktypeDefinition,
+  blocktype: ReferenceableBlocktypeDefinition,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
 ): void {
@@ -31,7 +31,7 @@ export function validateBlocktypeDefinition(
 }
 
 function checkNoMultipleInputs(
-  blocktype: BuiltinBlocktypeDefinition,
+  blocktype: ReferenceableBlocktypeDefinition,
   context: ValidationContext,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -53,7 +53,7 @@ function checkNoMultipleInputs(
 }
 
 function checkNoMultipleOutputs(
-  blocktype: BuiltinBlocktypeDefinition,
+  blocktype: ReferenceableBlocktypeDefinition,
   context: ValidationContext,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -75,7 +75,7 @@ function checkNoMultipleOutputs(
 }
 
 function checkOneInput(
-  blocktype: BuiltinBlocktypeDefinition,
+  blocktype: ReferenceableBlocktypeDefinition,
   context: ValidationContext,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -93,7 +93,7 @@ function checkOneInput(
 }
 
 function checkOneOutput(
-  blocktype: BuiltinBlocktypeDefinition,
+  blocktype: ReferenceableBlocktypeDefinition,
   context: ValidationContext,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -111,7 +111,7 @@ function checkOneOutput(
 }
 
 function checkNoDuplicateProperties(
-  blocktype: BuiltinBlocktypeDefinition,
+  blocktype: ReferenceableBlocktypeDefinition,
   context: ValidationContext,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -147,7 +147,7 @@ function checkNoDuplicateProperties(
 }
 
 function checkPropertiesDefaultValuesHaveCorrectType(
-  blocktype: BuiltinBlocktypeDefinition,
+  blocktype: ReferenceableBlocktypeDefinition,
   context: ValidationContext,
   evaluationContext: EvaluationContext,
 ): void {

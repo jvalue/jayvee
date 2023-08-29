@@ -30,6 +30,7 @@ import { validateTypedConstraintDefinition } from './checks/typed-constraint-def
 import { validateValuetypeDefinition } from './checks/valuetype-definition';
 import { validateValuetypeReference } from './checks/valuetype-reference';
 import { ValidationContext } from './validation-context';
+import { validateCompositeBlockTypeDefinition } from './checks/composite-block-definition';
 
 /**
  * Registry for validation checks.
@@ -44,6 +45,7 @@ export class JayveeValidationRegistry extends ValidationRegistry {
     this.registerJayveeValidationChecks({
       BuiltinBlocktypeDefinition: validateBlocktypeDefinition,
       BlockDefinition: validateBlockDefinition,
+      CompositeBlocktypeDefinition: validateCompositeBlockTypeDefinition,
       ColumnId: validateColumnId,
       TypedConstraintDefinition: validateTypedConstraintDefinition,
       ExpressionConstraintDefinition: validateExpressionConstraintDefinition,

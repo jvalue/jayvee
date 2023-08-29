@@ -193,10 +193,18 @@ export function createCompositeBlockExecutor(
   } as unknown as BlockExecutorClass<BlockExecutor<IOType, IOType>>;
 }
 
-// Todo, what if more than one input/output exists?
 export const getInputType = (block: CompositeBlocktypeDefinition): IOType => {
+  assert(
+    block.inputs.length === 1,
+    `Composite block ${block.name} must have exactly one input.`,
+  );
   return block.inputs[0] ? getIOType(block.inputs[0]) : IOType.NONE;
 };
+
 export const getOutputType = (block: CompositeBlocktypeDefinition): IOType => {
+  assert(
+    block.outputs.length === 1,
+    `Composite block ${block.name} must have exactly one output.`,
+  );
   return block.outputs[0] ? getIOType(block.outputs[0]) : IOType.NONE;
 };
