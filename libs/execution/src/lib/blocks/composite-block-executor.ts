@@ -1,26 +1,34 @@
-import {
-  getBlocksInTopologicalSorting,
-  BlocktypeProperty,
-  BlockDefinition,
-  createValuetype,
-  Valuetype,
-  EvaluationContext,
-  InternalValueRepresentation,
-  evaluatePropertyValue,
-  evaluateExpression,
-  IOType,
-  isCompositeBlocktypeDefinition,
-  CompositeBlocktypeDefinition,
-  getIOType,
-  BlocktypePipeline,
-} from '@jvalue/jayvee-language-server';
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { strict as assert } from 'assert/strict';
+
+import {
+  BlockDefinition,
+  BlocktypePipeline,
+  BlocktypeProperty,
+  CompositeBlocktypeDefinition,
+  EvaluationContext,
+  IOType,
+  InternalValueRepresentation,
+  Valuetype,
+  createValuetype,
+  evaluateExpression,
+  evaluatePropertyValue,
+  getBlocksInTopologicalSorting,
+  getIOType,
+  isCompositeBlocktypeDefinition,
+} from '@jvalue/jayvee-language-server';
+
 import { ExecutionContext } from '../execution-context';
 import { IOTypeImplementation, NONE } from '../types';
+
+// eslint-disable-next-line import/no-cycle
 import { executeBlocks } from './block-execution-util';
 import { AbstractBlockExecutor, BlockExecutor } from './block-executor';
-import * as R from '@jvalue/jayvee-execution';
-import { BlockExecutorClass } from '@jvalue/jayvee-execution';
+import { BlockExecutorClass } from './block-executor-class';
+import * as R from './execution-result';
 
 export function createCompositeBlockExecutor(
   inputType: IOType,
@@ -49,13 +57,14 @@ export function createCompositeBlockExecutor(
       super(inputType, outputType);
     }
 
-    // eslint-disable-next-line @typescript-eslint/require-await
     async doExecute(
       input: IOTypeImplementation<typeof inputType>,
       context: ExecutionContext,
     ): Promise<R.Result<IOTypeImplementation<typeof outputType> | null>> {
       context.logger.logDebug(
-        `Executing composite block of type ${block.type}`,
+        `Executing composite block of type ${
+          block.type.ref?.name ?? 'undefined'
+        }`,
       );
 
       this.addVariablesToContext(block, blockTypeReference.properties, context);
@@ -84,7 +93,7 @@ export function createCompositeBlockExecutor(
 
       const pipeline = getPipeline(blockTypeReference);
 
-      if (R.isOk(executionResult) && pipeline.output) {
+      if (R.isOk(executionResult)) {
         // The last block always pipes into the output if it exists
         const lastBlock = pipeline.blocks.at(-1);
 
@@ -94,7 +103,9 @@ export function createCompositeBlockExecutor(
 
         assert(
           blockExecutionResult,
-          `No execution result found for composite block ${block.type}`,
+          `No execution result found for composite block ${
+            block.type.ref?.name ?? 'undefined'
+          }`,
         );
 
         return R.ok(blockExecutionResult.value);
@@ -163,7 +174,7 @@ export function createCompositeBlockExecutor(
           valueType,
         );
 
-        if (value) {
+        if (value !== undefined) {
           return value;
         }
       }
@@ -174,7 +185,7 @@ export function createCompositeBlockExecutor(
 
       if (
         !propertyFromBlockType ||
-        propertyFromBlockType.defaultValue == undefined
+        propertyFromBlockType.defaultValue === undefined
       ) {
         return;
       }

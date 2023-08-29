@@ -47,7 +47,7 @@ export class CompositeBlocktypeMetaInformation extends BlockMetaInformation {
     // We assume blocktype properties that have an expression as default value can be evaluated during runtime
     return missingRequiredPropertyNames.filter((propertyName) => {
       const blocktypeProperty = this.blockTypeDefinition.properties.find(
-        (blocktypeProperty) => blocktypeProperty.name == propertyName,
+        (blocktypeProperty) => blocktypeProperty.name === propertyName,
       );
 
       return !blocktypeProperty?.defaultValue;

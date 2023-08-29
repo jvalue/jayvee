@@ -1,12 +1,15 @@
 import {
-  collectParents,
   BlockDefinition,
+  collectParents,
 } from '@jvalue/jayvee-language-server';
+
 import { ExecutionContext } from '../execution-context';
-import { NONE, IOTypeImplementation } from '../types';
+import { Logger } from '../logger';
+import { IOTypeImplementation, NONE } from '../types';
+
+// eslint-disable-next-line import/no-cycle
 import { createBlockExecutor } from './block-executor-registry';
-import * as R from '@jvalue/jayvee-execution';
-import { Logger } from '@jvalue/jayvee-execution';
+import * as R from './execution-result';
 
 export interface ExecutionOrderItem {
   block: BlockDefinition;
@@ -28,7 +31,11 @@ export async function executeBlocks(
     let inputValue =
       parentData[0]?.value === undefined ? NONE : parentData[0]?.value;
 
-    if (isFirstblock && inputValue == NONE && initialInputValue !== undefined) {
+    if (
+      isFirstblock &&
+      inputValue === NONE &&
+      initialInputValue !== undefined
+    ) {
       inputValue = initialInputValue;
     }
 
@@ -41,10 +48,9 @@ export async function executeBlocks(
     );
     if (R.isErr(executionResult)) {
       return executionResult;
-    } else {
-      const blockResultData = executionResult.right;
-      blockData.value = blockResultData;
     }
+    const blockResultData = executionResult.right;
+    blockData.value = blockResultData;
 
     executionContext.exitNode(block);
     isFirstblock = false;

@@ -34,6 +34,7 @@ export function collectStartingBlocks(
         ) {
           return blockRef.ref;
         }
+        return undefined;
       })
       .filter(Boolean) as unknown as BlockDefinition[];
 

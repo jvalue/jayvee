@@ -6,14 +6,13 @@ import { strict as assert } from 'assert';
 
 import {
   BlockDefinition,
-  IOType,
   Registry,
-  getIOType,
   isCompositeBlocktypeDefinition,
 } from '@jvalue/jayvee-language-server';
 
 import { BlockExecutor } from './block-executor';
 import { BlockExecutorClass } from './block-executor-class';
+// eslint-disable-next-line import/no-cycle
 import {
   createCompositeBlockExecutor,
   getInputType,
