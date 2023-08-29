@@ -18,7 +18,7 @@ And last but not least, please read and follow our [code of conduct](https://git
 
 The Jayvee repository is located [here](https://github.com/jvalue/jayvee) on GitHub.
 It uses an [Nx mono-repository](https://nx.dev/) setup and contains all related projects, most notably the Jayvee language server and interpreter.
-Please have a look at the [architecture overview](./03-architecture-overview.d) for more details.
+Please have a look at the [architecture overview](./03-architecture-overview.md) for more details.
 
 ## Prerequisites
 
