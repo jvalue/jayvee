@@ -6,11 +6,11 @@ sidebar_position: 1
 
 ## How to contribute
 
-In order to contribute to the Jayvee project, please have a look at our [contribution guide](https://github.com/jvalue/jayvee/blob/main/CONTRIBUTING.md). Before planning a contribution, please read the [design principles](./design-principles) and consider if your changes fit the vision expressed there.
+In order to contribute to the Jayvee project, please have a look at our [contribution guide](https://github.com/jvalue/jayvee/blob/main/CONTRIBUTING.md). Before planning a contribution, please read the [design principles](./05-design-principles.md) and consider if your changes fit the vision expressed there.
 
 The overall project is licensed under the `AGPL-3.0-only` license and is compliant to the [REUSE Specification](https://reuse.software/spec/) by the [Free Software Foundation Europe](https://fsfe.org/).
 Because of this, contributions are required to adhere to the license and follow that specification.
-More details on this topic can be found [here](./dev-processes/licensing-and-copyright).
+More details on this topic can be found [here](./02-dev-processes/03-licensing-and-copyright.md).
 
 And last but not least, please read and follow our [code of conduct](https://github.com/jvalue/jayvee/blob/main/CODE_OF_CONDUCT.md).
 
@@ -18,7 +18,7 @@ And last but not least, please read and follow our [code of conduct](https://git
 
 The Jayvee repository is located [here](https://github.com/jvalue/jayvee) on GitHub.
 It uses an [Nx mono-repository](https://nx.dev/) setup and contains all related projects, most notably the Jayvee language server and interpreter.
-Please have a look at the [architecture overview](./architecture-overview) for more details.
+Please have a look at the [architecture overview](./03-architecture-overview.d) for more details.
 
 ## Prerequisites
 
