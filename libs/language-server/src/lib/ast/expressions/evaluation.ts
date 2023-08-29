@@ -157,6 +157,12 @@ export function evaluatePropertyValue<T extends InternalValueRepresentation>(
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   assert(propertyValue !== undefined);
 
+  if (isBlocktypeProperty(propertyValue)) {
+    // Properties of blocktypes are always undefined
+    // because they are set in the block that instantiates the block type
+    return undefined;
+  }
+
   let result: InternalValueRepresentation | undefined;
   if (isRuntimeParameterLiteral(propertyValue)) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -172,8 +178,6 @@ export function evaluatePropertyValue<T extends InternalValueRepresentation>(
     }
   } else if (isExpression(propertyValue)) {
     result = evaluateExpression(propertyValue, evaluationContext);
-  } else if (isBlocktypeProperty(propertyValue)) {
-    result = undefined;
   } else {
     assertUnreachable(propertyValue);
   }

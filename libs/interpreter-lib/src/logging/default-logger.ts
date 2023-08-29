@@ -135,7 +135,6 @@ export class DefaultLogger extends Logger {
         underlineTo = range.end.character;
       }
 
-      // Todo probably need to replace tabs with spaces? Need to think how repeatCharAccordingToString influences this
       const underlineIndent = this.repeatCharAccordingToString(
         ' ',
         line.substring(0, underlineFrom),

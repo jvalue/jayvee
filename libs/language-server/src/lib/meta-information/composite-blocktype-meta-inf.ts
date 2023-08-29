@@ -24,7 +24,6 @@ export class CompositeBlocktypeMetaInformation extends BlockMetaInformation {
       const valuetype = createValuetype(property.valuetype);
       assert(valuetype !== undefined);
 
-      // Todo should set more values in PropertySpecification here
       properties[property.name] = {
         type: valuetype,
       };
