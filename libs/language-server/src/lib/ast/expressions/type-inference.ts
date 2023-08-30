@@ -331,9 +331,7 @@ function inferTypeFromReferenceLiteral(
     isTransformPortDefinition(referenced) ||
     isBlocktypeProperty(referenced)
   ) {
-    const valueType = isTransformPortDefinition(referenced)
-      ? referenced.valueType
-      : referenced.valuetype;
+    const valueType = referenced.valueType;
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (valueType === undefined) {
       return undefined;

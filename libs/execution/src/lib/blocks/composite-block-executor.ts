@@ -91,10 +91,9 @@ export function createCompositeBlockExecutor(
 
       this.removeVariablesFromContext(blockTypeReference.properties, context);
 
-      const pipeline = getPipeline(blockTypeReference);
-
       if (R.isOk(executionResult)) {
         // The last block always pipes into the output if it exists
+        const pipeline = getPipeline(blockTypeReference);
         const lastBlock = pipeline.blocks.at(-1);
 
         const blockExecutionResult = R.okData(executionResult).find(
@@ -129,7 +128,7 @@ export function createCompositeBlockExecutor(
       context: ExecutionContext,
     ) {
       properties.forEach((blocktypeProperty) => {
-        const valueType = createValuetype(blocktypeProperty.valuetype);
+        const valueType = createValuetype(blocktypeProperty.valueType);
 
         assert(
           valueType,
@@ -167,7 +166,7 @@ export function createCompositeBlockExecutor(
         (property) => property.name === name,
       );
 
-      if (propertyFromBlock) {
+      if (propertyFromBlock !== undefined) {
         const value = evaluatePropertyValue(
           propertyFromBlock,
           evaluationContext,
@@ -183,10 +182,7 @@ export function createCompositeBlockExecutor(
         (property) => property.name === name,
       );
 
-      if (
-        !propertyFromBlockType ||
-        propertyFromBlockType.defaultValue === undefined
-      ) {
+      if (propertyFromBlockType?.defaultValue === undefined) {
         return;
       }
 

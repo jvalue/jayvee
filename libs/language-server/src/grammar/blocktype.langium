@@ -36,7 +36,7 @@ BlocktypeOutput:
     'output' name=ID 'oftype' iotype=[IotypeDefinition] ';';
 
 BlocktypeProperty:
-    'property' name=ID 'oftype' valuetype=ValuetypeReference (':' defaultValue=Expression)? ';';
+    'property' name=ID 'oftype' valueType=ValuetypeReference (':' defaultValue=Expression)? ';';
 
 BlocktypePipeline:
     input=[BlocktypeInput] '->' (blocks+=[BlockDefinition] '->')+ output=[BlocktypeOutput] ';';

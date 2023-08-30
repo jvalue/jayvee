@@ -28,15 +28,14 @@ export function collectStartingBlocks(
       .map((pipe) => pipe.blocks[0])
       .map((blockRef: Reference<BlockDefinition> | undefined) => {
         if (
-          blockRef &&
-          blockRef.ref &&
+          blockRef?.ref !== undefined &&
           getMetaInformation(blockRef.ref.type) !== undefined
         ) {
           return blockRef.ref;
         }
         return undefined;
       })
-      .filter(Boolean) as unknown as BlockDefinition[];
+      .filter((x): x is BlockDefinition => x !== undefined);
 
     return startingBlocks;
   }

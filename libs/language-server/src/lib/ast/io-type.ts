@@ -16,12 +16,16 @@ export enum IOType {
 }
 
 export function getIOType(blockIO: BlocktypeInput | BlocktypeOutput): IOType {
-  const ioName = blockIO.iotype.ref?.name as string;
-
+  const ioTypeName = blockIO.iotype.ref?.name;
   assert(
-    Object.values(IOType).some((type) => type === ioName),
-    `IOType ${ioName} does not exist.`,
+    ioTypeName !== undefined,
+    `Unknown IOType name for block input/output ${blockIO.name}.`,
   );
 
-  return ioName as IOType;
+  assert(
+    Object.values(IOType).some((type) => type === ioTypeName),
+    `IOType ${ioTypeName} does not exist.`,
+  );
+
+  return ioTypeName as IOType;
 }

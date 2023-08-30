@@ -30,12 +30,11 @@ export function getRegisteredBlockExecutors(): BlockExecutorClass[] {
 }
 
 export function createBlockExecutor(block: BlockDefinition): BlockExecutor {
-  const blockType = block.type.ref?.name;
+  const blockType = block.type.ref;
   assert(blockType !== undefined);
 
   if (
-    !blockExecutorRegistry.get(blockType) &&
-    block.type.ref &&
+    !blockExecutorRegistry.get(blockType.name) &&
     isCompositeBlocktypeDefinition(block.type.ref)
   ) {
     const executorClass = createCompositeBlockExecutor(
@@ -47,11 +46,11 @@ export function createBlockExecutor(block: BlockDefinition): BlockExecutor {
     blockExecutorRegistry.register(block.type.ref.name, executorClass);
   }
 
-  const blockExecutor = blockExecutorRegistry.get(blockType);
+  const blockExecutor = blockExecutorRegistry.get(blockType.name);
 
   assert(
     blockExecutor !== undefined,
-    `No executor was registered for block type ${blockType}`,
+    `No executor was registered for block type ${blockType.name}`,
   );
 
   return new blockExecutor();

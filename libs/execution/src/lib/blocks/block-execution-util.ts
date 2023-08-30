@@ -20,12 +20,21 @@ export interface ExecutionOrderItem {
   value: IOTypeImplementation | null;
 }
 
+/**
+ * Executes an ordered list of blocks in sequence, using outputs from previous blocks as inputs for downstream blocks.
+ *
+ * @param executionContext The context the blocks are executed in, e.g., a pipeline or composite block
+ * @param executionOrder An ordered list of blocks so that blocks that need inputs are after blocks that produce these inputs
+ * @param initialInputValue An initial input that was produced outside of this block chain, e.g., as input to a composite block
+ *
+ * @returns The ordered blocks and their produced outputs or an error on failure
+ */
 export async function executeBlocks(
   executionContext: ExecutionContext,
   executionOrder: ExecutionOrderItem[],
   initialInputValue: IOTypeImplementation | undefined = undefined,
 ): Promise<R.Result<ExecutionOrderItem[]>> {
-  let isFirstblock = true;
+  let isFirstBlock = true;
 
   for (const blockData of executionOrder) {
     const block = blockData.block;
@@ -35,11 +44,10 @@ export async function executeBlocks(
     let inputValue =
       parentData[0]?.value === undefined ? NONE : parentData[0]?.value;
 
-    if (
-      isFirstblock &&
-      inputValue === NONE &&
-      initialInputValue !== undefined
-    ) {
+    const useExternalInputValueForFirstBlock =
+      isFirstBlock && inputValue === NONE && initialInputValue !== undefined;
+
+    if (useExternalInputValueForFirstBlock) {
       inputValue = initialInputValue;
     }
 
@@ -57,7 +65,7 @@ export async function executeBlocks(
     blockData.value = blockResultData;
 
     executionContext.exitNode(block);
-    isFirstblock = false;
+    isFirstBlock = false;
   }
   return R.ok(executionOrder);
 }

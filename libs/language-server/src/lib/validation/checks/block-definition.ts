@@ -76,13 +76,12 @@ function checkPipesOfBlock(
       );
     }
   } else if (pipes.length === 0) {
+    const isLastBlockOfCompositeBlocktype =
+      isCompositeBlocktypeDefinition(block.$container) &&
+      block.$container.blocks.at(-1)?.name === block.name;
+
     // The last block in a composite block is connected to the output, not another block
-    if (
-      !(
-        isCompositeBlocktypeDefinition(block.$container) &&
-        block.$container.blocks.at(-1)?.name === block.name
-      )
-    ) {
+    if (!isLastBlockOfCompositeBlocktype) {
       context.accept(
         'warning',
         `A pipe should be connected to the ${whatToCheck} of this block`,

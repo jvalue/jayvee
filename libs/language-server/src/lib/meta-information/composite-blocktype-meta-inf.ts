@@ -21,7 +21,7 @@ export class CompositeBlocktypeMetaInformation extends BlockMetaInformation {
     const properties: Record<string, PropertySpecification> = {};
 
     for (const property of blockTypeDefinition.properties) {
-      const valuetype = createValuetype(property.valuetype);
+      const valuetype = createValuetype(property.valueType);
       assert(valuetype !== undefined);
 
       properties[property.name] = {
@@ -50,7 +50,7 @@ export class CompositeBlocktypeMetaInformation extends BlockMetaInformation {
         (blocktypeProperty) => blocktypeProperty.name === propertyName,
       );
 
-      return !blocktypeProperty?.defaultValue;
+      return blocktypeProperty?.defaultValue === undefined;
     });
   }
 }
