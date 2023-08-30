@@ -3,7 +3,7 @@ title: Design Principles
 sidebar_position: 5
 ---
 
-When deciding on new features for the domain-specific language itself, we try to adhere to the following high level guidelines. Of course, non of these statements is set in stone and every decision is a tradeoff.
+When deciding on new features for the domain-specific language itself, we try to adhere to the following high level guidelines. Of course, none of these statements is set in stone and every decision is a tradeoff.
 
 ## Jayvee Manifesto
 _Inspired by the [Agile Manifesto](https://agilemanifesto.org/)._
