@@ -84,6 +84,12 @@ export abstract class MetaInformation {
     return this.getPropertySpecification(name) !== undefined;
   }
 
+  getMissingRequiredPropertyNames(
+    presentPropertyNames: string[] = [],
+  ): string[] {
+    return this.getPropertyNames('required', presentPropertyNames);
+  }
+
   getPropertyNames(
     kind: 'optional' | 'required' | undefined = undefined,
     excludeNames: string[] = [],

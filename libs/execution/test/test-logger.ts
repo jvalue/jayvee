@@ -20,6 +20,10 @@ export class TestLogger extends Logger {
     super();
   }
 
+  override setLoggingDepth(): void {
+    return undefined;
+  }
+
   override logInfo(message: string): void {
     console.log(`${chalk.bold(this.getContext())}${message}`);
   }

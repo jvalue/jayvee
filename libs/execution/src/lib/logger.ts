@@ -22,6 +22,7 @@ export enum DiagnosticSeverity {
 
 export abstract class Logger {
   abstract setLoggingContext(loggingContext: string | undefined): void;
+  abstract setLoggingDepth(depth: number): void;
   abstract logInfo(message: string): void;
   abstract logDebug(message: string): void;
   abstract logErr(message: string): void;
