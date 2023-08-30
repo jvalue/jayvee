@@ -2,9 +2,10 @@
 title: Writing tests for Jayvee
 ---
 
-We use tests at different levels to ensure that Jayvee works as intended and to catch breaking changes by regression testing (see [here for grammar tests](#existing-tests) and [here for execution tests](#existing-tests-1)).  
-Additionally, we implemented a few testing utils to avoid creating Langium Typescript objects by hand.
-It has to be mentioned that, like Jayvee itself, the tests are split into grammar and execution tests.
+In order to ensure that Jayvee works as intended and to catch breaking changes, we have implemented the following components for regression testing:  
+- Testing utils: utils to create Langium Typescript objects from *.jv test assets (see [here](#testing-utils)) as well as mocks for execution testing (see [here](#testing-utils-1))
+- [Grammar tests](#grammar-tests): test the grammar parsing and validation
+- [Execution tests](#execution-tests): test the execution of blocks
 
 ## Conventions
 All of the existing tests follow these conventions:
@@ -123,7 +124,7 @@ Due to how vastly different each `BlockExecutor` can be, this interface is very 
 
 [**rdbms/exec/test**](https://github.com/jvalue/jayvee/tree/dev/libs/extensions/rdbms/exec/test):  
 Contains the implementation of `BlockExecutorMock` for `PostgresLoaderExecutor` and `SQLiteLoaderExecutor`.  
-Both of these executors are mocked using `jest.mock` to mock the corresponding libraries (`pg` and `sqlite3`) (**Note:** This part has to be added to the top of each `*.spec.ts` file (see usage below) due to how `jest.mock` works).  
+Both of these executors are mocked using `jest.mock` to mock the corresponding libraries (`pg` and `sqlite3`)  
 **Usage:**
 ``` ts
 import {
@@ -131,6 +132,8 @@ import {
   SQLiteLoaderExecutorMock,
 } from '@jvalue/jayvee-extensions/rdbms/test';
 
+// Global mocking of external library at the top of test file required, 
+// even though the mocking is encapsulated in helper classes
 jest.mock('pg', () => {
   const mClient = {
     connect: jest.fn(),
