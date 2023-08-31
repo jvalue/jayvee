@@ -13,7 +13,7 @@ export enum IOType {
   FILE_SYSTEM = 'FileSystem',
   SHEET = 'Sheet',
   TABLE = 'Table',
-  WORKBOOK = 'Workbook'
+  WORKBOOK = 'Workbook',
 }
 
 export function getIOType(blockIO: BlocktypeInput | BlocktypeOutput): IOType {
