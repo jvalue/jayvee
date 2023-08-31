@@ -18,7 +18,7 @@ entry JayveeModel:
     | valuetypes+=(CustomValuetypeDefinition | BuiltinValuetypeDefinition)
     | constraints+=ConstraintDefinition
     | transforms+=TransformDefinition
-    | blocktypes+=BuiltinBlocktypeDefinition
+    | blocktypes+=ReferenceableBlocktypeDefinition
     | iotypes+=IotypeDefinition
   )*;
 
@@ -34,7 +34,7 @@ PipelineDefinition:
   '}';
 
 BlockDefinition:
-  'block' name=ID 'oftype' type=[BuiltinBlocktypeDefinition] body=PropertyBody;
+  'block' name=ID 'oftype' type=[ReferenceableBlocktypeDefinition] body=PropertyBody;
 
 PipeDefinition:
   SinglePipeDefinition | ChainedPipeDefinition;

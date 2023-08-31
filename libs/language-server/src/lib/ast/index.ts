@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+// eslint-disable-next-line import/no-cycle
 export * from './expressions';
 
 export * from './generated/ast';
@@ -11,3 +12,5 @@ export * from './generated/module';
 export * from './wrappers';
 
 export * from './model-util';
+
+export * from './io-type';

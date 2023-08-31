@@ -8,16 +8,18 @@ import { Reference, isReference } from 'langium';
 import { assertUnreachable } from 'langium/lib/utils/errors';
 
 import {
-  BuiltinBlocktypeDefinition,
   ConstraintTypeLiteral,
-  isBuiltinBlocktypeDefinition,
+  ReferenceableBlocktypeDefinition,
+  isCompositeBlocktypeDefinition,
   isConstraintTypeLiteral,
+  isReferenceableBlocktypeDefinition,
 } from '../ast/generated/ast';
 import { ConstructorClass } from '../util/constructor-class';
 import { Registry } from '../util/registry';
 
 // eslint-disable-next-line import/no-cycle
 import { BlockMetaInformation } from './block-meta-inf';
+import { CompositeBlocktypeMetaInformation } from './composite-blocktype-meta-inf';
 import { ConstraintMetaInformation } from './constraint-meta-inf';
 import { MetaInformation } from './meta-inf';
 
@@ -32,8 +34,8 @@ export function registerMetaInformation(
 
 export function getMetaInformation(
   type:
-    | BuiltinBlocktypeDefinition
-    | Reference<BuiltinBlocktypeDefinition>
+    | ReferenceableBlocktypeDefinition
+    | Reference<ReferenceableBlocktypeDefinition>
     | undefined,
 ): BlockMetaInformation | undefined;
 export function getMetaInformation(
@@ -41,15 +43,15 @@ export function getMetaInformation(
 ): ConstraintMetaInformation | undefined;
 export function getMetaInformation(
   type:
-    | BuiltinBlocktypeDefinition
-    | Reference<BuiltinBlocktypeDefinition>
+    | ReferenceableBlocktypeDefinition
+    | Reference<ReferenceableBlocktypeDefinition>
     | ConstraintTypeLiteral
     | undefined,
 ): MetaInformation | undefined;
 export function getMetaInformation(
   type:
-    | BuiltinBlocktypeDefinition
-    | Reference<BuiltinBlocktypeDefinition>
+    | ReferenceableBlocktypeDefinition
+    | Reference<ReferenceableBlocktypeDefinition>
     | ConstraintTypeLiteral
     | undefined,
 ): BlockMetaInformation | ConstraintMetaInformation | undefined {
@@ -58,12 +60,23 @@ export function getMetaInformation(
     return undefined;
   }
 
+  // Register meta information about composite blocks from jv code
+  if (
+    isCompositeBlocktypeDefinition(dereferencedType) &&
+    !metaInformationRegistry.get(dereferencedType.name)
+  ) {
+    metaInformationRegistry.register(
+      dereferencedType.name,
+      new CompositeBlocktypeMetaInformation(dereferencedType),
+    );
+  }
+
   const metaInf = metaInformationRegistry.get(dereferencedType.name);
   if (metaInf === undefined) {
     return undefined;
   }
 
-  if (isBuiltinBlocktypeDefinition(dereferencedType)) {
+  if (isReferenceableBlocktypeDefinition(dereferencedType)) {
     assert(metaInf instanceof BlockMetaInformation);
     return metaInf;
   }
@@ -91,15 +104,17 @@ export function getRegisteredConstraintMetaInformation(): ConstraintMetaInformat
 }
 
 export function getOrFailMetaInformation(
-  type: BuiltinBlocktypeDefinition | Reference<BuiltinBlocktypeDefinition>,
+  type:
+    | ReferenceableBlocktypeDefinition
+    | Reference<ReferenceableBlocktypeDefinition>,
 ): BlockMetaInformation;
 export function getOrFailMetaInformation(
   type: ConstraintTypeLiteral,
 ): ConstraintMetaInformation;
 export function getOrFailMetaInformation(
   type:
-    | BuiltinBlocktypeDefinition
-    | Reference<BuiltinBlocktypeDefinition>
+    | ReferenceableBlocktypeDefinition
+    | Reference<ReferenceableBlocktypeDefinition>
     | ConstraintTypeLiteral,
 ): MetaInformation {
   const result = getMetaInformation(type);

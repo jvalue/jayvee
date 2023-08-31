@@ -1,6 +1,6 @@
 {
   "name": "jayvee",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "scripts": {
     "nx": "nx",
     "format": "nx format:write",

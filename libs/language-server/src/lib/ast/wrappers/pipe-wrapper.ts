@@ -8,6 +8,7 @@ import { DiagnosticInfo } from 'langium';
 
 import {
   BlockDefinition,
+  BlocktypePipeline,
   ChainedPipeDefinition,
   PipeDefinition,
   SinglePipeDefinition,
@@ -24,7 +25,10 @@ export class PipeWrapper<N extends PipeDefinition = PipeDefinition>
   public readonly from: BlockDefinition;
   public readonly to: BlockDefinition;
 
-  constructor(pipe: ChainedPipeDefinition, chainIndex: number);
+  constructor(
+    pipe: ChainedPipeDefinition | BlocktypePipeline,
+    chainIndex: number,
+  );
   constructor(pipe: SinglePipeDefinition);
   constructor(pipe: N, chainIndex?: number) {
     this.astNode = pipe;
@@ -86,7 +90,10 @@ export class PipeWrapper<N extends PipeDefinition = PipeDefinition>
     return this.from === pipe.from && this.to === pipe.to;
   }
 
-  static canBeWrapped(pipe: ChainedPipeDefinition, chainIndex: number): boolean;
+  static canBeWrapped(
+    pipe: ChainedPipeDefinition | BlocktypePipeline,
+    chainIndex: number,
+  ): boolean;
   static canBeWrapped(pipe: SinglePipeDefinition): boolean;
   static canBeWrapped<N extends PipeDefinition>(
     pipe: N,
@@ -106,7 +113,9 @@ export class PipeWrapper<N extends PipeDefinition = PipeDefinition>
   }
 }
 
-export function createSemanticPipes(pipe: PipeDefinition): PipeWrapper[] {
+export function createSemanticPipes(
+  pipe: PipeDefinition | BlocktypePipeline,
+): PipeWrapper[] {
   if (isSinglePipeDefinition(pipe)) {
     return createFromSinglePipe(pipe);
   }
@@ -120,7 +129,9 @@ function createFromSinglePipe(pipe: SinglePipeDefinition): PipeWrapper[] {
   return [];
 }
 
-function createFromChainedPipe(pipe: ChainedPipeDefinition): PipeWrapper[] {
+function createFromChainedPipe(
+  pipe: ChainedPipeDefinition | BlocktypePipeline,
+): PipeWrapper[] {
   const result: PipeWrapper[] = [];
   for (let chainIndex = 0; chainIndex < pipe.blocks.length - 1; ++chainIndex) {
     if (!PipeWrapper.canBeWrapped(pipe, chainIndex)) {

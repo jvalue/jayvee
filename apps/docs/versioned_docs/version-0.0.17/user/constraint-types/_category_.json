@@ -1,0 +1,8 @@
+{
+  "label": "Constraint Types",
+  "position": 5,
+  "link": {
+    "type": "generated-index",
+    "description": "These constraints are shipped with Jayvee and are available right out of the box."
+  }
+}

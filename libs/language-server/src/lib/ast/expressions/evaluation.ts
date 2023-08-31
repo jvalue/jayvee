@@ -16,6 +16,7 @@ import {
   ValueKeywordLiteral,
   ValueLiteral,
   isBinaryExpression,
+  isBlocktypeProperty,
   isCellRangeLiteral,
   isCollectionLiteral,
   isConstraintDefinition,
@@ -101,6 +102,9 @@ export class EvaluationContext {
     if (isTransformPortDefinition(dereferenced)) {
       return this.variableValues.get(dereferenced.name);
     }
+    if (isBlocktypeProperty(dereferenced)) {
+      return this.variableValues.get(dereferenced.name);
+    }
     assertUnreachable(dereferenced);
   }
 
@@ -152,6 +156,12 @@ export function evaluatePropertyValue<T extends InternalValueRepresentation>(
   const propertyValue = property?.value;
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   assert(propertyValue !== undefined);
+
+  if (isBlocktypeProperty(propertyValue)) {
+    // Properties of blocktypes are always undefined
+    // because they are set in the block that instantiates the block type
+    return undefined;
+  }
 
   let result: InternalValueRepresentation | undefined;
   if (isRuntimeParameterLiteral(propertyValue)) {
