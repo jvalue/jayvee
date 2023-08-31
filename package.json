@@ -12,6 +12,7 @@
     "example:cars": "nx run interpreter:run -d example/cars.jv -dg peek",
     "example:gtfs": "nx run interpreter:run -d example/gtfs-static.jv -dg peek",
     "example:gtfs-rt": "nx run interpreter:run -d example/gtfs-rt.jv -dg peek",
+    "example:lightTraping": "nx run interpreter:run -d example/lightTrappingSiliconSolarCells.jv -dg peek",
     "example:vehicles": "nx run interpreter:run -d -e DB_HOST=localhost -e DB_PORT=5432 -e DB_USERNAME=postgres -e DB_PASSWORD=postgres -e DB_DATABASE=postgres example/electric-vehicles.jv -dg peek"
   },
   "private": true,
