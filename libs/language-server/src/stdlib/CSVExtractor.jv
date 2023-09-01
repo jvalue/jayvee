@@ -9,8 +9,8 @@ composite blocktype CSVExtractor {
     property enclosing oftype text: '';
     property enclosingEscape oftype text: '';
 
-    input inputName oftype None;
-    output outputName oftype Sheet;
+    input inputPort oftype None;
+    output outputPort oftype Sheet;
 
     block FileExtractor oftype HttpExtractor { url: url; }
     block FileTextInterpreter oftype TextFileInterpreter {}
@@ -21,9 +21,9 @@ composite blocktype CSVExtractor {
 		enclosingEscape: enclosingEscape;
 	}
 
-    inputName
+    inputPort
         ->FileExtractor
         ->FileTextInterpreter
         ->FileCSVInterpreter
-        ->outputName;
+        ->outputPort;
 }
