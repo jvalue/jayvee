@@ -4,7 +4,7 @@ sidebar_position: 4
 
 # Composite Blocks
 
-Composite blocks are a way to create new blocktypes in Jayvee by combining the functionality of existing blocks and pipes. By relying on composite blocks instead of implementing more builtin blocks in a language interpreter Jayvee supports easy extension by users.
+Composite blocks are a way to create new blocktypes in Jayvee by combining the functionality of existing blocks and pipes. By relying on composite blocks instead of implementing more builtin blocks in a language interpreter, Jayvee supports easy extension by users.
 
 Composite blocks define:
 - with the `property` keyword: properties with a name and [value type](./core-concepts.md#valuetypes), optionally a default value
@@ -50,7 +50,7 @@ pipeline CarsPipeline {
 
 ### Refactoring using composite blocks
 
-The common usecase of downloading a CSV file using HTTP can be refactored into a composite block. Note that we define all properties of the builtin blocks that are used as properties of the new CSVExtractor blocktype (but add fallback values). If some internal configuration is always the same we could also not expose it as property of the new blocktype.
+The common use-case of downloading a CSV file using HTTP can be refactored into a composite block. Note that we define all properties of the builtin blocks that are used as properties of the new CSVExtractor blocktype (but add fallback values). If some internal configuration is always the same, we could also not expose it as a property of the new blocktype.
 
 ```jayvee
 // Define a new blocktype named CSVExtractor outside of the pipeline
