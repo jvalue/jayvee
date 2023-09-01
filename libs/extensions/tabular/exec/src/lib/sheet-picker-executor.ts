@@ -36,7 +36,7 @@ export class SheetPickerExecutor extends AbstractBlockExecutor<
     const sheet = workbook.getSheetByName(sheetName);
     if (sheet === undefined) {
       return R.err({
-        message: `Archive type is not supported`,
+        message: `Workbook does not contain a sheet named ${sheetName}`,
         diagnostic: { node: context.getCurrentNode(), property: 'name' },
       });
     }

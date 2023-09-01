@@ -39,7 +39,10 @@ export class XLSXInterpreterExecutor extends AbstractBlockExecutor<
     const workbook = new Workbook();
     for (const workSheetName of workBookFromFile.SheetNames) {
       const workSheet = workBookFromFile.Sheets[workSheetName];
-      assert(workSheet !== undefined);
+      assert(
+        workSheet !== undefined,
+        `Failed to read sheet ${workSheetName} from Workbook.`,
+      );
 
       /** Extract sheet into array of array structure as described in https://github.com/SheetJS/sheetjs/issues/1258#issuecomment-419129919 */
       const workSheetDataArray: string[][] = xlsx.utils.sheet_to_json(

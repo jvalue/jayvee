@@ -145,12 +145,12 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
 
     const numberOfSheets = workbookSheets.size;
     if (numberOfSheets === 0) {
-      this.log(`empty Workbook`);
+      this.log(`Empty Workbook`);
       return;
     }
     this.log(`Workbook with ${numberOfSheets} Sheets.`);
 
-    this.log(`WorkSheets in WorkBook:`);
+    this.log(`Sheets in WorkBook:`);
 
     for (let i = 0; i < numberOfSheets; ++i) {
       if (
