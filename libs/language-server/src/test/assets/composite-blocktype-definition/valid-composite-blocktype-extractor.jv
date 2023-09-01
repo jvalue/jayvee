@@ -1,0 +1,28 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+composite blocktype CSVExtractor {
+    property url oftype text;
+    property delimiter oftype text: ',';
+    property enclosing oftype text: '';
+    property enclosingEscape oftype text: '';
+
+    input inputName oftype None;
+    output outputName oftype Sheet;
+
+    block FileExtractor oftype HttpExtractor { url: url; }
+    block FileTextInterpreter oftype TextFileInterpreter {}
+
+    block FileCSVInterpreter oftype CSVInterpreter {
+      delimiter: delimiter;
+      enclosing: enclosing;
+      enclosingEscape: enclosingEscape;
+    }
+
+    inputName
+        ->FileExtractor
+        ->FileTextInterpreter
+        ->FileCSVInterpreter
+        ->outputName;
+}
