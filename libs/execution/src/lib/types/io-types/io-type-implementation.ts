@@ -10,6 +10,7 @@ import { type TextFile } from './filesystem-node-file-text';
 import { type None } from './none';
 import { type Sheet } from './sheet';
 import { type Table } from './table';
+import { type Workbook } from './workbook';
 
 export interface IOTypeImplementation<T extends IOType = IOType> {
   ioType: T;
@@ -20,6 +21,7 @@ export interface IOTypeImplementation<T extends IOType = IOType> {
 export interface IoTypeVisitor<R = unknown> {
   visitTable(table: Table): R;
   visitSheet(sheet: Sheet): R;
+  visitWorkbook(workbook: Workbook): R;
   visitNone(none: None): R;
   visitFileSystem(fileSystem: FileSystem): R;
   visitBinaryFile(binaryFile: BinaryFile): R;
