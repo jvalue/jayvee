@@ -13,7 +13,10 @@ import {
   RuntimeParameterProvider,
   ValidationContext,
   createJayveeServices,
-  getMetaInformation,
+  getBlockMetaInf,
+  getConstraintMetaInf,
+  isBuiltinConstrainttypeDefinition,
+  isReferenceableBlocktypeDefinition,
   useExtension,
 } from '../../../lib';
 import {
@@ -52,7 +55,12 @@ describe('Validation of PropertyAssignment', () => {
     ) as PropertyBody;
 
     const type = propertyBody.$container.type;
-    const metaInf = getMetaInformation(type);
+    let metaInf: MetaInformation | undefined;
+    if (isReferenceableBlocktypeDefinition(type.ref)) {
+      metaInf = getBlockMetaInf(type.ref);
+    } else if (isBuiltinConstrainttypeDefinition(type.ref)) {
+      metaInf = getConstraintMetaInf(type.ref);
+    }
     expect(metaInf === undefined);
 
     const propertyAssignment = locator.getAstNode<PropertyAssignment>(

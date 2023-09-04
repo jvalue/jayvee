@@ -9,7 +9,7 @@
 
 import { PipeDefinition } from '../../ast/generated/ast';
 import { createSemanticPipes } from '../../ast/wrappers/pipe-wrapper';
-import { getMetaInformation } from '../../meta-information/meta-inf-registry';
+import { getBlockMetaInf } from '../../meta-information/meta-inf-registry';
 import { ValidationContext } from '../validation-context';
 
 export function validatePipeDefinition(
@@ -28,9 +28,9 @@ function checkBlockCompatibility(
     const fromBlockType = semanticPipe.from?.type;
     const toBlockType = semanticPipe.to?.type;
 
-    const fromBlockMetaInf = getMetaInformation(fromBlockType);
+    const fromBlockMetaInf = getBlockMetaInf(fromBlockType);
 
-    const toBlockMetaInf = getMetaInformation(toBlockType);
+    const toBlockMetaInf = getBlockMetaInf(toBlockType);
 
     if (fromBlockMetaInf === undefined || toBlockMetaInf === undefined) {
       continue;

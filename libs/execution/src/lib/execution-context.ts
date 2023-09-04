@@ -9,20 +9,21 @@ import {
   ConstraintDefinition,
   EvaluationContext,
   InternalValueRepresentation,
-  MetaInformation,
   PipelineDefinition,
   PropertyAssignment,
   TransformDefinition,
   Valuetype,
   evaluatePropertyValue,
-  getOrFailMetaInformation,
-  isConstraintDefinition,
+  getOrFailBockMetaInf,
+  getOrFailConstraintMetaInf,
+  isBlockDefinition,
   isExpressionConstraintDefinition,
   isPipelineDefinition,
   isPropertyBody,
   isTransformDefinition,
+  isTypedConstraintDefinition,
 } from '@jvalue/jayvee-language-server';
-import { isReference } from 'langium';
+import { assertUnreachable, isReference } from 'langium';
 
 import {
   DebugGranularity,
@@ -145,13 +146,12 @@ export class ExecutionContext {
     assert(!isExpressionConstraintDefinition(currentNode));
     assert(!isTransformDefinition(currentNode));
 
-    let metaInf: MetaInformation;
-    if (isConstraintDefinition(currentNode)) {
-      metaInf = getOrFailMetaInformation(currentNode.type);
-    } else {
+    if (isTypedConstraintDefinition(currentNode)) {
+      return getOrFailConstraintMetaInf(currentNode.type);
+    } else if (isBlockDefinition(currentNode)) {
       assert(isReference(currentNode.type));
-      metaInf = getOrFailMetaInformation(currentNode.type);
+      return getOrFailBockMetaInf(currentNode.type);
     }
-    return metaInf;
+    assertUnreachable(currentNode);
   }
 }

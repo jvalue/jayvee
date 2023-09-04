@@ -18,7 +18,7 @@ import {
   collectOutgoingPipes,
 } from '../../ast/model-util';
 import { PipeWrapper } from '../../ast/wrappers/pipe-wrapper';
-import { getMetaInformation } from '../../meta-information/meta-inf-registry';
+import { getBlockMetaInf } from '../../meta-information/meta-inf-registry';
 import { ValidationContext } from '../validation-context';
 
 export function validateBlockDefinition(
@@ -34,7 +34,7 @@ function checkPipesOfBlock(
   whatToCheck: 'input' | 'output',
   context: ValidationContext,
 ): void {
-  const blockMetaInf = getMetaInformation(block?.type);
+  const blockMetaInf = getBlockMetaInf(block?.type);
   if (blockMetaInf === undefined) {
     return;
   }

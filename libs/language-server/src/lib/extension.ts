@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { BlockMetaInformation } from './meta-information';
-import { registerMetaInformation } from './meta-information/meta-inf-registry';
+import { registerBlockMetaInf } from './meta-information/meta-inf-registry';
 import { ConstructorClass } from './util/constructor-class';
 
 export interface JayveeLangExtension {
@@ -11,5 +11,5 @@ export interface JayveeLangExtension {
 }
 
 export function useExtension(extension: JayveeLangExtension) {
-  extension.getBlockMetaInf().forEach(registerMetaInformation);
+  extension.getBlockMetaInf().forEach(registerBlockMetaInf);
 }

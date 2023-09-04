@@ -5,11 +5,15 @@
 import {
   BuiltinConstrainttypeDefinition,
   EvaluationContext,
+  MetaInformation,
   PropertyBody,
   ReferenceableBlocktypeDefinition,
   RuntimeParameterLiteral,
   ValidationContext,
-  getMetaInformation,
+  getBlockMetaInf,
+  getConstraintMetaInf,
+  isBuiltinConstrainttypeDefinition,
+  isReferenceableBlocktypeDefinition,
 } from '@jvalue/jayvee-language-server';
 import { Reference } from 'langium';
 
@@ -75,7 +79,13 @@ function checkRuntimeParameterValueParsing(
     return;
   }
 
-  const metaInf = getMetaInformation(type);
+  let metaInf: MetaInformation | undefined;
+  if (isReferenceableBlocktypeDefinition(type.ref)) {
+    metaInf = getBlockMetaInf(type.ref);
+  } else if (isBuiltinConstrainttypeDefinition(type.ref)) {
+    metaInf = getConstraintMetaInf(type.ref);
+  }
+
   const propertySpec = metaInf?.getPropertySpecification(propertyName);
   if (propertySpec === undefined) {
     return;

@@ -6,7 +6,7 @@ import {
   AstNode,
   AstNodeHoverProvider,
   MaybePromise,
-  isReference,
+  assertUnreachable,
 } from 'langium';
 import { Hover } from 'vscode-languageserver-protocol';
 
@@ -14,12 +14,18 @@ import {
   BuiltinBlocktypeDefinition,
   BuiltinConstrainttypeDefinition,
   PropertyAssignment,
+  isBlockDefinition,
   isBuiltinBlocktypeDefinition,
   isBuiltinConstrainttypeDefinition,
   isPropertyAssignment,
+  isTypedConstraintDefinition,
 } from '../ast';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
-import { getMetaInformation } from '../meta-information';
+import {
+  MetaInformation,
+  getBlockMetaInf,
+  getConstraintMetaInf,
+} from '../meta-information';
 
 export class JayveeHoverProvider extends AstNodeHoverProvider {
   override getAstNodeHoverContent(
@@ -51,7 +57,7 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   private getBlockTypeMarkdownDoc(
     blockType: BuiltinBlocktypeDefinition,
   ): string | undefined {
-    const blockMetaInf = getMetaInformation(blockType);
+    const blockMetaInf = getBlockMetaInf(blockType);
     if (blockMetaInf === undefined) {
       return;
     }
@@ -63,7 +69,7 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   private getConstraintTypeMarkdownDoc(
     constraintType: BuiltinConstrainttypeDefinition,
   ): string | undefined {
-    const constraintMetaInf = getMetaInformation(constraintType);
+    const constraintMetaInf = getConstraintMetaInf(constraintType);
     if (constraintMetaInf === undefined) {
       return;
     }
@@ -76,7 +82,14 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
     property: PropertyAssignment,
   ): string | undefined {
     const block = property.$container.$container;
-    const metaInf = getMetaInformation(block.type);
+    let metaInf: MetaInformation | undefined;
+    if (isTypedConstraintDefinition(block)) {
+      metaInf = getConstraintMetaInf(block.type);
+    } else if (isBlockDefinition(block)) {
+      metaInf = getBlockMetaInf(block.type);
+    } else {
+      assertUnreachable(block);
+    }
     if (metaInf === undefined) {
       return;
     }

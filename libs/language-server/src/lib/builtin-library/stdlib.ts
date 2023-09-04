@@ -7,7 +7,8 @@ import { PrimitiveValuetypes } from '../ast/wrappers/value-type/primitive/primit
 import {
   BlockMetaInformation,
   ConstraintMetaInformation,
-  metaInformationRegistry,
+  blockMetaInfRegistry,
+  constraintMetaInfRegistry,
 } from '../meta-information';
 
 import { PartialStdLib } from './generated/partial-stdlib';
@@ -36,32 +37,20 @@ export const IOtypesLib = {
 
 // Is a method since metaInformationRegistry might not be initialized when this as variable.
 export function getBuiltinBlocktypesLib() {
-  const builtins = metaInformationRegistry.getAllEntries();
+  const builtins = blockMetaInfRegistry.getAllEntries();
   return {
     'builtin:///stdlib/builtin-blocktypes.jv': builtins
-      .filter((entry) => entry.value instanceof BlockMetaInformation)
-      .map((entry) =>
-        parseBlockMetaInfToJayvee(
-          entry.key,
-          entry.value as BlockMetaInformation,
-        ),
-      )
+      .map((entry) => parseBlockMetaInfToJayvee(entry.key, entry.value))
       .join('\n\n'),
   };
 }
 
 // Is a method since metaInformationRegistry might not be initialized when this as variable.
 export function getBuiltinConstrainttypesLib() {
-  const builtins = metaInformationRegistry.getAllEntries();
+  const builtins = constraintMetaInfRegistry.getAllEntries();
   return {
     'builtin:///stdlib/builtin-constrainttypes.jv': builtins
-      .filter((entry) => entry.value instanceof ConstraintMetaInformation)
-      .map((entry) =>
-        parseConstraintMetaInfToJayvee(
-          entry.key,
-          entry.value as ConstraintMetaInformation,
-        ),
-      )
+      .map((entry) => parseConstraintMetaInfToJayvee(entry.key, entry.value))
       .join('\n\n'),
   };
 }

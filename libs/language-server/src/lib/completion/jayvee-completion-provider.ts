@@ -24,15 +24,18 @@ import {
   PropertyBody,
   ValuetypeReference,
   isBlockDefinition,
+  isBuiltinConstrainttypeDefinition,
   isConstraintDefinition,
   isJayveeModel,
   isPropertyAssignment,
   isPropertyBody,
+  isReferenceableBlocktypeDefinition,
 } from '../ast/generated/ast';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
 import { MetaInformation } from '../meta-information/meta-inf';
 import {
-  getMetaInformation,
+  getBlockMetaInf,
+  getConstraintMetaInf,
   getRegisteredBlockMetaInformation,
   getRegisteredConstraintMetaInformation,
 } from '../meta-information/meta-inf-registry';
@@ -152,10 +155,16 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       container = astNode.$container.$container;
     }
 
-    const metaInf = getMetaInformation(container.type);
+    let metaInf: MetaInformation | undefined;
+    if (isReferenceableBlocktypeDefinition(container.type.ref)) {
+      metaInf = getBlockMetaInf(container.type.ref);
+    } else if (isBuiltinConstrainttypeDefinition(container.type.ref)) {
+      metaInf = getConstraintMetaInf(container.type.ref);
+    }
     if (metaInf === undefined) {
       return;
     }
+
     const presentPropertyNames = container.body.properties.map(
       (attr) => attr.name,
     );
