@@ -52,8 +52,6 @@ describe('Validation of RangeConstraint', () => {
   }
 
   beforeAll(() => {
-    // TODO: fix tests after removing TestExtension
-
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;

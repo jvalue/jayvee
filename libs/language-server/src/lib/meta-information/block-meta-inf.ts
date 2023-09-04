@@ -68,6 +68,10 @@ export class BlockMetaInformation extends MetaInformation {
       ? toBeWrapped.ref
       : toBeWrapped;
 
+    if (blocktypeDefinition === undefined) {
+      return false;
+    }
+
     // TODO: implement
     if (isBuiltinBlocktypeDefinition(blocktypeDefinition)) {
       return true;

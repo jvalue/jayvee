@@ -15,8 +15,6 @@ describe('Validation of builtin examples of ConstraintMetaInformation', () => {
   let validate: (input: string) => Promise<ValidationResult<AstNode>>;
 
   beforeAll(() => {
-    // TODO: fix tests after removing TestExtension
-
     // Create language services
     services = createJayveeServices(NodeFileSystem).Jayvee;
     // Create validation helper for language services

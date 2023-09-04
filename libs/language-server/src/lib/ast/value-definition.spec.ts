@@ -21,7 +21,6 @@ describe('Parsing of ValuetypeDefinition', () => {
   );
 
   beforeAll(() => {
-    // TODO: fix tests after removing TestExtension
     const services = createJayveeServices(NodeFileSystem).Jayvee;
     parse = parseHelper(services);
   });

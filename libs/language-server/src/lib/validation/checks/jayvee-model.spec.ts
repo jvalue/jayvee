@@ -46,8 +46,6 @@ describe('Validation of JayveeModel', () => {
   }
 
   beforeAll(() => {
-    // TODO: fix tests after removing TestExtension
-
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
     // Parse function for Jayvee (without validation)

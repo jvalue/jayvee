@@ -14,3 +14,13 @@ pipeline Pipeline {
     to: TestLoader;
   }
 }
+
+builtin blocktype TestFileExtractor {
+  input inPort oftype None;
+  output outPort oftype File;
+}
+
+builtin blocktype TestTableLoader {
+  input inPort oftype Table;
+  output outPort oftype None;
+}

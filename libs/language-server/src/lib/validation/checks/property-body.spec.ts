@@ -54,8 +54,6 @@ describe('Validation PropertyBody', () => {
   }
 
   beforeAll(() => {
-    // TODO: fix tests after removing TestExtension
-
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;
@@ -99,7 +97,7 @@ describe('Validation PropertyBody', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
-      `Invalid value "invalid"`,
+      'The value needs to be of type CustomValuetype but is of type text',
       expect.any(Object),
     );
   });

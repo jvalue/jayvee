@@ -55,14 +55,11 @@ describe('Validation of PropertyAssignment', () => {
     const type = propertyBody.$container.type;
     let metaInf: MetaInformation | undefined;
     if (isReferenceableBlocktypeDefinition(type.ref)) {
-      if (!BlockMetaInformation.canBeWrapped(type.ref)) {
-        return; // TODO: is this the right to do here?
-      }
       metaInf = new BlockMetaInformation(type.ref);
     } else if (isBuiltinConstrainttypeDefinition(type.ref)) {
       metaInf = getConstraintMetaInf(type.ref);
     }
-    expect(metaInf === undefined);
+    expect(metaInf).toBeDefined();
 
     const propertyAssignment = locator.getAstNode<PropertyAssignment>(
       propertyBody,
@@ -78,8 +75,6 @@ describe('Validation of PropertyAssignment', () => {
   }
 
   beforeAll(() => {
-    // TODO: fix tests after removing TestExtension
-
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;
