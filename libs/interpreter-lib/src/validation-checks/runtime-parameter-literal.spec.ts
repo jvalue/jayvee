@@ -24,7 +24,7 @@ import { NodeFileSystem } from 'langium/node';
 
 import { validateRuntimeParameterLiteral } from './runtime-parameter-literal';
 
-describe('Validation of AllowlistConstraintExecutor', () => {
+describe('Validation of validateRuntimeParameterLiteral', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
