@@ -118,6 +118,11 @@ At the moment this only contains two functions:
 - `clearConstraintExecutorRegistry` clearing the corresponding `ConstraintExecutor`s registry. 
 They are required in case the tested method initializes Jayvee itself (see [smoke test](#existing-tests-1)).
 
+[**test-logger.ts**](https://github.com/jvalue/jayvee/blob/dev/libs/execution/test/test-logger.ts):  
+This contains a subclass of the [`DefaultLogger`](https://github.com/jvalue/jayvee/blob/dev/libs/execution/src/lib/logging/default-logger.ts) used for tests which require a `Logger` implementation. The `TestLogger` contains the following tests functionality:
+- `getLogs`: retrieve the cached logs that the logger received.
+- `clearLogs`: clear the cached logs.
+
 [**block-executor-mocks.ts**](https://github.com/jvalue/jayvee/blob/dev/libs/execution/test/block-executor-mock.ts):  
 `BlockExecutorMock` interface for defining mocks for `AbstractBlockExecutor`. Generally only loader and executor blocks require mocks, because they interact with "the outside world" (i.e. `HttpExtractor` making http calls).  
 Due to how vastly different each `BlockExecutor` can be, this interface is very simple, containing only a `setup(...args: unknown[])` and a `restore()` method. See below for existing implementations.
