@@ -31,7 +31,7 @@ function checkConstraintType(
   if (metaInf === undefined) {
     context.accept(
       'error',
-      `Unknown constraint type '${constraintType.name ?? ''}'`,
+      `Unknown constraint type '${constraintType.$refText ?? ''}'`,
       {
         node: constraint,
         property: 'type',
