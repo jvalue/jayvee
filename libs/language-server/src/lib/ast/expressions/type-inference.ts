@@ -15,6 +15,7 @@ import {
   ReferenceLiteral,
   ValueKeywordLiteral,
   isBinaryExpression,
+  isBlocktypeProperty,
   isBooleanLiteral,
   isCellRangeLiteral,
   isCollectionLiteral,
@@ -33,6 +34,7 @@ import {
   isValueLiteral,
   isValuetypeAssignmentLiteral,
 } from '../generated/ast';
+// eslint-disable-next-line import/no-cycle
 import { getNextAstNodeContainer } from '../model-util';
 import {
   AtomicValuetype,
@@ -325,9 +327,11 @@ function inferTypeFromReferenceLiteral(
   if (isTransformDefinition(referenced)) {
     return PrimitiveValuetypes.Transform;
   }
-  if (isTransformPortDefinition(referenced)) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const valueType = referenced?.valueType;
+  if (
+    isTransformPortDefinition(referenced) ||
+    isBlocktypeProperty(referenced)
+  ) {
+    const valueType = referenced.valueType;
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (valueType === undefined) {
       return undefined;

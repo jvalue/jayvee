@@ -5,6 +5,7 @@
 import { internalValueToString } from '@jvalue/jayvee-language-server';
 
 import { Logger } from '../logger';
+import { Workbook } from '../types';
 import { FileSystem } from '../types/io-types/filesystem';
 import { BinaryFile } from '../types/io-types/filesystem-node-file-binary';
 import { TextFile } from '../types/io-types/filesystem-node-file-text';
@@ -15,6 +16,7 @@ import { Table } from '../types/io-types/table';
 import { DebugGranularity } from './debug-configuration';
 
 export class DebugLogVisitor implements IoTypeVisitor<void> {
+  private readonly PEEK_NUMBER_OF_WORKBOOKS = 5;
   private readonly PEEK_NUMBER_OF_ROWS = 10;
   private readonly PEEK_NUMBER_OF_BYTES = 100;
   private readonly PEEK_NUMBER_OF_LINES = 10;
@@ -133,6 +135,37 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
     }
 
     this.log('... (omitted in peek mode)');
+  }
+  visitWorkbook(workbook: Workbook): void {
+    if (this.debugGranularity === 'minimal') {
+      return;
+    }
+    const workbookSheets = workbook.getSheets();
+    const keys = Array.from(workbookSheets.keys());
+
+    const numberOfSheets = workbookSheets.size;
+    if (numberOfSheets === 0) {
+      this.log(`Empty Workbook`);
+      return;
+    }
+    this.log(`Workbook with ${numberOfSheets} Sheets.`);
+
+    this.log(`Sheets in WorkBook:`);
+
+    for (let i = 0; i < numberOfSheets; ++i) {
+      if (
+        this.debugGranularity === 'peek' &&
+        i >= this.PEEK_NUMBER_OF_WORKBOOKS
+      ) {
+        break;
+      }
+      const currentWorkbookName = keys[i];
+      if (currentWorkbookName === undefined) {
+        continue;
+      }
+      this.log(`WorkSheet: ${currentWorkbookName}`);
+    }
+    this.logPeekComment();
   }
 
   private log(text: string): void {

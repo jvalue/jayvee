@@ -5,11 +5,28 @@
 import './expression'
 import './iotype'
 import './terminal'
+import './transform'
 import './valuetype'
+import './main'
+
+ReferenceableBlocktypeDefinition:
+  BuiltinBlocktypeDefinition | CompositeBlocktypeDefinition;
 
 BuiltinBlocktypeDefinition:
     'builtin' 'blocktype' name=ID '{'
         (inputs+=BlocktypeInput | outputs+=BlocktypeOutput | properties+=BlocktypeProperty)*
+'}';
+
+CompositeBlocktypeDefinition:
+    'composite' 'blocktype' name=ID '{'
+        (
+            inputs+=BlocktypeInput
+            | outputs+=BlocktypeOutput
+            | properties+=BlocktypeProperty
+            | blocks+=BlockDefinition
+            | pipes+=BlocktypePipeline
+            | transforms+=TransformDefinition
+        )*
 '}';
 
 BlocktypeInput:
@@ -19,4 +36,7 @@ BlocktypeOutput:
     'output' name=ID 'oftype' iotype=[IotypeDefinition] ';';
 
 BlocktypeProperty:
-    'property' name=ID 'oftype' valuetype=ValuetypeReference (':' defaultValue=Expression)? ';';
+    'property' name=ID 'oftype' valueType=ValuetypeReference (':' defaultValue=Expression)? ';';
+
+BlocktypePipeline:
+    input=[BlocktypeInput] '->' (blocks+=[BlockDefinition] '->')+ output=[BlocktypeOutput] ';';

@@ -6,7 +6,7 @@ sidebar_position: 1
 
 ## How to contribute
 
-In order to contribute to the Jayvee project, please have a look at our [contribution guide](https://github.com/jvalue/jayvee/blob/main/CONTRIBUTING.md).
+In order to contribute to the Jayvee project, please have a look at our [contribution guide](https://github.com/jvalue/jayvee/blob/main/CONTRIBUTING.md). Before planning a contribution, please read the [design principles](./05-design-principles.md) and consider if your changes fit the vision expressed there.
 
 The overall project is licensed under the `AGPL-3.0-only` license and is compliant to the [REUSE Specification](https://reuse.software/spec/) by the [Free Software Foundation Europe](https://fsfe.org/).
 Because of this, contributions are required to adhere to the license and follow that specification.

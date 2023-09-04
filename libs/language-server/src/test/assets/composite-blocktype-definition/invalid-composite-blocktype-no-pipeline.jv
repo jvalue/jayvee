@@ -1,0 +1,10 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+composite blocktype TestBlock {
+    property test oftype text;
+
+    input inputName oftype None;
+    output outputName oftype Sheet;
+}

@@ -3,9 +3,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
+  BlocktypeProperty,
   ConstraintDefinition,
   TransformDefinition,
   ValuetypeAssignment,
+  isBlocktypeProperty,
   isConstraintDefinition,
   isTransformDefinition,
   isValuetypeAssignment,
@@ -26,6 +28,7 @@ export type AtomicInternalValueRepresentation =
   | CellRangeWrapper
   | ConstraintDefinition
   | ValuetypeAssignment
+  | BlocktypeProperty
   | TransformDefinition;
 
 export type InternalValueRepresentationTypeguard<
@@ -67,6 +70,9 @@ export function internalValueToString(
     return valueRepresentation.name;
   }
   if (isTransformDefinition(valueRepresentation)) {
+    return valueRepresentation.name;
+  }
+  if (isBlocktypeProperty(valueRepresentation)) {
     return valueRepresentation.name;
   }
   throw new Error(
