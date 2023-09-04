@@ -8,10 +8,10 @@ import { Reference, isReference } from 'langium';
 import { assertUnreachable } from 'langium/lib/utils/errors';
 
 import {
-  ConstraintTypeLiteral,
+  BuiltinConstrainttypeDefinition,
   ReferenceableBlocktypeDefinition,
+  isBuiltinConstrainttypeDefinition,
   isCompositeBlocktypeDefinition,
-  isConstraintTypeLiteral,
   isReferenceableBlocktypeDefinition,
 } from '../ast/generated/ast';
 import { ConstructorClass } from '../util/constructor-class';
@@ -39,20 +39,25 @@ export function getMetaInformation(
     | undefined,
 ): BlockMetaInformation | undefined;
 export function getMetaInformation(
-  type: ConstraintTypeLiteral | undefined,
+  type:
+    | BuiltinConstrainttypeDefinition
+    | Reference<BuiltinConstrainttypeDefinition>
+    | undefined,
 ): ConstraintMetaInformation | undefined;
 export function getMetaInformation(
   type:
     | ReferenceableBlocktypeDefinition
     | Reference<ReferenceableBlocktypeDefinition>
-    | ConstraintTypeLiteral
+    | BuiltinConstrainttypeDefinition
+    | Reference<BuiltinConstrainttypeDefinition>
     | undefined,
 ): MetaInformation | undefined;
 export function getMetaInformation(
   type:
     | ReferenceableBlocktypeDefinition
     | Reference<ReferenceableBlocktypeDefinition>
-    | ConstraintTypeLiteral
+    | BuiltinConstrainttypeDefinition
+    | Reference<BuiltinConstrainttypeDefinition>
     | undefined,
 ): BlockMetaInformation | ConstraintMetaInformation | undefined {
   const dereferencedType = isReference(type) ? type.ref : type;
@@ -80,7 +85,7 @@ export function getMetaInformation(
     assert(metaInf instanceof BlockMetaInformation);
     return metaInf;
   }
-  if (isConstraintTypeLiteral(dereferencedType)) {
+  if (isBuiltinConstrainttypeDefinition(dereferencedType)) {
     assert(metaInf instanceof ConstraintMetaInformation);
     return metaInf;
   }
@@ -109,13 +114,16 @@ export function getOrFailMetaInformation(
     | Reference<ReferenceableBlocktypeDefinition>,
 ): BlockMetaInformation;
 export function getOrFailMetaInformation(
-  type: ConstraintTypeLiteral,
+  type:
+    | BuiltinConstrainttypeDefinition
+    | Reference<BuiltinConstrainttypeDefinition>,
 ): ConstraintMetaInformation;
 export function getOrFailMetaInformation(
   type:
     | ReferenceableBlocktypeDefinition
     | Reference<ReferenceableBlocktypeDefinition>
-    | ConstraintTypeLiteral,
+    | BuiltinConstrainttypeDefinition
+    | Reference<BuiltinConstrainttypeDefinition>,
 ): MetaInformation {
   const result = getMetaInformation(type);
   const typeName =
