@@ -117,6 +117,10 @@ const config = {
                 label: 'Privacy Policy',
                 href: 'https://jvalue.org/notices/privacy-policy/',
               },
+              {
+                label: 'Open Source Notices',
+                href: 'https://github.com/jvalue/jayvee/blob/main/NOTICES.md',
+              },
             ],
           },
         ],
