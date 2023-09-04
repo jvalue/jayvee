@@ -14,9 +14,9 @@ export class DefaultLogger extends Logger {
   private readonly TAB_TO_SPACES = 4;
 
   constructor(
-    private readonly enableDebugLogging: boolean,
-    private loggingContext?: string,
-    private depth: number = 0,
+    protected readonly enableDebugLogging: boolean,
+    protected loggingContext?: string,
+    protected depth: number = 0,
   ) {
     super();
   }
@@ -55,7 +55,7 @@ export class DefaultLogger extends Logger {
     return '\t'.repeat(this.depth);
   }
 
-  private getContext(): string {
+  protected getContext(): string {
     return this.loggingContext !== undefined
       ? chalk.grey(`[${this.loggingContext}] `)
       : '';
@@ -75,7 +75,7 @@ export class DefaultLogger extends Logger {
     printFn('');
   }
 
-  private logDiagnosticMessage(
+  protected logDiagnosticMessage(
     severityName: string,
     message: string,
     printFn: (message: string) => void,
@@ -86,7 +86,7 @@ export class DefaultLogger extends Logger {
     );
   }
 
-  private logDiagnosticInfo(
+  protected logDiagnosticInfo(
     range: Range,
     document: LangiumDocument,
     printFn: (message: string) => void,
@@ -172,7 +172,7 @@ export class DefaultLogger extends Logger {
     }, '');
   }
 
-  private inferPrintFunction(
+  protected inferPrintFunction(
     severity: DiagnosticSeverity,
   ): (message: string) => void {
     switch (severity) {
@@ -188,7 +188,7 @@ export class DefaultLogger extends Logger {
     }
   }
 
-  private inferChalkColor(
+  protected inferChalkColor(
     severity: DiagnosticSeverity,
   ): (message: string) => string {
     switch (severity) {
