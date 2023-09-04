@@ -2,12 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { DiagnosticSeverity, Logger } from '@jvalue/jayvee-execution';
 import * as chalk from 'chalk';
 import { LangiumDocument } from 'langium';
 import { assertUnreachable } from 'langium/lib/utils/errors';
 import { Range } from 'vscode-languageserver';
 import { uinteger } from 'vscode-languageserver-types';
+
+import { DiagnosticSeverity, Logger } from './logger';
 
 export class DefaultLogger extends Logger {
   private readonly TAB_TO_SPACES = 4;
