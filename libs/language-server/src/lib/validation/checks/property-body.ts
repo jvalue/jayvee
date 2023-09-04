@@ -16,11 +16,9 @@ import {
   isBuiltinConstrainttypeDefinition,
   isReferenceableBlocktypeDefinition,
 } from '../../ast/generated/ast';
+import { BlockMetaInformation } from '../../meta-information/block-meta-inf';
 import { MetaInformation } from '../../meta-information/meta-inf';
-import {
-  getBlockMetaInf,
-  getConstraintMetaInf,
-} from '../../meta-information/meta-inf-registry';
+import { getConstraintMetaInf } from '../../meta-information/meta-inf-registry';
 import { ValidationContext } from '../validation-context';
 import { checkUniqueNames } from '../validation-util';
 
@@ -76,7 +74,10 @@ function inferMetaInformation(
   if (isBuiltinConstrainttypeDefinition(type)) {
     return getConstraintMetaInf(type);
   } else if (isReferenceableBlocktypeDefinition(type)) {
-    return getBlockMetaInf(type);
+    if (!BlockMetaInformation.canBeWrapped(type)) {
+      return;
+    }
+    return new BlockMetaInformation(type);
   }
 
   assertUnreachable(type);

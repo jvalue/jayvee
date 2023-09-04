@@ -2,11 +2,16 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
+
+import { Reference, isReference } from 'langium';
+
 // eslint-disable-next-line import/no-cycle
-import { IOType } from '../ast';
-import { EvaluationContext } from '../ast/expressions/evaluation';
-import { PropertyBody } from '../ast/generated/ast';
-import { ValidationContext } from '../validation/validation-context';
+import { IOType, createValuetype, getIOType } from '../ast';
+import {
+  ReferenceableBlocktypeDefinition,
+  isBuiltinBlocktypeDefinition,
+} from '../ast/generated/ast';
 
 import { ExampleDoc, MetaInformation, PropertySpecification } from './meta-inf';
 
@@ -15,21 +20,59 @@ interface BlockDocs {
   examples?: ExampleDoc[];
 }
 
-export abstract class BlockMetaInformation extends MetaInformation {
+export class BlockMetaInformation extends MetaInformation {
   docs: BlockDocs = {};
 
-  protected constructor(
-    blockType: string,
-    properties: Record<string, PropertySpecification>,
-    public readonly inputType: IOType,
-    public readonly outputType: IOType,
-    validation?: (
-      property: PropertyBody,
-      validationContext: ValidationContext,
-      evaluationContext: EvaluationContext,
-    ) => void,
+  readonly inputType: IOType;
+  readonly outputType: IOType;
+
+  constructor(
+    toBeWrapped:
+      | ReferenceableBlocktypeDefinition
+      | Reference<ReferenceableBlocktypeDefinition>,
   ) {
-    super(blockType, properties, validation);
+    const blocktypeDefinition = isReference(toBeWrapped)
+      ? toBeWrapped.ref
+      : toBeWrapped;
+    assert(blocktypeDefinition !== undefined);
+
+    const blocktypeName = blocktypeDefinition.name;
+
+    const properties: Record<string, PropertySpecification> = {};
+    for (const property of blocktypeDefinition.properties) {
+      const valuetype = createValuetype(property.valueType);
+      assert(valuetype !== undefined);
+
+      properties[property.name] = {
+        type: valuetype,
+      };
+    }
+
+    super(blocktypeName, properties, undefined);
+
+    const inputPort = blocktypeDefinition.inputs[0];
+    assert(inputPort !== undefined);
+    this.inputType = getIOType(inputPort);
+
+    const outputPort = blocktypeDefinition.outputs[0];
+    assert(outputPort !== undefined);
+    this.outputType = getIOType(outputPort);
+  }
+
+  static canBeWrapped(
+    toBeWrapped:
+      | ReferenceableBlocktypeDefinition
+      | Reference<ReferenceableBlocktypeDefinition>,
+  ): boolean {
+    const blocktypeDefinition = isReference(toBeWrapped)
+      ? toBeWrapped.ref
+      : toBeWrapped;
+
+    // TODO: implement
+    if (isBuiltinBlocktypeDefinition(blocktypeDefinition)) {
+      return true;
+    }
+    return true;
   }
 
   canBeConnectedTo(blockAfter: BlockMetaInformation): boolean {

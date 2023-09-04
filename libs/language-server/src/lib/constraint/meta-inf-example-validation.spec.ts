@@ -5,9 +5,7 @@
 import { AstNode } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { TestLangExtension } from '../../test/extension';
 import { ValidationResult, validationHelper } from '../../test/langium-utils';
-import { useExtension } from '../extension';
 import { JayveeServices, createJayveeServices } from '../jayvee-module';
 
 import { getAvailableConstraintMetaInf } from './constraint-registry';
@@ -17,8 +15,8 @@ describe('Validation of builtin examples of ConstraintMetaInformation', () => {
   let validate: (input: string) => Promise<ValidationResult<AstNode>>;
 
   beforeAll(() => {
-    // Register test extension
-    useExtension(new TestLangExtension());
+    // TODO: fix tests after removing TestExtension
+
     // Create language services
     services = createJayveeServices(NodeFileSystem).Jayvee;
     // Create validation helper for language services

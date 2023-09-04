@@ -32,9 +32,9 @@ import {
   isReferenceableBlocktypeDefinition,
 } from '../ast/generated/ast';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
+import { BlockMetaInformation } from '../meta-information';
 import { MetaInformation } from '../meta-information/meta-inf';
 import {
-  getBlockMetaInf,
   getConstraintMetaInf,
   getRegisteredBlockMetaInformation,
   getRegisteredConstraintMetaInformation,
@@ -157,7 +157,10 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
 
     let metaInf: MetaInformation | undefined;
     if (isReferenceableBlocktypeDefinition(container.type.ref)) {
-      metaInf = getBlockMetaInf(container.type.ref);
+      if (!BlockMetaInformation.canBeWrapped(container.type.ref)) {
+        return;
+      }
+      metaInf = new BlockMetaInformation(container.type.ref);
     } else if (isBuiltinConstrainttypeDefinition(container.type.ref)) {
       metaInf = getConstraintMetaInf(container.type.ref);
     }

@@ -5,8 +5,6 @@
 import { AstNode, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { useExtension } from '..';
-import { TestLangExtension } from '../../test/extension';
 import { ParseHelperOptions, parseHelper } from '../../test/langium-utils';
 import { readJvTestAssetHelper } from '../../test/utils';
 import { createJayveeServices } from '../jayvee-module';
@@ -23,7 +21,7 @@ describe('Parsing of ValuetypeDefinition', () => {
   );
 
   beforeAll(() => {
-    useExtension(new TestLangExtension());
+    // TODO: fix tests after removing TestExtension
     const services = createJayveeServices(NodeFileSystem).Jayvee;
     parse = parseHelper(services);
   });

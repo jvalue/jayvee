@@ -6,6 +6,7 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
+  BlockMetaInformation,
   EvaluationContext,
   MetaInformation,
   PropertyAssignment,
@@ -13,11 +14,9 @@ import {
   RuntimeParameterProvider,
   ValidationContext,
   createJayveeServices,
-  getBlockMetaInf,
   getConstraintMetaInf,
   isBuiltinConstrainttypeDefinition,
   isReferenceableBlocktypeDefinition,
-  useExtension,
 } from '../../../lib';
 import {
   ParseHelperOptions,
@@ -26,7 +25,6 @@ import {
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../test';
-import { TestLangExtension } from '../../../test/extension';
 
 import { validatePropertyAssignment } from './property-assignment';
 
@@ -57,7 +55,10 @@ describe('Validation of PropertyAssignment', () => {
     const type = propertyBody.$container.type;
     let metaInf: MetaInformation | undefined;
     if (isReferenceableBlocktypeDefinition(type.ref)) {
-      metaInf = getBlockMetaInf(type.ref);
+      if (!BlockMetaInformation.canBeWrapped(type.ref)) {
+        return; // TODO: is this the right to do here?
+      }
+      metaInf = new BlockMetaInformation(type.ref);
     } else if (isBuiltinConstrainttypeDefinition(type.ref)) {
       metaInf = getConstraintMetaInf(type.ref);
     }
@@ -77,8 +78,8 @@ describe('Validation of PropertyAssignment', () => {
   }
 
   beforeAll(() => {
-    // Register test extension
-    useExtension(new TestLangExtension());
+    // TODO: fix tests after removing TestExtension
+
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;

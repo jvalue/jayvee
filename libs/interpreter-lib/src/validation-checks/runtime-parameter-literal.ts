@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
+  BlockMetaInformation,
   BuiltinConstrainttypeDefinition,
   EvaluationContext,
   MetaInformation,
@@ -10,7 +11,6 @@ import {
   ReferenceableBlocktypeDefinition,
   RuntimeParameterLiteral,
   ValidationContext,
-  getBlockMetaInf,
   getConstraintMetaInf,
   isBuiltinConstrainttypeDefinition,
   isReferenceableBlocktypeDefinition,
@@ -81,7 +81,10 @@ function checkRuntimeParameterValueParsing(
 
   let metaInf: MetaInformation | undefined;
   if (isReferenceableBlocktypeDefinition(type.ref)) {
-    metaInf = getBlockMetaInf(type.ref);
+    if (!BlockMetaInformation.canBeWrapped(type.ref)) {
+      return; // TODO: is this the rigth thing to do here?
+    }
+    metaInf = new BlockMetaInformation(type.ref);
   } else if (isBuiltinConstrainttypeDefinition(type.ref)) {
     metaInf = getConstraintMetaInf(type.ref);
   }

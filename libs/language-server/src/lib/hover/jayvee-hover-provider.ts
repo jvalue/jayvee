@@ -22,8 +22,8 @@ import {
 } from '../ast';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
 import {
+  BlockMetaInformation,
   MetaInformation,
-  getBlockMetaInf,
   getConstraintMetaInf,
 } from '../meta-information';
 
@@ -57,10 +57,10 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   private getBlockTypeMarkdownDoc(
     blockType: BuiltinBlocktypeDefinition,
   ): string | undefined {
-    const blockMetaInf = getBlockMetaInf(blockType);
-    if (blockMetaInf === undefined) {
+    if (!BlockMetaInformation.canBeWrapped(blockType)) {
       return;
     }
+    const blockMetaInf = new BlockMetaInformation(blockType);
 
     const lspDocBuilder = new LspDocGenerator();
     return lspDocBuilder.generateBlockTypeDoc(blockMetaInf);
@@ -81,14 +81,17 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   private getPropertyMarkdownDoc(
     property: PropertyAssignment,
   ): string | undefined {
-    const block = property.$container.$container;
+    const container = property.$container.$container;
     let metaInf: MetaInformation | undefined;
-    if (isTypedConstraintDefinition(block)) {
-      metaInf = getConstraintMetaInf(block.type);
-    } else if (isBlockDefinition(block)) {
-      metaInf = getBlockMetaInf(block.type);
+    if (isTypedConstraintDefinition(container)) {
+      metaInf = getConstraintMetaInf(container.type);
+    } else if (isBlockDefinition(container)) {
+      if (!BlockMetaInformation.canBeWrapped(container.type)) {
+        return;
+      }
+      metaInf = new BlockMetaInformation(container.type);
     } else {
-      assertUnreachable(block);
+      assertUnreachable(container);
     }
     if (metaInf === undefined) {
       return;

@@ -10,7 +10,6 @@ import {
   ValidationContext,
   checkUniqueNames,
   createJayveeServices,
-  useExtension,
 } from '..';
 import {
   ParseHelperOptions,
@@ -19,7 +18,6 @@ import {
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../test';
-import { TestLangExtension } from '../../test/extension';
 
 describe('Validation of validation-utils', () => {
   let parse: (
@@ -47,8 +45,8 @@ describe('Validation of validation-utils', () => {
   }
 
   beforeAll(() => {
-    // Register test extension
-    useExtension(new TestLangExtension());
+    // TODO: fix tests after removing TestExtension
+
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;

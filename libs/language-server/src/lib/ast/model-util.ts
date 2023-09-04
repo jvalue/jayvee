@@ -7,7 +7,7 @@ import { strict as assert } from 'assert';
 import { AstNode, Reference, assertUnreachable } from 'langium';
 
 // eslint-disable-next-line import/no-cycle
-import { getBlockMetaInf } from '../meta-information/meta-inf-registry';
+import { BlockMetaInformation } from '../meta-information';
 
 import {
   BinaryExpression,
@@ -29,7 +29,7 @@ export function collectStartingBlocks(
       .map((blockRef: Reference<BlockDefinition> | undefined) => {
         if (
           blockRef?.ref !== undefined &&
-          getBlockMetaInf(blockRef.ref.type) !== undefined
+          BlockMetaInformation.canBeWrapped(blockRef.ref.type)
         ) {
           return blockRef.ref;
         }
@@ -45,10 +45,10 @@ export function collectStartingBlocks(
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const blocks = container?.blocks ?? [];
   for (const block of blocks) {
-    const blockMetaInf = getBlockMetaInf(block.type);
-    if (blockMetaInf === undefined) {
+    if (!BlockMetaInformation.canBeWrapped(block.type)) {
       continue;
     }
+    const blockMetaInf = new BlockMetaInformation(block.type);
 
     if (!blockMetaInf.hasInput()) {
       result.push(block);

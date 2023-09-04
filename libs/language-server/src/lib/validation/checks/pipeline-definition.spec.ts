@@ -9,7 +9,6 @@ import {
   PipelineDefinition,
   ValidationContext,
   createJayveeServices,
-  useExtension,
 } from '../../../lib';
 import {
   ParseHelperOptions,
@@ -18,7 +17,6 @@ import {
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../test';
-import { TestLangExtension } from '../../../test/extension';
 
 import { validatePipelineDefinition } from './pipeline-definition';
 
@@ -53,8 +51,8 @@ describe('Validation of PipelineDefinition', () => {
   }
 
   beforeAll(() => {
-    // Register test extension
-    useExtension(new TestLangExtension());
+    // TODO: fix tests after removing TestExtension
+
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;
