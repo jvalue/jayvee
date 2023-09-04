@@ -1,0 +1,22 @@
+/*
+Interprets a `File` as an archive file and converts it to a `FileSystem`. The archive file root is considered the root of the `FileSystem`.
+
+@example Interprets a `File` as a ZIP-archive and creates a `FileSystem` of its extracted contents.
+block ZipArchiveInterpreter oftype ArchiveInterpreter {
+  archiveType: "zip";
+}
+*/
+builtin blocktype ArchiveInterpreter {
+	input default oftype File;
+	output default oftype FileSystem;
+	
+	// The archive type to be interpreted, e.g., "zip" or "gz".
+	property archiveType oftype ArchiveType; // TODO: supported archive types
+}
+
+valuetype ArchiveType {
+	constraints: [ArchiveTypeHandleConstraint];
+}
+
+constraint ArchiveTypeHandleConstraint on text:
+	value in ["zip", "gz"];

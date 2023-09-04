@@ -1,0 +1,17 @@
+/*
+Deletes individual lines from a `TextFile`.
+*/
+builtin blocktype TextLineDeleter {
+	input default oftype TextFile;
+	output default oftype TextFile;
+	
+	// The line numbers to delete.
+	property lines oftype Collection<TextLine>;
+}
+
+valuetype TextLine {
+    constraints: [PositiveIntConstraint];
+}
+
+constraint PositiveIntConstraint on integer:
+    value > 0;

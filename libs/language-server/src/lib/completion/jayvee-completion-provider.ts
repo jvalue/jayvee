@@ -36,7 +36,6 @@ import { BlockMetaInformation } from '../meta-information';
 import { MetaInformation } from '../meta-information/meta-inf';
 import {
   getConstraintMetaInf,
-  getRegisteredBlockMetaInformation,
   getRegisteredConstraintMetaInformation,
 } from '../meta-information/meta-inf-registry';
 
@@ -88,22 +87,33 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
   private completionForBlockType(
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
-    getRegisteredBlockMetaInformation().forEach((metaInf) => {
-      const lspDocBuilder = new LspDocGenerator();
-      const markdownDoc = lspDocBuilder.generateBlockTypeDoc(metaInf);
-      acceptor({
-        label: metaInf.type,
-        labelDetails: {
-          detail: ` ${metaInf.inputType} ${RIGHT_ARROW_SYMBOL} ${metaInf.outputType}`,
-        },
-        kind: CompletionItemKind.Class,
-        detail: `(block type)`,
-        documentation: {
-          kind: 'markdown',
-          value: markdownDoc,
-        },
+    this.langiumDocumentService.all
+      .map((document) => document.parseResult.value)
+      .forEach((parsedDocument) => {
+        if (!isJayveeModel(parsedDocument)) {
+          throw new Error('Expected parsed document to be a JayveeModel');
+        }
+        parsedDocument.blocktypes.forEach((blocktypeDefinition) => {
+          if (!BlockMetaInformation.canBeWrapped(blocktypeDefinition)) {
+            return;
+          }
+          const blocktype = new BlockMetaInformation(blocktypeDefinition);
+          const lspDocBuilder = new LspDocGenerator();
+          const markdownDoc = lspDocBuilder.generateBlockTypeDoc(blocktype);
+          acceptor({
+            label: blocktype.type,
+            labelDetails: {
+              detail: ` ${blocktype.inputType} ${RIGHT_ARROW_SYMBOL} ${blocktype.outputType}`,
+            },
+            kind: CompletionItemKind.Class,
+            detail: `(block type)`,
+            documentation: {
+              kind: 'markdown',
+              value: markdownDoc,
+            },
+          });
+        });
       });
-    });
   }
 
   private completionForConstraintType(

@@ -7,11 +7,18 @@ import { strict as assert } from 'assert';
 import { Reference, isReference } from 'langium';
 
 // eslint-disable-next-line import/no-cycle
-import { IOType, createValuetype, getIOType } from '../ast';
+import {
+  EvaluationContext,
+  IOType,
+  createValuetype,
+  evaluateExpression,
+  getIOType,
+} from '../ast';
 import {
   ReferenceableBlocktypeDefinition,
   isBuiltinBlocktypeDefinition,
 } from '../ast/generated/ast';
+import { RuntimeParameterProvider } from '../services';
 
 import { ExampleDoc, MetaInformation, PropertySpecification } from './meta-inf';
 
@@ -46,6 +53,15 @@ export class BlockMetaInformation extends MetaInformation {
       properties[property.name] = {
         type: valuetype,
       };
+
+      const defaultValue = evaluateExpression(
+        property.defaultValue,
+        new EvaluationContext(new RuntimeParameterProvider()), // TODO: check if that works
+      );
+      if (defaultValue !== undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        properties[property.name]!.defaultValue = defaultValue;
+      }
     }
 
     super(blocktypeName, properties, undefined);

@@ -1,0 +1,11 @@
+/*
+Selects a range of lines from a `TextFile`.
+*/
+builtin blocktype TextRangeSelector {
+	input default oftype TextFile;
+	output default oftype TextFile;
+	
+	property lineFrom oftype integer: 1;
+	property lineTo oftype integer: 999999; // TODO: allow sth like +Infinity
+	// TODO: ensure lineFrom <= lineTo
+}

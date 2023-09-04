@@ -1,0 +1,45 @@
+/*
+Extracts a `File` from the web.
+
+@example Fetches a file from the given URL.
+block CarsFileExtractor oftype HttpExtractor {
+  url: "tinyurl.com/4ub9spwz";
+}
+*/
+builtin blocktype HttpExtractor {
+	input default oftype None;
+	output default oftype File;
+	
+	// The URL to the file in the web to extract.
+	property url oftype text;
+	// Configures how many retries should be executed after a failure fetching the data.
+	property retries oftype Count: 0;
+	// Configures the wait time in milliseconds before executing a retry.
+	property retryBackoffMilliseconds oftype RetryIntervalMilliseconds: 1000;
+	// Configures the wait strategy before executing a retry. Can have values "exponential" or "linear".
+	property retryBackoffStrategy oftype RetryBackoffStrategy: "exponential";
+	// Indicates, whether to follow redirects on get requests. If `false`, redirects are not followed. Default `true`
+	property followRedirects oftype boolean: true;
+}
+
+valuetype Count {
+	constraints: [IntNonNegative];
+}
+
+constraint IntNonNegative on integer:
+	value >= 0;
+
+valuetype RetryIntervalMilliseconds {
+	constraints: [IntOver999];
+}
+
+constraint IntOver999 on integer:
+	value > 999;
+
+valuetype RetryBackoffStrategy {
+	constraints : [RetryBackoffStrategyConstraint]
+}
+
+constraint RetryBackoffStrategyConstraint on text:
+	value in ["linear", "exponential"];
+

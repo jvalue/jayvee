@@ -1,0 +1,21 @@
+/*
+Interprets a `File` as a `TextFile`.
+*/
+builtin blocktype TextFileInterpreter {
+	input default oftype File;
+	output default oftype TextFile;
+	
+	// The encoding used for decoding the file contents.
+	property encoding oftype TextEncoding: 'utf-8';
+	// The regex for identifying line breaks.
+	property lineBreak oftype Regex: /\r?\n/;
+    // TODO: check Regex valuetype
+}
+
+valuetype TextEncoding {
+	constraints: [TextEncodingConstraint];
+}
+
+constraint TextEncodingConstraint on text:
+	// https://developer.mozilla.org/en-US/docs/Web/API/Encoding_API/Encodings
+	value in ['utf-8', 'ibm866', 'latin2', 'latin3', 'latin4', 'cyrillic', 'arabic', 'greek', 'hebrew', 'logical', 'latin6', 'utf-16'];

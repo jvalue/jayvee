@@ -6,6 +6,7 @@ import { strict as assert } from 'assert';
 
 import {
   BlockDefinition,
+  BlockMetaInformation,
   ConstraintDefinition,
   EvaluationContext,
   InternalValueRepresentation,
@@ -14,7 +15,6 @@ import {
   TransformDefinition,
   Valuetype,
   evaluatePropertyValue,
-  getOrFailBockMetaInf,
   getOrFailConstraintMetaInf,
   isBlockDefinition,
   isExpressionConstraintDefinition,
@@ -150,7 +150,8 @@ export class ExecutionContext {
       return getOrFailConstraintMetaInf(currentNode.type);
     } else if (isBlockDefinition(currentNode)) {
       assert(isReference(currentNode.type));
-      return getOrFailBockMetaInf(currentNode.type);
+      assert(BlockMetaInformation.canBeWrapped(currentNode.type));
+      return new BlockMetaInformation(currentNode.type);
     }
     assertUnreachable(currentNode);
   }
