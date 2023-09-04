@@ -76,6 +76,8 @@ block GasReserveHttpExtractor oftype HttpExtractor {
 
 In the example above, the `url` property of type `text` is defined by the corresponding `HttpExtractor` block type.
 
+Blocks can be either defined as part of the language, called `builtin` or defined as composition of existing blocks by users in Jayvee, called `composite`. See the documentation for [Composite Blocks](./composite-blocks.md).
+
 ## ValueTypes
 
 A `ValueType` is the definition of a data type of the processed data.

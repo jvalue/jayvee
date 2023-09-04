@@ -77,6 +77,7 @@ export class ExecutionContext {
   }
 
   private updateLoggingContext() {
+    this.logger.setLoggingDepth(this.stack.length);
     this.logger.setLoggingContext(this.getCurrentNode().name);
   }
 

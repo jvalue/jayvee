@@ -69,6 +69,10 @@ export class TestLogger extends Logger {
     }
   }
 
+  override setLoggingDepth(): void {
+    return undefined;
+  }
+
   override logInfo(message: string): void {
     const msg = `${chalk.bold(this.getContext())}${message}`;
     this.infoLogs.push(msg);

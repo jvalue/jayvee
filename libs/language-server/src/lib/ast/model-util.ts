@@ -4,7 +4,7 @@
 
 import { strict as assert } from 'assert';
 
-import { AstNode, assertUnreachable } from 'langium';
+import { AstNode, Reference, assertUnreachable } from 'langium';
 
 // eslint-disable-next-line import/no-cycle
 import { getMetaInformation } from '../meta-information/meta-inf-registry';
@@ -12,18 +12,38 @@ import { getMetaInformation } from '../meta-information/meta-inf-registry';
 import {
   BinaryExpression,
   BlockDefinition,
+  CompositeBlocktypeDefinition,
   PipelineDefinition,
   UnaryExpression,
+  isCompositeBlocktypeDefinition,
 } from './generated/ast';
 import { PipeWrapper, createSemanticPipes } from './wrappers/pipe-wrapper';
 
 export function collectStartingBlocks(
-  pipeline: PipelineDefinition,
+  container: PipelineDefinition | CompositeBlocktypeDefinition,
 ): BlockDefinition[] {
+  // For composite blocks the first blocks of all pipelines are starting blocks as they have inputs
+  if (isCompositeBlocktypeDefinition(container)) {
+    const startingBlocks = container.pipes
+      .map((pipe) => pipe.blocks[0])
+      .map((blockRef: Reference<BlockDefinition> | undefined) => {
+        if (
+          blockRef?.ref !== undefined &&
+          getMetaInformation(blockRef.ref.type) !== undefined
+        ) {
+          return blockRef.ref;
+        }
+        return undefined;
+      })
+      .filter((x): x is BlockDefinition => x !== undefined);
+
+    return startingBlocks;
+  }
+
   const result: BlockDefinition[] = [];
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  const blocks = pipeline?.blocks ?? [];
+  const blocks = container?.blocks ?? [];
   for (const block of blocks) {
     const blockMetaInf = getMetaInformation(block.type);
     if (blockMetaInf === undefined) {
@@ -75,9 +95,11 @@ function collectPipes(
   });
 }
 
-export function collectAllPipes(pipeline: PipelineDefinition): PipeWrapper[] {
+export function collectAllPipes(
+  container: PipelineDefinition | CompositeBlocktypeDefinition,
+): PipeWrapper[] {
   const result: PipeWrapper[] = [];
-  for (const pipe of pipeline.pipes) {
+  for (const pipe of container.pipes) {
     result.push(...createSemanticPipes(pipe));
   }
   return result;
@@ -99,7 +121,7 @@ export function collectAllPipes(pipeline: PipelineDefinition): PipeWrapper[] {
  * Kahn, A. B. (1962). Topological sorting of large networks. Communications of the ACM, 5(11), 558–562.
  */
 export function getBlocksInTopologicalSorting(
-  pipeline: PipelineDefinition,
+  pipeline: PipelineDefinition | CompositeBlocktypeDefinition,
 ): BlockDefinition[] {
   const sortedNodes = [];
   const currentNodes = [...collectStartingBlocks(pipeline)];
@@ -137,15 +159,6 @@ export function getBlocksInTopologicalSorting(
   );
 
   return sortedNodes;
-}
-
-export enum IOType {
-  NONE = 'None',
-  FILE = 'File',
-  TEXT_FILE = 'TextFile',
-  FILE_SYSTEM = 'FileSystem',
-  SHEET = 'Sheet',
-  TABLE = 'Table',
 }
 
 export type UnaryExpressionOperator = UnaryExpression['operator'];

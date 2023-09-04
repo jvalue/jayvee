@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import './blocktype'
 import './cellrange'
 import './constraint'
 import './valuetype'
@@ -90,5 +91,6 @@ ReferenceLiteral:
 
 Referencable:
   ConstraintDefinition
+  | BlocktypeProperty
   | TransformDefinition
   | TransformPortDefinition;

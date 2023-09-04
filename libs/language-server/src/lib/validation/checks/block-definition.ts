@@ -3,13 +3,16 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /**
- * See https://jvalue.github.io/jayvee/docs/dev/working-with-the-ast for why the following ESLint rule is disabled for this file.
+ * See https://jvalue.github.io/jayvee/docs/dev/guides/working-with-the-ast/ for why the following ESLint rule is disabled for this file.
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
 import { assertUnreachable } from 'langium';
 
-import { BlockDefinition } from '../../ast/generated/ast';
+import {
+  BlockDefinition,
+  isCompositeBlocktypeDefinition,
+} from '../../ast/generated/ast';
 import {
   collectIngoingPipes,
   collectOutgoingPipes,
@@ -73,13 +76,20 @@ function checkPipesOfBlock(
       );
     }
   } else if (pipes.length === 0) {
-    context.accept(
-      'warning',
-      `A pipe should be connected to the ${whatToCheck} of this block`,
-      {
-        node: block,
-        property: 'name',
-      },
-    );
+    const isLastBlockOfCompositeBlocktype =
+      isCompositeBlocktypeDefinition(block.$container) &&
+      block.$container.blocks.at(-1)?.name === block.name;
+
+    // The last block in a composite block is connected to the output, not another block
+    if (!isLastBlockOfCompositeBlocktype) {
+      context.accept(
+        'warning',
+        `A pipe should be connected to the ${whatToCheck} of this block`,
+        {
+          node: block,
+          property: 'name',
+        },
+      );
+    }
   }
 }
