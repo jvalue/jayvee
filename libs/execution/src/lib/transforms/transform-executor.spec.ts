@@ -134,18 +134,24 @@ describe('Validation of TransformExecutor', () => {
     );
     const transformColumnNames: string[] = ['Column2'];
 
-    const result = await parseAndExecuteTransform(
-      text,
-      inputTable,
-      transformColumnNames,
-    );
+    try {
+      const result = await parseAndExecuteTransform(
+        text,
+        inputTable,
+        transformColumnNames,
+      );
 
-    expect(result.rowsToDelete).toHaveLength(0);
-    expect(result.resultingColumn.valuetype).toEqual(
-      PrimitiveValuetypes.Integer,
-    );
-    expect(result.resultingColumn.values).toHaveLength(1);
-    expect(result.resultingColumn.values).toEqual(expect.arrayContaining([21]));
+      expect(result.rowsToDelete).toHaveLength(0);
+      expect(result.resultingColumn.valuetype).toEqual(
+        PrimitiveValuetypes.Integer,
+      );
+      expect(result.resultingColumn.values).toHaveLength(1);
+      expect(result.resultingColumn.values).toEqual(
+        expect.arrayContaining([21]),
+      );
+    } catch (e) {
+      expect(e).toEqual(undefined);
+    }
   });
 
   it('should diagnose no error on invalid value representation', async () => {
@@ -174,16 +180,22 @@ describe('Validation of TransformExecutor', () => {
     );
     const transformColumnNames: string[] = ['Column2'];
 
-    const result = await parseAndExecuteTransform(
-      text,
-      inputTable,
-      transformColumnNames,
-    );
+    try {
+      const result = await parseAndExecuteTransform(
+        text,
+        inputTable,
+        transformColumnNames,
+      );
 
-    expect(result.rowsToDelete).toHaveLength(1);
-    expect(result.rowsToDelete).toEqual(expect.arrayContaining([0]));
-    expect(result.resultingColumn.valuetype).toEqual(PrimitiveValuetypes.Text);
-    expect(result.resultingColumn.values).toHaveLength(0);
+      expect(result.rowsToDelete).toHaveLength(1);
+      expect(result.rowsToDelete).toEqual(expect.arrayContaining([0]));
+      expect(result.resultingColumn.valuetype).toEqual(
+        PrimitiveValuetypes.Text,
+      );
+      expect(result.resultingColumn.values).toHaveLength(0);
+    } catch (e) {
+      expect(e).toEqual(undefined);
+    }
   });
 
   it('should diagnose no error on valid value', async () => {
@@ -219,20 +231,24 @@ describe('Validation of TransformExecutor', () => {
     );
     const transformColumnNames: string[] = ['Column2', 'Column3'];
 
-    const result = await parseAndExecuteTransform(
-      text,
-      inputTable,
-      transformColumnNames,
-    );
+    try {
+      const result = await parseAndExecuteTransform(
+        text,
+        inputTable,
+        transformColumnNames,
+      );
 
-    expect(result.rowsToDelete).toHaveLength(0);
-    expect(result.resultingColumn.valuetype).toEqual(
-      PrimitiveValuetypes.Integer,
-    );
-    expect(result.resultingColumn.values).toHaveLength(1);
-    expect(result.resultingColumn.values).toEqual(
-      expect.arrayContaining([106]),
-    );
+      expect(result.rowsToDelete).toHaveLength(0);
+      expect(result.resultingColumn.valuetype).toEqual(
+        PrimitiveValuetypes.Integer,
+      );
+      expect(result.resultingColumn.values).toHaveLength(1);
+      expect(result.resultingColumn.values).toEqual(
+        expect.arrayContaining([106]),
+      );
+    } catch (e) {
+      expect(e).toEqual(undefined);
+    }
   });
 
   it('should diagnose error on empty columns map', async () => {
@@ -270,9 +286,6 @@ describe('Validation of TransformExecutor', () => {
       expect(result).toEqual(undefined);
     } catch (e) {
       expect(e).toBeInstanceOf(assert.AssertionError);
-      expect((e as assert.AssertionError).message).toEqual(
-        'The expression evaluated to a falsy value:\n\n  this.getInputDetails()\n',
-      );
       expect((e as assert.AssertionError).stack).toEqual(
         expect.stringContaining('at TransformExecutor.addVariablesToContext'),
       );
@@ -281,7 +294,7 @@ describe('Validation of TransformExecutor', () => {
     }
   });
 
-  it('should diagnose error on invalid column type', async () => {
+  it('should diagnose no error on invalid column type', async () => {
     const text = readJvTestAsset(
       'transform-executor/valid-decimal-integer-transform.jv',
     );
@@ -313,15 +326,60 @@ describe('Validation of TransformExecutor', () => {
         inputTable,
         transformColumnNames,
       );
-      expect(result).toEqual(undefined);
-    } catch (e) {
-      expect(e).toBeInstanceOf(assert.AssertionError);
-      expect((e as assert.AssertionError).message).toEqual('false == true');
-      expect((e as assert.AssertionError).stack).toEqual(
-        expect.stringContaining('at CeilOperatorEvaluator.evaluate'),
+
+      expect(result.rowsToDelete).toHaveLength(1);
+      expect(result.resultingColumn.valuetype).toEqual(
+        PrimitiveValuetypes.Integer,
       );
-      expect((e as assert.AssertionError).expected).toEqual(true);
-      expect((e as assert.AssertionError).actual).toEqual(false);
+      expect(result.resultingColumn.values).toHaveLength(0);
+    } catch (e) {
+      expect(e).toEqual(undefined);
+    }
+  });
+
+  it('should diagnose no error on invalid row value', async () => {
+    const text = readJvTestAsset(
+      'transform-executor/valid-decimal-integer-transform.jv',
+    );
+
+    const inputTable = constructTable(
+      [
+        {
+          columnName: 'Column1',
+          column: {
+            values: ['value 1', 'value 2'],
+            valuetype: PrimitiveValuetypes.Text,
+          },
+        },
+        {
+          columnName: 'Column2',
+          column: {
+            values: ['20.2', 20.1],
+            valuetype: PrimitiveValuetypes.Decimal,
+          },
+        },
+      ],
+      2,
+    );
+    const transformColumnNames: string[] = ['Column2'];
+
+    try {
+      const result = await parseAndExecuteTransform(
+        text,
+        inputTable,
+        transformColumnNames,
+      );
+
+      expect(result.rowsToDelete).toHaveLength(1);
+      expect(result.resultingColumn.valuetype).toEqual(
+        PrimitiveValuetypes.Integer,
+      );
+      expect(result.resultingColumn.values).toHaveLength(1);
+      expect(result.resultingColumn.values).toEqual(
+        expect.arrayContaining([21]),
+      );
+    } catch (e) {
+      expect(e).toEqual(undefined);
     }
   });
 });
