@@ -11,12 +11,5 @@ builtin blocktype ArchiveInterpreter {
 	output default oftype FileSystem;
 	
 	// The archive type to be interpreted, e.g., "zip" or "gz".
-	property archiveType oftype ArchiveType; // TODO: supported archive types
+	property archiveType oftype text;
 }
-
-valuetype ArchiveType oftype text {
-	constraints: [ArchiveTypeHandleConstraint];
-}
-
-constraint ArchiveTypeHandleConstraint on text:
-	value in ["zip", "gz"];

@@ -7,7 +7,12 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { EvaluationContext, inferExpressionType } from '../../ast';
+import {
+  EvaluationContext,
+  InternalValueRepresentation,
+  evaluatePropertyValue,
+  inferExpressionType,
+} from '../../ast';
 import {
   PropertyAssignment,
   isBlocktypeProperty,
@@ -34,6 +39,13 @@ export function validatePropertyAssignment(
     return;
   }
   checkPropertyValueTyping(
+    property,
+    propertySpec,
+    validationContext,
+    evaluationContext,
+  );
+
+  checkBlocktypeSpecificProperties(
     property,
     propertySpec,
     validationContext,
@@ -110,4 +122,54 @@ function checkPropertyValueTyping(
     validationContext,
     evaluationContext,
   );
+}
+
+function checkBlocktypeSpecificProperties(
+  property: PropertyAssignment,
+  propertySpec: PropertySpecification,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
+) {
+  const propName = property.name;
+  const propValue = evaluatePropertyValue(
+    property,
+    evaluationContext,
+    propertySpec.type,
+  );
+  if (propValue === undefined) {
+    return;
+  }
+
+  switch (property.$container.$container.type.ref?.name) {
+    case 'ArchiveInterpreter':
+      return checkArchiveInterpreterProperties(
+        propName,
+        propValue,
+        property,
+        validationContext,
+      );
+    default:
+  }
+}
+
+function checkArchiveInterpreterProperties(
+  propName: string,
+  propValue: InternalValueRepresentation,
+  property: PropertyAssignment,
+  validationContext: ValidationContext,
+) {
+  const allowedArchiveTypes: InternalValueRepresentation[] = ['zip', 'gz'];
+  if (propName === 'archiveType') {
+    if (!allowedArchiveTypes.includes(propValue)) {
+      validationContext.accept(
+        'error',
+        `The value of property "${propName}" is not a valid value: [${allowedArchiveTypes.join(
+          ', ',
+        )}]`,
+        {
+          node: property,
+        },
+      );
+    }
+  }
 }

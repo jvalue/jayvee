@@ -139,7 +139,7 @@ describe('Validation of PropertyAssignment', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
-      `The value needs to be of type text but is of type integer`,
+      `The value of property "textProperty" needs to be of type text but is of type integer`,
       expect.any(Object),
     );
   });
