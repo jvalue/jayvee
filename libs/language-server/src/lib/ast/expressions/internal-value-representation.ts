@@ -52,6 +52,16 @@ export function internalValueToString(
     return String(valueRepresentation);
   }
   if (typeof valueRepresentation === 'number') {
+    if (valueRepresentation === Number.POSITIVE_INFINITY) {
+      return Number.MAX_VALUE.toLocaleString('fullwide', {
+        useGrouping: false,
+      });
+    }
+    if (valueRepresentation === Number.NEGATIVE_INFINITY) {
+      return Number.MIN_VALUE.toLocaleString('fullwide', {
+        useGrouping: false,
+      });
+    }
     return `${valueRepresentation}`;
   }
   if (typeof valueRepresentation === 'string') {
