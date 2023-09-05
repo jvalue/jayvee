@@ -5,18 +5,14 @@
 import { readFileSync, readdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
-import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
 import {
+  BlockMetaInformation,
   PrimitiveValuetypes,
-  getRegisteredBlockMetaInformation,
   getRegisteredConstraintMetaInformation,
   registerConstraints,
-  useExtension,
 } from '@jvalue/jayvee-language-server';
 
 import { UserDocGenerator } from './user-doc-generator';
-
-useExtension(new StdLangExtension());
 
 function main(): void {
   const rootPath = join(__dirname, '..', '..', '..', '..');
@@ -35,7 +31,7 @@ function generateBlockTypeDocs(rootPath: string): void {
     'user',
     'block-types',
   );
-  const metaInfs = getRegisteredBlockMetaInformation();
+  const metaInfs: BlockMetaInformation[] = []; // TODO: load from Std Lib
   for (const metaInf of metaInfs) {
     const userDocBuilder = new UserDocGenerator();
     const blockTypeDoc = userDocBuilder.generateBlockTypeDoc(metaInf);

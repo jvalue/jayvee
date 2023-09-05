@@ -12,7 +12,7 @@ builtin blocktype TextFileInterpreter {
     // TODO: check Regex valuetype
 }
 
-valuetype TextEncoding {
+valuetype TextEncoding oftype text {
 	constraints: [TextEncodingConstraint];
 }
 

@@ -62,7 +62,7 @@ builtin blocktype GtfsRTInterpreter {
 	property entity oftype GtfsRTEntity;
 }
 
-valuetype GtfsRTEntity {
+valuetype GtfsRTEntity oftype text {
 	constraints: [GtfsRTEntityConstraint];
 }
 

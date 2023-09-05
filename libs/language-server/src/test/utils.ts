@@ -7,7 +7,7 @@ import * as path from 'path';
 
 import { AstNode, LangiumDocument, ValidationAcceptor } from 'langium';
 
-import { blockMetaInfRegistry, constraintMetaInfRegistry } from '../lib';
+import { constraintMetaInfRegistry } from '../lib/meta-information/meta-inf-registry';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export const validationAcceptorMockImpl: ValidationAcceptor = () => {};
@@ -44,6 +44,5 @@ export function expectNoParserAndLexerErrors(
 }
 
 export function clearMetaInfRegistry() {
-  blockMetaInfRegistry.clear();
   constraintMetaInfRegistry.clear();
 }

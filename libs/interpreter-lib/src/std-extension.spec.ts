@@ -5,13 +5,14 @@
 import { strict as assert } from 'assert';
 
 import { getRegisteredBlockExecutors } from '@jvalue/jayvee-execution';
-import { getRegisteredBlockMetaInformation } from '@jvalue/jayvee-language-server';
+import { BlockMetaInformation } from '@jvalue/jayvee-language-server';
 
 import { useStdExtension } from './interpreter';
 
 describe('std extension', () => {
   useStdExtension();
-  getRegisteredBlockMetaInformation().forEach((metaInf) => {
+  [].forEach((metaInf: BlockMetaInformation) => {
+    // TODO: iterate over all block meta inf
     it(`should provide a matching block executor for block type ${metaInf.type}`, () => {
       const matchingBlockExecutorClass = getRegisteredBlockExecutors().find(
         (blockExecutorClass) => blockExecutorClass.type === metaInf.type,

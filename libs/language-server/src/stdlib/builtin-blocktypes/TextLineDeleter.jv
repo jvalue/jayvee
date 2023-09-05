@@ -9,7 +9,7 @@ builtin blocktype TextLineDeleter {
 	property lines oftype Collection<TextLine>;
 }
 
-valuetype TextLine {
+valuetype TextLine oftype integer {
     constraints: [PositiveIntConstraint];
 }
 

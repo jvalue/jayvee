@@ -14,7 +14,7 @@ builtin blocktype ArchiveInterpreter {
 	property archiveType oftype ArchiveType; // TODO: supported archive types
 }
 
-valuetype ArchiveType {
+valuetype ArchiveType oftype text {
 	constraints: [ArchiveTypeHandleConstraint];
 }
 

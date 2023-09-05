@@ -22,21 +22,21 @@ builtin blocktype HttpExtractor {
 	property followRedirects oftype boolean: true;
 }
 
-valuetype Count {
+valuetype Count oftype integer {
 	constraints: [IntNonNegative];
 }
 
 constraint IntNonNegative on integer:
 	value >= 0;
 
-valuetype RetryIntervalMilliseconds {
+valuetype RetryIntervalMilliseconds oftype integer {
 	constraints: [IntOver999];
 }
 
 constraint IntOver999 on integer:
 	value > 999;
 
-valuetype RetryBackoffStrategy {
+valuetype RetryBackoffStrategy oftype text {
 	constraints : [RetryBackoffStrategyConstraint]
 }
 

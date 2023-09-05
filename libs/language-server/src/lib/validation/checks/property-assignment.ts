@@ -95,7 +95,9 @@ function checkPropertyValueTyping(
   if (!inferredType.isConvertibleTo(propertyType)) {
     validationContext.accept(
       'error',
-      `The value needs to be of type ${propertyType.getName()} but is of type ${inferredType.getName()}`,
+      `The value of property "${
+        property.name
+      }" needs to be of type ${propertyType.getName()} but is of type ${inferredType.getName()}`,
       {
         node: propertyValue,
       },
