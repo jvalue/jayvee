@@ -182,6 +182,33 @@ describe('Validation of PropertyAssignment', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
 
+  describe('ArchiveInterpreter blocktype', () => {
+    it('should diagnose no error on valid archiveType parameter value', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/archive-interpreter/valid-valid-archivetype-param.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
+    });
+
+    it('should diagnose error on invalid archiveType parameter value', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/archive-interpreter/invalid-invalid-archivetype-param.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+      expect(validationAcceptorMock).toHaveBeenCalledWith(
+        'error',
+        'The value of property "archiveType" must be one of the following values: "zip", "gz"',
+        expect.any(Object),
+      );
+    });
+  });
+
   describe('CellWriter blocktype', () => {
     it('should diagnose error on wrong dimension for at parameter', async () => {
       const text = readJvTestAsset(
