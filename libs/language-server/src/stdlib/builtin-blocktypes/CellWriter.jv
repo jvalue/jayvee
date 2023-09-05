@@ -20,6 +20,6 @@ builtin blocktype CellWriter {
 	// The values to write.
 	property write oftype Collection<text>;
 	// The cells to write into.
-	property at oftype CellRange; // TODO: ensure 1-dimensional
-	// TODO: ensure write.length === at.dim
+	property at oftype CellRange;
+	// TODO: ensure write.length === at.values.length
 }

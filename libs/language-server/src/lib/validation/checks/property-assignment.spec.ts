@@ -181,4 +181,21 @@ describe('Validation of PropertyAssignment', () => {
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
+
+  describe('CellWriter blocktype', () => {
+    it('should diagnose error on wrong dimension for at parameter', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/cell-writer/invalid-wrong-at-dimension.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+      expect(validationAcceptorMock).toHaveBeenCalledWith(
+        'error',
+        'The cell range needs to be one-dimensional',
+        expect.any(Object),
+      );
+    });
+  });
 });

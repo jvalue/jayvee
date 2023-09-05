@@ -10,6 +10,7 @@
 import {
   EvaluationContext,
   InternalValueRepresentation,
+  PrimitiveValuetypes,
   evaluatePropertyValue,
   inferExpressionType,
 } from '../../ast';
@@ -142,17 +143,24 @@ function checkBlocktypeSpecificProperties(
 
   switch (property.$container.$container.type.ref?.name) {
     case 'ArchiveInterpreter':
-      return checkArchiveInterpreterProperties(
+      return checkArchiveInterpreterProperty(
         propName,
         propValue,
         property,
         validationContext,
       );
+    case 'CellWriter':
+      return checkCellWriterProperty(
+        propName,
+        property,
+        validationContext,
+        evaluationContext,
+      );
     default:
   }
 }
 
-function checkArchiveInterpreterProperties(
+function checkArchiveInterpreterProperty(
   propName: string,
   propValue: InternalValueRepresentation,
   property: PropertyAssignment,
@@ -168,6 +176,34 @@ function checkArchiveInterpreterProperties(
         )}]`,
         {
           node: property,
+        },
+      );
+    }
+  }
+}
+
+function checkCellWriterProperty(
+  propName: string,
+  property: PropertyAssignment,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
+) {
+  if (propName === 'at') {
+    const cellRange = evaluatePropertyValue(
+      property,
+      evaluationContext,
+      PrimitiveValuetypes.CellRange,
+    );
+    if (cellRange === undefined) {
+      return;
+    }
+
+    if (!cellRange.isOneDimensional()) {
+      validationContext.accept(
+        'error',
+        'The cell range needs to be one-dimensional',
+        {
+          node: cellRange.astNode,
         },
       );
     }
