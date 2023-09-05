@@ -13,7 +13,8 @@ terminal INTEGER returns number: /[0-9]+/;
 
 terminal STRING: /"[^"]*"|'[^']*'/;
 
-hidden terminal SINGLE_LINE_COMMENT: /\/\/[^\n\r]*/;
+hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
+hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
 
 terminal REGEX: /\/.+\//;
 
