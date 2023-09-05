@@ -48,6 +48,10 @@ export function validatePropertyAssignment(
     evaluationContext,
   );
 
+  if (validationContext.hasErrorOccurred()) {
+    return;
+  }
+
   checkBlocktypeSpecificProperties(
     property,
     propertySpec,
