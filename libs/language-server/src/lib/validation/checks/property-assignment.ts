@@ -8,11 +8,13 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
 import {
+  CollectionValuetype,
   EvaluationContext,
   InternalValueRepresentation,
   PrimitiveValuetypes,
   evaluatePropertyValue,
   inferExpressionType,
+  isColumnWrapper,
 } from '../../ast';
 import {
   PropertyAssignment,
@@ -156,6 +158,13 @@ function checkBlocktypeSpecificProperties(
         validationContext,
         evaluationContext,
       );
+    case 'ColumnDeleter':
+      return checkColumnDeleterProperty(
+        propName,
+        property,
+        validationContext,
+        evaluationContext,
+      );
     default:
   }
 }
@@ -207,5 +216,32 @@ function checkCellWriterProperty(
         },
       );
     }
+  }
+}
+
+function checkColumnDeleterProperty(
+  propName: string,
+  property: PropertyAssignment,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
+) {
+  if (propName === 'delete') {
+    const cellRanges = evaluatePropertyValue(
+      property,
+      evaluationContext,
+      new CollectionValuetype(PrimitiveValuetypes.CellRange),
+    );
+
+    cellRanges?.forEach((cellRange) => {
+      if (!isColumnWrapper(cellRange)) {
+        validationContext.accept(
+          'error',
+          'An entire column needs to be selected',
+          {
+            node: cellRange.astNode,
+          },
+        );
+      }
+    });
   }
 }

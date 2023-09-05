@@ -198,4 +198,31 @@ describe('Validation of PropertyAssignment', () => {
       );
     });
   });
+
+  describe('ColumnDeleter blocktype', () => {
+    it('should diagnose error on deleting partial column', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/column-deleter/invalid-partial-column-delete.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+      expect(validationAcceptorMock).toHaveBeenCalledWith(
+        'error',
+        'An entire column needs to be selected',
+        expect.any(Object),
+      );
+    });
+
+    it('should diagnose no error', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/column-deleter/valid-column-delete.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
+    });
+  });
 });
