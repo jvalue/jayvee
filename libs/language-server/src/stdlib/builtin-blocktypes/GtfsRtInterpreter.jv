@@ -59,12 +59,5 @@ builtin blocktype GtfsRTInterpreter {
 	//             ```
 	// 
 	//             
-	property entity oftype GtfsRTEntity;
+	property entity oftype text;
 }
-
-valuetype GtfsRTEntity oftype text {
-	constraints: [GtfsRTEntityConstraint];
-}
-
-constraint GtfsRTEntityConstraint on text:
-	value in ['trip_update', 'alert', 'vehicle'];

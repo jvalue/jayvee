@@ -225,4 +225,31 @@ describe('Validation of PropertyAssignment', () => {
       expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
     });
   });
+
+  describe('GtfsRTInterpreter blocktype', () => {
+    it('should diagnose no error on valid entity parameter value', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/gtfs-rt-interpreter/valid-valid-entity-param.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
+    });
+
+    it('should diagnose error on invalid entity parameter value', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/gtfs-rt-interpreter/invalid-invalid-entity-param.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+      expect(validationAcceptorMock).toHaveBeenCalledWith(
+        'error',
+        'The value of property "entity" must be one of the following values: "trip_update", "alert", "vehicle"',
+        expect.any(Object),
+      );
+    });
+  });
 });

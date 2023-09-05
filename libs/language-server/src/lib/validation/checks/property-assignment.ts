@@ -165,6 +165,13 @@ function checkBlocktypeSpecificProperties(
         validationContext,
         evaluationContext,
       );
+    case 'GtfsRTInterpreter':
+      return checkGtfsRTInterpreterProperty(
+        propName,
+        propValue,
+        property,
+        validationContext,
+      );
     default:
   }
 }
@@ -180,9 +187,9 @@ function checkArchiveInterpreterProperty(
     if (!allowedArchiveTypes.includes(propValue)) {
       validationContext.accept(
         'error',
-        `The value of property "${propName}" is not a valid value: [${allowedArchiveTypes.join(
-          ', ',
-        )}]`,
+        `The value of property "${propName}" must be one of the following values: ${allowedArchiveTypes
+          .map((v) => `"${v.toString()}"`)
+          .join(', ')}`,
         {
           node: property,
         },
@@ -243,5 +250,31 @@ function checkColumnDeleterProperty(
         );
       }
     });
+  }
+}
+
+function checkGtfsRTInterpreterProperty(
+  propName: string,
+  propValue: InternalValueRepresentation,
+  property: PropertyAssignment,
+  validationContext: ValidationContext,
+) {
+  const allowedEntities: InternalValueRepresentation[] = [
+    'trip_update',
+    'alert',
+    'vehicle',
+  ];
+  if (propName === 'entity') {
+    if (!allowedEntities.includes(propValue)) {
+      validationContext.accept(
+        'error',
+        `The value of property "${propName}" must be one of the following values: ${allowedEntities
+          .map((v) => `"${v.toString()}"`)
+          .join(', ')}`,
+        {
+          node: property,
+        },
+      );
+    }
   }
 }
