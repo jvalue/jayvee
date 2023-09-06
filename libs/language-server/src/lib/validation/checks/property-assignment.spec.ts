@@ -429,7 +429,7 @@ describe('Validation of PropertyAssignment', () => {
       expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
     });
 
-    it('should diagnose error on invalid entity parameter value', async () => {
+    it('should diagnose error on invalid encoding parameter value', async () => {
       const text = readJvTestAsset(
         'property-assignment/blocktype-specific/text-file-interpreter/invalid-invalid-encoding-param.jv',
       );
@@ -440,6 +440,33 @@ describe('Validation of PropertyAssignment', () => {
       expect(validationAcceptorMock).toHaveBeenCalledWith(
         'error',
         'The value of property "encoding" must be one of the following values: "utf8", "ibm866", "latin2", "latin3", "latin4", "cyrillic", "arabic", "greek", "hebrew", "logical", "latin6", "utf-16"',
+        expect.any(Object),
+      );
+    });
+  });
+
+  describe('TextLineDeleter blocktype', () => {
+    it('should diagnose no error on valid lines parameter value', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/text-line-deleter/valid-postive-line-number.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
+    });
+
+    it('should diagnose error on invalid lines parameter value', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/text-line-deleter/invalid-line-less-or-equal-zero.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(3);
+      expect(validationAcceptorMock).toHaveBeenCalledWith(
+        'error',
+        'Line numbers need to be greater than zero',
         expect.any(Object),
       );
     });

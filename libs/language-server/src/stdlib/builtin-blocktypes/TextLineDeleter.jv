@@ -6,12 +6,5 @@ builtin blocktype TextLineDeleter {
 	output default oftype TextFile;
 	
 	// The line numbers to delete.
-	property lines oftype Collection<TextLine>;
+	property lines oftype Collection<integer>;
 }
-
-valuetype TextLine oftype integer {
-    constraints: [PositiveIntConstraint];
-}
-
-constraint PositiveIntConstraint on integer:
-    value > 0;

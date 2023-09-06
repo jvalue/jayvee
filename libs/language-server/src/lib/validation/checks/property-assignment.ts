@@ -208,6 +208,13 @@ function checkBlocktypeSpecificProperties(
         property,
         validationContext,
       );
+    case 'TextLineDeleter':
+      return checkTextLineDeleterProperty(
+        propName,
+        property,
+        validationContext,
+        evaluationContext,
+      );
     default:
   }
 }
@@ -461,5 +468,34 @@ function checkTextFileInterpreterProperty(
         },
       );
     }
+  }
+}
+
+function checkTextLineDeleterProperty(
+  propName: string,
+  property: PropertyAssignment,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
+) {
+  if (propName === 'lines') {
+    const minTextLineIndex = 1;
+    const lines = evaluatePropertyValue(
+      property,
+      evaluationContext,
+      new CollectionValuetype(PrimitiveValuetypes.Integer),
+    );
+    lines?.forEach((value, index) => {
+      if (value < minTextLineIndex) {
+        validationContext.accept(
+          'error',
+          `Line numbers need to be greater than zero`,
+          {
+            node: property.value,
+            property: 'values',
+            index: index,
+          },
+        );
+      }
+    });
   }
 }
