@@ -6,6 +6,6 @@ builtin blocktype TextRangeSelector {
 	output default oftype TextFile;
 	
 	property lineFrom oftype integer: 1;
-	property lineTo oftype integer: 999999; // TODO: allow sth like +Infinity
+	property lineTo oftype integer: 9007199254740991;
 	// TODO: ensure lineFrom <= lineTo
 }

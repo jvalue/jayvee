@@ -215,6 +215,13 @@ function checkBlocktypeSpecificProperties(
         validationContext,
         evaluationContext,
       );
+    case 'TextRangeSelector':
+      return checkTextRangeSelectorProperty(
+        propName,
+        propValue,
+        property,
+        validationContext,
+      );
     default:
   }
 }
@@ -497,5 +504,30 @@ function checkTextLineDeleterProperty(
         );
       }
     });
+  }
+}
+
+function checkTextRangeSelectorProperty(
+  propName: string,
+  propValue: InternalValueRepresentation,
+  property: PropertyAssignment,
+  validationContext: ValidationContext,
+) {
+  const minLineIndex = 1;
+  if (propName === 'lineFrom' || propName === 'lineTo') {
+    if (
+      propValue !== undefined &&
+      typeof propValue === 'number' &&
+      propValue < minLineIndex
+    ) {
+      validationContext.accept(
+        'error',
+        `The value of property "${propName}" must not be smaller than ${minLineIndex}`,
+        {
+          node: property,
+          property: 'value',
+        },
+      );
+    }
   }
 }

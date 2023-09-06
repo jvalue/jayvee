@@ -471,4 +471,56 @@ describe('Validation of PropertyAssignment', () => {
       );
     });
   });
+
+  describe('TextRangeSelector blocktype', () => {
+    it('should diagnose no error on valid lineFrom parameter value', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/text-range-selector/valid-postive-lineFrom-number.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
+    });
+
+    it('should diagnose error on invalid lineFrom parameter value', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/text-range-selector/invalid-lineFrom-less-or-equal-zero.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+      expect(validationAcceptorMock).toHaveBeenCalledWith(
+        'error',
+        'The value of property "lineFrom" must not be smaller than 1',
+        expect.any(Object),
+      );
+    });
+
+    it('should diagnose no error on valid lineTo parameter value', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/text-range-selector/valid-postive-lineTo-number.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
+    });
+
+    it('should diagnose error on invalid lineTo parameter value', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/text-range-selector/invalid-lineTo-less-or-equal-zero.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+      expect(validationAcceptorMock).toHaveBeenCalledWith(
+        'error',
+        'The value of property "lineTo" must not be smaller than 1',
+        expect.any(Object),
+      );
+    });
+  });
 });
