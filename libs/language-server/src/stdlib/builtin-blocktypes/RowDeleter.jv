@@ -11,5 +11,5 @@ builtin blocktype RowDeleter {
 	output default oftype Sheet;
 	
 	// The rows to delete.
-	property delete oftype Collection<CellRange>; // TODO: ensure whole row is selected
+	property delete oftype Collection<CellRange>;
 }

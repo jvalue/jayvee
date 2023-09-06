@@ -15,6 +15,7 @@ import {
   evaluatePropertyValue,
   inferExpressionType,
   isColumnWrapper,
+  isRowWrapper,
 } from '../../ast';
 import {
   PropertyAssignment,
@@ -182,6 +183,13 @@ function checkBlocktypeSpecificProperties(
         propValue,
         property,
         validationContext,
+      );
+    case 'RowDeleter':
+      return checkRowDeleterProperty(
+        propName,
+        property,
+        validationContext,
+        evaluationContext,
       );
     default:
   }
@@ -352,5 +360,32 @@ function checkHttpExtractorProperty(
         },
       );
     }
+  }
+}
+
+function checkRowDeleterProperty(
+  propName: string,
+  property: PropertyAssignment,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
+) {
+  if (propName === 'delete') {
+    const cellRanges = evaluatePropertyValue(
+      property,
+      evaluationContext,
+      new CollectionValuetype(PrimitiveValuetypes.CellRange),
+    );
+
+    cellRanges?.forEach((cellRange) => {
+      if (!isRowWrapper(cellRange)) {
+        validationContext.accept(
+          'error',
+          'An entire row needs to be selected',
+          {
+            node: cellRange.astNode,
+          },
+        );
+      }
+    });
   }
 }

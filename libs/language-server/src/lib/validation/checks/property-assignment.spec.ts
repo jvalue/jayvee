@@ -356,4 +356,31 @@ describe('Validation of PropertyAssignment', () => {
       );
     });
   });
+
+  describe('RowDeleter blocktype', () => {
+    it('should diagnose error on deleting partial row', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/row-deleter/invalid-partial-row-delete.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+      expect(validationAcceptorMock).toHaveBeenCalledWith(
+        'error',
+        'An entire row needs to be selected',
+        expect.any(Object),
+      );
+    });
+
+    it('should diagnose no error', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/row-deleter/valid-row-delete.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
+    });
+  });
 });
