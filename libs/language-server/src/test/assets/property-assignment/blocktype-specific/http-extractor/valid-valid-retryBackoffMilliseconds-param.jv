@@ -4,7 +4,7 @@
 
 pipeline Pipeline {
   block Test oftype HttpExtractor {
-    retryBackoffMilliseconds: 5000; // only first prop of first block is under test
+    retryBackoffMilliseconds: 5000;
     url: 'http://some-url.de';
   }
   block TestLoader oftype TestLoader {

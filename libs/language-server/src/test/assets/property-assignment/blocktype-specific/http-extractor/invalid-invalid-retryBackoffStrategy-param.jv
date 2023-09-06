@@ -4,7 +4,7 @@
 
 pipeline Pipeline {
   block Test oftype HttpExtractor {
-    retryBackoffStrategy: 'invalid'; // only first prop of first block is under test
+    retryBackoffStrategy: 'invalid';
     url: 'http://some-url.de';
   }
   block TestLoader oftype TestLoader {
