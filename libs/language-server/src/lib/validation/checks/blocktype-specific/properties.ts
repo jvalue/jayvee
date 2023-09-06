@@ -111,18 +111,13 @@ function checkArchiveInterpreterProperty(
 ) {
   const allowedArchiveTypes: InternalValueRepresentation[] = ['zip', 'gz'];
   if (propName === 'archiveType') {
-    if (!allowedArchiveTypes.includes(propValue)) {
-      validationContext.accept(
-        'error',
-        `The value of property "${propName}" must be one of the following values: ${allowedArchiveTypes
-          .map((v) => `"${v.toString()}"`)
-          .join(', ')}`,
-        {
-          node: property,
-          property: 'value',
-        },
-      );
-    }
+    checkPropertyValueOneOf(
+      propValue,
+      allowedArchiveTypes,
+      propName,
+      property,
+      validationContext,
+    );
   }
 }
 
@@ -193,18 +188,13 @@ function checkGtfsRTInterpreterProperty(
     'vehicle',
   ];
   if (propName === 'entity') {
-    if (!allowedEntities.includes(propValue)) {
-      validationContext.accept(
-        'error',
-        `The value of property "${propName}" must be one of the following values: ${allowedEntities
-          .map((v) => `"${v.toString()}"`)
-          .join(', ')}`,
-        {
-          node: property,
-          property: 'value',
-        },
-      );
-    }
+    checkPropertyValueOneOf(
+      propValue,
+      allowedEntities,
+      propName,
+      property,
+      validationContext,
+    );
   }
 }
 
@@ -245,18 +235,13 @@ function checkHttpExtractorProperty(
       'exponential',
       'linear',
     ];
-    if (!allowedRetryStrategies.includes(propValue)) {
-      validationContext.accept(
-        'error',
-        `The value of property "${propName}" must be one of the following values: ${allowedRetryStrategies
-          .map((v) => `"${v.toString()}"`)
-          .join(', ')}`,
-        {
-          node: property,
-          property: 'value',
-        },
-      );
-    }
+    checkPropertyValueOneOf(
+      propValue,
+      allowedRetryStrategies,
+      propName,
+      property,
+      validationContext,
+    );
   }
 }
 
@@ -329,18 +314,13 @@ function checkTextFileInterpreterProperty(
     'utf-16',
   ];
   if (propName === 'encoding') {
-    if (!allowedEncodings.includes(propValue)) {
-      validationContext.accept(
-        'error',
-        `The value of property "${propName}" must be one of the following values: ${allowedEncodings
-          .map((v) => `"${v.toString()}"`)
-          .join(', ')}`,
-        {
-          node: property,
-          property: 'value',
-        },
-      );
-    }
+    checkPropertyValueOneOf(
+      propValue,
+      allowedEncodings,
+      propName,
+      property,
+      validationContext,
+    );
   }
 }
 
@@ -391,5 +371,26 @@ function checkTextRangeSelectorProperty(
         },
       );
     }
+  }
+}
+
+function checkPropertyValueOneOf(
+  propValue: InternalValueRepresentation,
+  allowedValues: InternalValueRepresentation[],
+  propName: string,
+  property: PropertyAssignment,
+  validationContext: ValidationContext,
+) {
+  if (!allowedValues.includes(propValue)) {
+    validationContext.accept(
+      'error',
+      `The value of property "${propName}" must be one of the following values: ${allowedValues
+        .map((v) => `"${v.toString()}"`)
+        .join(', ')}`,
+      {
+        node: property,
+        property: 'value',
+      },
+    );
   }
 }
