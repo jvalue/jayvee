@@ -176,6 +176,13 @@ function checkBlocktypeSpecificProperties(
         property,
         validationContext,
       );
+    case 'HttpExtractor':
+      return checkHttpExtractorProperty(
+        propName,
+        propValue,
+        property,
+        validationContext,
+      );
     default:
   }
 }
@@ -196,6 +203,7 @@ function checkArchiveInterpreterProperty(
           .join(', ')}`,
         {
           node: property,
+          property: 'value',
         },
       );
     }
@@ -277,6 +285,70 @@ function checkGtfsRTInterpreterProperty(
           .join(', ')}`,
         {
           node: property,
+          property: 'value',
+        },
+      );
+    }
+  }
+}
+
+function checkHttpExtractorProperty(
+  propName: string,
+  propValue: InternalValueRepresentation,
+  property: PropertyAssignment,
+  validationContext: ValidationContext,
+) {
+  if (propName === 'retries') {
+    const minRetryValue = 0;
+    if (
+      propValue !== undefined &&
+      typeof propValue === 'number' &&
+      propValue < minRetryValue
+    ) {
+      validationContext.accept(
+        'error',
+        `The value of property "${propName}" must not be smaller than ${minRetryValue}`,
+        {
+          node: property,
+          property: 'value',
+        },
+      );
+    }
+  }
+  if (propName === 'retryBackoffMilliseconds') {
+    const minBackoffValue = 1000;
+    if (
+      propValue !== undefined &&
+      typeof propValue === 'number' &&
+      propValue < minBackoffValue
+    ) {
+      validationContext.accept(
+        'error',
+        `The value of property "${propName}" must not be smaller than ${minBackoffValue}`,
+        {
+          node: property,
+          property: 'value',
+        },
+      );
+    }
+  }
+  if (propName === 'retryBackoffStrategy') {
+    const allowedRetryStrategies: InternalValueRepresentation[] = [
+      'exponential',
+      'linear',
+    ];
+    if (
+      propValue !== undefined &&
+      !allowedRetryStrategies.includes(propValue)
+    ) {
+      validationContext.accept(
+        'error',
+        `The value of property "${propName}" must be one of the following values: ${allowedRetryStrategies
+          .map((v) => `"${v.toString()}"`)
+          .join(', ')}`,
+        {
+          node: property,
+          property: 'value',
         },
       );
     }

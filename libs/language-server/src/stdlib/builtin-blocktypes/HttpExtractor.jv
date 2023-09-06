@@ -13,33 +13,11 @@ builtin blocktype HttpExtractor {
 	// The URL to the file in the web to extract.
 	property url oftype text;
 	// Configures how many retries should be executed after a failure fetching the data.
-	property retries oftype Count: 0;
+	property retries oftype integer: 0;
 	// Configures the wait time in milliseconds before executing a retry.
-	property retryBackoffMilliseconds oftype RetryIntervalMilliseconds: 1000;
+	property retryBackoffMilliseconds oftype integer: 1000;
 	// Configures the wait strategy before executing a retry. Can have values "exponential" or "linear".
-	property retryBackoffStrategy oftype RetryBackoffStrategy: "exponential";
+	property retryBackoffStrategy oftype text: "exponential";
 	// Indicates, whether to follow redirects on get requests. If `false`, redirects are not followed. Default `true`
 	property followRedirects oftype boolean: true;
 }
-
-valuetype Count oftype integer {
-	constraints: [IntNonNegative];
-}
-
-constraint IntNonNegative on integer:
-	value >= 0;
-
-valuetype RetryIntervalMilliseconds oftype integer {
-	constraints: [IntOver999];
-}
-
-constraint IntOver999 on integer:
-	value > 999;
-
-valuetype RetryBackoffStrategy oftype text {
-	constraints : [RetryBackoffStrategyConstraint]
-}
-
-constraint RetryBackoffStrategyConstraint on text:
-	value in ["linear", "exponential"];
-

@@ -279,4 +279,81 @@ describe('Validation of PropertyAssignment', () => {
       );
     });
   });
+
+  describe('HttpExtractor blocktype', () => {
+    it('should diagnose no error on valid retries parameter value', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/http-extractor/valid-valid-retries-param.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
+    });
+
+    it('should diagnose error on invalid retries parameter value', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/http-extractor/invalid-invalid-retries-param.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+      expect(validationAcceptorMock).toHaveBeenCalledWith(
+        'error',
+        'The value of property "retries" must not be smaller than 0',
+        expect.any(Object),
+      );
+    });
+
+    it('should diagnose no error on valid retryBackoffMilliseconds parameter value', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/http-extractor/valid-valid-retryBackoffMilliseconds-param.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
+    });
+
+    it('should diagnose error on invalid retryBackoffMilliseconds parameter value', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/http-extractor/invalid-invalid-retryBackoffMilliseconds-param.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+      expect(validationAcceptorMock).toHaveBeenCalledWith(
+        'error',
+        'The value of property "retryBackoffMilliseconds" must not be smaller than 1000',
+        expect.any(Object),
+      );
+    });
+
+    it('should diagnose no error on valid retryBackoffStrategy parameter value', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/http-extractor/valid-valid-retryBackoffStrategy-param.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
+    });
+
+    it('should diagnose error on invalid retryBackoffStrategy parameter value', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/http-extractor/invalid-invalid-retryBackoffStrategy-param.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+      expect(validationAcceptorMock).toHaveBeenCalledWith(
+        'error',
+        'The value of property "retryBackoffStrategy" must be one of the following values: "exponential", "linear"',
+        expect.any(Object),
+      );
+    });
+  });
 });
