@@ -417,4 +417,31 @@ describe('Validation of PropertyAssignment', () => {
       expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
     });
   });
+
+  describe('TextFileInterpreter blocktype', () => {
+    it('should diagnose no error on valid encoding parameter value', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/text-file-interpreter/valid-utf8-encoding-param.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
+    });
+
+    it('should diagnose error on invalid entity parameter value', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/text-file-interpreter/invalid-invalid-encoding-param.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+      expect(validationAcceptorMock).toHaveBeenCalledWith(
+        'error',
+        'The value of property "encoding" must be one of the following values: "utf8", "ibm866", "latin2", "latin3", "latin4", "cyrillic", "arabic", "greek", "hebrew", "logical", "latin6", "utf-16"',
+        expect.any(Object),
+      );
+    });
+  });
 });

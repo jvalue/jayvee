@@ -201,6 +201,13 @@ function checkBlocktypeSpecificProperties(
         validationContext,
         evaluationContext,
       );
+    case 'TextFileInterpreter':
+      return checkTextFileInterpreterProperty(
+        propName,
+        propValue,
+        property,
+        validationContext,
+      );
     default:
   }
 }
@@ -417,5 +424,42 @@ function checkTableInterpreterProperty(
     }
 
     checkUniqueNames(valuetypeAssignments, validationContext, 'column');
+  }
+}
+
+function checkTextFileInterpreterProperty(
+  propName: string,
+  propValue: InternalValueRepresentation,
+  property: PropertyAssignment,
+  validationContext: ValidationContext,
+) {
+  // https://developer.mozilla.org/en-US/docs/Web/API/Encoding_API/Encodings
+  const allowedEncodings: InternalValueRepresentation[] = [
+    'utf8',
+    'ibm866',
+    'latin2',
+    'latin3',
+    'latin4',
+    'cyrillic',
+    'arabic',
+    'greek',
+    'hebrew',
+    'logical',
+    'latin6',
+    'utf-16',
+  ];
+  if (propName === 'encoding') {
+    if (!allowedEncodings.includes(propValue)) {
+      validationContext.accept(
+        'error',
+        `The value of property "${propName}" must be one of the following values: ${allowedEncodings
+          .map((v) => `"${v.toString()}"`)
+          .join(', ')}`,
+        {
+          node: property,
+          property: 'value',
+        },
+      );
+    }
   }
 }
