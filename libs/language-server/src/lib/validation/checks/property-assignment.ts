@@ -27,7 +27,10 @@ import {
   PropertySpecification,
 } from '../../meta-information/meta-inf';
 import { ValidationContext } from '../validation-context';
-import { checkExpressionSimplification } from '../validation-util';
+import {
+  checkExpressionSimplification,
+  checkUniqueNames,
+} from '../validation-util';
 
 export function validatePropertyAssignment(
   property: PropertyAssignment,
@@ -186,6 +189,13 @@ function checkBlocktypeSpecificProperties(
       );
     case 'RowDeleter':
       return checkRowDeleterProperty(
+        propName,
+        property,
+        validationContext,
+        evaluationContext,
+      );
+    case 'TableInterpreter':
+      return checkTableInterpreterProperty(
         propName,
         property,
         validationContext,
@@ -387,5 +397,25 @@ function checkRowDeleterProperty(
         );
       }
     });
+  }
+}
+
+function checkTableInterpreterProperty(
+  propName: string,
+  property: PropertyAssignment,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
+) {
+  if (propName === 'columns') {
+    const valuetypeAssignments = evaluatePropertyValue(
+      property,
+      evaluationContext,
+      new CollectionValuetype(PrimitiveValuetypes.ValuetypeAssignment),
+    );
+    if (valuetypeAssignments === undefined) {
+      return;
+    }
+
+    checkUniqueNames(valuetypeAssignments, validationContext, 'column');
   }
 }

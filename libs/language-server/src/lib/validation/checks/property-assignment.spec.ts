@@ -383,4 +383,38 @@ describe('Validation of PropertyAssignment', () => {
       expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
     });
   });
+
+  describe('TableInterpreter blocktype', () => {
+    it('should diagnose error on non unique column names', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/table-interpreter/invalid-non-unique-column-names.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
+      expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+        1,
+        'error',
+        'The column name "name" needs to be unique.',
+        expect.any(Object),
+      );
+      expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+        2,
+        'error',
+        'The column name "name" needs to be unique.',
+        expect.any(Object),
+      );
+    });
+
+    it('should diagnose no error', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/table-interpreter/valid-correct-table.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
+    });
+  });
 });
