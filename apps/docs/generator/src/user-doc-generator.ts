@@ -11,6 +11,7 @@ import {
   IOType,
   JayveeBlockTypeDocGenerator,
   JayveeConstraintTypeDocGenerator,
+  JayveeServices,
   JayveeValueTypesDocGenerator,
   MarkdownBuilder,
   PrimitiveValuetype,
@@ -23,6 +24,8 @@ export class UserDocGenerator
     JayveeConstraintTypeDocGenerator,
     JayveeValueTypesDocGenerator
 {
+  constructor(private services: JayveeServices) {}
+
   generateValueTypesDoc(valueTypes: {
     [name: string]: PrimitiveValuetype;
   }): string {
@@ -73,12 +76,28 @@ block ExampleTableInterpreter oftype TableInterpreter {
   }
 
   generateBlockTypeDoc(metaInf: BlockMetaInformation): string {
+    const documentationService =
+      this.services.documentation.DocumentationProvider;
+    const blocktypeDocs = documentationService.getDocumentation(
+      metaInf.wrapped,
+    );
+    const blocktypeDocsParts = blocktypeDocs
+      ?.split('@example')
+      .map((t) => t.trim());
+    const blocktypeExamples = blocktypeDocsParts?.slice(1).map((x) => {
+      const exampleLines = x.split('\n');
+      return {
+        description: exampleLines[0] ?? '',
+        code: exampleLines.slice(1).join('\n'),
+      };
+    });
+
     const builder = new UserDocMarkdownBuilder()
       .docTitle(metaInf.type)
       .generationComment()
       .ioTypes(metaInf.inputType, metaInf.outputType)
-      .description(metaInf.docs.description)
-      .examples(metaInf.docs.examples);
+      .description(blocktypeDocsParts?.[0])
+      .examples(blocktypeExamples);
 
     builder.propertiesHeading();
     Object.entries(metaInf.getPropertySpecifications()).forEach(

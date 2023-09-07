@@ -3,8 +3,8 @@ Interprets an input file as a csv-file containing string-values delimited by `de
 
 @example Interprets an input file as a csv-file containing string-values delimited by `;` and outputs `Sheet`.
 block AgencyCSVInterpreter oftype CSVInterpreter {  
-    delimiter: ";";
-  }
+	delimiter: ";";
+}
 */
 builtin blocktype CSVInterpreter {
 	input default oftype TextFile;

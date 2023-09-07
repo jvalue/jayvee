@@ -14,10 +14,7 @@ import {
   evaluateExpression,
   getIOType,
 } from '../ast';
-import {
-  ReferenceableBlocktypeDefinition,
-  isBuiltinBlocktypeDefinition,
-} from '../ast/generated/ast';
+import { ReferenceableBlocktypeDefinition } from '../ast/generated/ast';
 import { RuntimeParameterProvider } from '../services';
 
 import { ExampleDoc, MetaInformation, PropertySpecification } from './meta-inf';
@@ -29,6 +26,7 @@ interface BlockDocs {
 
 export class BlockMetaInformation extends MetaInformation {
   docs: BlockDocs = {};
+  readonly wrapped: ReferenceableBlocktypeDefinition;
 
   readonly inputType: IOType;
   readonly outputType: IOType;
@@ -66,6 +64,8 @@ export class BlockMetaInformation extends MetaInformation {
 
     super(blocktypeName, properties, undefined);
 
+    this.wrapped = blocktypeDefinition;
+
     const inputPort = blocktypeDefinition.inputs[0];
     assert(inputPort !== undefined);
     this.inputType = getIOType(inputPort);
@@ -100,9 +100,8 @@ export class BlockMetaInformation extends MetaInformation {
     }
 
     if (
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       blocktypeDefinition.properties.some((property) => {
-        property.valueType.reference.ref === undefined;
+        return property.valueType.reference.ref === undefined;
       })
     ) {
       return false;

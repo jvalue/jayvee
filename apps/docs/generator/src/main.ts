@@ -7,13 +7,13 @@ import { join } from 'path';
 
 import {
   BlockMetaInformation,
+  JayveeServices,
   PrimitiveValuetypes,
   createJayveeServices,
   getRegisteredConstraintMetaInformation,
   initializeWorkspace,
   isJayveeModel,
 } from '@jvalue/jayvee-language-server';
-import { LangiumDocuments } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import { UserDocGenerator } from './user-doc-generator';
@@ -23,18 +23,19 @@ async function main(): Promise<void> {
 
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   await initializeWorkspace(services);
-  const documentService = services.shared.workspace.LangiumDocuments;
 
-  generateBlockTypeDocs(documentService, rootPath);
-  generateConstraintTypeDocs(rootPath);
-  generateValueTypeDocs(rootPath);
+  generateBlockTypeDocs(services, rootPath);
+  generateConstraintTypeDocs(services, rootPath);
+  generateValueTypeDocs(services, rootPath);
   generateExampleDocs(rootPath);
 }
 
 function generateBlockTypeDocs(
-  documentService: LangiumDocuments,
+  services: JayveeServices,
   rootPath: string,
 ): void {
+  const documentService = services.shared.workspace.LangiumDocuments;
+
   const metaInfs: BlockMetaInformation[] = [];
   documentService.all
     .map((document) => document.parseResult.value)
@@ -48,6 +49,7 @@ function generateBlockTypeDocs(
         }
       });
     });
+
   const docsPath = join(
     rootPath,
     'apps',
@@ -58,7 +60,7 @@ function generateBlockTypeDocs(
   );
 
   for (const metaInf of metaInfs) {
-    const userDocBuilder = new UserDocGenerator();
+    const userDocBuilder = new UserDocGenerator(services);
     const blockTypeDoc = userDocBuilder.generateBlockTypeDoc(metaInf);
 
     const fileName = `${metaInf.type}.md`;
@@ -69,7 +71,10 @@ function generateBlockTypeDocs(
   }
 }
 
-function generateConstraintTypeDocs(rootPath: string): void {
+function generateConstraintTypeDocs(
+  services: JayveeServices,
+  rootPath: string,
+): void {
   const docsPath = join(
     rootPath,
     'apps',
@@ -81,7 +86,7 @@ function generateConstraintTypeDocs(rootPath: string): void {
   const metaInfs = getRegisteredConstraintMetaInformation();
 
   for (const metaInf of metaInfs) {
-    const userDocBuilder = new UserDocGenerator();
+    const userDocBuilder = new UserDocGenerator(services);
     const blockTypeDoc = userDocBuilder.generateConstraintTypeDoc(metaInf);
 
     const fileName = `${metaInf.type}.md`;
@@ -92,9 +97,12 @@ function generateConstraintTypeDocs(rootPath: string): void {
   }
 }
 
-function generateValueTypeDocs(rootPath: string): void {
+function generateValueTypeDocs(
+  services: JayveeServices,
+  rootPath: string,
+): void {
   const docsPath = join(rootPath, 'apps', 'docs', 'docs', 'user', 'valuetypes');
-  const userDocBuilder = new UserDocGenerator();
+  const userDocBuilder = new UserDocGenerator(services);
   const valueTypeDoc =
     userDocBuilder.generateValueTypesDoc(PrimitiveValuetypes);
 
