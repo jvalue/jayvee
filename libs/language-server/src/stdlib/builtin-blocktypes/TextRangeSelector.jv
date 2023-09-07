@@ -7,5 +7,4 @@ builtin blocktype TextRangeSelector {
 	
 	property lineFrom oftype integer: 1;
 	property lineTo oftype integer: 9007199254740991;
-	// TODO: ensure lineFrom <= lineTo
 }

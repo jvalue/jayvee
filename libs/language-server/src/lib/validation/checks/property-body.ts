@@ -13,6 +13,7 @@ import { EvaluationContext } from '../../ast/expressions/evaluation';
 import {
   PropertyAssignment,
   PropertyBody,
+  isBlockDefinition,
   isBuiltinConstrainttypeDefinition,
   isReferenceableBlocktypeDefinition,
 } from '../../ast/generated/ast';
@@ -22,6 +23,7 @@ import { getConstraintMetaInf } from '../../meta-information/meta-inf-registry';
 import { ValidationContext } from '../validation-context';
 import { checkUniqueNames } from '../validation-util';
 
+import { checkBlocktypeSpecificPropertyBody } from './blocktype-specific/property-body';
 import { validatePropertyAssignment } from './property-assignment';
 
 export function validatePropertyBody(
@@ -114,4 +116,12 @@ function checkCustomPropertyValidation(
   evaluationContext: EvaluationContext,
 ): void {
   metaInf.validate(propertyBody, validationContext, evaluationContext);
+
+  if (isBlockDefinition(propertyBody.$container)) {
+    checkBlocktypeSpecificPropertyBody(
+      propertyBody,
+      validationContext,
+      evaluationContext,
+    );
+  }
 }

@@ -1,0 +1,109 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
+import { NodeFileSystem } from 'langium/node';
+
+import {
+  BlockMetaInformation,
+  EvaluationContext,
+  MetaInformation,
+  PropertyBody,
+  RuntimeParameterProvider,
+  ValidationContext,
+  createJayveeServices,
+  getConstraintMetaInf,
+  isBuiltinConstrainttypeDefinition,
+  isReferenceableBlocktypeDefinition,
+} from '../../..';
+import {
+  ParseHelperOptions,
+  expectNoParserAndLexerErrors,
+  parseHelper,
+  readJvTestAssetHelper,
+  validationAcceptorMockImpl,
+} from '../../../../test';
+
+import { checkBlocktypeSpecificPropertyBody } from './property-body';
+
+describe('Validation of blocktype specific property bodies', () => {
+  let parse: (
+    input: string,
+    options?: ParseHelperOptions,
+  ) => Promise<LangiumDocument<AstNode>>;
+
+  const validationAcceptorMock = jest.fn(validationAcceptorMockImpl);
+
+  let locator: AstNodeLocator;
+
+  const readJvTestAsset = readJvTestAssetHelper(
+    __dirname,
+    '../../../../test/assets/',
+  );
+
+  async function parseAndValidatePropertyAssignment(input: string) {
+    const document = await parse(input);
+    expectNoParserAndLexerErrors(document);
+
+    const propertyBody = locator.getAstNode<PropertyBody>(
+      document.parseResult.value,
+      'pipelines@0/blocks@0/body',
+    ) as PropertyBody;
+
+    const type = propertyBody.$container.type;
+    let metaInf: MetaInformation | undefined;
+    if (isReferenceableBlocktypeDefinition(type.ref)) {
+      metaInf = new BlockMetaInformation(type.ref);
+    } else if (isBuiltinConstrainttypeDefinition(type.ref)) {
+      metaInf = getConstraintMetaInf(type.ref);
+    }
+    expect(metaInf).toBeDefined();
+
+    checkBlocktypeSpecificPropertyBody(
+      propertyBody,
+      new ValidationContext(validationAcceptorMock),
+      new EvaluationContext(new RuntimeParameterProvider()),
+    );
+  }
+
+  beforeAll(() => {
+    // Create language services
+    const services = createJayveeServices(NodeFileSystem).Jayvee;
+    locator = services.workspace.AstNodeLocator;
+    // Parse function for Jayvee (without validation)
+    parse = parseHelper(services);
+  });
+
+  afterEach(() => {
+    // Reset mock
+    validationAcceptorMock.mockReset();
+  });
+
+  describe('TextRangeSelector blocktype', () => {
+    it('should diagnose error on lineFrom > lineTo', async () => {
+      const text = readJvTestAsset(
+        'property-body/blocktype-specific/text-range-selector/invalid-lineFrom-greater-lineTo.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
+      expect(validationAcceptorMock).toHaveBeenCalledWith(
+        'error',
+        'The lower line number needs to be smaller or equal to the upper line number',
+        expect.any(Object),
+      );
+    });
+
+    it('should diagnose no error', async () => {
+      const text = readJvTestAsset(
+        'property-body/blocktype-specific/text-range-selector/valid-correct-range.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
+    });
+  });
+});
