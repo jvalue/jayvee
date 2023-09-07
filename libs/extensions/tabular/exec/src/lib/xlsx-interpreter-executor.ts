@@ -52,8 +52,6 @@ export class XLSXInterpreterExecutor extends AbstractBlockExecutor<
         workSheetDataArray[rowNumber - 1] = cellValues;
       });
 
-      console.log(JSON.stringify(workSheetDataArray));
-
       workbook.addSheet(workSheetDataArray, workSheet.name);
     });
 
