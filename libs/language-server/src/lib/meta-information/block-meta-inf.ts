@@ -56,7 +56,7 @@ export class BlockMetaInformation extends MetaInformation {
 
       const defaultValue = evaluateExpression(
         property.defaultValue,
-        new EvaluationContext(new RuntimeParameterProvider()), // TODO: check if that works
+        new EvaluationContext(new RuntimeParameterProvider()),
       );
       if (defaultValue !== undefined) {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
