@@ -150,7 +150,12 @@ export class ExecutionContext {
       return getOrFailConstraintMetaInf(currentNode.type);
     } else if (isBlockDefinition(currentNode)) {
       assert(isReference(currentNode.type));
-      assert(BlockMetaInformation.canBeWrapped(currentNode.type));
+      assert(
+        BlockMetaInformation.canBeWrapped(currentNode.type),
+        `Blocktype ${
+          currentNode.type.ref?.name ?? '<unresolved reference>'
+        } cannot be wrapped`,
+      );
       return new BlockMetaInformation(currentNode.type);
     }
     assertUnreachable(currentNode);

@@ -79,7 +79,6 @@ export async function validateDocument(
     for (const errDiagnostic of errDiagnostics) {
       logger.logLanguageServerDiagnostic(errDiagnostic, document);
     }
-    throw new Error(errDiagnostics.map((r) => r.message).join('\n'));
     process.exit(ExitCode.FAILURE);
   }
 
