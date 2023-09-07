@@ -81,23 +81,15 @@ block ExampleTableInterpreter oftype TableInterpreter {
     const blocktypeDocs = documentationService.getDocumentation(
       metaInf.wrapped,
     );
-    const blocktypeDocsParts = blocktypeDocs
-      ?.split('@example')
-      .map((t) => t.trim());
-    const blocktypeExamples = blocktypeDocsParts?.slice(1).map((x) => {
-      const exampleLines = x.split('\n');
-      return {
-        description: exampleLines[0] ?? '',
-        code: exampleLines.slice(1).join('\n'),
-      };
-    });
+    const blocktypeDocsFromComments =
+      this.extractDocsFromComment(blocktypeDocs);
 
     const builder = new UserDocMarkdownBuilder()
       .docTitle(metaInf.type)
       .generationComment()
       .ioTypes(metaInf.inputType, metaInf.outputType)
-      .description(blocktypeDocsParts?.[0])
-      .examples(blocktypeExamples);
+      .description(blocktypeDocsFromComments?.description)
+      .examples(blocktypeDocsFromComments?.examples);
 
     builder.propertiesHeading();
     Object.entries(metaInf.getPropertySpecifications()).forEach(
@@ -111,24 +103,14 @@ block ExampleTableInterpreter oftype TableInterpreter {
 
         const propertyDocs =
           documentationService.getDocumentation(blocktypeProperty);
-        console.log(propertyDocs);
-        const propertyDocsParts = propertyDocs
-          ?.split('@example')
-          .map((t) => t.trim());
-        const propertyExamples = propertyDocsParts?.slice(1).map((x) => {
-          const exampleLines = x.split('\n');
-          return {
-            description: exampleLines[0] ?? '',
-            code: exampleLines.slice(1).join('\n'),
-          };
-        });
+        const propDocsFromComments = this.extractDocsFromComment(propertyDocs);
 
         builder
           .propertyHeading(key, 3)
           .propertySpec(property)
-          .description(propertyDocsParts?.[0], 4)
+          .description(propDocsFromComments?.description, 4)
           .validation(property.docs?.validation, 4)
-          .examples(propertyExamples, 4);
+          .examples(propDocsFromComments?.examples, 4);
       },
     );
 
@@ -156,6 +138,30 @@ block ExampleTableInterpreter oftype TableInterpreter {
     );
 
     return builder.build();
+  }
+
+  private extractDocsFromComment(comment?: string | undefined):
+    | {
+        description: string | undefined;
+        examples: ExampleDoc[];
+      }
+    | undefined {
+    if (comment === undefined) {
+      return undefined;
+    }
+    const commentSections = comment.split('@example').map((t) => t.trim());
+    const examples = commentSections.slice(1).map((x) => {
+      const exampleLines = x.split('\n');
+      return {
+        description: exampleLines[0] ?? '',
+        code: exampleLines.slice(1).join('\n'),
+      };
+    });
+
+    return {
+      description: commentSections[0],
+      examples: examples,
+    };
   }
 }
 
