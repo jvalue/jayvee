@@ -80,10 +80,10 @@ function checkRuntimeParameterValueParsing(
   }
 
   let metaInf: MetaInformation | undefined;
-  if (isReferenceableBlocktypeDefinition(type.ref)) {
-    if (!BlockMetaInformation.canBeWrapped(type.ref)) {
-      return; // TODO: is this the rigth thing to do here?
-    }
+  if (
+    isReferenceableBlocktypeDefinition(type.ref) &&
+    BlockMetaInformation.canBeWrapped(type.ref)
+  ) {
     metaInf = new BlockMetaInformation(type.ref);
   } else if (isBuiltinConstrainttypeDefinition(type.ref)) {
     metaInf = getConstraintMetaInf(type.ref);
