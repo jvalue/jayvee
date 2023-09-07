@@ -10,6 +10,8 @@ builtin blocktype ArchiveInterpreter {
 	input default oftype File;
 	output default oftype FileSystem;
 	
-	// The archive type to be interpreted, e.g., "zip" or "gz".
+	/* 
+	The archive type to be interpreted, e.g., "zip" or "gz". 
+	*/
 	property archiveType oftype text;
 }

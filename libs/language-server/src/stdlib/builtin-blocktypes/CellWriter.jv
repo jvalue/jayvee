@@ -17,8 +17,12 @@ builtin blocktype CellWriter {
 	input default oftype Sheet;
 	output default oftype Sheet;
 	
-	// The values to write.
+	/* 
+	The values to write.
+	*/
 	property write oftype Collection<text>;
-	// The cells to write into.
+	/*
+	The cells to write into.
+	*/
 	property at oftype CellRange;
 }

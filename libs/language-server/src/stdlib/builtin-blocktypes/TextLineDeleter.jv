@@ -5,6 +5,8 @@ builtin blocktype TextLineDeleter {
 	input default oftype TextFile;
 	output default oftype TextFile;
 	
-	// The line numbers to delete.
+	/*
+	The line numbers to delete.
+	*/
 	property lines oftype Collection<integer>;
 }

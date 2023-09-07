@@ -102,12 +102,33 @@ block ExampleTableInterpreter oftype TableInterpreter {
     builder.propertiesHeading();
     Object.entries(metaInf.getPropertySpecifications()).forEach(
       ([key, property]) => {
+        const blocktypeProperty = metaInf.wrapped.properties.filter(
+          (p) => p.name === key,
+        )[0];
+        if (blocktypeProperty === undefined) {
+          return;
+        }
+
+        const propertyDocs =
+          documentationService.getDocumentation(blocktypeProperty);
+        console.log(propertyDocs);
+        const propertyDocsParts = propertyDocs
+          ?.split('@example')
+          .map((t) => t.trim());
+        const propertyExamples = propertyDocsParts?.slice(1).map((x) => {
+          const exampleLines = x.split('\n');
+          return {
+            description: exampleLines[0] ?? '',
+            code: exampleLines.slice(1).join('\n'),
+          };
+        });
+
         builder
           .propertyHeading(key, 3)
           .propertySpec(property)
-          .description(property.docs?.description, 4)
+          .description(propertyDocsParts?.[0], 4)
           .validation(property.docs?.validation, 4)
-          .examples(property.docs?.examples, 4);
+          .examples(propertyExamples, 4);
       },
     );
 

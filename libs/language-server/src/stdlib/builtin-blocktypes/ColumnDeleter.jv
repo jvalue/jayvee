@@ -10,6 +10,8 @@ builtin blocktype ColumnDeleter {
 	input default oftype Sheet;
 	output default oftype Sheet;
 	
-	// The columns to delete. Has to be a full column.
+	/* 
+	The columns to delete. Has to be a full column.
+	*/
 	property delete oftype Collection<CellRange>;
 }

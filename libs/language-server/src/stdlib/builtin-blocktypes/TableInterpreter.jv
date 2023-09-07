@@ -25,8 +25,13 @@ builtin blocktype TableInterpreter {
 	input default oftype Sheet;
 	output default oftype Table;
 	
-	// Whether the first row should be interpreted as header row.
-	property header oftype boolean: true;
-	// Collection of valuetype assignments. Uses column names (potentially matched with the header or by sequence depending on the `header` property) to assign a primitive valuetype to each column.
-	property columns oftype Collection<ValuetypeAssignment>;
+  /*
+  Whether the first row should be interpreted as header row.
+	*/
+  property header oftype boolean: true;
+	
+  /*
+  Collection of valuetype assignments. Uses column names (potentially matched with the header or by sequence depending on the `header` property) to assign a primitive valuetype to each column.
+	*/
+  property columns oftype Collection<ValuetypeAssignment>;
 }

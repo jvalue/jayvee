@@ -10,6 +10,8 @@ builtin blocktype SheetPicker {
 	input default oftype Workbook;
 	output default oftype Sheet;
 	
-	// The name of the sheet to select.
+	/*
+	The name of the sheet to select.
+	*/
 	property sheetName oftype text;
 }

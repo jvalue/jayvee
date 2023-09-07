@@ -10,10 +10,18 @@ builtin blocktype CSVInterpreter {
 	input default oftype TextFile;
 	output default oftype Sheet;
 	
-	// The delimiter for values in the CSV file.
+	/*
+	The delimiter for values in the CSV file.
+	*/
 	property delimiter oftype text: ',';
-	// The enclosing character that may be used for values in the CSV file.
+	
+	/*
+	The enclosing character that may be used for values in the CSV file.
+	*/
 	property enclosing oftype text: '';
-	// The character to escape enclosing characters in values.
+	
+	/*
+	The character to escape enclosing characters in values.
+	*/
 	property enclosingEscape oftype text: '';
 }

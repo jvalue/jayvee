@@ -10,6 +10,8 @@ builtin blocktype RowDeleter {
 	input default oftype Sheet;
 	output default oftype Sheet;
 	
-	// The rows to delete.
+	/*
+	The rows to delete.
+	*/
 	property delete oftype Collection<CellRange>;
 }

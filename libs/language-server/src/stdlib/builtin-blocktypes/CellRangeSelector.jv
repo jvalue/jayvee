@@ -10,6 +10,8 @@ builtin blocktype CellRangeSelector {
 	input default oftype Sheet;
 	output default oftype Sheet;
 	
-	// The cell range to select.
+	/*
+	The cell range to select.
+	*/
 	property select oftype CellRange;
 }

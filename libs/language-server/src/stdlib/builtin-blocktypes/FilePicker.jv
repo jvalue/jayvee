@@ -10,6 +10,8 @@ builtin blocktype FilePicker {
 	input default oftype FileSystem;
 	output default oftype File;
 	
-	// The path of the file to select, relative to the root of the provided `FileSystem`.
+	/* 
+	The path of the file to select, relative to the root of the provided `FileSystem`.
+	*/
 	property path oftype text;
 }

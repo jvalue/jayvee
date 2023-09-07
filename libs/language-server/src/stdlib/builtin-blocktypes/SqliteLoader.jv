@@ -11,10 +11,18 @@ builtin blocktype SQLiteLoader {
 	input default oftype Table;
 	output default oftype None;
 	
-	// The name of the table to write into.
+	/*
+	The name of the table to write into.
+	*/
 	property table oftype text;
-	// The path to a SQLite file that will be created if it does not exist. Usual file extensions are `.sqlite` and `.db`.
+	
+	/*
+	The path to a SQLite file that will be created if it does not exist. Usual file extensions are `.sqlite` and `.db`.
+	*/
 	property file oftype text;
-	// Indicates, whether to drop the table before loading data into it. If `false`, data is appended to the table instead of dropping it.
+	
+	/*
+	Indicates, whether to drop the table before loading data into it. If `false`, data is appended to the table instead of dropping it.
+	*/
 	property dropTable oftype boolean: true;
 }
