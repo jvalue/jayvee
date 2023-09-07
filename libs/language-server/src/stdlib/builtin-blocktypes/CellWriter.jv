@@ -21,5 +21,4 @@ builtin blocktype CellWriter {
 	property write oftype Collection<text>;
 	// The cells to write into.
 	property at oftype CellRange;
-	// TODO: ensure write.length === at.values.length
 }

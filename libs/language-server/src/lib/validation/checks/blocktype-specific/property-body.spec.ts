@@ -106,4 +106,38 @@ describe('Validation of blocktype specific property bodies', () => {
       expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
     });
   });
+
+  describe('CellWriter blocktype', () => {
+    it('should diagnose error on number of write values does not match cell range', async () => {
+      const text = readJvTestAsset(
+        'property-body/blocktype-specific/cell-writer/invalid-write-length-does-not-match-cell-range.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
+      expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+        1,
+        'warning',
+        'The number of values to write (3) does not match the number of cells (4)',
+        expect.any(Object),
+      );
+      expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+        2,
+        'warning',
+        'The number of values to write (3) does not match the number of cells (4)',
+        expect.any(Object),
+      );
+    });
+
+    it('should diagnose no error', async () => {
+      const text = readJvTestAsset(
+        'property-body/blocktype-specific/cell-writer/valid-range-matches-array-length.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
+    });
+  });
 });

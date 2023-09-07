@@ -131,6 +131,16 @@ describe('Validation of blocktype specific properties', () => {
         expect.any(Object),
       );
     });
+
+    it('should diagnose no error on correct dimension for at parameter', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/cell-writer/valid-one-dimensional-at-value.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
+    });
   });
 
   describe('ColumnDeleter blocktype', () => {
