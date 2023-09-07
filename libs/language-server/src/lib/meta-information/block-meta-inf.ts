@@ -88,10 +88,26 @@ export class BlockMetaInformation extends MetaInformation {
       return false;
     }
 
-    // TODO: implement
-    if (isBuiltinBlocktypeDefinition(blocktypeDefinition)) {
-      return true;
+    if (
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      blocktypeDefinition.properties === undefined ||
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      blocktypeDefinition.name === undefined ||
+      blocktypeDefinition.inputs[0] === undefined ||
+      blocktypeDefinition.outputs[0] === undefined
+    ) {
+      return false;
     }
+
+    if (
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      blocktypeDefinition.properties.some((property) => {
+        property.valueType.reference.ref === undefined;
+      })
+    ) {
+      return false;
+    }
+
     return true;
   }
 
