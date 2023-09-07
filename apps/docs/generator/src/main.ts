@@ -8,21 +8,46 @@ import { join } from 'path';
 import {
   BlockMetaInformation,
   PrimitiveValuetypes,
+  createJayveeServices,
   getRegisteredConstraintMetaInformation,
-  registerConstraints,
+  initializeWorkspace,
+  isJayveeModel,
 } from '@jvalue/jayvee-language-server';
+import { LangiumDocuments } from 'langium';
+import { NodeFileSystem } from 'langium/node';
 
 import { UserDocGenerator } from './user-doc-generator';
 
-function main(): void {
+async function main(): Promise<void> {
   const rootPath = join(__dirname, '..', '..', '..', '..');
-  generateBlockTypeDocs(rootPath);
+
+  const services = createJayveeServices(NodeFileSystem).Jayvee;
+  await initializeWorkspace(services);
+  const documentService = services.shared.workspace.LangiumDocuments;
+
+  generateBlockTypeDocs(documentService, rootPath);
   generateConstraintTypeDocs(rootPath);
   generateValueTypeDocs(rootPath);
   generateExampleDocs(rootPath);
 }
 
-function generateBlockTypeDocs(rootPath: string): void {
+function generateBlockTypeDocs(
+  documentService: LangiumDocuments,
+  rootPath: string,
+): void {
+  const metaInfs: BlockMetaInformation[] = [];
+  documentService.all
+    .map((document) => document.parseResult.value)
+    .forEach((parsedDocument) => {
+      if (!isJayveeModel(parsedDocument)) {
+        throw new Error('Expected parsed document to be a JayveeModel');
+      }
+      parsedDocument.blocktypes.forEach((blocktypeDefinition) => {
+        if (BlockMetaInformation.canBeWrapped(blocktypeDefinition)) {
+          metaInfs.push(new BlockMetaInformation(blocktypeDefinition));
+        }
+      });
+    });
   const docsPath = join(
     rootPath,
     'apps',
@@ -31,7 +56,7 @@ function generateBlockTypeDocs(rootPath: string): void {
     'user',
     'block-types',
   );
-  const metaInfs: BlockMetaInformation[] = []; // TODO: load from Std Lib
+
   for (const metaInf of metaInfs) {
     const userDocBuilder = new UserDocGenerator();
     const blockTypeDoc = userDocBuilder.generateBlockTypeDoc(metaInf);
@@ -53,7 +78,6 @@ function generateConstraintTypeDocs(rootPath: string): void {
     'user',
     'constraint-types',
   );
-  registerConstraints();
   const metaInfs = getRegisteredConstraintMetaInformation();
 
   for (const metaInf of metaInfs) {
@@ -109,4 +133,6 @@ ${exampleModel.toString()}
   }
 }
 
-main();
+main()
+  .then(() => console.log('Finished generating docs!'))
+  .catch((e) => console.error(e));
