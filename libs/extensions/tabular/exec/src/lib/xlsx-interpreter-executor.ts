@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'assert';
-
 import * as R from '@jvalue/jayvee-execution';
 import {
   AbstractBlockExecutor,
@@ -14,7 +12,7 @@ import {
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import { IOType } from '@jvalue/jayvee-language-server';
-import * as xlsx from 'xlsx';
+import * as exceljs from 'exceljs';
 
 @implementsStatic<BlockExecutorClass>()
 export class XLSXInterpreterExecutor extends AbstractBlockExecutor<
@@ -32,26 +30,33 @@ export class XLSXInterpreterExecutor extends AbstractBlockExecutor<
     context: ExecutionContext,
   ): Promise<R.Result<Workbook>> {
     context.logger.logDebug(`Reading from XLSX file`);
-    const workBookFromFile = xlsx.read(file.content, {
-      dense: true,
-      raw: true,
-    });
+    const workBookFromFile = new exceljs.Workbook();
+    await workBookFromFile.xlsx.load(file.content);
+
     const workbook = new Workbook();
-    for (const workSheetName of workBookFromFile.SheetNames) {
-      const workSheet = workBookFromFile.Sheets[workSheetName];
-      assert(
-        workSheet !== undefined,
-        `Failed to read sheet ${workSheetName} from Workbook.`,
-      );
 
-      /** Extract sheet into array of array structure as described in https://github.com/SheetJS/sheetjs/issues/1258#issuecomment-419129919 */
-      const workSheetDataArray: string[][] = xlsx.utils.sheet_to_json(
-        workSheet,
-        { header: 1, raw: true, rawNumbers: false, defval: '' },
-      );
+    workBookFromFile.eachSheet((workSheet) => {
+      const workSheetDataArray: string[][] = [];
+      workSheet.eachRow((row, rowNumber) => {
+        const cellValues: string[] = [];
 
-      workbook.addSheet(workSheetDataArray, workSheetName);
-    }
+        // ExcelJS Rows and Columns are indexed from 1
+        // We reduce their index to match Sheets being zero indexed
+        row.eachCell(
+          { includeEmpty: true },
+          (cell: exceljs.Cell, colNumber: number) => {
+            cellValues[colNumber - 1] = cell.text;
+          },
+        );
+
+        workSheetDataArray[rowNumber - 1] = cellValues;
+      });
+
+      console.log(JSON.stringify(workSheetDataArray));
+
+      workbook.addSheet(workSheetDataArray, workSheet.name);
+    });
+
     return Promise.resolve(R.ok(workbook));
   }
 }
