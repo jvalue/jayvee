@@ -38,6 +38,7 @@ export function getBuiltinConstrainttypesLib() {
   const builtins = constraintMetaInfRegistry.getAllEntries();
   return {
     'builtin:///stdlib/builtin-constrainttypes.jv': builtins
+      .filter((entry) => entry.value instanceof ConstraintMetaInformation)
       .map((entry) => parseConstraintMetaInfToJayvee(entry.key, entry.value))
       .join('\n\n'),
   };

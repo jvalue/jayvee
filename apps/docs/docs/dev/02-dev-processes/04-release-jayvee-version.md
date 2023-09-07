@@ -15,7 +15,8 @@ To indicate that, we only release alpha versions where the `version` is incremen
 For releasing a new version of Jayvee, you need to complete the following steps:
 
 1. Increment the version in the `package.json` file.
-2. Run `npx nx run docs:version-snapshot`.
-3. If you are on a feature or dev branch, merge into main.
-4. Create a GitHub release on the main branch. Attach a changelog.
-5. The CI/CD will deal with the rest.
+2. Run `npm i` to update the `package-lock.json`.
+3. Run `npx nx run docs:version-snapshot` to generate a snapshot of the docs for the previous version.
+4. If you are on a feature or dev branch, merge into main.
+5. Create a GitHub release on the main branch. Attach a changelog.
+6. The CI/CD will deal with the rest.

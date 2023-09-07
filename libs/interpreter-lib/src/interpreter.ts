@@ -199,6 +199,8 @@ async function runPipeline(
       diagnosticError.message,
       diagnosticError.diagnostic,
     );
+    logExecutionDuration(startTime, executionContext.logger);
+    return ExitCode.FAILURE;
   }
 
   logExecutionDuration(startTime, executionContext.logger);
