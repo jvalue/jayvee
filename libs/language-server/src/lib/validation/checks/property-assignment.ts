@@ -20,7 +20,7 @@ import {
 import { ValidationContext } from '../validation-context';
 import { checkExpressionSimplification } from '../validation-util';
 
-import { checkBlocktypeSpecificProperties } from './blocktype-specific/properties';
+import { checkBlocktypeSpecificProperties } from './blocktype-specific/property-assignment';
 
 export function validatePropertyAssignment(
   property: PropertyAssignment,

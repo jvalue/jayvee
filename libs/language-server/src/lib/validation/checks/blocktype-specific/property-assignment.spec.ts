@@ -17,7 +17,7 @@ import {
   getConstraintMetaInf,
   isBuiltinConstrainttypeDefinition,
   isReferenceableBlocktypeDefinition,
-} from '../../../../lib';
+} from '../../..';
 import {
   ParseHelperOptions,
   expectNoParserAndLexerErrors,
@@ -26,7 +26,7 @@ import {
   validationAcceptorMockImpl,
 } from '../../../../test';
 
-import { checkBlocktypeSpecificProperties } from './properties';
+import { checkBlocktypeSpecificProperties } from './property-assignment';
 
 describe('Validation of blocktype specific properties', () => {
   let parse: (
