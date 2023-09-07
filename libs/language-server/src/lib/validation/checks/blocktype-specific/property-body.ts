@@ -25,6 +25,12 @@ export function checkBlocktypeSpecificPropertyBody(
         validationContext,
         evaluationContext,
       );
+    case 'TableTransformer':
+      return checkTableTransformerPropertyBody(
+        propertyBody,
+        validationContext,
+        evaluationContext,
+      );
     default:
   }
 }
@@ -109,5 +115,68 @@ function checkCellWriterPropertyBody(
         { node: propertyNode.value },
       );
     });
+  }
+}
+
+function checkTableTransformerPropertyBody(
+  propertyBody: PropertyBody,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
+) {
+  checkInputColumnsMatchTransformationPorts(
+    propertyBody,
+    validationContext,
+    evaluationContext,
+  );
+}
+
+function checkInputColumnsMatchTransformationPorts(
+  propertyBody: PropertyBody,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
+): void {
+  const useProperty = propertyBody.properties.find((x) => x.name === 'use');
+  const inputColumnsProperty = propertyBody.properties.find(
+    (x) => x.name === 'inputColumns',
+  );
+
+  if (useProperty === undefined || inputColumnsProperty === undefined) {
+    return;
+  }
+
+  const transform = evaluatePropertyValue(
+    useProperty,
+    evaluationContext,
+    PrimitiveValuetypes.Transform,
+  );
+  const inputColumns = evaluatePropertyValue(
+    inputColumnsProperty,
+    evaluationContext,
+    new CollectionValuetype(PrimitiveValuetypes.Text),
+  );
+
+  if (transform === undefined || inputColumns === undefined) {
+    return;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const transformInputPorts = transform?.body?.ports?.filter(
+    (x) => x.kind === 'from',
+  );
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (transformInputPorts === undefined) {
+    return;
+  }
+
+  const numberTransformPorts = transformInputPorts.length;
+  const numberInputColumns = inputColumns.length;
+
+  if (numberTransformPorts !== numberInputColumns) {
+    validationContext.accept(
+      'error',
+      `Expected ${numberTransformPorts} columns but only got ${numberInputColumns}`,
+      {
+        node: inputColumnsProperty,
+      },
+    );
   }
 }

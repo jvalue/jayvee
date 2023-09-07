@@ -140,4 +140,31 @@ describe('Validation of blocktype specific property bodies', () => {
       expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
     });
   });
+
+  describe('TableTransformer blocktype', () => {
+    it('should diagnose error on number of input columns do not match transform input ports', async () => {
+      const text = readJvTestAsset(
+        'property-body/blocktype-specific/table-transformer/invalid-input-columns-transform-port-missmatch.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+      expect(validationAcceptorMock).toHaveBeenCalledWith(
+        'error',
+        'Expected 1 columns but only got 2',
+        expect.any(Object),
+      );
+    });
+
+    it('should diagnose no error', async () => {
+      const text = readJvTestAsset(
+        'property-body/blocktype-specific/table-transformer/valid-correct-ports.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
+    });
+  });
 });

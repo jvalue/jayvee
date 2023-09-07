@@ -41,5 +41,4 @@ builtin blocktype TableTransformer {
 	property outputColumn oftype text;
 	// Reference to the transform that is applied to the column.
 	property use oftype Transform; 
-	// TODO: checkInputColumnsMatchTransformationPorts 
 }
