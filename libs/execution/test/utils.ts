@@ -41,6 +41,7 @@ export function getTestExecutionContext(
     debugGranularity: 'minimal',
     debugTargets: 'all',
   },
+  loggerPrintLogs = true,
 ): ExecutionContext {
   const pipeline = locator.getAstNode<PipelineDefinition>(
     document.parseResult.value,
@@ -49,7 +50,7 @@ export function getTestExecutionContext(
 
   const executionContext = new ExecutionContext(
     pipeline,
-    new TestLogger(runOptions.isDebugMode),
+    new TestLogger(runOptions.isDebugMode, undefined, loggerPrintLogs),
     runOptions,
     new EvaluationContext(new RuntimeParameterProvider()),
   );
