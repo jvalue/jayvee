@@ -48,7 +48,10 @@ describe('Validation of parsing-util', () => {
     exitSpy = jest
       .spyOn(process, 'exit')
       .mockImplementation((code?: number) => {
-        throw new Error(`process.exit: ${code ?? 0}`);
+        if (code === undefined || code === 0) {
+          return undefined as never;
+        }
+        throw new Error(`process.exit: ${code}`);
       });
 
     // Register test extension
@@ -60,8 +63,8 @@ describe('Validation of parsing-util', () => {
   });
 
   afterEach(() => {
+    exitSpy.mockClear();
     // logger.clearLogs();
-    jest.clearAllMocks();
   });
 
   describe('Validation of validateDocument', () => {
