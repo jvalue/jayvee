@@ -18,7 +18,7 @@ import {
 import { AstNode, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { validateDocument } from './parsing-util';
+import { extractDocumentFromString, validateDocument } from './parsing-util';
 
 describe('Validation of parsing-util', () => {
   let parse: (
@@ -106,6 +106,34 @@ describe('Validation of parsing-util', () => {
       expect(logger.getLogs().errorLogs).toHaveLength(0);
       expect(logger.getLogs().debugLogs).toHaveLength(0);
       expect(logger.getLogs().diagnosticLogs).toHaveLength(1);*/
+    });
+  });
+
+  describe('Validation of extractDocumentFromString', () => {
+    it('should diagnose no error on valid model string', async () => {
+      const text = readJvTestAsset('extractDocumentFromString/valid-model.jv');
+
+      await extractDocumentFromString(text, services, logger);
+
+      expect(exitSpy).toHaveBeenCalledTimes(0);
+      /*expect(logger.getLogs().infoLogs).toHaveLength(0);
+      expect(logger.getLogs().errorLogs).toHaveLength(0);
+      expect(logger.getLogs().debugLogs).toHaveLength(0);
+      expect(logger.getLogs().diagnosticLogs).toHaveLength(0);*/
+    });
+
+    it('should diagnose error on invalid model string', async () => {
+      const text = readJvTestAsset(
+        'extractDocumentFromString/invalid-model.jv',
+      );
+
+      await extractDocumentFromString(text, services, logger);
+
+      expect(exitSpy).toHaveBeenCalledTimes(1);
+      /*expect(logger.getLogs().infoLogs).toHaveLength(0);
+      expect(logger.getLogs().errorLogs).toHaveLength(0);
+      expect(logger.getLogs().debugLogs).toHaveLength(0);
+      expect(logger.getLogs().diagnosticLogs).toHaveLength(3);*/
     });
   });
 });
