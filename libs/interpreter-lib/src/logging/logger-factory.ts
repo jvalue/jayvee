@@ -2,9 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { Logger } from '@jvalue/jayvee-execution';
-
-import { DefaultLogger } from './default-logger';
+import { DefaultLogger, Logger } from '@jvalue/jayvee-execution';
 
 export class LoggerFactory {
   constructor(private readonly enableDebugLogging: boolean) {}

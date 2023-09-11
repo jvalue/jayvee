@@ -8,7 +8,7 @@ import {
 } from '@jvalue/jayvee-language-server';
 
 import { ExecutionContext } from '../execution-context';
-import { Logger } from '../logger';
+import { Logger } from '../logging/logger';
 import { IOTypeImplementation, NONE } from '../types';
 
 // eslint-disable-next-line import/no-cycle

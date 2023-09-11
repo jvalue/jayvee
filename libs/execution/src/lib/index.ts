@@ -12,4 +12,4 @@ export * from './types/valuetypes/visitors';
 
 export * from './execution-context';
 export * from './extension';
-export * from './logger';
+export * from './logging';
