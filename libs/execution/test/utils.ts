@@ -14,6 +14,8 @@ import {
   DebugTargets,
   ExecutionContext,
   StackNode,
+  Table,
+  TableColumn,
   blockExecutorRegistry,
   constraintExecutorRegistry,
 } from '../src';
@@ -57,4 +59,18 @@ export function getTestExecutionContext(
   initialStack.forEach((node) => executionContext.enterNode(node));
 
   return executionContext;
+}
+
+export interface TableColumnDefinition {
+  columnName: string;
+  column: TableColumn;
+}
+
+export function constructTable(
+  columns: TableColumnDefinition[],
+  numberOfRows: number,
+): Table {
+  const table = new Table(numberOfRows);
+  columns.forEach((col) => table.addColumn(col.columnName, col.column));
+  return table;
 }

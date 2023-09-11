@@ -21,7 +21,7 @@ import {
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { getTestExecutionContext } from '../../../test/utils';
+import { constructTable, getTestExecutionContext } from '../../../test/utils';
 import { Table, TableColumn } from '../types/io-types/table';
 
 import { PortDetails, TransformExecutor } from './transform-executor';
@@ -38,20 +38,6 @@ describe('Validation of TransformExecutor', () => {
     __dirname,
     '../../../test/assets/',
   );
-
-  interface TableColumnDefinition {
-    columnName: string;
-    column: TableColumn;
-  }
-
-  function constructTable(
-    columns: TableColumnDefinition[],
-    numberOfRows: number,
-  ): Table {
-    const table = new Table(numberOfRows);
-    columns.forEach((col) => table.addColumn(col.columnName, col.column));
-    return table;
-  }
 
   function getColumnsMap(
     inputColumnNames: string[],
