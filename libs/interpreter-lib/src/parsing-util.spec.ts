@@ -20,11 +20,7 @@ import {
 import { AstNode, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import {
-  extractDocumentFromFile,
-  extractDocumentFromString,
-  validateDocument,
-} from './parsing-util';
+import { extractDocumentFromFile, validateDocument } from './parsing-util';
 
 describe('Validation of parsing-util', () => {
   let parse: (
@@ -36,7 +32,7 @@ describe('Validation of parsing-util', () => {
 
   let services: JayveeServices;
 
-  const logger = new TestLogger(true, undefined);
+  const logger = new TestLogger(true, undefined, false);
 
   const readJvTestAsset = readJvTestAssetHelper(
     __dirname,
@@ -64,7 +60,7 @@ describe('Validation of parsing-util', () => {
 
   afterEach(() => {
     exitSpy.mockClear();
-    // logger.clearLogs();
+    logger.clearLogs();
   });
 
   describe('Validation of validateDocument', () => {
@@ -81,10 +77,10 @@ describe('Validation of parsing-util', () => {
       await parseAndValidateDocument(text);
 
       expect(exitSpy).toHaveBeenCalledTimes(0);
-      /* expect(logger.getLogs().infoLogs).toHaveLength(0);
+      expect(logger.getLogs().infoLogs).toHaveLength(0);
       expect(logger.getLogs().errorLogs).toHaveLength(0);
       expect(logger.getLogs().debugLogs).toHaveLength(0);
-      expect(logger.getLogs().diagnosticLogs).toHaveLength(0);*/
+      expect(logger.getLogs().diagnosticLogs).toHaveLength(0);
     });
 
     it('should diagnose error on wrong loader type', async () => {
@@ -97,16 +93,16 @@ describe('Validation of parsing-util', () => {
       } catch (e) {
         expect(exitSpy).toHaveBeenCalledTimes(1);
         expect(exitSpy).toHaveBeenCalledWith(1);
-        /* expect(logger.getLogs().infoLogs).toHaveLength(0);
+        expect(logger.getLogs().infoLogs).toHaveLength(0);
         expect(logger.getLogs().errorLogs).toHaveLength(0);
         expect(logger.getLogs().debugLogs).toHaveLength(0);
-        expect(logger.getLogs().diagnosticLogs).toHaveLength(2);*/
+        expect(logger.getLogs().diagnosticLogs).toHaveLength(2 * 5); // 2 calls that get formated to 5 lines each
       }
     });
 
     it('should diagnose no error on nonErr diagnostics', async () => {
       const text = readJvTestAsset(
-        'validateDocument/invalid-wrong-loader-type.jv',
+        'validateDocument/valid-simplify-warning.jv',
       );
 
       try {
@@ -114,40 +110,10 @@ describe('Validation of parsing-util', () => {
       } catch (e) {
         expect(exitSpy).toHaveBeenCalledTimes(1);
         expect(exitSpy).toHaveBeenCalledWith(1);
-        /* expect(logger.getLogs().infoLogs).toHaveLength(0);
+        expect(logger.getLogs().infoLogs).toHaveLength(0);
         expect(logger.getLogs().errorLogs).toHaveLength(0);
         expect(logger.getLogs().debugLogs).toHaveLength(0);
-        expect(logger.getLogs().diagnosticLogs).toHaveLength(1);*/
-      }
-    });
-  });
-
-  describe('Validation of extractDocumentFromString', () => {
-    it('should diagnose no error on valid model string', async () => {
-      const text = readJvTestAsset('extractDocumentFromString/valid-model.jv');
-
-      await extractDocumentFromString(text, services, logger);
-
-      expect(exitSpy).toHaveBeenCalledTimes(0);
-      /* expect(logger.getLogs().infoLogs).toHaveLength(0);
-      expect(logger.getLogs().errorLogs).toHaveLength(0);
-      expect(logger.getLogs().debugLogs).toHaveLength(0);
-      expect(logger.getLogs().diagnosticLogs).toHaveLength(0);*/
-    });
-
-    it('should diagnose error on invalid model string', async () => {
-      const text = readJvTestAsset(
-        'extractDocumentFromString/invalid-model.jv',
-      );
-
-      try {
-        await extractDocumentFromString(text, services, logger);
-      } catch (e) {
-        expect(exitSpy).toHaveBeenCalledTimes(1);
-        /* expect(logger.getLogs().infoLogs).toHaveLength(0);
-        expect(logger.getLogs().errorLogs).toHaveLength(0);
-        expect(logger.getLogs().debugLogs).toHaveLength(0);
-        expect(logger.getLogs().diagnosticLogs).toHaveLength(3);*/
+        expect(logger.getLogs().diagnosticLogs).toHaveLength(1);
       }
     });
   });
@@ -165,10 +131,10 @@ describe('Validation of parsing-util', () => {
       );
 
       expect(exitSpy).toHaveBeenCalledTimes(0);
-      /* expect(logger.getLogs().infoLogs).toHaveLength(0);
+      expect(logger.getLogs().infoLogs).toHaveLength(0);
       expect(logger.getLogs().errorLogs).toHaveLength(0);
       expect(logger.getLogs().debugLogs).toHaveLength(0);
-      expect(logger.getLogs().diagnosticLogs).toHaveLength(0);*/
+      expect(logger.getLogs().diagnosticLogs).toHaveLength(0);
     });
 
     it('should diagnose error on invalid extension', async () => {
@@ -184,11 +150,15 @@ describe('Validation of parsing-util', () => {
         );
       } catch (e) {
         expect(exitSpy).toHaveBeenCalledTimes(1);
-        /* expect(logger.getLogs().infoLogs).toHaveLength(0);
+        expect(logger.getLogs().infoLogs).toHaveLength(0);
         expect(logger.getLogs().errorLogs).toHaveLength(1);
-        expect(logger.getLogs().errorLogs[0]).toEqual(expect.objectContaining({message: 'Please choose a file with this extension: ".jv"'}));
+        expect(logger.getLogs().errorLogs[0]).toEqual(
+          expect.stringContaining(
+            'Please choose a file with this extension: ".jv"',
+          ),
+        );
         expect(logger.getLogs().debugLogs).toHaveLength(0);
-        expect(logger.getLogs().diagnosticLogs).toHaveLength(0);*/
+        expect(logger.getLogs().diagnosticLogs).toHaveLength(0);
       }
     });
 
@@ -205,11 +175,14 @@ describe('Validation of parsing-util', () => {
         );
       } catch (e) {
         expect(exitSpy).toHaveBeenCalledTimes(1);
-        /* expect(logger.getLogs().infoLogs).toHaveLength(0);
-        expect(logger.getLogs().errorLogs).toHaveLength(0);
-        expect(logger.getLogs().errorLogs[0].message).toMatch(/File [\w\-\/]*\/libs\/interpreter-lib\/test\/assets\/parsing-util\/extractDocumentFromFile\/invalid-missing-file\.jv does not exist\./);
+        expect(logger.getLogs().infoLogs).toHaveLength(0);
+        expect(logger.getLogs().errorLogs).toHaveLength(1);
+        expect(logger.getLogs().errorLogs[0]).toMatch(
+          // eslint-disable-next-line no-useless-escape
+          /File [\w\-\/]*\/libs\/interpreter-lib\/test\/assets\/parsing-util\/extractDocumentFromFile\/invalid-missing-file\.jv does not exist\./,
+        );
         expect(logger.getLogs().debugLogs).toHaveLength(0);
-        expect(logger.getLogs().diagnosticLogs).toHaveLength(0);*/
+        expect(logger.getLogs().diagnosticLogs).toHaveLength(0);
       }
     });
   });
