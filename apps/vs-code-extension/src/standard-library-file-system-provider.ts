@@ -5,6 +5,7 @@
 import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
 import {
   getStdLib,
+  registerConstraints,
   useExtension as useLangExtension,
 } from '@jvalue/jayvee-language-server';
 import {
@@ -34,6 +35,7 @@ export class StandardLibraryFileSystemProvider implements FileSystemProvider {
     // The VSCode Extension needs to register the StdLangExtension,
     // otherwise the StdLib does not include the blocktype definitions.
     useLangExtension(new StdLangExtension());
+    registerConstraints();
 
     Object.entries(getStdLib()).forEach(([libName, lib]) => {
       this.libraries.set(

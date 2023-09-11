@@ -6,6 +6,7 @@ import { createValuetype } from '../../ast';
 import {
   ValuetypeReference,
   isBuiltinBlocktypeDefinition,
+  isBuiltinConstrainttypeDefinition,
 } from '../../ast/generated/ast';
 import { ValidationContext } from '../validation-context';
 
@@ -53,10 +54,10 @@ function checkIsValuetypeReferenceable(
     return;
   }
 
-  const isUsedInBuiltinBlocktype = isBuiltinBlocktypeDefinition(
-    valuetypeRef.$container.$container,
-  );
-  if (isUsedInBuiltinBlocktype) {
+  const isUsedInBuiltinDefinition =
+    isBuiltinBlocktypeDefinition(valuetypeRef.$container.$container) ||
+    isBuiltinConstrainttypeDefinition(valuetypeRef.$container.$container);
+  if (isUsedInBuiltinDefinition) {
     return;
   }
 

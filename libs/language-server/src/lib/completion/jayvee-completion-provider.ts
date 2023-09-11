@@ -20,13 +20,11 @@ import { createValuetype } from '../ast';
 import {
   BlockDefinition,
   ConstraintDefinition,
-  ConstraintTypeLiteral,
   PropertyAssignment,
   PropertyBody,
   ValuetypeReference,
   isBlockDefinition,
   isConstraintDefinition,
-  isConstraintTypeLiteral,
   isJayveeModel,
   isPropertyAssignment,
   isPropertyBody,
@@ -63,8 +61,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       }
 
       const isConstraintTypeCompletion =
-        (isConstraintDefinition(astNode) || isConstraintTypeLiteral(astNode)) &&
-        next.type === ConstraintTypeLiteral;
+        isConstraintDefinition(astNode) && next.property === 'type';
       if (isConstraintTypeCompletion) {
         return this.completionForConstraintType(acceptor);
       }
