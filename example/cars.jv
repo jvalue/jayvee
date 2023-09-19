@@ -14,7 +14,7 @@ pipeline CarsPipeline {
 	}
 
 	block CarsTextFileInterpreter oftype TextFileInterpreter {
-
+		// empty block
 	}
 
 	pipe {
