@@ -43,7 +43,7 @@ export class TestLogger extends DefaultLogger {
   override logDebug(message: string): void {
     if (this.enableDebugLogging) {
       const msg = `${chalk.bold(this.getContext())}${message}`;
-      this.logCache.insertLogMessage(msg, DiagnosticSeverity.INFO);
+      this.logCache.insertLogMessage(msg, DiagnosticSeverity.DEBUG);
       this.printMessageToPrintFnIfEnabled(msg, console.log);
     }
   }

@@ -182,6 +182,7 @@ export class DefaultLogger extends Logger {
         return console.warn;
       case DiagnosticSeverity.INFO:
       case DiagnosticSeverity.HINT:
+      case DiagnosticSeverity.DEBUG:
         return console.info;
       default:
         assertUnreachable(severity);
@@ -200,6 +201,8 @@ export class DefaultLogger extends Logger {
         return chalk.green;
       case DiagnosticSeverity.HINT:
         return chalk.blue;
+      case DiagnosticSeverity.DEBUG:
+        return chalk.grey;
       default:
         assertUnreachable(severity);
     }

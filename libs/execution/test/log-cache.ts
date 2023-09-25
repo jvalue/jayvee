@@ -45,6 +45,7 @@ export class LogCache {
       [DiagnosticSeverity.HINT]: [] as string[],
       [DiagnosticSeverity.INFO]: [] as string[],
       [DiagnosticSeverity.WARNING]: [] as string[],
+      [DiagnosticSeverity.DEBUG]: [] as string[],
     };
     const severities: DiagnosticSeverity[] = [];
     if (Array.isArray(severity)) {
