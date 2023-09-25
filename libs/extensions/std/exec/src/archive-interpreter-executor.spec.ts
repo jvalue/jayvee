@@ -39,7 +39,13 @@ describe('Validation of ArchiveInterpreterExecutor', () => {
   );
 
   function readTestArchive(fileName: string) {
-    return readFileSync(path.resolve(__dirname, '../test/assets/', fileName));
+    return readFileSync(
+      path.resolve(
+        __dirname,
+        '../test/assets/archive-interpreter-executor/',
+        fileName,
+      ),
+    );
   }
 
   async function parseAndExecuteArchiveInterpreter(
@@ -74,9 +80,7 @@ describe('Validation of ArchiveInterpreterExecutor', () => {
     const text = readJvTestAsset('valid-zip-archive-interpreter.jv');
 
     try {
-      const testFile = readTestArchive(
-        'archive-interpreter-executor/valid-zip.zip',
-      );
+      const testFile = readTestArchive('valid-zip.zip');
       const result = await parseAndExecuteArchiveInterpreter(
         text,
         new R.BinaryFile(
@@ -108,9 +112,7 @@ describe('Validation of ArchiveInterpreterExecutor', () => {
     const text = readJvTestAsset('valid-gz-archive-interpreter.jv');
 
     try {
-      const testFile = readTestArchive(
-        'archive-interpreter-executor/valid-gz.gz',
-      );
+      const testFile = readTestArchive('valid-gz.gz');
       const result = await parseAndExecuteArchiveInterpreter(
         text,
         new R.BinaryFile(
@@ -142,9 +144,7 @@ describe('Validation of ArchiveInterpreterExecutor', () => {
     const text = readJvTestAsset('valid-gz-archive-interpreter.jv');
 
     try {
-      const testFile = readTestArchive(
-        'archive-interpreter-executor/valid-zip.zip',
-      );
+      const testFile = readTestArchive('valid-zip.zip');
       const result = await parseAndExecuteArchiveInterpreter(
         text,
         new R.BinaryFile(
@@ -170,9 +170,7 @@ describe('Validation of ArchiveInterpreterExecutor', () => {
     const text = readJvTestAsset('valid-7z-archive-interpreter.jv');
 
     try {
-      const testFile = readTestArchive(
-        'archive-interpreter-executor/valid-7z.7z',
-      );
+      const testFile = readTestArchive('valid-7z.7z');
       const result = await parseAndExecuteArchiveInterpreter(
         text,
         new R.BinaryFile(
@@ -196,9 +194,7 @@ describe('Validation of ArchiveInterpreterExecutor', () => {
     const text = readJvTestAsset('valid-zip-archive-interpreter.jv');
 
     try {
-      const testFile = readTestArchive(
-        'archive-interpreter-executor/invalid-corrupt-zip.zip',
-      );
+      const testFile = readTestArchive('invalid-corrupt-zip.zip');
       const result = await parseAndExecuteArchiveInterpreter(
         text,
         new R.BinaryFile(
