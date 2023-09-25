@@ -8,19 +8,10 @@ import { Range } from 'vscode-languageserver';
 
 import { DefaultLogger, DiagnosticSeverity } from '../src/lib';
 
-export interface ClearLogsOptions {
-  clearInfo: boolean;
-  clearError: boolean;
-  clearDebug: boolean;
-  clearDiagnostic: boolean;
-}
+import { LogCache } from './log-cache';
 
 export class TestLogger extends DefaultLogger {
-  private infoLogs: string[] = [];
-  private errorLogs: string[] = [];
-  private debugLogs: string[] = [];
-  private diagnosticLogs: string[] = [];
-
+  private logCache: LogCache = new LogCache();
   constructor(
     enableDebugLogging: boolean,
     loggingContext?: string,
@@ -30,66 +21,37 @@ export class TestLogger extends DefaultLogger {
     super(enableDebugLogging, loggingContext, depth);
   }
 
-  public getLogs(): {
-    infoLogs: string[];
-    errorLogs: string[];
-    debugLogs: string[];
-    diagnosticLogs: string[];
-  } {
-    return {
-      infoLogs: Array.from(this.infoLogs),
-      errorLogs: Array.from(this.errorLogs),
-      debugLogs: Array.from(this.debugLogs),
-      diagnosticLogs: Array.from(this.diagnosticLogs),
-    };
+  public getLogs() {
+    return this.logCache.getLogsFilteredBySeverity([
+      DiagnosticSeverity.ERROR,
+      DiagnosticSeverity.HINT,
+      DiagnosticSeverity.INFO,
+      DiagnosticSeverity.WARNING,
+    ]);
   }
 
-  public clearLogs(
-    options: ClearLogsOptions = {
-      clearInfo: true,
-      clearDebug: true,
-      clearError: true,
-      clearDiagnostic: true,
-    },
-  ): void {
-    if (options.clearInfo) {
-      this.infoLogs = [];
-    }
-    if (options.clearError) {
-      this.errorLogs = [];
-    }
-    if (options.clearDebug) {
-      this.debugLogs = [];
-    }
-    if (options.clearDiagnostic) {
-      this.diagnosticLogs = [];
-    }
+  public clearLogs(): void {
+    this.logCache.clearLogs();
   }
 
   override logInfo(message: string): void {
     const msg = `${chalk.bold(this.getContext())}${message}`;
-    this.infoLogs.push(msg);
-    if (this.printLogs) {
-      console.log(msg);
-    }
+    this.logCache.insertLogMessage(msg, DiagnosticSeverity.INFO);
+    this.printMessageToPrintFnIfEnabled(msg, console.log);
   }
 
   override logDebug(message: string): void {
     if (this.enableDebugLogging) {
       const msg = `${chalk.bold(this.getContext())}${message}`;
-      this.debugLogs.push(msg);
-      if (this.printLogs) {
-        console.log(msg);
-      }
+      this.logCache.insertLogMessage(msg, DiagnosticSeverity.INFO);
+      this.printMessageToPrintFnIfEnabled(msg, console.log);
     }
   }
 
   override logErr(message: string): void {
     const msg = `${chalk.bold(this.getContext())}${chalk.red(message)}`;
-    this.errorLogs.push(msg);
-    if (this.printLogs) {
-      console.error(msg);
-    }
+    this.logCache.insertLogMessage(msg, DiagnosticSeverity.ERROR);
+    this.printMessageToPrintFnIfEnabled(msg, console.error);
   }
 
   protected override logDiagnostic(
@@ -101,15 +63,22 @@ export class TestLogger extends DefaultLogger {
     const printFn = (msg: string) => {
       const basePrintFn = this.inferPrintFunction(severity);
 
-      this.diagnosticLogs.push(msg);
-      if (this.printLogs) {
-        basePrintFn(msg);
-      }
+      this.logCache.insertLogMessage(msg, severity);
+      this.printMessageToPrintFnIfEnabled(msg, basePrintFn);
     };
     const colorFn = this.inferChalkColor(severity);
 
     this.logDiagnosticMessage(severity, message, printFn, colorFn);
     this.logDiagnosticInfo(range, document, printFn, colorFn);
     printFn('');
+  }
+
+  printMessageToPrintFnIfEnabled(
+    message: string,
+    printFn: (message: string) => void,
+  ) {
+    if (this.printLogs) {
+      printFn(message);
+    }
   }
 }
