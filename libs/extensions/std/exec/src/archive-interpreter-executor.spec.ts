@@ -33,7 +33,10 @@ describe('Validation of ArchiveInterpreterExecutor', () => {
 
   let locator: AstNodeLocator;
 
-  const readJvTestAsset = readJvTestAssetHelper(__dirname, '../test/assets/');
+  const readJvTestAsset = readJvTestAssetHelper(
+    __dirname,
+    '../test/assets/archive-interpreter-executor/',
+  );
 
   function readTestArchive(fileName: string) {
     return readFileSync(path.resolve(__dirname, '../test/assets/', fileName));
@@ -68,9 +71,7 @@ describe('Validation of ArchiveInterpreterExecutor', () => {
   });
 
   it('should diagnose no error on valid zip BinaryFile', async () => {
-    const text = readJvTestAsset(
-      'archive-interpreter-executor/valid-zip-archive-interpreter.jv',
-    );
+    const text = readJvTestAsset('valid-zip-archive-interpreter.jv');
 
     try {
       const testFile = readTestArchive(
@@ -104,9 +105,7 @@ describe('Validation of ArchiveInterpreterExecutor', () => {
   });
 
   it('should diagnose no error on valid gz BinaryFile', async () => {
-    const text = readJvTestAsset(
-      'archive-interpreter-executor/valid-gz-archive-interpreter.jv',
-    );
+    const text = readJvTestAsset('valid-gz-archive-interpreter.jv');
 
     try {
       const testFile = readTestArchive(
@@ -140,9 +139,7 @@ describe('Validation of ArchiveInterpreterExecutor', () => {
   });
 
   it('should diagnose error on zip as gz archive', async () => {
-    const text = readJvTestAsset(
-      'archive-interpreter-executor/valid-gz-archive-interpreter.jv',
-    );
+    const text = readJvTestAsset('valid-gz-archive-interpreter.jv');
 
     try {
       const testFile = readTestArchive(
@@ -170,9 +167,7 @@ describe('Validation of ArchiveInterpreterExecutor', () => {
   });
 
   it('should diagnose error on invalid archive type', async () => {
-    const text = readJvTestAsset(
-      'archive-interpreter-executor/valid-7z-archive-interpreter.jv',
-    );
+    const text = readJvTestAsset('valid-7z-archive-interpreter.jv');
 
     try {
       const testFile = readTestArchive(
@@ -198,9 +193,7 @@ describe('Validation of ArchiveInterpreterExecutor', () => {
   });
 
   it('should diagnose error on corrupted archive', async () => {
-    const text = readJvTestAsset(
-      'archive-interpreter-executor/valid-zip-archive-interpreter.jv',
-    );
+    const text = readJvTestAsset('valid-zip-archive-interpreter.jv');
 
     try {
       const testFile = readTestArchive(
