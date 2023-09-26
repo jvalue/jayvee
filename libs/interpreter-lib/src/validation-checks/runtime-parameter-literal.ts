@@ -3,17 +3,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  BlockMetaInformation,
   BuiltinConstrainttypeDefinition,
   EvaluationContext,
-  MetaInformation,
   PropertyBody,
   ReferenceableBlocktypeDefinition,
   RuntimeParameterLiteral,
   ValidationContext,
-  getConstraintMetaInf,
-  isBuiltinConstrainttypeDefinition,
-  isReferenceableBlocktypeDefinition,
+  getMetaInformation,
 } from '@jvalue/jayvee-language-server';
 import { Reference } from 'langium';
 
@@ -71,22 +67,13 @@ function checkRuntimeParameterValueParsing(
     | undefined =
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     enclosingPropertyBody.$container?.type;
+  const metaInf = getMetaInformation(type);
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const propertyName = runtimeParameter.$container?.name;
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (propertyName === undefined) {
     return;
-  }
-
-  let metaInf: MetaInformation | undefined;
-  if (
-    isReferenceableBlocktypeDefinition(type.ref) &&
-    BlockMetaInformation.canBeWrapped(type.ref)
-  ) {
-    metaInf = new BlockMetaInformation(type.ref);
-  } else if (isBuiltinConstrainttypeDefinition(type.ref)) {
-    metaInf = getConstraintMetaInf(type.ref);
   }
 
   const propertySpec = metaInf?.getPropertySpecification(propertyName);

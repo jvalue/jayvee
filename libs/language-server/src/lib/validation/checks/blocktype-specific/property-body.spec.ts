@@ -6,16 +6,12 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  BlockMetaInformation,
   EvaluationContext,
-  MetaInformation,
   PropertyBody,
   RuntimeParameterProvider,
   ValidationContext,
   createJayveeServices,
-  getConstraintMetaInf,
-  isBuiltinConstrainttypeDefinition,
-  isReferenceableBlocktypeDefinition,
+  getMetaInformation,
 } from '../../..';
 import {
   ParseHelperOptions,
@@ -51,13 +47,7 @@ describe('Validation of blocktype specific property bodies', () => {
       'pipelines@0/blocks@0/body',
     ) as PropertyBody;
 
-    const type = propertyBody.$container.type;
-    let metaInf: MetaInformation | undefined;
-    if (isReferenceableBlocktypeDefinition(type.ref)) {
-      metaInf = new BlockMetaInformation(type.ref);
-    } else if (isBuiltinConstrainttypeDefinition(type.ref)) {
-      metaInf = getConstraintMetaInf(type.ref);
-    }
+    const metaInf = getMetaInformation(propertyBody.$container.type);
     expect(metaInf).toBeDefined();
 
     checkBlocktypeSpecificPropertyBody(

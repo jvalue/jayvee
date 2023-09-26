@@ -2,28 +2,21 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  AstNode,
-  AstNodeHoverProvider,
-  MaybePromise,
-  assertUnreachable,
-} from 'langium';
+import { AstNode, AstNodeHoverProvider, MaybePromise } from 'langium';
 import { Hover } from 'vscode-languageserver-protocol';
 
 import {
   BuiltinBlocktypeDefinition,
   BuiltinConstrainttypeDefinition,
   PropertyAssignment,
-  isBlockDefinition,
+  getMetaInformation,
   isBuiltinBlocktypeDefinition,
   isBuiltinConstrainttypeDefinition,
   isPropertyAssignment,
-  isTypedConstraintDefinition,
 } from '../ast';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
 import {
   BlockMetaInformation,
-  MetaInformation,
   getConstraintMetaInf,
 } from '../meta-information';
 
@@ -82,17 +75,7 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
     property: PropertyAssignment,
   ): string | undefined {
     const container = property.$container.$container;
-    let metaInf: MetaInformation | undefined;
-    if (isTypedConstraintDefinition(container)) {
-      metaInf = getConstraintMetaInf(container.type);
-    } else if (isBlockDefinition(container)) {
-      if (!BlockMetaInformation.canBeWrapped(container.type)) {
-        return;
-      }
-      metaInf = new BlockMetaInformation(container.type);
-    } else {
-      assertUnreachable(container);
-    }
+    const metaInf = getMetaInformation(container.type);
     if (metaInf === undefined) {
       return;
     }

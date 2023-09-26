@@ -7,19 +7,14 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { assertUnreachable } from 'langium';
-
+import { getMetaInformation } from '../../ast';
 import { EvaluationContext } from '../../ast/expressions/evaluation';
 import {
   PropertyAssignment,
   PropertyBody,
   isBlockDefinition,
-  isBuiltinConstrainttypeDefinition,
-  isReferenceableBlocktypeDefinition,
 } from '../../ast/generated/ast';
-import { BlockMetaInformation } from '../../meta-information/block-meta-inf';
 import { MetaInformation } from '../../meta-information/meta-inf';
-import { getConstraintMetaInf } from '../../meta-information/meta-inf-registry';
 import { ValidationContext } from '../validation-context';
 import { checkUniqueNames } from '../validation-util';
 
@@ -69,20 +64,7 @@ function inferMetaInformation(
   propertyBody: PropertyBody,
 ): MetaInformation | undefined {
   const type = propertyBody.$container?.type.ref;
-  if (type === undefined) {
-    return undefined;
-  }
-
-  if (isBuiltinConstrainttypeDefinition(type)) {
-    return getConstraintMetaInf(type);
-  } else if (isReferenceableBlocktypeDefinition(type)) {
-    if (!BlockMetaInformation.canBeWrapped(type)) {
-      return;
-    }
-    return new BlockMetaInformation(type);
-  }
-
-  assertUnreachable(type);
+  return getMetaInformation(type);
 }
 
 function checkPropertyCompleteness(

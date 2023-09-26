@@ -16,7 +16,7 @@ import {
 } from 'langium';
 import { CompletionItemKind } from 'vscode-languageserver';
 
-import { createValuetype } from '../ast';
+import { createValuetype, getMetaInformation } from '../ast';
 import {
   BlockDefinition,
   ConstraintDefinition,
@@ -24,20 +24,15 @@ import {
   PropertyBody,
   ValuetypeReference,
   isBlockDefinition,
-  isBuiltinConstrainttypeDefinition,
   isConstraintDefinition,
   isJayveeModel,
   isPropertyAssignment,
   isPropertyBody,
-  isReferenceableBlocktypeDefinition,
 } from '../ast/generated/ast';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
 import { BlockMetaInformation } from '../meta-information';
 import { MetaInformation } from '../meta-information/meta-inf';
-import {
-  getConstraintMetaInf,
-  getRegisteredConstraintMetaInformation,
-} from '../meta-information/meta-inf-registry';
+import { getRegisteredConstraintMetaInformation } from '../meta-information/meta-inf-registry';
 
 const RIGHT_ARROW_SYMBOL = '\u{2192}';
 
@@ -165,15 +160,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       container = astNode.$container.$container;
     }
 
-    let metaInf: MetaInformation | undefined;
-    if (isReferenceableBlocktypeDefinition(container.type.ref)) {
-      if (!BlockMetaInformation.canBeWrapped(container.type.ref)) {
-        return;
-      }
-      metaInf = new BlockMetaInformation(container.type.ref);
-    } else if (isBuiltinConstrainttypeDefinition(container.type.ref)) {
-      metaInf = getConstraintMetaInf(container.type.ref);
-    }
+    const metaInf = getMetaInformation(container.type);
     if (metaInf === undefined) {
       return;
     }

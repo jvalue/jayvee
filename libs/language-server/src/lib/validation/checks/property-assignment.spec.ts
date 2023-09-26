@@ -6,7 +6,6 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  BlockMetaInformation,
   EvaluationContext,
   MetaInformation,
   PropertyAssignment,
@@ -14,9 +13,7 @@ import {
   RuntimeParameterProvider,
   ValidationContext,
   createJayveeServices,
-  getConstraintMetaInf,
-  isBuiltinConstrainttypeDefinition,
-  isReferenceableBlocktypeDefinition,
+  getMetaInformation,
 } from '../../../lib';
 import {
   ParseHelperOptions,
@@ -53,12 +50,7 @@ describe('Validation of PropertyAssignment', () => {
     ) as PropertyBody;
 
     const type = propertyBody.$container.type;
-    let metaInf: MetaInformation | undefined;
-    if (isReferenceableBlocktypeDefinition(type.ref)) {
-      metaInf = new BlockMetaInformation(type.ref);
-    } else if (isBuiltinConstrainttypeDefinition(type.ref)) {
-      metaInf = getConstraintMetaInf(type.ref);
-    }
+    const metaInf = getMetaInformation(type);
     expect(metaInf).toBeDefined();
 
     const propertyAssignment = locator.getAstNode<PropertyAssignment>(
