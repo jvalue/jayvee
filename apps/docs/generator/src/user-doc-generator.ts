@@ -149,7 +149,18 @@ block ExampleTableInterpreter oftype TableInterpreter {
     if (comment === undefined) {
       return undefined;
     }
-    const commentSections = comment.split('@example').map((t) => t.trim());
+    /*
+    Format:
+
+    <description>
+    *@example*
+    <example description>
+    <example code>
+    */
+
+    const commentSections = comment
+      .split('*@example*')
+      .map((section) => section.trim());
     const examples = commentSections.slice(1).map((x) => {
       const exampleLines = x.split('\n');
       return {

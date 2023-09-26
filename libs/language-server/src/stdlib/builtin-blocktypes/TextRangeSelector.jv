@@ -1,5 +1,5 @@
-/*
-Selects a range of lines from a `TextFile`.
+/**
+* Selects a range of lines from a `TextFile`.
 */
 builtin blocktype TextRangeSelector {
 	input default oftype TextFile;

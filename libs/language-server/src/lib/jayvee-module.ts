@@ -23,7 +23,6 @@ import { JayveeCompletionProvider } from './completion/jayvee-completion-provide
 import { registerConstraints } from './constraint/constraint-registry';
 import { JayveeHoverProvider } from './hover/jayvee-hover-provider';
 import { JayveeValueConverter } from './jayvee-value-converter';
-import { JayveeDocumentationProvider } from './services/jayvee-documentation-provider';
 import { RuntimeParameterProvider } from './services/runtime-parameter-provider';
 import { JayveeValidationRegistry } from './validation/validation-registry';
 
@@ -68,10 +67,6 @@ export const JayveeModule: Module<
       new JayveeHoverProvider(services),
   },
   RuntimeParameterProvider: () => new RuntimeParameterProvider(),
-  documentation: {
-    DocumentationProvider: (services: LangiumServices) =>
-      new JayveeDocumentationProvider(services),
-  },
 };
 
 export const JayveeSharedModule: Module<
