@@ -4,7 +4,12 @@
 
 import { strict as assert } from 'assert';
 
-import { AstNode, Reference, assertUnreachable } from 'langium';
+import {
+  AstNode,
+  LangiumDocuments,
+  Reference,
+  assertUnreachable,
+} from 'langium';
 
 // eslint-disable-next-line import/no-cycle
 import { BlockMetaInformation } from '../meta-information';
@@ -15,7 +20,9 @@ import {
   CompositeBlocktypeDefinition,
   PipelineDefinition,
   UnaryExpression,
+  isBuiltinBlocktypeDefinition,
   isCompositeBlocktypeDefinition,
+  isJayveeModel,
 } from './generated/ast';
 import { PipeWrapper, createSemanticPipes } from './wrappers/pipe-wrapper';
 
@@ -186,4 +193,33 @@ export function getNextAstNodeContainer<T extends AstNode>(
     return node.$container;
   }
   return getNextAstNodeContainer(node.$container, guard);
+}
+
+/**
+ * Utility function that gets all builtin blocktypes.
+ * Make sure to call @see initializeWorkspace first so that the file system is initialized.
+ */
+export function getAllBuiltinBlocktypes(
+  documentService: LangiumDocuments,
+): BlockMetaInformation[] {
+  const allBuiltinBlocktypes: BlockMetaInformation[] = [];
+
+  documentService.all
+    .map((document) => document.parseResult.value)
+    .forEach((parsedDocument) => {
+      if (!isJayveeModel(parsedDocument)) {
+        throw new Error('Expected parsed document to be a JayveeModel');
+      }
+      parsedDocument.blocktypes.forEach((blocktypeDefinition) => {
+        if (!isBuiltinBlocktypeDefinition(blocktypeDefinition)) {
+          return;
+        }
+        if (BlockMetaInformation.canBeWrapped(blocktypeDefinition)) {
+          allBuiltinBlocktypes.push(
+            new BlockMetaInformation(blocktypeDefinition),
+          );
+        }
+      });
+    });
+  return allBuiltinBlocktypes;
 }

@@ -6,13 +6,12 @@ import { readFileSync, readdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 import {
-  BlockMetaInformation,
   JayveeServices,
   PrimitiveValuetypes,
   createJayveeServices,
+  getAllBuiltinBlocktypes,
   getRegisteredConstraintMetaInformation,
   initializeWorkspace,
-  isJayveeModel,
 } from '@jvalue/jayvee-language-server';
 import { NodeFileSystem } from 'langium/node';
 
@@ -34,21 +33,9 @@ function generateBlockTypeDocs(
   services: JayveeServices,
   rootPath: string,
 ): void {
-  const documentService = services.shared.workspace.LangiumDocuments;
-
-  const metaInfs: BlockMetaInformation[] = [];
-  documentService.all
-    .map((document) => document.parseResult.value)
-    .forEach((parsedDocument) => {
-      if (!isJayveeModel(parsedDocument)) {
-        throw new Error('Expected parsed document to be a JayveeModel');
-      }
-      parsedDocument.blocktypes.forEach((blocktypeDefinition) => {
-        if (BlockMetaInformation.canBeWrapped(blocktypeDefinition)) {
-          metaInfs.push(new BlockMetaInformation(blocktypeDefinition));
-        }
-      });
-    });
+  const metaInfs = getAllBuiltinBlocktypes(
+    services.shared.workspace.LangiumDocuments,
+  );
 
   const docsPath = join(
     rootPath,
