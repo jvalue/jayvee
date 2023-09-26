@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 /**
 * Applies a transform on each value of a column. The input port type of the used transform has to match the type of the input column.
 * 

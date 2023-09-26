@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 /**
 * Writes textual values into cells of a `Sheet`. The number of text values needs to match the number of cells to write into.
 * 
