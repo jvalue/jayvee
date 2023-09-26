@@ -97,7 +97,7 @@ describe('Validation PropertyBody', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
-      'The value needs to be of type CustomValuetype but is of type text',
+      'The value of property "customValidationTextProperty" needs to be of type CustomValuetype but is of type text',
       expect.any(Object),
     );
   });
