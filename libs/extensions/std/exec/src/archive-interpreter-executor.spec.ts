@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { readFileSync } from 'fs';
 import * as path from 'path';
 
 import * as R from '@jvalue/jayvee-execution';
@@ -23,6 +22,8 @@ import {
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
+import { createBinaryFileFromLocalFile } from '../test';
+
 import { ArchiveInterpreterExecutor } from './archive-interpreter-executor';
 
 describe('Validation of ArchiveInterpreterExecutor', () => {
@@ -38,14 +39,13 @@ describe('Validation of ArchiveInterpreterExecutor', () => {
     '../test/assets/archive-interpreter-executor/',
   );
 
-  function readTestArchive(fileName: string) {
-    return readFileSync(
-      path.resolve(
-        __dirname,
-        '../test/assets/archive-interpreter-executor/',
-        fileName,
-      ),
+  function readTestArchive(fileName: string): R.BinaryFile {
+    const absoluteFileName = path.resolve(
+      __dirname,
+      '../test/assets/archive-interpreter-executor/',
+      fileName,
     );
+    return createBinaryFileFromLocalFile(absoluteFileName);
   }
 
   async function parseAndExecuteArchiveInterpreter(
@@ -80,15 +80,7 @@ describe('Validation of ArchiveInterpreterExecutor', () => {
     const text = readJvTestAsset('valid-zip-archive-interpreter.jv');
 
     const testFile = readTestArchive('valid-zip.zip');
-    const result = await parseAndExecuteArchiveInterpreter(
-      text,
-      new R.BinaryFile(
-        'testArchive.zip',
-        R.FileExtension.ZIP,
-        R.MimeType.APPLICATION_ZIP,
-        testFile,
-      ),
-    );
+    const result = await parseAndExecuteArchiveInterpreter(text, testFile);
 
     expect(R.isErr(result)).toEqual(false);
     if (R.isOk(result)) {
@@ -108,22 +100,14 @@ describe('Validation of ArchiveInterpreterExecutor', () => {
     const text = readJvTestAsset('valid-gz-archive-interpreter.jv');
 
     const testFile = readTestArchive('valid-gz.gz');
-    const result = await parseAndExecuteArchiveInterpreter(
-      text,
-      new R.BinaryFile(
-        'testArchive.gz',
-        R.FileExtension.ZIP,
-        R.MimeType.APPLICATION_OCTET_STREAM,
-        testFile,
-      ),
-    );
+    const result = await parseAndExecuteArchiveInterpreter(text, testFile);
 
     expect(R.isErr(result)).toEqual(false);
     if (R.isOk(result)) {
       expect(result.right.ioType).toEqual(IOType.FILE_SYSTEM);
-      expect(result.right.getFile('/testArchive')).toEqual(
+      expect(result.right.getFile('/valid-gz')).toEqual(
         expect.objectContaining({
-          name: 'testArchive',
+          name: 'valid-gz',
           extension: '',
           ioType: IOType.FILE,
           mimeType: R.MimeType.APPLICATION_OCTET_STREAM,
@@ -136,15 +120,7 @@ describe('Validation of ArchiveInterpreterExecutor', () => {
     const text = readJvTestAsset('valid-gz-archive-interpreter.jv');
 
     const testFile = readTestArchive('valid-zip.zip');
-    const result = await parseAndExecuteArchiveInterpreter(
-      text,
-      new R.BinaryFile(
-        'testArchive.zip',
-        R.FileExtension.ZIP,
-        R.MimeType.APPLICATION_ZIP,
-        testFile,
-      ),
-    );
+    const result = await parseAndExecuteArchiveInterpreter(text, testFile);
 
     expect(R.isOk(result)).toEqual(false);
     if (R.isErr(result)) {
@@ -158,15 +134,7 @@ describe('Validation of ArchiveInterpreterExecutor', () => {
     const text = readJvTestAsset('valid-7z-archive-interpreter.jv');
 
     const testFile = readTestArchive('valid-7z.7z');
-    const result = await parseAndExecuteArchiveInterpreter(
-      text,
-      new R.BinaryFile(
-        'testArchive.7z',
-        R.FileExtension.ZIP,
-        R.MimeType.APPLICATION_OCTET_STREAM,
-        testFile,
-      ),
-    );
+    const result = await parseAndExecuteArchiveInterpreter(text, testFile);
 
     expect(R.isOk(result)).toEqual(false);
     if (R.isErr(result)) {
@@ -178,15 +146,7 @@ describe('Validation of ArchiveInterpreterExecutor', () => {
     const text = readJvTestAsset('valid-zip-archive-interpreter.jv');
 
     const testFile = readTestArchive('invalid-corrupt-zip.zip');
-    const result = await parseAndExecuteArchiveInterpreter(
-      text,
-      new R.BinaryFile(
-        'testArchive.zip',
-        R.FileExtension.ZIP,
-        R.MimeType.APPLICATION_ZIP,
-        testFile,
-      ),
-    );
+    const result = await parseAndExecuteArchiveInterpreter(text, testFile);
 
     expect(R.isOk(result)).toEqual(false);
     if (R.isErr(result)) {

@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { readFileSync } from 'fs';
 import * as path from 'path';
 
 import * as R from '@jvalue/jayvee-execution';
@@ -23,11 +22,9 @@ import {
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
+import { createBinaryFileFromLocalFile } from '../test';
+
 import { FilePickerExecutor } from './file-picker-executor';
-import {
-  inferFileExtensionFromFileExtensionString,
-  inferMimeTypeFromContentTypeString,
-} from './file-util';
 
 describe('Validation of FilePickerExecutor', () => {
   let parse: (
@@ -44,20 +41,14 @@ describe('Validation of FilePickerExecutor', () => {
   );
 
   function uploadTestFile(fileName: string) {
-    const extName = path.extname(fileName);
-    const mimeType =
-      inferMimeTypeFromContentTypeString(extName) ||
-      R.MimeType.APPLICATION_OCTET_STREAM;
-    const fileExtension =
-      inferFileExtensionFromFileExtensionString(extName) ||
-      R.FileExtension.NONE;
-    const file = readFileSync(
-      path.resolve(__dirname, '../test/assets/file-picker-executor/', fileName),
+    const absoluteFileName = path.resolve(
+      __dirname,
+      '../test/assets/file-picker-executor/',
+      fileName,
     );
-
     fileSystem.putFile(
       `/${fileName}`,
-      new R.BinaryFile(fileName, fileExtension, mimeType, file),
+      createBinaryFileFromLocalFile(absoluteFileName),
     );
   }
 
