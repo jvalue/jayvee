@@ -27,6 +27,13 @@ export function clearConstraintExecutorRegistry() {
   constraintExecutorRegistry.clear();
 }
 
+export function processExitMockImplementation(code?: number) {
+  if (code === undefined || code === 0) {
+    return undefined as never;
+  }
+  throw new Error(`process.exit: ${code}`);
+}
+
 export function getTestExecutionContext(
   locator: AstNodeLocator,
   document: LangiumDocument<AstNode>,
