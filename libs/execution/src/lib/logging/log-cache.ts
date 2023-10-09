@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { DiagnosticSeverity } from '../src/lib';
+import { DiagnosticSeverity } from './logger';
 
 interface LogEntry {
   severity: DiagnosticSeverity;

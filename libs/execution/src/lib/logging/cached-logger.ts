@@ -6,19 +6,21 @@ import * as chalk from 'chalk';
 import { LangiumDocument } from 'langium';
 import { Range } from 'vscode-languageserver';
 
-import { DefaultLogger, DiagnosticSeverity } from '../src/lib';
-
+import { DefaultLogger } from './default-logger';
 import { LogCache } from './log-cache';
+import { DiagnosticSeverity } from './logger';
 
-export class TestLogger extends DefaultLogger {
-  private logCache: LogCache = new LogCache();
+export class CachedLogger extends DefaultLogger {
+  private logCache: LogCache;
   constructor(
     enableDebugLogging: boolean,
     loggingContext?: string,
     private printLogs: boolean = true,
     depth = 0,
+    cacheSize = 200,
   ) {
     super(enableDebugLogging, loggingContext, depth);
+    this.logCache = new LogCache(cacheSize);
   }
 
   public getLogs() {
