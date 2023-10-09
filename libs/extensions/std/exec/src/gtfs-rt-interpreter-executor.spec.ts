@@ -6,6 +6,7 @@ import * as path from 'path';
 
 import * as R from '@jvalue/jayvee-execution';
 import { getTestExecutionContext } from '@jvalue/jayvee-execution/test';
+import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
 import {
   BlockDefinition,
   IOType,
@@ -67,7 +68,8 @@ describe('Validation of GtfsRTInterpreterExecutor', () => {
   }
 
   beforeAll(() => {
-    // Register test extension
+    // Register extensions
+    useExtension(new StdLangExtension());
     useExtension(new TestLangExtension());
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
