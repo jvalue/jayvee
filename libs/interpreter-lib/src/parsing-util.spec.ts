@@ -63,7 +63,7 @@ describe('Validation of parsing-util', () => {
     logger.clearLogs();
   });
 
-  describe('Validation of validateDocument', () => {
+  describe('Function of validateDocument', () => {
     async function parseAndValidateDocument(input: string) {
       const document = await parse(input);
       expectNoParserAndLexerErrors(document);
@@ -118,7 +118,7 @@ describe('Validation of parsing-util', () => {
     });
   });
 
-  describe('Validation of extractDocumentFromFile', () => {
+  describe('Function of extractDocumentFromFile', () => {
     it('should diagnose no error on valid model file', async () => {
       await extractDocumentFromFile(
         path.resolve(
