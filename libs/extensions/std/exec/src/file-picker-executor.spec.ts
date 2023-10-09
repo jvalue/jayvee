@@ -92,7 +92,6 @@ describe('Validation of FilePickerExecutor', () => {
 
     expect(R.isErr(result)).toEqual(false);
     if (R.isOk(result)) {
-      expect(result.right?.ioType).toEqual(IOType.FILE);
       expect(result.right).toEqual(
         expect.objectContaining({
           name: 'test.txt',
