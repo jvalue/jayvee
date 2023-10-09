@@ -87,7 +87,9 @@ describe('Validation of FilePickerExecutor', () => {
     locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
-    // Prepare filesystem
+  });
+  beforeEach(() => {
+    // Create fresh filesystem
     fileSystem = new R.InMemoryFileSystem();
   });
 
@@ -108,6 +110,17 @@ describe('Validation of FilePickerExecutor', () => {
           mimeType: R.MimeType.TEXT_PLAIN,
         }),
       );
+    }
+  });
+
+  it('should diagnose error on file not found', async () => {
+    const text = readJvTestAsset('valid-file-picker.jv');
+
+    const result = await parseAndExecuteArchiveInterpreter(text, fileSystem);
+
+    expect(R.isOk(result)).toEqual(false);
+    if (R.isErr(result)) {
+      expect(result.left.message).toEqual(`File '/test.txt' not found`);
     }
   });
 });
