@@ -22,5 +22,5 @@ export function createBinaryFileFromLocalFile(fileName: string): BinaryFile {
   const file = readFileSync(
     path.resolve(__dirname, '../test/assets/file-picker-executor/', fileName),
   );
-  return new BinaryFile(fileName, fileExtension, mimeType, file);
+  return new BinaryFile(path.basename(fileName), fileExtension, mimeType, file);
 }
