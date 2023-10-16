@@ -1,0 +1,139 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+import * as path from 'path';
+
+import * as R from '@jvalue/jayvee-execution';
+import { getTestExecutionContext } from '@jvalue/jayvee-execution/test';
+import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
+import {
+  BlockDefinition,
+  IOType,
+  createJayveeServices,
+  useExtension,
+} from '@jvalue/jayvee-language-server';
+import {
+  ParseHelperOptions,
+  TestLangExtension,
+  expectNoParserAndLexerErrors,
+  parseHelper,
+  readJvTestAssetHelper,
+} from '@jvalue/jayvee-language-server/test';
+import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
+import { NodeFileSystem } from 'langium/node';
+
+import { createTextFileFromLocalFile } from '../test';
+
+import { TextLineDeleterExecutor } from './text-line-deleter-executor';
+
+describe('Validation of TextFileInterpreterExecutor', () => {
+  let parse: (
+    input: string,
+    options?: ParseHelperOptions,
+  ) => Promise<LangiumDocument<AstNode>>;
+
+  let locator: AstNodeLocator;
+
+  const readJvTestAsset = readJvTestAssetHelper(
+    __dirname,
+    '../test/assets/text-line-deleter-executor/',
+  );
+
+  function readTestFile(fileName: string): R.TextFile {
+    const absoluteFileName = path.resolve(
+      __dirname,
+      '../test/assets/text-line-deleter-executor/',
+      fileName,
+    );
+    return createTextFileFromLocalFile(absoluteFileName);
+  }
+
+  async function parseAndExecuteExecutor(
+    input: string,
+    IOInput: R.TextFile,
+  ): Promise<R.Result<R.TextFile>> {
+    const document = await parse(input, { validationChecks: 'all' });
+    expectNoParserAndLexerErrors(document);
+
+    const block = locator.getAstNode<BlockDefinition>(
+      document.parseResult.value,
+      'pipelines@0/blocks@1',
+    ) as BlockDefinition;
+
+    return new TextLineDeleterExecutor().doExecute(
+      IOInput,
+      getTestExecutionContext(locator, document, [block]),
+    );
+  }
+
+  beforeAll(() => {
+    // Register extensions
+    useExtension(new StdLangExtension());
+    useExtension(new TestLangExtension());
+    // Create language services
+    const services = createJayveeServices(NodeFileSystem).Jayvee;
+    locator = services.workspace.AstNodeLocator;
+    // Parse function for Jayvee (without validation)
+    parse = parseHelper(services);
+  });
+
+  it('should diagnose no error on valid text file with at least one line', async () => {
+    const text = readJvTestAsset('valid-first-line.jv');
+
+    const testFile = readTestFile('test.txt');
+    const result = await parseAndExecuteExecutor(text, testFile);
+
+    expect(R.isErr(result)).toEqual(false);
+    if (R.isOk(result)) {
+      expect(result.right.ioType).toEqual(IOType.TEXT_FILE);
+      expect(result.right.content).toEqual(
+        expect.arrayContaining(['Test  File']),
+      );
+    }
+  });
+
+  it('should diagnose no error on empty lines parameter', async () => {
+    const text = readJvTestAsset('valid-no-line.jv');
+
+    const testFile = readTestFile('test.txt');
+    const result = await parseAndExecuteExecutor(text, testFile);
+
+    expect(R.isErr(result)).toEqual(false);
+    if (R.isOk(result)) {
+      expect(result.right.ioType).toEqual(IOType.TEXT_FILE);
+      expect(result.right.content).toEqual(
+        expect.arrayContaining(['Multiline', 'Test  File']),
+      );
+    }
+  });
+
+  it('should diagnose no error on empty text', async () => {
+    const text = readJvTestAsset('valid-first-line.jv');
+
+    const testFile = readTestFile('test-empty.txt');
+    const result = await parseAndExecuteExecutor(text, testFile);
+
+    expect(R.isOk(result)).toEqual(false);
+    if (R.isErr(result)) {
+      expect(result.left.message).toEqual(
+        'Line 1 does not exist in the text file, only 0 line(s) are present',
+      );
+    }
+  });
+
+  it('should diagnose no error on duplicate line', async () => {
+    const text = readJvTestAsset('valid-duplicate-line.jv');
+
+    const testFile = readTestFile('test.txt');
+    const result = await parseAndExecuteExecutor(text, testFile);
+
+    expect(R.isErr(result)).toEqual(false);
+    if (R.isOk(result)) {
+      expect(result.right.ioType).toEqual(IOType.TEXT_FILE);
+      expect(result.right.content).toEqual(
+        expect.arrayContaining(['Test  File']),
+      );
+    }
+  });
+});
