@@ -71,9 +71,16 @@ describe('Validation of HttpExtractorExecutor', () => {
     nock.restore();
   });
 
+  beforeEach(() => {
+    if (!nock.isActive()) {
+      nock.activate();
+    }
+    nock.cleanAll();
+  });
+
   it('should diagnose no error on valid http url', async () => {
     const text = readJvTestAsset('valid-http.jv');
-    nock('http://localhost')
+    const nockScope = nock('http://localhost')
       .get('/test.txt')
       .replyWithFile(
         200,
@@ -90,6 +97,7 @@ describe('Validation of HttpExtractorExecutor', () => {
 
     expect(R.isErr(result)).toEqual(false);
     if (R.isOk(result)) {
+      expect(nockScope.isDone()).toEqual(true);
       expect(result.right).toEqual(
         expect.objectContaining({
           name: 'test.txt',
@@ -103,7 +111,7 @@ describe('Validation of HttpExtractorExecutor', () => {
 
   it('should diagnose no error on valid https url', async () => {
     const text = readJvTestAsset('valid-https.jv');
-    nock('https://localhost')
+    const nockScope = nock('https://localhost')
       .get('/test.txt')
       .replyWithFile(
         200,
@@ -120,6 +128,7 @@ describe('Validation of HttpExtractorExecutor', () => {
 
     expect(R.isErr(result)).toEqual(false);
     if (R.isOk(result)) {
+      expect(nockScope.isDone()).toEqual(true);
       expect(result.right).toEqual(
         expect.objectContaining({
           name: 'test.txt',
@@ -131,11 +140,81 @@ describe('Validation of HttpExtractorExecutor', () => {
     }
   });
 
-  /* it('should diagnose no error on retries exceeded', () => {});
+  it('should diagnose no error on retry', async () => {
+    const text = readJvTestAsset('valid-one-retry.jv');
+    const nockScope404 = nock('https://localhost').get('/test.txt').reply(404);
+    const nockScope200 = nock('https://localhost')
+      .get('/test.txt')
+      .replyWithFile(
+        200,
+        path.resolve(
+          __dirname,
+          '../test/assets/http-extractor-executor/test.txt',
+        ),
+        {
+          'Content-Type': 'text/plain',
+        },
+      );
 
-  it('should diagnose no error on url not found', () => {});
+    const result = await parseAndExecuteExecutor(text);
 
-  it('should diagnose no error on download error', () => {});
+    expect(R.isErr(result)).toEqual(false);
+    if (R.isOk(result)) {
+      expect(nockScope404.isDone()).toEqual(true);
+      expect(nockScope200.isDone()).toEqual(true);
+      expect(result.right).toEqual(
+        expect.objectContaining({
+          name: 'test.txt',
+          extension: 'txt',
+          ioType: IOType.FILE,
+          mimeType: R.MimeType.APPLICATION_OCTET_STREAM,
+        }),
+      );
+    }
+  });
 
-  it('should diagnose no error on ignoring redirects', () => {});*/
+  it('should diagnose no error on url not found', async () => {
+    const text = readJvTestAsset('valid-http.jv');
+    const nockScope = nock('http://localhost').get('/test.txt').reply(404);
+
+    const result = await parseAndExecuteExecutor(text);
+
+    expect(R.isOk(result)).toEqual(false);
+    if (R.isErr(result)) {
+      expect(nockScope.isDone()).toEqual(true);
+      expect(result.left.message).toEqual(
+        'HTTP fetch failed with code 404. Please check your connection.',
+      );
+    }
+  });
+
+  it('should diagnose no error on ClientRequest error', async () => {
+    const text = readJvTestAsset('valid-https.jv');
+    const nockScope = nock('https://localhost')
+      .get('/test.txt')
+      .replyWithError('Test error');
+
+    const result = await parseAndExecuteExecutor(text);
+
+    expect(R.isOk(result)).toEqual(false);
+    if (R.isErr(result)) {
+      expect(nockScope.isDone()).toEqual(true);
+      expect(result.left.message).toEqual('Test error');
+    }
+  });
+
+  it('should diagnose no error on ignoring redirects', async () => {
+    const text = readJvTestAsset('valid-http.jv');
+    const nockScope = nock('http://localhost').get('/test.txt').reply(301);
+
+    const result = await parseAndExecuteExecutor(text);
+
+    expect(R.isOk(result)).toEqual(false);
+    if (R.isErr(result)) {
+      expect(nockScope.isDone()).toEqual(true);
+      expect(result.left.message).toEqual(
+        'HTTP fetch was redirected with code 301. Redirects are either disabled or maximum number of redirects was exeeded.',
+      );
+    }
+  });
 });
