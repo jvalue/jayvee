@@ -10,6 +10,7 @@ import {
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 
 import {
+  CachedLogger,
   DebugGranularity,
   DebugTargets,
   ExecutionContext,
@@ -17,8 +18,6 @@ import {
   blockExecutorRegistry,
   constraintExecutorRegistry,
 } from '../src';
-
-import { TestLogger } from './test-logger';
 
 export function clearBlockExecutorRegistry() {
   blockExecutorRegistry.clear();
@@ -57,7 +56,7 @@ export function getTestExecutionContext(
 
   const executionContext = new ExecutionContext(
     pipeline,
-    new TestLogger(runOptions.isDebugMode, undefined, loggerPrintLogs),
+    new CachedLogger(runOptions.isDebugMode, undefined, loggerPrintLogs),
     runOptions,
     new EvaluationContext(new RuntimeParameterProvider()),
   );
