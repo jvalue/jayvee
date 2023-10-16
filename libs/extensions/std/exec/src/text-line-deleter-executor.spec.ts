@@ -27,7 +27,7 @@ import { createTextFileFromLocalFile } from '../test';
 
 import { TextLineDeleterExecutor } from './text-line-deleter-executor';
 
-describe('Validation of TextFileInterpreterExecutor', () => {
+describe('Validation of TextLineDeleterExecutor', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
