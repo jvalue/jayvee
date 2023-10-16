@@ -193,6 +193,13 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
             }),
           );
         });
+      }).on('error', (e: Error) => {
+        resolve(
+          R.err({
+            message: e.message,
+            diagnostic: { node: context.getCurrentNode(), property: 'name' },
+          }),
+        );
       });
     });
   }
