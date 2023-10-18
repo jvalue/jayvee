@@ -24,7 +24,7 @@ export class TextRangeSelectorMetaInformation extends BlockMetaInformation {
         },
         lineTo: {
           type: PrimitiveValuetypes.Integer,
-          defaultValue: Number.POSITIVE_INFINITY,
+          defaultValue: Number.MAX_SAFE_INTEGER,
           validation: greaterThanZeroValidation,
         },
       },
