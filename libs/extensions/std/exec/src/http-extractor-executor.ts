@@ -16,16 +16,14 @@ import {
   MimeType,
   None,
   implementsStatic,
+  inferFileExtensionFromContentTypeString,
+  inferFileExtensionFromFileExtensionString,
+  inferMimeTypeFromContentTypeString,
 } from '@jvalue/jayvee-execution';
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 import { http, https } from 'follow-redirects';
 import { AstNode } from 'langium';
 
-import {
-  inferFileExtensionFromContentTypeString,
-  inferFileExtensionFromFileExtensionString,
-  inferMimeTypeFromContentTypeString,
-} from './file-util';
 import {
   createBackoffStrategy,
   isBackoffStrategyHandle,
