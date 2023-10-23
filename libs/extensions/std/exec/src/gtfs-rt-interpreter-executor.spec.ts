@@ -143,7 +143,7 @@ describe('Validation of GtfsRTInterpreterExecutor', () => {
     }
   });
 
-  it('should diagnose no error on invalid entity parameter', async () => {
+  it('should diagnose error on invalid entity parameter', async () => {
     const text = readJvTestAsset('invalid-entity-parameter.jv');
 
     const testFile = readTestFile('valid-trip-update');
@@ -157,7 +157,7 @@ describe('Validation of GtfsRTInterpreterExecutor', () => {
     }
   });
 
-  it('should diagnose no error on invalid gtfs file input', async () => {
+  it('should diagnose error on invalid gtfs file input', async () => {
     const text = readJvTestAsset('invalid-entity-parameter.jv');
 
     const testFile = readTestFile('invalid-gtfs');

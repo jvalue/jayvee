@@ -173,7 +173,7 @@ describe('Validation of HttpExtractorExecutor', () => {
     }
   });
 
-  it('should diagnose no error on url not found', async () => {
+  it('should diagnose error on url not found', async () => {
     const text = readJvTestAsset('valid-http.jv');
     const nockScope = nock('http://localhost').get('/test.txt').reply(404);
 
@@ -188,7 +188,7 @@ describe('Validation of HttpExtractorExecutor', () => {
     }
   });
 
-  it('should diagnose no error on ClientRequest error', async () => {
+  it('should diagnose error on ClientRequest error', async () => {
     const text = readJvTestAsset('valid-https.jv');
     const nockScope = nock('https://localhost')
       .get('/test.txt')
@@ -203,7 +203,7 @@ describe('Validation of HttpExtractorExecutor', () => {
     }
   });
 
-  it('should diagnose no error on ignoring redirects', async () => {
+  it('should diagnose error on ignoring redirects', async () => {
     const text = readJvTestAsset('valid-http.jv');
     const nockScope = nock('http://localhost').get('/test.txt').reply(301);
 

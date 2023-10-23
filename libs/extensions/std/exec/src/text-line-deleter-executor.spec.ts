@@ -108,7 +108,7 @@ describe('Validation of TextLineDeleterExecutor', () => {
     }
   });
 
-  it('should diagnose no error on empty text', async () => {
+  it('should diagnose error on empty text', async () => {
     const text = readJvTestAsset('valid-first-line.jv');
 
     const testFile = readTestFile('test-empty.txt');
