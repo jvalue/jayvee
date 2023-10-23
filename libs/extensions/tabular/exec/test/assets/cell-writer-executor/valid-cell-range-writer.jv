@@ -4,7 +4,7 @@
 
 pipeline TestPipeline {
 
-  block TestExtractor oftype TestFileExtractor {
+  block TestExtractor oftype TestSheetExtractor {
   }
 
   block TestBlock oftype CellWriter {
@@ -12,7 +12,7 @@ pipeline TestPipeline {
     at: range A1:C1;
   }
 
-  block TestLoader oftype TestFileLoader {
+  block TestLoader oftype TestSheetLoader {
   }
 
   TestExtractor -> TestBlock -> TestLoader;

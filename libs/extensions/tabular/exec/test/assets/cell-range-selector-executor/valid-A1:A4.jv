@@ -4,14 +4,14 @@
 
 pipeline TestPipeline {
 
-  block TestExtractor oftype TestFileExtractor {
+  block TestExtractor oftype TestSheetExtractor {
   }
 
   block TestBlock oftype CellRangeSelector {
     select: range A1:A4;
   }
 
-  block TestLoader oftype TestFileLoader {
+  block TestLoader oftype TestSheetLoader {
   }
 
   TestExtractor -> TestBlock -> TestLoader;

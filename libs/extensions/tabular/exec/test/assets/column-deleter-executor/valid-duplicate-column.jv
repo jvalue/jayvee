@@ -4,14 +4,14 @@
 
 pipeline TestPipeline {
 
-  block TestExtractor oftype TestFileExtractor {
+  block TestExtractor oftype TestSheetExtractor {
   }
 
   block TestBlock oftype ColumnDeleter {
     delete: [column A, column A];
   }
 
-  block TestLoader oftype TestFileLoader {
+  block TestLoader oftype TestSheetLoader {
   }
 
   TestExtractor -> TestBlock -> TestLoader;
