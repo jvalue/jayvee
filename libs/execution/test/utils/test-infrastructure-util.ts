@@ -17,7 +17,7 @@ import {
   StackNode,
   blockExecutorRegistry,
   constraintExecutorRegistry,
-} from '../src';
+} from '../../src';
 
 export function clearBlockExecutorRegistry() {
   blockExecutorRegistry.clear();
