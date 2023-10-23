@@ -5,6 +5,7 @@
 export default {
   displayName: 'extensions-tabular-exec',
   preset: '../../../../jest.preset.js',
+  testEnvironment: './src/jsdom-environment-fix.ts',
   globals: {
     'ts-jest': {
       tsconfig: '<rootDir>/tsconfig.spec.json',
