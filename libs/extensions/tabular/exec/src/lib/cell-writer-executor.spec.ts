@@ -128,7 +128,7 @@ describe('Validation of CellWriterExecutor', () => {
     }
   });
 
-  it('should diagnose no error on single cell writer on empty sheet', async () => {
+  it('should diagnose error on single cell writer on empty sheet', async () => {
     const text = readJvTestAsset('valid-single-cell-writer.jv');
 
     const testWorkbook = await readTestWorkbook('test-empty.xlsx');
