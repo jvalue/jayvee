@@ -25,9 +25,7 @@ export function createBinaryFileFromLocalFile(fileName: string): BinaryFile {
     MimeType.APPLICATION_OCTET_STREAM;
   const fileExtension =
     inferFileExtensionFromFileExtensionString(extName) || FileExtension.NONE;
-  const file = readFileSync(
-    path.resolve(__dirname, '../test/assets/file-picker-executor/', fileName),
-  );
+  const file = readFileSync(path.resolve(__dirname, fileName));
   return new BinaryFile(path.basename(fileName), fileExtension, mimeType, file);
 }
 
@@ -38,10 +36,7 @@ export function createTextFileFromLocalFile(fileName: string): TextFile {
     MimeType.APPLICATION_OCTET_STREAM;
   const fileExtension =
     inferFileExtensionFromFileExtensionString(extName) || FileExtension.NONE;
-  const fileContent = readFileSync(
-    path.resolve(__dirname, '../test/assets/file-picker-executor/', fileName),
-    'utf-8',
-  );
+  const fileContent = readFileSync(path.resolve(__dirname, fileName), 'utf-8');
 
   return new TextFile(
     path.basename(fileName),
