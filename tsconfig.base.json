@@ -21,28 +21,25 @@
     "strictNullChecks": true,
     "baseUrl": ".",
     "paths": {
-      "@jvalue/jayvee-interpreter-lib": [
-        "libs/interpreter-lib/src/index.ts"
-      ],
       "@jvalue/jayvee-execution": ["libs/execution/src/index.ts"],
       "@jvalue/jayvee-execution/test": ["libs/execution/test/index.ts"],
       "@jvalue/jayvee-extensions/rdbms/exec": [
         "libs/extensions/rdbms/exec/src/index.ts"
       ],
-      "@jvalue/jayvee-extensions/rdbms/test": [
-        "libs/extensions/rdbms/exec/test/index.ts"
-      ],
       "@jvalue/jayvee-extensions/rdbms/lang": [
         "libs/extensions/rdbms/lang/src/index.ts"
+      ],
+      "@jvalue/jayvee-extensions/rdbms/test": [
+        "libs/extensions/rdbms/exec/test/index.ts"
       ],
       "@jvalue/jayvee-extensions/std/exec": [
         "libs/extensions/std/exec/src/index.ts"
       ],
-      "@jvalue/jayvee-extensions/std/test": [
-        "libs/extensions/std/exec/test/index.ts"
-      ],
       "@jvalue/jayvee-extensions/std/lang": [
         "libs/extensions/std/lang/src/index.ts"
+      ],
+      "@jvalue/jayvee-extensions/std/test": [
+        "libs/extensions/std/exec/test/index.ts"
       ],
       "@jvalue/jayvee-extensions/tabular/exec": [
         "libs/extensions/tabular/exec/src/index.ts"
@@ -50,6 +47,7 @@
       "@jvalue/jayvee-extensions/tabular/lang": [
         "libs/extensions/tabular/lang/src/index.ts"
       ],
+      "@jvalue/jayvee-interpreter-lib": ["libs/interpreter-lib/src/index.ts"],
       "@jvalue/jayvee-language-server": ["libs/language-server/src/index.ts"],
       "@jvalue/jayvee-language-server/test": [
         "libs/language-server/src/test/index.ts"
