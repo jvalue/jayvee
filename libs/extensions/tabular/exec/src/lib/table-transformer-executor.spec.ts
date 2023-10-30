@@ -1,0 +1,222 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+import * as path from 'path';
+
+import * as R from '@jvalue/jayvee-execution';
+import { getTestExecutionContext } from '@jvalue/jayvee-execution/test';
+import { TabularLangExtension } from '@jvalue/jayvee-extensions/tabular/lang';
+import {
+  BlockDefinition,
+  IOType,
+  PrimitiveValuetypes,
+  createJayveeServices,
+  useExtension,
+} from '@jvalue/jayvee-language-server';
+import {
+  ParseHelperOptions,
+  TestLangExtension,
+  expectNoParserAndLexerErrors,
+  parseHelper,
+  readJvTestAssetHelper,
+} from '@jvalue/jayvee-language-server/test';
+import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
+import { NodeFileSystem } from 'langium/node';
+
+import {
+  ReducedColumnDefinitionEntry,
+  createTableFromLocalExcelFile,
+} from '../../test/util';
+
+import { TableTransformerExecutor } from './table-transformer-executor';
+
+describe('Validation of TableTransformerExecutor', () => {
+  let parse: (
+    input: string,
+    options?: ParseHelperOptions,
+  ) => Promise<LangiumDocument<AstNode>>;
+
+  let locator: AstNodeLocator;
+
+  const readJvTestAsset = readJvTestAssetHelper(
+    __dirname,
+    '../../test/assets/table-transformer-executor/',
+  );
+
+  async function readTestExcelAllColumns() {
+    return readTestTable('test-excel.xlsx', [
+      {
+        columnName: 'index',
+        sheetColumnIndex: 0,
+        valuetype: PrimitiveValuetypes.Integer,
+      },
+      {
+        columnName: 'name',
+        sheetColumnIndex: 1,
+        valuetype: PrimitiveValuetypes.Text,
+      },
+      {
+        columnName: 'flag',
+        sheetColumnIndex: 2,
+        valuetype: PrimitiveValuetypes.Boolean,
+      },
+    ]);
+  }
+  async function readTestTable(
+    fileName: string,
+    columnDefinitions: ReducedColumnDefinitionEntry[],
+  ): Promise<R.Table> {
+    const absoluteFileName = path.resolve(
+      __dirname,
+      '../../test/assets/table-transformer-executor/',
+      fileName,
+    );
+    return await createTableFromLocalExcelFile(
+      absoluteFileName,
+      columnDefinitions,
+    );
+  }
+
+  async function parseAndExecuteExecutor(
+    input: string,
+    IOInput: R.Table,
+  ): Promise<R.Result<R.Table>> {
+    const document = await parse(input, { validationChecks: 'all' });
+    expectNoParserAndLexerErrors(document);
+
+    const block = locator.getAstNode<BlockDefinition>(
+      document.parseResult.value,
+      'pipelines@0/blocks@1',
+    ) as BlockDefinition;
+
+    return new TableTransformerExecutor().doExecute(
+      IOInput,
+      getTestExecutionContext(locator, document, [block]),
+    );
+  }
+
+  beforeAll(() => {
+    // Register extensions
+    useExtension(new TabularLangExtension());
+    useExtension(new TestLangExtension());
+    // Create language services
+    const services = createJayveeServices(NodeFileSystem).Jayvee;
+    locator = services.workspace.AstNodeLocator;
+    // Parse function for Jayvee (without validation)
+    parse = parseHelper(services);
+  });
+
+  it('should diagnose no error on valid table transform', async () => {
+    const text = readJvTestAsset('valid-transfomer.jv');
+
+    const testTable = await readTestExcelAllColumns();
+    const result = await parseAndExecuteExecutor(text, testTable);
+
+    expect(R.isErr(result)).toEqual(false);
+    if (R.isOk(result)) {
+      expect(result.right.ioType).toEqual(IOType.TABLE);
+      expect(result.right.getNumberOfColumns()).toEqual(4);
+      expect(result.right.getNumberOfRows()).toEqual(6);
+      expect(result.right.getColumn('index')).toEqual(
+        expect.objectContaining({
+          values: expect.arrayContaining([0, 1, 2, 5]) as number[],
+        }),
+      );
+      expect(result.right.getColumn('index2')).toEqual(
+        expect.objectContaining({
+          values: expect.arrayContaining([0, 2, 4, 10]) as number[],
+        }),
+      );
+    }
+  });
+
+  it('should diagnose no error on column overwrite', async () => {
+    const text = readJvTestAsset('valid-column-overwrite.jv');
+
+    const testTable = await readTestExcelAllColumns();
+    const result = await parseAndExecuteExecutor(text, testTable);
+
+    expect(R.isErr(result)).toEqual(false);
+    if (R.isOk(result)) {
+      expect(result.right.ioType).toEqual(IOType.TABLE);
+      expect(result.right.getNumberOfColumns()).toEqual(3);
+      expect(result.right.getNumberOfRows()).toEqual(6);
+      expect(result.right.getColumn('index')).toEqual(
+        expect.objectContaining({
+          values: expect.arrayContaining([0, 2, 4, 10]) as number[],
+        }),
+      );
+    }
+  });
+
+  it('should diagnose no error on column type change', async () => {
+    const text = readJvTestAsset('valid-column-type-change.jv');
+
+    const testTable = await readTestExcelAllColumns();
+    const result = await parseAndExecuteExecutor(text, testTable);
+
+    expect(R.isErr(result)).toEqual(false);
+    if (R.isOk(result)) {
+      expect(result.right.ioType).toEqual(IOType.TABLE);
+      expect(result.right.getNumberOfColumns()).toEqual(3);
+      expect(result.right.getNumberOfRows()).toEqual(6);
+      expect(result.right.getColumn('index')).toEqual(
+        expect.objectContaining({
+          values: [false, true, true, true, true, true],
+          valuetype: PrimitiveValuetypes.Boolean,
+        }),
+      );
+    }
+  });
+
+  it('should diagnose no error on empty table', async () => {
+    const text = readJvTestAsset('valid-transfomer.jv');
+
+    const testTable = await readTestTable('test-empty.xlsx', [
+      {
+        columnName: 'index',
+        sheetColumnIndex: 0,
+        valuetype: PrimitiveValuetypes.Integer,
+      },
+    ]);
+    const result = await parseAndExecuteExecutor(text, testTable);
+
+    expect(R.isErr(result)).toEqual(false);
+    if (R.isOk(result)) {
+      expect(result.right.ioType).toEqual(IOType.TABLE);
+      expect(result.right.getNumberOfColumns()).toEqual(2);
+      expect(result.right.getNumberOfRows()).toEqual(0);
+      expect(result.right.getColumn('index')?.values).toHaveLength(0);
+      expect(result.right.getColumn('index2')?.values).toHaveLength(0);
+    }
+  });
+
+  it('should diagnose error on missing input column', async () => {
+    const text = readJvTestAsset('valid-missing-input-column.jv');
+
+    const testTable = await readTestExcelAllColumns();
+    const result = await parseAndExecuteExecutor(text, testTable);
+
+    expect(R.isOk(result)).toEqual(false);
+    if (R.isErr(result)) {
+      expect(result.left.message).toEqual(
+        'The specified input column "id" does not exist in the given table',
+      );
+    }
+  });
+
+  it('should diagnose error on transform type missmatch', async () => {
+    const text = readJvTestAsset('valid-transform-type-missmatch.jv');
+
+    const testTable = await readTestExcelAllColumns();
+    const result = await parseAndExecuteExecutor(text, testTable);
+
+    expect(R.isOk(result)).toEqual(false);
+    if (R.isErr(result)) {
+      expect(result.left.message).toEqual(
+        'Type text of column "name" is not convertible to type integer',
+      );
+    }
+  });
+});
