@@ -27,7 +27,7 @@ import {
   rowIndexToString,
 } from '@jvalue/jayvee-language-server';
 
-interface ColumnDefinitionEntry {
+export interface ColumnDefinitionEntry {
   sheetColumnIndex: number;
   columnName: string;
   valuetype: Valuetype;
