@@ -20,8 +20,8 @@ The general syntax of transforms looks like this:
 
 ```jayvee
 transform <name> {
-  from <inputName> oftype <inputValueType>;
-  to <outputName> oftype <outputValueType>;
+  from <inputName> oftype <inputValuetype>;
+  to <outputName> oftype <outputValuetype>;
 
   <outputName>: <expression>;
 }
@@ -32,7 +32,7 @@ The curly braces denote the body of the transform.
 
 The body first contains the definitions of input and output ports.
 Input ports are defined using the `from` keyword whereas output ports use the `to` keyword.
-Next, they are given a name and, after the `oftype` keyword, typed with a `valuetype`.
+Next, they are given a name and, after the `oftype` keyword, typed with a valuetype.
 
 Below, there needs to be an output assignment for each output port.
 The output assignment defines how a particular output value is computed.

@@ -140,7 +140,7 @@ In `libs/extensions/<extension-name>/lang/src/lib/my-extractor-meta-inf.ts`:
 import {
   BlockMetaInformation,
   IOType,
-  PrimitiveValueTypes,
+  PrimitiveValuetypes,
 } from '@jvalue/jayvee-language-server';
 
 export class MyExtractorMetaInformation extends BlockMetaInformation {
@@ -152,10 +152,10 @@ export class MyExtractorMetaInformation extends BlockMetaInformation {
       // Property definitions:
       {
         url: {
-          type: PrimitiveValueTypes.Text,
+          type: PrimitiveValuetypes.Text,
         },
         limit: {
-          type: PrimitiveValueTypes.Integer,
+          type: PrimitiveValuetypes.Integer,
           defaultValue: 10,
         },
       },
@@ -214,7 +214,7 @@ import {
   Sheet,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
-import { IOType, PrimitiveValueTypes } from '@jvalue/jayvee-language-server';
+import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
 export class MyExtractorExecutor
@@ -233,11 +233,11 @@ export class MyExtractorExecutor
     // Accessing property values by their name:
     const url = context.getPropertyValue(
       'url',
-      PrimitiveValueTypes.Text,
+      PrimitiveValuetypes.Text,
     );
     const limit = context.getPropertyValue(
       'limit',
-      PrimitiveValueTypes.Integer,
+      PrimitiveValuetypes.Integer,
     );
     
     // ...
