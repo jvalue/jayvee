@@ -13,9 +13,11 @@ pipeline CarsPipeline {
 		to: CarsTextFileInterpreter;
 	}
 
-	block CarsTextFileInterpreter oftype TextFileInterpreter {
-		// empty block
-	}
+	// 4. The output of the "from" block is hereby used 
+	// as input for the "to" block.
+
+	// 5. More convenient syntax of a pipe
+	CarsTextFileInterpreter -> CarsCSVInterpreter;
 
 	pipe {
 		from: CarsTextFileInterpreter;
