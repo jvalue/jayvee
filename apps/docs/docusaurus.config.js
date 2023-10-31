@@ -11,12 +11,11 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Jayvee',
-  tagline: 'Data engineering made easy',
   url: 'https://jvalue.github.io',
-  baseUrl: '/jayvee/',
+  baseUrl: '/jayvee',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
-  favicon: 'img/jayvee.png',
+  favicon: '/img/jayvee.png',
   organizationName: 'jvalue', // Usually your GitHub org/user name.
   projectName: 'jayvee', // Usually your repo name.
   themes: ['@docusaurus/theme-mermaid'],
@@ -43,10 +42,7 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       navbar: {
-        logo: {
-          alt: 'Jayvee logo',
-          src: 'img/jayvee.png',
-        },
+        title: 'Jayvee',
         items: [
           {
             type: 'doc',
@@ -61,9 +57,15 @@ const config = {
             label: 'Developer Docs',
           },
           {
-            href: 'https://github.com/jvalue/jayvee',
-            label: 'GitHub',
+            type: 'docsVersionDropdown',
             position: 'right',
+            dropdownActiveClassDisabled: true,
+          },
+          {
+            href: 'https://github.com/jvalue/jayvee',
+            position: 'right',
+            className: 'header-github-link',
+            'aria-label': 'GitHub repository',
           },
         ],
       },
@@ -71,17 +73,25 @@ const config = {
         style: 'dark',
         links: [
           {
-            title: 'User Docs',
+            title: 'Learn',
             items: [
               {
-                label: 'Introduction to Jayvee',
+                label: 'Installation',
                 to: '/docs/user/intro',
               },
+              {
+                label: 'Core Concepts',
+                to: '/docs/user/core-concepts',
+              },
+              {
+                label: 'Examples',
+                to: '/docs/user/examples/cars',
+              },
+              {
+                label: 'Start contributing',
+                to: '/docs/dev/intro',
+              },
             ],
-          },
-          {
-            title: 'Developer Docs',
-            items: [],
           },
           {
             title: 'More',
@@ -89,6 +99,27 @@ const config = {
               {
                 label: 'GitHub',
                 href: 'https://github.com/jvalue/jayvee',
+              },
+              {
+                label: 'JValue',
+                href: 'https://jvalue.org/',
+              },
+            ],
+          },
+          {
+            title: 'Legal',
+            items: [
+              {
+                label: 'Imprint',
+                href: 'https://jvalue.org/notices/imprint/',
+              },
+              {
+                label: 'Privacy Policy',
+                href: 'https://jvalue.org/notices/privacy-policy/',
+              },
+              {
+                label: 'Open Source Notices',
+                href: 'https://github.com/jvalue/jayvee/blob/main/NOTICES.md',
               },
             ],
           },

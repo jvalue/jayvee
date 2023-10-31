@@ -57,6 +57,16 @@
         "jestConfig": "apps/docs/jest.config.ts",
         "passWithNoTests": true
       }
+    },
+    "version-snapshot": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["generate"],
+      "options": {
+        "commands": [
+          "node tools/scripts/docs/create-new-version-snapshot.mjs"
+        ],
+        "parallel": false
+      }
     }
   },
   "tags": []

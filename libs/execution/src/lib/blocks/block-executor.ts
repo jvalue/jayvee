@@ -2,8 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { IOType } from '@jvalue/jayvee-language-server';
+import { strict as assert } from 'assert';
 
+import { IOType, isBlockDefinition } from '@jvalue/jayvee-language-server';
+
+import { isBlockTargetedForDebugLogging } from '../debugging/debug-configuration';
+import { DebugLogVisitor } from '../debugging/debug-log-visitor';
 import { ExecutionContext } from '../execution-context';
 import { IOTypeImplementation } from '../types/io-types/io-type-implementation';
 
@@ -17,6 +21,60 @@ export interface BlockExecutor<
   readonly outputType: O;
 
   execute(
+    input: IOTypeImplementation<I>,
+    context: ExecutionContext,
+  ): Promise<R.Result<IOTypeImplementation<O> | null>>;
+}
+
+export abstract class AbstractBlockExecutor<I extends IOType, O extends IOType>
+  implements BlockExecutor<I, O>
+{
+  constructor(public readonly inputType: I, public readonly outputType: O) {}
+
+  async execute(
+    input: IOTypeImplementation<I>,
+    context: ExecutionContext,
+  ): Promise<R.Result<IOTypeImplementation<O> | null>> {
+    const executionResult = await this.doExecute(input, context);
+
+    if (R.isOk(executionResult)) {
+      this.logBlockResult(executionResult.right, context);
+    }
+    return executionResult;
+  }
+
+  private logBlockResult(
+    result: IOTypeImplementation | null,
+    context: ExecutionContext,
+  ): void {
+    if (!context.runOptions.isDebugMode) {
+      return;
+    }
+
+    if (result == null) {
+      return;
+    }
+
+    const currentNode = context.getCurrentNode();
+    assert(isBlockDefinition(currentNode));
+    const isBlockTargeted = isBlockTargetedForDebugLogging(
+      currentNode,
+      context,
+    );
+    if (!isBlockTargeted) {
+      return;
+    }
+
+    result.acceptVisitor(
+      new DebugLogVisitor(
+        context.runOptions.debugGranularity,
+        'Output',
+        context.logger,
+      ),
+    );
+  }
+
+  abstract doExecute(
     input: IOTypeImplementation<I>,
     context: ExecutionContext,
   ): Promise<R.Result<IOTypeImplementation<O> | null>>;

@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../../expressions/evaluation';
+import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
 import {
   ValuetypeAssignment as AstValuetypeAssignment,
   isValuetypeAssignment as isAstValuetypeAssignment,
@@ -21,8 +21,8 @@ class ValuetypeAssignmentValuetypeImpl extends PrimitiveValuetype<AstValuetypeAs
     return false;
   }
 
-  override getName(): 'valuetypeAssignment' {
-    return 'valuetypeAssignment';
+  override getName(): 'ValuetypeAssignment' {
+    return 'ValuetypeAssignment';
   }
 
   override isInternalValueRepresentation(

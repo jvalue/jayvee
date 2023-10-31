@@ -42,7 +42,7 @@ export class EqualityOperatorTypeComputer
       if (!isRightOperandTypeValid) {
         context?.accept(
           'error',
-          `Operator does not support type ${leftOperandType.getName()}`,
+          `Operator does not support type ${rightOperandType.getName()}`,
           {
             node: expression.right,
           },

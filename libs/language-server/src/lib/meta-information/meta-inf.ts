@@ -3,10 +3,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 // eslint-disable-next-line import/no-cycle
-import {
-  EvaluationContext,
-  InternalValueRepresentation,
-} from '../ast/expressions/evaluation';
+import { EvaluationContext } from '../ast/expressions/evaluation';
+import { InternalValueRepresentation } from '../ast/expressions/internal-value-representation';
 import { PropertyAssignment, PropertyBody } from '../ast/generated/ast';
 import { Valuetype } from '../ast/wrappers/value-type';
 import { ValidationContext } from '../validation/validation-context';
@@ -84,6 +82,12 @@ export abstract class MetaInformation {
 
   hasPropertySpecification(name: string): boolean {
     return this.getPropertySpecification(name) !== undefined;
+  }
+
+  getMissingRequiredPropertyNames(
+    presentPropertyNames: string[] = [],
+  ): string[] {
+    return this.getPropertyNames('required', presentPropertyNames);
   }
 
   getPropertyNames(

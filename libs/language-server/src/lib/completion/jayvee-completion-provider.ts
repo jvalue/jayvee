@@ -9,22 +9,23 @@ import {
   CompletionContext,
   CompletionValueItem,
   DefaultCompletionProvider,
+  LangiumDocuments,
+  LangiumServices,
   MaybePromise,
   NextFeature,
 } from 'langium';
 import { CompletionItemKind } from 'vscode-languageserver';
 
+import { createValuetype } from '../ast';
 import {
   BlockDefinition,
-  BlockTypeLiteral,
   ConstraintDefinition,
-  ConstraintTypeLiteral,
   PropertyAssignment,
   PropertyBody,
+  ValuetypeReference,
   isBlockDefinition,
-  isBlockTypeLiteral,
   isConstraintDefinition,
-  isConstraintTypeLiteral,
+  isJayveeModel,
   isPropertyAssignment,
   isPropertyBody,
 } from '../ast/generated/ast';
@@ -39,6 +40,13 @@ import {
 const RIGHT_ARROW_SYMBOL = '\u{2192}';
 
 export class JayveeCompletionProvider extends DefaultCompletionProvider {
+  protected langiumDocumentService: LangiumDocuments;
+
+  constructor(services: LangiumServices) {
+    super(services);
+    this.langiumDocumentService = services.shared.workspace.LangiumDocuments;
+  }
+
   override completionFor(
     context: CompletionContext,
     next: NextFeature,
@@ -47,17 +55,20 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     const astNode = context.node;
     if (astNode !== undefined) {
       const isBlockTypeCompletion =
-        (isBlockDefinition(astNode) || isBlockTypeLiteral(astNode)) &&
-        next.type === BlockTypeLiteral;
+        isBlockDefinition(astNode) && next.property === 'type';
       if (isBlockTypeCompletion) {
         return this.completionForBlockType(acceptor);
       }
 
       const isConstraintTypeCompletion =
-        (isConstraintDefinition(astNode) || isConstraintTypeLiteral(astNode)) &&
-        next.type === ConstraintTypeLiteral;
+        isConstraintDefinition(astNode) && next.property === 'type';
       if (isConstraintTypeCompletion) {
         return this.completionForConstraintType(acceptor);
+      }
+
+      const isValuetypeDefinitionCompletion = next.type === ValuetypeReference;
+      if (isValuetypeDefinitionCompletion) {
+        return this.completionForValuetype(context, acceptor);
       }
 
       const isFirstPropertyCompletion =
@@ -105,6 +116,29 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
         detail: `(constraint type)`,
       });
     });
+  }
+
+  private completionForValuetype(
+    context: CompletionContext,
+    acceptor: CompletionAcceptor,
+  ): MaybePromise<void> {
+    this.langiumDocumentService.all
+      .map((document) => document.parseResult.value)
+      .forEach((parsedDocument) => {
+        if (!isJayveeModel(parsedDocument)) {
+          throw new Error('Expected parsed document to be a JayveeModel');
+        }
+        parsedDocument.valuetypes.forEach((valuetypeDefinition) => {
+          const valuetype = createValuetype(valuetypeDefinition);
+          if (valuetype !== undefined && valuetype.isReferenceableByUser()) {
+            acceptor({
+              label: valuetypeDefinition.name,
+              kind: CompletionItemKind.Class,
+              detail: `(valuetype)`,
+            });
+          }
+        });
+      });
   }
 
   private completionForPropertyName(

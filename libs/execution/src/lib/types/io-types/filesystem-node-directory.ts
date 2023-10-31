@@ -89,4 +89,15 @@ export class FileSystemDirectory extends FileSystemNode {
     );
     return children.length !== 0;
   }
+
+  override toDirectoryString(indentation = 0): string {
+    return (
+      '\t'.repeat(indentation) +
+      this.name +
+      '\n' +
+      this.children
+        .map((child) => child.toDirectoryString(indentation + 2))
+        .join('\n')
+    );
+  }
 }

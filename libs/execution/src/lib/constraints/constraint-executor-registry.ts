@@ -21,7 +21,8 @@ import { RangeConstraintExecutor } from './executors/range-constraint-executor';
 import { RegexConstraintExecutor } from './executors/regex-constraint-executor';
 import { TypedConstraintExecutorClass } from './typed-constraint-executor-class';
 
-const constraintExecutorRegistry = new Registry<TypedConstraintExecutorClass>();
+export const constraintExecutorRegistry =
+  new Registry<TypedConstraintExecutorClass>();
 
 export function registerDefaultConstraintExecutors() {
   registerConstraintExecutor(AllowlistConstraintExecutor);
@@ -45,7 +46,11 @@ export function createConstraintExecutor(
   constraint: ConstraintDefinition,
 ): ConstraintExecutor {
   if (isTypedConstraintDefinition(constraint)) {
-    const constraintType = constraint.type.name;
+    const constraintType = constraint.type.ref?.name;
+    assert(
+      constraintType !== undefined,
+      `Could not resolve reference to constraint type of ${constraint.name}`,
+    );
     const constraintExecutor = constraintExecutorRegistry.get(constraintType);
     assert(
       constraintExecutor !== undefined,

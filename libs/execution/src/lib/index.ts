@@ -7,8 +7,9 @@ export * from './constraints';
 export * from './transforms';
 export * from './types';
 export * from './util';
+export * from './debugging';
 export * from './types/valuetypes/visitors';
 
 export * from './execution-context';
 export * from './extension';
-export * from './logger';
+export * from './logging';

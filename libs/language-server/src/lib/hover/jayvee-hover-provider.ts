@@ -6,11 +6,11 @@ import { AstNode, AstNodeHoverProvider, MaybePromise } from 'langium';
 import { Hover } from 'vscode-languageserver-protocol';
 
 import {
-  BlockTypeLiteral,
-  ConstraintTypeLiteral,
+  BuiltinBlocktypeDefinition,
+  BuiltinConstrainttypeDefinition,
   PropertyAssignment,
-  isBlockTypeLiteral,
-  isConstraintTypeLiteral,
+  isBuiltinBlocktypeDefinition,
+  isBuiltinConstrainttypeDefinition,
   isPropertyAssignment,
 } from '../ast';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
@@ -21,10 +21,10 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
     astNode: AstNode,
   ): MaybePromise<Hover | undefined> {
     let doc = undefined;
-    if (isBlockTypeLiteral(astNode)) {
+    if (isBuiltinBlocktypeDefinition(astNode)) {
       doc = this.getBlockTypeMarkdownDoc(astNode);
     }
-    if (isConstraintTypeLiteral(astNode)) {
+    if (isBuiltinConstrainttypeDefinition(astNode)) {
       doc = this.getConstraintTypeMarkdownDoc(astNode);
     }
     if (isPropertyAssignment(astNode)) {
@@ -44,7 +44,7 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   }
 
   private getBlockTypeMarkdownDoc(
-    blockType: BlockTypeLiteral,
+    blockType: BuiltinBlocktypeDefinition,
   ): string | undefined {
     const blockMetaInf = getMetaInformation(blockType);
     if (blockMetaInf === undefined) {
@@ -56,7 +56,7 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   }
 
   private getConstraintTypeMarkdownDoc(
-    constraintType: ConstraintTypeLiteral,
+    constraintType: BuiltinConstrainttypeDefinition,
   ): string | undefined {
     const constraintMetaInf = getMetaInformation(constraintType);
     if (constraintMetaInf === undefined) {

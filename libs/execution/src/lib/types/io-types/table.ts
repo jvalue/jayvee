@@ -13,7 +13,7 @@ import {
 import { SQLColumnTypeVisitor } from '../valuetypes/visitors/sql-column-type-visitor';
 import { SQLValueRepresentationVisitor } from '../valuetypes/visitors/sql-value-representation-visitor';
 
-import { IOTypeImplementation } from './io-type-implementation';
+import { IOTypeImplementation, IoTypeVisitor } from './io-type-implementation';
 
 export interface TableColumn<
   T extends InternalValueRepresentation = InternalValueRepresentation,
@@ -92,8 +92,29 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     return this.columns.has(name);
   }
 
+  getColumns(): ReadonlyMap<string, TableColumn> {
+    return this.columns;
+  }
+
   getColumn(name: string): TableColumn | undefined {
     return this.columns.get(name);
+  }
+
+  getRow(rowId: number): Map<string, InternalValueRepresentation> {
+    const numberOfRows = this.getNumberOfRows();
+    if (rowId >= numberOfRows) {
+      throw new Error(
+        `Trying to access table row ${rowId} (of ${numberOfRows} rows)`,
+      );
+    }
+
+    const row: Map<string, InternalValueRepresentation> = new Map();
+    [...this.columns.entries()].forEach(([columnName, column]) => {
+      const value = column.values[rowId];
+      assert(value !== undefined);
+      row.set(columnName, value);
+    });
+    return row;
   }
 
   static generateDropTableStatement(tableName: string): string {
@@ -153,5 +174,9 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     });
 
     return cloned;
+  }
+
+  acceptVisitor<R>(visitor: IoTypeVisitor<R>): R {
+    return visitor.visitTable(this);
   }
 }

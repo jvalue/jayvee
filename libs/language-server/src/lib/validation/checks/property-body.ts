@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /**
- * See https://jvalue.github.io/jayvee/docs/dev/working-with-the-ast for why the following ESLint rule is disabled for this file.
+ * See https://jvalue.github.io/jayvee/docs/dev/guides/working-with-the-ast/ for why the following ESLint rule is disabled for this file.
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
@@ -69,10 +69,8 @@ function checkPropertyCompleteness(
   context: ValidationContext,
 ): void {
   const presentPropertyNames = properties.map((property) => property.name);
-  const missingRequiredPropertyNames = metaInf.getPropertyNames(
-    'required',
-    presentPropertyNames,
-  );
+  const missingRequiredPropertyNames =
+    metaInf.getMissingRequiredPropertyNames(presentPropertyNames);
 
   if (missingRequiredPropertyNames.length > 0) {
     context.accept(

@@ -5,11 +5,15 @@
 import { IOType } from '@jvalue/jayvee-language-server';
 
 import { FileSystemFile } from './filesystem-node-file';
-import { IOTypeImplementation } from './io-type-implementation';
+import { IOTypeImplementation, IoTypeVisitor } from './io-type-implementation';
 
 export class TextFile
   extends FileSystemFile<string[]>
   implements IOTypeImplementation<IOType.TEXT_FILE>
 {
   public readonly ioType = IOType.TEXT_FILE;
+
+  acceptVisitor<R>(visitor: IoTypeVisitor<R>): R {
+    return visitor.visitTextFile(this);
+  }
 }

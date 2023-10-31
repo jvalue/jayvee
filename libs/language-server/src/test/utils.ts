@@ -7,7 +7,7 @@ import * as path from 'path';
 
 import { AstNode, LangiumDocument, ValidationAcceptor } from 'langium';
 
-import { BlockMetaInformation, IOType } from '../lib';
+import { BlockMetaInformation, IOType, metaInformationRegistry } from '../lib';
 
 import { TestLangExtension } from './extension';
 
@@ -55,4 +55,8 @@ export function getTestExtensionBlockForIOType(
     io,
   );
   return new metaInf();
+}
+
+export function clearMetaInfRegistry() {
+  metaInformationRegistry.clear();
 }

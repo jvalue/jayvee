@@ -7,28 +7,60 @@ import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
+import Heading from '@theme/Heading';
 import HomepageFeatures from '@site/src/components/HomepageFeatures';
 
 import styles from './index.module.css';
 
 function HomepageHeader() {
-  const { siteConfig } = useDocusaurusContext();
   return (
-    <header className={clsx('hero hero--primary', styles.heroBanner)}>
+    <div>
+      <TitleBanner/>
+    </div>
+  );
+}
+
+
+function TitleBanner(): JSX.Element {
+  return (
+    <header className={clsx('hero hero--primary', styles.titleBanner)}>
       <div className="container">
-        <h1 className="hero__title">{siteConfig.title}</h1>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
-        <div className={styles.buttons}>
+        <div className={styles.titleBannerTitle}>
+          🥳 
+          <span className={styles.titleBannerTitleText}><b>Jayvee</b>'s alpha is now available!</span>
+          🎉
+        </div>
+
+        <div className={styles.titleBannerTagline}>
+          A <b>domain-specific language</b> for everyone to <b>participate</b> in building <b>data pipelines</b>!
+        </div>
+
+        <div className={styles.titleBannerButtons}>
           <Link
-            className="button button--secondary button--lg"
+            className="button button--primary"
             to="/docs/user/intro"
           >
-            Start data engineering - 5min ⏱️
+            Get Started
           </Link>
+          <Link
+            className="button button--info"
+            to="/docs/user/examples/cars"
+          >
+            Example
+          </Link>
+          <span className={styles.titleBannerButtonsGitHubButtonWrapper}>
+            <iframe
+              className={styles.titleBannerButtonsGitHubButton}
+              src="https://ghbtns.com/github-btn.html?user=jvalue&amp;repo=jayvee&amp;type=star&amp;count=true&amp;size=large"
+              width={160}
+              height={30}
+              title="GitHub Stars"
+            />
+          </span>
         </div>
       </div>
     </header>
-  );
+  )
 }
 
 export default function Home(): JSX.Element {

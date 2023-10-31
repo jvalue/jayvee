@@ -13,7 +13,7 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
       {
         lowerBound: {
           type: PrimitiveValuetypes.Decimal,
-          defaultValue: Number.NEGATIVE_INFINITY,
+          defaultValue: Number.MIN_SAFE_INTEGER,
         },
         lowerBoundInclusive: {
           type: PrimitiveValuetypes.Boolean,
@@ -21,7 +21,7 @@ export class RangeConstraintMetaInformation extends ConstraintMetaInformation {
         },
         upperBound: {
           type: PrimitiveValuetypes.Decimal,
-          defaultValue: Number.POSITIVE_INFINITY,
+          defaultValue: Number.MAX_SAFE_INTEGER,
         },
         upperBoundInclusive: {
           type: PrimitiveValuetypes.Boolean,

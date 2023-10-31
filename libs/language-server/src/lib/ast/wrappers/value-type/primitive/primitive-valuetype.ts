@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../../expressions';
+import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
 // eslint-disable-next-line import/no-cycle
 import { AbstractValuetype, Valuetype } from '../valuetype';
 
@@ -22,6 +22,15 @@ export abstract class PrimitiveValuetype<
   }
 
   protected override doGetSupertype(): undefined {
+    return undefined;
+  }
+
+  /**
+   * The user documentation for the value type.
+   * Text only, no comment characters.
+   * Should be given for all user-referenceable value types @see isReferenceableByUser
+   */
+  getUserDoc(): string | undefined {
     return undefined;
   }
 }

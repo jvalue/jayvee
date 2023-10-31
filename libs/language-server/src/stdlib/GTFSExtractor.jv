@@ -1,0 +1,20 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+// A GTFSExtractor extracts a file from a given URL, interprets it as ZIP and extracts it
+composite blocktype GTFSExtractor {
+    property url oftype text;
+
+    input inputPort oftype None;
+    output outputPort oftype FileSystem;
+
+    block FileExtractor oftype HttpExtractor { url: url; }
+
+	block ZipArchiveInterpreter oftype ArchiveInterpreter { archiveType: "zip"; }
+
+    inputPort
+        ->FileExtractor
+        ->ZipArchiveInterpreter
+        ->outputPort;
+}

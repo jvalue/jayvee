@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /**
- * See https://jvalue.github.io/jayvee/docs/dev/working-with-the-ast for why the following ESLint rule is disabled for this file.
+ * See https://jvalue.github.io/jayvee/docs/dev/guides/working-with-the-ast/ for why the following ESLint rule is disabled for this file.
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
@@ -24,7 +24,10 @@ import {
   isExpressionConstraintDefinition,
   isTypedConstraintDefinition,
 } from '../../ast';
-import { ValuetypeDefinition } from '../../ast/generated/ast';
+import {
+  ValuetypeDefinition,
+  ValuetypeGenericDefinition,
+} from '../../ast/generated/ast';
 import { getMetaInformation } from '../../meta-information/meta-inf-registry';
 import { ValidationContext } from '../validation-context';
 
@@ -39,6 +42,7 @@ export function validateValuetypeDefinition(
     validationContext,
     evaluationContext,
   );
+  checkGenericsHaveNoDuplicate(valuetype, validationContext);
 }
 
 function checkSupertypeCycle(
@@ -48,6 +52,7 @@ function checkSupertypeCycle(
   const hasCycle =
     createValuetype(valuetypeDefinition)?.hasSupertypeCycle() ?? false;
   if (hasCycle) {
+    assert(!valuetypeDefinition.isBuiltin);
     context.accept(
       'error',
       'Could not construct this valuetype since there is a cycle in the (transitive) "oftype" relation.',
@@ -145,4 +150,46 @@ function getCompatibleValuetype(
     return createValuetype(constraint?.valuetype);
   }
   assertUnreachable(constraint);
+}
+
+function checkGenericsHaveNoDuplicate(
+  valuetypeDefinition: ValuetypeDefinition,
+  context: ValidationContext,
+): void {
+  const generics = valuetypeDefinition.genericDefinition?.generics;
+  if (generics === undefined) {
+    return;
+  }
+
+  const duplicates = getDuplicateGenerics(generics);
+
+  duplicates.forEach((generic) => {
+    context.accept('error', `Generic parameter ${generic.name} is not unique`, {
+      node: generic,
+      property: 'name',
+    });
+  });
+}
+
+function getDuplicateGenerics(
+  generics: ValuetypeGenericDefinition[],
+): ValuetypeGenericDefinition[] {
+  const countPerGenericName = generics
+    .map((generic) => {
+      return { name: generic.name, count: 1 };
+    })
+    .reduce((result: Record<string, number>, current) => {
+      const currentName = current.name;
+      result[currentName] = (result[currentName] ?? 0) + 1;
+      return result;
+    }, {});
+  const duplicateGenericNames = Object.entries(countPerGenericName)
+    .filter(([, occurences]) => occurences > 1)
+    .map(([generic]) => generic);
+
+  const duplicates: ValuetypeGenericDefinition[] = [];
+  duplicateGenericNames.forEach((genericName) => {
+    duplicates.push(...generics.filter((x) => x.name === genericName));
+  });
+  return duplicates;
 }

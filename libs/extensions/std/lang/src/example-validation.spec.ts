@@ -2,6 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { readdirSync } from 'fs';
+import * as path from 'path';
+
 import {
   JayveeServices,
   createJayveeServices,
@@ -21,10 +24,8 @@ describe('jv example tests', () => {
   let services: JayveeServices;
   let validate: (input: string) => Promise<ValidationResult<AstNode>>;
 
-  const readJvTestAsset = readJvTestAssetHelper(
-    __dirname,
-    '../../../../../example/',
-  );
+  const baseDirPath = path.resolve(__dirname, '../../../../../example/');
+  const readJvTestAsset = readJvTestAssetHelper(baseDirPath);
 
   beforeAll(() => {
     // Register std extension
@@ -35,13 +36,10 @@ describe('jv example tests', () => {
     validate = validationHelper(services);
   });
 
-  it.each([
-    'cars.jv',
-    'electric-vehicles.jv',
-    'gtfs-rt-simple.jv',
-    'gtfs-static-and-rt.jv',
-    'gtfs-static.jv',
-  ])('valid %s', async (file: string) => {
+  it.each(
+    // Get all .jv files from example dir
+    readdirSync(baseDirPath).filter((file) => path.extname(file) === '.jv'),
+  )('valid %s', async (file: string) => {
     const text = readJvTestAsset(file);
 
     // Validate input

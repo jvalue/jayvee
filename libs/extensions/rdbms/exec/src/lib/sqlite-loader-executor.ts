@@ -4,7 +4,7 @@
 
 import * as R from '@jvalue/jayvee-execution';
 import {
-  BlockExecutor,
+  AbstractBlockExecutor,
   BlockExecutorClass,
   ExecutionContext,
   NONE,
@@ -16,14 +16,17 @@ import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 import * as sqlite3 from 'sqlite3';
 
 @implementsStatic<BlockExecutorClass>()
-export class SQLiteLoaderExecutor
-  implements BlockExecutor<IOType.TABLE, IOType.NONE>
-{
+export class SQLiteLoaderExecutor extends AbstractBlockExecutor<
+  IOType.TABLE,
+  IOType.NONE
+> {
   public static readonly type = 'SQLiteLoader';
-  public readonly inputType = IOType.TABLE;
-  public readonly outputType = IOType.NONE;
 
-  async execute(
+  constructor() {
+    super(IOType.TABLE, IOType.NONE);
+  }
+
+  async doExecute(
     input: Table,
     context: ExecutionContext,
   ): Promise<R.Result<None>> {

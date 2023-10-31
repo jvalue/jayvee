@@ -5,8 +5,15 @@
 import './expression'
 import './terminal'
 
-ValuetypeDefinition:
-  'valuetype' name=ID 'oftype' type=ValuetypeReference '{'
+BuiltinValuetypeDefinition infers ValuetypeDefinition:
+  isBuiltin?='builtin' 'valuetype' name=ID 
+    (genericDefinition=ValuetypeGenericsDefinition)?
+  ';';
+
+CustomValuetypeDefinition infers ValuetypeDefinition:
+  'valuetype' name=ID 
+    (genericDefinition=ValuetypeGenericsDefinition)?
+  'oftype' type=ValuetypeReference '{'
     'constraints' ':' constraints=CollectionLiteral ';'
   '}';
 
@@ -17,17 +24,16 @@ ValuetypeAssignment:
   name=STRING 'oftype' type=ValuetypeReference;
 
 ValuetypeReference:
-  (PrimitiveValuetypeKeywordLiteral | ValuetypeDefinitionReference);
+  reference=[ValuetypeDefinition] 
+    ('<' 
+      genericRefs+=[ValuetypeDefinition] (',' genericRefs+=[ValuetypeDefinition])* 
+    '>')?;
 
-// Workaround as cross-references cannot be mixed with other types
-ValuetypeDefinitionReference:
-  reference=[ValuetypeDefinition];
+ValuetypeGenericsDefinition:
+  '<' 
+    generics+=ValuetypeGenericDefinition
+    (',' generics+=ValuetypeGenericDefinition)* 
+  '>';
 
-PrimitiveValuetypeKeywordLiteral:
-  keyword=PrimitiveValuetypeKeyword;
-
-PrimitiveValuetypeKeyword returns string:
-  'text'
-  | 'decimal'
-  | 'integer'
-  | 'boolean';
+ValuetypeGenericDefinition:
+  name=ID;

@@ -5,26 +5,28 @@
 import React from 'react';
 import clsx from 'clsx';
 import styles from './styles.module.css';
+import { useBaseUrlUtils } from '@docusaurus/useBaseUrl';
 
-type FeatureItem = {
-  title: string;
-  Svg: React.ComponentType<React.ComponentProps<'svg'>>;
-  description: JSX.Element;
-};
+import { type FeatureItem, Features } from '../../data/features';
 
-const FeatureList: FeatureItem[] = [
-  
-];
+function Feature(feature: FeatureItem) {
+  const {withBaseUrl} = useBaseUrlUtils();
 
-function Feature({ title, Svg, description }: FeatureItem) {
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
+      <img
+        className={styles.featureImage}
+        alt={feature.title}
+        src={withBaseUrl(feature.image.src)}
+        width={Math.floor(feature.image.width)}
+        height={Math.floor(feature.image.height)}
+        loading="lazy"
+      />
       </div>
       <div className="text--center padding-horiz--md">
-        <h3>{title}</h3>
-        <p>{description}</p>
+        <h3>{feature.title}</h3>
+        <div>{feature.description}</div>
       </div>
     </div>
   );
@@ -34,8 +36,9 @@ export default function HomepageFeatures(): JSX.Element {
   return (
     <section className={styles.features}>
       <div className="container">
+        <h2 className='text--center'>Main Features</h2>
         <div className="row">
-          {FeatureList.map((props, idx) => (
+          {Features.map((props, idx) => (
             <Feature key={idx} {...props} />
           ))}
         </div>

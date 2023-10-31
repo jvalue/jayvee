@@ -57,6 +57,10 @@ export class TestPropertyMetaInformation extends BlockMetaInformation {
           type: new CollectionValuetype(PrimitiveValuetypes.Text),
           defaultValue: [],
         },
+        valuetypeAssignmentProperty: {
+          type: PrimitiveValuetypes.ValuetypeAssignment,
+          defaultValue: '"test" oftype text',
+        },
       },
       // Input type:
       IOType.FILE,

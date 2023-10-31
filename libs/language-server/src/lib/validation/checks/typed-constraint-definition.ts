@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /**
- * See https://jvalue.github.io/jayvee/docs/dev/working-with-the-ast for why the following ESLint rule is disabled for this file.
+ * See https://jvalue.github.io/jayvee/docs/dev/guides/working-with-the-ast/ for why the following ESLint rule is disabled for this file.
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
@@ -31,7 +31,7 @@ function checkConstraintType(
   if (metaInf === undefined) {
     context.accept(
       'error',
-      `Unknown constraint type '${constraintType.name ?? ''}'`,
+      `Unknown constraint type '${constraintType.$refText ?? ''}'`,
       {
         node: constraint,
         property: 'type',

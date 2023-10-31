@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../../expressions/evaluation';
+import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
 // eslint-disable-next-line import/no-cycle
 import { ValuetypeVisitor } from '../valuetype';
 
@@ -17,8 +17,8 @@ class RegexValuetypeImpl extends PrimitiveValuetype<RegExp> {
     return false;
   }
 
-  override getName(): 'regex' {
-    return 'regex';
+  override getName(): 'Regex' {
+    return 'Regex';
   }
 
   override isInternalValueRepresentation(

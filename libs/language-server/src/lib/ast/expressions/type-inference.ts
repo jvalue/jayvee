@@ -11,9 +11,11 @@ import {
   CollectionLiteral,
   Expression,
   ExpressionLiteral,
+  NumericLiteral,
   ReferenceLiteral,
   ValueKeywordLiteral,
   isBinaryExpression,
+  isBlocktypeProperty,
   isBooleanLiteral,
   isCellRangeLiteral,
   isCollectionLiteral,
@@ -32,6 +34,7 @@ import {
   isValueLiteral,
   isValuetypeAssignmentLiteral,
 } from '../generated/ast';
+// eslint-disable-next-line import/no-cycle
 import { getNextAstNodeContainer } from '../model-util';
 import {
   AtomicValuetype,
@@ -40,6 +43,7 @@ import {
   isAtomicValuetype,
   isPrimitiveValuetype,
 } from '../wrappers';
+import { EmptyCollection } from '../wrappers/value-type/primitive/collection/empty-collection-valuetype';
 import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-valuetypes';
 import { type Valuetype } from '../wrappers/value-type/valuetype';
 import { createValuetype } from '../wrappers/value-type/valuetype-util';
@@ -97,10 +101,7 @@ function inferTypeFromExpressionLiteral(
     } else if (isBooleanLiteral(expression)) {
       return PrimitiveValuetypes.Boolean;
     } else if (isNumericLiteral(expression)) {
-      if (Number.isInteger(expression.value)) {
-        return PrimitiveValuetypes.Integer;
-      }
-      return PrimitiveValuetypes.Decimal;
+      return inferNumericType(expression);
     } else if (isCellRangeLiteral(expression)) {
       return PrimitiveValuetypes.CellRange;
     } else if (isRegexLiteral(expression)) {
@@ -122,6 +123,18 @@ function inferTypeFromExpressionLiteral(
   assertUnreachable(expression);
 }
 
+/**
+ * Infers the numeric type dependent on the value parsed to TypeScript.
+ * Thus, the inferred type might differ from the literal type.
+ * E.g., 3.0 is currently interpreted as integer but is a DecimalLiteral.
+ */
+function inferNumericType(expression: NumericLiteral): Valuetype {
+  if (Number.isInteger(expression.value)) {
+    return PrimitiveValuetypes.Integer;
+  }
+  return PrimitiveValuetypes.Decimal;
+}
+
 function inferCollectionType(
   collection: CollectionLiteral,
   context: ValidationContext | undefined,
@@ -134,7 +147,7 @@ function inferCollectionType(
   const stacks = elementValuetypes.map(getValuetypeHierarchyStack);
 
   if (stacks.length === 0) {
-    return PrimitiveValuetypes.EmptyCollection;
+    return EmptyCollection;
   }
   if (stacks.length === 1) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -314,9 +327,11 @@ function inferTypeFromReferenceLiteral(
   if (isTransformDefinition(referenced)) {
     return PrimitiveValuetypes.Transform;
   }
-  if (isTransformPortDefinition(referenced)) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const valueType = referenced?.valueType;
+  if (
+    isTransformPortDefinition(referenced) ||
+    isBlocktypeProperty(referenced)
+  ) {
+    const valueType = referenced.valueType;
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (valueType === undefined) {
       return undefined;
