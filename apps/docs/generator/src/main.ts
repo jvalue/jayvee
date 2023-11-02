@@ -10,7 +10,7 @@ import {
   PrimitiveValuetypes,
   createJayveeServices,
   getAllBuiltinBlocktypes,
-  getRegisteredConstraintMetaInformation,
+  getAllBuiltinConstraintTypes,
   initializeWorkspace,
 } from '@jvalue/jayvee-language-server';
 import { NodeFileSystem } from 'langium/node';
@@ -70,7 +70,9 @@ function generateConstraintTypeDocs(
     'user',
     'constraint-types',
   );
-  const metaInfs = getRegisteredConstraintMetaInformation();
+  const metaInfs = getAllBuiltinConstraintTypes(
+    services.shared.workspace.LangiumDocuments,
+  );
 
   for (const metaInf of metaInfs) {
     const userDocBuilder = new UserDocGenerator(services);
