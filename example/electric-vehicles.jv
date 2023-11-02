@@ -132,10 +132,6 @@ valuetype UsStateCode oftype text {
 	];
 }
 
-constraint Test oftype AllowlistConstraint {
-	allowlist: [];
-}
-
 constraint UsStateCodeAllowlist on text:
 	value in [
 		"AL", "AK", "AZ", "AR", "AS", "CA", "CO", "CT", "DE", "DC",
