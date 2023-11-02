@@ -17,6 +17,7 @@ import { BlockMetaInformation } from '../meta-information';
 import {
   BinaryExpression,
   BlockDefinition,
+  BuiltinBlocktypeDefinition,
   CompositeBlocktypeDefinition,
   PipelineDefinition,
   UnaryExpression,
@@ -197,12 +198,15 @@ export function getNextAstNodeContainer<T extends AstNode>(
 
 /**
  * Utility function that gets all builtin blocktypes.
+ * Duplicates are only added once.
  * Make sure to call @see initializeWorkspace first so that the file system is initialized.
  */
 export function getAllBuiltinBlocktypes(
   documentService: LangiumDocuments,
 ): BlockMetaInformation[] {
   const allBuiltinBlocktypes: BlockMetaInformation[] = [];
+  const visitedBuiltinBlocktypeDefinitions =
+    new Set<BuiltinBlocktypeDefinition>();
 
   documentService.all
     .map((document) => document.parseResult.value)
@@ -214,10 +218,18 @@ export function getAllBuiltinBlocktypes(
         if (!isBuiltinBlocktypeDefinition(blocktypeDefinition)) {
           return;
         }
+
+        const wasAlreadyVisited =
+          visitedBuiltinBlocktypeDefinitions.has(blocktypeDefinition);
+        if (wasAlreadyVisited) {
+          return;
+        }
+
         if (BlockMetaInformation.canBeWrapped(blocktypeDefinition)) {
           allBuiltinBlocktypes.push(
             new BlockMetaInformation(blocktypeDefinition),
           );
+          visitedBuiltinBlocktypeDefinitions.add(blocktypeDefinition);
         }
       });
     });
