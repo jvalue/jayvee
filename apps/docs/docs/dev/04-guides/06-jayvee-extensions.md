@@ -13,10 +13,6 @@ Jayvee extensions that shall be used by default are bundled into the so-called [
 
 ### Language extension
 
-:::info
-This mechanism is currently under construction! We are moving from a code-first approach (using typescript classes to generate the Jayvee model of the blocktype) to a model-first approach (parsing the Jayvee model of the blocktype and creating ast wrappers). 
-:::
-
 A language extension defines meta information of block types which are required by the
 [language server](https://github.com/jvalue/jayvee/tree/main/libs/language-server).
 Such meta information describes properties of
