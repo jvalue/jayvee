@@ -17,7 +17,7 @@ import {
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
 import {
   BlockMetaInformation,
-  getConstraintMetaInf,
+  ConstraintMetaInformation,
 } from '../meta-information';
 
 export class JayveeHoverProvider extends AstNodeHoverProvider {
@@ -62,10 +62,10 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   private getConstraintTypeMarkdownDoc(
     constraintType: BuiltinConstrainttypeDefinition,
   ): string | undefined {
-    const constraintMetaInf = getConstraintMetaInf(constraintType);
-    if (constraintMetaInf === undefined) {
+    if (!ConstraintMetaInformation.canBeWrapped(constraintType)) {
       return;
     }
+    const constraintMetaInf = new ConstraintMetaInformation(constraintType);
 
     const lspDocBuilder = new LspDocGenerator();
     return lspDocBuilder.generateConstraintTypeDoc(constraintMetaInf);

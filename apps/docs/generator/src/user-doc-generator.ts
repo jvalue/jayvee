@@ -121,7 +121,7 @@ block ExampleTableInterpreter oftype TableInterpreter {
     const builder = new UserDocMarkdownBuilder()
       .docTitle(metaInf.type)
       .generationComment()
-      .compatibleValueType(metaInf.compatibleValuetype.getName())
+      .compatibleValueType(metaInf.on.getName())
       .description(metaInf.docs.description)
       .examples(metaInf.docs.examples);
 

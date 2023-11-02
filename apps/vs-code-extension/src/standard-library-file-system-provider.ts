@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { getStdLib, registerConstraints } from '@jvalue/jayvee-language-server';
+import { getStdLib } from '@jvalue/jayvee-language-server';
 import {
   EventEmitter,
   ExtensionContext,
@@ -29,7 +29,6 @@ export class StandardLibraryFileSystemProvider implements FileSystemProvider {
   private registerStdLib() {
     // The VSCode Extension needs to register the StdLangExtension,
     // otherwise the StdLib does not include the blocktype definitions.
-    registerConstraints();
 
     Object.entries(getStdLib()).forEach(([libName, lib]) => {
       this.libraries.set(

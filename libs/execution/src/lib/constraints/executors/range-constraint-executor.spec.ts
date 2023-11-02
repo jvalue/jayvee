@@ -7,6 +7,7 @@ import {
   InternalValueRepresentation,
   TypedConstraintDefinition,
   createJayveeServices,
+  initializeWorkspace,
 } from '@jvalue/jayvee-language-server';
 import {
   ParseHelperOptions,
@@ -57,9 +58,11 @@ describe('Validation of RangeConstraintExecutor', () => {
     );
   }
 
-  beforeAll(() => {
+  beforeAll(async () => {
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
+    await initializeWorkspace(services);
+
     locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);

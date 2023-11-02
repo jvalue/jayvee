@@ -29,10 +29,12 @@ import {
   isPropertyAssignment,
   isPropertyBody,
 } from '../ast/generated/ast';
-import { getAllBuiltinBlocktypes } from '../ast/model-util';
+import {
+  getAllBuiltinBlocktypes,
+  getAllBuiltinConstraintTypes,
+} from '../ast/model-util';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
 import { MetaInformation } from '../meta-information/meta-inf';
-import { getRegisteredConstraintMetaInformation } from '../meta-information/meta-inf-registry';
 
 const RIGHT_ARROW_SYMBOL = '\u{2192}';
 
@@ -104,14 +106,24 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
   private completionForConstraintType(
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
-    getRegisteredConstraintMetaInformation().forEach((metaInf) => {
+    const constraintMetaInfs = getAllBuiltinConstraintTypes(
+      this.langiumDocumentService,
+    );
+    constraintMetaInfs.forEach((constraintType) => {
+      const lspDocBuilder = new LspDocGenerator();
+      const markdownDoc =
+        lspDocBuilder.generateConstraintTypeDoc(constraintType);
       acceptor({
-        label: metaInf.type,
+        label: constraintType.type,
         labelDetails: {
-          detail: ` ${metaInf.compatibleValuetype.getName()}`,
+          detail: ` on ${constraintType.on.getName()}`,
         },
         kind: CompletionItemKind.Class,
         detail: `(constraint type)`,
+        documentation: {
+          kind: 'markdown',
+          value: markdownDoc,
+        },
       });
     });
   }

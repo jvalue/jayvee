@@ -12,12 +12,16 @@ import {
 } from 'langium';
 
 // eslint-disable-next-line import/no-cycle
-import { BlockMetaInformation } from '../meta-information';
+import {
+  BlockMetaInformation,
+  ConstraintMetaInformation,
+} from '../meta-information';
 
 import {
   BinaryExpression,
   BlockDefinition,
   BuiltinBlocktypeDefinition,
+  BuiltinConstrainttypeDefinition,
   CompositeBlocktypeDefinition,
   PipelineDefinition,
   UnaryExpression,
@@ -234,4 +238,41 @@ export function getAllBuiltinBlocktypes(
       });
     });
   return allBuiltinBlocktypes;
+}
+
+/**
+ * Utility function that gets all builtin blocktypes.
+ * Duplicates are only added once.
+ * Make sure to call @see initializeWorkspace first so that the file system is initialized.
+ */
+export function getAllBuiltinConstraintTypes(
+  documentService: LangiumDocuments,
+): ConstraintMetaInformation[] {
+  const allBuiltinConstraintTypes: ConstraintMetaInformation[] = [];
+  const visitedBuiltinConstraintTypeDefinitions =
+    new Set<BuiltinConstrainttypeDefinition>();
+
+  documentService.all
+    .map((document) => document.parseResult.value)
+    .forEach((parsedDocument) => {
+      if (!isJayveeModel(parsedDocument)) {
+        throw new Error('Expected parsed document to be a JayveeModel');
+      }
+      parsedDocument.constrainttypes.forEach((constraintTypeDefinition) => {
+        const wasAlreadyVisited = visitedBuiltinConstraintTypeDefinitions.has(
+          constraintTypeDefinition,
+        );
+        if (wasAlreadyVisited) {
+          return;
+        }
+
+        if (ConstraintMetaInformation.canBeWrapped(constraintTypeDefinition)) {
+          allBuiltinConstraintTypes.push(
+            new ConstraintMetaInformation(constraintTypeDefinition),
+          );
+          visitedBuiltinConstraintTypeDefinitions.add(constraintTypeDefinition);
+        }
+      });
+    });
+  return allBuiltinConstraintTypes;
 }
