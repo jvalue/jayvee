@@ -85,7 +85,7 @@ describe('Validation of constraint type specific properties', () => {
   describe('LengthConstraint constraint type', () => {
     it('should diagnose error on min < 0', async () => {
       const text = readJvTestAsset(
-        'length-constraint-meta-inf/invalid-min-negative.jv',
+        'property-assignment/constrainttype-specific/length-constraint/invalid-min-negative.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -100,7 +100,7 @@ describe('Validation of constraint type specific properties', () => {
 
     it('should diagnose error on max < 0', async () => {
       const text = readJvTestAsset(
-        'length-constraint-meta-inf/invalid-max-negative.jv',
+        'property-assignment/constrainttype-specific/length-constraint/invalid-max-negative.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
