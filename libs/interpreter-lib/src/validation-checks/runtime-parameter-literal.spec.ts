@@ -9,11 +9,10 @@ import {
   RuntimeParameterProvider,
   ValidationContext,
   createJayveeServices,
-  useExtension,
+  initializeWorkspace,
 } from '@jvalue/jayvee-language-server';
 import {
   ParseHelperOptions,
-  TestLangExtension,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
@@ -66,12 +65,18 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
     );
   }
 
-  beforeAll(() => {
-    // Register test extension
-    useExtension(new TestLangExtension());
+  beforeAll(async () => {
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
+
+    await initializeWorkspace(services, [
+      {
+        uri: process.cwd(),
+        name: 'TestBlockTypes.jv',
+      },
+    ]);
     locator = services.workspace.AstNodeLocator;
+
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });

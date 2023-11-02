@@ -40,8 +40,8 @@ export class JayveeWorkspaceManager extends DefaultWorkspaceManager {
  */
 export async function initializeWorkspace(
   services: LangiumServices,
+  workspaceFolders: WorkspaceFolder[] = [],
 ): Promise<void> {
-  const workspaceFolders: WorkspaceFolder[] = [];
   await services.shared.workspace.WorkspaceManager.initializeWorkspace(
     workspaceFolders,
   );
