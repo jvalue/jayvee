@@ -10,6 +10,7 @@ import {
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 
 import {
+  CachedLogger,
   DebugGranularity,
   DebugTargets,
   ExecutionContext,
@@ -18,14 +19,19 @@ import {
   constraintExecutorRegistry,
 } from '../src';
 
-import { TestLogger } from './test-logger';
-
 export function clearBlockExecutorRegistry() {
   blockExecutorRegistry.clear();
 }
 
 export function clearConstraintExecutorRegistry() {
   constraintExecutorRegistry.clear();
+}
+
+export function processExitMockImplementation(code?: number) {
+  if (code === undefined || code === 0) {
+    return undefined as never;
+  }
+  throw new Error(`process.exit: ${code}`);
 }
 
 export function getTestExecutionContext(
@@ -41,6 +47,7 @@ export function getTestExecutionContext(
     debugGranularity: 'minimal',
     debugTargets: 'all',
   },
+  loggerPrintLogs = true,
 ): ExecutionContext {
   const pipeline = locator.getAstNode<PipelineDefinition>(
     document.parseResult.value,
@@ -49,7 +56,7 @@ export function getTestExecutionContext(
 
   const executionContext = new ExecutionContext(
     pipeline,
-    new TestLogger(runOptions.isDebugMode),
+    new CachedLogger(runOptions.isDebugMode, undefined, loggerPrintLogs),
     runOptions,
     new EvaluationContext(new RuntimeParameterProvider()),
   );

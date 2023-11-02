@@ -23,7 +23,7 @@ export class LengthConstraintMetaInformation extends ConstraintMetaInformation {
         },
         maxLength: {
           type: PrimitiveValuetypes.Integer,
-          defaultValue: Number.POSITIVE_INFINITY,
+          defaultValue: Number.MAX_SAFE_INTEGER,
           validation: nonNegativeValidation,
         },
       },

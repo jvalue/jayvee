@@ -28,7 +28,7 @@ import {
   columnIndexAsCharacters,
 } from './util/column-id-util';
 
-export const LAST_INDEX = Number.POSITIVE_INFINITY;
+export const LAST_INDEX = Number.MAX_SAFE_INTEGER;
 
 export class CellIndex {
   constructor(

@@ -29,7 +29,7 @@ import {
   DebugGranularity,
   DebugTargets,
 } from './debugging/debug-configuration';
-import { Logger } from './logger';
+import { Logger } from './logging/logger';
 
 export type StackNode =
   | BlockDefinition

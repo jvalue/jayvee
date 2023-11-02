@@ -2,4 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-export * from './logger-factory';
+pipeline Pipeline {
+  block Test oftype TestProperty {
+    integerProperty: requires INTEGER_ENV;
+  }
+}
