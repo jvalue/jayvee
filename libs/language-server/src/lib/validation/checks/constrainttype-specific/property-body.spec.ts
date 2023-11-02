@@ -75,7 +75,7 @@ describe('Validation of constraint type specific property bodies', () => {
   describe('LengthConstraint constraint type', () => {
     it('should diagnose error on min > max', async () => {
       const text = readJvTestAsset(
-        'length-constraint-meta-inf/invalid-min-greater-max.jv',
+        'property-body/constrainttype-specific/length-constraint/invalid-min-greater-max.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -92,7 +92,7 @@ describe('Validation of constraint type specific property bodies', () => {
   describe('RangeConstraint constraint type', () => {
     it('should diagnose error on lower bound > upper bound', async () => {
       const text = readJvTestAsset(
-        'range-constraint-meta-inf/invalid-lower-above-upper.jv',
+        'property-body/constrainttype-specific/range-constraint/invalid-lower-above-upper.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -107,7 +107,7 @@ describe('Validation of constraint type specific property bodies', () => {
 
     it('should diagnose error on lower bound = upper bound without bound inclusivity = true', async () => {
       const text = readJvTestAsset(
-        'range-constraint-meta-inf/invalid-missing-bound-inclusivity.jv',
+        'property-body/constrainttype-specific/range-constraint/invalid-missing-bound-inclusivity.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
