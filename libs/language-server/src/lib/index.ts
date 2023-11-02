@@ -12,4 +12,3 @@ export * from './util';
 export * from './validation';
 
 export * from './jayvee-module';
-export * from './extension';

@@ -28,7 +28,7 @@ import {
   ValuetypeDefinition,
   ValuetypeGenericDefinition,
 } from '../../ast/generated/ast';
-import { getMetaInformation } from '../../meta-information/meta-inf-registry';
+import { getConstraintMetaInf } from '../../meta-information/meta-inf-registry';
 import { ValidationContext } from '../validation-context';
 
 export function validateValuetypeDefinition(
@@ -144,7 +144,7 @@ function getCompatibleValuetype(
   constraint: ConstraintDefinition,
 ): Valuetype | undefined {
   if (isTypedConstraintDefinition(constraint)) {
-    const constraintMetaInf = getMetaInformation(constraint?.type);
+    const constraintMetaInf = getConstraintMetaInf(constraint?.type);
     return constraintMetaInf?.compatibleValuetype;
   } else if (isExpressionConstraintDefinition(constraint)) {
     return createValuetype(constraint?.valuetype);

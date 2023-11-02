@@ -6,3 +6,10 @@ pipeline Pipeline {
   block Test oftype TestProperty {
   }
 }
+
+builtin blocktype TestProperty {
+  input inPort oftype None;
+  output outPort oftype None;
+
+  property textProperty oftype text;
+}

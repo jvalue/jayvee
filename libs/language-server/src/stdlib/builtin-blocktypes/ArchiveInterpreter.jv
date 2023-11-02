@@ -1,0 +1,21 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* Interprets a `File` as an archive file and converts it to a `FileSystem`. The archive file root is considered the root of the `FileSystem`.
+* 
+* @example Interprets a `File` as a ZIP-archive and creates a `FileSystem` of its extracted contents.
+* block ZipArchiveInterpreter oftype ArchiveInterpreter {
+*   archiveType: "zip";
+* }
+*/
+builtin blocktype ArchiveInterpreter {
+	input default oftype File;
+	output default oftype FileSystem;
+	
+	/**
+	* The archive type to be interpreted, e.g., "zip" or "gz". 
+	*/
+	property archiveType oftype text;
+}

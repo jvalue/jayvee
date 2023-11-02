@@ -12,9 +12,7 @@ import {
   TypedConstraintDefinition,
   ValidationContext,
   createJayveeServices,
-  useExtension,
 } from '../..';
-import { TestLangExtension } from '../../test/extension';
 import { ParseHelperOptions, parseHelper } from '../../test/langium-utils';
 import {
   expectNoParserAndLexerErrors,
@@ -54,8 +52,6 @@ describe('Validation of RangeConstraint', () => {
   }
 
   beforeAll(() => {
-    // Register test extension
-    useExtension(new TestLangExtension());
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;

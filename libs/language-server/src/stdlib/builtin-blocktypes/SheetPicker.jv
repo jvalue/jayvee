@@ -1,0 +1,21 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* Selects one `Sheet` from a `Workbook` based on its `sheetName`. If no sheet matches the name, no output is created and the execution of the pipeline is aborted.
+* 
+* @example Tries to pick the sheet `AgencyNames` from the provided `Workbook`. If `AgencyNames` exists it is passed on as `Sheet`, if it does not exist the execution of the pipeline is aborted.
+* block AgencySheetPicker oftype SheetPicker {
+*   sheetName: "AgencyNames";
+* }
+*/
+builtin blocktype SheetPicker {
+	input default oftype Workbook;
+	output default oftype Sheet;
+	
+	/**
+	* The name of the sheet to select.
+	*/
+	property sheetName oftype text;
+}

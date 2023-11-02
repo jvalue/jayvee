@@ -1,0 +1,51 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* Loads a `Table` into a PostgreSQL database sink.
+* 
+* @example A local Postgres instance is filled with table data about cars.
+* block CarsLoader oftype PostgresLoader {
+*   host: "localhost";
+*   port: 5432;
+*   username: "postgres";
+*   password: "postgres";
+*   database: "CarsDB";
+*   table: "Cars";
+* }
+*/
+builtin blocktype PostgresLoader {
+	input default oftype Table;
+	output default oftype None;
+	
+	/**
+	* The hostname or IP address of the Postgres database.
+	*/
+	property host oftype text;
+	
+	/**
+	* The port of the Postgres database.
+	*/
+	property port oftype integer;
+	
+	/**
+	* The username to login to the Postgres database.
+	*/
+	property username oftype text;
+	
+	/**
+	* The password to login to the Postgres database.
+	*/
+	property password oftype text;
+	
+	/**
+	* The database to use.
+	*/
+	property database oftype text;
+	
+	/**
+	* The name of the table to write into.
+	*/
+	property table oftype text;
+}

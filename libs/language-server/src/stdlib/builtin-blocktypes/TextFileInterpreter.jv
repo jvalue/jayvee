@@ -1,0 +1,21 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* Interprets a `File` as a `TextFile`.
+*/
+builtin blocktype TextFileInterpreter {
+	input default oftype File;
+	output default oftype TextFile;
+	
+	/**
+	* The encoding used for decoding the file contents.
+	*/
+	property encoding oftype text: 'utf-8';
+	
+	/**
+	* The regex for identifying line breaks.
+	*/
+	property lineBreak oftype Regex: /\r?\n/;
+}

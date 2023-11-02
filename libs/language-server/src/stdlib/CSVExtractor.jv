@@ -2,7 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// A CSVExtractor extracts a file from a given URL and interprets it as CSV
+/**
+* A CSVExtractor extracts a file from a given URL and interprets it as CSV
+*/
 composite blocktype CSVExtractor {
     property url oftype text;
     property delimiter oftype text: ',';

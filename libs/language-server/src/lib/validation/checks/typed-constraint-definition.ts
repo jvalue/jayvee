@@ -8,7 +8,7 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
 import { TypedConstraintDefinition } from '../../ast/generated/ast';
-import { getMetaInformation } from '../../meta-information/meta-inf-registry';
+import { getConstraintMetaInf } from '../../meta-information/meta-inf-registry';
 import { ValidationContext } from '../validation-context';
 
 export function validateTypedConstraintDefinition(
@@ -27,7 +27,7 @@ function checkConstraintType(
     return undefined;
   }
 
-  const metaInf = getMetaInformation(constraintType);
+  const metaInf = getConstraintMetaInf(constraintType);
   if (metaInf === undefined) {
     context.accept(
       'error',

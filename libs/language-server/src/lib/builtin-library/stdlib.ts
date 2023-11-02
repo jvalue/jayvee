@@ -5,9 +5,8 @@
 import { IOType, PrimitiveValuetype, internalValueToString } from '../ast';
 import { PrimitiveValuetypes } from '../ast/wrappers/value-type/primitive/primitive-valuetypes';
 import {
-  BlockMetaInformation,
   ConstraintMetaInformation,
-  metaInformationRegistry,
+  constraintMetaInfRegistry,
 } from '../meta-information';
 
 import { PartialStdLib } from './generated/partial-stdlib';
@@ -35,33 +34,12 @@ export const IOtypesLib = {
 };
 
 // Is a method since metaInformationRegistry might not be initialized when this as variable.
-export function getBuiltinBlocktypesLib() {
-  const builtins = metaInformationRegistry.getAllEntries();
-  return {
-    'builtin:///stdlib/builtin-blocktypes.jv': builtins
-      .filter((entry) => entry.value instanceof BlockMetaInformation)
-      .map((entry) =>
-        parseBlockMetaInfToJayvee(
-          entry.key,
-          entry.value as BlockMetaInformation,
-        ),
-      )
-      .join('\n\n'),
-  };
-}
-
-// Is a method since metaInformationRegistry might not be initialized when this as variable.
 export function getBuiltinConstrainttypesLib() {
-  const builtins = metaInformationRegistry.getAllEntries();
+  const builtins = constraintMetaInfRegistry.getAllEntries();
   return {
     'builtin:///stdlib/builtin-constrainttypes.jv': builtins
       .filter((entry) => entry.value instanceof ConstraintMetaInformation)
-      .map((entry) =>
-        parseConstraintMetaInfToJayvee(
-          entry.key,
-          entry.value as ConstraintMetaInformation,
-        ),
-      )
+      .map((entry) => parseConstraintMetaInfToJayvee(entry.key, entry.value))
       .join('\n\n'),
   };
 }
@@ -71,54 +49,8 @@ export function getStdLib() {
     ...PartialStdLib,
     ...getBuiltinValuetypesLib(),
     ...IOtypesLib,
-    ...getBuiltinBlocktypesLib(),
     ...getBuiltinConstrainttypesLib(),
   };
-}
-
-function parseBlockMetaInfToJayvee(
-  name: string,
-  metaInf: BlockMetaInformation,
-): string {
-  const lines: string[] = [];
-  if (metaInf.docs.description !== undefined) {
-    lines.push(parseAsComment(metaInf.docs.description));
-  }
-  if (metaInf.docs.examples !== undefined) {
-    metaInf.docs.examples.forEach((example, i) => {
-      lines.push('//');
-      lines.push(`// Example ${i + 1}: ${example.description}`);
-      lines.push(parseAsComment(example.code));
-    });
-  }
-
-  lines.push(`builtin blocktype ${name} {`);
-  lines.push(parseBuiltinBlocktypeBody(metaInf));
-  lines.push('}');
-
-  return lines.join('\n');
-}
-
-function parseBuiltinBlocktypeBody(metaInf: BlockMetaInformation): string {
-  const bodyLines: string[] = [];
-
-  bodyLines.push(`\tinput default oftype ${metaInf.inputType};`);
-  bodyLines.push(`\toutput default oftype ${metaInf.outputType};`);
-  bodyLines.push('\t');
-
-  Object.entries(metaInf.getPropertySpecifications()).forEach(
-    ([propName, propSpecification]) => {
-      const propDoc = propSpecification.docs?.description;
-      if (propDoc !== undefined) {
-        bodyLines.push(parseAsComment(propDoc, 1));
-      }
-      bodyLines.push(
-        `\tproperty ${propName} oftype ${propSpecification.type.getName()};`,
-      );
-    },
-  );
-
-  return bodyLines.join('\n');
 }
 
 function parseBuiltinValuetypeToJayvee(valuetype: PrimitiveValuetype): string {
