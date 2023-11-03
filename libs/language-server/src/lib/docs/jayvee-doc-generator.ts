@@ -6,11 +6,11 @@ import { BlockTypeWrapper, ConstraintWrapper } from '../ast';
 import { Valuetype } from '../ast/wrappers/value-type/valuetype';
 
 export interface JayveeBlockTypeDocGenerator {
-  generateBlockTypeDoc(metaInf: BlockTypeWrapper): string;
+  generateBlockTypeDoc(blockType: BlockTypeWrapper): string;
 }
 
 export interface JayveeConstraintTypeDocGenerator {
-  generateConstraintTypeDoc(metaInf: ConstraintWrapper): string;
+  generateConstraintTypeDoc(constraintType: ConstraintWrapper): string;
 }
 
 export interface JayveeValueTypesDocGenerator {
@@ -19,7 +19,7 @@ export interface JayveeValueTypesDocGenerator {
 
 export interface JayveePropertyDocGenerator {
   generatePropertyDoc(
-    metaInf: BlockTypeWrapper,
+    blockType: BlockTypeWrapper,
     propertyName: string,
   ): string | undefined;
 }

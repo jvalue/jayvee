@@ -25,11 +25,11 @@ import { checkBlocktypeSpecificProperties } from './blocktype-specific/property-
 
 export function validatePropertyAssignment(
   property: PropertyAssignment,
-  metaInf: TypedObjectWrapper,
+  wrapper: TypedObjectWrapper,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
 ): void {
-  const propertySpec = metaInf.getPropertySpecification(property?.name);
+  const propertySpec = wrapper.getPropertySpecification(property?.name);
 
   checkPropertyNameValidity(property, propertySpec, validationContext);
 

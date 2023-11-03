@@ -13,7 +13,7 @@ import {
   TypedObjectWrapper,
   ValidationContext,
   createJayveeServices,
-  getMetaInformation,
+  getTypedObjectWrapper,
 } from '../../..';
 import {
   ParseHelperOptions,
@@ -49,12 +49,12 @@ describe('Validation of constraint type specific properties', () => {
       'constraints@0/body',
     ) as PropertyBody;
 
-    const metaInf = getMetaInformation(propertyBody.$container.type);
-    expect(metaInf).toBeDefined();
+    const wrapper = getTypedObjectWrapper(propertyBody.$container.type);
+    expect(wrapper).toBeDefined();
 
     propertyBody.properties.forEach((propertyAssignment) => {
       const propertySpec = (
-        metaInf as TypedObjectWrapper
+        wrapper as TypedObjectWrapper
       ).getPropertySpecification(propertyAssignment.name);
       expect(propertySpec).toBeDefined();
 

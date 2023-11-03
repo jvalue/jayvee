@@ -129,8 +129,8 @@ export class ExecutionContext {
     propertyName: string,
     valuetype: Valuetype<I>,
   ): I {
-    const metaInf = this.getMetaInformationOfCurrentNode();
-    const propertySpec = metaInf.getPropertySpecification(propertyName);
+    const wrapper = this.getWrapperOfCurrentNode();
+    const propertySpec = wrapper.getPropertySpecification(propertyName);
     assert(propertySpec !== undefined);
 
     const defaultValue = propertySpec.defaultValue;
@@ -140,7 +140,7 @@ export class ExecutionContext {
     return defaultValue;
   }
 
-  private getMetaInformationOfCurrentNode() {
+  private getWrapperOfCurrentNode() {
     const currentNode = this.getCurrentNode();
     assert(!isPipelineDefinition(currentNode));
     assert(!isExpressionConstraintDefinition(currentNode));

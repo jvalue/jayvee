@@ -37,7 +37,7 @@ function checkPipesOfBlock(
   if (!BlockTypeWrapper.canBeWrapped(block?.type)) {
     return;
   }
-  const blockMetaInf = new BlockTypeWrapper(block?.type);
+  const blockType = new BlockTypeWrapper(block?.type);
 
   let pipes: PipeWrapper[];
   switch (whatToCheck) {
@@ -55,13 +55,13 @@ function checkPipesOfBlock(
   }
 
   if (
-    (whatToCheck === 'input' && !blockMetaInf.hasInput()) ||
-    (whatToCheck === 'output' && !blockMetaInf.hasOutput())
+    (whatToCheck === 'input' && !blockType.hasInput()) ||
+    (whatToCheck === 'output' && !blockType.hasOutput())
   ) {
     for (const pipe of pipes) {
       context.accept(
         'error',
-        `Blocks of type ${blockMetaInf.type} do not have an ${whatToCheck}`,
+        `Blocks of type ${blockType.type} do not have an ${whatToCheck}`,
         whatToCheck === 'input'
           ? pipe.getToDiagnostic()
           : pipe.getFromDiagnostic(),
@@ -71,7 +71,7 @@ function checkPipesOfBlock(
     for (const pipe of pipes) {
       context.accept(
         'error',
-        `At most one pipe can be connected to the ${whatToCheck} of a ${blockMetaInf.type}`,
+        `At most one pipe can be connected to the ${whatToCheck} of a ${blockType.type}`,
         pipe.getToDiagnostic(),
       );
     }

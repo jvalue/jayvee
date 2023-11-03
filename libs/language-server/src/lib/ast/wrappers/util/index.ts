@@ -17,9 +17,9 @@ import { ConstraintWrapper } from '../typed-object/constrainttype-wrapper';
 export * from './column-id-util';
 
 /**
- * Creates a MetaInformation wrapper object based on the given type reference.
+ * Creates a @see TypedObjectWrapper wrapper object based on the given type reference.
  */
-export function getMetaInformation(
+export function getTypedObjectWrapper(
   typeRef:
     | Reference<ReferenceableBlocktypeDefinition>
     | Reference<BuiltinConstrainttypeDefinition>

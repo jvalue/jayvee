@@ -56,9 +56,9 @@ export function collectStartingBlocks(
     if (!BlockTypeWrapper.canBeWrapped(block.type)) {
       continue;
     }
-    const blockMetaInf = new BlockTypeWrapper(block.type);
+    const blockType = new BlockTypeWrapper(block.type);
 
-    if (!blockMetaInf.hasInput()) {
+    if (!blockType.hasInput()) {
       result.push(block);
     }
   }

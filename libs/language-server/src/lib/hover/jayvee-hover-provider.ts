@@ -11,7 +11,7 @@ import {
   BuiltinConstrainttypeDefinition,
   ConstraintWrapper,
   PropertyAssignment,
-  getMetaInformation,
+  getTypedObjectWrapper,
   isBuiltinBlocktypeDefinition,
   isBuiltinConstrainttypeDefinition,
   isPropertyAssignment,
@@ -46,39 +46,39 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   }
 
   private getBlockTypeMarkdownDoc(
-    blockType: BuiltinBlocktypeDefinition,
+    blockTypeDefinition: BuiltinBlocktypeDefinition,
   ): string | undefined {
-    if (!BlockTypeWrapper.canBeWrapped(blockType)) {
+    if (!BlockTypeWrapper.canBeWrapped(blockTypeDefinition)) {
       return;
     }
-    const blockMetaInf = new BlockTypeWrapper(blockType);
+    const blockType = new BlockTypeWrapper(blockTypeDefinition);
 
     const lspDocBuilder = new LspDocGenerator();
-    return lspDocBuilder.generateBlockTypeDoc(blockMetaInf);
+    return lspDocBuilder.generateBlockTypeDoc(blockType);
   }
 
   private getConstraintTypeMarkdownDoc(
-    constraintType: BuiltinConstrainttypeDefinition,
+    constraintTypeDefinition: BuiltinConstrainttypeDefinition,
   ): string | undefined {
-    if (!ConstraintWrapper.canBeWrapped(constraintType)) {
+    if (!ConstraintWrapper.canBeWrapped(constraintTypeDefinition)) {
       return;
     }
-    const constraintMetaInf = new ConstraintWrapper(constraintType);
+    const constraintType = new ConstraintWrapper(constraintTypeDefinition);
 
     const lspDocBuilder = new LspDocGenerator();
-    return lspDocBuilder.generateConstraintTypeDoc(constraintMetaInf);
+    return lspDocBuilder.generateConstraintTypeDoc(constraintType);
   }
 
   private getPropertyMarkdownDoc(
     property: PropertyAssignment,
   ): string | undefined {
     const container = property.$container.$container;
-    const metaInf = getMetaInformation(container.type);
-    if (metaInf === undefined) {
+    const wrapper = getTypedObjectWrapper(container.type);
+    if (wrapper === undefined) {
       return;
     }
 
     const lspDocBuilder = new LspDocGenerator();
-    return lspDocBuilder.generatePropertyDoc(metaInf, property.name);
+    return lspDocBuilder.generatePropertyDoc(wrapper, property.name);
   }
 }

@@ -21,22 +21,22 @@ export class LspDocGenerator
     JayveeConstraintTypeDocGenerator,
     JayveePropertyDocGenerator
 {
-  generateBlockTypeDoc(metaInf: BlockTypeWrapper): string {
+  generateBlockTypeDoc(blockType: BlockTypeWrapper): string {
     const markdownBuilder = new MarkdownBuilder();
-    return markdownBuilder.line(metaInf.docs.description).build();
+    return markdownBuilder.line(blockType.docs.description).build();
   }
 
-  generateConstraintTypeDoc(metaInf: ConstraintWrapper): string {
+  generateConstraintTypeDoc(constraintType: ConstraintWrapper): string {
     const markdownBuilder = new MarkdownBuilder();
-    return markdownBuilder.line(metaInf.docs.description).build();
+    return markdownBuilder.line(constraintType.docs.description).build();
   }
 
   generatePropertyDoc(
-    metaInf: TypedObjectWrapper,
+    wrapper: TypedObjectWrapper,
     propertyName: string,
   ): string | undefined {
     const markdownBuilder = new MarkdownBuilder();
-    const propertySpec = metaInf.getPropertySpecification(propertyName);
+    const propertySpec = wrapper.getPropertySpecification(propertyName);
     if (propertySpec === undefined) {
       return undefined;
     }

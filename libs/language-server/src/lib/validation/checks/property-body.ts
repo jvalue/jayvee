@@ -7,7 +7,7 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { TypedObjectWrapper, getMetaInformation } from '../../ast';
+import { TypedObjectWrapper, getTypedObjectWrapper } from '../../ast';
 import { EvaluationContext } from '../../ast/expressions/evaluation';
 import {
   PropertyAssignment,
@@ -30,21 +30,21 @@ export function validatePropertyBody(
   const properties = propertyBody?.properties ?? [];
   checkUniqueNames(properties, validationContext);
 
-  const metaInf = inferMetaInformation(propertyBody);
-  if (metaInf === undefined) {
+  const wrapper = inferTypedObjectWrapper(propertyBody);
+  if (wrapper === undefined) {
     return;
   }
 
   checkPropertyCompleteness(
     propertyBody,
     properties,
-    metaInf,
+    wrapper,
     validationContext,
   );
   for (const property of propertyBody.properties) {
     validatePropertyAssignment(
       property,
-      metaInf,
+      wrapper,
       validationContext,
       evaluationContext,
     );
@@ -55,28 +55,28 @@ export function validatePropertyBody(
 
   checkCustomPropertyValidation(
     propertyBody,
-    metaInf,
+    wrapper,
     validationContext,
     evaluationContext,
   );
 }
 
-function inferMetaInformation(
+function inferTypedObjectWrapper(
   propertyBody: PropertyBody,
 ): TypedObjectWrapper | undefined {
   const type = propertyBody.$container?.type.ref;
-  return getMetaInformation(type);
+  return getTypedObjectWrapper(type);
 }
 
 function checkPropertyCompleteness(
   propertyBody: PropertyBody,
   properties: PropertyAssignment[],
-  metaInf: TypedObjectWrapper,
+  wrapper: TypedObjectWrapper,
   context: ValidationContext,
 ): void {
   const presentPropertyNames = properties.map((property) => property.name);
   const missingRequiredPropertyNames =
-    metaInf.getMissingRequiredPropertyNames(presentPropertyNames);
+    wrapper.getMissingRequiredPropertyNames(presentPropertyNames);
 
   if (missingRequiredPropertyNames.length > 0) {
     context.accept(
@@ -94,11 +94,11 @@ function checkPropertyCompleteness(
 
 function checkCustomPropertyValidation(
   propertyBody: PropertyBody,
-  metaInf: TypedObjectWrapper,
+  wrapper: TypedObjectWrapper,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
 ): void {
-  metaInf.validate(propertyBody, validationContext, evaluationContext);
+  wrapper.validate(propertyBody, validationContext, evaluationContext);
 
   if (isBlockDefinition(propertyBody.$container)) {
     checkBlocktypeSpecificPropertyBody(

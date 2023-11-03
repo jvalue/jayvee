@@ -25,8 +25,8 @@ describe('Validation of docs examples of ConstraintTypes', () => {
     expect(allConstraintTypes.length).toBeGreaterThan(0);
 
     await Promise.all(
-      allConstraintTypes.map(async (constraintMetaInf) => {
-        for (const example of constraintMetaInf.docs.examples ?? []) {
+      allConstraintTypes.map(async (constraintType) => {
+        for (const example of constraintType.docs.examples ?? []) {
           const validationResult = await validate(example.code);
           const diagnostics = validationResult.diagnostics;
 

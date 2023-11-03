@@ -24,19 +24,21 @@ async function loadAllBuiltinBlocktypes(): Promise<BlockTypeWrapper[]> {
 describe('std extension', () => {
   it('should provide matching block executors for builtin block types', async () => {
     useStdExtension();
-    (await loadAllBuiltinBlocktypes()).forEach((metaInf: BlockTypeWrapper) => {
-      console.info(`Looking for executor for blocktype ${metaInf.type}`);
-      const matchingBlockExecutorClass = getRegisteredBlockExecutors().find(
-        (blockExecutorClass) => blockExecutorClass.type === metaInf.type,
-      );
+    (await loadAllBuiltinBlocktypes()).forEach(
+      (blockType: BlockTypeWrapper) => {
+        console.info(`Looking for executor for blocktype ${blockType.type}`);
+        const matchingBlockExecutorClass = getRegisteredBlockExecutors().find(
+          (blockExecutorClass) => blockExecutorClass.type === blockType.type,
+        );
 
-      expect(matchingBlockExecutorClass).toBeDefined();
-      assert(matchingBlockExecutorClass !== undefined);
+        expect(matchingBlockExecutorClass).toBeDefined();
+        assert(matchingBlockExecutorClass !== undefined);
 
-      const matchingBlockExecutor = new matchingBlockExecutorClass();
+        const matchingBlockExecutor = new matchingBlockExecutorClass();
 
-      expect(matchingBlockExecutor.inputType).toEqual(metaInf.inputType);
-      expect(matchingBlockExecutor.outputType).toEqual(metaInf.outputType);
-    });
+        expect(matchingBlockExecutor.inputType).toEqual(blockType.inputType);
+        expect(matchingBlockExecutor.outputType).toEqual(blockType.outputType);
+      },
+    );
   });
 });
