@@ -11,8 +11,8 @@ import {
   isReferenceableBlocktypeDefinition,
 } from '../../generated/ast';
 // eslint-disable-next-line import/no-cycle
-import { BlockMetaInformation } from '../block-meta-inf';
-import { ConstraintMetaInformation } from '../constraint-meta-inf';
+import { BlockTypeWrapper } from '../typed-object/blocktype-wrapper';
+import { ConstraintWrapper } from '../typed-object/constrainttype-wrapper';
 
 export * from './column-id-util';
 
@@ -26,22 +26,22 @@ export function getMetaInformation(
     | BuiltinConstrainttypeDefinition
     | ReferenceableBlocktypeDefinition
     | undefined,
-): BlockMetaInformation | ConstraintMetaInformation | undefined {
+): BlockTypeWrapper | ConstraintWrapper | undefined {
   const type = isReference(typeRef) ? typeRef.ref : typeRef;
   if (type === undefined) {
     return undefined;
   }
 
   if (isReferenceableBlocktypeDefinition(type)) {
-    if (!BlockMetaInformation.canBeWrapped(type)) {
+    if (!BlockTypeWrapper.canBeWrapped(type)) {
       return undefined;
     }
-    return new BlockMetaInformation(type);
+    return new BlockTypeWrapper(type);
   } else if (isBuiltinConstrainttypeDefinition(type)) {
-    if (!ConstraintMetaInformation.canBeWrapped(type)) {
+    if (!ConstraintWrapper.canBeWrapped(type)) {
       return undefined;
     }
-    return new ConstraintMetaInformation(type);
+    return new ConstraintWrapper(type);
   }
   assertUnreachable(type);
 }

@@ -24,7 +24,7 @@ import {
   isJayveeModel,
 } from './generated/ast';
 // eslint-disable-next-line import/no-cycle
-import { BlockMetaInformation, ConstraintMetaInformation } from './wrappers';
+import { BlockTypeWrapper, ConstraintWrapper } from './wrappers';
 import { PipeWrapper, createSemanticPipes } from './wrappers/pipe-wrapper';
 
 export function collectStartingBlocks(
@@ -37,7 +37,7 @@ export function collectStartingBlocks(
       .map((blockRef: Reference<BlockDefinition> | undefined) => {
         if (
           blockRef?.ref !== undefined &&
-          BlockMetaInformation.canBeWrapped(blockRef.ref.type)
+          BlockTypeWrapper.canBeWrapped(blockRef.ref.type)
         ) {
           return blockRef.ref;
         }
@@ -53,10 +53,10 @@ export function collectStartingBlocks(
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const blocks = container?.blocks ?? [];
   for (const block of blocks) {
-    if (!BlockMetaInformation.canBeWrapped(block.type)) {
+    if (!BlockTypeWrapper.canBeWrapped(block.type)) {
       continue;
     }
-    const blockMetaInf = new BlockMetaInformation(block.type);
+    const blockMetaInf = new BlockTypeWrapper(block.type);
 
     if (!blockMetaInf.hasInput()) {
       result.push(block);
@@ -203,8 +203,8 @@ export function getNextAstNodeContainer<T extends AstNode>(
  */
 export function getAllBuiltinBlocktypes(
   documentService: LangiumDocuments,
-): BlockMetaInformation[] {
-  const allBuiltinBlocktypes: BlockMetaInformation[] = [];
+): BlockTypeWrapper[] {
+  const allBuiltinBlocktypes: BlockTypeWrapper[] = [];
   const visitedBuiltinBlocktypeDefinitions =
     new Set<BuiltinBlocktypeDefinition>();
 
@@ -225,10 +225,8 @@ export function getAllBuiltinBlocktypes(
           return;
         }
 
-        if (BlockMetaInformation.canBeWrapped(blocktypeDefinition)) {
-          allBuiltinBlocktypes.push(
-            new BlockMetaInformation(blocktypeDefinition),
-          );
+        if (BlockTypeWrapper.canBeWrapped(blocktypeDefinition)) {
+          allBuiltinBlocktypes.push(new BlockTypeWrapper(blocktypeDefinition));
           visitedBuiltinBlocktypeDefinitions.add(blocktypeDefinition);
         }
       });
@@ -243,8 +241,8 @@ export function getAllBuiltinBlocktypes(
  */
 export function getAllBuiltinConstraintTypes(
   documentService: LangiumDocuments,
-): ConstraintMetaInformation[] {
-  const allBuiltinConstraintTypes: ConstraintMetaInformation[] = [];
+): ConstraintWrapper[] {
+  const allBuiltinConstraintTypes: ConstraintWrapper[] = [];
   const visitedBuiltinConstraintTypeDefinitions =
     new Set<BuiltinConstrainttypeDefinition>();
 
@@ -262,9 +260,9 @@ export function getAllBuiltinConstraintTypes(
           return;
         }
 
-        if (ConstraintMetaInformation.canBeWrapped(constraintTypeDefinition)) {
+        if (ConstraintWrapper.canBeWrapped(constraintTypeDefinition)) {
           allBuiltinConstraintTypes.push(
-            new ConstraintMetaInformation(constraintTypeDefinition),
+            new ConstraintWrapper(constraintTypeDefinition),
           );
           visitedBuiltinConstraintTypeDefinitions.add(constraintTypeDefinition);
         }

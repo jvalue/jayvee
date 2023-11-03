@@ -9,8 +9,8 @@
 
 import {
   EvaluationContext,
-  MetaInformation,
   PropertySpecification,
+  TypedObjectWrapper,
   inferExpressionType,
 } from '../../ast';
 import {
@@ -25,7 +25,7 @@ import { checkBlocktypeSpecificProperties } from './blocktype-specific/property-
 
 export function validatePropertyAssignment(
   property: PropertyAssignment,
-  metaInf: MetaInformation,
+  metaInf: TypedObjectWrapper,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
 ): void {

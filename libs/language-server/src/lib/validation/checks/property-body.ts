@@ -7,7 +7,7 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { MetaInformation, getMetaInformation } from '../../ast';
+import { TypedObjectWrapper, getMetaInformation } from '../../ast';
 import { EvaluationContext } from '../../ast/expressions/evaluation';
 import {
   PropertyAssignment,
@@ -63,7 +63,7 @@ export function validatePropertyBody(
 
 function inferMetaInformation(
   propertyBody: PropertyBody,
-): MetaInformation | undefined {
+): TypedObjectWrapper | undefined {
   const type = propertyBody.$container?.type.ref;
   return getMetaInformation(type);
 }
@@ -71,7 +71,7 @@ function inferMetaInformation(
 function checkPropertyCompleteness(
   propertyBody: PropertyBody,
   properties: PropertyAssignment[],
-  metaInf: MetaInformation,
+  metaInf: TypedObjectWrapper,
   context: ValidationContext,
 ): void {
   const presentPropertyNames = properties.map((property) => property.name);
@@ -94,7 +94,7 @@ function checkPropertyCompleteness(
 
 function checkCustomPropertyValidation(
   propertyBody: PropertyBody,
-  metaInf: MetaInformation,
+  metaInf: TypedObjectWrapper,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
 ): void {

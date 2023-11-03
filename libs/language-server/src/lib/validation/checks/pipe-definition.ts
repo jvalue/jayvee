@@ -8,8 +8,8 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
 import { PipeDefinition } from '../../ast/generated/ast';
-import { BlockMetaInformation } from '../../ast/wrappers/block-meta-inf';
 import { createSemanticPipes } from '../../ast/wrappers/pipe-wrapper';
+import { BlockTypeWrapper } from '../../ast/wrappers/typed-object/blocktype-wrapper';
 import { ValidationContext } from '../validation-context';
 
 export function validatePipeDefinition(
@@ -29,13 +29,13 @@ function checkBlockCompatibility(
     const toBlockType = semanticPipe.to?.type;
 
     if (
-      !BlockMetaInformation.canBeWrapped(fromBlockType) ||
-      !BlockMetaInformation.canBeWrapped(toBlockType)
+      !BlockTypeWrapper.canBeWrapped(fromBlockType) ||
+      !BlockTypeWrapper.canBeWrapped(toBlockType)
     ) {
       continue;
     }
-    const fromBlockMetaInf = new BlockMetaInformation(fromBlockType);
-    const toBlockMetaInf = new BlockMetaInformation(toBlockType);
+    const fromBlockMetaInf = new BlockTypeWrapper(fromBlockType);
+    const toBlockMetaInf = new BlockTypeWrapper(toBlockType);
 
     if (fromBlockMetaInf.hasOutput() && toBlockMetaInf.hasInput()) {
       if (!fromBlockMetaInf.canBeConnectedTo(toBlockMetaInf)) {

@@ -6,10 +6,10 @@ import { AstNode, AstNodeHoverProvider, MaybePromise } from 'langium';
 import { Hover } from 'vscode-languageserver-protocol';
 
 import {
-  BlockMetaInformation,
+  BlockTypeWrapper,
   BuiltinBlocktypeDefinition,
   BuiltinConstrainttypeDefinition,
-  ConstraintMetaInformation,
+  ConstraintWrapper,
   PropertyAssignment,
   getMetaInformation,
   isBuiltinBlocktypeDefinition,
@@ -48,10 +48,10 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   private getBlockTypeMarkdownDoc(
     blockType: BuiltinBlocktypeDefinition,
   ): string | undefined {
-    if (!BlockMetaInformation.canBeWrapped(blockType)) {
+    if (!BlockTypeWrapper.canBeWrapped(blockType)) {
       return;
     }
-    const blockMetaInf = new BlockMetaInformation(blockType);
+    const blockMetaInf = new BlockTypeWrapper(blockType);
 
     const lspDocBuilder = new LspDocGenerator();
     return lspDocBuilder.generateBlockTypeDoc(blockMetaInf);
@@ -60,10 +60,10 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   private getConstraintTypeMarkdownDoc(
     constraintType: BuiltinConstrainttypeDefinition,
   ): string | undefined {
-    if (!ConstraintMetaInformation.canBeWrapped(constraintType)) {
+    if (!ConstraintWrapper.canBeWrapped(constraintType)) {
       return;
     }
-    const constraintMetaInf = new ConstraintMetaInformation(constraintType);
+    const constraintMetaInf = new ConstraintWrapper(constraintType);
 
     const lspDocBuilder = new LspDocGenerator();
     return lspDocBuilder.generateConstraintTypeDoc(constraintMetaInf);

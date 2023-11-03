@@ -7,10 +7,10 @@ import { NodeFileSystem } from 'langium/node';
 
 import {
   EvaluationContext,
-  MetaInformation,
   PropertyBody,
   PropertySpecification,
   RuntimeParameterProvider,
+  TypedObjectWrapper,
   ValidationContext,
   createJayveeServices,
   getMetaInformation,
@@ -54,7 +54,7 @@ describe('Validation of blocktype specific properties', () => {
 
     propertyBody.properties.forEach((propertyAssignment) => {
       const propertySpec = (
-        metaInf as MetaInformation
+        metaInf as TypedObjectWrapper
       ).getPropertySpecification(propertyAssignment.name);
       expect(propertySpec).toBeDefined();
 

@@ -5,8 +5,8 @@
 import { strict as assert } from 'assert';
 
 import {
-  BlockMetaInformation,
-  ConstraintMetaInformation,
+  BlockTypeWrapper,
+  ConstraintWrapper,
   ExampleDoc,
   IOType,
   JayveeBlockTypeDocGenerator,
@@ -75,7 +75,7 @@ block ExampleTableInterpreter oftype TableInterpreter {
     return builder.build();
   }
 
-  generateBlockTypeDoc(metaInf: BlockMetaInformation): string {
+  generateBlockTypeDoc(metaInf: BlockTypeWrapper): string {
     const documentationService =
       this.services.documentation.DocumentationProvider;
     const blocktypeDocs = documentationService.getDocumentation(
@@ -117,7 +117,7 @@ block ExampleTableInterpreter oftype TableInterpreter {
     return builder.build();
   }
 
-  generateConstraintTypeDoc(metaInf: ConstraintMetaInformation): string {
+  generateConstraintTypeDoc(metaInf: ConstraintWrapper): string {
     const documentationService =
       this.services.documentation.DocumentationProvider;
     const blocktypeDocs = documentationService.getDocumentation(

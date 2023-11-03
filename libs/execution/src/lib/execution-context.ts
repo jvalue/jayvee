@@ -6,9 +6,9 @@ import { strict as assert } from 'assert';
 
 import {
   BlockDefinition,
-  BlockMetaInformation,
+  BlockTypeWrapper,
   ConstraintDefinition,
-  ConstraintMetaInformation,
+  ConstraintWrapper,
   EvaluationContext,
   InternalValueRepresentation,
   PipelineDefinition,
@@ -149,20 +149,20 @@ export class ExecutionContext {
     assert(isReference(currentNode.type));
     if (isTypedConstraintDefinition(currentNode)) {
       assert(
-        ConstraintMetaInformation.canBeWrapped(currentNode.type),
+        ConstraintWrapper.canBeWrapped(currentNode.type),
         `ConstraintType ${
           currentNode.type.ref?.name ?? '<unresolved reference>'
         } cannot be wrapped`,
       );
-      return new ConstraintMetaInformation(currentNode.type);
+      return new ConstraintWrapper(currentNode.type);
     } else if (isBlockDefinition(currentNode)) {
       assert(
-        BlockMetaInformation.canBeWrapped(currentNode.type),
+        BlockTypeWrapper.canBeWrapped(currentNode.type),
         `Blocktype ${
           currentNode.type.ref?.name ?? '<unresolved reference>'
         } cannot be wrapped`,
       );
-      return new BlockMetaInformation(currentNode.type);
+      return new BlockTypeWrapper(currentNode.type);
     }
     assertUnreachable(currentNode);
   }

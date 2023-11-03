@@ -9,7 +9,4 @@ export * from './value-type';
 export * from './ast-node-wrapper';
 export * from './cell-range-wrapper';
 
-export * from './meta-inf';
-export * from './block-meta-inf';
-export * from './composite-blocktype-meta-inf';
-export * from './constraint-meta-inf';
+export * from './typed-object';

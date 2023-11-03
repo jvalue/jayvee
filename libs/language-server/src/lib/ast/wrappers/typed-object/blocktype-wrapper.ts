@@ -6,21 +6,25 @@ import { strict as assert } from 'assert';
 
 import { Reference, isReference } from 'langium';
 
-import { RuntimeParameterProvider } from '../../services';
+import { RuntimeParameterProvider } from '../../../services';
 // eslint-disable-next-line import/no-cycle
-import { EvaluationContext, evaluateExpression } from '../expressions';
-import { ReferenceableBlocktypeDefinition } from '../generated/ast';
-import { IOType, getIOType } from '../io-type';
+import { EvaluationContext, evaluateExpression } from '../../expressions';
+import { ReferenceableBlocktypeDefinition } from '../../generated/ast';
+import { IOType, getIOType } from '../../io-type';
+import { createValuetype } from '../value-type';
 
-import { ExampleDoc, MetaInformation, PropertySpecification } from './meta-inf';
-import { createValuetype } from './value-type';
+import {
+  ExampleDoc,
+  PropertySpecification,
+  TypedObjectWrapper,
+} from './typed-object-wrapper';
 
 interface BlockDocs {
   description?: string;
   examples?: ExampleDoc[];
 }
 
-export class BlockMetaInformation extends MetaInformation<ReferenceableBlocktypeDefinition> {
+export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlocktypeDefinition> {
   docs: BlockDocs = {};
 
   readonly inputType: IOType;
@@ -103,7 +107,7 @@ export class BlockMetaInformation extends MetaInformation<ReferenceableBlocktype
     return true;
   }
 
-  canBeConnectedTo(blockAfter: BlockMetaInformation): boolean {
+  canBeConnectedTo(blockAfter: BlockTypeWrapper): boolean {
     return this.outputType === blockAfter.inputType;
   }
 

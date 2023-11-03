@@ -6,7 +6,7 @@ import { strict as assert } from 'assert';
 
 import { getRegisteredBlockExecutors } from '@jvalue/jayvee-execution';
 import {
-  BlockMetaInformation,
+  BlockTypeWrapper,
   createJayveeServices,
   getAllBuiltinBlocktypes,
   initializeWorkspace,
@@ -15,7 +15,7 @@ import { NodeFileSystem } from 'langium/node';
 
 import { useStdExtension } from './interpreter';
 
-async function loadAllBuiltinBlocktypes(): Promise<BlockMetaInformation[]> {
+async function loadAllBuiltinBlocktypes(): Promise<BlockTypeWrapper[]> {
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   await initializeWorkspace(services);
   return getAllBuiltinBlocktypes(services.shared.workspace.LangiumDocuments);
@@ -24,21 +24,19 @@ async function loadAllBuiltinBlocktypes(): Promise<BlockMetaInformation[]> {
 describe('std extension', () => {
   it('should provide matching block executors for builtin block types', async () => {
     useStdExtension();
-    (await loadAllBuiltinBlocktypes()).forEach(
-      (metaInf: BlockMetaInformation) => {
-        console.info(`Looking for executor for blocktype ${metaInf.type}`);
-        const matchingBlockExecutorClass = getRegisteredBlockExecutors().find(
-          (blockExecutorClass) => blockExecutorClass.type === metaInf.type,
-        );
+    (await loadAllBuiltinBlocktypes()).forEach((metaInf: BlockTypeWrapper) => {
+      console.info(`Looking for executor for blocktype ${metaInf.type}`);
+      const matchingBlockExecutorClass = getRegisteredBlockExecutors().find(
+        (blockExecutorClass) => blockExecutorClass.type === metaInf.type,
+      );
 
-        expect(matchingBlockExecutorClass).toBeDefined();
-        assert(matchingBlockExecutorClass !== undefined);
+      expect(matchingBlockExecutorClass).toBeDefined();
+      assert(matchingBlockExecutorClass !== undefined);
 
-        const matchingBlockExecutor = new matchingBlockExecutorClass();
+      const matchingBlockExecutor = new matchingBlockExecutorClass();
 
-        expect(matchingBlockExecutor.inputType).toEqual(metaInf.inputType);
-        expect(matchingBlockExecutor.outputType).toEqual(metaInf.outputType);
-      },
-    );
+      expect(matchingBlockExecutor.inputType).toEqual(metaInf.inputType);
+      expect(matchingBlockExecutor.outputType).toEqual(metaInf.outputType);
+    });
   });
 });

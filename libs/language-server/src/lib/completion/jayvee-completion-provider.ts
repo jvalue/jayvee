@@ -16,7 +16,11 @@ import {
 } from 'langium';
 import { CompletionItemKind } from 'vscode-languageserver';
 
-import { MetaInformation, createValuetype, getMetaInformation } from '../ast';
+import {
+  TypedObjectWrapper,
+  createValuetype,
+  getMetaInformation,
+} from '../ast';
 import {
   BlockDefinition,
   ConstraintDefinition,
@@ -188,7 +192,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
   }
 
   private constructPropertyCompletionValueItems(
-    metaInf: MetaInformation,
+    metaInf: TypedObjectWrapper,
     propertyNames: string[],
     kind: 'required' | 'optional',
   ): CompletionValueItem[] {

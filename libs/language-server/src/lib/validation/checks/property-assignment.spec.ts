@@ -7,10 +7,10 @@ import { NodeFileSystem } from 'langium/node';
 
 import {
   EvaluationContext,
-  MetaInformation,
   PropertyAssignment,
   PropertyBody,
   RuntimeParameterProvider,
+  TypedObjectWrapper,
   ValidationContext,
   createJayveeServices,
   getMetaInformation,
@@ -60,7 +60,7 @@ describe('Validation of PropertyAssignment', () => {
 
     validatePropertyAssignment(
       propertyAssignment,
-      metaInf as MetaInformation,
+      metaInf as TypedObjectWrapper,
       new ValidationContext(validationAcceptorMock),
       new EvaluationContext(new RuntimeParameterProvider()),
     );

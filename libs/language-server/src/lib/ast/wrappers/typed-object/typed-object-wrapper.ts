@@ -4,14 +4,13 @@
 
 import { AstNode } from 'langium';
 
-import { ValidationContext } from '../../validation/validation-context';
+import { ValidationContext } from '../../../validation/validation-context';
 // eslint-disable-next-line import/no-cycle
-import { EvaluationContext } from '../expressions/evaluation';
-import { InternalValueRepresentation } from '../expressions/internal-value-representation';
-import { PropertyAssignment, PropertyBody } from '../generated/ast';
-import { Valuetype } from '../wrappers/value-type';
-
-import { AstNodeWrapper } from './ast-node-wrapper';
+import { EvaluationContext } from '../../expressions/evaluation';
+import { InternalValueRepresentation } from '../../expressions/internal-value-representation';
+import { PropertyAssignment, PropertyBody } from '../../generated/ast';
+import { AstNodeWrapper } from '../ast-node-wrapper';
+import { Valuetype } from '../value-type';
 
 export interface PropertySpecification<
   I extends InternalValueRepresentation = InternalValueRepresentation,
@@ -37,7 +36,7 @@ export interface PropertyDocs {
   validation?: string;
 }
 
-export abstract class MetaInformation<N extends AstNode = AstNode>
+export abstract class TypedObjectWrapper<N extends AstNode = AstNode>
   implements AstNodeWrapper<N>
 {
   protected constructor(

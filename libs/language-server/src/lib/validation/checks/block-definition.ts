@@ -17,8 +17,8 @@ import {
   collectIngoingPipes,
   collectOutgoingPipes,
 } from '../../ast/model-util';
-import { BlockMetaInformation } from '../../ast/wrappers/block-meta-inf';
 import { PipeWrapper } from '../../ast/wrappers/pipe-wrapper';
+import { BlockTypeWrapper } from '../../ast/wrappers/typed-object/blocktype-wrapper';
 import { ValidationContext } from '../validation-context';
 
 export function validateBlockDefinition(
@@ -34,10 +34,10 @@ function checkPipesOfBlock(
   whatToCheck: 'input' | 'output',
   context: ValidationContext,
 ): void {
-  if (!BlockMetaInformation.canBeWrapped(block?.type)) {
+  if (!BlockTypeWrapper.canBeWrapped(block?.type)) {
     return;
   }
-  const blockMetaInf = new BlockMetaInformation(block?.type);
+  const blockMetaInf = new BlockTypeWrapper(block?.type);
 
   let pipes: PipeWrapper[];
   switch (whatToCheck) {

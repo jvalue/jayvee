@@ -6,23 +6,27 @@ import { strict as assert } from 'assert';
 
 import { Reference, isReference } from 'langium';
 
-import { RuntimeParameterProvider } from '../../services';
+import { RuntimeParameterProvider } from '../../../services';
 // eslint-disable-next-line import/no-cycle
 import {
   EvaluationContext,
   evaluateExpression,
-} from '../expressions/evaluation';
-import { BuiltinConstrainttypeDefinition } from '../generated/ast';
+} from '../../expressions/evaluation';
+import { BuiltinConstrainttypeDefinition } from '../../generated/ast';
+import { Valuetype, createValuetype } from '../value-type';
 
-import { ExampleDoc, MetaInformation, PropertySpecification } from './meta-inf';
-import { Valuetype, createValuetype } from './value-type';
+import {
+  ExampleDoc,
+  PropertySpecification,
+  TypedObjectWrapper,
+} from './typed-object-wrapper';
 
 interface ConstraintDocs {
   description?: string;
   examples?: ExampleDoc[];
 }
 
-export class ConstraintMetaInformation extends MetaInformation<BuiltinConstrainttypeDefinition> {
+export class ConstraintWrapper extends TypedObjectWrapper<BuiltinConstrainttypeDefinition> {
   docs: ConstraintDocs = {};
   readonly on: Valuetype;
 
