@@ -79,7 +79,7 @@ block ExampleTableInterpreter oftype TableInterpreter {
     const documentationService =
       this.services.documentation.DocumentationProvider;
     const blocktypeDocs = documentationService.getDocumentation(
-      metaInf.wrapped,
+      metaInf.astNode,
     );
     const blocktypeDocsFromComments =
       this.extractDocsFromComment(blocktypeDocs);
@@ -94,7 +94,7 @@ block ExampleTableInterpreter oftype TableInterpreter {
     builder.propertiesHeading();
     Object.entries(metaInf.getPropertySpecifications()).forEach(
       ([key, property]) => {
-        const blocktypeProperty = metaInf.wrapped.properties.filter(
+        const blocktypeProperty = metaInf.astNode.properties.filter(
           (p) => p.name === key,
         )[0];
         if (blocktypeProperty === undefined) {
@@ -121,7 +121,7 @@ block ExampleTableInterpreter oftype TableInterpreter {
     const documentationService =
       this.services.documentation.DocumentationProvider;
     const blocktypeDocs = documentationService.getDocumentation(
-      metaInf.wrapped,
+      metaInf.astNode,
     );
     const constraintTypeDocsFromComments =
       this.extractDocsFromComment(blocktypeDocs);

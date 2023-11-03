@@ -5,8 +5,8 @@
 import {
   BlockMetaInformation,
   ConstraintMetaInformation,
-} from '../meta-information';
-import { MetaInformation } from '../meta-information/meta-inf';
+  MetaInformation,
+} from '../ast';
 
 import {
   JayveeBlockTypeDocGenerator,

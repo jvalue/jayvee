@@ -16,7 +16,7 @@ import {
 } from 'langium';
 import { CompletionItemKind } from 'vscode-languageserver';
 
-import { createValuetype, getMetaInformation } from '../ast';
+import { MetaInformation, createValuetype, getMetaInformation } from '../ast';
 import {
   BlockDefinition,
   ConstraintDefinition,
@@ -34,7 +34,6 @@ import {
   getAllBuiltinConstraintTypes,
 } from '../ast/model-util';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
-import { MetaInformation } from '../meta-information/meta-inf';
 
 const RIGHT_ARROW_SYMBOL = '\u{2192}';
 

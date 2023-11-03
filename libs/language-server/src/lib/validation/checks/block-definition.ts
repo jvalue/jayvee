@@ -17,8 +17,8 @@ import {
   collectIngoingPipes,
   collectOutgoingPipes,
 } from '../../ast/model-util';
+import { BlockMetaInformation } from '../../ast/wrappers/block-meta-inf';
 import { PipeWrapper } from '../../ast/wrappers/pipe-wrapper';
-import { BlockMetaInformation } from '../../meta-information';
 import { ValidationContext } from '../validation-context';
 
 export function validateBlockDefinition(

@@ -8,7 +8,7 @@
  */
 
 import { TypedConstraintDefinition } from '../../ast/generated/ast';
-import { ConstraintMetaInformation } from '../../meta-information';
+import { ConstraintMetaInformation } from '../../ast/wrappers/constraint-meta-inf';
 import { ValidationContext } from '../validation-context';
 
 export function validateTypedConstraintDefinition(

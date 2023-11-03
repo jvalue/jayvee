@@ -15,6 +15,7 @@ import {
   CollectionLiteral,
   CollectionValuetype,
   ConstraintDefinition,
+  ConstraintMetaInformation,
   EvaluationContext,
   PrimitiveValuetypes,
   Valuetype,
@@ -28,7 +29,6 @@ import {
   ValuetypeDefinition,
   ValuetypeGenericDefinition,
 } from '../../ast/generated/ast';
-import { ConstraintMetaInformation } from '../../meta-information';
 import { ValidationContext } from '../validation-context';
 
 export function validateValuetypeDefinition(

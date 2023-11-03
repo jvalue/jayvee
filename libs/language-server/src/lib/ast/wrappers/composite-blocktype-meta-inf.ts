@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line import/no-cycle
-import { CompositeBlocktypeDefinition } from '../ast';
+import { CompositeBlocktypeDefinition } from '../generated/ast';
 
+// eslint-disable-next-line import/no-cycle
 import { BlockMetaInformation } from './block-meta-inf';
 
 export class CompositeBlocktypeMetaInformation extends BlockMetaInformation {

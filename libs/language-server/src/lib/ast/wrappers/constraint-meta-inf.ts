@@ -6,25 +6,24 @@ import { strict as assert } from 'assert';
 
 import { Reference, isReference } from 'langium';
 
+import { RuntimeParameterProvider } from '../../services';
 // eslint-disable-next-line import/no-cycle
-import { Valuetype, createValuetype } from '../ast';
 import {
   EvaluationContext,
   evaluateExpression,
-} from '../ast/expressions/evaluation';
-import { BuiltinConstrainttypeDefinition } from '../ast/generated/ast';
-import { RuntimeParameterProvider } from '../services';
+} from '../expressions/evaluation';
+import { BuiltinConstrainttypeDefinition } from '../generated/ast';
 
 import { ExampleDoc, MetaInformation, PropertySpecification } from './meta-inf';
+import { Valuetype, createValuetype } from './value-type';
 
 interface ConstraintDocs {
   description?: string;
   examples?: ExampleDoc[];
 }
 
-export class ConstraintMetaInformation extends MetaInformation {
+export class ConstraintMetaInformation extends MetaInformation<BuiltinConstrainttypeDefinition> {
   docs: ConstraintDocs = {};
-  readonly wrapped: BuiltinConstrainttypeDefinition;
   readonly on: Valuetype;
 
   constructor(
@@ -58,9 +57,7 @@ export class ConstraintMetaInformation extends MetaInformation {
       }
     }
 
-    super(constraintTypeName, properties, undefined);
-
-    this.wrapped = constraintTypeDefinition;
+    super(constraintTypeDefinition, constraintTypeName, properties, undefined);
 
     const valuetype = createValuetype(constraintTypeDefinition.valuetype);
     assert(valuetype !== undefined);

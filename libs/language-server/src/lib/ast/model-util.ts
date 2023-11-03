@@ -11,12 +11,6 @@ import {
   assertUnreachable,
 } from 'langium';
 
-// eslint-disable-next-line import/no-cycle
-import {
-  BlockMetaInformation,
-  ConstraintMetaInformation,
-} from '../meta-information';
-
 import {
   BinaryExpression,
   BlockDefinition,
@@ -29,6 +23,8 @@ import {
   isCompositeBlocktypeDefinition,
   isJayveeModel,
 } from './generated/ast';
+// eslint-disable-next-line import/no-cycle
+import { BlockMetaInformation, ConstraintMetaInformation } from './wrappers';
 import { PipeWrapper, createSemanticPipes } from './wrappers/pipe-wrapper';
 
 export function collectStartingBlocks(

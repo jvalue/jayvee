@@ -7,16 +7,17 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { EvaluationContext, inferExpressionType } from '../../ast';
+import {
+  EvaluationContext,
+  MetaInformation,
+  PropertySpecification,
+  inferExpressionType,
+} from '../../ast';
 import {
   PropertyAssignment,
   isBlocktypeProperty,
   isRuntimeParameterLiteral,
 } from '../../ast/generated/ast';
-import {
-  MetaInformation,
-  PropertySpecification,
-} from '../../meta-information/meta-inf';
 import { ValidationContext } from '../validation-context';
 import { checkExpressionSimplification } from '../validation-util';
 

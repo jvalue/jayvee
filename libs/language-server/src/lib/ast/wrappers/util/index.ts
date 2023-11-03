@@ -4,17 +4,15 @@
 
 import { Reference, assertUnreachable, isReference } from 'langium';
 
-// eslint-disable-next-line import/no-cycle
-import {
-  BlockMetaInformation,
-  ConstraintMetaInformation,
-} from '../../../meta-information';
 import {
   BuiltinConstrainttypeDefinition,
   ReferenceableBlocktypeDefinition,
   isBuiltinConstrainttypeDefinition,
   isReferenceableBlocktypeDefinition,
 } from '../../generated/ast';
+// eslint-disable-next-line import/no-cycle
+import { BlockMetaInformation } from '../block-meta-inf';
+import { ConstraintMetaInformation } from '../constraint-meta-inf';
 
 export * from './column-id-util';
 

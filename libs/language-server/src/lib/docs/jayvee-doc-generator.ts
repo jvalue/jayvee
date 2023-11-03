@@ -2,9 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { BlockMetaInformation, ConstraintMetaInformation } from '../ast';
 import { Valuetype } from '../ast/wrappers/value-type/valuetype';
-import { ConstraintMetaInformation } from '../meta-information';
-import { BlockMetaInformation } from '../meta-information/block-meta-inf';
 
 export interface JayveeBlockTypeDocGenerator {
   generateBlockTypeDoc(metaInf: BlockMetaInformation): string;

@@ -2,12 +2,16 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { AstNode } from 'langium';
+
+import { ValidationContext } from '../../validation/validation-context';
 // eslint-disable-next-line import/no-cycle
-import { EvaluationContext } from '../ast/expressions/evaluation';
-import { InternalValueRepresentation } from '../ast/expressions/internal-value-representation';
-import { PropertyAssignment, PropertyBody } from '../ast/generated/ast';
-import { Valuetype } from '../ast/wrappers/value-type';
-import { ValidationContext } from '../validation/validation-context';
+import { EvaluationContext } from '../expressions/evaluation';
+import { InternalValueRepresentation } from '../expressions/internal-value-representation';
+import { PropertyAssignment, PropertyBody } from '../generated/ast';
+import { Valuetype } from '../wrappers/value-type';
+
+import { AstNodeWrapper } from './ast-node-wrapper';
 
 export interface PropertySpecification<
   I extends InternalValueRepresentation = InternalValueRepresentation,
@@ -33,8 +37,11 @@ export interface PropertyDocs {
   validation?: string;
 }
 
-export abstract class MetaInformation {
+export abstract class MetaInformation<N extends AstNode = AstNode>
+  implements AstNodeWrapper<N>
+{
   protected constructor(
+    public readonly astNode: N,
     public readonly type: string,
     private readonly properties: Record<string, PropertySpecification>,
     private readonly validation?: (

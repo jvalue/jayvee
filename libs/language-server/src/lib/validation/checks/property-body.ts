@@ -7,7 +7,7 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { getMetaInformation } from '../../ast';
+import { MetaInformation, getMetaInformation } from '../../ast';
 import { EvaluationContext } from '../../ast/expressions/evaluation';
 import {
   PropertyAssignment,
@@ -15,7 +15,6 @@ import {
   isBlockDefinition,
   isTypedConstraintDefinition,
 } from '../../ast/generated/ast';
-import { MetaInformation } from '../../meta-information/meta-inf';
 import { ValidationContext } from '../validation-context';
 import { checkUniqueNames } from '../validation-util';
 

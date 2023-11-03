@@ -6,8 +6,10 @@ import { AstNode, AstNodeHoverProvider, MaybePromise } from 'langium';
 import { Hover } from 'vscode-languageserver-protocol';
 
 import {
+  BlockMetaInformation,
   BuiltinBlocktypeDefinition,
   BuiltinConstrainttypeDefinition,
+  ConstraintMetaInformation,
   PropertyAssignment,
   getMetaInformation,
   isBuiltinBlocktypeDefinition,
@@ -15,10 +17,6 @@ import {
   isPropertyAssignment,
 } from '../ast';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
-import {
-  BlockMetaInformation,
-  ConstraintMetaInformation,
-} from '../meta-information';
 
 export class JayveeHoverProvider extends AstNodeHoverProvider {
   override getAstNodeHoverContent(

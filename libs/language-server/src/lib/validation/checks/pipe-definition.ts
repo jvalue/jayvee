@@ -8,8 +8,8 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
 import { PipeDefinition } from '../../ast/generated/ast';
+import { BlockMetaInformation } from '../../ast/wrappers/block-meta-inf';
 import { createSemanticPipes } from '../../ast/wrappers/pipe-wrapper';
-import { BlockMetaInformation } from '../../meta-information';
 import { ValidationContext } from '../validation-context';
 
 export function validatePipeDefinition(
