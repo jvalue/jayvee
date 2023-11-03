@@ -9,7 +9,7 @@ import {
   BlockTypeWrapper,
   BuiltinBlocktypeDefinition,
   BuiltinConstrainttypeDefinition,
-  ConstraintWrapper,
+  ConstraintTypeWrapper,
   PropertyAssignment,
   getTypedObjectWrapper,
   isBuiltinBlocktypeDefinition,
@@ -60,10 +60,10 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   private getConstraintTypeMarkdownDoc(
     constraintTypeDefinition: BuiltinConstrainttypeDefinition,
   ): string | undefined {
-    if (!ConstraintWrapper.canBeWrapped(constraintTypeDefinition)) {
+    if (!ConstraintTypeWrapper.canBeWrapped(constraintTypeDefinition)) {
       return;
     }
-    const constraintType = new ConstraintWrapper(constraintTypeDefinition);
+    const constraintType = new ConstraintTypeWrapper(constraintTypeDefinition);
 
     const lspDocBuilder = new LspDocGenerator();
     return lspDocBuilder.generateConstraintTypeDoc(constraintType);

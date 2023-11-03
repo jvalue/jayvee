@@ -26,7 +26,7 @@ interface ConstraintDocs {
   examples?: ExampleDoc[];
 }
 
-export class ConstraintWrapper extends TypedObjectWrapper<BuiltinConstrainttypeDefinition> {
+export class ConstraintTypeWrapper extends TypedObjectWrapper<BuiltinConstrainttypeDefinition> {
   docs: ConstraintDocs = {};
   readonly on: Valuetype;
 

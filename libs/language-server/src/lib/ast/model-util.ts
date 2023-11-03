@@ -24,7 +24,7 @@ import {
   isJayveeModel,
 } from './generated/ast';
 // eslint-disable-next-line import/no-cycle
-import { BlockTypeWrapper, ConstraintWrapper } from './wrappers';
+import { BlockTypeWrapper, ConstraintTypeWrapper } from './wrappers';
 import { PipeWrapper, createSemanticPipes } from './wrappers/pipe-wrapper';
 
 export function collectStartingBlocks(
@@ -241,8 +241,8 @@ export function getAllBuiltinBlocktypes(
  */
 export function getAllBuiltinConstraintTypes(
   documentService: LangiumDocuments,
-): ConstraintWrapper[] {
-  const allBuiltinConstraintTypes: ConstraintWrapper[] = [];
+): ConstraintTypeWrapper[] {
+  const allBuiltinConstraintTypes: ConstraintTypeWrapper[] = [];
   const visitedBuiltinConstraintTypeDefinitions =
     new Set<BuiltinConstrainttypeDefinition>();
 
@@ -260,9 +260,9 @@ export function getAllBuiltinConstraintTypes(
           return;
         }
 
-        if (ConstraintWrapper.canBeWrapped(constraintTypeDefinition)) {
+        if (ConstraintTypeWrapper.canBeWrapped(constraintTypeDefinition)) {
           allBuiltinConstraintTypes.push(
-            new ConstraintWrapper(constraintTypeDefinition),
+            new ConstraintTypeWrapper(constraintTypeDefinition),
           );
           visitedBuiltinConstraintTypeDefinitions.add(constraintTypeDefinition);
         }

@@ -8,7 +8,7 @@ import {
   BlockDefinition,
   BlockTypeWrapper,
   ConstraintDefinition,
-  ConstraintWrapper,
+  ConstraintTypeWrapper,
   EvaluationContext,
   InternalValueRepresentation,
   PipelineDefinition,
@@ -149,12 +149,12 @@ export class ExecutionContext {
     assert(isReference(currentNode.type));
     if (isTypedConstraintDefinition(currentNode)) {
       assert(
-        ConstraintWrapper.canBeWrapped(currentNode.type),
+        ConstraintTypeWrapper.canBeWrapped(currentNode.type),
         `ConstraintType ${
           currentNode.type.ref?.name ?? '<unresolved reference>'
         } cannot be wrapped`,
       );
-      return new ConstraintWrapper(currentNode.type);
+      return new ConstraintTypeWrapper(currentNode.type);
     } else if (isBlockDefinition(currentNode)) {
       assert(
         BlockTypeWrapper.canBeWrapped(currentNode.type),

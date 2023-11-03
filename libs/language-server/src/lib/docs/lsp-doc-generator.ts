@@ -4,7 +4,7 @@
 
 import {
   BlockTypeWrapper,
-  ConstraintWrapper,
+  ConstraintTypeWrapper,
   TypedObjectWrapper,
 } from '../ast';
 
@@ -26,7 +26,7 @@ export class LspDocGenerator
     return markdownBuilder.line(blockType.docs.description).build();
   }
 
-  generateConstraintTypeDoc(constraintType: ConstraintWrapper): string {
+  generateConstraintTypeDoc(constraintType: ConstraintTypeWrapper): string {
     const markdownBuilder = new MarkdownBuilder();
     return markdownBuilder.line(constraintType.docs.description).build();
   }

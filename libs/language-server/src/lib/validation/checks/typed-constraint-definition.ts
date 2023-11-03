@@ -8,7 +8,7 @@
  */
 
 import { TypedConstraintDefinition } from '../../ast/generated/ast';
-import { ConstraintWrapper } from '../../ast/wrappers/typed-object/constrainttype-wrapper';
+import { ConstraintTypeWrapper } from '../../ast/wrappers/typed-object/constrainttype-wrapper';
 import { ValidationContext } from '../validation-context';
 
 export function validateTypedConstraintDefinition(
@@ -28,7 +28,7 @@ function checkConstraintType(
     return undefined;
   }
 
-  const canCreateWrapper = ConstraintWrapper.canBeWrapped(constraintType);
+  const canCreateWrapper = ConstraintTypeWrapper.canBeWrapped(constraintType);
   if (!canCreateWrapper) {
     context.accept(
       'error',

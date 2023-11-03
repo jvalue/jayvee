@@ -15,7 +15,7 @@ import {
   CollectionLiteral,
   CollectionValuetype,
   ConstraintDefinition,
-  ConstraintWrapper,
+  ConstraintTypeWrapper,
   EvaluationContext,
   PrimitiveValuetypes,
   Valuetype,
@@ -144,10 +144,10 @@ function getCompatibleValuetype(
   constraint: ConstraintDefinition,
 ): Valuetype | undefined {
   if (isTypedConstraintDefinition(constraint)) {
-    if (ConstraintWrapper.canBeWrapped(constraint.type)) {
+    if (ConstraintTypeWrapper.canBeWrapped(constraint.type)) {
       return undefined;
     }
-    return new ConstraintWrapper(constraint.type).on;
+    return new ConstraintTypeWrapper(constraint.type).on;
   } else if (isExpressionConstraintDefinition(constraint)) {
     return createValuetype(constraint?.valuetype);
   }

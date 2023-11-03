@@ -12,7 +12,7 @@ import {
 } from '../../generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { BlockTypeWrapper } from '../typed-object/blocktype-wrapper';
-import { ConstraintWrapper } from '../typed-object/constrainttype-wrapper';
+import { ConstraintTypeWrapper } from '../typed-object/constrainttype-wrapper';
 
 export * from './column-id-util';
 
@@ -26,7 +26,7 @@ export function getTypedObjectWrapper(
     | BuiltinConstrainttypeDefinition
     | ReferenceableBlocktypeDefinition
     | undefined,
-): BlockTypeWrapper | ConstraintWrapper | undefined {
+): BlockTypeWrapper | ConstraintTypeWrapper | undefined {
   const type = isReference(typeRef) ? typeRef.ref : typeRef;
   if (type === undefined) {
     return undefined;
@@ -38,10 +38,10 @@ export function getTypedObjectWrapper(
     }
     return new BlockTypeWrapper(type);
   } else if (isBuiltinConstrainttypeDefinition(type)) {
-    if (!ConstraintWrapper.canBeWrapped(type)) {
+    if (!ConstraintTypeWrapper.canBeWrapped(type)) {
       return undefined;
     }
-    return new ConstraintWrapper(type);
+    return new ConstraintTypeWrapper(type);
   }
   assertUnreachable(type);
 }
