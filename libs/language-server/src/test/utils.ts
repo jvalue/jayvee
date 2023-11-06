@@ -2,11 +2,15 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import * as assert from 'assert';
 import { readFileSync } from 'fs';
 import * as path from 'path';
 
 import { AstNode, LangiumDocument, ValidationAcceptor } from 'langium';
+import { WorkspaceFolder } from 'vscode-languageserver-protocol';
 
+import { JayveeServices } from '../lib';
+import { initializeWorkspace } from '../lib/builtin-library/jayvee-workspace-manager';
 import { constraintMetaInfRegistry } from '../lib/meta-information/meta-inf-registry';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -45,4 +49,16 @@ export function expectNoParserAndLexerErrors(
 
 export function clearMetaInfRegistry() {
   constraintMetaInfRegistry.clear();
+}
+
+export async function loadTestExtensions(
+  services: JayveeServices,
+  testExtensionJvFiles: string[],
+) {
+  assert(testExtensionJvFiles.every((file) => file.endsWith('.jv')));
+  const extensions: WorkspaceFolder[] = testExtensionJvFiles.map((file) => ({
+    uri: path.dirname(file),
+    name: path.basename(file),
+  }));
+  return initializeWorkspace(services, extensions);
 }
