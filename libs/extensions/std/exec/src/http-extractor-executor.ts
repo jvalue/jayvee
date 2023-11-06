@@ -24,7 +24,7 @@ import { AstNode } from 'langium';
 import {
   inferFileExtensionFromContentTypeString,
   inferFileExtensionFromFileExtensionString,
-  inferMimeTypeFromContentTypeString,
+  inferMimeTypeFromFileExtensionString,
 } from './file-util';
 import {
   createBackoffStrategy,
@@ -151,7 +151,7 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
 
           // Infer Mimetype from HTTP-Header, if not inferrable, then default to application/octet-stream
           const mimeType: MimeType | undefined =
-            inferMimeTypeFromContentTypeString(
+            inferMimeTypeFromFileExtensionString(
               response.headers['content-type'],
             ) || MimeType.APPLICATION_OCTET_STREAM;
 
