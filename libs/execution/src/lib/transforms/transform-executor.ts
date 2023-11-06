@@ -95,10 +95,19 @@ export class TransformExecutor {
     for (let rowIndex = 0; rowIndex < numberOfRows; ++rowIndex) {
       this.addVariablesToContext(inputDetailsList, columns, rowIndex, context);
 
-      const newValue = evaluateExpression(
-        this.getOutputAssignment().expression,
-        context.evaluationContext,
-      );
+      let newValue: InternalValueRepresentation | undefined = undefined;
+      try {
+        newValue = evaluateExpression(
+          this.getOutputAssignment().expression,
+          context.evaluationContext,
+        );
+      } catch (e) {
+        if (e instanceof Error) {
+          context.logger.logDebug(e.message);
+        } else {
+          context.logger.logDebug(String(e));
+        }
+      }
 
       if (newValue === undefined) {
         context.logger.logDebug(
