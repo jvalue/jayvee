@@ -7,23 +7,23 @@ import { FileExtension, MimeType } from '@jvalue/jayvee-execution';
 import {
   inferFileExtensionFromContentTypeString,
   inferFileExtensionFromFileExtensionString,
-  inferMimeTypeFromContentTypeString,
+  inferMimeTypeFromFileExtensionString,
 } from './file-util';
 
 describe('Validation of file-util', () => {
   describe('Function inferMimeTypeFromContentTypeString', () => {
     it('should diagnose no error on known mimeType', () => {
-      const result = inferMimeTypeFromContentTypeString('txt');
+      const result = inferMimeTypeFromFileExtensionString('txt');
 
       expect(result).toEqual(MimeType.TEXT_PLAIN);
     });
     it('should diagnose no error on undefined input', () => {
-      const result = inferMimeTypeFromContentTypeString(undefined);
+      const result = inferMimeTypeFromFileExtensionString(undefined);
 
       expect(result).toEqual(undefined);
     });
     it('should diagnose no error on unknown mimeType', () => {
-      const result = inferMimeTypeFromContentTypeString('unity');
+      const result = inferMimeTypeFromFileExtensionString('unity');
 
       expect(result).toEqual(undefined);
     });
