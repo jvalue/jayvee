@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  ConstraintTypeLiteral,
+  BuiltinConstrainttypeDefinition,
   EvaluationContext,
   PropertyBody,
   ReferenceableBlocktypeDefinition,
@@ -63,10 +63,11 @@ function checkRuntimeParameterValueParsing(
   const enclosingPropertyBody = getEnclosingPropertyBody(runtimeParameter);
   const type:
     | Reference<ReferenceableBlocktypeDefinition>
-    | ConstraintTypeLiteral
+    | Reference<BuiltinConstrainttypeDefinition>
     | undefined =
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     enclosingPropertyBody.$container?.type;
+  const metaInf = getMetaInformation(type);
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const propertyName = runtimeParameter.$container?.name;
@@ -75,7 +76,6 @@ function checkRuntimeParameterValueParsing(
     return;
   }
 
-  const metaInf = getMetaInformation(type);
   const propertySpec = metaInf?.getPropertySpecification(propertyName);
   if (propertySpec === undefined) {
     return;

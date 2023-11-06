@@ -1,0 +1,20 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+pipeline Pipeline {
+  block Test oftype TableInterpreter {
+    columns: [
+      "name" oftype text,
+      "name" oftype integer,
+    ];
+  }
+
+  block TestExtractor oftype TestSheetExtractor {
+  }
+
+  block TestLoader oftype TestTableLoader {
+  }
+
+  TestExtractor -> Test -> TestLoader;
+}

@@ -11,6 +11,7 @@ import {
   IOType,
   JayveeBlockTypeDocGenerator,
   JayveeConstraintTypeDocGenerator,
+  JayveeServices,
   JayveeValueTypesDocGenerator,
   MarkdownBuilder,
   PrimitiveValuetype,
@@ -23,6 +24,8 @@ export class UserDocGenerator
     JayveeConstraintTypeDocGenerator,
     JayveeValueTypesDocGenerator
 {
+  constructor(private services: JayveeServices) {}
+
   generateValueTypesDoc(valueTypes: {
     [name: string]: PrimitiveValuetype;
   }): string {
@@ -73,22 +76,41 @@ block ExampleTableInterpreter oftype TableInterpreter {
   }
 
   generateBlockTypeDoc(metaInf: BlockMetaInformation): string {
+    const documentationService =
+      this.services.documentation.DocumentationProvider;
+    const blocktypeDocs = documentationService.getDocumentation(
+      metaInf.wrapped,
+    );
+    const blocktypeDocsFromComments =
+      this.extractDocsFromComment(blocktypeDocs);
+
     const builder = new UserDocMarkdownBuilder()
       .docTitle(metaInf.type)
       .generationComment()
       .ioTypes(metaInf.inputType, metaInf.outputType)
-      .description(metaInf.docs.description)
-      .examples(metaInf.docs.examples);
+      .description(blocktypeDocsFromComments?.description)
+      .examples(blocktypeDocsFromComments?.examples);
 
     builder.propertiesHeading();
     Object.entries(metaInf.getPropertySpecifications()).forEach(
       ([key, property]) => {
+        const blocktypeProperty = metaInf.wrapped.properties.filter(
+          (p) => p.name === key,
+        )[0];
+        if (blocktypeProperty === undefined) {
+          return;
+        }
+
+        const propertyDocs =
+          documentationService.getDocumentation(blocktypeProperty);
+        const propDocsFromComments = this.extractDocsFromComment(propertyDocs);
+
         builder
           .propertyHeading(key, 3)
           .propertySpec(property)
-          .description(property.docs?.description, 4)
+          .description(propDocsFromComments?.description, 4)
           .validation(property.docs?.validation, 4)
-          .examples(property.docs?.examples, 4);
+          .examples(propDocsFromComments?.examples, 4);
       },
     );
 
@@ -116,6 +138,41 @@ block ExampleTableInterpreter oftype TableInterpreter {
     );
 
     return builder.build();
+  }
+
+  private extractDocsFromComment(comment?: string | undefined):
+    | {
+        description: string | undefined;
+        examples: ExampleDoc[];
+      }
+    | undefined {
+    if (comment === undefined) {
+      return undefined;
+    }
+    /*
+    Format:
+
+    <description>
+    *@example*
+    <example description>
+    <example code>
+    */
+
+    const commentSections = comment
+      .split('*@example*')
+      .map((section) => section.trim());
+    const examples = commentSections.slice(1).map((x) => {
+      const exampleLines = x.split('\n');
+      return {
+        description: exampleLines[0] ?? '',
+        code: exampleLines.slice(1).join('\n'),
+      };
+    });
+
+    return {
+      description: commentSections[0],
+      examples: examples,
+    };
   }
 }
 

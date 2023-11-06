@@ -1,0 +1,32 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* Loads a `Table` into a SQLite database sink.
+* 
+* @example A SQLite file `cars.db` is created in the working directory. Incoming data is written to the table `cars`.
+* block CarsLoader oftype SQLiteLoader {
+*   table: "cars";
+*   file: "./cars.db";
+* }
+*/
+builtin blocktype SQLiteLoader {
+	input default oftype Table;
+	output default oftype None;
+	
+	/**
+	* The name of the table to write into.
+	*/
+	property table oftype text;
+	
+	/**
+	* The path to a SQLite file that will be created if it does not exist. Usual file extensions are `.sqlite` and `.db`.
+	*/
+	property file oftype text;
+	
+	/**
+	* Indicates, whether to drop the table before loading data into it. If `false`, data is appended to the table instead of dropping it.
+	*/
+	property dropTable oftype boolean: true;
+}

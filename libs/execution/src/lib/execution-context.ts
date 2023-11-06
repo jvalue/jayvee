@@ -6,29 +6,30 @@ import { strict as assert } from 'assert';
 
 import {
   BlockDefinition,
+  BlockMetaInformation,
   ConstraintDefinition,
   EvaluationContext,
   InternalValueRepresentation,
-  MetaInformation,
   PipelineDefinition,
   PropertyAssignment,
   TransformDefinition,
   Valuetype,
   evaluatePropertyValue,
-  getOrFailMetaInformation,
-  isConstraintDefinition,
+  getOrFailConstraintMetaInf,
+  isBlockDefinition,
   isExpressionConstraintDefinition,
   isPipelineDefinition,
   isPropertyBody,
   isTransformDefinition,
+  isTypedConstraintDefinition,
 } from '@jvalue/jayvee-language-server';
-import { isReference } from 'langium';
+import { assertUnreachable, isReference } from 'langium';
 
 import {
   DebugGranularity,
   DebugTargets,
 } from './debugging/debug-configuration';
-import { Logger } from './logger';
+import { Logger } from './logging/logger';
 
 export type StackNode =
   | BlockDefinition
@@ -145,13 +146,18 @@ export class ExecutionContext {
     assert(!isExpressionConstraintDefinition(currentNode));
     assert(!isTransformDefinition(currentNode));
 
-    let metaInf: MetaInformation;
-    if (isConstraintDefinition(currentNode)) {
-      metaInf = getOrFailMetaInformation(currentNode.type);
-    } else {
+    if (isTypedConstraintDefinition(currentNode)) {
+      return getOrFailConstraintMetaInf(currentNode.type);
+    } else if (isBlockDefinition(currentNode)) {
       assert(isReference(currentNode.type));
-      metaInf = getOrFailMetaInformation(currentNode.type);
+      assert(
+        BlockMetaInformation.canBeWrapped(currentNode.type),
+        `Blocktype ${
+          currentNode.type.ref?.name ?? '<unresolved reference>'
+        } cannot be wrapped`,
+      );
+      return new BlockMetaInformation(currentNode.type);
     }
-    return metaInf;
+    assertUnreachable(currentNode);
   }
 }

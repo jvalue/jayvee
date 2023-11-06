@@ -1,0 +1,115 @@
+---
+title: cars
+---
+
+```jayvee
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+// Example 1: Cars
+// Learning goals:
+// - Understand the core concepts pipeline, block, and pipe
+// - Understand the general structure of a pipeline
+
+// 1. This Jayvee model describes a pipeline 
+// from a CSV file in the web 
+// to a SQLite file sink.
+pipeline CarsPipeline {
+
+	// 2. We describe the structure of the pipeline,
+	// usually at the top of the pipeline.
+	// by connecting blocks via pipes. 
+
+	// 3. Verbose syntax of a pipe
+	// connecting the block CarsExtractor
+	// with the block CarsTextFileInterpreter.
+	pipe {
+		from: CarsExtractor;
+		to: CarsTextFileInterpreter;
+	}
+
+	// 4. The output of the "from" block is hereby used 
+	// as input for the "to" block.
+
+	// 5. More convenient syntax of a pipe
+	CarsTextFileInterpreter -> CarsCSVInterpreter;
+
+	// 6. Pipes can be further chained, 
+	// leading to an overview of the pipeline.
+	CarsCSVInterpreter 
+		-> NameHeaderWriter
+	   	-> CarsTableInterpreter
+		-> CarsLoader;
+
+
+	// 7. Below the pipes, we usually define the blocks 
+	// that are connected by the pipes.
+
+	// 8. Blocks instantiate a blocktype by using the oftype keyword.
+	// The blocktype defines the available properties that the block
+	// can use to specify the intended behavior of the block 
+	block CarsExtractor oftype HttpExtractor {
+
+		// 9. Properties are assigned to concrete values.
+		// Here, we specify the URL where the file shall be downloaded from.
+		url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
+	}
+
+	// 10. The HttpExtractor requires no input and produces a binary file as output.
+	// This file has to be interpreted, e.g., as text file.
+	block CarsTextFileInterpreter oftype TextFileInterpreter { }
+
+	// 11. Next, we interpret the text file as sheet.
+	// A sheet only contains text cells and is useful for manipulating the shape of data before assigning more strict value types to cells.
+	block CarsCSVInterpreter oftype CSVInterpreter {
+		enclosing: '"';
+	}
+
+	// 12. We can write into cells of a sheet using the CellWriter blocktype.
+	block NameHeaderWriter oftype CellWriter {
+		// 13. We utilize a syntax similar to spreadsheet programs.
+		// Cell ranges can be described using the keywords "cell", "row", "column", or "range" that indicate which 
+		// cells are selected for the write action.
+		at: cell A1;
+
+		// 14. For each cell we selected with the "at" property above,
+		// we can specify what value shall be written into the cell.
+		write: ["name"];
+	}
+
+	// 15. As a next step, we interpret the sheet as a table by adding structure.
+	// We define a valuetype per column that specifies the data type of the column.
+	// Rows that include values that are not valid according to the their valuetypes are dropped automatically. 
+	block CarsTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns: [
+			"name" oftype text,
+			"mpg" oftype decimal,
+			"cyl" oftype integer,
+			"disp" oftype decimal,
+			"hp" oftype integer,
+			"drat" oftype decimal,
+			"wt" oftype decimal,
+			"qsec" oftype decimal,
+			"vs" oftype integer,
+			"am" oftype integer,
+			"gear" oftype integer,
+			"carb" oftype integer
+		];
+	}
+
+	// 16. As a last step, we load the table into a sink,
+	// here into a sqlite file.
+	// The structural information of the table is used
+	// to generate the correct table.
+	block CarsLoader oftype SQLiteLoader {
+		table: "Cars";
+		file: "./cars.sqlite";
+	}
+
+	// 17. Congratulations!
+	// You can now use the sink for your data analysis, app, 
+	// or whatever you want to do with the cleaned data.  
+}
+```

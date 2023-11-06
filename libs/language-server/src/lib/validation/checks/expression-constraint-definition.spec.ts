@@ -11,7 +11,6 @@ import {
   RuntimeParameterProvider,
   ValidationContext,
   createJayveeServices,
-  useExtension,
 } from '../../../lib';
 import {
   ParseHelperOptions,
@@ -20,7 +19,6 @@ import {
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../test';
-import { TestLangExtension } from '../../../test/extension';
 
 import { validateExpressionConstraintDefinition } from './expression-constraint-definition';
 
@@ -57,8 +55,6 @@ describe('Validation of ConstraintDefinition (expression syntax)', () => {
   }
 
   beforeAll(() => {
-    // Register test extension
-    useExtension(new TestLangExtension());
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;

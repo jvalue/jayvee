@@ -7,13 +7,18 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
+import { getMetaInformation } from '../../ast';
 import { EvaluationContext } from '../../ast/expressions/evaluation';
-import { PropertyAssignment, PropertyBody } from '../../ast/generated/ast';
+import {
+  PropertyAssignment,
+  PropertyBody,
+  isBlockDefinition,
+} from '../../ast/generated/ast';
 import { MetaInformation } from '../../meta-information/meta-inf';
-import { getMetaInformation } from '../../meta-information/meta-inf-registry';
 import { ValidationContext } from '../validation-context';
 import { checkUniqueNames } from '../validation-util';
 
+import { checkBlocktypeSpecificPropertyBody } from './blocktype-specific/property-body';
 import { validatePropertyAssignment } from './property-assignment';
 
 export function validatePropertyBody(
@@ -58,7 +63,7 @@ export function validatePropertyBody(
 function inferMetaInformation(
   propertyBody: PropertyBody,
 ): MetaInformation | undefined {
-  const type = propertyBody.$container?.type;
+  const type = propertyBody.$container?.type.ref;
   return getMetaInformation(type);
 }
 
@@ -93,4 +98,12 @@ function checkCustomPropertyValidation(
   evaluationContext: EvaluationContext,
 ): void {
   metaInf.validate(propertyBody, validationContext, evaluationContext);
+
+  if (isBlockDefinition(propertyBody.$container)) {
+    checkBlocktypeSpecificPropertyBody(
+      propertyBody,
+      validationContext,
+      evaluationContext,
+    );
+  }
 }

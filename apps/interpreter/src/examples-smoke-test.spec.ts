@@ -7,6 +7,7 @@ import * as path from 'path';
 import {
   clearBlockExecutorRegistry,
   clearConstraintExecutorRegistry,
+  processExitMockImplementation,
 } from '@jvalue/jayvee-execution/test';
 import {
   PostgresLoaderExecutorMock,
@@ -53,14 +54,14 @@ describe('jv example smoke tests', () => {
   beforeAll(() => {
     exitSpy = jest
       .spyOn(process, 'exit')
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .mockImplementation((code?: number) => undefined as never);
+      .mockImplementation(processExitMockImplementation);
     httpExtractorMock = new HttpExtractorExecutorMock();
     postgresLoaderMock = new PostgresLoaderExecutorMock();
     sqliteLoaderMock = new SQLiteLoaderExecutorMock();
   });
 
   afterEach(() => {
+    exitSpy.mockClear();
     httpExtractorMock.restore();
     postgresLoaderMock.restore();
     sqliteLoaderMock.restore();

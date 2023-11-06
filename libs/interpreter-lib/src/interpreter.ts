@@ -17,7 +17,6 @@ import {
 } from '@jvalue/jayvee-execution';
 import * as R from '@jvalue/jayvee-execution';
 import { StdExecExtension } from '@jvalue/jayvee-extensions/std/exec';
-import { StdLangExtension } from '@jvalue/jayvee-extensions/std/lang';
 import {
   BlockDefinition,
   EvaluationContext,
@@ -29,7 +28,6 @@ import {
   collectStartingBlocks,
   createJayveeServices,
   getBlocksInTopologicalSorting,
-  useExtension as useLangExtension,
 } from '@jvalue/jayvee-language-server';
 import * as chalk from 'chalk';
 import { NodeFileSystem } from 'langium/node';
@@ -136,7 +134,6 @@ function setupRuntimeParameterProvider(
 }
 
 export function useStdExtension() {
-  useLangExtension(new StdLangExtension());
   useExecutionExtension(new StdExecExtension());
 }
 
@@ -202,6 +199,8 @@ async function runPipeline(
       diagnosticError.message,
       diagnosticError.diagnostic,
     );
+    logExecutionDuration(startTime, executionContext.logger);
+    return ExitCode.FAILURE;
   }
 
   logExecutionDuration(startTime, executionContext.logger);

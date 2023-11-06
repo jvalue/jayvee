@@ -46,7 +46,11 @@ export function createConstraintExecutor(
   constraint: ConstraintDefinition,
 ): ConstraintExecutor {
   if (isTypedConstraintDefinition(constraint)) {
-    const constraintType = constraint.type.name;
+    const constraintType = constraint.type.ref?.name;
+    assert(
+      constraintType !== undefined,
+      `Could not resolve reference to constraint type of ${constraint.name}`,
+    );
     const constraintExecutor = constraintExecutorRegistry.get(constraintType);
     assert(
       constraintExecutor !== undefined,

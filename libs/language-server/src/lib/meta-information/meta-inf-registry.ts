@@ -5,124 +5,58 @@
 import { strict as assert } from 'assert';
 
 import { Reference, isReference } from 'langium';
-import { assertUnreachable } from 'langium/lib/utils/errors';
 
-import {
-  ConstraintTypeLiteral,
-  ReferenceableBlocktypeDefinition,
-  isCompositeBlocktypeDefinition,
-  isConstraintTypeLiteral,
-  isReferenceableBlocktypeDefinition,
-} from '../ast/generated/ast';
+import { BuiltinConstrainttypeDefinition } from '../ast/generated/ast';
 import { ConstructorClass } from '../util/constructor-class';
 import { Registry } from '../util/registry';
 
 // eslint-disable-next-line import/no-cycle
-import { BlockMetaInformation } from './block-meta-inf';
-import { CompositeBlocktypeMetaInformation } from './composite-blocktype-meta-inf';
 import { ConstraintMetaInformation } from './constraint-meta-inf';
-import { MetaInformation } from './meta-inf';
 
-export const metaInformationRegistry = new Registry<MetaInformation>();
+export const constraintMetaInfRegistry =
+  new Registry<ConstraintMetaInformation>();
 
-export function registerMetaInformation(
-  metaInfClass: ConstructorClass<MetaInformation>,
+export function registerConstraintMetaInf(
+  metaInfClass: ConstructorClass<ConstraintMetaInformation>,
 ) {
   const metaInf = new metaInfClass();
-  metaInformationRegistry.register(metaInf.type, metaInf);
+  constraintMetaInfRegistry.register(metaInf.type, metaInf);
 }
 
-export function getMetaInformation(
+export function getConstraintMetaInf(
   type:
-    | ReferenceableBlocktypeDefinition
-    | Reference<ReferenceableBlocktypeDefinition>
+    | BuiltinConstrainttypeDefinition
+    | Reference<BuiltinConstrainttypeDefinition>
     | undefined,
-): BlockMetaInformation | undefined;
-export function getMetaInformation(
-  type: ConstraintTypeLiteral | undefined,
-): ConstraintMetaInformation | undefined;
-export function getMetaInformation(
-  type:
-    | ReferenceableBlocktypeDefinition
-    | Reference<ReferenceableBlocktypeDefinition>
-    | ConstraintTypeLiteral
-    | undefined,
-): MetaInformation | undefined;
-export function getMetaInformation(
-  type:
-    | ReferenceableBlocktypeDefinition
-    | Reference<ReferenceableBlocktypeDefinition>
-    | ConstraintTypeLiteral
-    | undefined,
-): BlockMetaInformation | ConstraintMetaInformation | undefined {
+): ConstraintMetaInformation | undefined {
   const dereferencedType = isReference(type) ? type.ref : type;
   if (dereferencedType === undefined) {
     return undefined;
   }
 
-  // Register meta information about composite blocks from jv code
-  if (
-    isCompositeBlocktypeDefinition(dereferencedType) &&
-    !metaInformationRegistry.get(dereferencedType.name)
-  ) {
-    metaInformationRegistry.register(
-      dereferencedType.name,
-      new CompositeBlocktypeMetaInformation(dereferencedType),
-    );
-  }
-
-  const metaInf = metaInformationRegistry.get(dereferencedType.name);
+  const metaInf = constraintMetaInfRegistry.get(dereferencedType.name);
   if (metaInf === undefined) {
     return undefined;
   }
 
-  if (isReferenceableBlocktypeDefinition(dereferencedType)) {
-    assert(metaInf instanceof BlockMetaInformation);
-    return metaInf;
-  }
-  if (isConstraintTypeLiteral(dereferencedType)) {
-    assert(metaInf instanceof ConstraintMetaInformation);
-    return metaInf;
-  }
-  assertUnreachable(dereferencedType);
-}
-
-export function getRegisteredBlockMetaInformation(): BlockMetaInformation[] {
-  return metaInformationRegistry
-    .getAll()
-    .filter(
-      (metaInf) => metaInf instanceof BlockMetaInformation,
-    ) as BlockMetaInformation[];
+  return metaInf;
 }
 
 export function getRegisteredConstraintMetaInformation(): ConstraintMetaInformation[] {
-  return metaInformationRegistry
-    .getAll()
-    .filter(
-      (metaInf) => metaInf instanceof ConstraintMetaInformation,
-    ) as ConstraintMetaInformation[];
+  return constraintMetaInfRegistry.getAll();
 }
 
-export function getOrFailMetaInformation(
+export function getOrFailConstraintMetaInf(
   type:
-    | ReferenceableBlocktypeDefinition
-    | Reference<ReferenceableBlocktypeDefinition>,
-): BlockMetaInformation;
-export function getOrFailMetaInformation(
-  type: ConstraintTypeLiteral,
-): ConstraintMetaInformation;
-export function getOrFailMetaInformation(
-  type:
-    | ReferenceableBlocktypeDefinition
-    | Reference<ReferenceableBlocktypeDefinition>
-    | ConstraintTypeLiteral,
-): MetaInformation {
-  const result = getMetaInformation(type);
+    | BuiltinConstrainttypeDefinition
+    | Reference<BuiltinConstrainttypeDefinition>,
+): ConstraintMetaInformation {
+  const result = getConstraintMetaInf(type);
   const typeName =
     (isReference(type) ? type.ref?.name : type.name) ?? '<invalid ref>';
   assert(
     result !== undefined,
-    `Meta information for type ${typeName} was expected to be present, got undefined instead`,
+    `Meta information for constrainttype ${typeName} was expected to be present, got undefined instead`,
   );
   return result;
 }

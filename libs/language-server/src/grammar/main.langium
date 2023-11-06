@@ -19,6 +19,7 @@ entry JayveeModel:
     | constraints+=ConstraintDefinition
     | transforms+=TransformDefinition
     | blocktypes+=ReferenceableBlocktypeDefinition
+    | constrainttypes+=BuiltinConstrainttypeDefinition
     | iotypes+=IotypeDefinition
   )*;
 

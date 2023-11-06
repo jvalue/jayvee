@@ -9,7 +9,6 @@ import {
   BlockDefinition,
   ValidationContext,
   createJayveeServices,
-  useExtension,
 } from '../..';
 import {
   ParseHelperOptions,
@@ -18,7 +17,6 @@ import {
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../test';
-import { TestLangExtension } from '../../../test/extension';
 
 import { validateBlockDefinition } from './block-definition';
 
@@ -53,8 +51,6 @@ describe('Validation of BlockDefinition', () => {
   }
 
   beforeAll(() => {
-    // Register test extension
-    useExtension(new TestLangExtension());
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;
