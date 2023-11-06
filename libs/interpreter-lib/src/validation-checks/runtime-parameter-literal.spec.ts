@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import * as path from 'path';
+
 import { parseValueToInternalRepresentation } from '@jvalue/jayvee-execution';
 import {
   EvaluationContext,
@@ -71,7 +73,10 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
 
     await initializeWorkspace(services, [
       {
-        uri: process.cwd(),
+        uri: path.resolve(
+          __dirname,
+          '../../test/assets/runtime-parameter-literal/test-extension',
+        ),
         name: 'TestBlockTypes.jv',
       },
     ]);
