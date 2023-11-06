@@ -8,3 +8,18 @@ pipeline Pipeline {
     customValidationTextProperty: 'invalid';
   }
 }
+
+builtin blocktype TestProperty {
+  input inPort oftype None;
+  output outPort oftype None;
+
+  property textProperty oftype text;
+  property customValidationTextProperty oftype CustomValuetype;
+}
+
+valuetype CustomValuetype oftype text {
+  constraints: [CustomConstraint];
+}
+
+constraint CustomConstraint on text:
+  value in ['valid'];

@@ -7,3 +7,16 @@ pipeline Pipeline {
     textProperty: requires TEXT_ENV;
   }
 }
+
+builtin blocktype TestProperty {
+  input inPort oftype File;
+  output outPort oftype Table;
+
+  property integerProperty oftype integer: 0;
+  property decimalProperty oftype integer: 0.0;
+  property textProperty oftype text;
+  property booleanProperty oftype boolean: false;
+  property regexProperty oftype Regex: /\r?\n/;
+  property textCollectionProperty oftype Collection<text>: [];
+  property valuetypeAssignmentProperty oftype ValuetypeAssignment: "test" oftype text;
+}

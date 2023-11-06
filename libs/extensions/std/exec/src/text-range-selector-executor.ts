@@ -41,7 +41,7 @@ export class TextRangeSelectorExecutor extends AbstractBlockExecutor<
 
     context.logger.logDebug(
       `Selecting lines from ${lineFrom} to ${
-        lineTo === Number.POSITIVE_INFINITY || lineTo >= numberOfLines
+        lineTo === Number.MAX_SAFE_INTEGER || lineTo >= numberOfLines
           ? 'the end'
           : `${lineTo}`
       }`,

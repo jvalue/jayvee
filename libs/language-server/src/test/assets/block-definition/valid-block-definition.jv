@@ -11,3 +11,13 @@ pipeline Pipeline {
 
   TestExtractor -> TestLoader;
 }
+
+builtin blocktype TestFileExtractor {
+  input inPort oftype None;
+  output outPort oftype File;
+}
+
+builtin blocktype TestTableLoader {
+  input inPort oftype File;
+  output outPort oftype None;
+}

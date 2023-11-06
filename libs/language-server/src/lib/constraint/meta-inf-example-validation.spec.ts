@@ -5,20 +5,16 @@
 import { AstNode } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { TestLangExtension } from '../../test/extension';
 import { ValidationResult, validationHelper } from '../../test/langium-utils';
-import { useExtension } from '../extension';
 import { JayveeServices, createJayveeServices } from '../jayvee-module';
 
-import { getConstraintMetaInf } from './constraint-registry';
+import { getAvailableConstraintMetaInf } from './constraint-registry';
 
 describe('Validation of builtin examples of ConstraintMetaInformation', () => {
   let services: JayveeServices;
   let validate: (input: string) => Promise<ValidationResult<AstNode>>;
 
   beforeAll(() => {
-    // Register test extension
-    useExtension(new TestLangExtension());
     // Create language services
     services = createJayveeServices(NodeFileSystem).Jayvee;
     // Create validation helper for language services
@@ -26,7 +22,7 @@ describe('Validation of builtin examples of ConstraintMetaInformation', () => {
   });
 
   it.each(
-    getConstraintMetaInf().map((metaInfClass) => {
+    getAvailableConstraintMetaInf().map((metaInfClass) => {
       const metaInf = new metaInfClass();
       return [metaInf.type, metaInf];
     }),

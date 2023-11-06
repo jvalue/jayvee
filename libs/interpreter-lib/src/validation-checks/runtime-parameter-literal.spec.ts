@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import * as path from 'path';
+
 import { parseValueToInternalRepresentation } from '@jvalue/jayvee-execution';
 import {
   EvaluationContext,
@@ -9,11 +11,10 @@ import {
   RuntimeParameterProvider,
   ValidationContext,
   createJayveeServices,
-  useExtension,
+  initializeWorkspace,
 } from '@jvalue/jayvee-language-server';
 import {
   ParseHelperOptions,
-  TestLangExtension,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
@@ -66,12 +67,21 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
     );
   }
 
-  beforeAll(() => {
-    // Register test extension
-    useExtension(new TestLangExtension());
+  beforeAll(async () => {
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
+
+    await initializeWorkspace(services, [
+      {
+        uri: path.resolve(
+          __dirname,
+          '../../test/assets/runtime-parameter-literal/test-extension',
+        ),
+        name: 'TestBlockTypes.jv',
+      },
+    ]);
     locator = services.workspace.AstNodeLocator;
+
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });

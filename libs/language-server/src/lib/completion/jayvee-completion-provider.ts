@@ -16,7 +16,7 @@ import {
 } from 'langium';
 import { CompletionItemKind } from 'vscode-languageserver';
 
-import { createValuetype } from '../ast';
+import { createValuetype, getMetaInformation } from '../ast';
 import {
   BlockDefinition,
   ConstraintDefinition,
@@ -29,13 +29,10 @@ import {
   isPropertyAssignment,
   isPropertyBody,
 } from '../ast/generated/ast';
+import { getAllBuiltinBlocktypes } from '../ast/model-util';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
 import { MetaInformation } from '../meta-information/meta-inf';
-import {
-  getMetaInformation,
-  getRegisteredBlockMetaInformation,
-  getRegisteredConstraintMetaInformation,
-} from '../meta-information/meta-inf-registry';
+import { getRegisteredConstraintMetaInformation } from '../meta-information/meta-inf-registry';
 
 const RIGHT_ARROW_SYMBOL = '\u{2192}';
 
@@ -85,13 +82,14 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
   private completionForBlockType(
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
-    getRegisteredBlockMetaInformation().forEach((metaInf) => {
+    const blockMetaInfs = getAllBuiltinBlocktypes(this.langiumDocumentService);
+    blockMetaInfs.forEach((blocktype) => {
       const lspDocBuilder = new LspDocGenerator();
-      const markdownDoc = lspDocBuilder.generateBlockTypeDoc(metaInf);
+      const markdownDoc = lspDocBuilder.generateBlockTypeDoc(blocktype);
       acceptor({
-        label: metaInf.type,
+        label: blocktype.type,
         labelDetails: {
-          detail: ` ${metaInf.inputType} ${RIGHT_ARROW_SYMBOL} ${metaInf.outputType}`,
+          detail: ` ${blocktype.inputType} ${RIGHT_ARROW_SYMBOL} ${blocktype.outputType}`,
         },
         kind: CompletionItemKind.Class,
         detail: `(block type)`,
@@ -156,6 +154,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     if (metaInf === undefined) {
       return;
     }
+
     const presentPropertyNames = container.body.properties.map(
       (attr) => attr.name,
     );

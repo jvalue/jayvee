@@ -1,0 +1,33 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* Writes textual values into cells of a `Sheet`. The number of text values needs to match the number of cells to write into.
+* 
+* @example Write the value "Name" into cell `A1`.
+* block NameHeaderWriter oftype CellWriter {
+*   at: cell A1;
+*   write: ["Name"];
+* }
+* 
+* @example Write the values "Name", "Age" into cells `A1` and `A2`.
+* block HeaderSequenceWriter oftype CellWriter {
+*   at: range A1:A2;
+*   write: ["Name", "Age"];
+* }
+*/
+builtin blocktype CellWriter {
+	input default oftype Sheet;
+	output default oftype Sheet;
+	
+	/** 
+	* The values to write.
+	*/
+	property write oftype Collection<text>;
+	
+	/**
+	* The cells to write into.
+	*/
+	property at oftype CellRange;
+}

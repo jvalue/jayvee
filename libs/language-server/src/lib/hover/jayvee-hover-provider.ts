@@ -9,12 +9,16 @@ import {
   BuiltinBlocktypeDefinition,
   BuiltinConstrainttypeDefinition,
   PropertyAssignment,
+  getMetaInformation,
   isBuiltinBlocktypeDefinition,
   isBuiltinConstrainttypeDefinition,
   isPropertyAssignment,
 } from '../ast';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
-import { getMetaInformation } from '../meta-information';
+import {
+  BlockMetaInformation,
+  getConstraintMetaInf,
+} from '../meta-information';
 
 export class JayveeHoverProvider extends AstNodeHoverProvider {
   override getAstNodeHoverContent(
@@ -46,10 +50,10 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   private getBlockTypeMarkdownDoc(
     blockType: BuiltinBlocktypeDefinition,
   ): string | undefined {
-    const blockMetaInf = getMetaInformation(blockType);
-    if (blockMetaInf === undefined) {
+    if (!BlockMetaInformation.canBeWrapped(blockType)) {
       return;
     }
+    const blockMetaInf = new BlockMetaInformation(blockType);
 
     const lspDocBuilder = new LspDocGenerator();
     return lspDocBuilder.generateBlockTypeDoc(blockMetaInf);
@@ -58,7 +62,7 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   private getConstraintTypeMarkdownDoc(
     constraintType: BuiltinConstrainttypeDefinition,
   ): string | undefined {
-    const constraintMetaInf = getMetaInformation(constraintType);
+    const constraintMetaInf = getConstraintMetaInf(constraintType);
     if (constraintMetaInf === undefined) {
       return;
     }
@@ -70,8 +74,8 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   private getPropertyMarkdownDoc(
     property: PropertyAssignment,
   ): string | undefined {
-    const block = property.$container.$container;
-    const metaInf = getMetaInformation(block.type);
+    const container = property.$container.$container;
+    const metaInf = getMetaInformation(container.type);
     if (metaInf === undefined) {
       return;
     }

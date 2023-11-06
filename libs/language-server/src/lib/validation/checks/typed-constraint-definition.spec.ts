@@ -9,7 +9,6 @@ import {
   TypedConstraintDefinition,
   ValidationContext,
   createJayveeServices,
-  useExtension,
 } from '../../../lib';
 import {
   ParseHelperOptions,
@@ -18,7 +17,6 @@ import {
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../test';
-import { TestLangExtension } from '../../../test/extension';
 
 import { validateTypedConstraintDefinition } from './typed-constraint-definition';
 
@@ -53,8 +51,6 @@ describe('Validation of ConstraintDefinition (typed syntax)', () => {
   }
 
   beforeAll(() => {
-    // Register test extension
-    useExtension(new TestLangExtension());
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;

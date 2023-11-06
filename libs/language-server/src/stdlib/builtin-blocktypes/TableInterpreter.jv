@@ -1,0 +1,41 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* Interprets a `Sheet` as a `Table`. In case a header row is present in the sheet, its names can be matched with the provided column names. Otherwise, the provided column names are assigned in order.
+* 
+* @example Interprets a `Sheet` about cars with a topmost header row and interprets it as a `Table` by assigning a primitive valuetype to each column. The column names are matched to the header, so the order of the type assignments does not matter.
+* block CarsTableInterpreter oftype TableInterpreter {
+*   header: true;
+*   columns: [
+*     "name" oftype text,
+*     "mpg" oftype decimal,
+*     "cyl" oftype integer,
+*   ];
+* }
+* 
+* @example Interprets a `Sheet` about cars without a topmost header row and interprets it as a `Table` by sequentially assigning a name and a primitive valuetype to each column of the sheet. Note that the order of columns matters here. The first column (column `A`) will be named "name", the second column (column `B`) will be named "mpg" etc.
+* block CarsTableInterpreter oftype TableInterpreter {
+*   header: false;
+*   columns: [
+*     "name" oftype text,
+*     "mpg" oftype decimal,
+*     "cyl" oftype integer,
+*   ];
+* }
+*/
+builtin blocktype TableInterpreter {
+	input default oftype Sheet;
+	output default oftype Table;
+	
+  /**
+  * Whether the first row should be interpreted as header row.
+	*/
+  property header oftype boolean: true;
+	
+  /**
+  * Collection of valuetype assignments. Uses column names (potentially matched with the header or by sequence depending on the `header` property) to assign a primitive valuetype to each column.
+	*/
+  property columns oftype Collection<ValuetypeAssignment>;
+}

@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { ConstraintMetaInformation } from '../meta-information';
-import { registerMetaInformation } from '../meta-information/meta-inf-registry';
+import { registerConstraintMetaInf } from '../meta-information/meta-inf-registry';
 import { ConstructorClass } from '../util';
 
 import { AllowlistConstraintMetaInformation } from './allowlist-constraint-meta-inf';
@@ -12,7 +12,7 @@ import { LengthConstraintMetaInformation } from './length-constraint-meta-inf';
 import { RangeConstraintMetaInformation } from './range-constraint-meta-inf';
 import { RegexConstraintMetaInformation } from './regex-constraint-meta-inf';
 
-export function getConstraintMetaInf(): ConstructorClass<ConstraintMetaInformation>[] {
+export function getAvailableConstraintMetaInf(): ConstructorClass<ConstraintMetaInformation>[] {
   return [
     AllowlistConstraintMetaInformation,
     DenylistConstraintMetaInformation,
@@ -23,7 +23,7 @@ export function getConstraintMetaInf(): ConstructorClass<ConstraintMetaInformati
 }
 
 export function registerConstraints() {
-  for (const metaInf of getConstraintMetaInf()) {
-    registerMetaInformation(metaInf);
+  for (const metaInf of getAvailableConstraintMetaInf()) {
+    registerConstraintMetaInf(metaInf);
   }
 }

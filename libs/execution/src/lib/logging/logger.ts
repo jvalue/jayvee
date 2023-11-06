@@ -18,6 +18,7 @@ export enum DiagnosticSeverity {
   WARNING = 'warning',
   INFO = 'info',
   HINT = 'hint',
+  DEBUG = 'debug',
 }
 
 export abstract class Logger {
