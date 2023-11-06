@@ -14,14 +14,14 @@ import {
 
 import {
   inferFileExtensionFromFileExtensionString,
-  inferMimeTypeFromContentTypeString,
+  inferMimeTypeFromFileExtensionString,
 } from '../src/file-util';
 import { splitLines } from '../src/string-util';
 
 export function createBinaryFileFromLocalFile(fileName: string): BinaryFile {
   const extName = path.extname(fileName);
   const mimeType =
-    inferMimeTypeFromContentTypeString(extName) ||
+    inferMimeTypeFromFileExtensionString(extName) ||
     MimeType.APPLICATION_OCTET_STREAM;
   const fileExtension =
     inferFileExtensionFromFileExtensionString(extName) || FileExtension.NONE;
@@ -32,7 +32,7 @@ export function createBinaryFileFromLocalFile(fileName: string): BinaryFile {
 export function createTextFileFromLocalFile(fileName: string): TextFile {
   const extName = path.extname(fileName);
   const mimeType =
-    inferMimeTypeFromContentTypeString(extName) ||
+    inferMimeTypeFromFileExtensionString(extName) ||
     MimeType.APPLICATION_OCTET_STREAM;
   const fileExtension =
     inferFileExtensionFromFileExtensionString(extName) || FileExtension.NONE;
