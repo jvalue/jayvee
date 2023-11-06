@@ -348,4 +348,50 @@ describe('Validation of TransformExecutor', () => {
     expect(result.resultingColumn.values).toHaveLength(1);
     expect(result.resultingColumn.values).toEqual(expect.arrayContaining([21]));
   });
+
+  it('should diagnose no error on expression evaluation error', async () => {
+    const text = readJvTestAsset(
+      'transform-executor/invalid-expression-evaluation-error.jv',
+    );
+
+    const inputTable = constructTable(
+      [
+        {
+          columnName: 'Column1',
+          column: {
+            values: ['value 1'],
+            valuetype: PrimitiveValuetypes.Text,
+          },
+        },
+        {
+          columnName: 'Column2',
+          column: {
+            values: [20.2],
+            valuetype: PrimitiveValuetypes.Decimal,
+          },
+        },
+        {
+          columnName: 'Column3',
+          column: {
+            values: [85.978],
+            valuetype: PrimitiveValuetypes.Decimal,
+          },
+        },
+      ],
+      1,
+    );
+    const transformColumnNames: string[] = ['Column2', 'Column1'];
+
+    const result = await parseAndExecuteTransform(
+      text,
+      inputTable,
+      transformColumnNames,
+    );
+
+    expect(result.rowsToDelete).toHaveLength(1);
+    expect(result.resultingColumn.valuetype).toEqual(
+      PrimitiveValuetypes.Decimal,
+    );
+    expect(result.resultingColumn.values).toHaveLength(0);
+  });
 });
