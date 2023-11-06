@@ -54,7 +54,10 @@ describe('Validation of parsing-util', () => {
 
     await initializeWorkspace(services, [
       {
-        uri: process.cwd(),
+        uri: path.resolve(
+          __dirname,
+          '../test/assets/parsing-util/test-extension',
+        ),
         name: 'TestBlockTypes.jv',
       },
     ]);

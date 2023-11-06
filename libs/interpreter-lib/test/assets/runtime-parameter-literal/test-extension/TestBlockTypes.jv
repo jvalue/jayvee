@@ -2,22 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pipeline TestPipeline {
-
-  block TestExtractor oftype TestFileExtractor {
-  }
-
-  block TestPropertyBlock oftype TestProperty {
-    textProperty: "Test";
-    integerProperty: 20 + 20;
-  }
-
-  block TestLoader oftype TestTableLoader {
-  }
-
-  TestExtractor -> TestPropertyBlock -> TestLoader;
-}
-
 builtin blocktype TestProperty {
   input inPort oftype File;
   output outPort oftype Table;
