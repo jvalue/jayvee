@@ -3,18 +3,18 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import assert = require('assert');
+import * as path from 'path';
 
 import {
   InternalValueRepresentation,
   PrimitiveValuetypes,
   TransformDefinition,
   createJayveeServices,
-  useExtension,
 } from '@jvalue/jayvee-language-server';
 import {
   ParseHelperOptions,
-  TestLangExtension,
   expectNoParserAndLexerErrors,
+  loadTestExtensions,
   parseHelper,
   readJvTestAssetHelper,
 } from '@jvalue/jayvee-language-server/test';
@@ -84,11 +84,17 @@ describe('Validation of TransformExecutor', () => {
     );
   }
 
-  beforeAll(() => {
-    // Register test extension
-    useExtension(new TestLangExtension());
+  beforeAll(async () => {
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
+
+    await loadTestExtensions(services, [
+      path.resolve(
+        __dirname,
+        '../../../test/assets/transform-executor/test-extension/TestBlockTypes.jv',
+      ),
+    ]);
+
     locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
@@ -120,24 +126,18 @@ describe('Validation of TransformExecutor', () => {
     );
     const transformColumnNames: string[] = ['Column2'];
 
-    try {
-      const result = await parseAndExecuteTransform(
-        text,
-        inputTable,
-        transformColumnNames,
-      );
+    const result = await parseAndExecuteTransform(
+      text,
+      inputTable,
+      transformColumnNames,
+    );
 
-      expect(result.rowsToDelete).toHaveLength(0);
-      expect(result.resultingColumn.valuetype).toEqual(
-        PrimitiveValuetypes.Integer,
-      );
-      expect(result.resultingColumn.values).toHaveLength(1);
-      expect(result.resultingColumn.values).toEqual(
-        expect.arrayContaining([21]),
-      );
-    } catch (e) {
-      expect(e).toEqual(undefined);
-    }
+    expect(result.rowsToDelete).toHaveLength(0);
+    expect(result.resultingColumn.valuetype).toEqual(
+      PrimitiveValuetypes.Integer,
+    );
+    expect(result.resultingColumn.values).toHaveLength(1);
+    expect(result.resultingColumn.values).toEqual(expect.arrayContaining([21]));
   });
 
   it('should diagnose no error on invalid value representation', async () => {
@@ -166,22 +166,16 @@ describe('Validation of TransformExecutor', () => {
     );
     const transformColumnNames: string[] = ['Column2'];
 
-    try {
-      const result = await parseAndExecuteTransform(
-        text,
-        inputTable,
-        transformColumnNames,
-      );
+    const result = await parseAndExecuteTransform(
+      text,
+      inputTable,
+      transformColumnNames,
+    );
 
-      expect(result.rowsToDelete).toHaveLength(1);
-      expect(result.rowsToDelete).toEqual(expect.arrayContaining([0]));
-      expect(result.resultingColumn.valuetype).toEqual(
-        PrimitiveValuetypes.Text,
-      );
-      expect(result.resultingColumn.values).toHaveLength(0);
-    } catch (e) {
-      expect(e).toEqual(undefined);
-    }
+    expect(result.rowsToDelete).toHaveLength(1);
+    expect(result.rowsToDelete).toEqual(expect.arrayContaining([0]));
+    expect(result.resultingColumn.valuetype).toEqual(PrimitiveValuetypes.Text);
+    expect(result.resultingColumn.values).toHaveLength(0);
   });
 
   it('should diagnose no error on valid value', async () => {
@@ -217,24 +211,20 @@ describe('Validation of TransformExecutor', () => {
     );
     const transformColumnNames: string[] = ['Column2', 'Column3'];
 
-    try {
-      const result = await parseAndExecuteTransform(
-        text,
-        inputTable,
-        transformColumnNames,
-      );
+    const result = await parseAndExecuteTransform(
+      text,
+      inputTable,
+      transformColumnNames,
+    );
 
-      expect(result.rowsToDelete).toHaveLength(0);
-      expect(result.resultingColumn.valuetype).toEqual(
-        PrimitiveValuetypes.Integer,
-      );
-      expect(result.resultingColumn.values).toHaveLength(1);
-      expect(result.resultingColumn.values).toEqual(
-        expect.arrayContaining([106]),
-      );
-    } catch (e) {
-      expect(e).toEqual(undefined);
-    }
+    expect(result.rowsToDelete).toHaveLength(0);
+    expect(result.resultingColumn.valuetype).toEqual(
+      PrimitiveValuetypes.Integer,
+    );
+    expect(result.resultingColumn.values).toHaveLength(1);
+    expect(result.resultingColumn.values).toEqual(
+      expect.arrayContaining([106]),
+    );
   });
 
   it('should diagnose error on empty columns map', async () => {
@@ -306,21 +296,17 @@ describe('Validation of TransformExecutor', () => {
     );
     const transformColumnNames: string[] = ['Column1'];
 
-    try {
-      const result = await parseAndExecuteTransform(
-        text,
-        inputTable,
-        transformColumnNames,
-      );
+    const result = await parseAndExecuteTransform(
+      text,
+      inputTable,
+      transformColumnNames,
+    );
 
-      expect(result.rowsToDelete).toHaveLength(1);
-      expect(result.resultingColumn.valuetype).toEqual(
-        PrimitiveValuetypes.Integer,
-      );
-      expect(result.resultingColumn.values).toHaveLength(0);
-    } catch (e) {
-      expect(e).toEqual(undefined);
-    }
+    expect(result.rowsToDelete).toHaveLength(1);
+    expect(result.resultingColumn.valuetype).toEqual(
+      PrimitiveValuetypes.Integer,
+    );
+    expect(result.resultingColumn.values).toHaveLength(0);
   });
 
   it('should diagnose no error on invalid row value', async () => {
@@ -349,23 +335,17 @@ describe('Validation of TransformExecutor', () => {
     );
     const transformColumnNames: string[] = ['Column2'];
 
-    try {
-      const result = await parseAndExecuteTransform(
-        text,
-        inputTable,
-        transformColumnNames,
-      );
+    const result = await parseAndExecuteTransform(
+      text,
+      inputTable,
+      transformColumnNames,
+    );
 
-      expect(result.rowsToDelete).toHaveLength(1);
-      expect(result.resultingColumn.valuetype).toEqual(
-        PrimitiveValuetypes.Integer,
-      );
-      expect(result.resultingColumn.values).toHaveLength(1);
-      expect(result.resultingColumn.values).toEqual(
-        expect.arrayContaining([21]),
-      );
-    } catch (e) {
-      expect(e).toEqual(undefined);
-    }
+    expect(result.rowsToDelete).toHaveLength(1);
+    expect(result.resultingColumn.valuetype).toEqual(
+      PrimitiveValuetypes.Integer,
+    );
+    expect(result.resultingColumn.values).toHaveLength(1);
+    expect(result.resultingColumn.values).toEqual(expect.arrayContaining([21]));
   });
 });
