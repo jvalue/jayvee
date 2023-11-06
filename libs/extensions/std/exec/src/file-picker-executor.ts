@@ -33,6 +33,12 @@ export class FilePickerExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<BinaryFile | null>> {
     const path = context.getPropertyValue('path', PrimitiveValuetypes.Text);
     const file = fileSystem.getFile(path);
+    if (file == null) {
+      return R.err({
+        message: `File '${path}' not found`,
+        diagnostic: { node: context.getCurrentNode() },
+      });
+    }
     assert(file instanceof BinaryFile);
     return R.ok(file);
   }
