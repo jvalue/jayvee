@@ -3,15 +3,23 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /**
-* Limits the length of a string with an upper and/or lower boundary. Only values with a length within the given range are valid.
+* Limits the length of a string with an upper and/or lower boundary. 
+* Only values with a length within the given range are valid.
 *
-* @example A string with 0 to 2147483647 characters.
-* constraint JavaStringLength oftype LengthConstraint {
+* @example A text constraint with 0 to 20 characters.
+* constraint ShortAnswerConstraint oftype LengthConstraint {
 *   minLength: 0;
-*   maxLength: 2147483647;
+*   maxLength: 20;
 * }
 */
 builtin constrainttype LengthConstraint on text {
+	/**
+    * Inclusive minimum of the valid text length.
+	*/
 	property minLength oftype integer : 0;
+
+	/**
+    * Inclusive maximum of the valid text length.
+	*/
 	property maxLength oftype integer : 9007199254740991;
 }
