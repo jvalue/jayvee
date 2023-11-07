@@ -6,19 +6,17 @@ import { AstNode, AstNodeHoverProvider, MaybePromise } from 'langium';
 import { Hover } from 'vscode-languageserver-protocol';
 
 import {
+  BlockTypeWrapper,
   BuiltinBlocktypeDefinition,
   BuiltinConstrainttypeDefinition,
+  ConstraintTypeWrapper,
   PropertyAssignment,
-  getMetaInformation,
+  getTypedObjectWrapper,
   isBuiltinBlocktypeDefinition,
   isBuiltinConstrainttypeDefinition,
   isPropertyAssignment,
 } from '../ast';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
-import {
-  BlockMetaInformation,
-  ConstraintMetaInformation,
-} from '../meta-information';
 
 export class JayveeHoverProvider extends AstNodeHoverProvider {
   override getAstNodeHoverContent(
@@ -48,39 +46,39 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   }
 
   private getBlockTypeMarkdownDoc(
-    blockType: BuiltinBlocktypeDefinition,
+    blockTypeDefinition: BuiltinBlocktypeDefinition,
   ): string | undefined {
-    if (!BlockMetaInformation.canBeWrapped(blockType)) {
+    if (!BlockTypeWrapper.canBeWrapped(blockTypeDefinition)) {
       return;
     }
-    const blockMetaInf = new BlockMetaInformation(blockType);
+    const blockType = new BlockTypeWrapper(blockTypeDefinition);
 
     const lspDocBuilder = new LspDocGenerator();
-    return lspDocBuilder.generateBlockTypeDoc(blockMetaInf);
+    return lspDocBuilder.generateBlockTypeDoc(blockType);
   }
 
   private getConstraintTypeMarkdownDoc(
-    constraintType: BuiltinConstrainttypeDefinition,
+    constraintTypeDefinition: BuiltinConstrainttypeDefinition,
   ): string | undefined {
-    if (!ConstraintMetaInformation.canBeWrapped(constraintType)) {
+    if (!ConstraintTypeWrapper.canBeWrapped(constraintTypeDefinition)) {
       return;
     }
-    const constraintMetaInf = new ConstraintMetaInformation(constraintType);
+    const constraintType = new ConstraintTypeWrapper(constraintTypeDefinition);
 
     const lspDocBuilder = new LspDocGenerator();
-    return lspDocBuilder.generateConstraintTypeDoc(constraintMetaInf);
+    return lspDocBuilder.generateConstraintTypeDoc(constraintType);
   }
 
   private getPropertyMarkdownDoc(
     property: PropertyAssignment,
   ): string | undefined {
     const container = property.$container.$container;
-    const metaInf = getMetaInformation(container.type);
-    if (metaInf === undefined) {
+    const wrapper = getTypedObjectWrapper(container.type);
+    if (wrapper === undefined) {
       return;
     }
 
     const lspDocBuilder = new LspDocGenerator();
-    return lspDocBuilder.generatePropertyDoc(metaInf, property.name);
+    return lspDocBuilder.generatePropertyDoc(wrapper, property.name);
   }
 }

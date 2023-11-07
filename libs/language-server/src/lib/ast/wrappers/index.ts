@@ -4,8 +4,9 @@
 
 // eslint-disable-next-line import/no-cycle
 export * from './util';
-// eslint-disable-next-line import/no-cycle
 export * from './value-type';
 
 export * from './ast-node-wrapper';
 export * from './cell-range-wrapper';
+
+export * from './typed-object';

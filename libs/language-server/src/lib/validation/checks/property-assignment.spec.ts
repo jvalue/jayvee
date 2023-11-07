@@ -7,13 +7,13 @@ import { NodeFileSystem } from 'langium/node';
 
 import {
   EvaluationContext,
-  MetaInformation,
   PropertyAssignment,
   PropertyBody,
   RuntimeParameterProvider,
+  TypedObjectWrapper,
   ValidationContext,
   createJayveeServices,
-  getMetaInformation,
+  getTypedObjectWrapper,
 } from '../../../lib';
 import {
   ParseHelperOptions,
@@ -50,8 +50,8 @@ describe('Validation of PropertyAssignment', () => {
     ) as PropertyBody;
 
     const type = propertyBody.$container.type;
-    const metaInf = getMetaInformation(type);
-    expect(metaInf).toBeDefined();
+    const wrapper = getTypedObjectWrapper(type);
+    expect(wrapper).toBeDefined();
 
     const propertyAssignment = locator.getAstNode<PropertyAssignment>(
       propertyBody,
@@ -60,7 +60,7 @@ describe('Validation of PropertyAssignment', () => {
 
     validatePropertyAssignment(
       propertyAssignment,
-      metaInf as MetaInformation,
+      wrapper as TypedObjectWrapper,
       new ValidationContext(validationAcceptorMock),
       new EvaluationContext(new RuntimeParameterProvider()),
     );

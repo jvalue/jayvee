@@ -24,9 +24,11 @@ describe('default constraint executors', () => {
 
     getAllBuiltinConstraintTypes(
       services.shared.workspace.LangiumDocuments,
-    ).forEach((metaInf) => {
+    ).forEach((constraintType) => {
       const matchingConstraintExecutorClass =
-        getRegisteredConstraintExecutors().find((c) => c.type === metaInf.type);
+        getRegisteredConstraintExecutors().find(
+          (c) => c.type === constraintType.type,
+        );
 
       expect(matchingConstraintExecutorClass).toBeDefined();
     });

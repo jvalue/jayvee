@@ -8,11 +8,11 @@ import {
   InternalValueRepresentation,
   PrimitiveValuetypes,
   PropertyAssignment,
+  PropertySpecification,
   evaluatePropertyValue,
   isColumnWrapper,
   isRowWrapper,
 } from '../../../ast';
-import { PropertySpecification } from '../../../meta-information';
 import { ValidationContext } from '../../validation-context';
 import { checkUniqueNames } from '../../validation-util';
 

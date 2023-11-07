@@ -6,7 +6,7 @@ import { strict as assert } from 'assert';
 
 import { getRegisteredBlockExecutors } from '@jvalue/jayvee-execution';
 import {
-  BlockMetaInformation,
+  BlockTypeWrapper,
   createJayveeServices,
   getAllBuiltinBlocktypes,
   initializeWorkspace,
@@ -15,7 +15,7 @@ import { NodeFileSystem } from 'langium/node';
 
 import { useStdExtension } from './interpreter';
 
-async function loadAllBuiltinBlocktypes(): Promise<BlockMetaInformation[]> {
+async function loadAllBuiltinBlocktypes(): Promise<BlockTypeWrapper[]> {
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   await initializeWorkspace(services);
   return getAllBuiltinBlocktypes(services.shared.workspace.LangiumDocuments);
@@ -25,10 +25,10 @@ describe('std extension', () => {
   it('should provide matching block executors for builtin block types', async () => {
     useStdExtension();
     (await loadAllBuiltinBlocktypes()).forEach(
-      (metaInf: BlockMetaInformation) => {
-        console.info(`Looking for executor for blocktype ${metaInf.type}`);
+      (blockType: BlockTypeWrapper) => {
+        console.info(`Looking for executor for blocktype ${blockType.type}`);
         const matchingBlockExecutorClass = getRegisteredBlockExecutors().find(
-          (blockExecutorClass) => blockExecutorClass.type === metaInf.type,
+          (blockExecutorClass) => blockExecutorClass.type === blockType.type,
         );
 
         expect(matchingBlockExecutorClass).toBeDefined();
@@ -36,8 +36,8 @@ describe('std extension', () => {
 
         const matchingBlockExecutor = new matchingBlockExecutorClass();
 
-        expect(matchingBlockExecutor.inputType).toEqual(metaInf.inputType);
-        expect(matchingBlockExecutor.outputType).toEqual(metaInf.outputType);
+        expect(matchingBlockExecutor.inputType).toEqual(blockType.inputType);
+        expect(matchingBlockExecutor.outputType).toEqual(blockType.outputType);
       },
     );
   });

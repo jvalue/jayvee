@@ -11,7 +11,7 @@ import {
   RuntimeParameterProvider,
   ValidationContext,
   createJayveeServices,
-  getMetaInformation,
+  getTypedObjectWrapper,
 } from '../../..';
 import {
   ParseHelperOptions,
@@ -47,8 +47,8 @@ describe('Validation of blocktype specific property bodies', () => {
       'pipelines@0/blocks@0/body',
     ) as PropertyBody;
 
-    const metaInf = getMetaInformation(propertyBody.$container.type);
-    expect(metaInf).toBeDefined();
+    const wrapper = getTypedObjectWrapper(propertyBody.$container.type);
+    expect(wrapper).toBeDefined();
 
     checkBlocktypeSpecificPropertyBody(
       propertyBody,

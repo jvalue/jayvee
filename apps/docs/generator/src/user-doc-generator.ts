@@ -5,8 +5,8 @@
 import { strict as assert } from 'assert';
 
 import {
-  BlockMetaInformation,
-  ConstraintMetaInformation,
+  BlockTypeWrapper,
+  ConstraintTypeWrapper,
   ExampleDoc,
   IOType,
   JayveeBlockTypeDocGenerator,
@@ -75,26 +75,26 @@ block ExampleTableInterpreter oftype TableInterpreter {
     return builder.build();
   }
 
-  generateBlockTypeDoc(metaInf: BlockMetaInformation): string {
+  generateBlockTypeDoc(blockType: BlockTypeWrapper): string {
     const documentationService =
       this.services.documentation.DocumentationProvider;
     const blocktypeDocs = documentationService.getDocumentation(
-      metaInf.wrapped,
+      blockType.astNode,
     );
     const blocktypeDocsFromComments =
       this.extractDocsFromComment(blocktypeDocs);
 
     const builder = new UserDocMarkdownBuilder()
-      .docTitle(metaInf.type)
+      .docTitle(blockType.type)
       .generationComment()
-      .ioTypes(metaInf.inputType, metaInf.outputType)
+      .ioTypes(blockType.inputType, blockType.outputType)
       .description(blocktypeDocsFromComments?.description)
       .examples(blocktypeDocsFromComments?.examples);
 
     builder.propertiesHeading();
-    Object.entries(metaInf.getPropertySpecifications()).forEach(
+    Object.entries(blockType.getPropertySpecifications()).forEach(
       ([key, property]) => {
-        const blocktypeProperty = metaInf.wrapped.properties.filter(
+        const blocktypeProperty = blockType.astNode.properties.filter(
           (p) => p.name === key,
         )[0];
         if (blocktypeProperty === undefined) {
@@ -117,24 +117,24 @@ block ExampleTableInterpreter oftype TableInterpreter {
     return builder.build();
   }
 
-  generateConstraintTypeDoc(metaInf: ConstraintMetaInformation): string {
+  generateConstraintTypeDoc(constraintType: ConstraintTypeWrapper): string {
     const documentationService =
       this.services.documentation.DocumentationProvider;
     const blocktypeDocs = documentationService.getDocumentation(
-      metaInf.wrapped,
+      constraintType.astNode,
     );
     const constraintTypeDocsFromComments =
       this.extractDocsFromComment(blocktypeDocs);
 
     const builder = new UserDocMarkdownBuilder()
-      .docTitle(metaInf.type)
+      .docTitle(constraintType.type)
       .generationComment()
-      .compatibleValueType(metaInf.on.getName())
+      .compatibleValueType(constraintType.on.getName())
       .description(constraintTypeDocsFromComments?.description)
       .examples(constraintTypeDocsFromComments?.examples);
 
     builder.propertiesHeading();
-    Object.entries(metaInf.getPropertySpecifications()).forEach(
+    Object.entries(constraintType.getPropertySpecifications()).forEach(
       ([key, property]) => {
         builder
           .propertyHeading(key, 3)

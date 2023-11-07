@@ -2,16 +2,15 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { BlockTypeWrapper, ConstraintTypeWrapper } from '../ast';
 import { Valuetype } from '../ast/wrappers/value-type/valuetype';
-import { ConstraintMetaInformation } from '../meta-information';
-import { BlockMetaInformation } from '../meta-information/block-meta-inf';
 
 export interface JayveeBlockTypeDocGenerator {
-  generateBlockTypeDoc(metaInf: BlockMetaInformation): string;
+  generateBlockTypeDoc(blockType: BlockTypeWrapper): string;
 }
 
 export interface JayveeConstraintTypeDocGenerator {
-  generateConstraintTypeDoc(metaInf: ConstraintMetaInformation): string;
+  generateConstraintTypeDoc(constraintType: ConstraintTypeWrapper): string;
 }
 
 export interface JayveeValueTypesDocGenerator {
@@ -20,7 +19,7 @@ export interface JayveeValueTypesDocGenerator {
 
 export interface JayveePropertyDocGenerator {
   generatePropertyDoc(
-    metaInf: BlockMetaInformation,
+    blockType: BlockTypeWrapper,
     propertyName: string,
   ): string | undefined;
 }

@@ -6,9 +6,9 @@ import {
   EvaluationContext,
   PrimitiveValuetypes,
   PropertyAssignment,
+  PropertySpecification,
   evaluatePropertyValue,
 } from '../../../ast';
-import { PropertySpecification } from '../../../meta-information';
 import { ValidationContext } from '../../validation-context';
 
 export function checkConstraintTypeSpecificProperties(

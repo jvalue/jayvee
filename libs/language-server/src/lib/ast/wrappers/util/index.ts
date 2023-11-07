@@ -4,46 +4,44 @@
 
 import { Reference, assertUnreachable, isReference } from 'langium';
 
-// eslint-disable-next-line import/no-cycle
-import {
-  BlockMetaInformation,
-  ConstraintMetaInformation,
-} from '../../../meta-information';
 import {
   BuiltinConstrainttypeDefinition,
   ReferenceableBlocktypeDefinition,
   isBuiltinConstrainttypeDefinition,
   isReferenceableBlocktypeDefinition,
 } from '../../generated/ast';
+// eslint-disable-next-line import/no-cycle
+import { BlockTypeWrapper } from '../typed-object/blocktype-wrapper';
+import { ConstraintTypeWrapper } from '../typed-object/constrainttype-wrapper';
 
 export * from './column-id-util';
 
 /**
- * Creates a MetaInformation wrapper object based on the given type reference.
+ * Creates a @see TypedObjectWrapper wrapper object based on the given type reference.
  */
-export function getMetaInformation(
+export function getTypedObjectWrapper(
   typeRef:
     | Reference<ReferenceableBlocktypeDefinition>
     | Reference<BuiltinConstrainttypeDefinition>
     | BuiltinConstrainttypeDefinition
     | ReferenceableBlocktypeDefinition
     | undefined,
-): BlockMetaInformation | ConstraintMetaInformation | undefined {
+): BlockTypeWrapper | ConstraintTypeWrapper | undefined {
   const type = isReference(typeRef) ? typeRef.ref : typeRef;
   if (type === undefined) {
     return undefined;
   }
 
   if (isReferenceableBlocktypeDefinition(type)) {
-    if (!BlockMetaInformation.canBeWrapped(type)) {
+    if (!BlockTypeWrapper.canBeWrapped(type)) {
       return undefined;
     }
-    return new BlockMetaInformation(type);
+    return new BlockTypeWrapper(type);
   } else if (isBuiltinConstrainttypeDefinition(type)) {
-    if (!ConstraintMetaInformation.canBeWrapped(type)) {
+    if (!ConstraintTypeWrapper.canBeWrapped(type)) {
       return undefined;
     }
-    return new ConstraintMetaInformation(type);
+    return new ConstraintTypeWrapper(type);
   }
   assertUnreachable(type);
 }

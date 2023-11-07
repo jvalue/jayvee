@@ -6,9 +6,9 @@ import { strict as assert } from 'assert';
 
 import {
   BlockDefinition,
-  BlockMetaInformation,
+  BlockTypeWrapper,
   ConstraintDefinition,
-  ConstraintMetaInformation,
+  ConstraintTypeWrapper,
   EvaluationContext,
   InternalValueRepresentation,
   PipelineDefinition,
@@ -129,8 +129,8 @@ export class ExecutionContext {
     propertyName: string,
     valuetype: Valuetype<I>,
   ): I {
-    const metaInf = this.getMetaInformationOfCurrentNode();
-    const propertySpec = metaInf.getPropertySpecification(propertyName);
+    const wrapper = this.getWrapperOfCurrentNode();
+    const propertySpec = wrapper.getPropertySpecification(propertyName);
     assert(propertySpec !== undefined);
 
     const defaultValue = propertySpec.defaultValue;
@@ -140,7 +140,7 @@ export class ExecutionContext {
     return defaultValue;
   }
 
-  private getMetaInformationOfCurrentNode() {
+  private getWrapperOfCurrentNode() {
     const currentNode = this.getCurrentNode();
     assert(!isPipelineDefinition(currentNode));
     assert(!isExpressionConstraintDefinition(currentNode));
@@ -149,20 +149,20 @@ export class ExecutionContext {
     assert(isReference(currentNode.type));
     if (isTypedConstraintDefinition(currentNode)) {
       assert(
-        ConstraintMetaInformation.canBeWrapped(currentNode.type),
+        ConstraintTypeWrapper.canBeWrapped(currentNode.type),
         `ConstraintType ${
           currentNode.type.ref?.name ?? '<unresolved reference>'
         } cannot be wrapped`,
       );
-      return new ConstraintMetaInformation(currentNode.type);
+      return new ConstraintTypeWrapper(currentNode.type);
     } else if (isBlockDefinition(currentNode)) {
       assert(
-        BlockMetaInformation.canBeWrapped(currentNode.type),
+        BlockTypeWrapper.canBeWrapped(currentNode.type),
         `Blocktype ${
           currentNode.type.ref?.name ?? '<unresolved reference>'
         } cannot be wrapped`,
       );
-      return new BlockMetaInformation(currentNode.type);
+      return new BlockTypeWrapper(currentNode.type);
     }
     assertUnreachable(currentNode);
   }

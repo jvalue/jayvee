@@ -15,6 +15,7 @@ import {
   CollectionLiteral,
   CollectionValuetype,
   ConstraintDefinition,
+  ConstraintTypeWrapper,
   EvaluationContext,
   PrimitiveValuetypes,
   Valuetype,
@@ -28,7 +29,6 @@ import {
   ValuetypeDefinition,
   ValuetypeGenericDefinition,
 } from '../../ast/generated/ast';
-import { ConstraintMetaInformation } from '../../meta-information';
 import { ValidationContext } from '../validation-context';
 
 export function validateValuetypeDefinition(
@@ -144,10 +144,10 @@ function getCompatibleValuetype(
   constraint: ConstraintDefinition,
 ): Valuetype | undefined {
   if (isTypedConstraintDefinition(constraint)) {
-    if (ConstraintMetaInformation.canBeWrapped(constraint.type)) {
+    if (ConstraintTypeWrapper.canBeWrapped(constraint.type)) {
       return undefined;
     }
-    return new ConstraintMetaInformation(constraint.type).on;
+    return new ConstraintTypeWrapper(constraint.type).on;
   } else if (isExpressionConstraintDefinition(constraint)) {
     return createValuetype(constraint?.valuetype);
   }

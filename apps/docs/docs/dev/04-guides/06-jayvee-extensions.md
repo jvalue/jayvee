@@ -108,12 +108,11 @@ The new block type will be automatically registered on the language server start
 
 If the block type and/or its properties requires custom validation logic, you can implement it in the [language server's block type specific checks](https://github.com/jvalue/jayvee/tree/main/libs/language-server/src/lib/validation/checks/blocktype-specific).
 
-
 #### 3. Implement `BlockExecutor`
 
 The following example implements an executor for the previously defined block type `MyExtractor`.
 
-The `execute` method defines the behavior when a block is executed. Its signature matches the input and output types defined in `MyExtractorMetaInformation`.
+The `execute` method defines the behavior when a block is executed. Its signature matches the input and output types defined in `MyExtractor.jv` file.
 
 In `libs/extensions/<extension-name>/exec/src/lib/my-extractor-executor.ts`:
 
@@ -167,7 +166,7 @@ export class MyExtractorExecutor
 > The interface `BlockExecutor<I,O>` is used as an API for block executors. The abstract class `AbstractBlockExecutor<I,O>` gives some further functionality for free, e.g., debug logging.
 
 > **Warning**
-> The generic types of `AbstractBlockExecutor<I,O>` need to match the input and output types of the corresponding `BlockMetaInformation`.
+> The generic types of `AbstractBlockExecutor<I,O>` need to match the input and output types of the corresponding `blocktype` definition.
 
 #### 4. Register the new `BlockExecutor` in the execution extension
 

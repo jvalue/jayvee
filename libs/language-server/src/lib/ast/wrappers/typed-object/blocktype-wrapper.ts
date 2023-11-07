@@ -6,27 +6,26 @@ import { strict as assert } from 'assert';
 
 import { Reference, isReference } from 'langium';
 
+import { RuntimeParameterProvider } from '../../../services';
 // eslint-disable-next-line import/no-cycle
-import {
-  EvaluationContext,
-  IOType,
-  createValuetype,
-  evaluateExpression,
-  getIOType,
-} from '../ast';
-import { ReferenceableBlocktypeDefinition } from '../ast/generated/ast';
-import { RuntimeParameterProvider } from '../services';
+import { EvaluationContext, evaluateExpression } from '../../expressions';
+import { ReferenceableBlocktypeDefinition } from '../../generated/ast';
+import { IOType, getIOType } from '../../io-type';
+import { createValuetype } from '../value-type';
 
-import { ExampleDoc, MetaInformation, PropertySpecification } from './meta-inf';
+import {
+  ExampleDoc,
+  PropertySpecification,
+  TypedObjectWrapper,
+} from './typed-object-wrapper';
 
 interface BlockDocs {
   description?: string;
   examples?: ExampleDoc[];
 }
 
-export class BlockMetaInformation extends MetaInformation {
+export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlocktypeDefinition> {
   docs: BlockDocs = {};
-  readonly wrapped: ReferenceableBlocktypeDefinition;
 
   readonly inputType: IOType;
   readonly outputType: IOType;
@@ -62,9 +61,7 @@ export class BlockMetaInformation extends MetaInformation {
       }
     }
 
-    super(blocktypeName, properties, undefined);
-
-    this.wrapped = blocktypeDefinition;
+    super(blocktypeDefinition, blocktypeName, properties, undefined);
 
     const inputPort = blocktypeDefinition.inputs[0];
     assert(inputPort !== undefined);
@@ -110,7 +107,7 @@ export class BlockMetaInformation extends MetaInformation {
     return true;
   }
 
-  canBeConnectedTo(blockAfter: BlockMetaInformation): boolean {
+  canBeConnectedTo(blockAfter: BlockTypeWrapper): boolean {
     return this.outputType === blockAfter.inputType;
   }
 
