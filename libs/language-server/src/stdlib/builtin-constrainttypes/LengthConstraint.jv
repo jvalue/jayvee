@@ -20,6 +20,7 @@ builtin constrainttype LengthConstraint on text {
 
 	/**
     * Inclusive maximum of the valid text length.
+	* The default value is the biggest usable integer.
 	*/
 	property maxLength oftype integer : 9007199254740991;
 }

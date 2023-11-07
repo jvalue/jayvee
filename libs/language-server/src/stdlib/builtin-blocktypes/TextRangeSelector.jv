@@ -9,6 +9,14 @@ builtin blocktype TextRangeSelector {
 	input default oftype TextFile;
 	output default oftype TextFile;
 	
+	/**
+	* Inclusive beginning line number for the selection.
+	*/
 	property lineFrom oftype integer: 1;
+	
+	/**
+	* Inclusive ending line number for the selection.
+	* The default value is the biggest usable integer.
+	*/
 	property lineTo oftype integer: 9007199254740991;
 }
