@@ -35,10 +35,19 @@ export class GtfsRTInterpreterExecutor extends AbstractBlockExecutor<
     const entity = context.getPropertyValue('entity', PrimitiveValuetypes.Text);
 
     // https://github.com/MobilityData/gtfs-realtime-bindings/tree/master/nodejs
-    const feedMessage =
-      GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(
+    let feedMessage;
+    try {
+      feedMessage = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(
         new Uint8Array(inputFile.content),
       );
+    } catch (e) {
+      return Promise.resolve(
+        R.err({
+          message: `Failed to decode gtfs file: ${this.getErrorMessage(e)}`,
+          diagnostic: { node: context.getCurrentNode() },
+        }),
+      );
+    }
 
     // Parse all possible feedentity to Sheet
     const sheet = await this.parseFeedMessage(entity, feedMessage, context);
@@ -51,6 +60,13 @@ export class GtfsRTInterpreterExecutor extends AbstractBlockExecutor<
       );
     }
     return R.ok(sheet.right);
+  }
+
+  private getErrorMessage(e: unknown): string {
+    if (e instanceof Error) {
+      return e.message;
+    }
+    return String(e);
   }
 
   private async parseFeedMessage(

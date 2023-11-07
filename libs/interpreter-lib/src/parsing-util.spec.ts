@@ -8,11 +8,11 @@ import { CachedLogger } from '@jvalue/jayvee-execution';
 import {
   JayveeServices,
   createJayveeServices,
-  initializeWorkspace,
 } from '@jvalue/jayvee-language-server';
 import {
   ParseHelperOptions,
   expectNoParserAndLexerErrors,
+  loadTestExtensions,
   parseHelper,
   readJvTestAssetHelper,
 } from '@jvalue/jayvee-language-server/test';
@@ -52,11 +52,11 @@ describe('Validation of parsing-util', () => {
     // Create language services
     services = createJayveeServices(NodeFileSystem).Jayvee;
 
-    await initializeWorkspace(services, [
-      {
-        uri: process.cwd(),
-        name: 'TestBlockTypes.jv',
-      },
+    await loadTestExtensions(services, [
+      path.resolve(
+        __dirname,
+        '../test/assets/parsing-util/test-extension/TestBlockTypes.jv',
+      ),
     ]);
 
     // Parse function for Jayvee (without validation)

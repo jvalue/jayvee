@@ -5,7 +5,7 @@
 import { FileExtension, MimeType } from '@jvalue/jayvee-execution';
 import * as mime from 'mime-types';
 
-export function inferMimeTypeFromContentTypeString(
+export function inferMimeTypeFromFileExtensionString(
   fileExtension: string | undefined,
 ): MimeType | undefined {
   if (fileExtension !== undefined) {

@@ -15,6 +15,8 @@ import {
 } from '@jvalue/jayvee-execution';
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 
+import { splitLines } from './string-util';
+
 @implementsStatic<BlockExecutorClass>()
 export class TextFileInterpreterExecutor extends AbstractBlockExecutor<
   IOType.FILE,
@@ -56,15 +58,4 @@ export class TextFileInterpreterExecutor extends AbstractBlockExecutor<
 
     return R.ok(new TextFile(file.name, file.extension, file.mimeType, lines));
   }
-}
-
-function splitLines(textContent: string, lineBreak: RegExp): string[] {
-  const lines = textContent.split(lineBreak);
-
-  // There may be an additional empty line due to the previous splitting
-  if (lines[lines.length - 1] === '') {
-    lines.splice(lines.length - 1, 1);
-  }
-
-  return lines;
 }

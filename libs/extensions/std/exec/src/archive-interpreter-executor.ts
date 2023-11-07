@@ -24,7 +24,7 @@ import * as JSZip from 'jszip';
 
 import {
   inferFileExtensionFromFileExtensionString,
-  inferMimeTypeFromContentTypeString,
+  inferMimeTypeFromFileExtensionString,
 } from './file-util';
 
 @implementsStatic<BlockExecutorClass>()
@@ -133,7 +133,7 @@ export class ArchiveInterpreterExecutor extends AbstractBlockExecutor<
     const extName = path.extname(fileName);
 
     const mimeType =
-      inferMimeTypeFromContentTypeString(extName) ||
+      inferMimeTypeFromFileExtensionString(extName) ||
       MimeType.APPLICATION_OCTET_STREAM;
     const fileExtension =
       inferFileExtensionFromFileExtensionString(extName) || FileExtension.NONE;
