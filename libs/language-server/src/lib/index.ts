@@ -4,7 +4,6 @@
 
 export * from './ast';
 export * from './builtin-library';
-export * from './constraint';
 export * from './docs';
 export * from './meta-information';
 export * from './services';

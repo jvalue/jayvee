@@ -8,6 +8,7 @@ import {
   BlockDefinition,
   BlockMetaInformation,
   ConstraintDefinition,
+  ConstraintMetaInformation,
   EvaluationContext,
   InternalValueRepresentation,
   PipelineDefinition,
@@ -15,7 +16,6 @@ import {
   TransformDefinition,
   Valuetype,
   evaluatePropertyValue,
-  getOrFailConstraintMetaInf,
   isBlockDefinition,
   isExpressionConstraintDefinition,
   isPipelineDefinition,
@@ -146,10 +146,16 @@ export class ExecutionContext {
     assert(!isExpressionConstraintDefinition(currentNode));
     assert(!isTransformDefinition(currentNode));
 
+    assert(isReference(currentNode.type));
     if (isTypedConstraintDefinition(currentNode)) {
-      return getOrFailConstraintMetaInf(currentNode.type);
+      assert(
+        ConstraintMetaInformation.canBeWrapped(currentNode.type),
+        `ConstraintType ${
+          currentNode.type.ref?.name ?? '<unresolved reference>'
+        } cannot be wrapped`,
+      );
+      return new ConstraintMetaInformation(currentNode.type);
     } else if (isBlockDefinition(currentNode)) {
-      assert(isReference(currentNode.type));
       assert(
         BlockMetaInformation.canBeWrapped(currentNode.type),
         `Blocktype ${

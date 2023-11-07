@@ -8,7 +8,6 @@ import { Reference, assertUnreachable, isReference } from 'langium';
 import {
   BlockMetaInformation,
   ConstraintMetaInformation,
-  getConstraintMetaInf,
 } from '../../../meta-information';
 import {
   BuiltinConstrainttypeDefinition,
@@ -41,7 +40,10 @@ export function getMetaInformation(
     }
     return new BlockMetaInformation(type);
   } else if (isBuiltinConstrainttypeDefinition(type)) {
-    return getConstraintMetaInf(type);
+    if (!ConstraintMetaInformation.canBeWrapped(type)) {
+      return undefined;
+    }
+    return new ConstraintMetaInformation(type);
   }
   assertUnreachable(type);
 }

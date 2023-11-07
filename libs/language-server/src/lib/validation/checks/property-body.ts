@@ -13,12 +13,14 @@ import {
   PropertyAssignment,
   PropertyBody,
   isBlockDefinition,
+  isTypedConstraintDefinition,
 } from '../../ast/generated/ast';
 import { MetaInformation } from '../../meta-information/meta-inf';
 import { ValidationContext } from '../validation-context';
 import { checkUniqueNames } from '../validation-util';
 
 import { checkBlocktypeSpecificPropertyBody } from './blocktype-specific/property-body';
+import { checkConstraintTypeSpecificPropertyBody } from './constrainttype-specific/property-body';
 import { validatePropertyAssignment } from './property-assignment';
 
 export function validatePropertyBody(
@@ -101,6 +103,12 @@ function checkCustomPropertyValidation(
 
   if (isBlockDefinition(propertyBody.$container)) {
     checkBlocktypeSpecificPropertyBody(
+      propertyBody,
+      validationContext,
+      evaluationContext,
+    );
+  } else if (isTypedConstraintDefinition(propertyBody.$container)) {
+    checkConstraintTypeSpecificPropertyBody(
       propertyBody,
       validationContext,
       evaluationContext,

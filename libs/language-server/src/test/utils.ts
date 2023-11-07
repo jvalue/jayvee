@@ -11,7 +11,6 @@ import { WorkspaceFolder } from 'vscode-languageserver-protocol';
 
 import { JayveeServices } from '../lib';
 import { initializeWorkspace } from '../lib/builtin-library/jayvee-workspace-manager';
-import { constraintMetaInfRegistry } from '../lib/meta-information/meta-inf-registry';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export const validationAcceptorMockImpl: ValidationAcceptor = () => {};
@@ -45,10 +44,6 @@ export function expectNoParserAndLexerErrors(
 ) {
   expect(document.parseResult.parserErrors).toHaveLength(0);
   expect(document.parseResult.lexerErrors).toHaveLength(0);
-}
-
-export function clearMetaInfRegistry() {
-  constraintMetaInfRegistry.clear();
 }
 
 export async function loadTestExtensions(

@@ -118,12 +118,20 @@ block ExampleTableInterpreter oftype TableInterpreter {
   }
 
   generateConstraintTypeDoc(metaInf: ConstraintMetaInformation): string {
+    const documentationService =
+      this.services.documentation.DocumentationProvider;
+    const blocktypeDocs = documentationService.getDocumentation(
+      metaInf.wrapped,
+    );
+    const constraintTypeDocsFromComments =
+      this.extractDocsFromComment(blocktypeDocs);
+
     const builder = new UserDocMarkdownBuilder()
       .docTitle(metaInf.type)
       .generationComment()
-      .compatibleValueType(metaInf.compatibleValuetype.getName())
-      .description(metaInf.docs.description)
-      .examples(metaInf.docs.examples);
+      .compatibleValueType(metaInf.on.getName())
+      .description(constraintTypeDocsFromComments?.description)
+      .examples(constraintTypeDocsFromComments?.examples);
 
     builder.propertiesHeading();
     Object.entries(metaInf.getPropertySpecifications()).forEach(

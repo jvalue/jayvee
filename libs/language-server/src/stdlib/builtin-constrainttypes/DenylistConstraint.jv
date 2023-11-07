@@ -1,0 +1,15 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* Defines a set of forbidden values. All values in the list are considered invalid.
+*
+* @example Denies all primary colors.
+* constraint NoPrimaryColors oftype DenylistConstraint {
+*   denylist: ["red", "blue", "yellow"];
+* }
+*/
+builtin constrainttype DenylistConstraint on text {
+	property denylist oftype Collection<text> ;
+}

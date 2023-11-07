@@ -6,5 +6,4 @@
 export * from './block-meta-inf';
 export * from './constraint-meta-inf';
 export * from './meta-inf';
-export * from './meta-inf-registry';
 export * from './composite-blocktype-meta-inf';

@@ -9,6 +9,7 @@ import {
   TypedConstraintDefinition,
   ValidationContext,
   createJayveeServices,
+  initializeWorkspace,
 } from '../../../lib';
 import {
   ParseHelperOptions,
@@ -50,9 +51,11 @@ describe('Validation of ConstraintDefinition (typed syntax)', () => {
     );
   }
 
-  beforeAll(() => {
+  beforeAll(async () => {
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
+    await initializeWorkspace(services);
+
     locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
