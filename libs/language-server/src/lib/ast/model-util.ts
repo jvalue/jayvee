@@ -241,7 +241,7 @@ export function getAllBuiltinBlocktypes(
 }
 
 /**
- * Utility function that gets all builtin blocktypes.
+ * Utility function that gets all builtin constraint types.
  * Duplicates are only added once.
  * Make sure to call @see initializeWorkspace first so that the file system is initialized.
  */
