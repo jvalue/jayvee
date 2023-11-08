@@ -27,8 +27,6 @@ describe('Validation of parsing-util', () => {
     options?: ParseHelperOptions,
   ) => Promise<LangiumDocument<AstNode>>;
 
-  let exitSpy: jest.SpyInstance;
-
   let services: JayveeServices;
 
   const logger = new CachedLogger(true, undefined, false);
@@ -39,16 +37,6 @@ describe('Validation of parsing-util', () => {
   );
 
   beforeAll(async () => {
-    // Mock Process.exit
-    exitSpy = jest
-      .spyOn(process, 'exit')
-      .mockImplementation((code?: number) => {
-        if (code === undefined || code === 0) {
-          return undefined as never;
-        }
-        throw new Error(`process.exit: ${code}`);
-      });
-
     // Create language services
     services = createJayveeServices(NodeFileSystem).Jayvee;
 
@@ -64,7 +52,6 @@ describe('Validation of parsing-util', () => {
   });
 
   afterEach(() => {
-    exitSpy.mockClear();
     logger.clearLogs();
   });
 
@@ -81,7 +68,7 @@ describe('Validation of parsing-util', () => {
 
       await parseAndValidateDocument(text);
 
-      expect(exitSpy).toHaveBeenCalledTimes(0);
+      expect(logger.getLogs().error.length).toEqual(0);
       expect(logger.getLogs().info).toHaveLength(0);
       expect(logger.getLogs().error).toHaveLength(0);
       expect(logger.getLogs().debug).toHaveLength(0);
@@ -97,8 +84,7 @@ describe('Validation of parsing-util', () => {
       try {
         await parseAndValidateDocument(text);
       } catch (e) {
-        expect(exitSpy).toHaveBeenCalledTimes(1);
-        expect(exitSpy).toHaveBeenCalledWith(1);
+        expect(logger.getLogs().error.length).toBeGreaterThanOrEqual(1);
         expect(logger.getLogs().info).toHaveLength(0);
         expect(logger.getLogs().error).toHaveLength(2 * 5); // 2 calls that get formated to 5 lines each
         expect(logger.getLogs().debug).toHaveLength(0);
@@ -115,8 +101,7 @@ describe('Validation of parsing-util', () => {
       try {
         await parseAndValidateDocument(text);
       } catch (e) {
-        expect(exitSpy).toHaveBeenCalledTimes(1);
-        expect(exitSpy).toHaveBeenCalledWith(1);
+        expect(logger.getLogs().error.length).toEqual(1);
         expect(logger.getLogs().info).toHaveLength(0);
         expect(logger.getLogs().error).toHaveLength(1);
         expect(logger.getLogs().debug).toHaveLength(0);
@@ -138,7 +123,7 @@ describe('Validation of parsing-util', () => {
         logger,
       );
 
-      expect(exitSpy).toHaveBeenCalledTimes(0);
+      expect(logger.getLogs().error.length).toEqual(0);
       expect(logger.getLogs().info).toHaveLength(0);
       expect(logger.getLogs().error).toHaveLength(0);
       expect(logger.getLogs().debug).toHaveLength(0);
@@ -158,7 +143,7 @@ describe('Validation of parsing-util', () => {
           logger,
         );
       } catch (e) {
-        expect(exitSpy).toHaveBeenCalledTimes(1);
+        expect(logger.getLogs().error.length).toEqual(1);
         expect(logger.getLogs().info).toHaveLength(0);
         expect(logger.getLogs().error).toHaveLength(1);
         expect(logger.getLogs().error[0]).toEqual(
@@ -184,7 +169,7 @@ describe('Validation of parsing-util', () => {
           logger,
         );
       } catch (e) {
-        expect(exitSpy).toHaveBeenCalledTimes(1);
+        expect(logger.getLogs().error.length).toEqual(1);
         expect(logger.getLogs().info).toHaveLength(0);
         expect(logger.getLogs().error).toHaveLength(1);
         expect(logger.getLogs().error[0]).toMatch(
