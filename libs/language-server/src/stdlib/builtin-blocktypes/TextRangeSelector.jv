@@ -1,0 +1,22 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* Selects a range of lines from a `TextFile`.
+*/
+builtin blocktype TextRangeSelector {
+	input default oftype TextFile;
+	output default oftype TextFile;
+	
+	/**
+	* Inclusive beginning line number for the selection.
+	*/
+	property lineFrom oftype integer: 1;
+	
+	/**
+	* Inclusive ending line number for the selection.
+	* The default value is the biggest usable integer.
+	*/
+	property lineTo oftype integer: 9007199254740991;
+}

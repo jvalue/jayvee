@@ -5,12 +5,13 @@
 import { strict as assert } from 'assert';
 
 import {
-  BlockMetaInformation,
-  ConstraintMetaInformation,
+  BlockTypeWrapper,
+  ConstraintTypeWrapper,
   ExampleDoc,
   IOType,
   JayveeBlockTypeDocGenerator,
   JayveeConstraintTypeDocGenerator,
+  JayveeServices,
   JayveeValueTypesDocGenerator,
   MarkdownBuilder,
   PrimitiveValuetype,
@@ -23,6 +24,8 @@ export class UserDocGenerator
     JayveeConstraintTypeDocGenerator,
     JayveeValueTypesDocGenerator
 {
+  constructor(private services: JayveeServices) {}
+
   generateValueTypesDoc(valueTypes: {
     [name: string]: PrimitiveValuetype;
   }): string {
@@ -72,16 +75,66 @@ block ExampleTableInterpreter oftype TableInterpreter {
     return builder.build();
   }
 
-  generateBlockTypeDoc(metaInf: BlockMetaInformation): string {
+  generateBlockTypeDoc(blockType: BlockTypeWrapper): string {
+    const documentationService =
+      this.services.documentation.DocumentationProvider;
+    const blocktypeDocs = documentationService.getDocumentation(
+      blockType.astNode,
+    );
+    const blocktypeDocsFromComments =
+      this.extractDocsFromComment(blocktypeDocs);
+
     const builder = new UserDocMarkdownBuilder()
-      .docTitle(metaInf.type)
+      .docTitle(blockType.type)
       .generationComment()
-      .ioTypes(metaInf.inputType, metaInf.outputType)
-      .description(metaInf.docs.description)
-      .examples(metaInf.docs.examples);
+      .ioTypes(blockType.inputType, blockType.outputType)
+      .description(blocktypeDocsFromComments?.description)
+      .examples(blocktypeDocsFromComments?.examples);
 
     builder.propertiesHeading();
-    Object.entries(metaInf.getPropertySpecifications()).forEach(
+    Object.entries(blockType.getPropertySpecifications()).forEach(
+      ([key, property]) => {
+        const blocktypeProperty = blockType.astNode.properties.filter(
+          (p) => p.name === key,
+        )[0];
+        if (blocktypeProperty === undefined) {
+          return;
+        }
+
+        const propertyDocs =
+          documentationService.getDocumentation(blocktypeProperty);
+        const propDocsFromComments = this.extractDocsFromComment(propertyDocs);
+
+        builder
+          .propertyHeading(key, 3)
+          .propertySpec(property)
+          .description(propDocsFromComments?.description, 4)
+          .validation(property.docs?.validation, 4)
+          .examples(propDocsFromComments?.examples, 4);
+      },
+    );
+
+    return builder.build();
+  }
+
+  generateConstraintTypeDoc(constraintType: ConstraintTypeWrapper): string {
+    const documentationService =
+      this.services.documentation.DocumentationProvider;
+    const blocktypeDocs = documentationService.getDocumentation(
+      constraintType.astNode,
+    );
+    const constraintTypeDocsFromComments =
+      this.extractDocsFromComment(blocktypeDocs);
+
+    const builder = new UserDocMarkdownBuilder()
+      .docTitle(constraintType.type)
+      .generationComment()
+      .compatibleValueType(constraintType.on.getName())
+      .description(constraintTypeDocsFromComments?.description)
+      .examples(constraintTypeDocsFromComments?.examples);
+
+    builder.propertiesHeading();
+    Object.entries(constraintType.getPropertySpecifications()).forEach(
       ([key, property]) => {
         builder
           .propertyHeading(key, 3)
@@ -95,27 +148,39 @@ block ExampleTableInterpreter oftype TableInterpreter {
     return builder.build();
   }
 
-  generateConstraintTypeDoc(metaInf: ConstraintMetaInformation): string {
-    const builder = new UserDocMarkdownBuilder()
-      .docTitle(metaInf.type)
-      .generationComment()
-      .compatibleValueType(metaInf.compatibleValuetype.getName())
-      .description(metaInf.docs.description)
-      .examples(metaInf.docs.examples);
+  private extractDocsFromComment(comment?: string | undefined):
+    | {
+        description: string | undefined;
+        examples: ExampleDoc[];
+      }
+    | undefined {
+    if (comment === undefined) {
+      return undefined;
+    }
+    /*
+    Format:
 
-    builder.propertiesHeading();
-    Object.entries(metaInf.getPropertySpecifications()).forEach(
-      ([key, property]) => {
-        builder
-          .propertyHeading(key, 3)
-          .propertySpec(property)
-          .description(property.docs?.description, 4)
-          .validation(property.docs?.validation, 4)
-          .examples(property.docs?.examples, 4);
-      },
-    );
+    <description>
+    *@example*
+    <example description>
+    <example code>
+    */
 
-    return builder.build();
+    const commentSections = comment
+      .split('*@example*')
+      .map((section) => section.trim());
+    const examples = commentSections.slice(1).map((x) => {
+      const exampleLines = x.split('\n');
+      return {
+        description: exampleLines[0] ?? '',
+        code: exampleLines.slice(1).join('\n'),
+      };
+    });
+
+    return {
+      description: commentSections[0],
+      examples: examples,
+    };
   }
 }
 

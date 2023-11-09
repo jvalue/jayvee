@@ -2,7 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// A GTFSExtractor extracts a file from a given URL, interprets it as ZIP and extracts it
+/**
+* A GTFSExtractor extracts a file from a given URL, interprets it as ZIP and extracts it
+*/
 composite blocktype GTFSExtractor {
     property url oftype text;
 

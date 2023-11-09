@@ -1,0 +1,26 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* Limits the length of a string with an upper and/or lower boundary. 
+* Only values with a length within the given range are valid.
+*
+* @example A text constraint with 0 to 20 characters.
+* constraint ShortAnswerConstraint oftype LengthConstraint {
+*   minLength: 0;
+*   maxLength: 20;
+* }
+*/
+builtin constrainttype LengthConstraint on text {
+	/**
+    * Inclusive minimum of the valid text length.
+	*/
+	property minLength oftype integer : 0;
+
+	/**
+    * Inclusive maximum of the valid text length.
+	* The default value is the biggest usable integer.
+	*/
+	property maxLength oftype integer : 9007199254740991;
+}

@@ -7,26 +7,29 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { EvaluationContext, inferExpressionType } from '../../ast';
+import {
+  EvaluationContext,
+  PropertySpecification,
+  TypedObjectWrapper,
+  inferExpressionType,
+} from '../../ast';
 import {
   PropertyAssignment,
   isBlocktypeProperty,
   isRuntimeParameterLiteral,
 } from '../../ast/generated/ast';
-import {
-  MetaInformation,
-  PropertySpecification,
-} from '../../meta-information/meta-inf';
 import { ValidationContext } from '../validation-context';
 import { checkExpressionSimplification } from '../validation-util';
 
+import { checkBlocktypeSpecificProperties } from './blocktype-specific/property-assignment';
+
 export function validatePropertyAssignment(
   property: PropertyAssignment,
-  metaInf: MetaInformation,
+  wrapper: TypedObjectWrapper,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
 ): void {
-  const propertySpec = metaInf.getPropertySpecification(property?.name);
+  const propertySpec = wrapper.getPropertySpecification(property?.name);
 
   checkPropertyNameValidity(property, propertySpec, validationContext);
 
@@ -34,6 +37,17 @@ export function validatePropertyAssignment(
     return;
   }
   checkPropertyValueTyping(
+    property,
+    propertySpec,
+    validationContext,
+    evaluationContext,
+  );
+
+  if (validationContext.hasErrorOccurred()) {
+    return;
+  }
+
+  checkBlocktypeSpecificProperties(
     property,
     propertySpec,
     validationContext,
@@ -95,7 +109,9 @@ function checkPropertyValueTyping(
   if (!inferredType.isConvertibleTo(propertyType)) {
     validationContext.accept(
       'error',
-      `The value needs to be of type ${propertyType.getName()} but is of type ${inferredType.getName()}`,
+      `The value of property "${
+        property.name
+      }" needs to be of type ${propertyType.getName()} but is of type ${inferredType.getName()}`,
       {
         node: propertyValue,
       },

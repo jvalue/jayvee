@@ -4,4 +4,3 @@
 
 export * from './langium-utils';
 export * from './utils';
-export * from './extension';

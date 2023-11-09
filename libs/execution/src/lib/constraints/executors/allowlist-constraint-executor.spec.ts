@@ -7,11 +7,9 @@ import {
   InternalValueRepresentation,
   TypedConstraintDefinition,
   createJayveeServices,
-  useExtension,
 } from '@jvalue/jayvee-language-server';
 import {
   ParseHelperOptions,
-  TestLangExtension,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
@@ -60,8 +58,6 @@ describe('Validation of AllowlistConstraintExecutor', () => {
   }
 
   beforeAll(() => {
-    // Register test extension
-    useExtension(new TestLangExtension());
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;

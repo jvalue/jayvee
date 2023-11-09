@@ -14,7 +14,11 @@ import {
   SQLiteLoaderExecutorMock,
 } from '@jvalue/jayvee-extensions/rdbms/test';
 import { HttpExtractorExecutorMock } from '@jvalue/jayvee-extensions/std/test';
-import { clearMetaInfRegistry } from '@jvalue/jayvee-language-server/test';
+import {
+  createJayveeServices,
+  initializeWorkspace,
+} from '@jvalue/jayvee-language-server';
+import { NodeFileSystem } from 'langium/node';
 import * as nock from 'nock';
 
 import { runAction } from './run-action';
@@ -51,7 +55,10 @@ describe('jv example smoke tests', () => {
   let postgresLoaderMock: PostgresLoaderExecutorMock;
   let sqliteLoaderMock: SQLiteLoaderExecutorMock;
 
-  beforeAll(() => {
+  beforeAll(async () => {
+    const services = createJayveeServices(NodeFileSystem).Jayvee;
+    await initializeWorkspace(services);
+
     exitSpy = jest
       .spyOn(process, 'exit')
       .mockImplementation(processExitMockImplementation);
@@ -67,7 +74,6 @@ describe('jv example smoke tests', () => {
     sqliteLoaderMock.restore();
 
     // Clear registries
-    clearMetaInfRegistry();
     clearBlockExecutorRegistry();
     clearConstraintExecutorRegistry();
   });

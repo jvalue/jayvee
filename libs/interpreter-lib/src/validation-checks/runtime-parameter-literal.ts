@@ -9,7 +9,7 @@ import {
   ReferenceableBlocktypeDefinition,
   RuntimeParameterLiteral,
   ValidationContext,
-  getMetaInformation,
+  getTypedObjectWrapper,
 } from '@jvalue/jayvee-language-server';
 import { Reference } from 'langium';
 
@@ -67,6 +67,7 @@ function checkRuntimeParameterValueParsing(
     | undefined =
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     enclosingPropertyBody.$container?.type;
+  const wrapper = getTypedObjectWrapper(type);
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const propertyName = runtimeParameter.$container?.name;
@@ -75,8 +76,7 @@ function checkRuntimeParameterValueParsing(
     return;
   }
 
-  const metaInf = getMetaInformation(type);
-  const propertySpec = metaInf?.getPropertySpecification(propertyName);
+  const propertySpec = wrapper?.getPropertySpecification(propertyName);
   if (propertySpec === undefined) {
     return;
   }

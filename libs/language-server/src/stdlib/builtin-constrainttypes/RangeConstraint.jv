@@ -1,0 +1,45 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* Limits the range of a number value with an upper and/or lower boundary which can be inclusive or exclusive. Only values within the given range are considered valid.
+*
+* @example A scale between (and including) 1 and 100.
+* constraint HundredScale oftype RangeConstraint {
+*   lowerBound: 1;
+*   upperBound: 100;		
+* }
+*
+* @example A scale for numbers strictly larger than 1 and less or equal to 100.
+* constraint HundredScale oftype RangeConstraint {
+*   lowerBound: 1;
+*   lowerBoundInclusive: false;
+*   upperBound: 100;		
+* }
+*/
+builtin constrainttype RangeConstraint on decimal {
+	/**
+	* Lower bound for the valid value range.
+	* @see lowerBoundInclusive whether inclusive or exclusive.
+	* The default value is the smallest usable integer.
+	*/
+	property lowerBound oftype decimal : -9007199254740991;
+
+	/**
+	* Boolean flag whether @see lowerBound is inclusive or exclusive.
+	*/
+	property lowerBoundInclusive oftype boolean : true;
+
+	/**
+	* Upper bound for the valid value range.
+	* @see upperBoundInclusive whether inclusive or exclusive.
+	* The default value is the biggest usable integer.
+	*/
+	property upperBound oftype decimal : 9007199254740991;
+
+	/**
+	* Boolean flag whether @see upperBound is inclusive or exclusive.
+	*/
+	property upperBoundInclusive oftype boolean : true;
+}

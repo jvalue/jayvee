@@ -11,7 +11,6 @@ import {
   RuntimeParameterProvider,
   ValidationContext,
   createJayveeServices,
-  useExtension,
 } from '../..';
 import {
   ParseHelperOptions,
@@ -20,7 +19,6 @@ import {
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../test';
-import { TestLangExtension } from '../../../test/extension';
 
 import { validateBlocktypeDefinition } from './blocktype-definition';
 
@@ -56,8 +54,6 @@ describe('Validation of BuiltinBlocktypeDefinition', () => {
   }
 
   beforeAll(() => {
-    // Register test extension
-    useExtension(new TestLangExtension());
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;

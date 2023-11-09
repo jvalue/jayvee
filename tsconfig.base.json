@@ -44,10 +44,6 @@
       "@jvalue/jayvee-extensions/tabular/exec": [
         "libs/extensions/tabular/exec/src/index.ts"
       ],
-      "@jvalue/jayvee-extensions/tabular/lang": [
-        "libs/extensions/tabular/lang/src/index.ts"
-      ],
-      "@jvalue/jayvee-interpreter-lib": ["libs/interpreter-lib/src/index.ts"],
       "@jvalue/jayvee-language-server": ["libs/language-server/src/index.ts"],
       "@jvalue/jayvee-language-server/test": [
         "libs/language-server/src/test/index.ts"

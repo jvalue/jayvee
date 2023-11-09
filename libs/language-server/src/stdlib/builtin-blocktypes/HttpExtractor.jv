@@ -1,0 +1,41 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* Extracts a `File` from the web.
+* 
+* @example Fetches a file from the given URL.
+* block CarsFileExtractor oftype HttpExtractor {
+*   url: "tinyurl.com/4ub9spwz";
+* }
+*/
+builtin blocktype HttpExtractor {
+	input default oftype None;
+	output default oftype File;
+	
+	/**
+	* The URL to the file in the web to extract.
+	*/
+	property url oftype text;
+	
+	/**
+	* Configures how many retries should be executed after a failure fetching the data.
+	*/
+	property retries oftype integer: 0;
+	
+	/**
+	* Configures the wait time in milliseconds before executing a retry.
+	*/
+	property retryBackoffMilliseconds oftype integer: 1000;
+	
+	/**
+	* Configures the wait strategy before executing a retry. Can have values "exponential" or "linear".
+	*/
+	property retryBackoffStrategy oftype text: "exponential";
+	
+	/**
+	* Indicates, whether to follow redirects on get requests. If `false`, redirects are not followed. Default `true`
+	*/
+	property followRedirects oftype boolean: true;
+}

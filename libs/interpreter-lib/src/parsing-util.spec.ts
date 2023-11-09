@@ -8,12 +8,11 @@ import { CachedLogger } from '@jvalue/jayvee-execution';
 import {
   JayveeServices,
   createJayveeServices,
-  useExtension,
 } from '@jvalue/jayvee-language-server';
 import {
   ParseHelperOptions,
-  TestLangExtension,
   expectNoParserAndLexerErrors,
+  loadTestExtensions,
   parseHelper,
   readJvTestAssetHelper,
 } from '@jvalue/jayvee-language-server/test';
@@ -39,7 +38,7 @@ describe('Validation of parsing-util', () => {
     '../test/assets/parsing-util/',
   );
 
-  beforeAll(() => {
+  beforeAll(async () => {
     // Mock Process.exit
     exitSpy = jest
       .spyOn(process, 'exit')
@@ -50,10 +49,16 @@ describe('Validation of parsing-util', () => {
         throw new Error(`process.exit: ${code}`);
       });
 
-    // Register test extension
-    useExtension(new TestLangExtension());
     // Create language services
     services = createJayveeServices(NodeFileSystem).Jayvee;
+
+    await loadTestExtensions(services, [
+      path.resolve(
+        __dirname,
+        '../test/assets/parsing-util/test-extension/TestBlockTypes.jv',
+      ),
+    ]);
+
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });
