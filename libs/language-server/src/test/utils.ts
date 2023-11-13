@@ -2,14 +2,15 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import * as assert from 'assert';
 import { readFileSync } from 'fs';
 import * as path from 'path';
 
 import { AstNode, LangiumDocument, ValidationAcceptor } from 'langium';
+import { WorkspaceFolder } from 'vscode-languageserver-protocol';
 
-import { BlockMetaInformation, IOType, metaInformationRegistry } from '../lib';
-
-import { TestLangExtension } from './extension';
+import { JayveeServices } from '../lib';
+import { initializeWorkspace } from '../lib/builtin-library/jayvee-workspace-manager';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export const validationAcceptorMockImpl: ValidationAcceptor = () => {};
@@ -45,18 +46,14 @@ export function expectNoParserAndLexerErrors(
   expect(document.parseResult.lexerErrors).toHaveLength(0);
 }
 
-export function getTestExtensionBlockForIOType(
-  testExtension: TestLangExtension,
-  ioType: IOType,
-  io: 'input' | 'output',
-): BlockMetaInformation {
-  const metaInf = testExtension.constructBlockMetaInformationFromIOType(
-    ioType,
-    io,
-  );
-  return new metaInf();
-}
-
-export function clearMetaInfRegistry() {
-  metaInformationRegistry.clear();
+export async function loadTestExtensions(
+  services: JayveeServices,
+  testExtensionJvFiles: string[],
+) {
+  assert(testExtensionJvFiles.every((file) => file.endsWith('.jv')));
+  const extensions: WorkspaceFolder[] = testExtensionJvFiles.map((file) => ({
+    uri: path.dirname(file),
+    name: path.basename(file),
+  }));
+  return initializeWorkspace(services, extensions);
 }

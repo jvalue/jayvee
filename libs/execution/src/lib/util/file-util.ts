@@ -6,7 +6,7 @@ import * as mime from 'mime-types';
 
 import { FileExtension, MimeType } from '../types';
 
-export function inferMimeTypeFromContentTypeString(
+export function inferMimeTypeFromFileExtensionString(
   fileExtension: string | undefined,
 ): MimeType | undefined {
   if (fileExtension !== undefined) {

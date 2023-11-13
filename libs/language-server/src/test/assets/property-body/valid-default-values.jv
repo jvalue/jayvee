@@ -7,3 +7,10 @@ pipeline Pipeline {
     textProperty: '';
   }
 }
+
+builtin blocktype TestProperty {
+  input inPort oftype None;
+  output outPort oftype None;
+
+  property textProperty oftype text;
+}

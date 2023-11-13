@@ -11,7 +11,6 @@ import {
   RuntimeParameterProvider,
   ValidationContext,
   createJayveeServices,
-  useExtension,
 } from '../../../lib';
 import {
   ParseHelperOptions,
@@ -20,7 +19,6 @@ import {
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../test';
-import { TestLangExtension } from '../../../test/extension';
 
 import { validatePropertyBody } from './property-body';
 
@@ -56,8 +54,6 @@ describe('Validation PropertyBody', () => {
   }
 
   beforeAll(() => {
-    // Register test extension
-    useExtension(new TestLangExtension());
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;
@@ -101,7 +97,7 @@ describe('Validation PropertyBody', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
-      `Invalid value "invalid"`,
+      'The value of property "customValidationTextProperty" needs to be of type CustomValuetype but is of type text',
       expect.any(Object),
     );
   });

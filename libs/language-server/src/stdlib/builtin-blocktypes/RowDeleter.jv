@@ -1,0 +1,21 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* Deletes one or more rows from a `Sheet`. Row IDs of subsequent rows will be shifted accordingly, so there will be no gaps.
+* 
+* @example Deletes row 2 (i.e. the second row).
+* block SecondRowDeleter oftype RowDeleter {
+*   delete: [row 2];
+* }
+*/
+builtin blocktype RowDeleter {
+	input default oftype Sheet;
+	output default oftype Sheet;
+	
+	/**
+	* The rows to delete.
+	*/
+	property delete oftype Collection<CellRange>;
+}

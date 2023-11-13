@@ -6,23 +6,24 @@ import { strict as assert } from 'assert';
 
 import {
   BlockDefinition,
+  BlockTypeWrapper,
   ConstraintDefinition,
+  ConstraintTypeWrapper,
   EvaluationContext,
   InternalValueRepresentation,
-  MetaInformation,
   PipelineDefinition,
   PropertyAssignment,
   TransformDefinition,
   Valuetype,
   evaluatePropertyValue,
-  getOrFailMetaInformation,
-  isConstraintDefinition,
+  isBlockDefinition,
   isExpressionConstraintDefinition,
   isPipelineDefinition,
   isPropertyBody,
   isTransformDefinition,
+  isTypedConstraintDefinition,
 } from '@jvalue/jayvee-language-server';
-import { isReference } from 'langium';
+import { assertUnreachable, isReference } from 'langium';
 
 import {
   DebugGranularity,
@@ -128,8 +129,8 @@ export class ExecutionContext {
     propertyName: string,
     valuetype: Valuetype<I>,
   ): I {
-    const metaInf = this.getMetaInformationOfCurrentNode();
-    const propertySpec = metaInf.getPropertySpecification(propertyName);
+    const wrapper = this.getWrapperOfCurrentNode();
+    const propertySpec = wrapper.getPropertySpecification(propertyName);
     assert(propertySpec !== undefined);
 
     const defaultValue = propertySpec.defaultValue;
@@ -139,19 +140,30 @@ export class ExecutionContext {
     return defaultValue;
   }
 
-  private getMetaInformationOfCurrentNode() {
+  private getWrapperOfCurrentNode() {
     const currentNode = this.getCurrentNode();
     assert(!isPipelineDefinition(currentNode));
     assert(!isExpressionConstraintDefinition(currentNode));
     assert(!isTransformDefinition(currentNode));
 
-    let metaInf: MetaInformation;
-    if (isConstraintDefinition(currentNode)) {
-      metaInf = getOrFailMetaInformation(currentNode.type);
-    } else {
-      assert(isReference(currentNode.type));
-      metaInf = getOrFailMetaInformation(currentNode.type);
+    assert(isReference(currentNode.type));
+    if (isTypedConstraintDefinition(currentNode)) {
+      assert(
+        ConstraintTypeWrapper.canBeWrapped(currentNode.type),
+        `ConstraintType ${
+          currentNode.type.ref?.name ?? '<unresolved reference>'
+        } cannot be wrapped`,
+      );
+      return new ConstraintTypeWrapper(currentNode.type);
+    } else if (isBlockDefinition(currentNode)) {
+      assert(
+        BlockTypeWrapper.canBeWrapped(currentNode.type),
+        `Blocktype ${
+          currentNode.type.ref?.name ?? '<unresolved reference>'
+        } cannot be wrapped`,
+      );
+      return new BlockTypeWrapper(currentNode.type);
     }
-    return metaInf;
+    assertUnreachable(currentNode);
   }
 }

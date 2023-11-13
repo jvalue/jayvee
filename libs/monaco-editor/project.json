@@ -64,7 +64,8 @@
       "options": {
         "commands": [
           "node tools/scripts/publish.mjs monaco-editor"
-        ]
+        ],
+        "parallel": false
       }
     },
     "pack": {
@@ -73,7 +74,8 @@
       "options": {
         "commands": [
           "node tools/scripts/pack.mjs monaco-editor"
-        ]
+        ],
+        "parallel": false
       }
     }
   },

@@ -1,0 +1,22 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+transform TestTransform {
+  from firstInputParam oftype decimal;
+  from secondInputParam oftype decimal;
+  to result oftype integer;
+
+  result: ceil(firstInputParam) + floor(secondInputParam);
+}
+
+pipeline TestPipeline {
+
+  block TestExtractor oftype TestFileExtractor {
+  }
+
+  block TestLoader oftype TestFileLoader {
+  }
+
+  TestExtractor -> TestLoader;
+}

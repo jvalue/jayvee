@@ -1,0 +1,14 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* Interprets an input file as a XLSX-file and outputs a `Workbook` containing `Sheet`s.
+* 
+* @example Interprets an input file as a XLSX-file and outputs a `Workbook` containing `Sheet`s.
+* block AgencyXLSXInterpreter oftype XLSXInterpreter { }
+*/
+builtin blocktype XLSXInterpreter {
+	input default oftype File;
+	output default oftype Workbook;
+}

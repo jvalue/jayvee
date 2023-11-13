@@ -3,9 +3,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  getRegisteredConstraintMetaInformation,
-  registerConstraints,
+  createJayveeServices,
+  getAllBuiltinConstraintTypes,
+  initializeWorkspace,
 } from '@jvalue/jayvee-language-server';
+import { NodeFileSystem } from 'langium/node';
 
 import {
   getRegisteredConstraintExecutors,
@@ -13,13 +15,20 @@ import {
 } from './constraint-executor-registry';
 
 describe('default constraint executors', () => {
-  registerConstraints();
-  registerDefaultConstraintExecutors();
+  it('should include executors for all constraint types', async () => {
+    // Create language services
+    const services = createJayveeServices(NodeFileSystem).Jayvee;
+    await initializeWorkspace(services);
 
-  getRegisteredConstraintMetaInformation().forEach((metaInf) => {
-    it(`should include an executor for ${metaInf.type}`, () => {
+    registerDefaultConstraintExecutors();
+
+    getAllBuiltinConstraintTypes(
+      services.shared.workspace.LangiumDocuments,
+    ).forEach((constraintType) => {
       const matchingConstraintExecutorClass =
-        getRegisteredConstraintExecutors().find((c) => c.type === metaInf.type);
+        getRegisteredConstraintExecutors().find(
+          (c) => c.type === constraintType.type,
+        );
 
       expect(matchingConstraintExecutorClass).toBeDefined();
     });

@@ -20,7 +20,6 @@ import {
 } from './ast/generated/module';
 import { JayveeWorkspaceManager } from './builtin-library/jayvee-workspace-manager';
 import { JayveeCompletionProvider } from './completion/jayvee-completion-provider';
-import { registerConstraints } from './constraint/constraint-registry';
 import { JayveeHoverProvider } from './hover/jayvee-hover-provider';
 import { JayveeValueConverter } from './jayvee-value-converter';
 import { RuntimeParameterProvider } from './services/runtime-parameter-provider';
@@ -108,8 +107,6 @@ export function createJayveeServices(context: DefaultSharedModuleContext): {
     JayveeModule,
   );
   shared.ServiceRegistry.register(Jayvee);
-
-  registerConstraints();
 
   return { shared, Jayvee };
 }

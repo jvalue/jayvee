@@ -1,0 +1,15 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* Limits the values to a defined a set of allowed values. Only values in the list are valid.
+* 
+* @example Only allows the common abbreviations for millisecond, second, minute, etc..
+* constraint TimeUnitString oftype AllowlistConstraint {
+*   allowlist: ["ms", "s", "min", "h", "d", "m", "y"];
+* }
+*/
+builtin constrainttype AllowlistConstraint on text {
+	property allowlist oftype Collection<text> ;
+}

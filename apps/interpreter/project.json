@@ -33,7 +33,8 @@
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
-        "commands": ["node --enable-source-maps dist/apps/interpreter/main.js"]
+        "commands": ["node --enable-source-maps dist/apps/interpreter/main.js"],
+        "parallel": false
       }
     },
     "test": {
@@ -52,7 +53,8 @@
           "node tools/scripts/interpreter/prepend-shebang.mjs interpreter main.js",
           "node tools/scripts/add-package-json-version.mjs interpreter",
           "node tools/scripts/interpreter/rewrite-version-mainjs.mjs interpreter"
-        ]
+        ],
+        "parallel": false
       }
     },
     "publish": {
@@ -61,7 +63,8 @@
       "options": {
         "commands": [
           "node tools/scripts/publish.mjs interpreter"
-        ]
+        ],
+        "parallel": false
       }
     },
     "pack": {
@@ -70,7 +73,8 @@
       "options": {
         "commands": [
           "node tools/scripts/pack.mjs interpreter"
-        ]
+        ],
+        "parallel": false
       }
     },
     "install": {
@@ -79,7 +83,8 @@
       "options": {
         "commands": [
           "npm i -g dist/apps/interpreter/jvalue-jayvee-interpreter-*.tgz"
-        ]
+        ],
+        "parallel": false
       }
     }
   },

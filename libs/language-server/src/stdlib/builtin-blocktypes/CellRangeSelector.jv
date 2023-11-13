@@ -1,0 +1,21 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* Selects a subset of a `Sheet` to produce a new `Sheet`.
+* 
+* @example Selects the cells in the given range and produces a new `Sheet` containing only the selected cells.
+* block CarsCoreDataSelector oftype CellRangeSelector {
+*   select: range A1:E*;
+* }
+*/
+builtin blocktype CellRangeSelector {
+	input default oftype Sheet;
+	output default oftype Sheet;
+	
+	/**
+	* The cell range to select.
+	*/
+	property select oftype CellRange;
+}

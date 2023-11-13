@@ -1,0 +1,21 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* Deletes columns from a `Sheet`. Column IDs of subsequent columns will be shifted accordingly, so there will be no gaps.
+* 
+* @example Deletes column B (i.e. the second column).
+* block MpgColumnDeleter oftype ColumnDeleter {
+*   delete: [column B];
+* }
+*/
+builtin blocktype ColumnDeleter {
+	input default oftype Sheet;
+	output default oftype Sheet;
+	
+	/** 
+	* The columns to delete. Has to be a full column.
+	*/
+	property delete oftype Collection<CellRange>;
+}

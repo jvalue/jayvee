@@ -4,19 +4,27 @@
 
 import { strict as assert } from 'assert';
 
-import { AstNode, Reference, assertUnreachable } from 'langium';
-
-// eslint-disable-next-line import/no-cycle
-import { getMetaInformation } from '../meta-information/meta-inf-registry';
+import {
+  AstNode,
+  LangiumDocuments,
+  Reference,
+  assertUnreachable,
+} from 'langium';
 
 import {
   BinaryExpression,
   BlockDefinition,
+  BuiltinBlocktypeDefinition,
+  BuiltinConstrainttypeDefinition,
   CompositeBlocktypeDefinition,
   PipelineDefinition,
   UnaryExpression,
+  isBuiltinBlocktypeDefinition,
   isCompositeBlocktypeDefinition,
+  isJayveeModel,
 } from './generated/ast';
+// eslint-disable-next-line import/no-cycle
+import { BlockTypeWrapper, ConstraintTypeWrapper } from './wrappers';
 import { PipeWrapper, createSemanticPipes } from './wrappers/pipe-wrapper';
 
 export function collectStartingBlocks(
@@ -29,7 +37,7 @@ export function collectStartingBlocks(
       .map((blockRef: Reference<BlockDefinition> | undefined) => {
         if (
           blockRef?.ref !== undefined &&
-          getMetaInformation(blockRef.ref.type) !== undefined
+          BlockTypeWrapper.canBeWrapped(blockRef.ref.type)
         ) {
           return blockRef.ref;
         }
@@ -45,12 +53,12 @@ export function collectStartingBlocks(
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const blocks = container?.blocks ?? [];
   for (const block of blocks) {
-    const blockMetaInf = getMetaInformation(block.type);
-    if (blockMetaInf === undefined) {
+    if (!BlockTypeWrapper.canBeWrapped(block.type)) {
       continue;
     }
+    const blockType = new BlockTypeWrapper(block.type);
 
-    if (!blockMetaInf.hasInput()) {
+    if (!blockType.hasInput()) {
       result.push(block);
     }
   }
@@ -186,4 +194,79 @@ export function getNextAstNodeContainer<T extends AstNode>(
     return node.$container;
   }
   return getNextAstNodeContainer(node.$container, guard);
+}
+
+/**
+ * Utility function that gets all builtin blocktypes.
+ * Duplicates are only added once.
+ * Make sure to call @see initializeWorkspace first so that the file system is initialized.
+ */
+export function getAllBuiltinBlocktypes(
+  documentService: LangiumDocuments,
+): BlockTypeWrapper[] {
+  const allBuiltinBlocktypes: BlockTypeWrapper[] = [];
+  const visitedBuiltinBlocktypeDefinitions =
+    new Set<BuiltinBlocktypeDefinition>();
+
+  documentService.all
+    .map((document) => document.parseResult.value)
+    .forEach((parsedDocument) => {
+      if (!isJayveeModel(parsedDocument)) {
+        throw new Error('Expected parsed document to be a JayveeModel');
+      }
+      parsedDocument.blocktypes.forEach((blocktypeDefinition) => {
+        if (!isBuiltinBlocktypeDefinition(blocktypeDefinition)) {
+          return;
+        }
+
+        const wasAlreadyVisited =
+          visitedBuiltinBlocktypeDefinitions.has(blocktypeDefinition);
+        if (wasAlreadyVisited) {
+          return;
+        }
+
+        if (BlockTypeWrapper.canBeWrapped(blocktypeDefinition)) {
+          allBuiltinBlocktypes.push(new BlockTypeWrapper(blocktypeDefinition));
+          visitedBuiltinBlocktypeDefinitions.add(blocktypeDefinition);
+        }
+      });
+    });
+  return allBuiltinBlocktypes;
+}
+
+/**
+ * Utility function that gets all builtin constraint types.
+ * Duplicates are only added once.
+ * Make sure to call @see initializeWorkspace first so that the file system is initialized.
+ */
+export function getAllBuiltinConstraintTypes(
+  documentService: LangiumDocuments,
+): ConstraintTypeWrapper[] {
+  const allBuiltinConstraintTypes: ConstraintTypeWrapper[] = [];
+  const visitedBuiltinConstraintTypeDefinitions =
+    new Set<BuiltinConstrainttypeDefinition>();
+
+  documentService.all
+    .map((document) => document.parseResult.value)
+    .forEach((parsedDocument) => {
+      if (!isJayveeModel(parsedDocument)) {
+        throw new Error('Expected parsed document to be a JayveeModel');
+      }
+      parsedDocument.constrainttypes.forEach((constraintTypeDefinition) => {
+        const wasAlreadyVisited = visitedBuiltinConstraintTypeDefinitions.has(
+          constraintTypeDefinition,
+        );
+        if (wasAlreadyVisited) {
+          return;
+        }
+
+        if (ConstraintTypeWrapper.canBeWrapped(constraintTypeDefinition)) {
+          allBuiltinConstraintTypes.push(
+            new ConstraintTypeWrapper(constraintTypeDefinition),
+          );
+          visitedBuiltinConstraintTypeDefinitions.add(constraintTypeDefinition);
+        }
+      });
+    });
+  return allBuiltinConstraintTypes;
 }

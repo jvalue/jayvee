@@ -7,14 +7,13 @@ import { NodeFileSystem } from 'langium/node';
 
 import {
   EvaluationContext,
-  MetaInformation,
   PropertyAssignment,
   PropertyBody,
   RuntimeParameterProvider,
+  TypedObjectWrapper,
   ValidationContext,
   createJayveeServices,
-  getMetaInformation,
-  useExtension,
+  getTypedObjectWrapper,
 } from '../../../lib';
 import {
   ParseHelperOptions,
@@ -23,7 +22,6 @@ import {
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../test';
-import { TestLangExtension } from '../../../test/extension';
 
 import { validatePropertyAssignment } from './property-assignment';
 
@@ -52,8 +50,8 @@ describe('Validation of PropertyAssignment', () => {
     ) as PropertyBody;
 
     const type = propertyBody.$container.type;
-    const metaInf = getMetaInformation(type);
-    expect(metaInf === undefined);
+    const wrapper = getTypedObjectWrapper(type);
+    expect(wrapper).toBeDefined();
 
     const propertyAssignment = locator.getAstNode<PropertyAssignment>(
       propertyBody,
@@ -62,15 +60,13 @@ describe('Validation of PropertyAssignment', () => {
 
     validatePropertyAssignment(
       propertyAssignment,
-      metaInf as MetaInformation,
+      wrapper as TypedObjectWrapper,
       new ValidationContext(validationAcceptorMock),
       new EvaluationContext(new RuntimeParameterProvider()),
     );
   }
 
   beforeAll(() => {
-    // Register test extension
-    useExtension(new TestLangExtension());
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;
@@ -135,7 +131,7 @@ describe('Validation of PropertyAssignment', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
-      `The value needs to be of type text but is of type integer`,
+      `The value of property "textProperty" needs to be of type text but is of type integer`,
       expect.any(Object),
     );
   });

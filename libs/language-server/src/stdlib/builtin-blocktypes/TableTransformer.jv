@@ -1,0 +1,56 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* Applies a transform on each value of a column. The input port type of the used transform has to match the type of the input column.
+* 
+* @example Given a column "temperature" with temperature values in Celsius, it overwrites the column with computed values in Fahrenheit by using the `CelsiusToFahrenheit` transform. The transform itself is defined elsewhere in the model.
+* 
+* transform CelsiusToFahrenheit {
+*   from Celsius oftype decimal;
+*   to Fahrenheit oftype decimal;
+* 
+*   Fahrenheit: (Celsius * 9/5) + 32;
+* }
+* 
+* block CelsiusToFahrenheitTransformer oftype TableTransformer {
+*   inputColumns: ['temperature'];
+*   outputColumn: 'temperature';
+*   use: CelsiusToFahrenheit;
+* }
+* 
+* @example Given a column "temperatureCelsius" with temperature values in Celsius, it adds a new column "temperatureFahrenheit" with computed values in Fahrenheit by using the `CelsiusToFahrenheit` transform. The transform itself is defined elsewhere in the model.
+* 
+* transform CelsiusToFahrenheit {
+*   from Celsius oftype decimal;
+*   to Fahrenheit oftype decimal;
+* 
+*   Fahrenheit: (Celsius * 9/5) + 32;
+* }
+* 
+* block CelsiusToFahrenheitTransformer oftype TableTransformer {
+*   inputColumns: ['temperatureCelsius'];
+*   outputColumn: 'temperatureFahrenheit';
+*   use: CelsiusToFahrenheit;
+* }
+*/
+builtin blocktype TableTransformer {
+	input default oftype Table;
+	output default oftype Table;
+	
+  /**
+  * The names of the input columns. The columns have to be present in the table and match with the transform's input port types.
+	*/
+  property inputColumns oftype Collection<text>;
+	
+  /**
+  * The name of the output column. Overwrites the column if it already exists, or otherwise creates a new one.
+	*/
+  property outputColumn oftype text;
+	
+  /**
+  * Reference to the transform that is applied to the column.
+	*/
+  property use oftype Transform; 
+}

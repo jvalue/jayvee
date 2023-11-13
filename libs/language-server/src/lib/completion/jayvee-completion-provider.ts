@@ -16,7 +16,11 @@ import {
 } from 'langium';
 import { CompletionItemKind } from 'vscode-languageserver';
 
-import { createValuetype } from '../ast';
+import {
+  TypedObjectWrapper,
+  createValuetype,
+  getTypedObjectWrapper,
+} from '../ast';
 import {
   BlockDefinition,
   ConstraintDefinition,
@@ -29,13 +33,11 @@ import {
   isPropertyAssignment,
   isPropertyBody,
 } from '../ast/generated/ast';
-import { LspDocGenerator } from '../docs/lsp-doc-generator';
-import { MetaInformation } from '../meta-information/meta-inf';
 import {
-  getMetaInformation,
-  getRegisteredBlockMetaInformation,
-  getRegisteredConstraintMetaInformation,
-} from '../meta-information/meta-inf-registry';
+  getAllBuiltinBlocktypes,
+  getAllBuiltinConstraintTypes,
+} from '../ast/model-util';
+import { LspDocGenerator } from '../docs/lsp-doc-generator';
 
 const RIGHT_ARROW_SYMBOL = '\u{2192}';
 
@@ -85,13 +87,14 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
   private completionForBlockType(
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
-    getRegisteredBlockMetaInformation().forEach((metaInf) => {
+    const blockTypes = getAllBuiltinBlocktypes(this.langiumDocumentService);
+    blockTypes.forEach((blockType) => {
       const lspDocBuilder = new LspDocGenerator();
-      const markdownDoc = lspDocBuilder.generateBlockTypeDoc(metaInf);
+      const markdownDoc = lspDocBuilder.generateBlockTypeDoc(blockType);
       acceptor({
-        label: metaInf.type,
+        label: blockType.type,
         labelDetails: {
-          detail: ` ${metaInf.inputType} ${RIGHT_ARROW_SYMBOL} ${metaInf.outputType}`,
+          detail: ` ${blockType.inputType} ${RIGHT_ARROW_SYMBOL} ${blockType.outputType}`,
         },
         kind: CompletionItemKind.Class,
         detail: `(block type)`,
@@ -106,14 +109,24 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
   private completionForConstraintType(
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
-    getRegisteredConstraintMetaInformation().forEach((metaInf) => {
+    const constraintTypes = getAllBuiltinConstraintTypes(
+      this.langiumDocumentService,
+    );
+    constraintTypes.forEach((constraintType) => {
+      const lspDocBuilder = new LspDocGenerator();
+      const markdownDoc =
+        lspDocBuilder.generateConstraintTypeDoc(constraintType);
       acceptor({
-        label: metaInf.type,
+        label: constraintType.type,
         labelDetails: {
-          detail: ` ${metaInf.compatibleValuetype.getName()}`,
+          detail: ` on ${constraintType.on.getName()}`,
         },
         kind: CompletionItemKind.Class,
         detail: `(constraint type)`,
+        documentation: {
+          kind: 'markdown',
+          value: markdownDoc,
+        },
       });
     });
   }
@@ -152,10 +165,11 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       container = astNode.$container.$container;
     }
 
-    const metaInf = getMetaInformation(container.type);
-    if (metaInf === undefined) {
+    const wrapper = getTypedObjectWrapper(container.type);
+    if (wrapper === undefined) {
       return;
     }
+
     const presentPropertyNames = container.body.properties.map(
       (attr) => attr.name,
     );
@@ -165,12 +179,12 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       'optional',
     ];
     for (const propertyKind of propertyKinds) {
-      const propertyNames = metaInf.getPropertyNames(
+      const propertyNames = wrapper.getPropertyNames(
         propertyKind,
         presentPropertyNames,
       );
       this.constructPropertyCompletionValueItems(
-        metaInf,
+        wrapper,
         propertyNames,
         propertyKind,
       ).forEach(acceptor);
@@ -178,12 +192,12 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
   }
 
   private constructPropertyCompletionValueItems(
-    metaInf: MetaInformation,
+    wrapper: TypedObjectWrapper,
     propertyNames: string[],
     kind: 'required' | 'optional',
   ): CompletionValueItem[] {
     return propertyNames.map((propertyName) => {
-      const propertySpec = metaInf.getPropertySpecification(propertyName);
+      const propertySpec = wrapper.getPropertySpecification(propertyName);
       assert(propertySpec !== undefined);
 
       const completionValueItem: CompletionValueItem = {
@@ -203,7 +217,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
 
       const lspDocBuilder = new LspDocGenerator();
       const markdownDoc = lspDocBuilder.generatePropertyDoc(
-        metaInf,
+        wrapper,
         propertyName,
       );
       if (markdownDoc !== undefined) {

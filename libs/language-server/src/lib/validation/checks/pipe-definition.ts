@@ -9,7 +9,7 @@
 
 import { PipeDefinition } from '../../ast/generated/ast';
 import { createSemanticPipes } from '../../ast/wrappers/pipe-wrapper';
-import { getMetaInformation } from '../../meta-information/meta-inf-registry';
+import { BlockTypeWrapper } from '../../ast/wrappers/typed-object/blocktype-wrapper';
 import { ValidationContext } from '../validation-context';
 
 export function validatePipeDefinition(
@@ -25,20 +25,21 @@ function checkBlockCompatibility(
 ): void {
   const semanticPipes = createSemanticPipes(pipe);
   for (const semanticPipe of semanticPipes) {
-    const fromBlockType = semanticPipe.from?.type;
-    const toBlockType = semanticPipe.to?.type;
+    const fromBlockTypeDefinition = semanticPipe.from?.type;
+    const toBlockTypeDefinition = semanticPipe.to?.type;
 
-    const fromBlockMetaInf = getMetaInformation(fromBlockType);
-
-    const toBlockMetaInf = getMetaInformation(toBlockType);
-
-    if (fromBlockMetaInf === undefined || toBlockMetaInf === undefined) {
+    if (
+      !BlockTypeWrapper.canBeWrapped(fromBlockTypeDefinition) ||
+      !BlockTypeWrapper.canBeWrapped(toBlockTypeDefinition)
+    ) {
       continue;
     }
+    const fromBlockType = new BlockTypeWrapper(fromBlockTypeDefinition);
+    const toBlockType = new BlockTypeWrapper(toBlockTypeDefinition);
 
-    if (fromBlockMetaInf.hasOutput() && toBlockMetaInf.hasInput()) {
-      if (!fromBlockMetaInf.canBeConnectedTo(toBlockMetaInf)) {
-        const errorMessage = `The output type "${fromBlockMetaInf.outputType}" of ${fromBlockMetaInf.type} is incompatible with the input type "${toBlockMetaInf.inputType}" of ${toBlockMetaInf.type}`;
+    if (fromBlockType.hasOutput() && toBlockType.hasInput()) {
+      if (!fromBlockType.canBeConnectedTo(toBlockType)) {
+        const errorMessage = `The output type "${fromBlockType.outputType}" of ${fromBlockType.type} is incompatible with the input type "${toBlockType.inputType}" of ${toBlockType.type}`;
         context.accept('error', errorMessage, semanticPipe.getFromDiagnostic());
         context.accept('error', errorMessage, semanticPipe.getToDiagnostic());
       }

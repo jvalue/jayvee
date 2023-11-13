@@ -19,7 +19,7 @@ import {
   err,
   implementsStatic,
   inferFileExtensionFromFileExtensionString,
-  inferMimeTypeFromContentTypeString,
+  inferMimeTypeFromFileExtensionString,
 } from '@jvalue/jayvee-execution';
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 import * as JSZip from 'jszip';
@@ -130,7 +130,7 @@ export class ArchiveInterpreterExecutor extends AbstractBlockExecutor<
     const extName = path.extname(fileName);
 
     const mimeType =
-      inferMimeTypeFromContentTypeString(extName) ||
+      inferMimeTypeFromFileExtensionString(extName) ||
       MimeType.APPLICATION_OCTET_STREAM;
     const fileExtension =
       inferFileExtensionFromFileExtensionString(extName) || FileExtension.NONE;

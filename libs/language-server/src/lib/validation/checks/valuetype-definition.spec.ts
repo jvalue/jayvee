@@ -11,7 +11,6 @@ import {
   ValidationContext,
   ValuetypeDefinition,
   createJayveeServices,
-  useExtension,
 } from '../../../lib';
 import {
   ParseHelperOptions,
@@ -20,7 +19,6 @@ import {
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../test';
-import { TestLangExtension } from '../../../test/extension';
 
 import { validateValuetypeDefinition } from './valuetype-definition';
 
@@ -56,8 +54,6 @@ describe('Validation of ValuetypeDefinition', () => {
   }
 
   beforeAll(() => {
-    // Register test extension
-    useExtension(new TestLangExtension());
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;

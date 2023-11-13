@@ -17,7 +17,7 @@ ExpressionConstraintDefinition:
   'constraint' name=ID 'on' valuetype=ValuetypeReference ':' expression=Expression ';';
 
 BuiltinConstrainttypeDefinition:
-  'builtin' 'constrainttype' name=ID '{'
+  'builtin' 'constrainttype' name=ID 'on' valuetype=ValuetypeReference '{'
     (properties+=ConstrainttypeProperty)*
 '}';
 
