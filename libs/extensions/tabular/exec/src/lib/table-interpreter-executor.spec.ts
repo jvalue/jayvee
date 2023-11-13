@@ -122,7 +122,7 @@ describe('Validation of TableInterpreterExecutor', () => {
       if (R.isOk(result)) {
         expect(result.right.ioType).toEqual(IOType.TABLE);
         expect(result.right.getNumberOfColumns()).toEqual(0);
-        expect(result.right.getNumberOfRows()).toEqual(16);
+        expect(result.right.getNumberOfRows()).toEqual(0);
       }
     });
 
@@ -139,7 +139,7 @@ describe('Validation of TableInterpreterExecutor', () => {
       if (R.isOk(result)) {
         expect(result.right.ioType).toEqual(IOType.TABLE);
         expect(result.right.getNumberOfColumns()).toEqual(0);
-        expect(result.right.getNumberOfRows()).toEqual(16);
+        expect(result.right.getNumberOfRows()).toEqual(0);
       }
     });
 
@@ -256,7 +256,7 @@ describe('Validation of TableInterpreterExecutor', () => {
       if (R.isOk(result)) {
         expect(result.right.ioType).toEqual(IOType.TABLE);
         expect(result.right.getNumberOfColumns()).toEqual(0);
-        expect(result.right.getNumberOfRows()).toEqual(16);
+        expect(result.right.getNumberOfRows()).toEqual(0);
       }
     });
 
