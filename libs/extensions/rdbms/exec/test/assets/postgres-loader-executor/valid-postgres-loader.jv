@@ -1,0 +1,20 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+pipeline TestPipeline {
+
+  block TestExtractor oftype TestFileExtractor {
+  }
+
+  block TestBlock oftype PostgresLoader {
+    host: "localhost";
+    port: 5432;
+    username: "postgres";
+    password: "postgres";
+    database: "TestDB";
+    table: "Test";
+  }
+
+  TestExtractor -> TestBlock;
+}
