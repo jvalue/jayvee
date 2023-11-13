@@ -6,18 +6,16 @@ import * as path from 'path';
 
 import * as R from '@jvalue/jayvee-execution';
 import { getTestExecutionContext } from '@jvalue/jayvee-execution/test';
-import { TabularLangExtension } from '@jvalue/jayvee-extensions/tabular/lang';
 import {
   BlockDefinition,
   IOType,
   PrimitiveValuetypes,
   createJayveeServices,
-  useExtension,
 } from '@jvalue/jayvee-language-server';
 import {
   ParseHelperOptions,
-  TestLangExtension,
   expectNoParserAndLexerErrors,
+  loadTestExtensions,
   parseHelper,
   readJvTestAssetHelper,
 } from '@jvalue/jayvee-language-server/test';
@@ -96,12 +94,12 @@ describe('Validation of TableTransformerExecutor', () => {
     );
   }
 
-  beforeAll(() => {
-    // Register extensions
-    useExtension(new TabularLangExtension());
-    useExtension(new TestLangExtension());
+  beforeAll(async () => {
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
+    await loadTestExtensions(services, [
+      path.resolve(__dirname, '../../test/test-extension/TestBlockTypes.jv'),
+    ]);
     locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);

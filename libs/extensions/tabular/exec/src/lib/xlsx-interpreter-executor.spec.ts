@@ -9,17 +9,15 @@ import {
   createBinaryFileFromLocalFile,
   getTestExecutionContext,
 } from '@jvalue/jayvee-execution/test';
-import { TabularLangExtension } from '@jvalue/jayvee-extensions/tabular/lang';
 import {
   BlockDefinition,
   IOType,
   createJayveeServices,
-  useExtension,
 } from '@jvalue/jayvee-language-server';
 import {
   ParseHelperOptions,
-  TestLangExtension,
   expectNoParserAndLexerErrors,
+  loadTestExtensions,
   parseHelper,
   readJvTestAssetHelper,
 } from '@jvalue/jayvee-language-server/test';
@@ -77,12 +75,12 @@ describe('Validation of XLSXInterpreterExecutor', () => {
     );
   }
 
-  beforeAll(() => {
-    // Register extensions
-    useExtension(new TabularLangExtension());
-    useExtension(new TestLangExtension());
+  beforeAll(async () => {
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
+    await loadTestExtensions(services, [
+      path.resolve(__dirname, '../../test/test-extension/TestBlockTypes.jv'),
+    ]);
     locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
