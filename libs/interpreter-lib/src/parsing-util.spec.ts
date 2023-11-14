@@ -4,7 +4,7 @@
 
 import * as path from 'path';
 
-import { CachedLogger } from '@jvalue/jayvee-execution';
+import { CachedLogger, DiagnosticSeverity } from '@jvalue/jayvee-execution';
 import {
   JayveeServices,
   createJayveeServices,
@@ -68,12 +68,11 @@ describe('Validation of parsing-util', () => {
 
       await parseAndValidateDocument(text);
 
-      expect(logger.getLogs().error.length).toEqual(0);
-      expect(logger.getLogs().info).toHaveLength(0);
-      expect(logger.getLogs().error).toHaveLength(0);
-      expect(logger.getLogs().debug).toHaveLength(0);
-      expect(logger.getLogs().hint).toHaveLength(0);
-      expect(logger.getLogs().warning).toHaveLength(0);
+      expect(logger.getLogs(DiagnosticSeverity.ERROR)).toHaveLength(0);
+      expect(logger.getLogs(DiagnosticSeverity.INFO)).toHaveLength(0);
+      expect(logger.getLogs(DiagnosticSeverity.DEBUG)).toHaveLength(0);
+      expect(logger.getLogs(DiagnosticSeverity.HINT)).toHaveLength(0);
+      expect(logger.getLogs(DiagnosticSeverity.WARNING)).toHaveLength(0);
     });
 
     it('should diagnose error on wrong loader type', async () => {
@@ -84,12 +83,11 @@ describe('Validation of parsing-util', () => {
       try {
         await parseAndValidateDocument(text);
       } catch (e) {
-        expect(logger.getLogs().error.length).toBeGreaterThanOrEqual(1);
-        expect(logger.getLogs().info).toHaveLength(0);
-        expect(logger.getLogs().error).toHaveLength(2 * 5); // 2 calls that get formated to 5 lines each
-        expect(logger.getLogs().debug).toHaveLength(0);
-        expect(logger.getLogs().hint).toHaveLength(0);
-        expect(logger.getLogs().warning).toHaveLength(0);
+        expect(logger.getLogs(DiagnosticSeverity.INFO)).toHaveLength(0);
+        expect(logger.getLogs(DiagnosticSeverity.ERROR)).toHaveLength(2 * 5); // 2 calls that get formated to 5 lines each
+        expect(logger.getLogs(DiagnosticSeverity.DEBUG)).toHaveLength(0);
+        expect(logger.getLogs(DiagnosticSeverity.HINT)).toHaveLength(0);
+        expect(logger.getLogs(DiagnosticSeverity.WARNING)).toHaveLength(0);
       }
     });
 
@@ -101,12 +99,11 @@ describe('Validation of parsing-util', () => {
       try {
         await parseAndValidateDocument(text);
       } catch (e) {
-        expect(logger.getLogs().error.length).toEqual(1);
-        expect(logger.getLogs().info).toHaveLength(0);
-        expect(logger.getLogs().error).toHaveLength(1);
-        expect(logger.getLogs().debug).toHaveLength(0);
-        expect(logger.getLogs().hint).toHaveLength(0);
-        expect(logger.getLogs().warning).toHaveLength(0);
+        expect(logger.getLogs(DiagnosticSeverity.INFO)).toHaveLength(0);
+        expect(logger.getLogs(DiagnosticSeverity.ERROR)).toHaveLength(1);
+        expect(logger.getLogs(DiagnosticSeverity.DEBUG)).toHaveLength(0);
+        expect(logger.getLogs(DiagnosticSeverity.HINT)).toHaveLength(0);
+        expect(logger.getLogs(DiagnosticSeverity.WARNING)).toHaveLength(0);
       }
     });
   });
@@ -123,12 +120,11 @@ describe('Validation of parsing-util', () => {
         logger,
       );
 
-      expect(logger.getLogs().error.length).toEqual(0);
-      expect(logger.getLogs().info).toHaveLength(0);
-      expect(logger.getLogs().error).toHaveLength(0);
-      expect(logger.getLogs().debug).toHaveLength(0);
-      expect(logger.getLogs().hint).toHaveLength(0);
-      expect(logger.getLogs().warning).toHaveLength(0);
+      expect(logger.getLogs(DiagnosticSeverity.INFO)).toHaveLength(0);
+      expect(logger.getLogs(DiagnosticSeverity.ERROR)).toHaveLength(0);
+      expect(logger.getLogs(DiagnosticSeverity.DEBUG)).toHaveLength(0);
+      expect(logger.getLogs(DiagnosticSeverity.HINT)).toHaveLength(0);
+      expect(logger.getLogs(DiagnosticSeverity.WARNING)).toHaveLength(0);
     });
 
     it('should diagnose error on invalid extension', async () => {
@@ -143,17 +139,16 @@ describe('Validation of parsing-util', () => {
           logger,
         );
       } catch (e) {
-        expect(logger.getLogs().error.length).toEqual(1);
-        expect(logger.getLogs().info).toHaveLength(0);
-        expect(logger.getLogs().error).toHaveLength(1);
-        expect(logger.getLogs().error[0]).toEqual(
+        expect(logger.getLogs(DiagnosticSeverity.INFO)).toHaveLength(0);
+        expect(logger.getLogs(DiagnosticSeverity.ERROR)).toHaveLength(1);
+        expect(logger.getLogs(DiagnosticSeverity.ERROR)[0]?.message).toEqual(
           expect.stringContaining(
             'Please choose a file with this extension: ".jv"',
           ),
         );
-        expect(logger.getLogs().debug).toHaveLength(0);
-        expect(logger.getLogs().hint).toHaveLength(0);
-        expect(logger.getLogs().warning).toHaveLength(0);
+        expect(logger.getLogs(DiagnosticSeverity.DEBUG)).toHaveLength(0);
+        expect(logger.getLogs(DiagnosticSeverity.HINT)).toHaveLength(0);
+        expect(logger.getLogs(DiagnosticSeverity.WARNING)).toHaveLength(0);
       }
     });
 
@@ -169,16 +164,15 @@ describe('Validation of parsing-util', () => {
           logger,
         );
       } catch (e) {
-        expect(logger.getLogs().error.length).toEqual(1);
-        expect(logger.getLogs().info).toHaveLength(0);
-        expect(logger.getLogs().error).toHaveLength(1);
-        expect(logger.getLogs().error[0]).toMatch(
+        expect(logger.getLogs(DiagnosticSeverity.INFO)).toHaveLength(0);
+        expect(logger.getLogs(DiagnosticSeverity.ERROR)).toHaveLength(1);
+        expect(logger.getLogs(DiagnosticSeverity.ERROR)[0]?.message).toMatch(
           // eslint-disable-next-line no-useless-escape
           /File [\w\-\/]*\/libs\/interpreter-lib\/test\/assets\/parsing-util\/extractDocumentFromFile\/invalid-missing-file\.jv does not exist\./,
         );
-        expect(logger.getLogs().debug).toHaveLength(0);
-        expect(logger.getLogs().hint).toHaveLength(0);
-        expect(logger.getLogs().warning).toHaveLength(0);
+        expect(logger.getLogs(DiagnosticSeverity.DEBUG)).toHaveLength(0);
+        expect(logger.getLogs(DiagnosticSeverity.HINT)).toHaveLength(0);
+        expect(logger.getLogs(DiagnosticSeverity.WARNING)).toHaveLength(0);
       }
     });
   });
