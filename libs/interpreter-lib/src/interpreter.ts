@@ -28,6 +28,7 @@ import {
   collectStartingBlocks,
   createJayveeServices,
   getBlocksInTopologicalSorting,
+  initializeWorkspace,
 } from '@jvalue/jayvee-language-server';
 import * as chalk from 'chalk';
 import { NodeFileSystem } from 'langium/node';
@@ -82,16 +83,25 @@ export async function interpretModel(
             ', ',
           )}.`,
       );
-    process.exit(ExitCode.FAILURE);
+    return ExitCode.FAILURE;
   }
 
   useStdExtension();
   registerDefaultConstraintExecutors();
 
   const services = createJayveeServices(NodeFileSystem).Jayvee;
+  await initializeWorkspace(services);
   setupJayveeServices(services, options.env);
 
-  const model = await extractAstNodeFn(services, loggerFactory);
+  let model: JayveeModel;
+  try {
+    model = await extractAstNodeFn(services, loggerFactory);
+  } catch (e) {
+    loggerFactory
+      .createLogger()
+      .logErr('Could not extract the AST node of the given model.');
+    return ExitCode.FAILURE;
+  }
 
   const debugTargets = getDebugTargets(options.debugTarget);
 
