@@ -63,14 +63,14 @@ By introducing the concept of `libraries`, most elements can be defined on three
 2. Within a pipeline
 3. (new) Within a library
 
-The name of an element is given by its definition. The **qualified name** is constructed by prepending container structures in this pattern: `<container name>.<element name>`, e.g., `MyDomainLibraryMyDomainLibrary.MyDomainSpecificValuetype`.
+The name of an element is given by its definition. 
+The **qualified name** is constructed by prepending container structures in this pattern: `<container name>.<element name>`, e.g., `MyDomainLibraryMyDomainLibrary.MyDomainSpecificValuetype`.
 
 **Access paths:**
 - root level elements can access 
   - root level elements by their name
   - and elements of libraries by their qualified name
 - elements within a library can access
-  - root level elements by their name
   - elements within the same library by their name
   - and elements of other libraries by their qualified name
 - elements within a pipeline can access
@@ -80,11 +80,13 @@ The name of an element is given by its definition. The **qualified name** is con
 
 **No-access paths:**
 - elements within a pipeline cannot be referenced by outside elements
+- elements within a library cannot access anything outside a library (the same or a different library)
 
 
 ### Importing elements
 
-Only `libraries` and their elements can be imported into other files. Elements on the root level of a file or within a pipeline cannot be imported.
+Only `libraries` and their elements can be imported into other files. 
+Elements on the root level of a file or within a pipeline cannot be imported.
 
 ```
 import './path/to/jv-file.jv'; // imports all libraries of the file
