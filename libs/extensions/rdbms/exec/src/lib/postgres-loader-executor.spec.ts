@@ -24,15 +24,23 @@ import {
 } from '@jvalue/jayvee-language-server/test';
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
-import { Client } from 'pg';
 
 import { PostgresLoaderExecutor } from './postgres-loader-executor';
 
+// eslint-disable-next-line no-var
+var databaseConnectMock: jest.Mock;
+// eslint-disable-next-line no-var
+var databaseQueryMock: jest.Mock;
+// eslint-disable-next-line no-var
+var databaseEndMock: jest.Mock;
 jest.mock('pg', () => {
+  databaseConnectMock = jest.fn();
+  databaseQueryMock = jest.fn();
+  databaseEndMock = jest.fn();
   const mClient = {
-    connect: jest.fn(),
-    query: jest.fn(),
-    end: jest.fn(),
+    connect: databaseConnectMock,
+    query: databaseQueryMock,
+    end: databaseEndMock,
   };
   return { Client: jest.fn(() => mClient) };
 });
@@ -44,7 +52,6 @@ describe('Validation of PostgresLoaderExecutor', () => {
   ) => Promise<LangiumDocument<AstNode>>;
 
   let locator: AstNodeLocator;
-  let pgClient: jest.Mocked<Client>;
 
   const readJvTestAsset = readJvTestAssetHelper(
     __dirname,
@@ -79,9 +86,6 @@ describe('Validation of PostgresLoaderExecutor', () => {
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });
-  beforeEach(() => {
-    pgClient = new Client() as jest.Mocked<Client>;
-  });
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -113,17 +117,20 @@ describe('Validation of PostgresLoaderExecutor', () => {
     expect(R.isErr(result)).toEqual(false);
     if (R.isOk(result)) {
       expect(result.right.ioType).toEqual(IOType.NONE);
-      expect(pgClient.connect).toBeCalledTimes(1);
-      expect(pgClient.query).nthCalledWith(1, 'DROP TABLE IF EXISTS "Test";');
-      expect(pgClient.query).nthCalledWith(
+      expect(databaseConnectMock).toBeCalledTimes(1);
+      expect(databaseQueryMock).nthCalledWith(
+        1,
+        'DROP TABLE IF EXISTS "Test";',
+      );
+      expect(databaseQueryMock).nthCalledWith(
         2,
         `CREATE TABLE IF NOT EXISTS "Test" ("Column1" text,"Column2" real);`,
       );
-      expect(pgClient.query).nthCalledWith(
+      expect(databaseQueryMock).nthCalledWith(
         3,
         `INSERT INTO "Test" ("Column1","Column2") VALUES ('value 1',20.2)`,
       );
-      expect(pgClient.end).toBeCalledTimes(1);
+      expect(databaseEndMock).toBeCalledTimes(1);
     }
   });
 
@@ -149,7 +156,7 @@ describe('Validation of PostgresLoaderExecutor', () => {
       ],
       1,
     );
-    pgClient.connect.mockImplementation(() => {
+    databaseConnectMock.mockImplementation(() => {
       throw new Error('Connection error');
     });
     const result = await parseAndExecuteExecutor(text, inputTable);
@@ -159,9 +166,9 @@ describe('Validation of PostgresLoaderExecutor', () => {
       expect(result.left.message).toEqual(
         'Could not write to postgres database: Connection error',
       );
-      expect(pgClient.connect).toBeCalledTimes(1);
-      expect(pgClient.query).toBeCalledTimes(0);
-      expect(pgClient.end).toBeCalledTimes(1);
+      expect(databaseConnectMock).toBeCalledTimes(1);
+      expect(databaseQueryMock).toBeCalledTimes(0);
+      expect(databaseEndMock).toBeCalledTimes(1);
     }
   });
 });
