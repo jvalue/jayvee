@@ -42,11 +42,12 @@ For example, we might be enable to build libraries of valuetypes that can be reu
 
 For exporting elements, I propose introducing a new concept called `libraries` instead of explicitly modeling an import or export per element.
 A `library` can inhibit `Valuetype`s, `Block`s, `BlockType`s, `Constraint`s, and `Transform`s.
+A library has to define a version in semver syntax.
 
 **Example library**
 
 ```
-library MyDomainLibrary {
+library MyDomainLibrary version 1.2.3 {
   valuetype MyDomainSpecificValuetype {
     // ... details of valuetype
   }
@@ -89,12 +90,16 @@ The **qualified name** is constructed by prepending container structures in this
 ### Importing elements
 
 Only `libraries` and their elements can be imported into other files.
+Each import explicitly defines the version of the imported library. On version mismatch, an error is raised.
 Elements on the root level of a file or within a pipeline cannot be imported.
 
 ```
-from './path/to/location.jv' use { MyDomainLibrary }; // only imports the named library, access via qualified name
-from './path/to/location.jv' use { MyDomainLibrary1, MyDomainLibrary1 }; // only imports the named libraries, access via qualified name
-from './path/to/location.jv' use { MyDomainLibrary called MyLibraryAlias} // only imports the named library, access via qualified name using the alias
+from './path/to/location.jv' use { MyDomainLibrary version 1.2.3 }; // only imports the named library, access via qualified name
+from './path/to/location.jv' use {
+  MyDomainLibrary1 version 1.2.3,
+  MyDomainLibrary1 version 1.2.3
+}; // only imports the named libraries, access via qualified name
+from './path/to/location.jv' use { MyDomainLibrary version 1.2.3 called MyLibraryAlias} // only imports the named library, access via qualified name using the alias
 ```
 
 References to these imported elements is by their qualified name (unless altered by an alias).
