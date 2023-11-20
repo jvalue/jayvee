@@ -21,6 +21,11 @@ export enum DiagnosticSeverity {
   DEBUG = 'debug',
 }
 
+export interface LogEntry {
+  severity: DiagnosticSeverity;
+  message: string;
+}
+
 export abstract class Logger {
   abstract setLoggingContext(loggingContext: string | undefined): void;
   abstract setLoggingDepth(depth: number): void;
