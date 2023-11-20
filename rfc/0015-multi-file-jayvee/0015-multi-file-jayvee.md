@@ -89,16 +89,9 @@ Only `libraries` and their elements can be imported into other files.
 Elements on the root level of a file or within a pipeline cannot be imported.
 
 ```
-import './path/to/jv-file.jv'; // imports all libraries of the file
-import './path/to/jv-file.jv' use { 
-  MyDomainLibrary 
-}; // only imports the named library, access via qualified name
-import './path/to/jv-file.jv' use {
-  MyDomainLibrary called MyLibraryAlias
-}; // only imports the named library, access via qualified name using the alias
-import './path/to/jv-file.jv' use {
-  MyDomainLibrary.MyDomainSpecificValuetype called MyElementAlias
-}; // only imports the named element, access via the alias
+from './path/to/jv-file.jv' use { MyDomainLibrary }; // only imports the named library, access via qualified name
+from './path/to/jv-file.jv' use { MyDomainLibrary1, MyDomainLibrary1 }; // only imports the named libraries, access via qualified name
+from './path/to/jv-file.jv' use { MyDomainLibrary called MyLibraryAlias} // only imports the named library, access via qualified name using the alias
 ```
 
 References to these imported elements is by their qualified name (unless altered by an alias).
@@ -113,6 +106,8 @@ References to these imported elements is by their qualified name (unless altered
 ## Alternatives
 - Make exports explicit instead of introducing the concept of libraries
 - Make exports explicit besides introducing the concept of libraries
+- "use" syntax without braces, etc., `from './path/to/file.jv' use MyDomainLibrary1, MyDomainLibrary2`
 
 ## Possible Future Changes/Enhancements
 - build out to use libraries of other projects via a package-manager mechanism
+- allow "using" single elements of a library instead of "using" the whole library
