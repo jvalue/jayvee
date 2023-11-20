@@ -1,8 +1,5 @@
 import { 
-  None, 
-  isDebugGranularity, 
   registerDefaultConstraintExecutors, 
-  parseValueToInternalRepresentation 
 } from '@jvalue/jayvee-execution';
 
 import {
@@ -16,12 +13,10 @@ import {
   JayveeModel, 
   JayveeServices, 
   createJayveeServices, 
-  RuntimeParameterProvider, 
   PipelineDefinition 
 } from '@jvalue/jayvee-language-server';
 
 import { NodeFileSystem } from 'langium/node';
-import { runMain } from 'module';
 
 export enum ExitCode {
   SUCCESS = 0,
@@ -32,7 +27,6 @@ export async function myRunAction(
   fileName: string,
   options: RunOptions,
 ): Promise<void> {
-  console.log("reached my run action")
   const extractAstNodeFn = async (
     services: JayveeServices,
     loggerFactory: LoggerFactory,
@@ -42,11 +36,8 @@ export async function myRunAction(
       services,
       loggerFactory.createLogger(),
     );
-  console.log("before interpret")
-  const exitCode = await interpretModel(extractAstNodeFn, options);
-  //const exitCode = await myInterpretModel(extractAstNodeFn, options);
-  console.log("model interpreted")
-  //process.exit(exitCode);
+  //const exitCode = await interpretModel(extractAstNodeFn, options);
+  const exitCode = await myInterpretModel(extractAstNodeFn, options);
 }
 
 export async function myInterpretModel(
@@ -63,14 +54,17 @@ export async function myInterpretModel(
   
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   
-  console.log("reached model")
   const model = await extractAstNodeFn(services, loggerFactory);
-  console.log("after model")
-  let mermaidCode = createMermaidCode(model.pipelines[0]!)
-  console.log("---------Mermaid Code---------")
-  console.log(mermaidCode)
-  console.log("-----------------------------")
-  
+
+  const pipelineMermaidCodes: Array<String> = model.pipelines.map(
+    (pipeline) => {return createMermaidCode(pipeline)}
+  )
+  console.log("nr. of pipelines found", pipelineMermaidCodes.length)
+  for (let pipelineMermaidCode of pipelineMermaidCodes) {
+    console.log("---------Mermaid Code---------")
+    console.log(pipelineMermaidCode)
+    console.log("-----------------------------")
+  }  
   return ExitCode.SUCCESS;
 }
 
@@ -86,7 +80,7 @@ function createMermaidCode(pipeline: PipelineDefinition){
 
 async function myCall(){
   console.log('Hello World!');
-  let fileName: string = "example/electric-vehicles.jv";
+  let fileName: string = "example/exercise1.jv";
   let options: RunOptions = {
     env: new Map,
     debug: true,
@@ -94,7 +88,7 @@ async function myCall(){
     debugTarget: undefined
   }
   const result = await myRunAction(fileName, options);
-  console.log("End world");
+  console.log("End World");
   process.exit(0)
 }
 
