@@ -8,7 +8,10 @@ import * as path from 'path';
 import { Logger } from '@jvalue/jayvee-execution';
 import { initializeWorkspace } from '@jvalue/jayvee-language-server';
 import { AstNode, LangiumDocument, LangiumServices } from 'langium';
-import { DiagnosticSeverity } from 'vscode-languageserver-protocol';
+import {
+  DiagnosticSeverity,
+  WorkspaceFolder,
+} from 'vscode-languageserver-protocol';
 import { URI } from 'vscode-uri';
 
 export enum ExitCode {
@@ -41,7 +44,15 @@ export async function extractDocumentFromFile(
       URI.file(path.resolve(fileName)),
     );
 
-  await initializeWorkspace(services);
+  // TODO: check where else is initializeWorkspace is called and needs adding workspace folders
+  const folders: WorkspaceFolder[] = [
+    {
+      uri: URI.file(path.resolve(path.dirname(fileName))).toString(),
+      name: 'main',
+    },
+  ];
+
+  await initializeWorkspace(services, folders);
 
   return await validateDocument(document, services, logger);
 }
