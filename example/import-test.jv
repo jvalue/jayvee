@@ -1,0 +1,3 @@
+valuetype X oftype text {
+	constraints: [];
+}

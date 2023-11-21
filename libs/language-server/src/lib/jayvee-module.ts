@@ -22,6 +22,7 @@ import { JayveeWorkspaceManager } from './builtin-library/jayvee-workspace-manag
 import { JayveeCompletionProvider } from './completion/jayvee-completion-provider';
 import { JayveeHoverProvider } from './hover/jayvee-hover-provider';
 import { JayveeValueConverter } from './jayvee-value-converter';
+import { JayveeScopeProvider } from './services/jayvee-scope-provider';
 import { RuntimeParameterProvider } from './services/runtime-parameter-provider';
 import { JayveeValidationRegistry } from './validation/validation-registry';
 
@@ -64,6 +65,9 @@ export const JayveeModule: Module<
       new JayveeCompletionProvider(services),
     HoverProvider: (services: LangiumServices) =>
       new JayveeHoverProvider(services),
+  },
+  references: {
+    ScopeProvider: (services) => new JayveeScopeProvider(services),
   },
   RuntimeParameterProvider: () => new RuntimeParameterProvider(),
 };

@@ -2,6 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+// TODO: remove after implementation
+import { X } from './import-test.jv';
+
 // Example 2: Electric Vehicles
 // Learning goals:
 // - Understand further core concepts transforms and valuetypes
@@ -35,8 +38,8 @@ pipeline ElectricVehiclesPipeline {
 
 	// 3. After the pipeline structure, we define the blocks used.
 	block ElectricVehiclesHttpExtractor oftype HttpExtractor {
-		url: "https://data.wa.gov/api/views/f6w7-q2d2/rows.csv?accessType=DOWNLOAD";
-	}
+	url: "https://data.wa.gov/api/views/f6w7-q2d2/rows.csv?accessType=DOWNLOAD";
+}
 
 	block ElectricVehiclesTextFileInterpreter oftype TextFileInterpreter { }
 
@@ -52,7 +55,7 @@ pipeline ElectricVehiclesPipeline {
 			"County" oftype text,
 			"City" oftype text,
 			"State" oftype UsStateCode,
-			"Postal Code" oftype text,
+			"Postal Code" oftype X,
 			"Model Year" oftype integer,
 			"Make" oftype text,
 			"Model" oftype text,
