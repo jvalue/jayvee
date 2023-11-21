@@ -14,7 +14,8 @@ import './iotype'
 
 entry JayveeModel:
   (
-    pipelines+=PipelineDefinition
+    imports+=ImportDefinition
+    | pipelines+=PipelineDefinition
     | valuetypes+=(CustomValuetypeDefinition | BuiltinValuetypeDefinition)
     | constraints+=ConstraintDefinition
     | transforms+=TransformDefinition
@@ -22,6 +23,21 @@ entry JayveeModel:
     | constrainttypes+=BuiltinConstrainttypeDefinition
     | iotypes+=IotypeDefinition
   )*;
+
+ImportDefinition:
+  // TODO: rename import to "use" and make sure there is no conflict with transformations
+  // TODO: validations
+  'import' '{' elements+=[ImportableElementDefinition] (',' elements+=(ImportableElementDefinition))* '}' 'from' location=STRING ';';
+
+ImportableElementDefinition:
+  PipelineDefinition
+    | CustomValuetypeDefinition 
+    | BuiltinValuetypeDefinition
+    | ConstraintDefinition
+    | TransformDefinition
+    | ReferenceableBlocktypeDefinition
+    | BuiltinConstrainttypeDefinition
+    | IotypeDefinition;
 
 PipelineDefinition:
   'pipeline' name=ID '{'
