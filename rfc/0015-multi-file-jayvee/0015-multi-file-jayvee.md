@@ -25,6 +25,10 @@ SPDX-License-Identifier: AGPL-3.0-only
 This RFC introduces the possibility of distributing a Jayvee program over multiple files.
 This feature will foster reuse of valuetypes, blocks, and other elements.
 Inherent to this feature is a concept of how scoping and naming is handled for nested structures.
+We introduce two concepts in this RFC:
+
+- File imports, and
+- Libraries
 
 ## Motivation
 
@@ -38,25 +42,43 @@ For example, we might be enable to build libraries of valuetypes that can be reu
 
 ## Explanation
 
-### Exporting elements
+### Exporting elements for later import
 
-For exporting elements, I propose introducing a new concept called `libraries` instead of explicitly modeling an import or export per element.
+For exporting single elements, I propose to introduce a new keyword `export`.
+All elements within a file are not exportable per default.
+Explicitly declaring an element as exportable allows for later import.
+
+**Example export**
+
+```
+export valuetype MyValueType {
+  // ... details
+}
+```
+
+### Bundling elements to a library for later import
+
+For bundling and exporting elements, I propose introducing a new concept called `libraries`.
 A `library` can inhibit `Valuetype`s, `Block`s, `BlockType`s, `Constraint`s, and `Transform`s.
 A library has to define a version in semver syntax.
+A library has to be exported.
+They serve as entry point to a collection of files (local or remote), similarly to JavaScript's `index.js` mechanism.
 
 **Example library**
 
 ```
-library MyDomainLibrary version 1.2.3 {
-  valuetype MyDomainSpecificValuetype {
+export library MyDomainLibrary version 1.2.3 {
+  // definition of a new valuetype as part of the library
+  valuetype MyDomainSpecificValuetype1 {
     // ... details of valuetype
   }
+
+  // reference to an existing valuetype to make it part of the library
+  include MyDomainSpecificValuetype2;
 
   // ... possibly more elements
 }
 ```
-
-Libraries are always "exported" and can be "imported" into other files.
 
 ### Visibility of elements in a file
 
@@ -67,7 +89,7 @@ By introducing the concept of `libraries`, most elements can be defined on three
 3. (new) Within a library
 
 The name of an element is given by its definition.
-The **qualified name** is constructed by prepending container structures in this pattern: `<container name>.<element name>`, e.g., `MyDomainLibraryMyDomainLibrary.MyDomainSpecificValuetype`.
+The **qualified name** is constructed by prepending container structures in this pattern: `<container name>.<element name>`, e.g., `MyDomainLibrary.MyDomainSpecificValuetype1`.
 
 **Access paths:**
 
@@ -75,7 +97,7 @@ The **qualified name** is constructed by prepending container structures in this
   - root level elements by their name
   - and elements of libraries by their qualified name
 - elements within a library can access
-  - elements within the same library by their name
+  - root level elements by their name
   - and elements of other libraries by their qualified name
 - elements within a pipeline can access
   - root level elements by their name
@@ -85,13 +107,27 @@ The **qualified name** is constructed by prepending container structures in this
 **No-access paths:**
 
 - elements within a pipeline cannot be referenced by outside elements
-- elements within a library cannot access anything outside a library (the same or a different library)
+
+**Imported elements are handled as if they were defined at the root level.**
 
 ### Importing elements
 
-Only `libraries` and their elements can be imported into other files.
-Each import explicitly defines the version of the imported library. On version mismatch, an error is raised.
-Elements on the root level of a file or within a pipeline cannot be imported.
+Only `export`ed elements can be imported into other files.
+
+#### Importing exported elements of a file
+
+```
+from './path/to/location.jv' use { MyDomainSpecificValuetype1 }; // only imports the defined elements from the file, access via qualified name as if it would be defined at the root level
+from './path/to/location.jv' use { MyDomainSpecificValuetype1 called Vt1} // only imports the defined elements from the file, access via qualified name using the alias
+```
+
+References to these imported elements is by their qualified name (unless altered by an alias).
+
+#### Importing a library
+
+Each import explicitly defines the version of the imported library.
+On version mismatch, an error is raised.
+Libraries can only be imported as a whole.
 
 ```
 from './path/to/location.jv' use { MyDomainLibrary version 1.2.3 }; // only imports the named library, access via qualified name
@@ -106,7 +142,7 @@ References to these imported elements is by their qualified name (unless altered
 
 ## Drawbacks
 
-- Implicit knowledge required: elements in libraries are exported
+- Two different sharing mechanisms (export keyword, library)
 - Elements of a pipeline cannot be reused, leading to potentially more slim pipelines and a parallel library
 - The elements of a library within a file always need the qualified name (alternative: allow access via sole name within file?)
 - We do not allow re-exporting (only by putting elements into a containing library)
@@ -114,9 +150,9 @@ References to these imported elements is by their qualified name (unless altered
 
 ## Alternatives
 
-- Make exports explicit instead of introducing the concept of libraries
-- Make exports explicit besides introducing the concept of libraries
 - "use" syntax without braces, etc., `from './path/to/file.jv' use MyDomainLibrary1, MyDomainLibrary2`
+- different syntax for importing files and libraries
+- Rather call it `module` instead of `library`
 
 ## Possible Future Changes/Enhancements
 
