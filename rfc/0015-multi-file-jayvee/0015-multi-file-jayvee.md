@@ -25,7 +25,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 This RFC introduces the possibility of distributing a Jayvee program over multiple files.
 This feature will foster reuse of valuetypes, blocks, and other elements.
 Inherent to this feature is a concept of how scoping and naming is handled for nested structures.
-We introduce two concepts in this RFC:
+This RFC introduces two concepts:
 
 - File imports, and
 - Libraries
@@ -38,13 +38,13 @@ The challenge is two-fold:
 1. Larger projects will become unmaintainable quite quickly, as the elements cannot be organized into multiple files.
 2. Without distribution to multiple files, there is no possibility to reuse models of other projects.
 
-For example, we might be enable to build libraries of valuetypes that can be reused across multiple projects instead of copying the code.
+For example, users will be enable to build libraries of valuetypes that can be reused across multiple projects instead of copying the code.
 
 ## Explanation
 
 ### Exporting elements for later import
 
-For exporting single elements, I propose to introduce a new keyword `export`.
+For exporting single elements, the RFC introduces the keyword `export`.
 All elements within a file are not exportable per default.
 Explicitly declaring an element as exportable allows for later import.
 
@@ -58,7 +58,7 @@ export valuetype MyValueType {
 
 ### Bundling elements to a library for later import
 
-For bundling and exporting elements, I propose introducing a new concept called `libraries`.
+For bundling and exporting elements, the RFC introduces a new concept called `libraries`.
 A `library` can inhibit `Valuetype`s, `Block`s, `BlockType`s, `Constraint`s, and `Transform`s.
 A library has to define a version in semver syntax.
 A library has to be exported.
@@ -145,7 +145,7 @@ References to these imported elements is by their qualified name (unless altered
 - Two different sharing mechanisms (export keyword, library)
 - Elements of a pipeline cannot be reused, leading to potentially more slim pipelines and a parallel library
 - The elements of a library within a file always need the qualified name (alternative: allow access via sole name within file?)
-- We do not allow re-exporting (only by putting elements into a containing library)
+- The RFC does not allow re-exporting (only by putting elements into a containing library)
 - Langium might not support this scoping mechanism out-of-the-box (more complex implementation)
 
 ## Alternatives
