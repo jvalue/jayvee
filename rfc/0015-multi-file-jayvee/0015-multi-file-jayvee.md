@@ -118,15 +118,15 @@ Only `publish`ed elements can be used in other files.
 When using elements of a file or a library, we have to define where the elements are located.
 Jayvee provides the following possibilities:
 
-- a relative file path, e.g., `from './path/to/file.jv' use *;`
-- an HTTP URL, e.g., `from 'https://jvalue.com/my-org/my-repo' use *;`
+- a relative file path, e.g., `use * from './path/to/file.jv';`
+- an HTTP URL, e.g., `use * from 'https://jvalue.com/my-org/my-repo';`
 
 #### Using published elements of a file (within the same project)
 
 ```
-from './path/to/location.jv' use *; // use all published elements from the file, access via qualified name as if it would be defined at the root level
-from './path/to/location.jv' use { MyDomainSpecificValuetype1 }; // only use the published elements from the file, access via qualified name as if it would be defined at the root level
-from './path/to/location.jv' use { MyDomainSpecificValuetype1 called Vt1} // only use the published elements from the file, access via qualified name using the alias
+use * from './path/to/location.jv'; // use all published elements from the file, access via qualified name as if it would be defined at the root level
+use { MyDomainSpecificValuetype1 } from './path/to/location.jv'; // only use the published elements from the file, access via qualified name as if it would be defined at the root level
+use { MyDomainSpecificValuetype1 called Vt1} from './path/to/location.jv'; // only use the published elements from the file, access via qualified name using the alias
 ```
 
 References to these used elements is by their qualified name (unless altered by an alias).
@@ -137,12 +137,12 @@ The `use` syntax is similar to importing an element of a file.
 Libraries can only be used as a whole.
 
 ```
-from './path/to/location.jv' use { MyDomainLibrary }; // only use the named library, access via qualified name
-from './path/to/location.jv' use {
+use { MyDomainLibrary } from './path/to/location.jv'; // only use the named library, access via qualified name
+use {
   MyDomainLibrary1,
   MyDomainLibrary1
-}; // only use the named libraries, access via qualified name
-from './path/to/location.jv' use { MyDomainLibrary called MyLibraryAlias} // only use the named library, access via qualified name using the alias
+} from './path/to/location.jv'; // only use the named libraries, access via qualified name
+use { MyDomainLibrary called MyLibraryAlias} from './path/to/location.jv'; // only use the named library, access via qualified name using the alias
 ```
 
 References to these used elements is by their qualified name (unless altered by an alias).
@@ -157,7 +157,8 @@ References to these used elements is by their qualified name (unless altered by 
 
 ## Alternatives
 
-- "use" syntax without braces, etc., `from './path/to/file.jv' use MyDomainLibrary1, MyDomainLibrary2`
+- "use" syntax without braces, etc., `use MyDomainLibrary1, MyDomainLibrary2 from './path/to/file.jv';`
+- switch around `use` and `from`: `from 'location' use { Element };`
 - different syntax for using files and libraries (e.g., `import`)
 - Rather call it `module` instead of `library`
 
@@ -167,5 +168,5 @@ References to these used elements is by their qualified name (unless altered by 
 - allow "using" single elements of a library instead of "using" the whole library
 - allow additional usage paths, like
   - absolute file paths, and
-  - org/repo combination at a central package registry, e.g., `from 'jv:my-org/my-repo' use *;`
+  - org/repo combination at a central package registry, e.g., `use * from 'jv:my-org/my-repo';`
 - specify metadata (like the version) of a library, potentially require a version on library usage
