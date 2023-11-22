@@ -116,8 +116,9 @@ Only `publish`ed elements can be used in other files.
 #### Using published elements of a file (within the same project)
 
 ```
-from './path/to/location.jv' use { MyDomainSpecificValuetype1 }; // only use the defined elements from the file, access via qualified name as if it would be defined at the root level
-from './path/to/location.jv' use { MyDomainSpecificValuetype1 called Vt1} // only use the defined elements from the file, access via qualified name using the alias
+from './path/to/location.jv' use *; // use all published elements from the file, access via qualified name as if it would be defined at the root level
+from './path/to/location.jv' use { MyDomainSpecificValuetype1 }; // only use the published elements from the file, access via qualified name as if it would be defined at the root level
+from './path/to/location.jv' use { MyDomainSpecificValuetype1 called Vt1} // only use the published elements from the file, access via qualified name using the alias
 ```
 
 References to these used elements is by their qualified name (unless altered by an alias).
