@@ -27,7 +27,7 @@ This feature will foster reuse of valuetypes, blocks, and other elements.
 Inherent to this feature is a concept of how scoping and naming is handled for nested structures.
 This RFC introduces two concepts:
 
-- File imports, and
+- Element usage from other files, and
 - Libraries
 
 ## Motivation
@@ -107,37 +107,37 @@ The **qualified name** is constructed by prepending container structures in this
 
 - elements within a pipeline cannot be referenced by outside elements
 
-**Imported elements are handled as if they were defined at the root level.**
+**Used elements of different files are handled as if they were defined at the root level.**
 
-### Importing elements
+### Using elements
 
-Only `publish`ed elements can be imported into other files.
+Only `publish`ed elements can be used in other files.
 
-#### Importing published elements of a file (within the same project)
+#### Using published elements of a file (within the same project)
 
 ```
-from './path/to/location.jv' use { MyDomainSpecificValuetype1 }; // only imports the defined elements from the file, access via qualified name as if it would be defined at the root level
-from './path/to/location.jv' use { MyDomainSpecificValuetype1 called Vt1} // only imports the defined elements from the file, access via qualified name using the alias
+from './path/to/location.jv' use { MyDomainSpecificValuetype1 }; // only use the defined elements from the file, access via qualified name as if it would be defined at the root level
+from './path/to/location.jv' use { MyDomainSpecificValuetype1 called Vt1} // only use the defined elements from the file, access via qualified name using the alias
 ```
 
-References to these imported elements is by their qualified name (unless altered by an alias).
+References to these used elements is by their qualified name (unless altered by an alias).
 
-#### Importing a library (from outside of the project)
+#### Using a library (from outside of the project)
 
-Each import explicitly defines the version of the imported library.
+Each `use` explicitly defines the version of the used library.
 On version mismatch, an error is raised.
-Libraries can only be imported as a whole.
+Libraries can only be used as a whole.
 
 ```
-from './path/to/location.jv' use { MyDomainLibrary version 1.2.3 }; // only imports the named library, access via qualified name
+from './path/to/location.jv' use { MyDomainLibrary version 1.2.3 }; // only use the named library, access via qualified name
 from './path/to/location.jv' use {
   MyDomainLibrary1 version 1.2.3,
   MyDomainLibrary1 version 1.2.3
-}; // only imports the named libraries, access via qualified name
-from './path/to/location.jv' use { MyDomainLibrary version 1.2.3 called MyLibraryAlias} // only imports the named library, access via qualified name using the alias
+}; // only use the named libraries, access via qualified name
+from './path/to/location.jv' use { MyDomainLibrary version 1.2.3 called MyLibraryAlias} // only use the named library, access via qualified name using the alias
 ```
 
-References to these imported elements is by their qualified name (unless altered by an alias).
+References to these used elements is by their qualified name (unless altered by an alias).
 
 ## Drawbacks
 
@@ -150,7 +150,7 @@ References to these imported elements is by their qualified name (unless altered
 ## Alternatives
 
 - "use" syntax without braces, etc., `from './path/to/file.jv' use MyDomainLibrary1, MyDomainLibrary2`
-- different syntax for importing files and libraries
+- different syntax for using files and libraries (e.g., `import`)
 - Rather call it `module` instead of `library`
 
 ## Possible Future Changes/Enhancements
