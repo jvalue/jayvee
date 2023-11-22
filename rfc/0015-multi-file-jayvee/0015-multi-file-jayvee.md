@@ -125,17 +125,16 @@ References to these used elements is by their qualified name (unless altered by 
 
 #### Using a library (from outside of the project)
 
-Each `use` explicitly defines the version of the used library.
-On version mismatch, an error is raised.
+The `use` syntax is similar to importing an element of a file.
 Libraries can only be used as a whole.
 
 ```
-from './path/to/location.jv' use { MyDomainLibrary version 1.2.3 }; // only use the named library, access via qualified name
+from './path/to/location.jv' use { MyDomainLibrary }; // only use the named library, access via qualified name
 from './path/to/location.jv' use {
-  MyDomainLibrary1 version 1.2.3,
-  MyDomainLibrary1 version 1.2.3
+  MyDomainLibrary1,
+  MyDomainLibrary1
 }; // only use the named libraries, access via qualified name
-from './path/to/location.jv' use { MyDomainLibrary version 1.2.3 called MyLibraryAlias} // only use the named library, access via qualified name using the alias
+from './path/to/location.jv' use { MyDomainLibrary called MyLibraryAlias} // only use the named library, access via qualified name using the alias
 ```
 
 References to these used elements is by their qualified name (unless altered by an alias).
