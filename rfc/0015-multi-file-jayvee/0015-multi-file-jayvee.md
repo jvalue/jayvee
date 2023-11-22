@@ -42,39 +42,38 @@ For example, users will be enable to build libraries of valuetypes that can be r
 
 ## Explanation
 
-### Exporting elements for later import
+### Publishing elements for usage elsewhere (within the project)
 
-For exporting single elements, the RFC introduces the keyword `export`.
-All elements within a file are not exportable per default.
-Explicitly declaring an element as exportable allows for later import.
+For publishing single elements, the RFC introduces the keyword `publish`.
+All elements within a file are not published per default.
+Explicitly declaring an element as published allows for usage elsewhere.
 
-**Example export**
+**Example publish**
 
 ```
-export valuetype MyValueType {
+publish valuetype MyValueType {
   // ... details
 }
 ```
 
-### Bundling elements to a library for later import
+### Bundling elements to a library for usage elsewhere (outside of the project)
 
-For bundling and exporting elements, the RFC introduces a new concept called `libraries`.
+For bundling and publishing elements, the RFC introduces a new concept called `libraries`.
 A `library` can inhibit `Valuetype`s, `Block`s, `BlockType`s, `Constraint`s, and `Transform`s.
-A library has to define a version in semver syntax.
-A library has to be exported.
-They serve as entry point to a collection of files (local or remote), similarly to JavaScript's `index.js` mechanism.
+A library is published per default.
+All elements within a library have to use the `publish` keyword.
 
 **Example library**
 
 ```
-export library MyDomainLibrary version 1.2.3 {
+library MyDomainLibrary {
   // definition of a new valuetype as part of the library
-  valuetype MyDomainSpecificValuetype1 {
+  publish valuetype MyDomainSpecificValuetype1 {
     // ... details of valuetype
   }
 
   // reference to an existing valuetype to make it part of the library
-  include MyDomainSpecificValuetype2;
+  publish MyDomainSpecificValuetype2;
 
   // ... possibly more elements
 }
@@ -112,9 +111,9 @@ The **qualified name** is constructed by prepending container structures in this
 
 ### Importing elements
 
-Only `export`ed elements can be imported into other files.
+Only `publish`ed elements can be imported into other files.
 
-#### Importing exported elements of a file
+#### Importing published elements of a file (within the same project)
 
 ```
 from './path/to/location.jv' use { MyDomainSpecificValuetype1 }; // only imports the defined elements from the file, access via qualified name as if it would be defined at the root level
@@ -123,7 +122,7 @@ from './path/to/location.jv' use { MyDomainSpecificValuetype1 called Vt1} // onl
 
 References to these imported elements is by their qualified name (unless altered by an alias).
 
-#### Importing a library
+#### Importing a library (from outside of the project)
 
 Each import explicitly defines the version of the imported library.
 On version mismatch, an error is raised.
@@ -142,10 +141,10 @@ References to these imported elements is by their qualified name (unless altered
 
 ## Drawbacks
 
-- Two different sharing mechanisms (export keyword, library)
+- Two different sharing mechanisms (`publish` keyword, `library` concept`)
 - Elements of a pipeline cannot be reused, leading to potentially more slim pipelines and a parallel library
 - The elements of a library within a file always need the qualified name (alternative: allow access via sole name within file?)
-- The RFC does not allow re-exporting (only by putting elements into a containing library)
+- The RFC does not allow re-publishing (only by putting elements into a containing library)
 - Langium might not support this scoping mechanism out-of-the-box (more complex implementation)
 
 ## Alternatives
