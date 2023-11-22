@@ -168,3 +168,4 @@ References to these used elements is by their qualified name (unless altered by 
 - allow additional usage paths, like
   - absolute file paths, and
   - org/repo combination at a central package registry, e.g., `from 'jv:my-org/my-repo' use *;`
+- specify metadata (like the version) of a library, potentially require a version on library usage
