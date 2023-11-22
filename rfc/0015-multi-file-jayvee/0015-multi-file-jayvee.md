@@ -51,9 +51,21 @@ Explicitly declaring an element as published allows for usage elsewhere.
 **Example publish**
 
 ```
-publish valuetype MyValueType {
+// define and publish in one syntax
+publish valuetype MyValueType1 {
   // ... details
 }
+
+// define first
+valuetype MyValueType2 {
+  // ... details
+}
+
+// publish later
+publish MyValueType2;
+
+// publish later under a different name
+publish MyValueType2 called MyValueType3;
 ```
 
 ### Bundling elements to a library for usage elsewhere (outside of the project)
