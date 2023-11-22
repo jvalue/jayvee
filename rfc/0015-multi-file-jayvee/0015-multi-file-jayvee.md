@@ -113,6 +113,14 @@ The **qualified name** is constructed by prepending container structures in this
 
 Only `publish`ed elements can be used in other files.
 
+#### Usage paths
+
+When using elements of a file or a library, we have to define where the elements are located.
+Jayvee provides the following possibilities:
+
+- a relative file path, e.g., `from './path/to/file.jv' use *;`
+- an HTTP URL, e.g., `from 'https://jvalue.com/my-org/my-repo' use *;`
+
 #### Using published elements of a file (within the same project)
 
 ```
@@ -157,3 +165,6 @@ References to these used elements is by their qualified name (unless altered by 
 
 - build out to use libraries of other projects via a package-manager mechanism, e.g., by using an URL as location of a "use" statement
 - allow "using" single elements of a library instead of "using" the whole library
+- allow additional usage paths, like
+  - absolute file paths, and
+  - org/repo combination at a central package registry, e.g., `from 'jv:my-org/my-repo' use *;`
