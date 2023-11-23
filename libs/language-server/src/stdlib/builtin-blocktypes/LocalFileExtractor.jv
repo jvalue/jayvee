@@ -1,0 +1,37 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* Extracts a `File` from the local storage.
+* 
+* @example Fetches a file from the given local path.
+* block CarsFileExtractor oftype LocalFileExtractor {
+*   filePath: "../../../../../example/test-example-dataset.csv";
+* }
+*/
+builtin blocktype LocalFileExtractor {
+	input default oftype None;
+	output default oftype File;
+	
+	/**
+	* The PATH to the file in the local storage to extract.
+	*/
+	property filePath oftype text;
+	
+	/**
+	* Configures how many retries should be executed after a failure fetching the data.
+	*/
+	property retries oftype integer: 0;
+	
+	/**
+	* Configures the wait time in milliseconds before executing a retry.
+	*/
+	property retryBackoffMilliseconds oftype integer: 1000;
+	
+	/**
+	* Configures the wait strategy before executing a retry. Can have values "exponential" or "linear".
+	*/
+	property retryBackoffStrategy oftype text: "exponential";
+	
+}
