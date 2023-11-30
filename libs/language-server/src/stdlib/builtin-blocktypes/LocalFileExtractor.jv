@@ -19,19 +19,4 @@ builtin blocktype LocalFileExtractor {
 	*/
 	property filePath oftype text;
 	
-	/**
-	* Configures how many retries should be executed after a failure fetching the data.
-	*/
-	property retries oftype integer: 0;
-	
-	/**
-	* Configures the wait time in milliseconds before executing a retry.
-	*/
-	property retryBackoffMilliseconds oftype integer: 1000;
-	
-	/**
-	* Configures the wait strategy before executing a retry. Can have values "exponential" or "linear".
-	*/
-	property retryBackoffStrategy oftype text: "exponential";
-	
 }

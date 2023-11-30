@@ -1,0 +1,35 @@
+pipeline TESTLOCAL{
+
+    block localextractortest oftype LocalFileExtractor {
+        filePath: "./example/test-example-dataset.csv";
+    }
+
+    block localfilextrctor oftype TextFileInterpreter {
+
+	}
+
+	block BatteryMaterialsCSVInterpreter oftype CSVInterpreter {
+		delimiter: ",";
+        enclosing: '"';
+	}
+
+    block test oftype TableInterpreter{
+        header: true;
+        columns: [
+            "Series_reference" oftype text
+        ];
+    }
+
+    block test2 oftype SQLiteLoader{
+        table: "TestLocalFile";
+        file: "./testlocal.sqlite";
+    }
+
+
+    localextractortest
+    -> localfilextrctor
+    -> BatteryMaterialsCSVInterpreter
+    -> test
+    -> test2;
+
+}
