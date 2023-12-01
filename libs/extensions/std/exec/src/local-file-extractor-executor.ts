@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'assert';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
@@ -12,24 +11,14 @@ import {
   BinaryFile,
   BlockExecutorClass,
   ExecutionContext,
-  ExecutionErrorDetails,
   FileExtension,
   MimeType,
   None,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
-import { AstNode } from 'langium';
 
-import {
-  inferFileExtensionFromContentTypeString,
-  inferFileExtensionFromFileExtensionString,
-  inferMimeTypeFromFileExtensionString,
-} from './file-util';
-import {
-  createBackoffStrategy,
-  isBackoffStrategyHandle,
-} from './util/backoff-strategy';
+import { inferFileExtensionFromFileExtensionString } from './file-util';
 
 @implementsStatic<BlockExecutorClass>()
 export class LocalFileExtractorExecutor extends AbstractBlockExecutor<
@@ -73,6 +62,7 @@ export class LocalFileExtractorExecutor extends AbstractBlockExecutor<
       );
 
       return R.ok(file);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       return R.err({
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access

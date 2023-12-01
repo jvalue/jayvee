@@ -1,10 +1,11 @@
 import * as path from 'path';
+
 import * as R from '@jvalue/jayvee-execution';
 import { getTestExecutionContext } from '@jvalue/jayvee-execution/test';
 import {
+  BlockDefinition,
   IOType,
   createJayveeServices,
-  BlockDefinition,
 } from '@jvalue/jayvee-language-server';
 import {
   expectNoParserAndLexerErrors,
@@ -13,15 +14,13 @@ import {
   readJvTestAssetHelper,
 } from '@jvalue/jayvee-language-server/test';
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
+import { NodeFileSystem } from 'langium/node';
 import * as nock from 'nock';
 
 import { LocalFileExtractorExecutor } from './local-file-extractor-executor';
-import { NodeFileSystem } from 'langium/node';
 
 describe('Validation of LocalFileExtractorExecutor', () => {
-  let parse: (
-    input: string,
-  ) => Promise<LangiumDocument<AstNode>>;
+  let parse: (input: string) => Promise<LangiumDocument<AstNode>>;
 
   let locator: AstNodeLocator;
 
@@ -71,7 +70,6 @@ describe('Validation of LocalFileExtractorExecutor', () => {
 
   it('should diagnose no error on valid local file path', async () => {
     const text = readJvTestAsset('valid-local-file.jv');
-    const filePath = path.resolve(__dirname, '../test/assets/local-file-extractor-executor/test.txt');
 
     const result = await parseAndExecuteExecutor(text);
 
@@ -90,13 +88,14 @@ describe('Validation of LocalFileExtractorExecutor', () => {
 
   it('should diagnose error on file not found', async () => {
     const text = readJvTestAsset('valid-local-file.jv');
-    const filePath = path.resolve(__dirname, '../test/assets/local-file-extractor-executor/nonexistent-file.txt');
 
     const result = await parseAndExecuteExecutor(text);
 
     expect(R.isOk(result)).toEqual(false);
     if (R.isErr(result)) {
-      expect(result.left.message).toEqual('Error reading file: ENOENT: no such file or directory');
+      expect(result.left.message).toEqual(
+        'Error reading file: ENOENT: no such file or directory',
+      );
     }
   });
 

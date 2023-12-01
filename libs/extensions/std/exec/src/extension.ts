@@ -34,7 +34,7 @@ export class StdExecExtension implements JayveeExecExtension {
       ArchiveInterpreterExecutor,
       FilePickerExecutor,
       GtfsRTInterpreterExecutor,
-      LocalFileExtractorExecutor
+      LocalFileExtractorExecutor,
     ];
   }
 }
