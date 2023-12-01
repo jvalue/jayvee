@@ -51,6 +51,34 @@ We distinguish different kinds of visibilities of elements:
 - **not existing**: `library-private`: usable only within the library
 - `library-published`: usable also in other locations (since `library` is always `file-published`)
 
+By introducing the concept of `libraries`, most elements can be defined on three levels in a Jayvee file:
+
+1. On the root level of the file
+2. Within a pipeline
+3. (new) Within a library
+
+The name of an element is given by its definition.
+The **qualified name** is constructed by prepending container structures in this pattern: `<container name>.<element name>`, e.g., `MyDomainLibrary.MyDomainSpecificValuetype`.
+
+**Access paths:**
+
+- root level elements can access
+  - root level elements by their name
+  - and elements of libraries by their qualified name
+- elements within a library can access
+  - root level elements by their name
+  - and elements of other libraries by their qualified name
+- elements within a pipeline can access
+  - root level elements by their name
+  - elements within the same pipeline by their name
+  - and elements of libraries by their qualified name
+
+**No-access paths:**
+
+- elements within a pipeline cannot be referenced by outside elements
+
+**Used elements of different files are handled as if they were defined at the root level.**
+
 ### Publishing elements for usage elsewhere (within the project)
 
 For publishing single elements, the RFC introduces the keyword `publish` to indicate the visibility `file-published`.
@@ -99,36 +127,6 @@ publish library MyDomainLibrary {
   // ... possibly more elements
 }
 ```
-
-### Visibility of elements in a file
-
-By introducing the concept of `libraries`, most elements can be defined on three levels in a Jayvee file:
-
-1. On the root level of the file
-2. Within a pipeline
-3. (new) Within a library
-
-The name of an element is given by its definition.
-The **qualified name** is constructed by prepending container structures in this pattern: `<container name>.<element name>`, e.g., `MyDomainLibrary.MyDomainSpecificValuetype1`.
-
-**Access paths:**
-
-- root level elements can access
-  - root level elements by their name
-  - and elements of libraries by their qualified name
-- elements within a library can access
-  - root level elements by their name
-  - and elements of other libraries by their qualified name
-- elements within a pipeline can access
-  - root level elements by their name
-  - elements within the same pipeline by their name
-  - and elements of libraries by their qualified name
-
-**No-access paths:**
-
-- elements within a pipeline cannot be referenced by outside elements
-
-**Used elements of different files are handled as if they were defined at the root level.**
 
 ### Using elements
 
