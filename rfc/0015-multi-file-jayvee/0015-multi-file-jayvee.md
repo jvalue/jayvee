@@ -28,7 +28,7 @@ Inherent to this feature is a concept of how scoping and naming is handled for n
 This RFC introduces two concepts:
 
 - Element usage from other files, and
-- Libraries
+- Packages
 
 ## Motivation
 
@@ -36,9 +36,7 @@ Right now, Jayvee users can only pack their whole Jayvee model into one file.
 The challenge is two-fold:
 
 1. Larger projects will become unmaintainable quite quickly, as the elements cannot be organized into multiple files.
-2. Without distribution to multiple files, there is no possibility to reuse models of other projects.
-
-For example, users will be enable to build libraries of valuetypes that can be reused across multiple projects instead of copying the code.
+2. Without distribution to multiple files, there is no possibility to later reuse models of other projects.
 
 ## Explanation
 
@@ -48,30 +46,30 @@ We distinguish different kinds of visibilities of elements:
 
 - `file-private`: usable only within the same file
 - `file-published`: usable also in other files of same project
-- **not existing**: `library-private`: usable only within the library
-- `library-published`: usable also in other locations (since `library` is always `file-published`)
+- `package-private`: usable only within the package
+- `package-published`: usable also in other locations (since `package` is always `file-published`)
 
-By introducing the concept of `libraries`, most elements can be defined on three levels in a Jayvee file:
+By introducing the concept of `packages`, most elements can be defined on three levels in a Jayvee file:
 
 1. On the root level of the file
 2. Within a pipeline
-3. (new) Within a library
+3. (new) Within a package
 
 The name of an element is given by its definition.
-The **qualified name** is constructed by prepending container structures in this pattern: `<container name>.<element name>`, e.g., `MyDomainLibrary.MyDomainSpecificValuetype`.
+The **qualified name** is constructed by prepending container structures in this pattern: `<container name>.<element name>`, e.g., `MyDomainPackage.MyDomainSpecificValuetype`.
 
 **Access paths:**
 
 - root level elements can access
   - root level elements by their name
-  - and elements of libraries by their qualified name
-- elements within a library can access
+  - and elements of packages by their qualified name
+- elements within a package can access
   - root level elements by their name
-  - and elements of other libraries by their qualified name
+  - and elements of other packages by their qualified name
 - elements within a pipeline can access
   - root level elements by their name
   - elements within the same pipeline by their name
-  - and elements of libraries by their qualified name
+  - and elements of packages by their qualified name
 
 **No-access paths:**
 
@@ -105,28 +103,31 @@ publish MyValueType2;
 publish MyValueType2 as MyValueType3;
 ```
 
-### Bundling elements to a library for usage elsewhere (outside of the project)
+### Packages: bundling elements to a package for decoupled usage
 
-For bundling and publishing elements, the RFC introduces a new concept called `libraries`.
-A `library` can inhibit `Valuetype`s, `Block`s, `BlockType`s, `Constraint`s, and `Transform`s.
-A library must be of visibility `file-published` and, thus, requires the keyword `publish`.
-All elements within a library have to use the `publish` keyword to make them of visibility `library-published`.
+For bundling and publishing elements, the RFC introduces a new concept called `packages`.
+A `package` can inhibit `Valuetype`s, `Block`s, `BlockType`s, `Constraint`s, `Transform`s, and further `Package`s.
+A package must be of visibility `file-published` and, thus, requires the keyword `publish`.
+Elements within a package can use the `publish` keyword to make them of visibility `package-published` or are `package-private` per default.
 
-**Example library**
+**Example package**
 
 ```
-publish library MyDomainLibrary {
-  // definition of a new valuetype as part of the library
+publish package MyDomainPackage {
+  // definition of a new valuetype as part of the package
   publish valuetype MyDomainSpecificValuetype1 {
     // ... details of valuetype
   }
 
-  // reference to an existing valuetype to make it part of the library
+  // reference to an existing valuetype to make it part of the package
   publish MyDomainSpecificValuetype2;
 
   // ... possibly more elements
 }
 ```
+
+The advantage of bundling elements into a `package` is the decoupling from the internal file system structure.
+Rather than accessing files directly (and needing knowledge what is element is located in which files) users can simply use a whole package with all its elements (and don't need to know in which file the element is originally defined).
 
 ### Using elements
 
@@ -134,11 +135,12 @@ Only `file-published` (with keyword `publish`) elements can be used in other fil
 
 #### Usage paths
 
-When using elements of a file or a library, we have to define where the elements are located.
+When using elements of a file or a package, we have to define where the elements are located.
 Jayvee provides the following possibilities:
 
 - a relative file path, e.g., `use * from './path/to/file.jv';`
-- an HTTP URL, e.g., `use * from 'https://jvalue.com/my-org/my-repo';`
+
+The `use` of elements via a file path decouples by using the element name or a defined alias instead of the file path within the file.
 
 #### Using published elements of a file (within the same project)
 
@@ -150,18 +152,18 @@ use { MyDomainSpecificValuetype1 as Vt1} from './path/to/location.jv'; // only u
 
 References to these used elements is by their qualified name (unless altered by an alias).
 
-#### Using a library (from outside of the project)
+#### Using a package
 
 The `use` syntax is similar to importing an element of a file.
-Libraries can only be used as a whole.
+Packages can only be used as a whole.
 
 ```
-use { MyDomainLibrary } from './path/to/location.jv'; // only use the named library, access via qualified name
+use { MyDomainPackage } from './path/to/location.jv'; // only use the named package, access via qualified name
 use {
-  MyDomainLibrary1,
-  MyDomainLibrary1
-} from './path/to/location.jv'; // only use the named libraries, access via qualified name
-use { MyDomainLibrary as MyLibraryAlias} from './path/to/location.jv'; // only use the named library, access via qualified name using the alias
+  MyDomainPackage1,
+  MyDomainPackage2
+} from './path/to/location.jv'; // only use the named packages, access via qualified name
+use { MyDomainPackage as MyPackageAlias} from './path/to/location.jv'; // only use the named package, access via qualified name using the alias
 ```
 
 References to these used elements is by their qualified name (unless altered by an alias).
@@ -169,29 +171,29 @@ References to these used elements is by their qualified name (unless altered by 
 ## Decision rationale
 
 - keywords `publish` and `use` over `export` and `import` since they are less technical and better understandable for subject-matter experts
+- concept of "namespaces" is separate from publishing them for reuse in other projects (this RFC only introduces the concept of "namespaces" by the keyword `package`)
 
 ## Drawbacks
 
-- Two different sharing mechanisms (`publish` keyword, `library` concept`)
-- Elements of a pipeline cannot be reused, leading to potentially more slim pipelines and a parallel library
-- The elements of a library within a file always need the qualified name (alternative: allow access via sole name within file?)
-- The RFC does not allow re-publishing (only by putting elements into a containing library)
+- Two different sharing mechanisms (`publish` keyword, `package` concept`)
+- Elements of a pipeline cannot be reused, leading to potentially more slim pipelines and a parallel package
+- The elements of a package within a file always need the qualified name (alternative: allow access via sole name within file?)
 - Langium might not support this scoping mechanism out-of-the-box (more complex implementation)
 
 ## Alternatives
 
-- "use" syntax without braces, etc., `use MyDomainLibrary1, MyDomainLibrary2 from './path/to/file.jv';`
+- "use" syntax without braces, etc., `use MyDomainPackage1, MyDomainPackage2 from './path/to/file.jv';`
 - switch around `use` and `from`: `from 'location' use { Element };`
-- different keyword for publishing files and libraries (e.g., `export`)
-- different keyword for using files and libraries (e.g., `import`)
+- different keyword for publishing files and packages (e.g., `export`)
+- different keyword for using files and packages (e.g., `import`)
 - different keyword for renaming published / used elements (e.g., `called`)
-- Rather call it `module` instead of `library`
+- Rather call it `module` or `component` instead of `package`
 
 ## Possible Future Changes/Enhancements
 
-- build out to use libraries of other projects via a package-manager mechanism, e.g., by using an URL as location of a "use" statement
-- allow "using" single elements of a library instead of "using" the whole library
+- build out to use packages of other projects via a package-manager mechanism, e.g., by using an URL as location of a "use" statement
+  - alternative: introduce new concept `library`
+- allow "using" single elements of a package instead of "using" the whole package
 - allow additional usage paths, like
   - absolute file paths, and
   - org/repo combination at a central package registry, e.g., `use * from 'jv:my-org/my-repo';`
-- specify metadata (like the version) of a library, potentially require a version on library usage
