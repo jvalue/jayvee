@@ -42,10 +42,19 @@ For example, users will be enable to build libraries of valuetypes that can be r
 
 ## Explanation
 
+### Element visibility
+
+We distinguish different kinds of visibilities of elements:
+
+- `file-private`: usable only within the same file
+- `file-published`: usable also in other files of same project
+- **not existing**: `library-private`: usable only within the library
+- `library-published`: usable also in other locations (since `library` is always `file-published`)
+
 ### Publishing elements for usage elsewhere (within the project)
 
-For publishing single elements, the RFC introduces the keyword `publish`.
-All elements within a file are not published per default.
+For publishing single elements, the RFC introduces the keyword `publish` to indicate the visibility `file-published`.
+All elements within a file are not published per default, visibility `file-private`.
 Explicitly declaring an element as published allows for usage elsewhere.
 
 **Example publish**
@@ -72,13 +81,13 @@ publish MyValueType2 as MyValueType3;
 
 For bundling and publishing elements, the RFC introduces a new concept called `libraries`.
 A `library` can inhibit `Valuetype`s, `Block`s, `BlockType`s, `Constraint`s, and `Transform`s.
-A library is published per default.
-All elements within a library have to use the `publish` keyword.
+A library must be of visibility `file-published` and, thus, requires the keyword `publish`.
+All elements within a library have to use the `publish` keyword to make them of visibility `library-published`.
 
 **Example library**
 
 ```
-library MyDomainLibrary {
+publish library MyDomainLibrary {
   // definition of a new valuetype as part of the library
   publish valuetype MyDomainSpecificValuetype1 {
     // ... details of valuetype
@@ -123,7 +132,7 @@ The **qualified name** is constructed by prepending container structures in this
 
 ### Using elements
 
-Only `publish`ed elements can be used in other files.
+Only `file-published` (with keyword `publish`) elements can be used in other files.
 
 #### Usage paths
 
@@ -171,7 +180,9 @@ References to these used elements is by their qualified name (unless altered by 
 
 - "use" syntax without braces, etc., `use MyDomainLibrary1, MyDomainLibrary2 from './path/to/file.jv';`
 - switch around `use` and `from`: `from 'location' use { Element };`
-- different syntax for using files and libraries (e.g., `import`)
+- different keyword for publishing files and libraries (e.g., `export`)
+- different keyword for using files and libraries (e.g., `import`)
+- different keyword for renaming published / used elements (e.g., `called`)
 - Rather call it `module` instead of `library`
 
 ## Possible Future Changes/Enhancements
