@@ -168,6 +168,10 @@ use { MyDomainLibrary as MyLibraryAlias} from './path/to/location.jv'; // only u
 
 References to these used elements is by their qualified name (unless altered by an alias).
 
+## Decision rationale
+
+- keywords `publish` and `use` over `export` and `import` since they are less technical and better understandable for subject-matter experts
+
 ## Drawbacks
 
 - Two different sharing mechanisms (`publish` keyword, `library` concept`)
