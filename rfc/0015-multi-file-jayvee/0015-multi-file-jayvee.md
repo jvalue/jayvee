@@ -65,7 +65,7 @@ valuetype MyValueType2 {
 publish MyValueType2;
 
 // publish later under a different name
-publish MyValueType2 called MyValueType3;
+publish MyValueType2 as MyValueType3;
 ```
 
 ### Bundling elements to a library for usage elsewhere (outside of the project)
@@ -138,7 +138,7 @@ Jayvee provides the following possibilities:
 ```
 use * from './path/to/location.jv'; // use all published elements from the file, access via qualified name as if it would be defined at the root level
 use { MyDomainSpecificValuetype1 } from './path/to/location.jv'; // only use the published elements from the file, access via qualified name as if it would be defined at the root level
-use { MyDomainSpecificValuetype1 called Vt1} from './path/to/location.jv'; // only use the published elements from the file, access via qualified name using the alias
+use { MyDomainSpecificValuetype1 as Vt1} from './path/to/location.jv'; // only use the published elements from the file, access via qualified name using the alias
 ```
 
 References to these used elements is by their qualified name (unless altered by an alias).
@@ -154,7 +154,7 @@ use {
   MyDomainLibrary1,
   MyDomainLibrary1
 } from './path/to/location.jv'; // only use the named libraries, access via qualified name
-use { MyDomainLibrary called MyLibraryAlias} from './path/to/location.jv'; // only use the named library, access via qualified name using the alias
+use { MyDomainLibrary as MyLibraryAlias} from './path/to/location.jv'; // only use the named library, access via qualified name using the alias
 ```
 
 References to these used elements is by their qualified name (unless altered by an alias).
