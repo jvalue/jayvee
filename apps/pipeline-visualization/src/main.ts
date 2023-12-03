@@ -7,21 +7,23 @@ import {
   RunOptions,
   extractAstNodeFromFile,
   interpretModel,
-  useStdExtension, 
+  useStdExtension,
+  ExitCode 
 } from '@jvalue/jayvee-interpreter-lib';
 import { 
   JayveeModel, 
   JayveeServices, 
   createJayveeServices, 
-  PipelineDefinition 
+  PipelineDefinition, 
+  getBlocksInTopologicalSorting 
 } from '@jvalue/jayvee-language-server';
 
 import { NodeFileSystem } from 'langium/node';
 
-export enum ExitCode {
-  SUCCESS = 0,
-  FAILURE = 1,
-  }
+import { 
+  createMermaidRepresentation,
+  setMermaidTheme,
+ } from './mermaid_utils';
   
 export async function myRunAction(
   fileName: string,
@@ -56,26 +58,18 @@ export async function myInterpretModel(
   
   const model = await extractAstNodeFn(services, loggerFactory);
 
-  const pipelineMermaidCodes: Array<String> = model.pipelines.map(
-    (pipeline) => {return createMermaidCode(pipeline)}
-  )
-  console.log("nr. of pipelines found", pipelineMermaidCodes.length)
-  for (let pipelineMermaidCode of pipelineMermaidCodes) {
-    console.log("---------Mermaid Code---------")
-    console.log(pipelineMermaidCode)
-    console.log("-----------------------------")
-  }  
+  const myblocks = getBlocksInTopologicalSorting(model.pipelines[0]!)
+  let pipelineMermaidCode = createMermaidRepresentation(model)
+  let mermaidTheme = setMermaidTheme()
+
+  console.log("---------Mermaid Code---------")
+  console.log(pipelineMermaidCode)
+  console.log("-----------------------------")
+  console.log("---------Mermaid Theme---------")
+  console.log(mermaidTheme)
+  console.log("-----------------------------")
+
   return ExitCode.SUCCESS;
-}
-
-
-function createMermaidCode(pipeline: PipelineDefinition){
-  let diagramType: string = "flowchart TD";
-  let blockList: string[] = [];
-  for (const block of pipeline.blocks)  {
-    blockList.push(block.name);
-  }
-  return diagramType + "\n" + blockList.join('-->');
 }
 
 async function myCall(){
