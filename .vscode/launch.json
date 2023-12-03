@@ -51,6 +51,12 @@
       "command": "npm run example:gtfs",
       "request": "launch",
       "type": "node-terminal"
+    },
+    {
+      "name": "Pipeline viz",
+      "command": "npx nx run pipeline-visualization:serve", 
+      "request": "launch", 
+      "type": "node-terminal"
     }
   ]
 }
