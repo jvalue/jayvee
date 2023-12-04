@@ -74,7 +74,7 @@ export async function myInterpretModel(
 
 async function myCall(){
   console.log('Hello World!');
-  let fileName: string = "example/exercise1.jv";
+  let fileName: string = "example/mycars.jv";
   let options: RunOptions = {
     env: new Map,
     debug: true,
