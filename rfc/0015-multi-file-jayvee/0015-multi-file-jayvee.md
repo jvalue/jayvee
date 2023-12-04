@@ -9,7 +9,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 |             |                 |
 | ----------- | --------------- | --------------------------------------------------------------- |
 | Feature Tag | `multi-file`    |
-| Status      | `ACCEPTED`    | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED --> |
+| Status      | `ACCEPTED`      | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED --> |
 | Responsible | `georg-schwarz` | <!-- TODO: assign yourself as main driver of this RFC -->       |
 
 <!--
@@ -108,7 +108,8 @@ publish MyValueType2 as MyValueType3;
 For bundling and publishing elements, the RFC introduces a new concept called `packages`.
 A `package` can include `Valuetype`s, `Block`s, `BlockType`s, `Constraint`s, `Transform`s, and further `Package`s.
 A package must be of visibility `file-published` and, thus, requires the keyword `publish`.
-Elements within a package can use the `publish` keyword to make them of visibility `package-published` or are `package-private` per default.
+Elements within a package can be of visibility `package-published` by using the `publish` keyword, or are `package-private` per default.
+`package`s within `package`s must be `publish`ed as a consequence.
 
 **Example package**
 
