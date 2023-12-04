@@ -106,7 +106,7 @@ publish MyValueType2 as MyValueType3;
 ### Packages: bundling elements to a package for decoupled usage
 
 For bundling and publishing elements, the RFC introduces a new concept called `packages`.
-A `package` can inhibit `Valuetype`s, `Block`s, `BlockType`s, `Constraint`s, `Transform`s, and further `Package`s.
+A `package` can include `Valuetype`s, `Block`s, `BlockType`s, `Constraint`s, `Transform`s, and further `Package`s.
 A package must be of visibility `file-published` and, thus, requires the keyword `publish`.
 Elements within a package can use the `publish` keyword to make them of visibility `package-published` or are `package-private` per default.
 
@@ -126,12 +126,12 @@ publish package MyDomainPackage {
 }
 ```
 
-The advantage of bundling elements into a `package` is the decoupling from the internal file system structure.
+The advantage of bundling elements into a `package` is the decoupling from the internal file system structure and logically grouping related elements into one namespace.
 Rather than accessing files directly (and needing knowledge what is element is located in which files) users can simply use a whole package with all its elements (and don't need to know in which file the element is originally defined).
 
 ### Using elements
 
-Only `file-published` (with keyword `publish`) elements can be used in other files.
+Only `file-published` (with keyword `publish`) elements can be `use`d in other files.
 
 #### Usage paths
 
@@ -140,7 +140,7 @@ Jayvee provides the following possibilities:
 
 - a relative file path, e.g., `use * from './path/to/file.jv';`
 
-The `use` of elements via a file path decouples by using the element name or a defined alias instead of the file path within the file.
+The `use` of elements via a file path decouples from the file system structure by using the element name or a defined alias instead of the file path within the file.
 
 #### Using published elements of a file (within the same project)
 
@@ -177,7 +177,6 @@ References to these used elements is by their qualified name (unless altered by 
 
 - Two different sharing mechanisms (`publish` keyword, `package` concept`)
 - Elements of a pipeline cannot be reused, leading to potentially more slim pipelines and a parallel package
-- The elements of a package within a file always need the qualified name (alternative: allow access via sole name within file?)
 - Langium might not support this scoping mechanism out-of-the-box (more complex implementation)
 
 ## Alternatives
