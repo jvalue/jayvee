@@ -49,33 +49,33 @@ We distinguish different kinds of visibilities of elements:
 - `package-private`: usable only within the package
 - `package-published`: usable also in other locations (since `package` is always `file-published`)
 
-By introducing the concept of `packages`, most elements can be defined on three levels in a Jayvee file:
+By introducing the concept of `packages`, most elements can be defined on three scope levels in a Jayvee file:
 
-1. On the root level of the file
-2. Within a pipeline
-3. (new) Within a package
+1. file-scope (not contained in a further structure, like a pipeline or a package)
+2. pipeline-scope (contained in a pipeline)
+3. (new) package-scope (contained in a package)
 
 The name of an element is given by its definition.
 The **qualified name** is constructed by prepending container structures in this pattern: `<container name>.<element name>`, e.g., `MyDomainPackage.MyDomainSpecificValuetype`.
 
 **Access paths:**
 
-- root level elements can access
-  - root level elements by their name
-  - and elements of packages by their qualified name
-- elements within a package can access
-  - root level elements by their name
-  - and elements of other packages by their qualified name
-- elements within a pipeline can access
-  - root level elements by their name
-  - elements within the same pipeline by their name
-  - and elements of packages by their qualified name
+- _file-scope_ elements can access
+  - &#9989; _file-scope_ elements by their name
+  - &#9989; _package-scope_ elements by their qualified name (`packageName.elementName`)
+  - &#10060; no _pipeline-scope_ elements
+- _package-scope_ elements can access
+  - &#9989; _file-scope_ elements by their name
+  - &#9989; elements of the same _package-scope_ by their name
+  - &#9989; elements of another _package-scope_ by their qualified name
+  - &#10060; no _pipeline-scope_ elements
+- _pipeline-scope_ elements can access
+  - &#9989; _file-scope_ elements by their name
+  - &#9989; elements within the same _pipeline-scope_ by their name
+  - &#10060; no elements of another _pipeline-scope_
+  - &#9989; _package-scope_ elements by their qualified name
 
-**No-access paths:**
-
-- elements within a pipeline cannot be referenced by outside elements
-
-**Used elements of different files are handled as if they were defined at the root level.**
+**Used elements** of different files are handled **as if they were defined at file scope level**.
 
 ### Publishing elements for usage elsewhere (within the project)
 
