@@ -145,9 +145,9 @@ The `use` of elements via a file path decouples from the file system structure b
 #### Using published elements of a file (within the same project)
 
 ```
-use * from './path/to/location.jv'; // use all published elements from the file, access via qualified name as if it would be defined at the root level
-use * as MyWrappingNamespace from './path/to/location.jv'; // use all published elements from the file, access via qualified name as if it was defined in an artificial package (adding a prefix to the qualified name)
-use { MyDomainSpecificValuetype1 } from './path/to/location.jv'; // only use the published elements from the file, access via qualified name as if it would be defined at the root level
+use * from './path/to/location.jv'; // use all published elements from the file, access via qualified name as if it would be defined at the _file-scope_
+use * as MyWrappingNamespace from './path/to/location.jv'; // use all published elements from the file, access via qualified name as if it was defined in an artificial _package-scope_ (adding a prefix to the qualified name)
+use { MyDomainSpecificValuetype1 } from './path/to/location.jv'; // only use the published elements from the file, access via qualified name as if it would be defined at the _file-scope_
 use { MyDomainSpecificValuetype1 as Vt1} from './path/to/location.jv'; // only use the published elements from the file, access via qualified name using the alias
 ```
 
