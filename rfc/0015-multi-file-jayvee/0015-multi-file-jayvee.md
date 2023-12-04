@@ -9,7 +9,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 |             |                 |
 | ----------- | --------------- | --------------------------------------------------------------- |
 | Feature Tag | `multi-file`    |
-| Status      | `DISCUSSION`    | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED --> |
+| Status      | `ACCEPTED`    | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED --> |
 | Responsible | `georg-schwarz` | <!-- TODO: assign yourself as main driver of this RFC -->       |
 
 <!--
