@@ -16,6 +16,8 @@ import {
   subgraphDirection,
   subgraphColor,
   showComposite,
+  showProperties,
+  properties,
   font,
   fontSize
   } from './mermaid_params';
@@ -68,7 +70,17 @@ export function createMermaidPipeline(pipeline: PipelineDefinition, index: integ
       composites += compositeName + "\n" + direction + "\n" + compositePipe.join("-->") + "\n" + "end \n";
     }
     pipe.push(block.name)
-    listofBocks.push(`${block.name}[${block.name}\n${block.type.ref?.name}]`)
+    let propertyString = ""
+    if (showProperties){
+      for (let property of block.body.properties) {
+        if (properties.includes(property.name)){
+          let pv: any = property.value // Is there a better way of doing this?
+          propertyString += `${property.name}: ${pv.value}\n`
+        }
+      }
+    }
+    //let propertyString = block.body.properties.map((property) => `${property.name}: ${property.value.value}`).join("\n")
+    listofBocks.push(`${block.name}["\` ${block.name}\n(${block.type.ref?.name})\n${propertyString}\`" ]`)
     let children = collectChildren(block);
     if (children.length == 1) {
       process_pipe(pipe, children[0]!);
