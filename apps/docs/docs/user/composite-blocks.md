@@ -102,7 +102,7 @@ If the CSVExtractor is available in the scope of the `CarsPipeline` from before 
 ```jayvee
 pipeline CarsPipeline {
     // HttpExtractor, TextFileInterpreter and CSVInterpreter have been replaced by CSVExtractor
-    CSVExtractor
+    CarsExtractor
         -> CarsTableInterpreter
         -> CarsLoader;
 
