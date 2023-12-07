@@ -7,7 +7,7 @@ import * as assert from 'assert';
 import { BlockExecutorMock } from '@jvalue/jayvee-execution/test';
 import * as sqlite3 from 'sqlite3';
 
-type MockedSqlite3Database = jest.Mocked<Partial<sqlite3.Database>>;
+type MockedSqlite3Database = jest.Mocked<sqlite3.Database>;
 
 export class SQLiteLoaderExecutorMock implements BlockExecutorMock {
   private _sqliteClient: MockedSqlite3Database | undefined;
@@ -26,7 +26,7 @@ export class SQLiteLoaderExecutorMock implements BlockExecutorMock {
     ) => void = defaultSQLiteMockRegistration,
   ) {
     // setup sqlite3 mock
-    this._sqliteClient = new sqlite3.Database('test');
+    this._sqliteClient = new sqlite3.Database('test') as MockedSqlite3Database;
     registerMocks(this._sqliteClient);
   }
   restore() {

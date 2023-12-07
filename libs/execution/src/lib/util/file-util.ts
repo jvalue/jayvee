@@ -2,8 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { FileExtension, MimeType } from '@jvalue/jayvee-execution';
 import * as mime from 'mime-types';
+
+import { FileExtension, MimeType } from '../types';
 
 export function inferMimeTypeFromFileExtensionString(
   fileExtension: string | undefined,
