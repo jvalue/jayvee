@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { FileExtension, MimeType } from '@jvalue/jayvee-execution';
+import { FileExtension, MimeType } from '../types';
 
 import {
   inferFileExtensionFromContentTypeString,

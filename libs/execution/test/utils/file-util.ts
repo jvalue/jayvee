@@ -10,13 +10,10 @@ import {
   FileExtension,
   MimeType,
   TextFile,
-} from '@jvalue/jayvee-execution';
-
-import {
   inferFileExtensionFromFileExtensionString,
   inferMimeTypeFromFileExtensionString,
-} from '../src/file-util';
-import { splitLines } from '../src/string-util';
+  splitLines,
+} from '../../src';
 
 export function createBinaryFileFromLocalFile(fileName: string): BinaryFile {
   const extName = path.extname(fileName);

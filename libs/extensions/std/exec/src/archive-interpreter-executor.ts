@@ -18,14 +18,11 @@ import {
   MimeType,
   err,
   implementsStatic,
+  inferFileExtensionFromFileExtensionString,
+  inferMimeTypeFromFileExtensionString,
 } from '@jvalue/jayvee-execution';
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 import * as JSZip from 'jszip';
-
-import {
-  inferFileExtensionFromFileExtensionString,
-  inferMimeTypeFromFileExtensionString,
-} from './file-util';
 
 @implementsStatic<BlockExecutorClass>()
 export class ArchiveInterpreterExecutor extends AbstractBlockExecutor<
