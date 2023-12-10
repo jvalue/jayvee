@@ -64,6 +64,14 @@ export class LocalFileExtractorExecutor extends AbstractBlockExecutor<
       return R.ok(file);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
+      // Check if the file path starts with "../"
+      if (filePath.startsWith('../')) {
+        const errorMessage = `Error: File path "${filePath}" is not allowed. Path traversal is restricted.`;
+        return R.err({
+          message: errorMessage,
+          diagnostic: { node: context.getCurrentNode(), property: 'filePath' },
+        });
+      }
       return R.err({
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         message: error.message,

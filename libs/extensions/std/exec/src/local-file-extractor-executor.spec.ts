@@ -99,5 +99,16 @@ describe('Validation of LocalFileExtractorExecutor', () => {
     }
   });
 
-  // Add more test cases as needed
+  it('should diagnose error on file path starting with ".//"', async () => {
+    const text = readJvTestAsset('invalid-local-file.jv');
+
+    const result = await parseAndExecuteExecutor(text);
+
+    expect(R.isOk(result)).toEqual(false);
+    if (R.isErr(result)) {
+      expect(result.left.message).toEqual(
+        'Error: File path "../somefile.txt" is not allowed. Path traversal is restricted.',
+      );
+    }
+  });
 });
