@@ -4,9 +4,6 @@
 
 pipeline TestPipeline {
 
-  block TestExtractor oftype TestFileExtractor {
-  }
-
   block TestBlock oftype LocalFileExtractor {
     filePath: '../../../../../../../example/test-example-dataset.csv';
   }

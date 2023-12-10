@@ -7,7 +7,7 @@
 * 
 * @example Fetches a file from the given local path.
 * block CarsFileExtractor oftype LocalFileExtractor {
-*   filePath: "../../../../../example/test-example-dataset.csv";
+*   filePath: "cars.csv";
 * }
 */
 builtin blocktype LocalFileExtractor {
