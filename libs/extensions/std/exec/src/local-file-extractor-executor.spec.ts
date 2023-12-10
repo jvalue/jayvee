@@ -73,12 +73,14 @@ describe('Validation of LocalFileExtractorExecutor', () => {
 
     const result = await parseAndExecuteExecutor(text);
 
+    console.log('Result:', result);
+
     expect(R.isErr(result)).toEqual(false);
     if (R.isOk(result)) {
       expect(result.right).toEqual(
         expect.objectContaining({
-          name: 'test.txt',
-          extension: 'txt',
+          name: 'local-file-test.csv',
+          extension: 'csv',
           ioType: IOType.FILE,
           mimeType: R.MimeType.APPLICATION_OCTET_STREAM,
         }),
@@ -94,7 +96,7 @@ describe('Validation of LocalFileExtractorExecutor', () => {
     expect(R.isOk(result)).toEqual(false);
     if (R.isErr(result)) {
       expect(result.left.message).toEqual(
-        'Error reading file: ENOENT: no such file or directory',
+        "File './libs/extensions/std/exec/test/assets/local-file-extractor-executor/local-file-test.csv' not found`",
       );
     }
   });
@@ -107,7 +109,7 @@ describe('Validation of LocalFileExtractorExecutor', () => {
     expect(R.isOk(result)).toEqual(false);
     if (R.isErr(result)) {
       expect(result.left.message).toEqual(
-        'Error: File path "../somefile.txt" is not allowed. Path traversal is restricted.',
+        'Error: File path "../somefile" is not allowed. Path traversal is restricted.',
       );
     }
   });

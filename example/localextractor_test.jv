@@ -1,7 +1,7 @@
 pipeline TESTLOCAL{
 
     block localextractortest oftype LocalFileExtractor {
-        filePath: "./example/test-example-dataset.csv";
+        filePath: "./example/local-file-extractor_test.csv";
     }
 
     block localfilextrctor oftype TextFileInterpreter {
@@ -16,7 +16,7 @@ pipeline TESTLOCAL{
     block test oftype TableInterpreter{
         header: true;
         columns: [
-            "Series_reference" oftype text
+            "HeaderExample1" oftype text
         ];
     }
 

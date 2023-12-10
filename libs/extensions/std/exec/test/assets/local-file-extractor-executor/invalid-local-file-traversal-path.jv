@@ -1,7 +1,7 @@
 pipeline TESTLOCAL{
 
     block localextractortest oftype LocalFileExtractor {
-        filePath: "../local-file-extractor-executor/local-file-test.csv";
+        filePath: "../local-file-extractor-executor/local-file-extractor-executor-test/local-file-test.csv";
     }
 
     block localfilextrctor oftype TextFileInterpreter {
