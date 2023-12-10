@@ -99,8 +99,8 @@ describe('Validation of LocalFileExtractorExecutor', () => {
     }
   });
 
-  it('should diagnose error on file path starting with ".//"', async () => {
-    const text = readJvTestAsset('invalid-local-file.jv');
+  it('should diagnose error on file path starting with "../"', async () => {
+    const text = readJvTestAsset('invalid-local-file-traversal-path.jv');
 
     const result = await parseAndExecuteExecutor(text);
 
