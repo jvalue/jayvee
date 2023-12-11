@@ -1,35 +1,20 @@
-pipeline TESTLOCAL{
+//../local-file-extractor-executor/local-file-extractor-executor-test/local-file-test.csv
 
-    block localextractortest oftype LocalFileExtractor {
-        filePath: "../local-file-extractor-executor/local-file-extractor-executor-test/local-file-test.csv";
-    }
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
 
-    block localfilextrctor oftype TextFileInterpreter {
+pipeline TestPipeline {
 
-	}
+  block TestExtractor oftype TestFileExtractor {
+  }
 
-	block BatteryMaterialsCSVInterpreter oftype CSVInterpreter {
-		delimiter: ",";
-        enclosing: '"';
-	}
+  block TestBlock oftype LocalFileExtractor {
+    filePath: '../jayvee/libs/extensions/std/exec/test/assets/local-file-extractor-executor/local-file-test.csv';
+  }
 
-    block test oftype TableInterpreter{
-        header: true;
-        columns: [
-            "HeaderExample1" oftype text
-        ];
-    }
+  block TestLoader oftype TestSheetLoader {
+  }
 
-    block test2 oftype SQLiteLoader{
-        table: "TestLocalFile";
-        file: "./testlocal.sqlite";
-    }
-
-
-    localextractortest
-    -> localfilextrctor
-    -> BatteryMaterialsCSVInterpreter
-    -> test
-    -> test2;
-
+  TestExtractor -> TestBlock -> TestLoader;
 }

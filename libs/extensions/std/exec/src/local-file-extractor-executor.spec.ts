@@ -73,8 +73,6 @@ describe('Validation of LocalFileExtractorExecutor', () => {
 
     const result = await parseAndExecuteExecutor(text);
 
-    console.log('Result:', result);
-
     expect(R.isErr(result)).toEqual(false);
     if (R.isOk(result)) {
       expect(result.right).toEqual(
@@ -89,15 +87,13 @@ describe('Validation of LocalFileExtractorExecutor', () => {
   });
 
   it('should diagnose error on file not found', async () => {
-    const text = readJvTestAsset('valid-local-file.jv');
+    const text = readJvTestAsset('invalid-file-not-found.jv');
 
     const result = await parseAndExecuteExecutor(text);
 
-    expect(R.isOk(result)).toEqual(false);
+    expect(R.isErr(result)).toEqual(true);
     if (R.isErr(result)) {
-      expect(result.left.message).toEqual(
-        "File './libs/extensions/std/exec/test/assets/local-file-extractor-executor/local-file-test.csv' not found`",
-      );
+      expect(result.left.message).toEqual(`File './test.csv' not found.`);
     }
   });
 
@@ -108,8 +104,8 @@ describe('Validation of LocalFileExtractorExecutor', () => {
 
     expect(R.isOk(result)).toEqual(false);
     if (R.isErr(result)) {
-      expect(result.left.message).toEqual(
-        'Error: File path "../somefile" is not allowed. Path traversal is restricted.',
+      expect(result.left.message).toMatch(
+        /^Error: File path "\.\.\/jayvee\/libs\/extensions\/std\/exec\/test\/assets\/local-file-extractor-executor\/local-file-test\.csv" is not allowed\. Path traversal is restricted\.$/,
       );
     }
   });

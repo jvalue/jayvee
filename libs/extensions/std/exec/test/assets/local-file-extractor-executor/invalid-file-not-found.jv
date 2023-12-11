@@ -8,7 +8,7 @@ pipeline TestPipeline {
   }
 
   block TestBlock oftype LocalFileExtractor {
-    filePath: './libs/extensions/std/exec/test/assets/local-file-extractor-executor/local-file-test.csv';
+    filePath: './test.csv';
   }
 
   block TestLoader oftype TestSheetLoader {

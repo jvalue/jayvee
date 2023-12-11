@@ -20,6 +20,7 @@ import {
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 
 import { inferFileExtensionFromFileExtensionString } from './file-util';
+import { none } from 'fp-ts/lib/Option';
 
 @implementsStatic<BlockExecutorClass>()
 export class LocalFileExtractorExecutor extends AbstractBlockExecutor<
@@ -72,7 +73,7 @@ export class LocalFileExtractorExecutor extends AbstractBlockExecutor<
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (file == null) {
       return R.err({
-        message: `File '${filePath}' not found`,
+        message: `File '${filePath}' not found.`,
         diagnostic: { node: context.getCurrentNode(), property: 'filePath' },
       });
     }
