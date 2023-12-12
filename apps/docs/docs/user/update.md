@@ -30,6 +30,8 @@ npm install -g @jvalue/jayvee-interpreter@0.0.17
 code --install-extension jayvee.vsix
 ```
 
+For manual installation, follow this [link](https://code.visualstudio.com/docs/editor/extension-marketplace#_install-from-a-vsix) for the official VSCode documentation.
+
 ### Version Checks.
 
 To verify wether the wanted version of Jayvee and VSCode extension where installed successfully, you can run in your Command Prompt(terminal):
