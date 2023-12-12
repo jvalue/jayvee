@@ -4,9 +4,9 @@ Jayvee is constently getting **updates** as a dedicated team of developers dilig
 
 ### Update Jayvee the right way.
 
-To update Jayvee, you need:
+To update Jayvee, you need to:
 
-1. Update the interprestere by reinstalling it using npm:
+1. Update the interpreter by reinstalling it using npm:
 
 ```bash
 npm install -g @jvalue/jayvee-interpreter
@@ -20,7 +20,7 @@ npm install -g @jvalue/jayvee-interpreter@0.0.17
 
 2. Update your VSCode Extension:
 
-- Go [here](https://github.com/jvalue/jayvee/releases/latest) to find the latest (or a specific) version of the VSCode Extenstion.
+- Go [here](https://github.com/jvalue/jayvee/releases/latest) to find the latest(or a specific) version of the VSCode Extenstion.
 
 - Then, download the latest `jayvee.vsix` file.
 
