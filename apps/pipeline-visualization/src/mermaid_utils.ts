@@ -15,13 +15,18 @@ import {
   diagramDirection, 
   subgraphDirection,
   subgraphColor,
-  showComposite,
-  showProperties,
+  //showComposite,
+  //showProperties,
   properties,
   font,
   fontSize
   } from './mermaid_params';
 
+
+  export interface MermaidOptions {
+    composite: boolean;
+    properties: boolean;
+  }
 
 function processPipeline(pipeline: PipelineDefinition): string{
   let listofPipes: Array<string[]> = []
@@ -45,7 +50,7 @@ function processPipeline(pipeline: PipelineDefinition): string{
   return result;
 }
 
-export function createMermaidPipeline(pipeline: PipelineDefinition, index: integer){
+export function createMermaidPipeline(pipeline: PipelineDefinition, mermaidOptions: MermaidOptions){
   /* const myToString = (block: BlockDefinition, index = 0): string => {
     const blockTypeName = block.type.ref?.name;
     const blockString = `${index}["\`${block.name} \n (${blockTypeName})\`"]`;
@@ -61,7 +66,7 @@ export function createMermaidPipeline(pipeline: PipelineDefinition, index: integ
   let listofBocks: Array<string> = [];
   let composites: string = "";
   const process_pipe = (pipe: string[], block:BlockDefinition) => {
-    if (block.type.ref?.$type == "CompositeBlocktypeDefinition" && showComposite){
+    if (block.type.ref?.$type == "CompositeBlocktypeDefinition" && mermaidOptions.composite){
       let compositePipe: string[] = []
       for (let subblock of block.type.ref?.blocks){
         compositePipe.push(subblock.name)
@@ -71,7 +76,7 @@ export function createMermaidPipeline(pipeline: PipelineDefinition, index: integ
     }
     pipe.push(block.name)
     let propertyString = ""
-    if (showProperties){
+    if (mermaidOptions.properties){
       for (let property of block.body.properties) {
         if (properties.includes(property.name)){
           let pv: any = property.value // Is there a better way of doing this?
@@ -80,7 +85,10 @@ export function createMermaidPipeline(pipeline: PipelineDefinition, index: integ
       }
     }
     //let propertyString = block.body.properties.map((property) => `${property.name}: ${property.value.value}`).join("\n")
-    listofBocks.push(`${block.name}["\` ${block.name}\n(${block.type.ref?.name})\n${propertyString}\`" ]`)
+    //Markdown styling
+    //listofBocks.push(`${block.name}["\` ${block.name}\n(${block.type.ref?.name})\n${propertyString}\`" ]`)
+    //HTML styling
+    listofBocks.push(`${block.name}[${block.name}<br><i>${block.type.ref?.name}</i><br>${propertyString}]`)
     let children = collectChildren(block);
     if (children.length == 1) {
       process_pipe(pipe, children[0]!);
@@ -114,13 +122,13 @@ export function createMermaidStyling(pipeline: PipelineDefinition) {
   return classAssign.join("\n")
 }
 
-export function createMermaidRepresentation(model: JayveeModel){
+export function createMermaidRepresentation(model: JayveeModel, mermaidOptions: MermaidOptions){
     let diagramSetup: string = diagramType + " " + diagramDirection;
     let pipelineCodes: string[] = [];
     let stylings: string[] = [];
     model.pipelines.forEach((pipeline, index) => {
         //let pipelineCode = processPipeline(pipeline);
-        let pipelineCode = createMermaidPipeline(pipeline, index);
+        let pipelineCode = createMermaidPipeline(pipeline, mermaidOptions);
         let styling = createMermaidStyling(pipeline)
         pipelineCodes.push(pipelineCode)
         stylings.push(styling)
