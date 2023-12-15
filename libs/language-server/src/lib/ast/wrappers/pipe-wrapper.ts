@@ -69,7 +69,7 @@ export class PipeWrapper
   }
 }
 
-export function createSemanticPipes(
+export function createWrappersFromPipeChain(
   pipe: PipeDefinition | BlocktypePipeline,
 ): PipeWrapper[] {
   const result: PipeWrapper[] = [];
@@ -77,8 +77,8 @@ export function createSemanticPipes(
     if (!PipeWrapper.canBeWrapped(pipe, chainIndex)) {
       continue;
     }
-    const semanticPipe = new PipeWrapper(pipe, chainIndex);
-    result.push(semanticPipe);
+    const pipeWrapper = new PipeWrapper(pipe, chainIndex);
+    result.push(pipeWrapper);
   }
   return result;
 }

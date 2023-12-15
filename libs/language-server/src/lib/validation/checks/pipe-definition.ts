@@ -8,7 +8,7 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
 import { PipeDefinition } from '../../ast/generated/ast';
-import { createSemanticPipes } from '../../ast/wrappers/pipe-wrapper';
+import { createWrappersFromPipeChain } from '../../ast/wrappers/pipe-wrapper';
 import { BlockTypeWrapper } from '../../ast/wrappers/typed-object/blocktype-wrapper';
 import { ValidationContext } from '../validation-context';
 
@@ -23,10 +23,10 @@ function checkBlockCompatibility(
   pipe: PipeDefinition,
   context: ValidationContext,
 ): void {
-  const semanticPipes = createSemanticPipes(pipe);
-  for (const semanticPipe of semanticPipes) {
-    const fromBlockTypeDefinition = semanticPipe.from?.type;
-    const toBlockTypeDefinition = semanticPipe.to?.type;
+  const pipeWrappers = createWrappersFromPipeChain(pipe);
+  for (const pipeWrapper of pipeWrappers) {
+    const fromBlockTypeDefinition = pipeWrapper.from?.type;
+    const toBlockTypeDefinition = pipeWrapper.to?.type;
 
     if (
       !BlockTypeWrapper.canBeWrapped(fromBlockTypeDefinition) ||
@@ -40,8 +40,8 @@ function checkBlockCompatibility(
     if (fromBlockType.hasOutput() && toBlockType.hasInput()) {
       if (!fromBlockType.canBeConnectedTo(toBlockType)) {
         const errorMessage = `The output type "${fromBlockType.outputType}" of ${fromBlockType.type} is incompatible with the input type "${toBlockType.inputType}" of ${toBlockType.type}`;
-        context.accept('error', errorMessage, semanticPipe.getFromDiagnostic());
-        context.accept('error', errorMessage, semanticPipe.getToDiagnostic());
+        context.accept('error', errorMessage, pipeWrapper.getFromDiagnostic());
+        context.accept('error', errorMessage, pipeWrapper.getToDiagnostic());
       }
     }
   }
