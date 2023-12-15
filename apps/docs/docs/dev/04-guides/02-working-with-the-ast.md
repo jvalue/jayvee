@@ -141,7 +141,7 @@ assert(referenced !== undefined);
 ## AST wrapper classes
 
 The generated interfaces for AST nodes in `ast.ts` are only meant to represent the AST structurally, they don't define any behavior.
-Also, in case of syntactic sugar, there may be different kinds of AST nodes representing the same semantic language concept (e.g. single pipes with a verbose syntax or chained pipes). 
+Also, in case of syntactic sugar, there may be different kinds of AST nodes representing the same semantic language concept. 
 
 To cope with this problem, there is the concept of an `AstNodeWrapper`.
 An AST node wrapper is capable of wrapping AST nodes that represent the same semantic language concept and adding behavior to them via custom methods.

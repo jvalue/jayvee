@@ -24,28 +24,6 @@ pipeline CarsPipeline {
 }
 ```
 
-Alternatively, you can use a slightly longer syntax for pipes:
-
-```jayvee
-pipeline CarsPipeline {
-    // Assumption: blocks "GasReserveHttpExtractor", "GasReserveCSVInterpreter", "GasReserveTableInterpreter", and "GasReserveLoader" are defined
-
-    pipe {
-        from: GasReserveHttpExtractor;
-        to: GasReserveTextFileInterpreter;
-
-    }
-
-    pipe {
-        from: GasReserveTextFileInterpreter;
-        to: GasReserveCSVInterpreter;
-
-    }
-
-    // etc.
-}
-```
-
 ## Blocks
 
 A `Block` is a processing step within a `Pipeline`.
