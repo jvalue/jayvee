@@ -7,6 +7,7 @@ import './iotype'
 import './terminal'
 import './transform'
 import './valuetype'
+import './block'
 import './main'
 
 ReferenceableBlocktypeDefinition:
