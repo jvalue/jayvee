@@ -71,11 +71,11 @@ export async function myInterpretModel(
 
   console.log("---------Mermaid Code---------")
   console.log(pipelineMermaidCode)
-  fs.writeFileSync("./mermaid_code.txt", pipelineMermaidCode);
+  fs.writeFileSync(mermaidOptions.mermaidFile, pipelineMermaidCode);
   console.log("-----------------------------")
   console.log("---------Mermaid Theme---------")
   console.log(mermaidTheme)
-  fs.writeFileSync("./mermaid_style.txt", mermaidTheme);
+  fs.writeFileSync(mermaidOptions.styleFile, mermaidTheme);
   console.log("-----------------------------")
 
   return ExitCode.SUCCESS;
@@ -99,9 +99,19 @@ async function myCall(
 
 const program = new Command();
 program
-  .version("0.1.0")
-  .description("Generating mermaid.js code from .jv-files")
+  .version('0.1.0')
+  .description('Generating mermaid.js code from .jv-files')
   .argument('<file>', `path to the .jv source file`)
+  .option(
+    '-m, --mermaid-file <file>',
+    'output file name for mermaid code',
+    'mermaid-code.txt'
+  )
+  .option(
+    '-s, --style-file <file>',
+    'output file name for mermaid style',
+    'mermaid-style.txt'
+  )
   .option(
     '-c, --composite-blocks',
     'show building blocks of composite blocks', 
@@ -118,7 +128,9 @@ program
 
 //for debugging with nx-serve
 const mermaidOptions: MermaidOptions = {
-  composite: true,
+  mermaidFile: 'mermaid-code.txt',
+  styleFile: 'mermaid-style.txt',
+  compositeBlocks: true,
   properties: true
 }
 //myCall("example/cars.jv", mermaidOptions)

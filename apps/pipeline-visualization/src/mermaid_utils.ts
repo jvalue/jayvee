@@ -15,8 +15,6 @@ import {
   diagramDirection, 
   subgraphDirection,
   subgraphColor,
-  //showComposite,
-  //showProperties,
   properties,
   font,
   fontSize
@@ -24,7 +22,9 @@ import {
 
 
   export interface MermaidOptions {
-    composite: boolean;
+    mermaidFile: string;
+    styleFile: string;
+    compositeBlocks: boolean;
     properties: boolean;
   }
 
@@ -66,7 +66,7 @@ export function createMermaidPipeline(pipeline: PipelineDefinition, mermaidOptio
   let listofBocks: Array<string> = [];
   let composites: string = "";
   const process_pipe = (pipe: string[], block:BlockDefinition) => {
-    if (block.type.ref?.$type == "CompositeBlocktypeDefinition" && mermaidOptions.composite){
+    if (block.type.ref?.$type == "CompositeBlocktypeDefinition" && mermaidOptions.compositeBlocks){
       let compositePipe: string[] = []
       for (let subblock of block.type.ref?.blocks){
         compositePipe.push(subblock.name)
