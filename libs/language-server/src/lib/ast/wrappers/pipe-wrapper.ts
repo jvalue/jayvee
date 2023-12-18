@@ -14,8 +14,11 @@ import {
 
 import { AstNodeWrapper } from './ast-node-wrapper';
 
-export class PipeWrapper<T extends PipeDefinition | BlocktypePipeline>
-  implements AstNodeWrapper<T>
+export class PipeWrapper<
+  T extends PipeDefinition | BlocktypePipeline =
+    | PipeDefinition
+    | BlocktypePipeline,
+> implements AstNodeWrapper<T>
 {
   public readonly astNode: T;
   private readonly chainIndex: number;
@@ -34,7 +37,7 @@ export class PipeWrapper<T extends PipeDefinition | BlocktypePipeline>
     this.chainIndex = chainIndex;
   }
 
-  getFromDiagnostic(): DiagnosticInfo<T, keyof T> {
+  getFromDiagnostic(): DiagnosticInfo<PipeDefinition | BlocktypePipeline> {
     return {
       node: this.astNode,
       property: 'blocks',
@@ -42,7 +45,7 @@ export class PipeWrapper<T extends PipeDefinition | BlocktypePipeline>
     };
   }
 
-  getToDiagnostic(): DiagnosticInfo<T, keyof T> {
+  getToDiagnostic(): DiagnosticInfo<PipeDefinition | BlocktypePipeline> {
     return {
       node: this.astNode,
       property: 'blocks',
