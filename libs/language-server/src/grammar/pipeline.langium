@@ -20,13 +20,4 @@ PipelineDefinition:
   '}';
 
 PipeDefinition:
-  SinglePipeDefinition | ChainedPipeDefinition;
-
-SinglePipeDefinition:
-  'pipe' '{'
-    'from' ':' from=[BlockDefinition] ';'
-    'to' ':' to=[BlockDefinition] ';'
-  '}';
-
-ChainedPipeDefinition:
     blocks+=[BlockDefinition] ('->' blocks+=[BlockDefinition])+ ';';

@@ -25,7 +25,10 @@ import {
 } from './generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { BlockTypeWrapper, ConstraintTypeWrapper } from './wrappers';
-import { PipeWrapper, createSemanticPipes } from './wrappers/pipe-wrapper';
+import {
+  PipeWrapper,
+  createWrappersFromPipeChain,
+} from './wrappers/pipe-wrapper';
 
 export function collectStartingBlocks(
   container: PipelineDefinition | CompositeBlocktypeDefinition,
@@ -90,12 +93,12 @@ function collectPipes(
   const pipeline = block.$container;
   const allPipes = collectAllPipes(pipeline);
 
-  return allPipes.filter((semanticPipe) => {
+  return allPipes.filter((pipeWrapper) => {
     switch (kind) {
       case 'outgoing':
-        return semanticPipe.from === block;
+        return pipeWrapper.from === block;
       case 'ingoing':
-        return semanticPipe.to === block;
+        return pipeWrapper.to === block;
       case undefined:
         return false;
     }
@@ -108,7 +111,7 @@ export function collectAllPipes(
 ): PipeWrapper[] {
   const result: PipeWrapper[] = [];
   for (const pipe of container.pipes) {
-    result.push(...createSemanticPipes(pipe));
+    result.push(...createWrappersFromPipeChain(pipe));
   }
   return result;
 }
