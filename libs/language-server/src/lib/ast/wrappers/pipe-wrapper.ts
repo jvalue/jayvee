@@ -14,15 +14,15 @@ import {
 
 import { AstNodeWrapper } from './ast-node-wrapper';
 
-export class PipeWrapper
-  implements AstNodeWrapper<PipeDefinition | BlocktypePipeline>
+export class PipeWrapper<T extends PipeDefinition | BlocktypePipeline>
+  implements AstNodeWrapper<T>
 {
-  public readonly astNode: PipeDefinition | BlocktypePipeline;
+  public readonly astNode: T;
   private readonly chainIndex: number;
   public readonly from: BlockDefinition;
   public readonly to: BlockDefinition;
 
-  constructor(pipe: BlocktypePipeline | PipeDefinition, chainIndex: number) {
+  constructor(pipe: T, chainIndex: number) {
     this.astNode = pipe;
     assert(0 <= chainIndex && chainIndex + 1 < pipe.blocks.length);
     assert(pipe.blocks[chainIndex]?.ref !== undefined);
@@ -34,25 +34,23 @@ export class PipeWrapper
     this.chainIndex = chainIndex;
   }
 
-  getFromDiagnostic(): DiagnosticInfo<PipeDefinition | BlocktypePipeline> {
-    const result: DiagnosticInfo<PipeDefinition | BlocktypePipeline> = {
+  getFromDiagnostic(): DiagnosticInfo<T, keyof T> {
+    return {
       node: this.astNode,
       property: 'blocks',
       index: this.chainIndex,
     };
-    return result;
   }
 
-  getToDiagnostic(): DiagnosticInfo<PipeDefinition | BlocktypePipeline> {
-    const result: DiagnosticInfo<PipeDefinition | BlocktypePipeline> = {
+  getToDiagnostic(): DiagnosticInfo<T, keyof T> {
+    return {
       node: this.astNode,
       property: 'blocks',
       index: this.chainIndex + 1,
     };
-    return result;
   }
 
-  equals(pipe: PipeWrapper): boolean {
+  equals(pipe: PipeWrapper<T>): boolean {
     return this.from === pipe.from && this.to === pipe.to;
   }
 
@@ -69,10 +67,10 @@ export class PipeWrapper
   }
 }
 
-export function createWrappersFromPipeChain(
-  pipe: PipeDefinition | BlocktypePipeline,
-): PipeWrapper[] {
-  const result: PipeWrapper[] = [];
+export function createWrappersFromPipeChain<
+  A extends PipeDefinition | BlocktypePipeline,
+>(pipe: A): PipeWrapper<A>[] {
+  const result: PipeWrapper<A>[] = [];
   for (let chainIndex = 0; chainIndex < pipe.blocks.length - 1; ++chainIndex) {
     if (!PipeWrapper.canBeWrapped(pipe, chainIndex)) {
       continue;
