@@ -95,6 +95,8 @@ block CarsLoader oftype SQLiteLoader {
 }
 ```
 
+Composite blocks are a special case that use pipeline sytnax to chain blocks but are not implicitly instantiated like pipelines if a model is executed. For the scope of this RFC, chaining pipeline syntax should **stay possible in pipelines and composite blocks** while **composite blocks are also be able to contain block definitions**. In a future enhancement (see Possible Future Changes/Enhancements), this should be split up with the introduction of packages (ref [RFC0015](../0015-multi-file-jayvee/0015-multi-file-jayvee.md)).
+
 ### Additional upsides
 Defining blocks only outside a pipeline also means we can reuse them across many pipelines. This has a positive side effect on blocks of types without non-default properties, such as the `TextFileInterpreter`. Before, any pipeline needed to define these blocks before it could instantiate them, leading to very verbose code.
 
@@ -112,12 +114,15 @@ block StandardXLSXInterpreter oftype XLSXInterpreter { }
 
 ## Drawbacks
 - This change introduces more structure for blocks but pipelines are still confusing, see Alternatives
+- With additional enforced structure, users loose flexibility to define things where they want
 
 ## Alternatives
 - Introduce explicit execution calls like `pipeline.execute();` or `instantiate <pipeline name>;`/`run <pipeline name>;` instead of implicitly executing pipelines
   - Decided against because Jayvee is purely descriptive right now outside of expressions
 - Change the `block` keyword to `blockdefinition` or `blocktype` (and change `blocktype` to `blocktypetype`)
   - Decided against because `block` is more intuitive for actual language users (especially compared to `blocktype` with `blocktypetype`)
+- Only document that the pipe syntax means instantiation and everything else is a definition
+  - decided against to follow "Explicit modeling over hidden magic" principle
 
 ## Possible Future Changes/Enhancements
-<!-- TODO: (optional) Point out what changes or enhancements you see in the future to the proposed concepts. -->
+- After implementing [RFC0015](../0015-multi-file-jayvee/0015-multi-file-jayvee.md), reconsider disallowing block definitions in composite blocks and instead enforce only chained pipelines in composite blocks and distribute them and their block definitions using packages instead.
