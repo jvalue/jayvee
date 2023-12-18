@@ -11,10 +11,7 @@ import {
   ValuetypeVisitor,
 } from '@jvalue/jayvee-language-server';
 
-const DECIMAL_COMMA_SEPARATOR_REGEX = /^[+-]?([0-9]*[,])?[0-9]+$/;
-const DECIMAL_DOT_SEPARATOR_REGEX = /^[+-]?([0-9]*[.])?[0-9]+$/;
-
-const INTEGER_REGEX = /^[+-]?[0-9]+$/;
+const NUMBER_REGEX = /^[+-]?([0-9]*[,\\.])?[0-9]+([eE][+\\-]?\d+)?$/;
 
 const TRUE_REGEX = /^true$/i;
 const FALSE_REGEX = /^false$/i;
@@ -47,24 +44,32 @@ class InternalRepresentationParserVisitor extends ValuetypeVisitor<
   }
 
   visitDecimal(): number | undefined {
-    let sanitizedValue: string;
-    if (DECIMAL_COMMA_SEPARATOR_REGEX.test(this.value)) {
-      sanitizedValue = this.value.replace(',', '.');
-    } else if (DECIMAL_DOT_SEPARATOR_REGEX.test(this.value)) {
-      sanitizedValue = this.value;
-    } else {
+    if (!NUMBER_REGEX.test(this.value)) {
       return undefined;
     }
 
-    return Number.parseFloat(sanitizedValue);
+    return Number.parseFloat(this.value.replace(',', '.'));
   }
 
   visitInteger(): number | undefined {
-    if (!INTEGER_REGEX.test(this.value)) {
+    /**
+     * Reuse decimal number parsing to capture valid scientific notation
+     * of integers like 5.3e3 = 5300. In contrast to decimal, if the final number
+     * is not a valid integer, returns undefined.
+     */
+    const decimalNumber = this.visitDecimal();
+
+    if (decimalNumber === undefined) {
       return undefined;
     }
 
-    return Number.parseInt(this.value, 10);
+    const integerNumber = Math.trunc(decimalNumber);
+
+    if (decimalNumber !== integerNumber) {
+      return undefined;
+    }
+
+    return integerNumber;
   }
 
   visitText(): string {
