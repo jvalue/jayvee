@@ -11,7 +11,7 @@ import {
   ValuetypeVisitor,
 } from '@jvalue/jayvee-language-server';
 
-const NUMBER_REGEX = /^[+-]?([0-9]*[,\\.])?[0-9]+([eE][+\\-]?\d+)?$/;
+const NUMBER_REGEX = /^[+-]?([0-9]*[,.])?[0-9]+([eE][+-]?\d+)?$/;
 
 const TRUE_REGEX = /^true$/i;
 const FALSE_REGEX = /^false$/i;
