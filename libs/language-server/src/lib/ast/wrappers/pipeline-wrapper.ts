@@ -53,7 +53,12 @@ export class PipelineWrapper
   }
 
   getStartingBlocks(): BlockDefinition[] {
-    return this.getStartingBlockPipes().map((p) => p.from);
+    const startingBlocks = this.getStartingBlockPipes().map((p) => p.from);
+
+    // Special case: the extractor is reused for multiple paths
+    // Thus, we remove duplicates
+    const withoutDuplicates = [...new Set(startingBlocks)];
+    return withoutDuplicates;
   }
 
   getOutgoingPipes(blockDefinition: BlockDefinition): PipeWrapper[] {
