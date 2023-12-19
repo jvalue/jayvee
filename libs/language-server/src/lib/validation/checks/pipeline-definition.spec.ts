@@ -63,9 +63,24 @@ describe('Validation of PipelineDefinition', () => {
     validationAcceptorMock.mockReset();
   });
 
-  it('should diagnose error on missing extractor block', async () => {
+  it('should diagnose error on missing starting block (no blocks)', async () => {
     const text = readJvTestAsset(
       'pipeline-definition/invalid-empty-pipeline.jv',
+    );
+
+    await parseAndValidatePipeline(text);
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+    expect(validationAcceptorMock).toHaveBeenCalledWith(
+      'error',
+      `An extractor block is required for this pipeline`,
+      expect.any(Object),
+    );
+  });
+
+  it('should diagnose error on missing starting block (no pipes)', async () => {
+    const text = readJvTestAsset(
+      'pipeline-definition/invalid-pipeline-only-blocks.jv',
     );
 
     await parseAndValidatePipeline(text);
