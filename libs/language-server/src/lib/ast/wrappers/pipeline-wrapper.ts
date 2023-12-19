@@ -52,23 +52,23 @@ export class PipelineWrapper
     return this.getStartingBlockPipes().map((p) => p.from);
   }
 
-  getSuccessorPipes(blockDefinition: BlockDefinition): PipeWrapper[] {
+  getOutgoingPipes(blockDefinition: BlockDefinition): PipeWrapper[] {
     return this.allPipes.filter((pipe) => {
       return pipe.from === blockDefinition;
     });
   }
 
-  getSuccessorBlocks(blockDefinition: BlockDefinition): BlockDefinition[] {
-    return this.getSuccessorPipes(blockDefinition).map((p) => p.to);
+  followOutgoingPipes(blockDefinition: BlockDefinition): BlockDefinition[] {
+    return this.getOutgoingPipes(blockDefinition).map((p) => p.to);
   }
 
-  getPredecessorPipes(blockDefinition: BlockDefinition): PipeWrapper[] {
+  getIngoingPipes(blockDefinition: BlockDefinition): PipeWrapper[] {
     return this.allPipes.filter((pipe) => {
       return pipe.to === blockDefinition;
     });
   }
 
-  getPredecessorBlocks(blockDefinition: BlockDefinition): BlockDefinition[] {
-    return this.getPredecessorPipes(blockDefinition).map((p) => p.from);
+  followIngoingPipes(blockDefinition: BlockDefinition): BlockDefinition[] {
+    return this.getIngoingPipes(blockDefinition).map((p) => p.from);
   }
 }

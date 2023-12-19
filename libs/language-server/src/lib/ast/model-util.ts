@@ -53,10 +53,10 @@ export function getBlocksInTopologicalSorting(
 
     sortedNodes.push(node);
 
-    for (const childNode of pipelineWrapper.getSuccessorBlocks(node)) {
+    for (const childNode of pipelineWrapper.followOutgoingPipes(node)) {
       // Mark edges between parent and child as visited
       pipelineWrapper
-        .getPredecessorPipes(childNode)
+        .getIngoingPipes(childNode)
         .filter((e) => e.from === node)
         .forEach((e) => {
           unvisitedEdges = unvisitedEdges.filter((edge) => !edge.equals(e));
@@ -64,7 +64,7 @@ export function getBlocksInTopologicalSorting(
 
       // If all edges to the child have been visited
       const notRemovedEdges = pipelineWrapper
-        .getPredecessorPipes(childNode)
+        .getIngoingPipes(childNode)
         .filter((e) => unvisitedEdges.some((edge) => edge.equals(e)));
       if (notRemovedEdges.length === 0) {
         // Insert it into currentBlocks

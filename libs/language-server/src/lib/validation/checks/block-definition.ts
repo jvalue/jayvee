@@ -101,11 +101,11 @@ function collectPipes(
   let pipes: PipeWrapper[];
   switch (whatToCheck) {
     case 'input': {
-      pipes = pipelineWrapper.getPredecessorPipes(block);
+      pipes = pipelineWrapper.getIngoingPipes(block);
       break;
     }
     case 'output': {
-      pipes = pipelineWrapper.getSuccessorPipes(block);
+      pipes = pipelineWrapper.getOutgoingPipes(block);
       break;
     }
     default: {

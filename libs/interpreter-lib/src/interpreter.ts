@@ -255,7 +255,7 @@ export function logPipelineOverview(
       block.name
     } (${blockTypeName})`;
     const childString = pipelineWrapper
-      .getSuccessorBlocks(block)
+      .followOutgoingPipes(block)
       .map((child) => toString(child, depth + 1))
       .join('\n');
     return blockString + '\n' + childString;
