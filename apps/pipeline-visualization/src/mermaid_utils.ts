@@ -27,6 +27,15 @@ export interface MermaidOptions {
   properties: boolean;
 }
 
+function escapeHtml(unsafe: string) {
+  return unsafe
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 function processPipeline(pipeline: PipelineDefinition): string {
   let listofPipes: Array<string[]> = [];
   const process_pipe = (pipe: string[], block: BlockDefinition) => {
@@ -92,7 +101,7 @@ export function createMermaidPipeline(
       for (let property of block.body.properties) {
         if (properties.includes(property.name)) {
           let pv: any = property.value; // Is there a better way of doing this?
-          propertyString += `${property.name}: ${pv.value}\n`;
+          propertyString += `${property.name}: ${escapeHtml(pv.value)}\n`;
         }
       }
     }
