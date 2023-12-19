@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'pipeline-visualization',
   preset: '../../jest.preset.js',
