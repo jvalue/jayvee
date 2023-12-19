@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { PipelineWrapper } from '../../ast';
 import { PipelineDefinition } from '../../ast/generated/ast';
-import { collectStartingBlocks } from '../../ast/model-util';
 import { ValidationContext } from '../validation-context';
 import { checkUniqueNames } from '../validation-util';
 
@@ -22,7 +22,8 @@ function checkStartingBlocks(
   pipeline: PipelineDefinition,
   context: ValidationContext,
 ): void {
-  const startingBlocks = collectStartingBlocks(pipeline);
+  const pipelineWrapper = new PipelineWrapper(pipeline);
+  const startingBlocks = pipelineWrapper.getStartingBlocks();
   if (startingBlocks.length === 0) {
     context.accept(
       'error',

@@ -4,7 +4,10 @@
 
 import {
   BlockDefinition,
-  collectParents,
+  CompositeBlocktypeDefinition,
+  PipelineDefinition,
+  PipelineWrapper,
+  getBlocksInTopologicalSorting,
 } from '@jvalue/jayvee-language-server';
 
 import { ExecutionContext } from '../execution-context';
@@ -31,18 +34,31 @@ export interface ExecutionOrderItem {
  */
 export async function executeBlocks(
   executionContext: ExecutionContext,
-  executionOrder: ExecutionOrderItem[],
+  compositeBlockTypeDefinition:
+    | CompositeBlocktypeDefinition
+    | PipelineDefinition,
   initialInputValue: IOTypeImplementation | undefined = undefined,
 ): Promise<R.Result<ExecutionOrderItem[]>> {
+  const pipelineWrapper = new PipelineWrapper(compositeBlockTypeDefinition);
+  const executionOrder: {
+    block: BlockDefinition;
+    value: IOTypeImplementation | null;
+  }[] = getBlocksInTopologicalSorting(compositeBlockTypeDefinition).map(
+    (block) => {
+      return { block: block, value: NONE };
+    },
+  );
+
   let isFirstBlock = true;
 
   for (const blockData of executionOrder) {
     const block = blockData.block;
-    const parentData = collectParents(block).map((parent) =>
-      executionOrder.find((blockData) => parent === blockData.block),
-    );
-    let inputValue =
-      parentData[0]?.value === undefined ? NONE : parentData[0]?.value;
+    const parentData = pipelineWrapper
+      .getPredecessorBlocks(block)
+      .map((parent) =>
+        executionOrder.find((blockData) => parent === blockData.block),
+      );
+    let inputValue = parentData[0]?.value ?? NONE;
 
     const useExternalInputValueForFirstBlock =
       isFirstBlock && inputValue === NONE && initialInputValue !== undefined;

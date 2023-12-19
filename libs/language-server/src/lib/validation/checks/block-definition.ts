@@ -9,14 +9,11 @@
 
 import { assertUnreachable } from 'langium';
 
+import { PipelineWrapper } from '../../ast';
 import {
   BlockDefinition,
   isCompositeBlocktypeDefinition,
 } from '../../ast/generated/ast';
-import {
-  collectIngoingPipes,
-  collectOutgoingPipes,
-} from '../../ast/model-util';
 import { PipeWrapper } from '../../ast/wrappers/pipe-wrapper';
 import { BlockTypeWrapper } from '../../ast/wrappers/typed-object/blocktype-wrapper';
 import { ValidationContext } from '../validation-context';
@@ -100,14 +97,15 @@ function collectPipes(
   block: BlockDefinition,
   whatToCheck: 'input' | 'output',
 ): PipeWrapper[] {
+  const pipelineWrapper = new PipelineWrapper(block.$container);
   let pipes: PipeWrapper[];
   switch (whatToCheck) {
     case 'input': {
-      pipes = collectIngoingPipes(block);
+      pipes = pipelineWrapper.getPredecessorPipes(block);
       break;
     }
     case 'output': {
-      pipes = collectOutgoingPipes(block);
+      pipes = pipelineWrapper.getSuccessorPipes(block);
       break;
     }
     default: {

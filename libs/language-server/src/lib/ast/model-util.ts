@@ -4,12 +4,7 @@
 
 import { strict as assert } from 'assert';
 
-import {
-  AstNode,
-  LangiumDocuments,
-  Reference,
-  assertUnreachable,
-} from 'langium';
+import { AstNode, LangiumDocuments } from 'langium';
 
 import {
   BinaryExpression,
@@ -20,101 +15,14 @@ import {
   PipelineDefinition,
   UnaryExpression,
   isBuiltinBlocktypeDefinition,
-  isCompositeBlocktypeDefinition,
   isJayveeModel,
 } from './generated/ast';
 // eslint-disable-next-line import/no-cycle
-import { BlockTypeWrapper, ConstraintTypeWrapper } from './wrappers';
 import {
-  PipeWrapper,
-  createWrappersFromPipeChain,
-} from './wrappers/pipe-wrapper';
-
-export function collectStartingBlocks(
-  container: PipelineDefinition | CompositeBlocktypeDefinition,
-): BlockDefinition[] {
-  // For composite blocks the first blocks of all pipelines are starting blocks as they have inputs
-  if (isCompositeBlocktypeDefinition(container)) {
-    const startingBlocks = container.pipes
-      .map((pipe) => pipe.blocks[0])
-      .map((blockRef: Reference<BlockDefinition> | undefined) => {
-        if (
-          blockRef?.ref !== undefined &&
-          BlockTypeWrapper.canBeWrapped(blockRef.ref.type)
-        ) {
-          return blockRef.ref;
-        }
-        return undefined;
-      })
-      .filter((x): x is BlockDefinition => x !== undefined);
-
-    return startingBlocks;
-  }
-
-  const result: BlockDefinition[] = [];
-
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  const blocks = container?.blocks ?? [];
-  for (const block of blocks) {
-    if (!BlockTypeWrapper.canBeWrapped(block.type)) {
-      continue;
-    }
-    const blockType = new BlockTypeWrapper(block.type);
-
-    if (!blockType.hasInput()) {
-      result.push(block);
-    }
-  }
-  return result;
-}
-
-export function collectChildren(block: BlockDefinition): BlockDefinition[] {
-  const outgoingPipes = collectOutgoingPipes(block);
-  return outgoingPipes.map((pipe) => pipe.to);
-}
-
-export function collectParents(block: BlockDefinition): BlockDefinition[] {
-  const ingoingPipes = collectIngoingPipes(block);
-  return ingoingPipes.map((pipe) => pipe.from);
-}
-
-export function collectOutgoingPipes(block: BlockDefinition) {
-  return collectPipes(block, 'outgoing');
-}
-
-export function collectIngoingPipes(block: BlockDefinition) {
-  return collectPipes(block, 'ingoing');
-}
-
-function collectPipes(
-  block: BlockDefinition,
-  kind: 'outgoing' | 'ingoing',
-): PipeWrapper[] {
-  const pipeline = block.$container;
-  const allPipes = collectAllPipes(pipeline);
-
-  return allPipes.filter((pipeWrapper) => {
-    switch (kind) {
-      case 'outgoing':
-        return pipeWrapper.from === block;
-      case 'ingoing':
-        return pipeWrapper.to === block;
-      case undefined:
-        return false;
-    }
-    return assertUnreachable(kind);
-  });
-}
-
-export function collectAllPipes(
-  container: PipelineDefinition | CompositeBlocktypeDefinition,
-): PipeWrapper[] {
-  const result: PipeWrapper[] = [];
-  for (const pipe of container.pipes) {
-    result.push(...createWrappersFromPipeChain(pipe));
-  }
-  return result;
-}
+  BlockTypeWrapper,
+  ConstraintTypeWrapper,
+  PipelineWrapper,
+} from './wrappers';
 
 /**
  * Returns blocks in a pipeline in topological order, based on
@@ -134,9 +42,10 @@ export function collectAllPipes(
 export function getBlocksInTopologicalSorting(
   pipeline: PipelineDefinition | CompositeBlocktypeDefinition,
 ): BlockDefinition[] {
+  const pipelineWrapper = new PipelineWrapper(pipeline);
   const sortedNodes = [];
-  const currentNodes = [...collectStartingBlocks(pipeline)];
-  let unvisitedEdges = [...collectAllPipes(pipeline)];
+  const currentNodes = [...pipelineWrapper.getStartingBlocks()];
+  let unvisitedEdges = [...pipelineWrapper.allPipes];
 
   while (currentNodes.length > 0) {
     const node = currentNodes.pop();
@@ -144,18 +53,19 @@ export function getBlocksInTopologicalSorting(
 
     sortedNodes.push(node);
 
-    for (const childNode of collectChildren(node)) {
+    for (const childNode of pipelineWrapper.getSuccessorBlocks(node)) {
       // Mark edges between parent and child as visited
-      collectIngoingPipes(childNode)
+      pipelineWrapper
+        .getPredecessorPipes(childNode)
         .filter((e) => e.from === node)
         .forEach((e) => {
           unvisitedEdges = unvisitedEdges.filter((edge) => !edge.equals(e));
         });
 
       // If all edges to the child have been visited
-      const notRemovedEdges = collectIngoingPipes(childNode).filter((e) =>
-        unvisitedEdges.some((edge) => edge.equals(e)),
-      );
+      const notRemovedEdges = pipelineWrapper
+        .getPredecessorPipes(childNode)
+        .filter((e) => unvisitedEdges.some((edge) => edge.equals(e)));
       if (notRemovedEdges.length === 0) {
         // Insert it into currentBlocks
         currentNodes.push(childNode);
