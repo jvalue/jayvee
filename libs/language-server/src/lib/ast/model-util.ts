@@ -53,7 +53,7 @@ export function getBlocksInTopologicalSorting(
 
     sortedNodes.push(node);
 
-    for (const childNode of pipelineWrapper.followOutgoingPipes(node)) {
+    for (const childNode of pipelineWrapper.getChildBlocks(node)) {
       // Mark edges between parent and child as visited
       pipelineWrapper
         .getIngoingPipes(childNode)

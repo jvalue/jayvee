@@ -50,7 +50,7 @@ export async function executeBlocks(
   for (const blockData of executionOrder) {
     const block = blockData.block;
     const parentData = pipelineWrapper
-      .followIngoingPipes(block)
+      .getParentBlocks(block)
       .map((parent) =>
         executionOrder.find((blockData) => parent === blockData.block),
       );

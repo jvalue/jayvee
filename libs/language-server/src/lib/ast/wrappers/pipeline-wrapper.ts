@@ -47,9 +47,9 @@ export class PipelineWrapper
 
   getStartingBlockPipes(): PipeWrapper[] {
     return this.allPipes.filter((pipe) => {
-      const fromBlock = pipe.from;
+      const parentBlock = pipe.from;
       const isToOfOtherPipe =
-        this.allPipes.filter((p) => p.to === fromBlock).length > 0;
+        this.allPipes.filter((p) => p.to === parentBlock).length > 0;
       return !isToOfOtherPipe;
     });
   }
@@ -69,7 +69,7 @@ export class PipelineWrapper
     });
   }
 
-  followOutgoingPipes(blockDefinition: BlockDefinition): BlockDefinition[] {
+  getChildBlocks(blockDefinition: BlockDefinition): BlockDefinition[] {
     return this.getOutgoingPipes(blockDefinition).map((p) => p.to);
   }
 
@@ -79,7 +79,7 @@ export class PipelineWrapper
     });
   }
 
-  followIngoingPipes(blockDefinition: BlockDefinition): BlockDefinition[] {
+  getParentBlocks(blockDefinition: BlockDefinition): BlockDefinition[] {
     return this.getIngoingPipes(blockDefinition).map((p) => p.from);
   }
 }
