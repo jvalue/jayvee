@@ -19,17 +19,19 @@ export class PipelineWrapper
   allPipes: PipeWrapper[] = [];
 
   constructor(
-    pipelineDefinition: PipelineDefinition | CompositeBlocktypeDefinition,
+    pipesContainer: PipelineDefinition | CompositeBlocktypeDefinition,
   ) {
-    this.astNode = pipelineDefinition;
+    this.astNode = pipesContainer;
 
-    this.allPipes = pipelineDefinition.pipes.flatMap((pipe) =>
+    this.allPipes = pipesContainer.pipes.flatMap((pipe) =>
       createWrappersFromPipeChain(pipe),
     );
   }
 
-  static canBeWrapped(pipelineDefinition: PipelineDefinition): boolean {
-    for (const pipeDefinition of pipelineDefinition.pipes) {
+  static canBeWrapped(
+    pipesContainer: PipelineDefinition | CompositeBlocktypeDefinition,
+  ): boolean {
+    for (const pipeDefinition of pipesContainer.pipes) {
       for (
         let chainIndex = 0;
         chainIndex < pipeDefinition.blocks.length - 1;
