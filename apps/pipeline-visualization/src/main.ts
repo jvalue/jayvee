@@ -105,8 +105,8 @@ program
   .option(
     '-c, --composite-blocks',
     'show building blocks of composite blocks',
-    false,
+    true,
   )
-  .option('-p, --properties', 'show properties of blocks', false)
+  .option('-p, --properties', 'show properties of blocks', true)
   .action(processOptions)
   .parse(process.argv);
