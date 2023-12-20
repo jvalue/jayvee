@@ -2,85 +2,18 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'assert';
-
 import { AstNode, LangiumDocuments } from 'langium';
 
 import {
   BinaryExpression,
-  BlockDefinition,
   BuiltinBlocktypeDefinition,
   BuiltinConstrainttypeDefinition,
-  CompositeBlocktypeDefinition,
-  PipelineDefinition,
   UnaryExpression,
   isBuiltinBlocktypeDefinition,
   isJayveeModel,
 } from './generated/ast';
 // eslint-disable-next-line import/no-cycle
-import {
-  BlockTypeWrapper,
-  ConstraintTypeWrapper,
-  PipelineWrapper,
-} from './wrappers';
-
-/**
- * Returns blocks in a pipeline in topological order, based on
- * Kahn's algorithm.
- *
- * Considers a pipeline as a directed, acyclical graph where
- * blocks are nodes and pipes are edges. A list in topological
- * order has the property that parent nodes are always listed
- * before their children.
- *
- * "[...] a list in topological order is such that no element
- * appears in it until after all elements appearing on all paths
- * leading to the particular element have been listed."
- *
- * Kahn, A. B. (1962). Topological sorting of large networks. Communications of the ACM, 5(11), 558–562.
- */
-export function getBlocksInTopologicalSorting(
-  pipeline: PipelineDefinition | CompositeBlocktypeDefinition,
-): BlockDefinition[] {
-  const pipelineWrapper = new PipelineWrapper(pipeline);
-  const sortedNodes = [];
-  const currentNodes = [...pipelineWrapper.getStartingBlocks()];
-  let unvisitedEdges = [...pipelineWrapper.allPipes];
-
-  while (currentNodes.length > 0) {
-    const node = currentNodes.pop();
-    assert(node !== undefined);
-
-    sortedNodes.push(node);
-
-    for (const childNode of pipelineWrapper.getChildBlocks(node)) {
-      // Mark edges between parent and child as visited
-      pipelineWrapper
-        .getIngoingPipes(childNode)
-        .filter((e) => e.from === node)
-        .forEach((e) => {
-          unvisitedEdges = unvisitedEdges.filter((edge) => !edge.equals(e));
-        });
-
-      // If all edges to the child have been visited
-      const notRemovedEdges = pipelineWrapper
-        .getIngoingPipes(childNode)
-        .filter((e) => unvisitedEdges.some((edge) => edge.equals(e)));
-      if (notRemovedEdges.length === 0) {
-        // Insert it into currentBlocks
-        currentNodes.push(childNode);
-      }
-    }
-  }
-
-  // If the graph still contains unvisited edges it is not a DAG
-  assert(
-    unvisitedEdges.length === 0,
-    `The pipeline ${pipeline.name} is expected to have no cycles`,
-  );
-
-  return sortedNodes;
-}
+import { BlockTypeWrapper, ConstraintTypeWrapper } from './wrappers';
 
 export type UnaryExpressionOperator = UnaryExpression['operator'];
 export type BinaryExpressionOperator = BinaryExpression['operator'];

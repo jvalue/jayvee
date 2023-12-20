@@ -7,7 +7,6 @@ import {
   CompositeBlocktypeDefinition,
   PipelineDefinition,
   PipelineWrapper,
-  getBlocksInTopologicalSorting,
 } from '@jvalue/jayvee-language-server';
 
 import { ExecutionContext } from '../execution-context';
@@ -41,7 +40,7 @@ export async function executeBlocks(
   const executionOrder: {
     block: BlockDefinition;
     value: IOTypeImplementation | null;
-  }[] = getBlocksInTopologicalSorting(pipesContainer).map((block) => {
+  }[] = pipelineWrapper.getBlocksInTopologicalSorting().map((block) => {
     return { block: block, value: NONE };
   });
 
