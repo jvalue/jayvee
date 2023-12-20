@@ -34,20 +34,16 @@ export interface ExecutionOrderItem {
  */
 export async function executeBlocks(
   executionContext: ExecutionContext,
-  compositeBlockTypeDefinition:
-    | CompositeBlocktypeDefinition
-    | PipelineDefinition,
+  pipesContainer: CompositeBlocktypeDefinition | PipelineDefinition,
   initialInputValue: IOTypeImplementation | undefined = undefined,
 ): Promise<R.Result<ExecutionOrderItem[]>> {
-  const pipelineWrapper = new PipelineWrapper(compositeBlockTypeDefinition);
+  const pipelineWrapper = new PipelineWrapper(pipesContainer);
   const executionOrder: {
     block: BlockDefinition;
     value: IOTypeImplementation | null;
-  }[] = getBlocksInTopologicalSorting(compositeBlockTypeDefinition).map(
-    (block) => {
-      return { block: block, value: NONE };
-    },
-  );
+  }[] = getBlocksInTopologicalSorting(pipesContainer).map((block) => {
+    return { block: block, value: NONE };
+  });
 
   let isFirstBlock = true;
 
