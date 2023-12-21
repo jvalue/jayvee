@@ -8,7 +8,7 @@ import {
   collectChildren,
   BlockDefinition,
   isCompositeBlocktypeDefinition,
-  CompositeBlocktypeDefinition,
+  isTextLiteral,
 } from '@jvalue/jayvee-language-server';
 import { integer } from 'vscode-languageserver-protocol';
 
@@ -78,15 +78,12 @@ export function createMermaidPipeline(
   let listofPipes: Array<string[]> = [];
   let listofBocks: Array<string> = [];
   let composites: string = '';
-  const process_pipe = (
-    pipe: string[],
-    block: BlockDefinition | CompositeBlocktypeDefinition,
-  ) => {
+  const process_pipe = (pipe: string[], block: BlockDefinition) => {
     pipe.push(block.name);
-    if (isCompositeBlocktypeDefinition(block)) {
+    if (isCompositeBlocktypeDefinition(block.type.ref)) {
       if (mermaidOptions.compositeBlocks) {
         let compositePipe: string[] = [];
-        for (let subblock of block.blocks) {
+        for (let subblock of block.type.ref.blocks) {
           compositePipe.push(subblock.name);
         }
         let compositeName = 'subgraph ' + block.name;
@@ -99,34 +96,36 @@ export function createMermaidPipeline(
           '\n' +
           'end \n';
       }
-    } else {
-      let propertyString = '';
-      if (mermaidOptions.properties) {
-        for (let property of block.body.properties) {
-          if (properties.includes(property.name)) {
-            let pv: any = property.value; // Is there a better way of doing this?
-            propertyString += `${property.name}: ${escapeHtml(pv.value)}\n`;
+    }
+    let propertyString = '';
+    if (mermaidOptions.properties) {
+      for (let property of block.body.properties) {
+        if (properties.includes(property.name)) {
+          if (isTextLiteral(property.value)) {
+            propertyString += `${property.name}: ${escapeHtml(
+              property.value.value,
+            )}\n`;
           }
         }
       }
-      //let propertyString = block.body.properties.map((property) => `${property.name}: ${property.value.value}`).join("\n")
-      //Markdown styling
-      //listofBocks.push(`${block.name}["\` ${block.name}\n(${block.type.ref?.name})\n${propertyString}\`" ]`)
-      //HTML styling
-      listofBocks.push(
-        `${block.name}[${block.name}<br><i>${block.type.ref?.name}</i><br>${propertyString}]`,
-      );
-      let children = collectChildren(block);
-      if (children.length == 1) {
-        process_pipe(pipe, children[0]!);
-      } else if (children.length > 1) {
-        listofPipes.push(pipe);
-        children.forEach((child) => {
-          process_pipe([block.name], child);
-        });
-      } else {
-        listofPipes.push(pipe);
-      }
+    }
+    //let propertyString = block.body.properties.map((property) => `${property.name}: ${property.value.value}`).join("\n")
+    //Markdown styling
+    //listofBocks.push(`${block.name}["\` ${block.name}\n(${block.type.ref?.name})\n${propertyString}\`" ]`)
+    //HTML styling
+    listofBocks.push(
+      `${block.name}[${block.name}<br><i>${block.type.ref?.name}</i><br>${propertyString}]`,
+    );
+    let children = collectChildren(block);
+    if (children.length == 1) {
+      process_pipe(pipe, children[0]!);
+    } else if (children.length > 1) {
+      listofPipes.push(pipe);
+      children.forEach((child) => {
+        process_pipe([block.name], child);
+      });
+    } else {
+      listofPipes.push(pipe);
     }
   };
   let startingBlocks = collectStartingBlocks(pipeline);
