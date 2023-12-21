@@ -7,8 +7,10 @@ import {
   RunOptions,
   extractAstNodeFromFile,
   interpretModel,
+  parseModel,
 } from '@jvalue/jayvee-interpreter-lib';
 import { JayveeModel, JayveeServices } from '@jvalue/jayvee-language-server';
+import * as process from 'process';
 
 export async function runAction(
   fileName: string,
@@ -23,6 +25,11 @@ export async function runAction(
       services,
       loggerFactory.createLogger(),
     );
+  if (options.parseOnly) {
+    const { model, services } = await parseModel(extractAstNodeFn, options);
+    const exitCode = model && services ? 0 : 1;
+    process.exit(exitCode);
+  }
   const exitCode = await interpretModel(extractAstNodeFn, options);
   process.exit(exitCode);
 }
