@@ -1,25 +1,24 @@
+import { strict as assert } from 'assert';
+
 import {
-  JayveeModel,
-  JayveeServices,
-  createJayveeServices,
-  PipelineDefinition,
-  getBlocksInTopologicalSorting,
-  collectStartingBlocks,
-  collectChildren,
   BlockDefinition,
+  JayveeModel,
+  PipelineDefinition,
+  collectChildren,
+  collectStartingBlocks,
+  getBlocksInTopologicalSorting,
   isCompositeBlocktypeDefinition,
   isTextLiteral,
 } from '@jvalue/jayvee-language-server';
-import { integer } from 'vscode-languageserver-protocol';
 
 import {
-  diagramType,
   diagramDirection,
-  subgraphDirection,
-  subgraphColor,
-  properties,
+  diagramType,
   font,
   fontSize,
+  properties,
+  subgraphColor,
+  subgraphDirection,
 } from './mermaid_params';
 
 export interface MermaidOptions {
@@ -38,28 +37,6 @@ function escapeHtml(unsafe: string) {
     .replace(/'/g, '&#039;');
 }
 
-function processPipeline(pipeline: PipelineDefinition): string {
-  let listofPipes: Array<string[]> = [];
-  const process_pipe = (pipe: string[], block: BlockDefinition) => {
-    pipe.push(block.name);
-    let children = collectChildren(block);
-    if (children.length == 1) {
-      process_pipe(pipe, children[0]!);
-    } else if (children.length > 1) {
-      listofPipes.push(pipe);
-      children.forEach((child) => {
-        process_pipe([block.name], child);
-      });
-    } else {
-      listofPipes.push(pipe);
-    }
-  };
-  let startingBlocks = collectStartingBlocks(pipeline);
-  startingBlocks.forEach((startingBlock) => process_pipe([], startingBlock));
-  let result = listofPipes.map((pipeline) => pipeline.join('-->')).join('\n');
-  return result;
-}
-
 export function createMermaidPipeline(
   pipeline: PipelineDefinition,
   mermaidOptions: MermaidOptions,
@@ -73,20 +50,20 @@ export function createMermaidPipeline(
     return blockString + '-->' + childString;
   };
  */
-  let name: string = 'subgraph ' + pipeline.name;
-  let direction: string = 'direction ' + subgraphDirection;
-  let listofPipes: Array<string[]> = [];
-  let listofBocks: Array<string> = [];
-  let composites: string = '';
+  const name: string = 'subgraph ' + pipeline.name;
+  const direction: string = 'direction ' + subgraphDirection;
+  const listofPipes: Array<string[]> = [];
+  const listofBocks: Array<string> = [];
+  let composites = '';
   const process_pipe = (pipe: string[], block: BlockDefinition) => {
     pipe.push(block.name);
     if (isCompositeBlocktypeDefinition(block.type.ref)) {
       if (mermaidOptions.compositeBlocks) {
-        let compositePipe: string[] = [];
-        for (let subblock of block.type.ref.blocks) {
+        const compositePipe: string[] = [];
+        for (const subblock of block.type.ref.blocks) {
           compositePipe.push(subblock.name);
         }
-        let compositeName = 'subgraph ' + block.name;
+        const compositeName = 'subgraph ' + block.name;
         composites +=
           compositeName +
           '\n' +
@@ -99,7 +76,7 @@ export function createMermaidPipeline(
     }
     let propertyString = '';
     if (mermaidOptions.properties) {
-      for (let property of block.body.properties) {
+      for (const property of block.body.properties) {
         if (properties.includes(property.name)) {
           if (isTextLiteral(property.value)) {
             propertyString += `${property.name}: ${escapeHtml(
@@ -109,16 +86,18 @@ export function createMermaidPipeline(
         }
       }
     }
-    //let propertyString = block.body.properties.map((property) => `${property.name}: ${property.value.value}`).join("\n")
-    //Markdown styling
-    //listofBocks.push(`${block.name}["\` ${block.name}\n(${block.type.ref?.name})\n${propertyString}\`" ]`)
-    //HTML styling
+    // let propertyString = block.body.properties.map((property) => `${property.name}: ${property.value.value}`).join("\n")
+    // Markdown styling
+    // listofBocks.push(`${block.name}["\` ${block.name}\n(${block.type.ref?.name})\n${propertyString}\`" ]`)
+    // HTML styling
+    assert(block.type.ref !== undefined);
     listofBocks.push(
-      `${block.name}[${block.name}<br><i>${block.type.ref?.name}</i><br>${propertyString}]`,
+      `${block.name}[${block.name}<br><i>${block.type.ref.name}</i><br>${propertyString}]`,
     );
-    let children = collectChildren(block);
-    if (children.length == 1) {
-      process_pipe(pipe, children[0]!);
+    const children = collectChildren(block);
+    if (children.length === 1) {
+      assert(children[0] !== undefined);
+      process_pipe(pipe, children[0]);
     } else if (children.length > 1) {
       listofPipes.push(pipe);
       children.forEach((child) => {
@@ -128,12 +107,12 @@ export function createMermaidPipeline(
       listofPipes.push(pipe);
     }
   };
-  let startingBlocks = collectStartingBlocks(pipeline);
+  const startingBlocks = collectStartingBlocks(pipeline);
   startingBlocks.forEach((startingBlock) => process_pipe([], startingBlock));
-  let pipelineSet = listofPipes
+  const pipelineSet = listofPipes
     .map((pipeline) => pipeline.join('-->'))
     .join('\n');
-  let blockSet = listofBocks.join('\n');
+  const blockSet = listofBocks.join('\n');
 
   return (
     name +
@@ -151,7 +130,7 @@ export function createMermaidPipeline(
 }
 
 export function createMermaidStyling(pipeline: PipelineDefinition) {
-  let classAssign = [];
+  const classAssign = [];
   for (const block of pipeline.blocks) {
     if (block.name.includes('Extractor')) {
       classAssign.push(`class ${block.name} source;`);
@@ -167,17 +146,17 @@ export function createMermaidRepresentation(
   model: JayveeModel,
   mermaidOptions: MermaidOptions,
 ) {
-  let diagramSetup: string = diagramType + ' ' + diagramDirection;
-  let pipelineCodes: string[] = [];
-  let stylings: string[] = [];
-  model.pipelines.forEach((pipeline, index) => {
-    //let pipelineCode = processPipeline(pipeline);
-    let pipelineCode = createMermaidPipeline(pipeline, mermaidOptions);
-    let styling = createMermaidStyling(pipeline);
+  const diagramSetup: string = diagramType + ' ' + diagramDirection;
+  const pipelineCodes: string[] = [];
+  const stylings: string[] = [];
+  model.pipelines.forEach((pipeline) => {
+    // let pipelineCode = processPipeline(pipeline);
+    const pipelineCode = createMermaidPipeline(pipeline, mermaidOptions);
+    const styling = createMermaidStyling(pipeline);
     pipelineCodes.push(pipelineCode);
     stylings.push(styling);
   });
-  let styles = setMermaidStyling();
+  const styles = setMermaidStyling();
   return (
     diagramSetup +
     '\n' +
@@ -190,7 +169,7 @@ export function createMermaidRepresentation(
 }
 
 export function setMermaidTheme() {
-  let theme = `{
+  const theme = `{
     "theme": "base",
     "themeVariables": {
         "fontFamily": "${font}",
@@ -202,7 +181,7 @@ export function setMermaidTheme() {
 }
 
 export function setMermaidStyling() {
-  let styleDefs = [
+  const styleDefs = [
     'classDef source fill:#FF9999,stroke:#333,stroke-width:2px;',
     'classDef sink fill:#BDFFA4,stroke:#333,stroke-width:2px;',
   ];

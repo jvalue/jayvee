@@ -1,26 +1,22 @@
 import * as fs from 'fs';
 
 import { registerDefaultConstraintExecutors } from '@jvalue/jayvee-execution';
-
 import {
+  ExitCode,
   LoggerFactory,
   RunOptions,
   extractAstNodeFromFile,
   interpretModel,
   useStdExtension,
-  ExitCode,
 } from '@jvalue/jayvee-interpreter-lib';
 import {
   JayveeModel,
   JayveeServices,
-  createJayveeServices,
   PipelineDefinition,
-  getBlocksInTopologicalSorting,
+  createJayveeServices,
 } from '@jvalue/jayvee-language-server';
-
-import { NodeFileSystem } from 'langium/node';
-
 import { Command } from 'commander';
+import { NodeFileSystem } from 'langium/node';
 
 import {
   MermaidOptions,
@@ -41,13 +37,13 @@ export async function processOptions(
       services,
       loggerFactory.createLogger(),
     );
-  let options: RunOptions = {
+  const options: RunOptions = {
     env: new Map(),
     debug: true,
     debugGranularity: 'peek',
     debugTarget: undefined,
   };
-  //const exitCode = await interpretModel(extractAstNodeFn, options);
+  // const exitCode = await interpretModel(extractAstNodeFn, options);
   const exitCode = await myInterpretModel(
     extractAstNodeFn,
     options,
@@ -72,8 +68,11 @@ export async function myInterpretModel(
 
   const model = await extractAstNodeFn(services, loggerFactory);
 
-  let pipelineMermaidCode = createMermaidRepresentation(model, mermaidOptions);
-  let mermaidTheme = setMermaidTheme();
+  const pipelineMermaidCode = createMermaidRepresentation(
+    model,
+    mermaidOptions,
+  );
+  const mermaidTheme = setMermaidTheme();
 
   console.log('---------Mermaid Code----------');
   console.log(pipelineMermaidCode);
