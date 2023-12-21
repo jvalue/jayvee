@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import * as process from 'process';
+
 import {
   LoggerFactory,
   RunOptions,
@@ -10,7 +12,6 @@ import {
   parseModel,
 } from '@jvalue/jayvee-interpreter-lib';
 import { JayveeModel, JayveeServices } from '@jvalue/jayvee-language-server';
-import * as process from 'process';
 
 export async function runAction(
   fileName: string,
@@ -25,7 +26,7 @@ export async function runAction(
       services,
       loggerFactory.createLogger(),
     );
-  if (options.parseOnly) {
+  if (options.parseOnly === true) {
     const { model, services } = await parseModel(extractAstNodeFn, options);
     const exitCode = model && services ? 0 : 1;
     process.exit(exitCode);

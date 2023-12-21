@@ -7,12 +7,12 @@ import { strict as assert } from 'assert';
 import * as R from '@jvalue/jayvee-execution';
 import {
   DebugGranularity,
-  executeBlocks,
   ExecutionContext,
-  isDebugGranularity,
-  logExecutionDuration,
   Logger,
   NONE,
+  executeBlocks,
+  isDebugGranularity,
+  logExecutionDuration,
   parseValueToInternalRepresentation,
   registerDefaultConstraintExecutors,
   useExtension as useExecutionExtension,
@@ -20,16 +20,16 @@ import {
 import { StdExecExtension } from '@jvalue/jayvee-extensions/std/exec';
 import {
   BlockDefinition,
-  collectChildren,
-  collectStartingBlocks,
-  createJayveeServices,
   EvaluationContext,
-  getBlocksInTopologicalSorting,
-  initializeWorkspace,
   JayveeModel,
   JayveeServices,
   PipelineDefinition,
   RuntimeParameterProvider,
+  collectChildren,
+  collectStartingBlocks,
+  createJayveeServices,
+  getBlocksInTopologicalSorting,
+  initializeWorkspace,
 } from '@jvalue/jayvee-language-server';
 import * as chalk from 'chalk';
 import { NodeFileSystem } from 'langium/node';

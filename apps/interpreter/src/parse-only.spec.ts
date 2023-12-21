@@ -2,10 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as process from 'process';
-import { runAction } from './run-action';
-import { RunOptions } from '@jvalue/jayvee-interpreter-lib';
 import * as path from 'path';
+import * as process from 'process';
+
+import { RunOptions } from '@jvalue/jayvee-interpreter-lib';
+
+import { runAction } from './run-action';
 
 describe('Parse Only', () => {
   const baseDir = path.resolve(__dirname, '../../../example/');
