@@ -4,7 +4,9 @@ sidebar_position: 1
 
 # Introduction to Jayvee
 
-Jayvee is a domain-specific language (DSL) for data engineering - the cleaning and preprocessing of data for later activities like data science or machine learning. You can use Jayvee to **model an ETL pipeline** and the command-line interpreter to **run the ETL pipeline** on your local machine.
+Jayvee is a domain-specific language (DSL) for automated processing of data pipelines.
+The Jayvee interpreter allows executing such data pipelines on local machines.
+Data engineers can use Jayvee and its interpreter to clean and preprocess data for later activities like data science or machine learning.
 
 ## Installation
 
