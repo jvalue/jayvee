@@ -20,7 +20,6 @@ import {
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 
 import { inferFileExtensionFromFileExtensionString } from './file-util';
-import { none } from 'fp-ts/lib/Option';
 
 @implementsStatic<BlockExecutorClass>()
 export class LocalFileExtractorExecutor extends AbstractBlockExecutor<
@@ -42,42 +41,34 @@ export class LocalFileExtractorExecutor extends AbstractBlockExecutor<
       PrimitiveValuetypes.Text,
     );
 
-    const rawData = await fs.readFile(filePath);
+    try {
+      const rawData = await fs.readFile(filePath);
 
-    // Infer FileName and FileExtension from filePath
-    const fileName = path.basename(filePath);
-    const extName = path.extname(fileName);
-    const fileExtension =
-      inferFileExtensionFromFileExtensionString(extName) || FileExtension.NONE;
+      // Infer FileName and FileExtension from filePath
+      const fileName = path.basename(filePath);
+      const extName = path.extname(fileName);
+      const fileExtension =
+        inferFileExtensionFromFileExtensionString(extName) ||
+        FileExtension.NONE;
 
-    // Infer Mimetype from FileExtension, if not inferrable, then default to application/octet-stream
-    const mimeType: MimeType | undefined = MimeType.APPLICATION_OCTET_STREAM;
+      // Infer Mimetype from FileExtension, if not inferrable, then default to application/octet-stream
+      const mimeType: MimeType | undefined = MimeType.APPLICATION_OCTET_STREAM;
 
-    // Create file and return file
-    const file = new BinaryFile(
-      fileName,
-      fileExtension,
-      mimeType,
-      rawData.buffer as ArrayBuffer,
-    );
+      // Create file and return file
+      const file = new BinaryFile(
+        fileName,
+        fileExtension,
+        mimeType,
+        rawData.buffer as ArrayBuffer,
+      );
 
-    // Check if the file path starts with "../"
-    if (filePath.startsWith('../')) {
-      const errorMessage = `Error: File path "${filePath}" is not allowed. Path traversal is restricted.`;
-      return R.err({
-        message: errorMessage,
-        diagnostic: { node: context.getCurrentNode(), property: 'filePath' },
-      });
-    }
-    // Check if file exists
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (file == null) {
+      assert(file instanceof BinaryFile);
+      return R.ok(file);
+    } catch (error) {
       return R.err({
         message: `File '${filePath}' not found.`,
         diagnostic: { node: context.getCurrentNode(), property: 'filePath' },
       });
     }
-    assert(file instanceof BinaryFile);
-    return R.ok(file);
   }
 }

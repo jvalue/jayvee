@@ -68,6 +68,14 @@ export function checkBlocktypeSpecificProperties(
         property,
         validationContext,
       );
+    case 'LocalFileExtractor':
+      return checkLocalFileExtractorProperty(
+        propName,
+        propValue,
+        property,
+        validationContext,
+      );
+
     case 'RowDeleter':
       return checkRowDeleterProperty(
         propName,
@@ -246,6 +254,26 @@ function checkHttpExtractorProperty(
       property,
       validationContext,
     );
+  }
+}
+
+function checkLocalFileExtractorProperty(
+  propName: string,
+  propValue: InternalValueRepresentation,
+  property: PropertyAssignment,
+  validationContext: ValidationContext,
+) {
+  if (propName === 'filePath') {
+    if (typeof propValue === 'string' && propValue.startsWith('../')) {
+      validationContext.accept(
+        'error',
+        'File path cannot start with "../". Path traversal is restricted.',
+        {
+          node: property,
+          property: 'value',
+        },
+      );
+    }
   }
 }
 

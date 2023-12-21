@@ -96,17 +96,4 @@ describe('Validation of LocalFileExtractorExecutor', () => {
       expect(result.left.message).toEqual(`File './test.csv' not found.`);
     }
   });
-
-  it('should diagnose error on file path starting with "../"', async () => {
-    const text = readJvTestAsset('invalid-local-file-traversal-path.jv');
-
-    const result = await parseAndExecuteExecutor(text);
-
-    expect(R.isOk(result)).toEqual(false);
-    if (R.isErr(result)) {
-      expect(result.left.message).toMatch(
-        /^Error: File path "\.\.\/jayvee\/libs\/extensions\/std\/exec\/test\/assets\/local-file-extractor-executor\/local-file-test\.csv" is not allowed\. Path traversal is restricted\.$/,
-      );
-    }
-  });
 });
