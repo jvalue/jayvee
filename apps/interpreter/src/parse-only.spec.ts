@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import * as process from 'process';
 import { runAction } from './run-action';
 import { RunOptions } from '@jvalue/jayvee-interpreter-lib';
