@@ -5,9 +5,9 @@ title: Update Jayvee
 
 # How to update Jayvee
 
-Jayvee is constently getting **updates** as a dedicated team of developers diligently addresses **performance issues** and incorporates **new features** to meet the evolving needs of its user base.
+Jayvee is constently getting updates as a dedicated team of developers diligently addresses performance issues and incorporates new features to meet the evolving needs of its user base.
 
-### Update Jayvee the right way.
+### Update Jayvee + Extension
 
 To update Jayvee, you need to:
 
@@ -37,7 +37,7 @@ code --install-extension jayvee.vsix
 
 For manual installation, follow this [link](https://code.visualstudio.com/docs/editor/extension-marketplace#_install-from-a-vsix) for the official VSCode documentation.
 
-### Version Check.
+### Version Check
 
 To verify wether the wanted version of Jayvee and VSCode extension where installed successfully, you can run in your Command Prompt(terminal):
 
