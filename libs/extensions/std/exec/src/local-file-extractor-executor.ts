@@ -46,9 +46,9 @@ export class LocalFileExtractorExecutor extends AbstractBlockExecutor<
 
       // Infer FileName and FileExtension from filePath
       const fileName = path.basename(filePath);
-      // const extName = path.extname(fileName);
+      const extName = path.extname(fileName);
       const fileExtension =
-        // inferFileExtensionFromFileExtensionString(extName) ||
+        inferFileExtensionFromFileExtensionString(extName) ||
         FileExtension.NONE;
 
       // Infer Mimetype from FileExtension, if not inferrable, then default to application/octet-stream
