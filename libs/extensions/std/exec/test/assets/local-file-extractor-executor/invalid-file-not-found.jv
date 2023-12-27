@@ -8,7 +8,7 @@ pipeline TestPipeline {
   }
 
   block TestBlock oftype LocalFileExtractor {
-    filePath: './test.csv';
+    filePath: './does-not-exist.csv';
   }
 
   block TestLoader oftype TestSheetLoader {

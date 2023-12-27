@@ -264,7 +264,9 @@ function checkLocalFileExtractorProperty(
   validationContext: ValidationContext,
 ) {
   if (propName === 'filePath') {
-    if (typeof propValue === 'string' && propValue.startsWith('../')) {
+    const validPathRegex = /^(?!.*\.\.\/).*$/;
+    const isValidPath = validPathRegex.test(propValue.toString());
+    if (isValidPath === false) {
       validationContext.accept(
         'error',
         'File path cannot start with "../". Path traversal is restricted.',

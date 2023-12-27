@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import assert = require('assert');
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
@@ -62,7 +61,7 @@ export class LocalFileExtractorExecutor extends AbstractBlockExecutor<
         rawData.buffer as ArrayBuffer,
       );
 
-      assert(file instanceof BinaryFile);
+      context.logger.logDebug(`Successfully extraced file ${filePath}`);
       return R.ok(file);
     } catch (error) {
       return R.err({
