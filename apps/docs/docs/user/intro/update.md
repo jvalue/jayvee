@@ -5,7 +5,7 @@ title: Update Jayvee
 
 # How to update Jayvee
 
-Jayvee is constently getting updates as a dedicated team of developers diligently addresses performance issues and incorporates new features to meet the evolving needs of its user base.
+Jayvee is consistently getting updates. To ensure you use the most recent version, please regularly update the interpreter and VSCode extension.
 
 ### Update Jayvee + Extension
 
@@ -29,17 +29,17 @@ npm install -g @jvalue/jayvee-interpreter@0.0.17
 
 - Then, download the latest `jayvee.vsix` file.
 
-- Finally, open your Command Prompt(terminal), and paste the code below:
+- Finally, to install the extension using the CLI, paste the code below into your command line:
 
 ```bash
 code --install-extension jayvee.vsix
 ```
 
-For manual installation, follow this [link](https://code.visualstudio.com/docs/editor/extension-marketplace#_install-from-a-vsix) for the official VSCode documentation.
+If you'd rather use the manual installation, follow this [link](https://code.visualstudio.com/docs/editor/extension-marketplace#_install-from-a-vsix) for the official VSCode documentation.
 
 ### Version Check
 
-To verify wether the wanted version of Jayvee and VSCode extension where installed successfully, you can run in your Command Prompt(terminal):
+To verify wether the wanted version of Jayvee and VSCode extension where installed successfully, you can run in your command line:
 
 For **Jayvee**:
 
@@ -49,4 +49,4 @@ jv -V
 
 For the **VSCode extension**:
 
-In VSCode: Go to the extensions menu, and look for `Jayvee`. The version is then displayed on the information page of the extension.
+Go to the extensions menu, and look for `Jayvee`. The version is then displayed on the information page of the extension.

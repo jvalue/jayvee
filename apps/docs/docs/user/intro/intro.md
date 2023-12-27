@@ -25,15 +25,7 @@ npm install -g @jvalue/jayvee-interpreter@0.0.17
 
 ## Update
 
-Updating the interpreter is done by reinstalling it using `npm`. Make sure to also update the [VSCode plugin](#vscode-plugin) to match the installed interpreter if you use it.
-
-IMPORTANT: If a new Jayvee update is available, you need to update your VSCode extension for Jayvee as well.
-
-More details on updating can be found [here](./update.md).
-
-```bash
-npm install -g @jvalue/jayvee-interpreter
-```
+Details about how to update Jayvee and the VSCode extension can be found [here](./update.md).
 
 ## Usage
 
