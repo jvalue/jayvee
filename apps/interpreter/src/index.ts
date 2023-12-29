@@ -58,7 +58,7 @@ program
     undefined,
   )
   .option(
-    '--parse-only',
+    '-po, --parse-only',
     'Only parses the model without running it. Exits with 0 if the model is valid, with 1 otherwise.',
     false,
   )
