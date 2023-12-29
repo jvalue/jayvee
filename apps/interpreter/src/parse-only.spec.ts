@@ -2,34 +2,56 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import * as fs from 'node:fs/promises';
+import * as os from 'os';
 import * as path from 'path';
 import * as process from 'process';
 
+import {
+  clearBlockExecutorRegistry,
+  clearConstraintExecutorRegistry,
+} from '@jvalue/jayvee-execution/test';
 import { RunOptions } from '@jvalue/jayvee-interpreter-lib';
 
 import { runAction } from './run-action';
 
 describe('Parse Only', () => {
   const baseDir = path.resolve(__dirname, '../../../example/');
+  const pathToValidModel = path.resolve(baseDir, 'cars.jv');
 
   const defaultOptions: RunOptions = {
     env: new Map<string, string>(),
     debug: false,
     debugGranularity: 'minimal',
     debugTarget: undefined,
-    parseOnly: true,
   };
 
+  let tempFile: string | undefined = undefined;
+
+  afterEach(async () => {
+    if (tempFile != null) {
+      await fs.rm(tempFile);
+      // eslint-disable-next-line require-atomic-updates
+      tempFile = undefined;
+    }
+  });
+
   beforeEach(() => {
+    jest.clearAllMocks();
     jest.spyOn(process, 'exit').mockImplementation(() => {
       throw new Error();
     });
+
+    // Reset jayvee specific stuff
+    clearBlockExecutorRegistry();
+    clearConstraintExecutorRegistry();
   });
 
   it('should exit with 0 on a valid option', async () => {
     await expect(
-      runAction(path.resolve(baseDir, 'cars.jv'), {
+      runAction(pathToValidModel, {
         ...defaultOptions,
+        parseOnly: true,
       }),
     ).rejects.toBeDefined();
 
@@ -38,13 +60,25 @@ describe('Parse Only', () => {
   });
 
   it('should exit with 1 on error', async () => {
+    const validModel = (await fs.readFile(pathToValidModel)).toString();
+
+    tempFile = path.resolve(
+      os.tmpdir(),
+      // E.g. "0.gn6v6ra9575" -> "gn6v6ra9575.jv"
+      Math.random().toString(36).substring(2) + '.jv',
+    );
+
+    // Write a partial valid model in that file
+    await fs.writeFile(tempFile, validModel.substring(validModel.length / 2));
+
     await expect(
-      runAction(path.resolve(baseDir, 'cars.jv'), {
+      runAction(tempFile, {
         ...defaultOptions,
+        parseOnly: true,
       }),
     ).rejects.toBeDefined();
 
     expect(process.exit).toBeCalledTimes(1);
-    expect(process.exit).toHaveBeenCalledWith(0);
+    expect(process.exit).toHaveBeenCalledWith(1);
   });
 });
