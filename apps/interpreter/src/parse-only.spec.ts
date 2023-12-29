@@ -11,9 +11,22 @@ import {
   clearBlockExecutorRegistry,
   clearConstraintExecutorRegistry,
 } from '@jvalue/jayvee-execution/test';
-import { RunOptions } from '@jvalue/jayvee-interpreter-lib';
+import {
+  RunOptions,
+  interpretModel,
+  interpretString,
+} from '@jvalue/jayvee-interpreter-lib';
 
 import { runAction } from './run-action';
+
+jest.mock('@jvalue/jayvee-interpreter-lib', () => {
+  const original: object = jest.requireActual('@jvalue/jayvee-interpreter-lib'); // Step 2.
+  return {
+    ...original,
+    interpretModel: jest.fn(),
+    interpretString: jest.fn(),
+  };
+});
 
 describe('Parse Only', () => {
   const baseDir = path.resolve(__dirname, '../../../example/');
@@ -34,6 +47,12 @@ describe('Parse Only', () => {
       // eslint-disable-next-line require-atomic-updates
       tempFile = undefined;
     }
+  });
+
+  afterEach(() => {
+    // Assert that model is not executed
+    expect(interpretString).not.toBeCalled();
+    expect(interpretModel).not.toBeCalled();
   });
 
   beforeEach(() => {
