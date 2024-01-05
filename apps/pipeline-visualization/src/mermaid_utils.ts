@@ -2,6 +2,7 @@ import { strict as assert } from 'assert';
 
 import {
   BlockDefinition,
+  BlockTypeWrapper,
   JayveeModel,
   PipelineDefinition,
   collectChildren,
@@ -41,15 +42,6 @@ export function createMermaidPipeline(
   pipeline: PipelineDefinition,
   mermaidOptions: MermaidOptions,
 ) {
-  /* const myToString = (block: BlockDefinition, index = 0): string => {
-    const blockTypeName = block.type.ref?.name;
-    const blockString = `${index}["\`${block.name} \n (${blockTypeName})\`"]`;
-    const childString = collectChildren(block)
-      .map((child) => myToString(child, index + 1))
-      .join('-->');
-    return blockString + '-->' + childString;
-  };
- */
   const name: string = 'subgraph ' + pipeline.name;
   const direction: string = 'direction ' + subgraphDirection;
   const listofPipes: Array<string[]> = [];
@@ -86,10 +78,6 @@ export function createMermaidPipeline(
         }
       }
     }
-    // let propertyString = block.body.properties.map((property) => `${property.name}: ${property.value.value}`).join("\n")
-    // Markdown styling
-    // listofBocks.push(`${block.name}["\` ${block.name}\n(${block.type.ref?.name})\n${propertyString}\`" ]`)
-    // HTML styling
     assert(block.type.ref !== undefined);
     listofBocks.push(
       `${block.name}[${block.name}<br><i>${block.type.ref.name}</i><br>${propertyString}]`,
@@ -132,10 +120,11 @@ export function createMermaidPipeline(
 export function createMermaidStyling(pipeline: PipelineDefinition) {
   const classAssign = [];
   for (const block of pipeline.blocks) {
-    if (block.name.includes('Extractor')) {
+    const blocktype = new BlockTypeWrapper(block.type);
+    if (blocktype.inputType === 'None') {
       classAssign.push(`class ${block.name} source;`);
     }
-    if (block.name.includes('Loader')) {
+    if (blocktype.outputType === 'None') {
       classAssign.push(`class ${block.name} sink;`);
     }
   }
@@ -147,24 +136,13 @@ export function createMermaidRepresentation(
   mermaidOptions: MermaidOptions,
 ) {
   const diagramSetup: string = diagramType + ' ' + diagramDirection;
-  const pipelineCodes: string[] = [];
-  const stylings: string[] = [];
-  model.pipelines.forEach((pipeline) => {
-    // let pipelineCode = processPipeline(pipeline);
-    const pipelineCode = createMermaidPipeline(pipeline, mermaidOptions);
-    const styling = createMermaidStyling(pipeline);
-    pipelineCodes.push(pipelineCode);
-    stylings.push(styling);
-  });
+  assert(model.pipelines[0] !== undefined);
+  const pipeline = model.pipelines[0];
+  const pipelineCode = createMermaidPipeline(pipeline, mermaidOptions);
+  const pipelineStyling = createMermaidStyling(pipeline);
   const styles = setMermaidStyling();
   return (
-    diagramSetup +
-    '\n' +
-    pipelineCodes.join('\n') +
-    '\n' +
-    stylings.join('\n') +
-    '\n' +
-    styles
+    diagramSetup + '\n' + pipelineCode + '\n' + pipelineStyling + '\n' + styles
   );
 }
 
