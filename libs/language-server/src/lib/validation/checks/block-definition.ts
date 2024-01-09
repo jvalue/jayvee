@@ -80,8 +80,12 @@ function checkPipesOfBlock(
       isCompositeBlocktypeDefinition(block.$container) &&
       block.$container.blocks.at(-1)?.name === block.name;
 
+    const isFirstBlockOfCompositeBlocktype =
+      isCompositeBlocktypeDefinition(block.$container) &&
+      block.$container.blocks.at(0)?.name === block.name;
+
     // The last block in a composite block is connected to the output, not another block
-    if (!isLastBlockOfCompositeBlocktype) {
+    if (!isLastBlockOfCompositeBlocktype && !isFirstBlockOfCompositeBlocktype) {
       context.accept(
         'warning',
         `A pipe should be connected to the ${whatToCheck} of this block`,
