@@ -4,7 +4,9 @@
 
 import { strict as assert } from 'assert';
 
+import * as R from '@jvalue/jayvee-execution';
 import {
+  DebugGranularity,
   ExecutionContext,
   Logger,
   NONE,
@@ -15,7 +17,6 @@ import {
   registerDefaultConstraintExecutors,
   useExtension as useExecutionExtension,
 } from '@jvalue/jayvee-execution';
-import * as R from '@jvalue/jayvee-execution';
 import { StdExecExtension } from '@jvalue/jayvee-extensions/std/exec';
 import {
   BlockDefinition,
@@ -33,9 +34,9 @@ import {
 import * as chalk from 'chalk';
 import { NodeFileSystem } from 'langium/node';
 
-import { LoggerFactory } from './logging/logger-factory';
+import { LoggerFactory } from './logging';
 import { ExitCode, extractAstNodeFromString } from './parsing-util';
-import { validateRuntimeParameterLiteral } from './validation-checks/runtime-parameter-literal';
+import { validateRuntimeParameterLiteral } from './validation-checks';
 
 interface InterpreterOptions {
   debugGranularity: R.DebugGranularity;
@@ -48,6 +49,7 @@ export interface RunOptions {
   debug: boolean;
   debugGranularity: string;
   debugTarget: string | undefined;
+  parseOnly?: boolean;
 }
 
 export async function interpretString(
@@ -66,13 +68,25 @@ export async function interpretString(
   return await interpretModel(extractAstNodeFn, options);
 }
 
-export async function interpretModel(
+/**
+ * Parses a model without executing it.
+ * Also sets up the environment so that the model can be properly executed.
+ *
+ * @returns non-null model, services and loggerFactory on success.
+ */
+export async function parseModel(
   extractAstNodeFn: (
     services: JayveeServices,
     loggerFactory: LoggerFactory,
   ) => Promise<JayveeModel>,
   options: RunOptions,
-): Promise<ExitCode> {
+): Promise<{
+  model: JayveeModel | null;
+  loggerFactory: LoggerFactory;
+  services: JayveeServices | null;
+}> {
+  let services: JayveeServices | null = null;
+  let model: JayveeModel | null = null;
   const loggerFactory = new LoggerFactory(options.debug);
   if (!isDebugGranularity(options.debugGranularity)) {
     loggerFactory
@@ -83,23 +97,40 @@ export async function interpretModel(
             ', ',
           )}.`,
       );
-    return ExitCode.FAILURE;
+    return { model, services, loggerFactory };
   }
 
   useStdExtension();
   registerDefaultConstraintExecutors();
 
-  const services = createJayveeServices(NodeFileSystem).Jayvee;
+  services = createJayveeServices(NodeFileSystem).Jayvee;
   await initializeWorkspace(services);
   setupJayveeServices(services, options.env);
 
-  let model: JayveeModel;
   try {
     model = await extractAstNodeFn(services, loggerFactory);
+    return { model, services, loggerFactory };
   } catch (e) {
     loggerFactory
       .createLogger()
       .logErr('Could not extract the AST node of the given model.');
+    return { model, services, loggerFactory };
+  }
+}
+
+export async function interpretModel(
+  extractAstNodeFn: (
+    services: JayveeServices,
+    loggerFactory: LoggerFactory,
+  ) => Promise<JayveeModel>,
+  options: RunOptions,
+): Promise<ExitCode> {
+  const { model, services, loggerFactory } = await parseModel(
+    extractAstNodeFn,
+    options,
+  );
+
+  if (model == null || services == null) {
     return ExitCode.FAILURE;
   }
 
@@ -111,7 +142,8 @@ export async function interpretModel(
     loggerFactory,
     {
       debug: options.debug,
-      debugGranularity: options.debugGranularity,
+      // type of options.debugGranularity is asserted in parseModel
+      debugGranularity: options.debugGranularity as DebugGranularity,
       debugTargets: debugTargets,
     },
   );
