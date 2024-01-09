@@ -23,9 +23,9 @@ composite blocktype CSVFileInterpreter {
         encoding: enoding;
     }
 
-	block FileCSVInterpreter oftype CSVInterpreter {
-		delimiter: delimiter;
-		enclosing: enclosing;
-		enclosingEscape: enclosingEscape;
-	}
+    block FileCSVInterpreter oftype CSVInterpreter {
+	    delimiter: delimiter;
+	    enclosing: enclosing;
+	    enclosingEscape: enclosingEscape;
+    }
 }
