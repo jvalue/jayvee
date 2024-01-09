@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 pipeline CarsPipeline {
     // Try using a CoolCarsExtractor although we only have normal cars.
     // This fill result in an error during parsing.
