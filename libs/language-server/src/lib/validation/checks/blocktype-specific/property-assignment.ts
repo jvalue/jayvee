@@ -263,19 +263,15 @@ function checkLocalFileExtractorProperty(
   property: PropertyAssignment,
   validationContext: ValidationContext,
 ) {
-  if (propName === 'filePath') {
-    const validPathRegex = /^(?!.*\.\.\/).*$/;
-    const isValidPath = validPathRegex.test(propValue.toString());
-    if (isValidPath === false) {
-      validationContext.accept(
-        'error',
-        'File path cannot start with "../". Path traversal is restricted.',
-        {
-          node: property,
-          property: 'value',
-        },
-      );
-    }
+  if (propName === 'filePath' && propValue.toString().includes('../')) {
+    validationContext.accept(
+      'error',
+      'File path cannot include "../". Path traversal is restricted.',
+      {
+        node: property,
+        property: 'value',
+      },
+    );
   }
 }
 
