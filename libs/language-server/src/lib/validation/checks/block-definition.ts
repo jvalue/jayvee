@@ -38,7 +38,68 @@ function checkPipesOfBlock(
     return;
   }
   const blockType = new BlockTypeWrapper(block?.type);
+  const pipes = collectPipes(block, whatToCheck);
 
+  const isStartOrEnd =
+    (whatToCheck === 'input' && !blockType.hasInput()) ||
+    (whatToCheck === 'output' && !blockType.hasOutput());
+  if (isStartOrEnd) {
+    if (pipes.length > 0) {
+      for (const pipe of pipes) {
+        context.accept(
+          'error',
+          `Blocks of type ${blockType.type} do not have an ${whatToCheck}`,
+          whatToCheck === 'input'
+            ? pipe.getToDiagnostic()
+            : pipe.getFromDiagnostic(),
+        );
+      }
+    }
+    return;
+  }
+
+  const hasMultipleInputPorts = pipes.length > 1 && whatToCheck === 'input';
+  if (hasMultipleInputPorts) {
+    for (const pipe of pipes) {
+      context.accept(
+        'error',
+        `At most one pipe can be connected to the ${whatToCheck} of a ${blockType.type}`,
+        pipe.getToDiagnostic(),
+      );
+    }
+    return;
+  }
+
+  // above: there should be pipes (defined by blocktype)
+  // but there aren't any
+  if (pipes.length === 0) {
+    const isLastBlockOfCompositeBlocktype =
+      isCompositeBlocktypeDefinition(block.$container) &&
+      block.$container.blocks.at(-1)?.name === block.name;
+
+    const isFirstBlockOfCompositeBlocktype =
+      isCompositeBlocktypeDefinition(block.$container) &&
+      block.$container.blocks.at(0)?.name === block.name;
+
+    // exception: the first block in a composite block is connected to the input, not another block
+    // exception: The last block in a composite block is connected to the output, not another block
+    if (!isLastBlockOfCompositeBlocktype && !isFirstBlockOfCompositeBlocktype) {
+      context.accept(
+        'warning',
+        `A pipe should be connected to the ${whatToCheck} of this block`,
+        {
+          node: block,
+          property: 'name',
+        },
+      );
+    }
+  }
+}
+
+function collectPipes(
+  block: BlockDefinition,
+  whatToCheck: 'input' | 'output',
+): PipeWrapper[] {
   let pipes: PipeWrapper[];
   switch (whatToCheck) {
     case 'input': {
@@ -53,43 +114,5 @@ function checkPipesOfBlock(
       assertUnreachable(whatToCheck);
     }
   }
-
-  if (
-    (whatToCheck === 'input' && !blockType.hasInput()) ||
-    (whatToCheck === 'output' && !blockType.hasOutput())
-  ) {
-    for (const pipe of pipes) {
-      context.accept(
-        'error',
-        `Blocks of type ${blockType.type} do not have an ${whatToCheck}`,
-        whatToCheck === 'input'
-          ? pipe.getToDiagnostic()
-          : pipe.getFromDiagnostic(),
-      );
-    }
-  } else if (pipes.length > 1 && whatToCheck === 'input') {
-    for (const pipe of pipes) {
-      context.accept(
-        'error',
-        `At most one pipe can be connected to the ${whatToCheck} of a ${blockType.type}`,
-        pipe.getToDiagnostic(),
-      );
-    }
-  } else if (pipes.length === 0) {
-    const isLastBlockOfCompositeBlocktype =
-      isCompositeBlocktypeDefinition(block.$container) &&
-      block.$container.blocks.at(-1)?.name === block.name;
-
-    // The last block in a composite block is connected to the output, not another block
-    if (!isLastBlockOfCompositeBlocktype) {
-      context.accept(
-        'warning',
-        `A pipe should be connected to the ${whatToCheck} of this block`,
-        {
-          node: block,
-          property: 'name',
-        },
-      );
-    }
-  }
+  return pipes;
 }
