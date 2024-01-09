@@ -79,7 +79,7 @@ describe('Validation of SheetPickerExecutor', () => {
   it('should diagnose no error on valid workbook', async () => {
     const text = readJvTestAsset('valid-sheet-picker.jv');
 
-    const testWorkbook = await readTestWorkbook('test-A1:C16.xlsx');
+    const testWorkbook = await readTestWorkbook('test-A1-C16.xlsx');
     const result = await parseAndExecuteExecutor(text, testWorkbook);
 
     expect(R.isErr(result)).toEqual(false);
@@ -101,7 +101,7 @@ describe('Validation of SheetPickerExecutor', () => {
   it('should diagnose error on sheet not found', async () => {
     const text = readJvTestAsset('valid-custom-sheet-name.jv');
 
-    const testWorkbook = await readTestWorkbook('test-A1:C16.xlsx');
+    const testWorkbook = await readTestWorkbook('test-A1-C16.xlsx');
     const result = await parseAndExecuteExecutor(text, testWorkbook);
 
     expect(R.isOk(result)).toEqual(false);
