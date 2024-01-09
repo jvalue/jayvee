@@ -2,8 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as fs from 'node:fs/promises';
-import * as os from 'os';
+import * as fs from 'node:fs';
 import * as path from 'path';
 import * as process from 'process';
 
@@ -20,7 +19,7 @@ import {
 import { runAction } from './run-action';
 
 jest.mock('@jvalue/jayvee-interpreter-lib', () => {
-  const original: object = jest.requireActual('@jvalue/jayvee-interpreter-lib'); // Step 2.
+  const original: object = jest.requireActual('@jvalue/jayvee-interpreter-lib');
   return {
     ...original,
     interpretModel: jest.fn(),
@@ -29,8 +28,11 @@ jest.mock('@jvalue/jayvee-interpreter-lib', () => {
 });
 
 describe('Parse Only', () => {
-  const baseDir = path.resolve(__dirname, '../../../example/');
-  const pathToValidModel = path.resolve(baseDir, 'cars.jv');
+  const pathToValidModel = path.resolve(__dirname, '../../../example/cars.jv');
+  const pathToInvalidModel = path.resolve(
+    __dirname,
+    '../test/assets/broken-model.jv',
+  );
 
   const defaultOptions: RunOptions = {
     env: new Map<string, string>(),
@@ -38,16 +40,6 @@ describe('Parse Only', () => {
     debugGranularity: 'minimal',
     debugTarget: undefined,
   };
-
-  let tempFile: string | undefined = undefined;
-
-  afterEach(async () => {
-    if (tempFile != null) {
-      await fs.rm(tempFile);
-      // eslint-disable-next-line require-atomic-updates
-      tempFile = undefined;
-    }
-  });
 
   afterEach(() => {
     // Assert that model is not executed
@@ -79,19 +71,10 @@ describe('Parse Only', () => {
   });
 
   it('should exit with 1 on error', async () => {
-    const validModel = (await fs.readFile(pathToValidModel)).toString();
-
-    tempFile = path.resolve(
-      os.tmpdir(),
-      // E.g. "0.gn6v6ra9575" -> "gn6v6ra9575.jv"
-      Math.random().toString(36).substring(2) + '.jv',
-    );
-
-    // Write a partial valid model in that file
-    await fs.writeFile(tempFile, validModel.substring(validModel.length / 2));
+    expect(fs.existsSync(pathToInvalidModel)).toBe(true);
 
     await expect(
-      runAction(tempFile, {
+      runAction(pathToInvalidModel, {
         ...defaultOptions,
         parseOnly: true,
       }),
