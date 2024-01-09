@@ -3,31 +3,29 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 /**
-* A CSVExtractor extracts a file from a given URL and interprets it as CSV
+* A CSVFileInterpreter interprets a file as CSV
 */
-composite blocktype CSVExtractor {
-    property url oftype text;
+composite blocktype CSVFileInterpreter {
     property delimiter oftype text: ',';
     property enclosing oftype text: '';
     property enclosingEscape oftype text: '';
-    property encoding oftype text: 'utf-8';
+    property enoding oftype text: 'utf-8';
 
-    input inputPort oftype None;
+    input inputPort oftype File;
     output outputPort oftype Sheet;
 
     inputPort
-        -> FileExtractor
+        -> FileTextInterpreter
         -> FileCSVInterpreter
         -> outputPort;
 
-    block FileExtractor oftype HttpExtractor { 
-        url: url; 
+    block FileTextInterpreter oftype TextFileInterpreter {
+        encoding: enoding;
     }
 
-	block FileCSVInterpreter oftype CSVFileInterpreter {
+	block FileCSVInterpreter oftype CSVInterpreter {
 		delimiter: delimiter;
 		enclosing: enclosing;
 		enclosingEscape: enclosingEscape;
-        enoding: encoding;
 	}
 }
