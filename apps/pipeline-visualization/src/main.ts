@@ -20,8 +20,8 @@ program
   .option(
     '-c, --composite-blocks',
     'show building blocks of composite blocks',
-    true,
+    false,
   )
-  .option('-p, --properties', 'show properties of blocks', true)
+  .option('-p, --properties', 'show properties of blocks', false)
   .action(processOptions)
   .parse(process.argv);

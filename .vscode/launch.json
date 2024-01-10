@@ -54,7 +54,7 @@
     },
     {
       "name": "Pipeline viz",
-      "command": "npx nx run pipeline-visualization:serve --args='example/mycars.jv'",
+      "command": "npx nx run pipeline-visualization:serve --args='example/cars.jv'",
       "request": "launch",
       "type": "node-terminal"
     }
