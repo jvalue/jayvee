@@ -79,7 +79,7 @@ describe('Validation of ColumnDeleterExecutor', () => {
   it('should diagnose no error on valid single column deleter', async () => {
     const text = readJvTestAsset('valid-single-column-deleter.jv');
 
-    const testWorkbook = await readTestWorkbook('test-A1:C16.xlsx');
+    const testWorkbook = await readTestWorkbook('test-A1-C16.xlsx');
     const result = await parseAndExecuteExecutor(
       text,
       testWorkbook.getSheetByName('Sheet1') as R.Sheet,
@@ -104,7 +104,7 @@ describe('Validation of ColumnDeleterExecutor', () => {
   it('should diagnose no error on valid multiple column deleter', async () => {
     const text = readJvTestAsset('valid-multiple-column-deleter.jv');
 
-    const testWorkbook = await readTestWorkbook('test-A1:C16.xlsx');
+    const testWorkbook = await readTestWorkbook('test-A1-C16.xlsx');
     const result = await parseAndExecuteExecutor(
       text,
       testWorkbook.getSheetByName('Sheet1') as R.Sheet,
@@ -125,7 +125,7 @@ describe('Validation of ColumnDeleterExecutor', () => {
   it('should diagnose error on deleting non existing column', async () => {
     const text = readJvTestAsset('valid-multiple-column-deleter.jv');
 
-    const testWorkbook = await readTestWorkbook('test-A1:B2.xlsx');
+    const testWorkbook = await readTestWorkbook('test-A1-B2.xlsx');
     const result = await parseAndExecuteExecutor(
       text,
       testWorkbook.getSheetByName('Sheet1') as R.Sheet,
@@ -142,7 +142,7 @@ describe('Validation of ColumnDeleterExecutor', () => {
   it('should diagnose only one column deletion on duplicate columns', async () => {
     const text = readJvTestAsset('valid-duplicate-column.jv');
 
-    const testWorkbook = await readTestWorkbook('test-A1:C16.xlsx');
+    const testWorkbook = await readTestWorkbook('test-A1-C16.xlsx');
     const result = await parseAndExecuteExecutor(
       text,
       testWorkbook.getSheetByName('Sheet1') as R.Sheet,
