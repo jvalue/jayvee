@@ -79,7 +79,7 @@ describe('Validation of RowDeleterExecutor', () => {
   it('should diagnose no error on valid single row deleter', async () => {
     const text = readJvTestAsset('valid-single-row-deleter.jv');
 
-    const testWorkbook = await readTestWorkbook('test-A1:C16.xlsx');
+    const testWorkbook = await readTestWorkbook('test-A1-C16.xlsx');
     const result = await parseAndExecuteExecutor(
       text,
       testWorkbook.getSheetByName('Sheet1') as R.Sheet,
@@ -100,7 +100,7 @@ describe('Validation of RowDeleterExecutor', () => {
   it('should diagnose no error on valid multiple row deleter', async () => {
     const text = readJvTestAsset('valid-multiple-row-deleter.jv');
 
-    const testWorkbook = await readTestWorkbook('test-A1:C16.xlsx');
+    const testWorkbook = await readTestWorkbook('test-A1-C16.xlsx');
     const result = await parseAndExecuteExecutor(
       text,
       testWorkbook.getSheetByName('Sheet1') as R.Sheet,
@@ -124,7 +124,7 @@ describe('Validation of RowDeleterExecutor', () => {
   it('should diagnose error on deleting non existing row', async () => {
     const text = readJvTestAsset('valid-multiple-row-deleter.jv');
 
-    const testWorkbook = await readTestWorkbook('test-A1:B2.xlsx');
+    const testWorkbook = await readTestWorkbook('test-A1-B2.xlsx');
     const result = await parseAndExecuteExecutor(
       text,
       testWorkbook.getSheetByName('Sheet1') as R.Sheet,
@@ -141,7 +141,7 @@ describe('Validation of RowDeleterExecutor', () => {
   it('should diagnose only one row deletion on duplicate rows', async () => {
     const text = readJvTestAsset('valid-duplicate-row.jv');
 
-    const testWorkbook = await readTestWorkbook('test-A1:C16.xlsx');
+    const testWorkbook = await readTestWorkbook('test-A1-C16.xlsx');
     const result = await parseAndExecuteExecutor(
       text,
       testWorkbook.getSheetByName('Sheet1') as R.Sheet,

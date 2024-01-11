@@ -79,7 +79,7 @@ describe('Validation of CellWriterExecutor', () => {
   it('should diagnose no error on valid single cell writer', async () => {
     const text = readJvTestAsset('valid-single-cell-writer.jv');
 
-    const testWorkbook = await readTestWorkbook('test-A1:C16.xlsx');
+    const testWorkbook = await readTestWorkbook('test-A1-C16.xlsx');
     const result = await parseAndExecuteExecutor(
       text,
       testWorkbook.getSheetByName('Sheet1') as R.Sheet,
@@ -104,7 +104,7 @@ describe('Validation of CellWriterExecutor', () => {
   it('should diagnose no error on valid cell range writer', async () => {
     const text = readJvTestAsset('valid-cell-range-writer.jv');
 
-    const testWorkbook = await readTestWorkbook('test-A1:C16.xlsx');
+    const testWorkbook = await readTestWorkbook('test-A1-C16.xlsx');
     const result = await parseAndExecuteExecutor(
       text,
       testWorkbook.getSheetByName('Sheet1') as R.Sheet,
