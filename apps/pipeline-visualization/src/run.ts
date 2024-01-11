@@ -26,7 +26,6 @@ export async function processOptions(
   fileName: string,
   mermaidOptions: MermaidOptions,
 ): Promise<void> {
-  console.log('file name is ', fileName);
   const extractAstNodeFn = async (
     services: JayveeServices,
     loggerFactory: LoggerFactory,
@@ -43,6 +42,7 @@ export async function processOptions(
     debugTarget: undefined,
   };
   const exitCode = await runModel(extractAstNodeFn, options, mermaidOptions);
+  process.exit(exitCode);
 }
 
 export async function runModel(
