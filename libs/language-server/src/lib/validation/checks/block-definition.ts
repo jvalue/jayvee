@@ -31,7 +31,10 @@ function checkPipesOfBlock(
   whatToCheck: 'input' | 'output',
   context: ValidationContext,
 ): void {
-  if (!BlockTypeWrapper.canBeWrapped(block?.type)) {
+  if (
+    !BlockTypeWrapper.canBeWrapped(block?.type) ||
+    !PipelineWrapper.canBeWrapped(block.$container)
+  ) {
     return;
   }
   const blockType = new BlockTypeWrapper(block?.type);
@@ -98,6 +101,7 @@ function collectPipes(
   whatToCheck: 'input' | 'output',
 ): PipeWrapper[] {
   const pipelineWrapper = new PipelineWrapper(block.$container);
+
   let pipes: PipeWrapper[];
   switch (whatToCheck) {
     case 'input': {

@@ -22,7 +22,11 @@ function checkStartingBlocks(
   pipeline: PipelineDefinition,
   context: ValidationContext,
 ): void {
+  if (PipelineWrapper.canBeWrapped(pipeline)) {
+    return;
+  }
   const pipelineWrapper = new PipelineWrapper(pipeline);
+
   const startingBlocks = pipelineWrapper.getStartingBlocks();
   if (startingBlocks.length === 0) {
     context.accept(
