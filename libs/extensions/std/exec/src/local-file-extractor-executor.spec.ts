@@ -100,4 +100,30 @@ describe('Validation of LocalFileExtractorExecutor', () => {
       expect(result.left.message).toEqual(`File './test.csv' not found.`);
     }
   });
+
+  it('should diagnose error on path traversal restricted', async () => {
+    const text = readJvTestAsset('invalid-path-traversal.jv');
+
+    const result = await parseAndExecuteExecutor(text);
+
+    expect(R.isErr(result)).toEqual(true);
+    if (R.isErr(result)) {
+      expect(result.left.message).toEqual(
+        `File path cannot include "../". Path traversal is restricted.`,
+      );
+    }
+  });
+
+  it('should diagnose error on path traversal restricted', async () => {
+    const text = readJvTestAsset('invalid-path-contains-traversal.jv');
+
+    const result = await parseAndExecuteExecutor(text);
+
+    expect(R.isErr(result)).toEqual(true);
+    if (R.isErr(result)) {
+      expect(result.left.message).toEqual(
+        `File path cannot include "../". Path traversal is restricted.`,
+      );
+    }
+  });
 });
