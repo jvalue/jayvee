@@ -13,16 +13,15 @@ import {
 import { AstNodeWrapper } from './ast-node-wrapper';
 import { PipeWrapper, createWrappersFromPipeChain } from './pipe-wrapper';
 
-export class PipelineWrapper
-  implements AstNodeWrapper<PipelineDefinition | CompositeBlocktypeDefinition>
+export class PipelineWrapper<
+  T extends PipelineDefinition | CompositeBlocktypeDefinition,
+> implements AstNodeWrapper<T>
 {
-  public readonly astNode: PipelineDefinition | CompositeBlocktypeDefinition;
+  public readonly astNode: T;
 
   allPipes: PipeWrapper[] = [];
 
-  constructor(
-    pipesContainer: PipelineDefinition | CompositeBlocktypeDefinition,
-  ) {
+  constructor(pipesContainer: T) {
     this.astNode = pipesContainer;
 
     this.allPipes = pipesContainer.pipes.flatMap((pipe) =>
