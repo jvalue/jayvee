@@ -3,18 +3,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 pipeline Pipeline {
-  TestExtractor -> TestLoader;
-
   block TestExtractor oftype TestFileExtractor {}
-  block TestLoader oftype TestFileLoader {}
 }
 
 builtin blocktype TestFileExtractor {
   input inPort oftype None;
   output outPort oftype File;
-}
-
-builtin blocktype TestFileLoader {
-  input inPort oftype File;
-  output outPort oftype None;
 }

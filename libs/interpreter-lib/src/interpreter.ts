@@ -9,7 +9,6 @@ import {
   DebugGranularity,
   ExecutionContext,
   Logger,
-  NONE,
   executeBlocks,
   isDebugGranularity,
   logExecutionDuration,
@@ -24,11 +23,9 @@ import {
   JayveeModel,
   JayveeServices,
   PipelineDefinition,
+  PipelineWrapper,
   RuntimeParameterProvider,
-  collectChildren,
-  collectStartingBlocks,
   createJayveeServices,
-  getBlocksInTopologicalSorting,
   initializeWorkspace,
 } from '@jvalue/jayvee-language-server';
 import * as chalk from 'chalk';
@@ -228,12 +225,7 @@ async function runPipeline(
 
   const startTime = new Date();
 
-  const executionOrder = getBlocksInTopologicalSorting(pipeline).map(
-    (block) => {
-      return { block: block, value: NONE };
-    },
-  );
-  const executionResult = await executeBlocks(executionContext, executionOrder);
+  const executionResult = await executeBlocks(executionContext, pipeline);
 
   if (R.isErr(executionResult)) {
     const diagnosticError = executionResult.left;
@@ -254,13 +246,16 @@ export function logPipelineOverview(
   runtimeParameterProvider: RuntimeParameterProvider,
   logger: Logger,
 ) {
+  const pipelineWrapper = new PipelineWrapper(pipeline);
+
   const toString = (block: BlockDefinition, depth = 0): string => {
     const blockTypeName = block.type.ref?.name;
     assert(blockTypeName !== undefined);
     const blockString = `${'\t'.repeat(depth)} -> ${
       block.name
     } (${blockTypeName})`;
-    const childString = collectChildren(block)
+    const childString = pipelineWrapper
+      .getChildBlocks(block)
       .map((child) => toString(child, depth + 1))
       .join('\n');
     return blockString + '\n' + childString;
@@ -280,7 +275,7 @@ export function logPipelineOverview(
   linesBuffer.push(
     `\tBlocks (${pipeline.blocks.length} blocks with ${pipeline.pipes.length} pipes):`,
   );
-  for (const block of collectStartingBlocks(pipeline)) {
+  for (const block of pipelineWrapper.getStartingBlocks()) {
     linesBuffer.push(toString(block, 1));
   }
   logger.logInfo(linesBuffer.join('\n'));

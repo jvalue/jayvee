@@ -9,14 +9,11 @@
 
 import { assertUnreachable } from 'langium';
 
+import { PipelineWrapper } from '../../ast';
 import {
   BlockDefinition,
   isCompositeBlocktypeDefinition,
 } from '../../ast/generated/ast';
-import {
-  collectIngoingPipes,
-  collectOutgoingPipes,
-} from '../../ast/model-util';
 import { PipeWrapper } from '../../ast/wrappers/pipe-wrapper';
 import { BlockTypeWrapper } from '../../ast/wrappers/typed-object/blocktype-wrapper';
 import { ValidationContext } from '../validation-context';
@@ -34,7 +31,10 @@ function checkPipesOfBlock(
   whatToCheck: 'input' | 'output',
   context: ValidationContext,
 ): void {
-  if (!BlockTypeWrapper.canBeWrapped(block?.type)) {
+  if (
+    !BlockTypeWrapper.canBeWrapped(block?.type) ||
+    !PipelineWrapper.canBeWrapped(block.$container)
+  ) {
     return;
   }
   const blockType = new BlockTypeWrapper(block?.type);
@@ -100,14 +100,16 @@ function collectPipes(
   block: BlockDefinition,
   whatToCheck: 'input' | 'output',
 ): PipeWrapper[] {
+  const pipelineWrapper = new PipelineWrapper(block.$container);
+
   let pipes: PipeWrapper[];
   switch (whatToCheck) {
     case 'input': {
-      pipes = collectIngoingPipes(block);
+      pipes = pipelineWrapper.getIngoingPipes(block);
       break;
     }
     case 'output': {
-      pipes = collectOutgoingPipes(block);
+      pipes = pipelineWrapper.getOutgoingPipes(block);
       break;
     }
     default: {

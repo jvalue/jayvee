@@ -10,3 +10,6 @@ export * from './ast-node-wrapper';
 export * from './cell-range-wrapper';
 
 export * from './typed-object';
+
+export * from './pipe-wrapper';
+export * from './pipeline-wrapper';
