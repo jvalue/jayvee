@@ -12,13 +12,13 @@ On the pure language side, the central project is the [language server](https://
 It contains the syntax definition (i.e. the grammar) and is capable of performing static semantic analysis on models, so invalid models can be rejected and errors are reported to the user.
 It uses the [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) (LSP) for communicating with IDEs in order to provide common features such as diagnostics, auto completion and much more.
 
-**Note:** The [Langium framework](https://langium.org/) generate TypeScript files for the AST based on the grammar specification.
+**Note:** The [Langium framework](https://langium.org/) generate TypeScript files for the abstract syntax tree (AST), based on the grammar specification.
 The following locations might be especially helpful to understand the grammar and its AST:
 
 - The Langium grammar files (see [here](https://github.com/jvalue/jayvee/tree/main/libs/language-server/src/grammar) or locally at `libs/language-server/src/grammar`; with `.langium` file ending). These files define the **syntax of the language**.
-- The generate TypeScript AST files (execute `npm run generate` to generate them at `libs/language-server/src/lib/ast/generated` in your local repository). These files include **AST node interfaces** (e.g., `BlockDefinition`) and **guard methods** (e.g., `isBlockDefinition`).
+- The generated TypeScript AST files (execute `npm run generate` to generate them at `libs/language-server/src/lib/ast/generated` in your local repository). These files include **TypeScript interfaces for AST nodes** (e.g., `BlockDefinition`) and **guard methods** (e.g., `isBlockDefinition`).
   They reflect the input of the grammar files regarding naming.
-- The remaining source files of the language server implement the LSP and the additional validations beyond the syntax of Jayvee.
+- The remaining source files of the language server implement the language server protocol (LSP) and the additional validations beyond the syntax of Jayvee.
 
 ## Interpreter
 
