@@ -11,6 +11,7 @@ on:
 
 jobs:
   CLAAssistant:
+    if: github.repository == 'jvalue/jayvee'
     runs-on: ubuntu-latest
     steps:
       - name: 'CLA Assistant'
