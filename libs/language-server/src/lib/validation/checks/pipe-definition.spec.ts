@@ -96,17 +96,24 @@ describe('Validation of PipeDefinition', () => {
       );
     });
 
-    it('should diagnose error on ingoing blocktype having no output but has pipe', async () => {
+    it('should diagnose error on connecting loader block to extractor block with a pipe', async () => {
       const text = readJvTestAsset(
         'pipe-definition/invalid-output-block-as-input.jv',
       );
 
       await parseAndValidatePipe(text);
 
-      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-      expect(validationAcceptorMock).toHaveBeenCalledWith(
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
+      expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+        1,
         'error',
-        'Blocks of type TestTableLoader do not have an output',
+        'Block "BlockTo" cannot be connected to other blocks. Its blocktype "TestFileLoader" has output type "None".',
+        expect.any(Object),
+      );
+      expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+        2,
+        'error',
+        'Block "BlockFrom" cannot be connected to from other blocks. Its blocktype "TestFileExtractor" has input type "None".',
         expect.any(Object),
       );
     });

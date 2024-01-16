@@ -46,7 +46,7 @@ function checkBlockCompatibility(
     }
 
     if (isToBlockExtractor) {
-      const errorMessage = `Block "${pipeWrapper.to?.name}" cannot be connected from other blocks. Its blocktype "${toBlockType.astNode.name}" has output type "${toBlockType.outputType}".`;
+      const errorMessage = `Block "${pipeWrapper.to?.name}" cannot be connected to from other blocks. Its blocktype "${toBlockType.astNode.name}" has input type "${toBlockType.inputType}".`;
       context.accept('error', errorMessage, pipeWrapper.getToDiagnostic());
     }
 
