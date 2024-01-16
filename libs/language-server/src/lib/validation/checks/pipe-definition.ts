@@ -37,12 +37,23 @@ function checkBlockCompatibility(
     const fromBlockType = new BlockTypeWrapper(fromBlockTypeDefinition);
     const toBlockType = new BlockTypeWrapper(toBlockTypeDefinition);
 
-    if (fromBlockType.hasOutput() && toBlockType.hasInput()) {
-      if (!fromBlockType.canBeConnectedTo(toBlockType)) {
-        const errorMessage = `The output type "${fromBlockType.outputType}" of ${fromBlockType.type} is incompatible with the input type "${toBlockType.inputType}" of ${toBlockType.type}`;
-        context.accept('error', errorMessage, pipeWrapper.getFromDiagnostic());
-        context.accept('error', errorMessage, pipeWrapper.getToDiagnostic());
-      }
+    const isFromBlockLoader = !fromBlockType.hasOutput();
+    const isToBlockExtractor = !toBlockType.hasInput();
+
+    if (isFromBlockLoader) {
+      const errorMessage = `Block "${pipeWrapper.from?.name}" cannot be connected to other blocks. Its blocktype "${fromBlockType.astNode.name}" has output type "${fromBlockType.outputType}".`;
+      context.accept('error', errorMessage, pipeWrapper.getFromDiagnostic());
+    }
+
+    if (isToBlockExtractor) {
+      const errorMessage = `Block "${pipeWrapper.to?.name}" cannot be connected to from other blocks. Its blocktype "${toBlockType.astNode.name}" has input type "${toBlockType.inputType}".`;
+      context.accept('error', errorMessage, pipeWrapper.getToDiagnostic());
+    }
+
+    if (!fromBlockType.canBeConnectedTo(toBlockType)) {
+      const errorMessage = `The output type "${fromBlockType.outputType}" of block "${pipeWrapper.from?.name}" (of type "${fromBlockType.astNode.name}") is not compatible with the input type "${toBlockType.inputType}" of block "${pipeWrapper.to?.name}" (of type "${toBlockType.astNode.name}")`;
+      context.accept('error', errorMessage, pipeWrapper.getFromDiagnostic());
+      context.accept('error', errorMessage, pipeWrapper.getToDiagnostic());
     }
   }
 }

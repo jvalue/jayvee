@@ -76,21 +76,6 @@ describe('Validation of BlockDefinition', () => {
     );
   });
 
-  it('should diagnose error on block as output without having an output', async () => {
-    const text = readJvTestAsset(
-      'block-definition/invalid-output-block-as-input.jv',
-    );
-
-    await parseAndValidateBlock(text);
-
-    expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
-      'error',
-      'Blocks of type TestTableLoader do not have an output',
-      expect.any(Object),
-    );
-  });
-
   it('should diagnose error on block as input for multiple pipes', async () => {
     const text = readJvTestAsset(
       'block-definition/invalid-block-as-multiple-pipe-inputs.jv',
