@@ -7,6 +7,7 @@ import { CompositeBlocktypeDefinition } from '../../ast/generated/ast';
 import { ValidationContext } from '../validation-context';
 
 import { validateBlocktypeDefinition } from './blocktype-definition';
+import { checkMultipleBlockInputs } from './pipeline-definition';
 
 export function validateCompositeBlockTypeDefinition(
   blockType: CompositeBlocktypeDefinition,
@@ -16,6 +17,8 @@ export function validateCompositeBlockTypeDefinition(
   validateBlocktypeDefinition(blockType, validationContext, evaluationContext);
   checkHasPipeline(blockType, validationContext);
   checkExactlyOnePipeline(blockType, validationContext);
+
+  checkMultipleBlockInputs(blockType, validationContext);
 }
 
 function checkHasPipeline(
