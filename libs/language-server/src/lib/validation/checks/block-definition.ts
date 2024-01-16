@@ -40,24 +40,6 @@ function checkPipesOfBlock(
   const blockType = new BlockTypeWrapper(block?.type);
   const pipes = collectPipes(block, whatToCheck);
 
-  const isStartOrEnd =
-    (whatToCheck === 'input' && !blockType.hasInput()) ||
-    (whatToCheck === 'output' && !blockType.hasOutput());
-  if (isStartOrEnd) {
-    if (pipes.length > 0) {
-      for (const pipe of pipes) {
-        context.accept(
-          'error',
-          `Blocks of type ${blockType.type} do not have an ${whatToCheck}`,
-          whatToCheck === 'input'
-            ? pipe.getToDiagnostic()
-            : pipe.getFromDiagnostic(),
-        );
-      }
-    }
-    return;
-  }
-
   const hasMultipleInputPorts = pipes.length > 1 && whatToCheck === 'input';
   if (hasMultipleInputPorts) {
     for (const pipe of pipes) {
@@ -70,8 +52,6 @@ function checkPipesOfBlock(
     return;
   }
 
-  // above: there should be pipes (defined by blocktype)
-  // but there aren't any
   if (pipes.length === 0) {
     const isLastBlockOfCompositeBlocktype =
       isCompositeBlocktypeDefinition(block.$container) &&
@@ -81,9 +61,18 @@ function checkPipesOfBlock(
       isCompositeBlocktypeDefinition(block.$container) &&
       block.$container.blocks.at(0)?.name === block.name;
 
+    const isExtractorBlock = !blockType.hasInput() && whatToCheck === 'input';
+    const isLoaderBlock = !blockType.hasOutput() && whatToCheck === 'output';
+
     // exception: the first block in a composite block is connected to the input, not another block
     // exception: The last block in a composite block is connected to the output, not another block
-    if (!isLastBlockOfCompositeBlocktype && !isFirstBlockOfCompositeBlocktype) {
+    // exception: the extractor / loader block in a pipeline
+    if (
+      !isLastBlockOfCompositeBlocktype &&
+      !isFirstBlockOfCompositeBlocktype &&
+      !isExtractorBlock &&
+      !isLoaderBlock
+    ) {
       context.accept(
         'warning',
         `A pipe should be connected to the ${whatToCheck} of this block`,

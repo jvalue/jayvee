@@ -37,12 +37,10 @@ function checkBlockCompatibility(
     const fromBlockType = new BlockTypeWrapper(fromBlockTypeDefinition);
     const toBlockType = new BlockTypeWrapper(toBlockTypeDefinition);
 
-    if (fromBlockType.hasOutput() && toBlockType.hasInput()) {
-      if (!fromBlockType.canBeConnectedTo(toBlockType)) {
-        const errorMessage = `The output type "${fromBlockType.outputType}" of ${fromBlockType.type} is incompatible with the input type "${toBlockType.inputType}" of ${toBlockType.type}`;
-        context.accept('error', errorMessage, pipeWrapper.getFromDiagnostic());
-        context.accept('error', errorMessage, pipeWrapper.getToDiagnostic());
-      }
+    if (!fromBlockType.canBeConnectedTo(toBlockType)) {
+      const errorMessage = `The output type "${fromBlockType.outputType}" of ${fromBlockType.type} is incompatible with the input type "${toBlockType.inputType}" of ${toBlockType.type}`;
+      context.accept('error', errorMessage, pipeWrapper.getFromDiagnostic());
+      context.accept('error', errorMessage, pipeWrapper.getToDiagnostic());
     }
   }
 }
