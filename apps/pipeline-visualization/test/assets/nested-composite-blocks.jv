@@ -1,0 +1,87 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+// Define a new blocktype named CSVExtractor outside of the pipeline
+composite blocktype CSVExtractor {
+    // Properties of the CSVExtractor, some with default values
+    property url oftype text;
+    property delimiter oftype text: ',';
+    property enclosing oftype text: '';
+    property enclosingEscape oftype text: '';
+
+    // Input and outputs
+    input inputName oftype None;
+    output outputName oftype Sheet;
+
+    // Pipeline definition from input, over blocks defined later, to output
+    inputName
+        ->FileExtractor
+        ->FileTextInterpreter
+        ->FileCSVInterpreter
+        ->outputName;
+
+    // Block definitions using values from properties by name
+    block FileExtractor oftype HttpExtractor { url: url; }
+    block FileTextInterpreter oftype TextFileInterpreter {}
+
+    block FileCSVInterpreter oftype CSVInterpreter {
+        delimiter: delimiter;
+        enclosing: enclosing;
+        enclosingEscape: enclosingEscape;
+    }
+}
+
+pipeline CarsPipeline {
+    // HttpExtractor, TextFileInterpreter and CSVInterpreter have been replaced by CSVExtractor
+    CarsExtractor
+        -> CarsTableInterpreter
+        -> CarsLoader;
+
+    block CarsExtractor oftype CSVExtractor {
+        url: "https://example.com/cars.csv";
+    }
+
+    // ... further block definitions
+    block CarsLoader oftype SQLiteLoader {
+
+		table: "Cars";
+
+		file: "./cars.sqlite";
+
+	}
+    block CarsTableInterpreter oftype TableInterpreter {
+
+		header: true;
+
+		columns: [
+
+			"name" oftype text,
+
+			"mpg" oftype decimal,
+
+			"cyl" oftype integer,
+
+			"disp" oftype decimal,
+
+			"hp" oftype integer,
+
+			"drat" oftype decimal,
+
+			"wt" oftype decimal,
+
+			"qsec" oftype decimal,
+
+			"vs" oftype integer,
+
+			"am" oftype integer,
+
+			"gear" oftype integer,
+
+			"carb" oftype integer
+
+		];
+
+	}
+
+}
