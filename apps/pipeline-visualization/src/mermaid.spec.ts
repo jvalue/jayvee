@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -47,7 +51,7 @@ describe('test mermaid code generation for nested-composite-blocks.jv', () => {
   const fileNameJv = path.resolve(baseDir, 'nested-composite-blocks.jv');
   const fileNameMermaidCode = 'mermaid-code-test.txt';
   const fileNameMermaidStyle = 'mermaid-style-test.txt';
-  
+
   it('example nested runs through', async () => {
     const mermaidOptions: MermaidOptions = {
       mermaidFile: fileNameMermaidCode,
