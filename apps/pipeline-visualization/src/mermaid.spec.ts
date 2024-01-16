@@ -4,9 +4,9 @@ import * as path from 'path';
 import { MermaidOptions } from './mermaid_utils';
 import { doProcessOptions } from './run';
 
-describe('test mermaid code generation', () => {
+describe('test mermaid code generation for cars.jv', () => {
   const baseDir = path.resolve(__dirname, '../../../example/');
-  let fileNameJv = path.resolve(baseDir, 'cars.jv');
+  const fileNameJv = path.resolve(baseDir, 'cars.jv');
   const fileNameMermaidCode = 'mermaid-code-test.txt';
   const fileNameMermaidStyle = 'mermaid-style-test.txt';
 
@@ -41,8 +41,14 @@ describe('test mermaid code generation', () => {
     const fileContent = fs.readFileSync(fileNameMermaidCode, 'utf-8');
     expect(fileContent).toMatch(gtCarsProperties);
   });
+});
+describe('test mermaid code generation for nested-composite-blocks.jv', () => {
+  const baseDir = path.resolve(__dirname, '../test/assets/');
+  const fileNameJv = path.resolve(baseDir, 'nested-composite-blocks.jv');
+  const fileNameMermaidCode = 'mermaid-code-test.txt';
+  const fileNameMermaidStyle = 'mermaid-style-test.txt';
+  
   it('example nested runs through', async () => {
-    fileNameJv = path.resolve(baseDir, 'cars-composite.jv');
     const mermaidOptions: MermaidOptions = {
       mermaidFile: fileNameMermaidCode,
       styleFile: fileNameMermaidStyle,
@@ -52,7 +58,6 @@ describe('test mermaid code generation', () => {
     await doProcessOptions(fileNameJv, mermaidOptions);
   });
   it('nested file content as expected', async () => {
-    fileNameJv = path.resolve(baseDir, 'cars-composite.jv');
     const mermaidOptions: MermaidOptions = {
       mermaidFile: fileNameMermaidCode,
       styleFile: fileNameMermaidStyle,
@@ -63,8 +68,7 @@ describe('test mermaid code generation', () => {
     const fileContent = fs.readFileSync(fileNameMermaidCode, 'utf-8');
     expect(fileContent).toMatch(gtNested);
   });
-  it('nested file content with properties as expected', async () => {
-    fileNameJv = path.resolve(baseDir, 'cars-composite.jv');
+  it('nested file content with composite as expected', async () => {
     const mermaidOptions: MermaidOptions = {
       mermaidFile: fileNameMermaidCode,
       styleFile: fileNameMermaidStyle,
