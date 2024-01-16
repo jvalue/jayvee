@@ -24,6 +24,12 @@ export class PipelineWrapper<
   constructor(pipesContainer: T) {
     this.astNode = pipesContainer;
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (pipesContainer.pipes === undefined) {
+      this.allPipes = [];
+      return;
+    }
+
     this.allPipes = pipesContainer.pipes.flatMap((pipe) =>
       createWrappersFromPipeChain(pipe),
     );
@@ -32,6 +38,11 @@ export class PipelineWrapper<
   static canBeWrapped(
     pipesContainer: PipelineDefinition | CompositeBlocktypeDefinition,
   ): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (pipesContainer.pipes === undefined) {
+      return true;
+    }
+
     for (const pipeDefinition of pipesContainer.pipes) {
       for (
         let chainIndex = 0;
