@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { strict as assert } from 'assert';
 
 import {
@@ -43,8 +47,8 @@ export function createMermaidPipeline(
 ) {
   const name: string = 'subgraph ' + pipeline.name;
   const direction: string = 'direction ' + subgraphDirection;
-  const listofPipes: Array<string[]> = [];
-  const listofBocks: Array<string> = [];
+  const listOfPipes: Array<string[]> = [];
+  const listOfBocks: Array<string> = [];
   let composites = '';
   const process_pipe = (pipe: string[], block: BlockDefinition) => {
     pipe.push(block.name);
@@ -78,7 +82,7 @@ export function createMermaidPipeline(
       }
     }
     assert(block.type.ref !== undefined);
-    listofBocks.push(
+    listOfBocks.push(
       `${block.name}[${block.name}<br><i>${block.type.ref.name}</i><br>${propertyString}]`,
     );
     const children = collectChildren(block);
@@ -86,20 +90,20 @@ export function createMermaidPipeline(
       assert(children[0] !== undefined);
       process_pipe(pipe, children[0]);
     } else if (children.length > 1) {
-      listofPipes.push(pipe);
+      listOfPipes.push(pipe);
       children.forEach((child) => {
         process_pipe([block.name], child);
       });
     } else {
-      listofPipes.push(pipe);
+      listOfPipes.push(pipe);
     }
   };
   const startingBlocks = collectStartingBlocks(pipeline);
   startingBlocks.forEach((startingBlock) => process_pipe([], startingBlock));
-  const pipelineSet = listofPipes
+  const pipelineSet = listOfPipes
     .map((pipeline) => pipeline.join('-->'))
     .join('\n');
-  const blockSet = listofBocks.join('\n');
+  const blockSet = listOfBocks.join('\n');
 
   return (
     name +
@@ -120,10 +124,10 @@ export function createMermaidStyling(pipeline: PipelineDefinition) {
   const classAssign = [];
   for (const block of pipeline.blocks) {
     const blocktype = new BlockTypeWrapper(block.type);
-    if (blocktype.inputType === 'None') {
+    if (!blocktype.hasInput()) {
       classAssign.push(`class ${block.name} source;`);
     }
-    if (blocktype.outputType === 'None') {
+    if (!blocktype.hasOutput()) {
       classAssign.push(`class ${block.name} sink;`);
     }
   }
