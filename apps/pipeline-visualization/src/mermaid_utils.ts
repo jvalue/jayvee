@@ -7,7 +7,6 @@ import {
   PipelineDefinition,
   collectChildren,
   collectStartingBlocks,
-  getBlocksInTopologicalSorting,
   isCompositeBlocktypeDefinition,
   isTextLiteral,
 } from '@jvalue/jayvee-language-server';

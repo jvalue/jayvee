@@ -1,19 +1,16 @@
 import * as fs from 'fs';
 
-import { registerDefaultConstraintExecutors } from '@jvalue/jayvee-execution';
 import {
   ExitCode,
   LoggerFactory,
   RunOptions,
   extractAstNodeFromFile,
-  useStdExtension,
 } from '@jvalue/jayvee-interpreter-lib';
 import {
   JayveeModel,
   JayveeServices,
   createJayveeServices,
 } from '@jvalue/jayvee-language-server';
-
 import { NodeFileSystem } from 'langium/node';
 
 import {
@@ -22,10 +19,10 @@ import {
   setMermaidTheme,
 } from './mermaid_utils';
 
-export async function processOptions(
+export async function doProcessOptions(
   fileName: string,
   mermaidOptions: MermaidOptions,
-): Promise<void> {
+): Promise<ExitCode> {
   const extractAstNodeFn = async (
     services: JayveeServices,
     loggerFactory: LoggerFactory,
@@ -42,6 +39,14 @@ export async function processOptions(
     debugTarget: undefined,
   };
   const exitCode = await runModel(extractAstNodeFn, options, mermaidOptions);
+  return exitCode;
+}
+
+export async function processOptions(
+  fileName: string,
+  mermaidOptions: MermaidOptions,
+): Promise<void> {
+  const exitCode = await doProcessOptions(fileName, mermaidOptions);
   process.exit(exitCode);
 }
 
@@ -54,9 +59,6 @@ export async function runModel(
   mermaidOptions: MermaidOptions,
 ) {
   const loggerFactory = new LoggerFactory(options.debug);
-
-  useStdExtension();
-  registerDefaultConstraintExecutors();
 
   const services = createJayveeServices(NodeFileSystem).Jayvee;
 
