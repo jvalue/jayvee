@@ -95,5 +95,20 @@ describe('Validation of PipeDefinition', () => {
         expect.any(Object),
       );
     });
+
+    it('should diagnose error on ingoing blocktype having no output but has pipe', async () => {
+      const text = readJvTestAsset(
+        'pipe-definition/invalid-output-block-as-input.jv',
+      );
+
+      await parseAndValidatePipe(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+      expect(validationAcceptorMock).toHaveBeenCalledWith(
+        'error',
+        'Blocks of type TestTableLoader do not have an output',
+        expect.any(Object),
+      );
+    });
   });
 });
