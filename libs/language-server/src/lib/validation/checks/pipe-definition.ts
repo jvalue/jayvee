@@ -51,7 +51,7 @@ function checkBlockCompatibility(
     }
 
     if (!fromBlockType.canBeConnectedTo(toBlockType)) {
-      const errorMessage = `The output type "${fromBlockType.outputType}" of ${fromBlockType.type} is incompatible with the input type "${toBlockType.inputType}" of ${toBlockType.type}`;
+      const errorMessage = `The output type "${fromBlockType.outputType}" of block "${pipeWrapper.from?.name}" (of type "${fromBlockType.astNode.name}") is not compatible with the input type "${toBlockType.inputType}" of block "${pipeWrapper.to?.name}" (of type "${toBlockType.astNode.name}")`;
       context.accept('error', errorMessage, pipeWrapper.getFromDiagnostic());
       context.accept('error', errorMessage, pipeWrapper.getToDiagnostic());
     }

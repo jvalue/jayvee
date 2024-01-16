@@ -91,7 +91,7 @@ describe('Validation of PipeDefinition', () => {
       expect(validationAcceptorMock).toHaveBeenNthCalledWith(
         2,
         'error',
-        `The output type "File" of TestFileExtractor is incompatible with the input type "Table" of TestTableLoader`,
+        'The output type "File" of block "TestExtractor" (of type "TestFileExtractor") is not compatible with the input type "Table" of block "TestLoader" (of type "TestTableLoader")',
         expect.any(Object),
       );
     });
