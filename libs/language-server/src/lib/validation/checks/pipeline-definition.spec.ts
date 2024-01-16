@@ -100,4 +100,20 @@ describe('Validation of PipelineDefinition', () => {
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
+
+  it('should diagnose error on block as input for multiple pipes', async () => {
+    const text = readJvTestAsset(
+      'pipeline-definition/invalid-block-as-multiple-pipe-inputs.jv',
+    );
+
+    await parseAndValidatePipeline(text);
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
+    expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+      2,
+      'error',
+      'At most one pipe can be connected to the input of a block. Currently, the following 2 blocks are connected via pipes: "BlockFrom1", "BlockFrom2"',
+      expect.any(Object),
+    );
+  });
 });
