@@ -144,7 +144,7 @@ function doCheckDefinedBlockIsUsed(
   context: ValidationContext,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (!BlockTypeWrapper.canBeWrapped(block?.type)) {
+  if (block.type === undefined || !BlockTypeWrapper.canBeWrapped(block.type)) {
     return;
   }
   const blockType = new BlockTypeWrapper(block.type);

@@ -31,7 +31,11 @@ function checkHasPipeline(
   context: ValidationContext,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (blockType.pipes?.length === 0) {
+  if (blockType.pipes === undefined) {
+    return;
+  }
+
+  if (blockType.pipes.length === 0) {
     context.accept(
       'error',
       `Composite blocktypes must define one pipeline '${blockType.name}'`,
@@ -48,7 +52,11 @@ function checkExactlyOnePipeline(
   context: ValidationContext,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (blockType.pipes?.length > 1) {
+  if (blockType.pipes === undefined) {
+    return;
+  }
+
+  if (blockType.pipes.length > 1) {
     blockType.pipes.forEach((pipe) => {
       context.accept(
         'error',
@@ -87,7 +95,7 @@ function doCheckDefinedBlockIsUsed(
   context: ValidationContext,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (!BlockTypeWrapper.canBeWrapped(block?.type)) {
+  if (block.type === undefined || !BlockTypeWrapper.canBeWrapped(block.type)) {
     return;
   }
   const pipes = pipelineWrapper.astNode.pipes;
