@@ -85,7 +85,7 @@ describe('Validation of PipelineDefinition', () => {
 
     await parseAndValidatePipeline(text);
 
-    expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(2); // one warning for unused blocks
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
       `An extractor block is required for this pipeline`,
@@ -113,6 +113,19 @@ describe('Validation of PipelineDefinition', () => {
       2,
       'error',
       'At most one pipe can be connected to the input of a block. Currently, the following 2 blocks are connected via pipes: "BlockFrom1", "BlockFrom2"',
+      expect.any(Object),
+    );
+  });
+
+  it('should diagnose error on block without pipe', async () => {
+    const text = readJvTestAsset('pipeline-definition/invalid-missing-pipe.jv');
+
+    await parseAndValidatePipeline(text);
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(2); // one error since missing extractor
+    expect(validationAcceptorMock).toHaveBeenCalledWith(
+      'warning',
+      'A pipe should be connected to the output of this block',
       expect.any(Object),
     );
   });
