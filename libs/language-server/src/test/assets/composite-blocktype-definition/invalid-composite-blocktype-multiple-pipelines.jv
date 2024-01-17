@@ -5,23 +5,19 @@
 composite blocktype TestBlock {
 
     input inputName oftype None;
-    output outputName oftype Sheet;
+    output outputName oftype TextFile;
 
     block FileExtractor oftype HttpExtractor { url: 'url'; }
-    block FileTextInterpreter oftype TextFileInterpreter {}
-
-    block FileCSVInterpreter oftype CSVInterpreter {
-    }
+    block FileTextInterpreter1 oftype TextFileInterpreter {}
+    block FileTextInterpreter2 oftype TextFileInterpreter {}
 
     inputName
         ->FileExtractor
-        ->FileTextInterpreter
-        ->FileCSVInterpreter
+        ->FileTextInterpreter1
         ->outputName;
         
     inputName
         ->FileExtractor
-        ->FileTextInterpreter
-        ->FileCSVInterpreter
+        ->FileTextInterpreter2
         ->outputName;
 }

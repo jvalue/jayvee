@@ -76,22 +76,6 @@ describe('Validation of BlockDefinition', () => {
     );
   });
 
-  it('should diagnose error on block as input for multiple pipes', async () => {
-    const text = readJvTestAsset(
-      'block-definition/invalid-block-as-multiple-pipe-inputs.jv',
-    );
-
-    await parseAndValidateBlock(text);
-
-    expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
-    expect(validationAcceptorMock).toHaveBeenNthCalledWith(
-      2,
-      'error',
-      'At most one pipe can be connected to the input of a TestTableLoader',
-      expect.any(Object),
-    );
-  });
-
   it('should have no error on valid block definition', async () => {
     const text = readJvTestAsset('block-definition/valid-block-definition.jv');
 

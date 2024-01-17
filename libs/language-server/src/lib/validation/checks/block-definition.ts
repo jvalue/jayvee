@@ -40,18 +40,6 @@ function checkPipesOfBlock(
   const blockType = new BlockTypeWrapper(block?.type);
   const pipes = collectPipes(block, whatToCheck);
 
-  const hasMultipleInputPorts = pipes.length > 1 && whatToCheck === 'input';
-  if (hasMultipleInputPorts) {
-    for (const pipe of pipes) {
-      context.accept(
-        'error',
-        `At most one pipe can be connected to the ${whatToCheck} of a ${blockType.type}`,
-        pipe.getToDiagnostic(),
-      );
-    }
-    return;
-  }
-
   if (pipes.length === 0) {
     const isLastBlockOfCompositeBlocktype =
       isCompositeBlocktypeDefinition(block.$container) &&
