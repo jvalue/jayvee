@@ -5,7 +5,10 @@
 import * as path from 'path';
 
 import * as R from '@jvalue/jayvee-execution';
-import { getTestExecutionContext } from '@jvalue/jayvee-execution/test';
+import {
+  createBinaryFileFromLocalFile,
+  getTestExecutionContext,
+} from '@jvalue/jayvee-execution/test';
 import {
   BlockDefinition,
   IOType,
@@ -20,8 +23,6 @@ import {
 } from '@jvalue/jayvee-language-server/test';
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
-
-import { createBinaryFileFromLocalFile } from '../test';
 
 import { FilePickerExecutor } from './file-picker-executor';
 

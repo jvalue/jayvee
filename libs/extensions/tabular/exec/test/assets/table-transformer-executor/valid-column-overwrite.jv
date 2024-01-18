@@ -1,0 +1,26 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+pipeline TestPipeline {
+  transform Double {
+    from original oftype integer;
+    to double oftype integer;
+
+    double: original * 2;
+  }
+
+  block TestExtractor oftype TestTableExtractor {
+  }
+
+  block TestBlock oftype TableTransformer {
+    inputColumns: ['index'];
+    outputColumn: 'index';
+    use: Double;
+  }
+
+  block TestLoader oftype TestTableLoader {
+  }
+
+  TestExtractor -> TestBlock -> TestLoader;
+}

@@ -57,6 +57,11 @@ program
     `Sets the target blocks of the of block debug logging, separated by comma. If not given, all blocks are targeted.`,
     undefined,
   )
+  .option(
+    '-po, --parse-only',
+    'Only parses the model without running it. Exits with 0 if the model is valid, with 1 otherwise.',
+    false,
+  )
   .description('Run a Jayvee file')
   .action(runAction);
 

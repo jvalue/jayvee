@@ -60,12 +60,10 @@ describe('Validation of PipeDefinition', () => {
     validationAcceptorMock.mockReset();
   });
 
-  describe('SinglePipeDefinition syntax', () => {
+  describe('PipeDefinition syntax', () => {
     // This test should succeed, because the error is thrown by langium during linking, not during validation!
     it('should have no error even if pipe references non existing block', async () => {
-      const text = readJvTestAsset(
-        'pipe-definition/single/valid-undefined-block.jv',
-      );
+      const text = readJvTestAsset('pipe-definition/valid-undefined-block.jv');
 
       await parseAndValidatePipe(text);
 
@@ -74,7 +72,7 @@ describe('Validation of PipeDefinition', () => {
 
     it('should have no error even if pipe references block of non existing type', async () => {
       const text = readJvTestAsset(
-        'pipe-definition/single/valid-unknown-blocktype.jv',
+        'pipe-definition/valid-unknown-blocktype.jv',
       );
 
       await parseAndValidatePipe(text);
@@ -84,7 +82,7 @@ describe('Validation of PipeDefinition', () => {
 
     it('should diagnose error on unsupported pipe between Blocktypes', async () => {
       const text = readJvTestAsset(
-        'pipe-definition/single/invalid-pipe-between-blocktypes.jv',
+        'pipe-definition/invalid-pipe-between-blocktypes.jv',
       );
 
       await parseAndValidatePipe(text);
@@ -93,46 +91,29 @@ describe('Validation of PipeDefinition', () => {
       expect(validationAcceptorMock).toHaveBeenNthCalledWith(
         2,
         'error',
-        `The output type "File" of TestFileExtractor is incompatible with the input type "Table" of TestTableLoader`,
+        'The output type "File" of block "TestExtractor" (of type "TestFileExtractor") is not compatible with the input type "Table" of block "TestLoader" (of type "TestTableLoader")',
         expect.any(Object),
       );
     });
-  });
 
-  describe('ChainedPipeDefinition syntax', () => {
-    // This test should succeed, because the error is thrown by langium during linking, not during validation!
-    it('should have no error even if pipe references non existing block', async () => {
+    it('should diagnose error on connecting loader block to extractor block with a pipe', async () => {
       const text = readJvTestAsset(
-        'pipe-definition/chained/valid-undefined-block.jv',
-      );
-
-      await parseAndValidatePipe(text);
-
-      expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
-    });
-
-    it('should have no error even if pipe references block of non existing type', async () => {
-      const text = readJvTestAsset(
-        'pipe-definition/chained/valid-unknown-blocktype.jv',
-      );
-
-      await parseAndValidatePipe(text);
-
-      expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
-    });
-
-    it('should diagnose error on unsupported pipe between Blocktypes', async () => {
-      const text = readJvTestAsset(
-        'pipe-definition/chained/invalid-pipe-between-blocktypes.jv',
+        'pipe-definition/invalid-output-block-as-input.jv',
       );
 
       await parseAndValidatePipe(text);
 
       expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
       expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+        1,
+        'error',
+        'Block "BlockTo" cannot be connected to other blocks. Its blocktype "TestFileLoader" has output type "None".',
+        expect.any(Object),
+      );
+      expect(validationAcceptorMock).toHaveBeenNthCalledWith(
         2,
         'error',
-        `The output type "File" of TestFileExtractor is incompatible with the input type "Table" of TestTableLoader`,
+        'Block "BlockFrom" cannot be connected to from other blocks. Its blocktype "TestFileExtractor" has input type "None".',
         expect.any(Object),
       );
     });
