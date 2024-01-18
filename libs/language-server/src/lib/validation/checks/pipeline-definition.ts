@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { PipeWrapper, PipelineWrapper } from '../../ast';
+import { BlockTypeWrapper, PipeWrapper, PipelineWrapper } from '../../ast';
 import {
   BlockDefinition,
   CompositeBlocktypeDefinition,
@@ -22,6 +22,7 @@ export function validatePipelineDefinition(
   checkUniqueNames(pipeline.constraints, context);
 
   checkMultipleBlockInputs(pipeline, context);
+  checkDefinedBlocksAreUsed(pipeline, context);
 }
 
 function checkStartingBlocks(
@@ -118,4 +119,63 @@ function doCheckMultipleBlockInputs(
   }
 
   return alreadyMarkedPipes;
+}
+
+export function checkDefinedBlocksAreUsed(
+  pipeline: PipelineDefinition | CompositeBlocktypeDefinition,
+  context: ValidationContext,
+): void {
+  if (!PipelineWrapper.canBeWrapped(pipeline)) {
+    return;
+  }
+  const pipelineWrapper = new PipelineWrapper(pipeline);
+
+  const containedBlocks = pipeline.blocks;
+  for (const block of containedBlocks) {
+    doCheckDefinedBlockIsUsed(pipelineWrapper, block, context);
+  }
+}
+
+function doCheckDefinedBlockIsUsed(
+  pipelineWrapper: PipelineWrapper<
+    PipelineDefinition | CompositeBlocktypeDefinition
+  >,
+  block: BlockDefinition,
+  context: ValidationContext,
+): void {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (block.type === undefined || !BlockTypeWrapper.canBeWrapped(block.type)) {
+    return;
+  }
+  const blockType = new BlockTypeWrapper(block.type);
+
+  const isExtractorBlock = !blockType.hasInput();
+  if (!isExtractorBlock) {
+    const parents = pipelineWrapper.getParentBlocks(block);
+    if (parents.length === 0) {
+      context.accept(
+        'warning',
+        `A pipe should be connected to the input of this block`,
+        {
+          node: block,
+          property: 'name',
+        },
+      );
+    }
+  }
+
+  const isLoaderBlock = !blockType.hasOutput();
+  if (!isLoaderBlock) {
+    const children = pipelineWrapper.getChildBlocks(block);
+    if (children.length === 0) {
+      context.accept(
+        'warning',
+        `A pipe should be connected to the output of this block`,
+        {
+          node: block,
+          property: 'name',
+        },
+      );
+    }
+  }
 }

@@ -138,4 +138,24 @@ describe('Validation of CompositeBlocktypeDefinition', () => {
       expect.any(Object),
     );
   });
+
+  it('should diagnose error on block without pipe', async () => {
+    const text = readJvTestAsset(
+      'composite-blocktype-definition/invalid-unconnected-block.jv',
+    );
+
+    await parseAndValidateBlocktype(text);
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
+    expect(validationAcceptorMock).toHaveBeenCalledWith(
+      'warning',
+      'A pipe should be connected to the input of this block',
+      expect.any(Object),
+    );
+    expect(validationAcceptorMock).toHaveBeenCalledWith(
+      'warning',
+      'A pipe should be connected to the output of this block',
+      expect.any(Object),
+    );
+  });
 });
