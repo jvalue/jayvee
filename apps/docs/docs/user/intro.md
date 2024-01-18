@@ -83,7 +83,7 @@ jv <file> -d --debug-granularity peek --debug-target MyExtractorBlock,MySinkBloc
 
 ## Examples
 
-You can find [multiple examples with inline explanations](/category/jayvee-examples).
+You can find multiple examples with inline explanations [here](./examples/README.mdx).
 
 ## VSCode Plugin
 
