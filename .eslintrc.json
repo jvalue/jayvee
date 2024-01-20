@@ -43,10 +43,15 @@
     },
     {
       "files": ["*.spec.ts", "*.spec.tsx", "*.spec.js", "*.spec.jsx"],
+      "plugins": ["jest"],
       "env": {
         "jest": true
       },
-      "rules": {}
+      "rules": {
+        // you should turn the original rule off *only* for test files
+        "@typescript-eslint/unbound-method": "off",
+        "jest/unbound-method": "error"
+      }
     }
   ]
 }

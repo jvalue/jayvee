@@ -1,0 +1,27 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+pipeline TestPipeline {
+  transform Add {
+    from left oftype integer;
+    from right oftype integer;
+    to added oftype integer;
+
+    added: left + right;
+  }
+
+  block TestExtractor oftype TestTableExtractor {
+  }
+
+  block TestBlock oftype TableTransformer {
+    inputColumns: ['index', 'id'];
+    outputColumn: 'add';
+    use: Add;
+  }
+
+  block TestLoader oftype TestTableLoader {
+  }
+
+  TestExtractor -> TestBlock -> TestLoader;
+}

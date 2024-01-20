@@ -28,12 +28,12 @@ export async function extractDocumentFromFile(
     }: ${extensions.map((extension) => `"${extension}"`).join(',')}`;
 
     logger.logErr(errorMessage);
-    process.exit(ExitCode.FAILURE);
+    return Promise.reject(ExitCode.FAILURE);
   }
 
   if (!fs.existsSync(fileName)) {
     logger.logErr(`File ${fileName} does not exist.`);
-    process.exit(ExitCode.FAILURE);
+    return Promise.reject(ExitCode.FAILURE);
   }
 
   const document =
@@ -79,7 +79,7 @@ export async function validateDocument(
     for (const errDiagnostic of errDiagnostics) {
       logger.logLanguageServerDiagnostic(errDiagnostic, document);
     }
-    process.exit(ExitCode.FAILURE);
+    return Promise.reject(ExitCode.FAILURE);
   }
 
   const nonErrDiagnostics = diagnostics.filter(

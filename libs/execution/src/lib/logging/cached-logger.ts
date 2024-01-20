@@ -8,14 +8,14 @@ import { Range } from 'vscode-languageserver';
 
 import { DefaultLogger } from './default-logger';
 import { LogCache } from './log-cache';
-import { DiagnosticSeverity } from './logger';
+import { DiagnosticSeverity, LogEntry } from './logger';
 
 export class CachedLogger extends DefaultLogger {
-  private logCache: LogCache;
+  protected logCache: LogCache;
   constructor(
     enableDebugLogging: boolean,
     loggingContext?: string,
-    private printLogs: boolean = true,
+    protected printLogs: boolean = true,
     depth = 0,
     cacheSize = 200,
   ) {
@@ -23,13 +23,16 @@ export class CachedLogger extends DefaultLogger {
     this.logCache = new LogCache(cacheSize);
   }
 
-  public getLogs() {
-    return this.logCache.getLogsFilteredBySeverity([
-      DiagnosticSeverity.ERROR,
-      DiagnosticSeverity.HINT,
-      DiagnosticSeverity.INFO,
-      DiagnosticSeverity.WARNING,
-    ]);
+  /**
+   * Gets all log entries with the specified log levels.
+   * If no log level given, returns logs on all log levels.
+   */
+  public getLogs(...logLevel: DiagnosticSeverity[]): ReadonlyArray<LogEntry> {
+    const filterLevels =
+      logLevel.length === 0 ? Object.values(DiagnosticSeverity) : logLevel;
+    return this.logCache
+      .getLogs()
+      .filter((log) => filterLevels.includes(log.severity));
   }
 
   public clearLogs(): void {

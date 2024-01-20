@@ -14,79 +14,78 @@ pipeline GtfsPipeline {
 	// 2. The origin for multiple pipe sequences is a zip
 	// file. Each csv file in this zip is further processed 
 	// by its own sequence of blocks and pipes.
-	GTFSSampleFeedExtractor -> ZipArchiveInterpreter;
 
-	ZipArchiveInterpreter
+	GTFSSampleFeedExtractor
 		-> AgencyFilePicker
 		-> AgencyTextFileInterpreter
 		-> AgencyCSVInterpreter
 		-> AgencyTableInterpreter
 		-> AgencyLoader;
 
-	ZipArchiveInterpreter	
+	GTFSSampleFeedExtractor	
 		-> CalendarDatesFilePicker
 		-> CalendarDatesTextFileInterpreter
 		-> CalendarDatesCSVInterpreter
 		-> CalendarDatesTableInterpreter
 		-> CalendarDatesLoader;
 
-	ZipArchiveInterpreter	
+	GTFSSampleFeedExtractor	
 		-> CalendarFilePicker
 		-> CalendarTextFileInterpreter
 		-> CalendarCSVInterpreter
 		-> CalendarTableInterpreter
 		-> CalendarLoader;
 
-	ZipArchiveInterpreter	
+	GTFSSampleFeedExtractor	
 		-> FareAttributesFilePicker
 		-> FareAttributesTextFileInterpreter
 		-> FareAttributesCSVInterpreter
 		-> FareAttributesTableInterpreter
 		-> FareAttributesLoader;
 
-	ZipArchiveInterpreter	
+	GTFSSampleFeedExtractor	
 		-> FareRulesFilePicker
 		-> FareRulesTextFileInterpreter
 		-> FareRulesCSVInterpreter
 		-> FareRulesTableInterpreter
 		-> FareRulesLoader;
 
-	ZipArchiveInterpreter	
+	GTFSSampleFeedExtractor	
 		-> FrequenciesFilePicker
 		-> FrequenciesTextFileInterpreter
 		-> FrequenciesCSVInterpreter
 		-> FrequenciesTableInterpreter
 		-> FrequenciesLoader;
 
-	ZipArchiveInterpreter			
+	GTFSSampleFeedExtractor			
 		-> RoutesFilePicker
 		-> RoutesTextFileInterpreter
 		-> RoutesCSVInterpreter 
 		-> RoutesTableInterpreter 
 		-> RoutesLoader;
 
-	ZipArchiveInterpreter			
+	GTFSSampleFeedExtractor			
 		-> ShapesFilePicker
 		-> ShapesTextFileInterpreter
 		-> ShapesCSVInterpreter 
 		-> ShapesTableInterpreter 
 		-> ShapesLoader;
 
-	ZipArchiveInterpreter	
+	GTFSSampleFeedExtractor	
 		-> StopTimesFilePicker
 		-> StopTimesTextFileInterpreter
 		-> StopTimesCSVInterpreter
 		-> StopTimesTableInterpreter 
 		-> StopTimesLoader;
 
-	ZipArchiveInterpreter
+	GTFSSampleFeedExtractor
 		-> StopsFilePicker 
 		-> StopsTextFileInterpreter
 		-> StopsCSVInterpreter 
 		-> StopsTableInterpreter 
 		-> StopsLoader;
 
-	ZipArchiveInterpreter	
+	GTFSSampleFeedExtractor	
 		-> TripsFilePicker 
 		-> TripsTextFileInterpreter
 		-> TripsCSVInterpreter 
@@ -94,12 +93,8 @@ pipeline GtfsPipeline {
 		-> TripsLoader;
 
 	// 3. As a first step, we download the zip file and interpret it.
-	block GTFSSampleFeedExtractor oftype HttpExtractor {
+	block GTFSSampleFeedExtractor oftype GTFSExtractor {
 		url: "https://developers.google.com/static/transit/gtfs/examples/sample-feed.zip";
-	}
-
-	block ZipArchiveInterpreter oftype ArchiveInterpreter {
-		archiveType: "zip";
 	}
 
 	// 4. Next, we pick several csv files (with the file extension ".txt") 

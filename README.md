@@ -6,7 +6,9 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 # Jayvee
 
-Jayvee is a DSL to model and execute automated data pipelines, e.g., for data engineering. 
+Jayvee is a domain-specific language (DSL) for automated processing of data pipelines.
+The Jayvee interpreter allows executing such data pipelines on local machines.
+Data engineers can use Jayvee and its interpreter to clean and preprocess data for later activities like data science or machine learning.
 
 [![Official Docs](assets/docs-banner.png)](https://jvalue.github.io/jayvee)
 
@@ -26,23 +28,20 @@ In case you would like to contribute to Jayvee, please have a look at our [contr
 
 In case you run into problems, make sure to use the current LTS version of Node.js and npm.
 
-
 ## Projects overview
 
-| Name                                                              | Description                                                                                                                      | NPM package                                |
-|-------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------| ------------------------------------------ |
-| [`language-server`](./libs/language-server)                       | Jayvee language definition and language server implementation                                                                    | [@jvalue/jayvee-language-server](https://www.npmjs.com/package/@jvalue/jayvee-language-server) |
-| [`interpreter`](./apps/interpreter)                               | Command line tool for interpreting Jayvee files                                                                                  | [@jvalue/jayvee-interpreter](https://www.npmjs.com/package/@jvalue/jayvee-interpreter) |
+| Name                                                              | Description                                                                                                                      | NPM package                                                                                                          |
+| ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| [`language-server`](./libs/language-server)                       | Jayvee language definition and language server implementation                                                                    | [@jvalue/jayvee-language-server](https://www.npmjs.com/package/@jvalue/jayvee-language-server)                       |
+| [`interpreter`](./apps/interpreter)                               | Command line tool for interpreting Jayvee files                                                                                  | [@jvalue/jayvee-interpreter](https://www.npmjs.com/package/@jvalue/jayvee-interpreter)                               |
 | [`language-server-web-worker`](./apps/language-server-web-worker) | Ready-to-use Jayvee language server, bundled as a [Web Worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API) | [@jvalue/jayvee-language-server-web-worker](https://www.npmjs.com/package/@jvalue/jayvee-language-server-web-worker) |
-| [`vs-code-extension`](./apps/vs-code-extension)                   | Visual Studio Code extension for editing Jayvee files                                                                            | - |
-| [`docs`](./apps/docs)                                             | Website for Jayvee user documentation                                                                                            | - |
-| [`monaco-editor`](./libs/monaco-editor)                           | React component for editing Jayvee files                                                                                         | [@jvalue/jayvee-monaco](https://www.npmjs.com/package/@jvalue/jayvee-monaco) |
-| [`execution`](./libs/execution)                                   | Shared code for Jayvee extensions and the interpreter                                                                            | - |
-| [`extensions/std`](./libs/extensions/std)                         | Standard Jayvee extension consisting of the extensions below                                                                     | - |
-| [`extensions/rdbms`](./libs/extensions/rdbms)                     | Jayvee extension for relational databases                                                                                        | - |
-| [`extensions/tabular`](./libs/extensions/tabular)                 | Jayvee extension for tabular data                                                                                                | - |
-
-
+| [`vs-code-extension`](./apps/vs-code-extension)                   | Visual Studio Code extension for editing Jayvee files                                                                            | -                                                                                                                    |
+| [`docs`](./apps/docs)                                             | Website for Jayvee user documentation                                                                                            | -                                                                                                                    |
+| [`monaco-editor`](./libs/monaco-editor)                           | React component for editing Jayvee files                                                                                         | [@jvalue/jayvee-monaco](https://www.npmjs.com/package/@jvalue/jayvee-monaco)                                         |
+| [`execution`](./libs/execution)                                   | Shared code for Jayvee extensions and the interpreter                                                                            | -                                                                                                                    |
+| [`extensions/std`](./libs/extensions/std)                         | Standard Jayvee extension consisting of the extensions below                                                                     | -                                                                                                                    |
+| [`extensions/rdbms`](./libs/extensions/rdbms)                     | Jayvee extension for relational databases                                                                                        | -                                                                                                                    |
+| [`extensions/tabular`](./libs/extensions/tabular)                 | Jayvee extension for tabular data                                                                                                | -                                                                                                                    |
 
 ## Scripts
 

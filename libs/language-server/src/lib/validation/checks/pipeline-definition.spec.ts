@@ -63,7 +63,7 @@ describe('Validation of PipelineDefinition', () => {
     validationAcceptorMock.mockReset();
   });
 
-  it('should diagnose error on missing extractor block', async () => {
+  it('should diagnose error on missing starting block (no blocks)', async () => {
     const text = readJvTestAsset(
       'pipeline-definition/invalid-empty-pipeline.jv',
     );
@@ -78,11 +78,55 @@ describe('Validation of PipelineDefinition', () => {
     );
   });
 
+  it('should diagnose error on missing starting block (no pipes)', async () => {
+    const text = readJvTestAsset(
+      'pipeline-definition/invalid-pipeline-only-blocks.jv',
+    );
+
+    await parseAndValidatePipeline(text);
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(2); // one warning for unused blocks
+    expect(validationAcceptorMock).toHaveBeenCalledWith(
+      'error',
+      `An extractor block is required for this pipeline`,
+      expect.any(Object),
+    );
+  });
+
   it('should have no error on valid pipeline', async () => {
     const text = readJvTestAsset('pipeline-definition/valid-pipeline.jv');
 
     await parseAndValidatePipeline(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
+  });
+
+  it('should diagnose error on block as input for multiple pipes', async () => {
+    const text = readJvTestAsset(
+      'pipeline-definition/invalid-block-as-multiple-pipe-inputs.jv',
+    );
+
+    await parseAndValidatePipeline(text);
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
+    expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+      2,
+      'error',
+      'At most one pipe can be connected to the input of a block. Currently, the following 2 blocks are connected via pipes: "BlockFrom1", "BlockFrom2"',
+      expect.any(Object),
+    );
+  });
+
+  it('should diagnose error on block without pipe', async () => {
+    const text = readJvTestAsset('pipeline-definition/invalid-missing-pipe.jv');
+
+    await parseAndValidatePipeline(text);
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(2); // one error since missing extractor
+    expect(validationAcceptorMock).toHaveBeenCalledWith(
+      'warning',
+      'A pipe should be connected to the output of this block',
+      expect.any(Object),
+    );
   });
 });
