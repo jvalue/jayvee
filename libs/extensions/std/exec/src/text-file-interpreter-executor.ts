@@ -12,10 +12,9 @@ import {
   ExecutionContext,
   TextFile,
   implementsStatic,
+  splitLines,
 } from '@jvalue/jayvee-execution';
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
-
-import { splitLines } from './string-util';
 
 @implementsStatic<BlockExecutorClass>()
 export class TextFileInterpreterExecutor extends AbstractBlockExecutor<

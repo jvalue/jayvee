@@ -8,7 +8,7 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
 import { PipeDefinition } from '../../ast/generated/ast';
-import { createSemanticPipes } from '../../ast/wrappers/pipe-wrapper';
+import { createWrappersFromPipeChain } from '../../ast/wrappers/pipe-wrapper';
 import { BlockTypeWrapper } from '../../ast/wrappers/typed-object/blocktype-wrapper';
 import { ValidationContext } from '../validation-context';
 
@@ -23,10 +23,10 @@ function checkBlockCompatibility(
   pipe: PipeDefinition,
   context: ValidationContext,
 ): void {
-  const semanticPipes = createSemanticPipes(pipe);
-  for (const semanticPipe of semanticPipes) {
-    const fromBlockTypeDefinition = semanticPipe.from?.type;
-    const toBlockTypeDefinition = semanticPipe.to?.type;
+  const pipeWrappers = createWrappersFromPipeChain(pipe);
+  for (const pipeWrapper of pipeWrappers) {
+    const fromBlockTypeDefinition = pipeWrapper.from?.type;
+    const toBlockTypeDefinition = pipeWrapper.to?.type;
 
     if (
       !BlockTypeWrapper.canBeWrapped(fromBlockTypeDefinition) ||
@@ -37,12 +37,23 @@ function checkBlockCompatibility(
     const fromBlockType = new BlockTypeWrapper(fromBlockTypeDefinition);
     const toBlockType = new BlockTypeWrapper(toBlockTypeDefinition);
 
-    if (fromBlockType.hasOutput() && toBlockType.hasInput()) {
-      if (!fromBlockType.canBeConnectedTo(toBlockType)) {
-        const errorMessage = `The output type "${fromBlockType.outputType}" of ${fromBlockType.type} is incompatible with the input type "${toBlockType.inputType}" of ${toBlockType.type}`;
-        context.accept('error', errorMessage, semanticPipe.getFromDiagnostic());
-        context.accept('error', errorMessage, semanticPipe.getToDiagnostic());
-      }
+    const isFromBlockLoader = !fromBlockType.hasOutput();
+    const isToBlockExtractor = !toBlockType.hasInput();
+
+    if (isFromBlockLoader) {
+      const errorMessage = `Block "${pipeWrapper.from?.name}" cannot be connected to other blocks. Its blocktype "${fromBlockType.astNode.name}" has output type "${fromBlockType.outputType}".`;
+      context.accept('error', errorMessage, pipeWrapper.getFromDiagnostic());
+    }
+
+    if (isToBlockExtractor) {
+      const errorMessage = `Block "${pipeWrapper.to?.name}" cannot be connected to from other blocks. Its blocktype "${toBlockType.astNode.name}" has input type "${toBlockType.inputType}".`;
+      context.accept('error', errorMessage, pipeWrapper.getToDiagnostic());
+    }
+
+    if (!fromBlockType.canBeConnectedTo(toBlockType)) {
+      const errorMessage = `The output type "${fromBlockType.outputType}" of block "${pipeWrapper.from?.name}" (of type "${fromBlockType.astNode.name}") is not compatible with the input type "${toBlockType.inputType}" of block "${pipeWrapper.to?.name}" (of type "${toBlockType.astNode.name}")`;
+      context.accept('error', errorMessage, pipeWrapper.getFromDiagnostic());
+      context.accept('error', errorMessage, pipeWrapper.getToDiagnostic());
     }
   }
 }

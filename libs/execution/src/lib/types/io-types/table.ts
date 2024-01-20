@@ -44,12 +44,20 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     this.columns.set(name, column);
   }
 
+  /**
+   * Tries to add a new row to this table.
+   * NOTE: This method will only add the row if the table has at least one column!
+   * @param row data of this row for each column
+   */
   addRow(row: TableRow): void {
     const rowLength = Object.keys(row).length;
     assert(
       rowLength === this.columns.size,
       `Added row has the wrong dimension (expected: ${this.columns.size}, actual: ${rowLength})`,
     );
+    if (rowLength === 0) {
+      return;
+    }
     assert(
       Object.keys(row).every((x) => this.hasColumn(x)),
       'Added row does not fit the columns in the table',

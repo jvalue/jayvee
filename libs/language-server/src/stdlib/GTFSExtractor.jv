@@ -11,12 +11,12 @@ composite blocktype GTFSExtractor {
     input inputPort oftype None;
     output outputPort oftype FileSystem;
 
+    inputPort
+        -> FileExtractor
+        -> ZipArchiveInterpreter
+        -> outputPort;
+
     block FileExtractor oftype HttpExtractor { url: url; }
 
 	block ZipArchiveInterpreter oftype ArchiveInterpreter { archiveType: "zip"; }
-
-    inputPort
-        ->FileExtractor
-        ->ZipArchiveInterpreter
-        ->outputPort;
 }

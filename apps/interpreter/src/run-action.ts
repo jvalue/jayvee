@@ -2,11 +2,14 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import * as process from 'process';
+
 import {
   LoggerFactory,
   RunOptions,
   extractAstNodeFromFile,
   interpretModel,
+  parseModel,
 } from '@jvalue/jayvee-interpreter-lib';
 import { JayveeModel, JayveeServices } from '@jvalue/jayvee-language-server';
 
@@ -23,6 +26,11 @@ export async function runAction(
       services,
       loggerFactory.createLogger(),
     );
+  if (options.parseOnly === true) {
+    const { model, services } = await parseModel(extractAstNodeFn, options);
+    const exitCode = model != null && services != null ? 0 : 1;
+    process.exit(exitCode);
+  }
   const exitCode = await interpretModel(extractAstNodeFn, options);
   process.exit(exitCode);
 }
