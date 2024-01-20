@@ -8,7 +8,7 @@ pipeline TestPipeline {
   }
 
   block TestBlock oftype LocalFileExtractor {
-    filePath: '../path-traversal-up.csv';
+    filePath: '../jayvee/libs/extensions/std/exec/test/assets/local-file-extractor-executor/path-traversal-assets/path-traversal-file.csv';
   }
 
   block TestLoader oftype TestSheetLoader {

@@ -97,7 +97,9 @@ describe('Validation of LocalFileExtractorExecutor', () => {
 
     expect(R.isErr(result)).toEqual(true);
     if (R.isErr(result)) {
-      expect(result.left.message).toEqual(`File './test.csv' not found.`);
+      expect(result.left.message).toEqual(
+        `File './does-not-exist.csv' not found.`,
+      );
     }
   });
 
