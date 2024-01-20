@@ -15,10 +15,9 @@ import {
   MimeType,
   None,
   implementsStatic,
+  inferFileExtensionFromFileExtensionString,
 } from '@jvalue/jayvee-execution';
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
-
-import { inferFileExtensionFromFileExtensionString } from '@jvalue/jayvee-execution';
 
 @implementsStatic<BlockExecutorClass>()
 export class LocalFileExtractorExecutor extends AbstractBlockExecutor<
