@@ -3,3 +3,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 export * from './implements-static-decorator';
+export * from './file-util';
+export * from './string-util';

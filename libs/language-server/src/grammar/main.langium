@@ -5,6 +5,7 @@
 grammar Jayvee
 
 import './blocktype'
+import './pipeline'
 import './terminal'
 import './property'
 import './valuetype'
@@ -23,28 +24,4 @@ entry JayveeModel:
     | iotypes+=IotypeDefinition
   )*;
 
-PipelineDefinition:
-  'pipeline' name=ID '{'
-    (
-      blocks+=BlockDefinition
-      | pipes+=PipeDefinition
-      | valuetypes+=CustomValuetypeDefinition
-      | constraints+=ConstraintDefinition
-      | transforms+=TransformDefinition
-    )*
-  '}';
 
-BlockDefinition:
-  'block' name=ID 'oftype' type=[ReferenceableBlocktypeDefinition] body=PropertyBody;
-
-PipeDefinition:
-  SinglePipeDefinition | ChainedPipeDefinition;
-
-SinglePipeDefinition:
-  'pipe' '{'
-    'from' ':' from=[BlockDefinition] ';'
-    'to' ':' to=[BlockDefinition] ';'
-  '}';
-
-ChainedPipeDefinition:
-    blocks+=[BlockDefinition] ('->' blocks+=[BlockDefinition])+ ';';

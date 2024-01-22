@@ -1,0 +1,31 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* A CSVFileInterpreter interprets a file as CSV
+*/
+composite blocktype CSVFileInterpreter {
+    property delimiter oftype text: ',';
+    property enclosing oftype text: '';
+    property enclosingEscape oftype text: '';
+    property enoding oftype text: 'utf-8';
+
+    input inputPort oftype File;
+    output outputPort oftype Sheet;
+
+    inputPort
+        -> FileTextInterpreter
+        -> FileCSVInterpreter
+        -> outputPort;
+
+    block FileTextInterpreter oftype TextFileInterpreter {
+        encoding: enoding;
+    }
+
+    block FileCSVInterpreter oftype CSVInterpreter {
+	    delimiter: delimiter;
+	    enclosing: enclosing;
+	    enclosingEscape: enclosingEscape;
+    }
+}

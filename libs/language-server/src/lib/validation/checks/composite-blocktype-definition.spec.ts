@@ -115,4 +115,47 @@ describe('Validation of CompositeBlocktypeDefinition', () => {
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
+
+  it('should diagnose error on block as input for multiple pipes', async () => {
+    const text = readJvTestAsset(
+      'composite-blocktype-definition/invalid-block-as-multiple-pipe-inputs.jv',
+    );
+
+    await parseAndValidateBlocktype(text);
+
+    // first 2 errors for multiple pipelines in test file
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(4);
+    expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+      3,
+      'error',
+      'At most one pipe can be connected to the input of a block. Currently, the following 2 blocks are connected via pipes: "BlockFrom1", "BlockFrom2"',
+      expect.any(Object),
+    );
+    expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+      4,
+      'error',
+      'At most one pipe can be connected to the input of a block. Currently, the following 2 blocks are connected via pipes: "BlockFrom1", "BlockFrom2"',
+      expect.any(Object),
+    );
+  });
+
+  it('should diagnose error on block without pipe', async () => {
+    const text = readJvTestAsset(
+      'composite-blocktype-definition/invalid-unconnected-block.jv',
+    );
+
+    await parseAndValidateBlocktype(text);
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
+    expect(validationAcceptorMock).toHaveBeenCalledWith(
+      'warning',
+      'A pipe should be connected to the input of this block',
+      expect.any(Object),
+    );
+    expect(validationAcceptorMock).toHaveBeenCalledWith(
+      'warning',
+      'A pipe should be connected to the output of this block',
+      expect.any(Object),
+    );
+  });
 });
