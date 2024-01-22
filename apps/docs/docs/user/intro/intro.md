@@ -80,7 +80,7 @@ jv <file> -d --debug-granularity peek --debug-target MyExtractorBlock,MySinkBloc
 
 ## Examples
 
-You can find multiple examples [here](https://github.com/jvalue/jayvee/tree/main/example). Copy them to your local file system and execute them with the `jv` command on your command line (see [usage](#usage)).
+You can find multiple examples with inline explanations [here](./examples/README.mdx). You can copy them to your local file system and execute them with the `jv` command on your command line (see [usage](#usage)).
 
 ## VSCode Plugin
 
