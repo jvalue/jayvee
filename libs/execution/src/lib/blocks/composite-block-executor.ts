@@ -16,13 +16,12 @@ import {
   createValuetype,
   evaluateExpression,
   evaluatePropertyValue,
-  getBlocksInTopologicalSorting,
   getIOType,
   isCompositeBlocktypeDefinition,
 } from '@jvalue/jayvee-language-server';
 
 import { ExecutionContext } from '../execution-context';
-import { IOTypeImplementation, NONE } from '../types';
+import { IOTypeImplementation } from '../types';
 
 // eslint-disable-next-line import/no-cycle
 import { executeBlocks } from './block-execution-util';
@@ -69,15 +68,9 @@ export function createCompositeBlockExecutor(
 
       this.addVariablesToContext(block, blockTypeReference.properties, context);
 
-      const executionOrder = getBlocksInTopologicalSorting(
-        blockTypeReference,
-      ).map((block) => {
-        return { block: block, value: NONE };
-      });
-
       const executionResult = await executeBlocks(
         context,
-        executionOrder,
+        blockTypeReference,
         input,
       );
 

@@ -91,7 +91,29 @@ describe('Validation of PipeDefinition', () => {
       expect(validationAcceptorMock).toHaveBeenNthCalledWith(
         2,
         'error',
-        `The output type "File" of TestFileExtractor is incompatible with the input type "Table" of TestTableLoader`,
+        'The output type "File" of block "TestExtractor" (of type "TestFileExtractor") is not compatible with the input type "Table" of block "TestLoader" (of type "TestTableLoader")',
+        expect.any(Object),
+      );
+    });
+
+    it('should diagnose error on connecting loader block to extractor block with a pipe', async () => {
+      const text = readJvTestAsset(
+        'pipe-definition/invalid-output-block-as-input.jv',
+      );
+
+      await parseAndValidatePipe(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
+      expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+        1,
+        'error',
+        'Block "BlockTo" cannot be connected to other blocks. Its blocktype "TestFileLoader" has output type "None".',
+        expect.any(Object),
+      );
+      expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+        2,
+        'error',
+        'Block "BlockFrom" cannot be connected to from other blocks. Its blocktype "TestFileExtractor" has input type "None".',
         expect.any(Object),
       );
     });

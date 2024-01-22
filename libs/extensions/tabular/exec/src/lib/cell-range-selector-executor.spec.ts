@@ -77,9 +77,9 @@ describe('Validation of CellRangeSelectorExecutor', () => {
   });
 
   it('should diagnose no error on valid selector', async () => {
-    const text = readJvTestAsset('valid-A1:C*.jv');
+    const text = readJvTestAsset('valid-A1-C.jv');
 
-    const testWorkbook = await readTestWorkbook('test-A1:C16.xlsx');
+    const testWorkbook = await readTestWorkbook('test-A1-C16.xlsx');
     const result = await parseAndExecuteExecutor(
       text,
       testWorkbook.getSheetByName('Sheet1') as R.Sheet,
@@ -102,9 +102,9 @@ describe('Validation of CellRangeSelectorExecutor', () => {
   });
 
   it('should diagnose no error on empty column', async () => {
-    const text = readJvTestAsset('valid-A1:C*.jv');
+    const text = readJvTestAsset('valid-A1-C.jv');
 
-    const testWorkbook = await readTestWorkbook('test-B1:C2.xlsx');
+    const testWorkbook = await readTestWorkbook('test-B1-C2.xlsx');
     const result = await parseAndExecuteExecutor(
       text,
       testWorkbook.getSheetByName('Sheet1') as R.Sheet,
@@ -124,9 +124,9 @@ describe('Validation of CellRangeSelectorExecutor', () => {
   });
 
   it('should diagnose error on selector out of bounds', async () => {
-    const text = readJvTestAsset('valid-A1:E4.jv');
+    const text = readJvTestAsset('valid-A1-E4.jv');
 
-    const testWorkbook = await readTestWorkbook('test-A1:C16.xlsx');
+    const testWorkbook = await readTestWorkbook('test-A1-C16.xlsx');
     const result = await parseAndExecuteExecutor(
       text,
       testWorkbook.getSheetByName('Sheet1') as R.Sheet,
@@ -141,7 +141,7 @@ describe('Validation of CellRangeSelectorExecutor', () => {
   });
 
   it('should diagnose error on selector on empty sheet', async () => {
-    const text = readJvTestAsset('valid-A1:C*.jv');
+    const text = readJvTestAsset('valid-A1-C.jv');
 
     const testWorkbook = await readTestWorkbook('test-empty.xlsx');
     const result = await parseAndExecuteExecutor(
@@ -158,7 +158,7 @@ describe('Validation of CellRangeSelectorExecutor', () => {
   });
 
   it('should diagnose error on single column selector on empty sheet', async () => {
-    const text = readJvTestAsset('valid-A1:A4.jv');
+    const text = readJvTestAsset('valid-A1-A4.jv');
 
     const testWorkbook = await readTestWorkbook('test-empty.xlsx');
     const result = await parseAndExecuteExecutor(

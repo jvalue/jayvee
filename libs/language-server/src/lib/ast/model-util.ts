@@ -2,175 +2,18 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'assert';
-
-import {
-  AstNode,
-  LangiumDocuments,
-  Reference,
-  assertUnreachable,
-} from 'langium';
+import { AstNode, LangiumDocuments } from 'langium';
 
 import {
   BinaryExpression,
-  BlockDefinition,
   BuiltinBlocktypeDefinition,
   BuiltinConstrainttypeDefinition,
-  CompositeBlocktypeDefinition,
-  PipelineDefinition,
   UnaryExpression,
   isBuiltinBlocktypeDefinition,
-  isCompositeBlocktypeDefinition,
   isJayveeModel,
 } from './generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { BlockTypeWrapper, ConstraintTypeWrapper } from './wrappers';
-import {
-  PipeWrapper,
-  createWrappersFromPipeChain,
-} from './wrappers/pipe-wrapper';
-
-export function collectStartingBlocks(
-  container: PipelineDefinition | CompositeBlocktypeDefinition,
-): BlockDefinition[] {
-  // For composite blocks the first blocks of all pipelines are starting blocks as they have inputs
-  if (isCompositeBlocktypeDefinition(container)) {
-    const startingBlocks = container.pipes
-      .map((pipe) => pipe.blocks[0])
-      .map((blockRef: Reference<BlockDefinition> | undefined) => {
-        if (
-          blockRef?.ref !== undefined &&
-          BlockTypeWrapper.canBeWrapped(blockRef.ref.type)
-        ) {
-          return blockRef.ref;
-        }
-        return undefined;
-      })
-      .filter((x): x is BlockDefinition => x !== undefined);
-
-    return startingBlocks;
-  }
-
-  const result: BlockDefinition[] = [];
-
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  const blocks = container?.blocks ?? [];
-  for (const block of blocks) {
-    if (!BlockTypeWrapper.canBeWrapped(block.type)) {
-      continue;
-    }
-    const blockType = new BlockTypeWrapper(block.type);
-
-    if (!blockType.hasInput()) {
-      result.push(block);
-    }
-  }
-  return result;
-}
-
-export function collectChildren(block: BlockDefinition): BlockDefinition[] {
-  const outgoingPipes = collectOutgoingPipes(block);
-  return outgoingPipes.map((pipe) => pipe.to);
-}
-
-export function collectParents(block: BlockDefinition): BlockDefinition[] {
-  const ingoingPipes = collectIngoingPipes(block);
-  return ingoingPipes.map((pipe) => pipe.from);
-}
-
-export function collectOutgoingPipes(block: BlockDefinition) {
-  return collectPipes(block, 'outgoing');
-}
-
-export function collectIngoingPipes(block: BlockDefinition) {
-  return collectPipes(block, 'ingoing');
-}
-
-function collectPipes(
-  block: BlockDefinition,
-  kind: 'outgoing' | 'ingoing',
-): PipeWrapper[] {
-  const pipeline = block.$container;
-  const allPipes = collectAllPipes(pipeline);
-
-  return allPipes.filter((pipeWrapper) => {
-    switch (kind) {
-      case 'outgoing':
-        return pipeWrapper.from === block;
-      case 'ingoing':
-        return pipeWrapper.to === block;
-      case undefined:
-        return false;
-    }
-    return assertUnreachable(kind);
-  });
-}
-
-export function collectAllPipes(
-  container: PipelineDefinition | CompositeBlocktypeDefinition,
-): PipeWrapper[] {
-  const result: PipeWrapper[] = [];
-  for (const pipe of container.pipes) {
-    result.push(...createWrappersFromPipeChain(pipe));
-  }
-  return result;
-}
-
-/**
- * Returns blocks in a pipeline in topological order, based on
- * Kahn's algorithm.
- *
- * Considers a pipeline as a directed, acyclical graph where
- * blocks are nodes and pipes are edges. A list in topological
- * order has the property that parent nodes are always listed
- * before their children.
- *
- * "[...] a list in topological order is such that no element
- * appears in it until after all elements appearing on all paths
- * leading to the particular element have been listed."
- *
- * Kahn, A. B. (1962). Topological sorting of large networks. Communications of the ACM, 5(11), 558–562.
- */
-export function getBlocksInTopologicalSorting(
-  pipeline: PipelineDefinition | CompositeBlocktypeDefinition,
-): BlockDefinition[] {
-  const sortedNodes = [];
-  const currentNodes = [...collectStartingBlocks(pipeline)];
-  let unvisitedEdges = [...collectAllPipes(pipeline)];
-
-  while (currentNodes.length > 0) {
-    const node = currentNodes.pop();
-    assert(node !== undefined);
-
-    sortedNodes.push(node);
-
-    for (const childNode of collectChildren(node)) {
-      // Mark edges between parent and child as visited
-      collectIngoingPipes(childNode)
-        .filter((e) => e.from === node)
-        .forEach((e) => {
-          unvisitedEdges = unvisitedEdges.filter((edge) => !edge.equals(e));
-        });
-
-      // If all edges to the child have been visited
-      const notRemovedEdges = collectIngoingPipes(childNode).filter((e) =>
-        unvisitedEdges.some((edge) => edge.equals(e)),
-      );
-      if (notRemovedEdges.length === 0) {
-        // Insert it into currentBlocks
-        currentNodes.push(childNode);
-      }
-    }
-  }
-
-  // If the graph still contains unvisited edges it is not a DAG
-  assert(
-    unvisitedEdges.length === 0,
-    `The pipeline ${pipeline.name} is expected to have no cycles`,
-  );
-
-  return sortedNodes;
-}
 
 export type UnaryExpressionOperator = UnaryExpression['operator'];
 export type BinaryExpressionOperator = BinaryExpression['operator'];
