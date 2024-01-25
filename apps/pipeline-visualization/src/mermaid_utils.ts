@@ -40,14 +40,15 @@ function escapeHtml(unsafe: string) {
     .replace(/'/g, '&#039;');
 }
 
-export function processMermaidLinks(
+export function createMermaidLinks(
   pipeline: PipelineDefinition,
   mermaidOptions: MermaidOptions,
 ) {
   const processBlock = (block: BlockDefinition, depth = 0): string => {
-    const chain: string[] = [block.name];
-    const compositeBlocks = [];
+    const chainOfBlocks: string[] = [block.name];
+    const compositeBlocks: BlockDefinition[] = [];
     let children: BlockDefinition[] = pipelineWrapper.getChildBlocks(block);
+    // as long as the pipeline does not split up
     while (children.length === 1) {
       if (
         isCompositeBlocktypeDefinition(block.type.ref) &&
@@ -55,34 +56,42 @@ export function processMermaidLinks(
       ) {
         compositeBlocks.push(block);
       }
+      // jump to next block and get its children
       assert(children[0] !== undefined);
       block = children[0];
-      chain.push(block.name);
+      chainOfBlocks.push(block.name);
       children = pipelineWrapper.getChildBlocks(block);
     }
-    let blockString = chain.join('-->');
-    const composites = compositeBlocks
+    let blockString = chainOfBlocks.join('-->');
+    // process all composite blocks
+    const compositesString = compositeBlocks
       .map((compositeBlock) => processCompositeBlock(compositeBlock, depth + 1))
       .join('\n');
-
+    // the pipeline branches here
     if (children.length > 1) {
       children.forEach((child) => {
+        // create one line per branching
         blockString += `\n${block.name}-->${child.name}`;
       });
+      // process all child blocks
       const childrenString = children
         .map((child) => processBlock(child))
         .join('\n');
       return blockString + '\n' + childrenString;
     }
-    return blockString + '\n' + composites;
+    return blockString + '\n' + compositesString;
   };
 
   const processCompositeBlock = (block: BlockDefinition, depth = 0): string => {
+    // the string representation of a composite blocks consists of:
+    // header with name and direction
+    // body with pipe of subblocks and optionally nested composite blocks
+    // tail with keyword 'end'
     const header = `${'\t'.repeat(depth)}subgraph ${block.name}\n ${'\t'.repeat(
       depth,
     )}direction ${subgraphDirection}`;
-    const subblocks = [];
-    const compositeBlocks = [];
+    const subblocks: string[] = [];
+    const compositeBlocks: BlockDefinition[] = [];
     assert(isCompositeBlocktypeDefinition(block.type.ref));
     for (const subblock of block.type.ref.blocks) {
       subblocks.push(subblock.name);
@@ -91,16 +100,17 @@ export function processMermaidLinks(
       }
     }
     const body = `${'\t'.repeat(depth)}` + subblocks.join('-->');
-    let composites = compositeBlocks
+    // process all composite blocks
+    let compositesString = compositeBlocks
       .map((compositeBlock) => processCompositeBlock(compositeBlock, depth + 1))
       .join('\n');
     const tail = `${'\t'.repeat(depth)}end`;
-
-    if (composites) {
-      composites = composites + '\n';
+    // non-empty composites require a new line
+    if (compositesString) {
+      compositesString = compositesString + '\n';
     }
 
-    return header + '\n' + body + '\n' + composites + tail;
+    return header + '\n' + body + '\n' + compositesString + tail;
   };
 
   const linesBuffer: string[] = [];
@@ -113,7 +123,7 @@ export function processMermaidLinks(
   return pipelineHead + '\n' + linesBuffer.join('\n') + '\nend';
 }
 
-export function processMermaidNodes(
+export function createMermaidNodes(
   pipeline: PipelineDefinition,
   mermaidOptions: MermaidOptions,
 ) {
@@ -159,8 +169,8 @@ export function createMermaidRepresentation(
   const diagramSetup: string = diagramType + ' ' + diagramDirection;
   assert(model.pipelines[0] !== undefined);
   const pipeline = model.pipelines[0];
-  const pipelineCode = processMermaidLinks(pipeline, mermaidOptions);
-  const pipelineStyling = processMermaidNodes(pipeline, mermaidOptions);
+  const pipelineCode = createMermaidLinks(pipeline, mermaidOptions);
+  const pipelineStyling = createMermaidNodes(pipeline, mermaidOptions);
   const styles = setMermaidStyling();
   return (
     diagramSetup +
