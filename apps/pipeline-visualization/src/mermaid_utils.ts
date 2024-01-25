@@ -9,8 +9,7 @@ import {
   BlockTypeWrapper,
   JayveeModel,
   PipelineDefinition,
-  collectChildren,
-  collectStartingBlocks,
+  PipelineWrapper,
   isCompositeBlocktypeDefinition,
   isTextLiteral,
 } from '@jvalue/jayvee-language-server';
@@ -41,36 +40,100 @@ function escapeHtml(unsafe: string) {
     .replace(/'/g, '&#039;');
 }
 
-export function createMermaidPipeline(
+export function createMermaidLinks(
   pipeline: PipelineDefinition,
   mermaidOptions: MermaidOptions,
 ) {
-  const name: string = 'subgraph ' + pipeline.name;
-  const direction: string = 'direction ' + subgraphDirection;
-  const listOfPipes: Array<string[]> = [];
-  const listOfBocks: Array<string> = [];
-  let composites = '';
-  const process_pipe = (pipe: string[], block: BlockDefinition) => {
-    pipe.push(block.name);
-    if (isCompositeBlocktypeDefinition(block.type.ref)) {
-      if (mermaidOptions.compositeBlocks) {
-        const compositePipe: string[] = [];
-        for (const subblock of block.type.ref.blocks) {
-          compositePipe.push(subblock.name);
-        }
-        const compositeName = 'subgraph ' + block.name;
-        composites +=
-          compositeName +
-          '\n' +
-          direction +
-          '\n' +
-          compositePipe.join('-->') +
-          '\n' +
-          'end \n';
+  const processBlock = (block: BlockDefinition, depth = 0): string => {
+    const chainOfBlocks: string[] = [block.name];
+    const compositeBlocks: BlockDefinition[] = [];
+    let children: BlockDefinition[] = pipelineWrapper.getChildBlocks(block);
+    // as long as the pipeline does not split up
+    while (children.length === 1) {
+      if (
+        isCompositeBlocktypeDefinition(block.type.ref) &&
+        mermaidOptions.compositeBlocks
+      ) {
+        compositeBlocks.push(block);
+      }
+      // jump to next block and get its children
+      assert(children[0] !== undefined);
+      block = children[0];
+      chainOfBlocks.push(block.name);
+      children = pipelineWrapper.getChildBlocks(block);
+    }
+    let blockString = chainOfBlocks.join('-->');
+    // process all composite blocks
+    const compositesString = compositeBlocks
+      .map((compositeBlock) => processCompositeBlock(compositeBlock, depth + 1))
+      .join('\n');
+    // the pipeline branches here
+    if (children.length > 1) {
+      children.forEach((child) => {
+        // create one line per branching
+        blockString += `\n${block.name}-->${child.name}`;
+      });
+      // process all child blocks
+      const childrenString = children
+        .map((child) => processBlock(child))
+        .join('\n');
+      return blockString + '\n' + childrenString;
+    }
+    return blockString + '\n' + compositesString;
+  };
+
+  const processCompositeBlock = (block: BlockDefinition, depth = 0): string => {
+    // the string representation of a composite blocks consists of:
+    // header with name and direction
+    // body with pipe of subblocks and optionally nested composite blocks
+    // tail with keyword 'end'
+    const header = `${'\t'.repeat(depth)}subgraph ${block.name}\n ${'\t'.repeat(
+      depth,
+    )}direction ${subgraphDirection}`;
+    const subblocks: string[] = [];
+    const compositeBlocks: BlockDefinition[] = [];
+    assert(isCompositeBlocktypeDefinition(block.type.ref));
+    for (const subblock of block.type.ref.blocks) {
+      subblocks.push(subblock.name);
+      if (isCompositeBlocktypeDefinition(subblock.type.ref)) {
+        compositeBlocks.push(subblock);
       }
     }
-    let propertyString = '';
+    const body = `${'\t'.repeat(depth)}` + subblocks.join('-->');
+    // process all composite blocks
+    let compositesString = compositeBlocks
+      .map((compositeBlock) => processCompositeBlock(compositeBlock, depth + 1))
+      .join('\n');
+    const tail = `${'\t'.repeat(depth)}end`;
+    // non-empty composites require a new line
+    if (compositesString) {
+      compositesString = compositesString + '\n';
+    }
+
+    return header + '\n' + body + '\n' + compositesString + tail;
+  };
+
+  const linesBuffer: string[] = [];
+  const pipelineWrapper = new PipelineWrapper(pipeline);
+  const pipelineHead = 'subgraph ' + pipeline.name;
+  for (const block of pipelineWrapper.getStartingBlocks()) {
+    linesBuffer.push(processBlock(block, 0));
+  }
+
+  return pipelineHead + '\n' + linesBuffer.join('\n') + '\nend';
+}
+
+export function createMermaidNodes(
+  pipeline: PipelineDefinition,
+  mermaidOptions: MermaidOptions,
+) {
+  const blockList = [];
+  const classAssignments = [];
+
+  for (const block of pipeline.blocks) {
+    assert(block.type.ref !== undefined);
     if (mermaidOptions.properties) {
+      let propertyString = '';
       for (const property of block.body.properties) {
         if (properties.includes(property.name)) {
           if (isTextLiteral(property.value)) {
@@ -80,58 +143,23 @@ export function createMermaidPipeline(
           }
         }
       }
-    }
-    assert(block.type.ref !== undefined);
-    listOfBocks.push(
-      `${block.name}[${block.name}<br><i>${block.type.ref.name}</i><br>${propertyString}]`,
-    );
-    const children = collectChildren(block);
-    if (children.length === 1) {
-      assert(children[0] !== undefined);
-      process_pipe(pipe, children[0]);
-    } else if (children.length > 1) {
-      listOfPipes.push(pipe);
-      children.forEach((child) => {
-        process_pipe([block.name], child);
-      });
+      blockList.push(
+        `${block.name}[${block.name}<br><i>${block.type.ref.name}</i><br>${propertyString}]`,
+      );
     } else {
-      listOfPipes.push(pipe);
+      blockList.push(
+        `${block.name}[${block.name}<br><i>${block.type.ref.name}</i>]`,
+      );
     }
-  };
-  const startingBlocks = collectStartingBlocks(pipeline);
-  startingBlocks.forEach((startingBlock) => process_pipe([], startingBlock));
-  const pipelineSet = listOfPipes
-    .map((pipeline) => pipeline.join('-->'))
-    .join('\n');
-  const blockSet = listOfBocks.join('\n');
-
-  return (
-    name +
-    '\n' +
-    direction +
-    '\n' +
-    pipelineSet +
-    '\n' +
-    'end \n' +
-    composites +
-    '\n' +
-    blockSet +
-    '\n'
-  );
-}
-
-export function createMermaidStyling(pipeline: PipelineDefinition) {
-  const classAssign = [];
-  for (const block of pipeline.blocks) {
     const blocktype = new BlockTypeWrapper(block.type);
     if (!blocktype.hasInput()) {
-      classAssign.push(`class ${block.name} source;`);
+      classAssignments.push(`class ${block.name} source;`);
     }
     if (!blocktype.hasOutput()) {
-      classAssign.push(`class ${block.name} sink;`);
+      classAssignments.push(`class ${block.name} sink;`);
     }
   }
-  return classAssign.join('\n');
+  return blockList.join('\n') + '\n\n' + classAssignments.join('\n');
 }
 
 export function createMermaidRepresentation(
@@ -141,11 +169,17 @@ export function createMermaidRepresentation(
   const diagramSetup: string = diagramType + ' ' + diagramDirection;
   assert(model.pipelines[0] !== undefined);
   const pipeline = model.pipelines[0];
-  const pipelineCode = createMermaidPipeline(pipeline, mermaidOptions);
-  const pipelineStyling = createMermaidStyling(pipeline);
+  const pipelineCode = createMermaidLinks(pipeline, mermaidOptions);
+  const pipelineStyling = createMermaidNodes(pipeline, mermaidOptions);
   const styles = setMermaidStyling();
   return (
-    diagramSetup + '\n' + pipelineCode + '\n' + pipelineStyling + '\n' + styles
+    diagramSetup +
+    '\n' +
+    pipelineCode +
+    '\n\n' +
+    pipelineStyling +
+    '\n' +
+    styles
   );
 }
 

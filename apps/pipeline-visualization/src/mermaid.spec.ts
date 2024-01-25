@@ -87,16 +87,16 @@ describe('test mermaid code generation for nested-composite-blocks.jv', () => {
 
 const gtCars = `flowchart LR
 subgraph CarsPipeline
-direction TB
 CarsExtractor-->CarsTextFileInterpreter-->CarsCSVInterpreter-->NameHeaderWriter-->CarsTableInterpreter-->CarsLoader
-end 
 
-CarsExtractor[CarsExtractor<br><i>HttpExtractor</i><br>]
-CarsTextFileInterpreter[CarsTextFileInterpreter<br><i>TextFileInterpreter</i><br>]
-CarsCSVInterpreter[CarsCSVInterpreter<br><i>CSVInterpreter</i><br>]
-NameHeaderWriter[NameHeaderWriter<br><i>CellWriter</i><br>]
-CarsTableInterpreter[CarsTableInterpreter<br><i>TableInterpreter</i><br>]
-CarsLoader[CarsLoader<br><i>SQLiteLoader</i><br>]
+end
+
+CarsExtractor[CarsExtractor<br><i>HttpExtractor</i>]
+CarsTextFileInterpreter[CarsTextFileInterpreter<br><i>TextFileInterpreter</i>]
+CarsCSVInterpreter[CarsCSVInterpreter<br><i>CSVInterpreter</i>]
+NameHeaderWriter[NameHeaderWriter<br><i>CellWriter</i>]
+CarsTableInterpreter[CarsTableInterpreter<br><i>TableInterpreter</i>]
+CarsLoader[CarsLoader<br><i>SQLiteLoader</i>]
 
 class CarsExtractor source;
 class CarsLoader sink;
@@ -105,9 +105,9 @@ classDef sink fill:#BDFFA4,stroke:#333,stroke-width:2px;`;
 
 const gtCarsProperties = `flowchart LR
 subgraph CarsPipeline
-direction TB
 CarsExtractor-->CarsTextFileInterpreter-->CarsCSVInterpreter-->NameHeaderWriter-->CarsTableInterpreter-->CarsLoader
-end 
+
+end
 
 CarsExtractor[CarsExtractor<br><i>HttpExtractor</i><br>]
 CarsTextFileInterpreter[CarsTextFileInterpreter<br><i>TextFileInterpreter</i><br>]
@@ -126,13 +126,13 @@ classDef sink fill:#BDFFA4,stroke:#333,stroke-width:2px;`;
 
 const gtNested = `flowchart LR
 subgraph CarsPipeline
-direction TB
 CarsExtractor-->CarsTableInterpreter-->CarsLoader
-end 
 
-CarsExtractor[CarsExtractor<br><i>CSVExtractor</i><br>]
-CarsTableInterpreter[CarsTableInterpreter<br><i>TableInterpreter</i><br>]
-CarsLoader[CarsLoader<br><i>SQLiteLoader</i><br>]
+end
+
+CarsExtractor[CarsExtractor<br><i>CSVExtractor</i>]
+CarsLoader[CarsLoader<br><i>SQLiteLoader</i>]
+CarsTableInterpreter[CarsTableInterpreter<br><i>TableInterpreter</i>]
 
 class CarsExtractor source;
 class CarsLoader sink;
@@ -141,17 +141,16 @@ classDef sink fill:#BDFFA4,stroke:#333,stroke-width:2px;`;
 
 const gtNestedComposite = `flowchart LR
 subgraph CarsPipeline
-direction TB
 CarsExtractor-->CarsTableInterpreter-->CarsLoader
-end 
-subgraph CarsExtractor
-direction TB
-FileExtractor-->FileTextInterpreter-->FileCSVInterpreter
-end 
+	subgraph CarsExtractor
+ 	direction TB
+	FileExtractor-->FileTextInterpreter-->FileCSVInterpreter
+	end
+end
 
-CarsExtractor[CarsExtractor<br><i>CSVExtractor</i><br>]
-CarsTableInterpreter[CarsTableInterpreter<br><i>TableInterpreter</i><br>]
-CarsLoader[CarsLoader<br><i>SQLiteLoader</i><br>]
+CarsExtractor[CarsExtractor<br><i>CSVExtractor</i>]
+CarsLoader[CarsLoader<br><i>SQLiteLoader</i>]
+CarsTableInterpreter[CarsTableInterpreter<br><i>TableInterpreter</i>]
 
 class CarsExtractor source;
 class CarsLoader sink;
