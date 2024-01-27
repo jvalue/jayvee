@@ -24,6 +24,8 @@ import {
   subgraphDirection,
 } from './mermaid_params';
 
+import { MermaidBuilder } from './mermaid_builder';
+
 export interface MermaidOptions {
   mermaidFile: string;
   styleFile: string;
@@ -45,6 +47,7 @@ export function createMermaidLinks(
   mermaidOptions: MermaidOptions,
 ) {
   const processBlock = (block: BlockDefinition, depth = 0): string => {
+    const mermaidBuilder = new MermaidBuilder();
     const chainOfBlocks: string[] = [block.name];
     const compositeBlocks: BlockDefinition[] = [];
     let children: BlockDefinition[] = pipelineWrapper.getChildBlocks(block);
@@ -62,7 +65,7 @@ export function createMermaidLinks(
       chainOfBlocks.push(block.name);
       children = pipelineWrapper.getChildBlocks(block);
     }
-    let blockString = chainOfBlocks.join('-->');
+    mermaidBuilder.chain(chainOfBlocks);
     // process all composite blocks
     const compositesString = compositeBlocks
       .map((compositeBlock) => processCompositeBlock(compositeBlock, depth + 1))
@@ -71,15 +74,19 @@ export function createMermaidLinks(
     if (children.length > 1) {
       children.forEach((child) => {
         // create one line per branching
-        blockString += `\n${block.name}-->${child.name}`;
+        mermaidBuilder.branching(block, child);
       });
       // process all child blocks
       const childrenString = children
         .map((child) => processBlock(child))
         .join('\n');
-      return blockString + '\n' + childrenString;
+      mermaidBuilder.section(childrenString);
+      return mermaidBuilder.build();
     }
-    return blockString + '\n' + compositesString;
+    if (compositesString) {
+      mermaidBuilder.section(compositesString);
+    }
+    return mermaidBuilder.build();
   };
 
   const processCompositeBlock = (block: BlockDefinition, depth = 0): string => {
@@ -87,9 +94,8 @@ export function createMermaidLinks(
     // header with name and direction
     // body with pipe of subblocks and optionally nested composite blocks
     // tail with keyword 'end'
-    const header = `${'\t'.repeat(depth)}subgraph ${block.name}\n ${'\t'.repeat(
-      depth,
-    )}direction ${subgraphDirection}`;
+    const mermaidBuilder = new MermaidBuilder();
+    mermaidBuilder.compositeHeader(block, depth, subgraphDirection);
     const subblocks: string[] = [];
     const compositeBlocks: BlockDefinition[] = [];
     assert(isCompositeBlocktypeDefinition(block.type.ref));
@@ -99,36 +105,32 @@ export function createMermaidLinks(
         compositeBlocks.push(subblock);
       }
     }
-    const body = `${'\t'.repeat(depth)}` + subblocks.join('-->');
+    mermaidBuilder.compositeBody(subblocks, depth);
     // process all composite blocks
     let compositesString = compositeBlocks
       .map((compositeBlock) => processCompositeBlock(compositeBlock, depth + 1))
       .join('\n');
-    const tail = `${'\t'.repeat(depth)}end`;
-    // non-empty composites require a new line
     if (compositesString) {
-      compositesString = compositesString + '\n';
+      mermaidBuilder.section(compositesString);
     }
+    mermaidBuilder.compositeTail(depth);
 
-    return header + '\n' + body + '\n' + compositesString + tail;
+    return mermaidBuilder.build();
   };
-
-  const linesBuffer: string[] = [];
+  const mermaidBuilder = new MermaidBuilder();
   const pipelineWrapper = new PipelineWrapper(pipeline);
-  const pipelineHead = 'subgraph ' + pipeline.name;
+  mermaidBuilder.pipelineHead(pipeline.name);
   for (const block of pipelineWrapper.getStartingBlocks()) {
-    linesBuffer.push(processBlock(block, 0));
+    mermaidBuilder.section(processBlock(block, 0));
   }
-
-  return pipelineHead + '\n' + linesBuffer.join('\n') + '\nend';
+  return mermaidBuilder.end().build();
 }
 
 export function createMermaidNodes(
   pipeline: PipelineDefinition,
   mermaidOptions: MermaidOptions,
 ) {
-  const blockList: string[] = [];
-  const classAssignments: string[] = [];
+  const mermaidBuilder = new MermaidBuilder();
 
   const processBlock = (block: BlockDefinition) => {
     assert(block.type.ref !== undefined);
@@ -143,13 +145,16 @@ export function createMermaidNodes(
           }
         }
       }
-      blockList.push(
-        `${block.name}[${block.name}<br><i>${block.type.ref.name}</i><br>${propertyString}]`,
-      );
+      mermaidBuilder.blockTypeWithProperties(block, propertyString);
     } else {
-      blockList.push(
-        `${block.name}[${block.name}<br><i>${block.type.ref.name}</i>]`,
-      );
+      mermaidBuilder.blockType(block);
+    }
+    const blocktype = new BlockTypeWrapper(block.type);
+    if (!blocktype.hasInput()) {
+      mermaidBuilder.classAssign(block, 'source');
+    }
+    if (!blocktype.hasOutput()) {
+      mermaidBuilder.classAssign(block, 'sink');
     }
     if (
       isCompositeBlocktypeDefinition(block.type.ref) &&
@@ -159,19 +164,12 @@ export function createMermaidNodes(
         processBlock(subblock);
       }
     }
-    const blocktype = new BlockTypeWrapper(block.type);
-    if (!blocktype.hasInput()) {
-      classAssignments.push(`class ${block.name} source;`);
-    }
-    if (!blocktype.hasOutput()) {
-      classAssignments.push(`class ${block.name} sink;`);
-    }
   };
 
   for (const block of pipeline.blocks) {
     processBlock(block);
   }
-  return blockList.join('\n') + '\n\n' + classAssignments.join('\n');
+  return mermaidBuilder.build();
 }
 
 export function createMermaidRepresentation(
