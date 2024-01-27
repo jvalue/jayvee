@@ -127,10 +127,10 @@ export function createMermaidNodes(
   pipeline: PipelineDefinition,
   mermaidOptions: MermaidOptions,
 ) {
-  const blockList = [];
-  const classAssignments = [];
+  const blockList: string[] = [];
+  const classAssignments: string[] = [];
 
-  for (const block of pipeline.blocks) {
+  const processBlock = (block: BlockDefinition) => {
     assert(block.type.ref !== undefined);
     if (mermaidOptions.properties) {
       let propertyString = '';
@@ -151,6 +151,14 @@ export function createMermaidNodes(
         `${block.name}[${block.name}<br><i>${block.type.ref.name}</i>]`,
       );
     }
+    if (
+      isCompositeBlocktypeDefinition(block.type.ref) &&
+      mermaidOptions.compositeBlocks
+    ) {
+      for (const subblock of block.type.ref.blocks) {
+        processBlock(subblock);
+      }
+    }
     const blocktype = new BlockTypeWrapper(block.type);
     if (!blocktype.hasInput()) {
       classAssignments.push(`class ${block.name} source;`);
@@ -158,6 +166,10 @@ export function createMermaidNodes(
     if (!blocktype.hasOutput()) {
       classAssignments.push(`class ${block.name} sink;`);
     }
+  };
+
+  for (const block of pipeline.blocks) {
+    processBlock(block);
   }
   return blockList.join('\n') + '\n\n' + classAssignments.join('\n');
 }
