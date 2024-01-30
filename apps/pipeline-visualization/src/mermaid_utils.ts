@@ -176,21 +176,24 @@ export function createMermaidRepresentation(
   model: JayveeModel,
   mermaidOptions: MermaidOptions,
 ) {
-  const diagramSetup: string = diagramType + ' ' + diagramDirection;
+  const mermaidBuilder = new MermaidBuilder();
+  mermaidBuilder.section(diagramType + ' ' + diagramDirection);
   assert(model.pipelines[0] !== undefined);
   const pipeline = model.pipelines[0];
-  const pipelineCode = createMermaidLinks(pipeline, mermaidOptions);
-  const pipelineStyling = createMermaidNodes(pipeline, mermaidOptions);
-  const styles = setMermaidStyling();
-  return (
-    diagramSetup +
-    '\n' +
-    pipelineCode +
-    '\n\n' +
-    pipelineStyling +
-    '\n' +
-    styles
-  );
+  mermaidBuilder.section(createMermaidLinks(pipeline, mermaidOptions));
+  mermaidBuilder.newLine();
+  mermaidBuilder.section(createMermaidNodes(pipeline, mermaidOptions));
+  mermaidBuilder.newLine();
+  mermaidBuilder.section(setMermaidStyling());
+  return mermaidBuilder.build();
+}
+
+export function setMermaidStyling() {
+  const styleDefs = [
+    'classDef source fill:#FF9999,stroke:#333,stroke-width:2px;',
+    'classDef sink fill:#BDFFA4,stroke:#333,stroke-width:2px;',
+  ];
+  return styleDefs.join('\n');
 }
 
 export function setMermaidTheme() {
@@ -203,12 +206,4 @@ export function setMermaidTheme() {
         }
     }`;
   return theme;
-}
-
-export function setMermaidStyling() {
-  const styleDefs = [
-    'classDef source fill:#FF9999,stroke:#333,stroke-width:2px;',
-    'classDef sink fill:#BDFFA4,stroke:#333,stroke-width:2px;',
-  ];
-  return styleDefs.join('\n');
 }

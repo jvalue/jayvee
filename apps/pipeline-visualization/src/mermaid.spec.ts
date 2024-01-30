@@ -88,28 +88,27 @@ describe('test mermaid code generation for nested-composite-blocks.jv', () => {
 const gtCars = `flowchart LR
 subgraph CarsPipeline
 CarsExtractor-->CarsTextFileInterpreter-->CarsCSVInterpreter-->NameHeaderWriter-->CarsTableInterpreter-->CarsLoader
-
 end
 
 CarsExtractor[CarsExtractor<br><i>HttpExtractor</i>]
+class CarsExtractor source;
 CarsTextFileInterpreter[CarsTextFileInterpreter<br><i>TextFileInterpreter</i>]
 CarsCSVInterpreter[CarsCSVInterpreter<br><i>CSVInterpreter</i>]
 NameHeaderWriter[NameHeaderWriter<br><i>CellWriter</i>]
 CarsTableInterpreter[CarsTableInterpreter<br><i>TableInterpreter</i>]
 CarsLoader[CarsLoader<br><i>SQLiteLoader</i>]
-
-class CarsExtractor source;
 class CarsLoader sink;
+
 classDef source fill:#FF9999,stroke:#333,stroke-width:2px;
 classDef sink fill:#BDFFA4,stroke:#333,stroke-width:2px;`;
 
 const gtCarsProperties = `flowchart LR
 subgraph CarsPipeline
 CarsExtractor-->CarsTextFileInterpreter-->CarsCSVInterpreter-->NameHeaderWriter-->CarsTableInterpreter-->CarsLoader
-
 end
 
 CarsExtractor[CarsExtractor<br><i>HttpExtractor</i><br>]
+class CarsExtractor source;
 CarsTextFileInterpreter[CarsTextFileInterpreter<br><i>TextFileInterpreter</i><br>]
 CarsCSVInterpreter[CarsCSVInterpreter<br><i>CSVInterpreter</i><br>enclosing: &quot;
 ]
@@ -118,24 +117,22 @@ CarsTableInterpreter[CarsTableInterpreter<br><i>TableInterpreter</i><br>]
 CarsLoader[CarsLoader<br><i>SQLiteLoader</i><br>table: Cars
 file: ./cars.sqlite
 ]
-
-class CarsExtractor source;
 class CarsLoader sink;
+
 classDef source fill:#FF9999,stroke:#333,stroke-width:2px;
 classDef sink fill:#BDFFA4,stroke:#333,stroke-width:2px;`;
 
 const gtNested = `flowchart LR
 subgraph CarsPipeline
 CarsExtractor-->CarsTableInterpreter-->CarsLoader
-
 end
 
 CarsExtractor[CarsExtractor<br><i>CSVExtractor</i>]
+class CarsExtractor source;
 CarsLoader[CarsLoader<br><i>SQLiteLoader</i>]
+class CarsLoader sink;
 CarsTableInterpreter[CarsTableInterpreter<br><i>TableInterpreter</i>]
 
-class CarsExtractor source;
-class CarsLoader sink;
 classDef source fill:#FF9999,stroke:#333,stroke-width:2px;
 classDef sink fill:#BDFFA4,stroke:#333,stroke-width:2px;`;
 
@@ -149,10 +146,14 @@ CarsExtractor-->CarsTableInterpreter-->CarsLoader
 end
 
 CarsExtractor[CarsExtractor<br><i>CSVExtractor</i>]
+class CarsExtractor source;
+FileExtractor[FileExtractor<br><i>HttpExtractor</i>]
+class FileExtractor source;
+FileTextInterpreter[FileTextInterpreter<br><i>TextFileInterpreter</i>]
+FileCSVInterpreter[FileCSVInterpreter<br><i>CSVInterpreter</i>]
 CarsLoader[CarsLoader<br><i>SQLiteLoader</i>]
+class CarsLoader sink;
 CarsTableInterpreter[CarsTableInterpreter<br><i>TableInterpreter</i>]
 
-class CarsExtractor source;
-class CarsLoader sink;
 classDef source fill:#FF9999,stroke:#333,stroke-width:2px;
 classDef sink fill:#BDFFA4,stroke:#333,stroke-width:2px;`;
