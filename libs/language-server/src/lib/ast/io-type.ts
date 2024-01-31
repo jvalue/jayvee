@@ -23,7 +23,10 @@ export function getIOType(blockIO: BlocktypeInput | BlocktypeOutput): IOType {
     `Unknown IOType name for block input/output ${blockIO.name}.`,
   );
 
-  assert(ioTypeName in IOType, `IOType ${ioTypeName} does not exist.`);
-
+  assert(
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+    Object.values(IOType).some((type) => type === ioTypeName),
+    `IOType ${ioTypeName} does not exist.`,
+  );
   return ioTypeName as IOType;
 }

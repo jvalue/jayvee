@@ -390,7 +390,7 @@ function checkPropertyValueOneOf(
     validationContext.accept(
       'error',
       `The value of property "${propName}" must be one of the following values: ${allowedValues
-        .map((v) => `"${internalValueToString(v)}"`)
+        .map((v) => `${internalValueToString(v)}`)
         .join(', ')}`,
       {
         node: property,
