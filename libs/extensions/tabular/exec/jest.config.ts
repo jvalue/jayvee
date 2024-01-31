@@ -6,13 +6,14 @@ export default {
   displayName: 'extensions-tabular-exec',
   preset: '../../../../jest.preset.js',
   testEnvironment: './test/jsdom-environment-fix.ts',
-  globals: {
-    'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.spec.json',
-    },
-  },
+  globals: {},
   transform: {
-    '^.+\\.[tj]s$': 'ts-jest',
+    '^.+\\.[tj]s$': [
+      'ts-jest',
+      {
+        tsconfig: '<rootDir>/tsconfig.spec.json',
+      },
+    ],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../../../coverage/libs/extensions/tabular/exec',

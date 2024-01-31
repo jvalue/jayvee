@@ -9,7 +9,6 @@
       "options": {
         "commands": [
           "langium generate -f libs/language-server/langium-config.json",
-          // Workaround until https://github.com/langium/langium/issues/740 is resolved:
           "node tools/scripts/fix-monarch-grammar-escape.mjs",
           "node tools/scripts/language-server/generate-stdlib.mjs"
         ],
@@ -18,7 +17,7 @@
     },
     "build": {
       "dependsOn": ["generate"],
-      "executor": "@nrwl/js:tsc",
+      "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/language-server",
@@ -26,21 +25,17 @@
         "tsConfig": "libs/language-server/tsconfig.lib.json"
       },
       "configurations": {
-        // https://nx.dev/recipes/executors/use-executor-configurations
         "dev": {},
         "prod": {}
       },
       "defaultConfiguration": "dev"
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/language-server/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "libs/language-server/jest.config.ts",

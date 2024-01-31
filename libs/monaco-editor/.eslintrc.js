@@ -4,7 +4,7 @@
 
 module.exports = {
   extends: [
-    'plugin:@nrwl/nx/react',
+    'plugin:@nx/react',
     '@jvalue/eslint-config-jvalue/react',
     '../../.eslintrc.json',
   ],

@@ -13,3 +13,5 @@
 
 .prettierignore
 .docusaurus/
+
+/.nx/cache
