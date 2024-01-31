@@ -20,7 +20,8 @@ Explore a glimpse of our upcoming features in the following list. This overview 
 - &#9989; Simple valuetypes and constraints
 - &#9989; Natively support table-based data
 - &#9989; Column-based transformations
-- &#9989; Describe blocks via blocktypes in Jayvee
+- &#9989; Describe blocks via builtin blocktypes in Jayvee
+- &#9989; Compose logic of multiple blocks via composite blocktypes
 - &#8987; Multi-file Jayvee to distribute programs over multiple files (see [RFC 0015](./rfc/0015-multi-file-jayvee/0015-multi-file-jayvee.md))
 - &#8987; Improve the syntax of valuetypes (see [RFC 0014](https://github.com/jvalue/jayvee/pull/409))
 - &#8987; Jayvee formatter
