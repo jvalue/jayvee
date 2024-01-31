@@ -51,7 +51,6 @@
     "@babel/preset-react": "^7.14.5",
     "@docusaurus/module-type-aliases": "2.4.1",
     "@jvalue/eslint-config-jvalue": "^1.3.0",
-    "@nrwl/js": "17.3.0",
     "@nx-plus/docusaurus": "^15.0.0-rc.0",
     "@nx/esbuild": "17.3.0",
     "@nx/eslint": "17.3.0",

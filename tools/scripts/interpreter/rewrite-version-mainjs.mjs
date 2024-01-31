@@ -6,7 +6,7 @@ import {readFileSync, writeFileSync} from 'fs';
 import {
     parsePackageJson, getOutputPath
 } from '../shared-util.mjs';
-import { workspaceRoot } from "@nrwl/devkit";
+import { workspaceRoot } from "@nx/devkit";
 
 // Executing this script: node path/to/rewrite-version-mainjs.mjs {projectName}
 const [, , projectName] = process.argv;
