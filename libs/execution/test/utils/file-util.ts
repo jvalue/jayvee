@@ -18,10 +18,10 @@ import {
 export function createBinaryFileFromLocalFile(fileName: string): BinaryFile {
   const extName = path.extname(fileName);
   const mimeType =
-    inferMimeTypeFromFileExtensionString(extName) ||
+    inferMimeTypeFromFileExtensionString(extName) ??
     MimeType.APPLICATION_OCTET_STREAM;
   const fileExtension =
-    inferFileExtensionFromFileExtensionString(extName) || FileExtension.NONE;
+    inferFileExtensionFromFileExtensionString(extName) ?? FileExtension.NONE;
   const file = readFileSync(path.resolve(__dirname, fileName));
   return new BinaryFile(path.basename(fileName), fileExtension, mimeType, file);
 }
@@ -29,10 +29,10 @@ export function createBinaryFileFromLocalFile(fileName: string): BinaryFile {
 export function createTextFileFromLocalFile(fileName: string): TextFile {
   const extName = path.extname(fileName);
   const mimeType =
-    inferMimeTypeFromFileExtensionString(extName) ||
+    inferMimeTypeFromFileExtensionString(extName) ??
     MimeType.APPLICATION_OCTET_STREAM;
   const fileExtension =
-    inferFileExtensionFromFileExtensionString(extName) || FileExtension.NONE;
+    inferFileExtensionFromFileExtensionString(extName) ?? FileExtension.NONE;
   const fileContent = readFileSync(path.resolve(__dirname, fileName), 'utf-8');
 
   return new TextFile(

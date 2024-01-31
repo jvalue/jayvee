@@ -2,6 +2,4 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-export interface ConstructorClass<T> {
-  new (): T;
-}
+export type ConstructorClass<T> = new () => T;

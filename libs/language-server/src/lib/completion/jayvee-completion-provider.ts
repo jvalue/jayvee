@@ -177,10 +177,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       (attr) => attr.name,
     );
 
-    const propertyKinds: Array<'optional' | 'required'> = [
-      'required',
-      'optional',
-    ];
+    const propertyKinds: ('optional' | 'required')[] = ['required', 'optional'];
     for (const propertyKind of propertyKinds) {
       const propertyNames = wrapper.getPropertyNames(
         propertyKind,

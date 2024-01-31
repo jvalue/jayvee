@@ -23,10 +23,7 @@ export function getIOType(blockIO: BlocktypeInput | BlocktypeOutput): IOType {
     `Unknown IOType name for block input/output ${blockIO.name}.`,
   );
 
-  assert(
-    Object.values(IOType).some((type) => type === ioTypeName),
-    `IOType ${ioTypeName} does not exist.`,
-  );
+  assert(ioTypeName in IOType, `IOType ${ioTypeName} does not exist.`);
 
   return ioTypeName as IOType;
 }
