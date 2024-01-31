@@ -13,6 +13,7 @@
         "outputPath": "dist/apps/interpreter",
         "main": "apps/interpreter/src/index.ts",
         "tsConfig": "apps/interpreter/tsconfig.app.json",
+        "webpackConfig": "apps/interpreter/webpack.config.js",
         "generatePackageJson": true
       },
       "configurations": {

@@ -26,7 +26,8 @@
         "compiler": "tsc",
         "outputPath": "dist/apps/docs/generator",
         "main": "apps/docs/generator/src/main.ts",
-        "tsConfig": "apps/docs/tsconfig.json"
+        "tsConfig": "apps/docs/tsconfig.json",
+        "webpackConfig": "apps/docs/webpack.config.js"
       },
       "dependsOn": ["prepare-generator"]
     },

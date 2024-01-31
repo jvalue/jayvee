@@ -11,6 +11,7 @@
         "outputPath": "dist/apps/language-server-web-worker",
         "main": "apps/language-server-web-worker/src/main.ts",
         "tsConfig": "apps/language-server-web-worker/tsconfig.app.json",
+        "webpackConfig": "apps/language-server-web-worker/webpack.config.js",
         "target": "web",
         "runtimeChunk": false,
         "vendorChunk": false,
