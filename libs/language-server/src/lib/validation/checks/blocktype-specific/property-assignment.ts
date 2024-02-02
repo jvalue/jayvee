@@ -263,10 +263,10 @@ function checkLocalFileExtractorProperty(
   property: PropertyAssignment,
   validationContext: ValidationContext,
 ) {
-  if (propName === 'filePath' && propValue.toString().includes('../')) {
+  if (propName === 'filePath' && propValue.toString().includes('..')) {
     validationContext.accept(
       'error',
-      'File path cannot include "../". Path traversal is restricted.',
+      'File path cannot include "..". Path traversal is restricted.',
       {
         node: property,
         property: 'value',

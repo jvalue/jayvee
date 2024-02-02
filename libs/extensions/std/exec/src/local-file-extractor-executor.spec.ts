@@ -111,7 +111,7 @@ describe('Validation of LocalFileExtractorExecutor', () => {
     expect(R.isErr(result)).toEqual(true);
     if (R.isErr(result)) {
       expect(result.left.message).toEqual(
-        `File path cannot include "../". Path traversal is restricted.`,
+        `File path cannot include "..". Path traversal is restricted.`,
       );
     }
   });
@@ -124,7 +124,7 @@ describe('Validation of LocalFileExtractorExecutor', () => {
     expect(R.isErr(result)).toEqual(true);
     if (R.isErr(result)) {
       expect(result.left.message).toEqual(
-        `File path cannot include "../". Path traversal is restricted.`,
+        `File path cannot include "..". Path traversal is restricted.`,
       );
     }
   });
