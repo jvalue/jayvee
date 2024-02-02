@@ -19,14 +19,15 @@
       "dependsOn": ["generate"]
     },
     "build-generator": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "target": "node",
         "compiler": "tsc",
         "outputPath": "dist/apps/docs/generator",
         "main": "apps/docs/generator/src/main.ts",
-        "tsConfig": "apps/docs/tsconfig.json"
+        "tsConfig": "apps/docs/tsconfig.json",
+        "webpackConfig": "apps/docs/webpack.config.js"
       },
       "dependsOn": ["prepare-generator"]
     },
@@ -45,27 +46,21 @@
       "dependsOn": ["build-generator"]
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/docs/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/docs/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/docs/jest.config.ts"
       }
     },
     "version-snapshot": {
       "executor": "nx:run-commands",
       "dependsOn": ["generate"],
       "options": {
-        "commands": [
-          "node tools/scripts/docs/create-new-version-snapshot.mjs"
-        ],
+        "commands": ["node tools/scripts/docs/create-new-version-snapshot.mjs"],
         "parallel": false
       }
     }

@@ -15,7 +15,7 @@ export class CachedLogger extends DefaultLogger {
   constructor(
     enableDebugLogging: boolean,
     loggingContext?: string,
-    protected printLogs: boolean = true,
+    protected printLogs = true,
     depth = 0,
     cacheSize = 200,
   ) {
@@ -27,7 +27,7 @@ export class CachedLogger extends DefaultLogger {
    * Gets all log entries with the specified log levels.
    * If no log level given, returns logs on all log levels.
    */
-  public getLogs(...logLevel: DiagnosticSeverity[]): ReadonlyArray<LogEntry> {
+  public getLogs(...logLevel: DiagnosticSeverity[]): readonly LogEntry[] {
     const filterLevels =
       logLevel.length === 0 ? Object.values(DiagnosticSeverity) : logLevel;
     return this.logCache

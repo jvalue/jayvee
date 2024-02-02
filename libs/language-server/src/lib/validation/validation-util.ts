@@ -11,6 +11,7 @@ import {
   EvaluationStrategy,
   Expression,
   evaluateExpression,
+  internalValueToString,
   isBinaryExpression,
   isExpressionLiteral,
   isFreeVariableLiteral,
@@ -82,8 +83,9 @@ export function checkExpressionSimplification(
 
     validationContext.accept(
       'info',
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      `The expression can be simplified to ${evaluatedExpression}`,
+      `The expression can be simplified to ${internalValueToString(
+        evaluatedExpression,
+      )}`,
       { node: expression },
     );
   });

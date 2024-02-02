@@ -105,7 +105,7 @@ export class TableTransformerExecutor extends AbstractBlockExecutor<
     transformInputDetailsList: PortDetails[],
     context: R.ExecutionContext,
   ): R.Result<Map<string, R.TableColumn>> {
-    const variableToColumnMap: Map<string, R.TableColumn> = new Map();
+    const variableToColumnMap = new Map<string, R.TableColumn>();
     for (let i = 0; i < inputColumnNames.length; ++i) {
       const inputColumnName = inputColumnNames[i];
       assert(inputColumnName !== undefined);

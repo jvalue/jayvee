@@ -7,7 +7,7 @@ import { type InternalValueRepresentation } from '../../../../expressions/intern
 import { PrimitiveValuetype } from '../primitive-valuetype';
 
 export type ToArray<I extends InternalValueRepresentation | undefined> =
-  I extends InternalValueRepresentation ? Array<I> : [];
+  I extends InternalValueRepresentation ? I[] : [];
 
 export abstract class AbstractCollectionValuetype<
   I extends InternalValueRepresentation | undefined,

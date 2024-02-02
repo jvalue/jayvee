@@ -35,7 +35,7 @@ Execution extensions are only required by the [interpreter](https://github.com/j
 #### 1. Generate an execution libraries
 
 ```bash
-npx nx g @nrwl/node:library --name="extensions/<extension-name>/exec"
+npx nx g @nx/node:library --name="extensions/<extension-name>/exec"
 ```
 
 #### 2. Create extension classes
