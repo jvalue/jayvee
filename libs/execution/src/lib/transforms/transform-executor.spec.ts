@@ -44,7 +44,7 @@ describe('Validation of TransformExecutor', () => {
     inputTable: Table,
     transformInputDetailsList: PortDetails[],
   ): Map<string, TableColumn> {
-    const variableToColumnMap: Map<string, TableColumn> = new Map();
+    const variableToColumnMap = new Map<string, TableColumn>();
     for (let i = 0; i < inputColumnNames.length; ++i) {
       const inputColumnName = inputColumnNames[i];
       assert(inputColumnName !== undefined);

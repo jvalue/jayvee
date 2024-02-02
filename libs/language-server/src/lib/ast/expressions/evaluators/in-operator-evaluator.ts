@@ -12,7 +12,7 @@ import { NUMBER_TYPEGUARD, STRING_TYPEGUARD } from '../typeguards';
 
 export class InOperatorEvaluator extends DefaultBinaryOperatorEvaluator<
   InternalValueRepresentation,
-  Array<InternalValueRepresentation>,
+  InternalValueRepresentation[],
   boolean
 > {
   constructor() {
@@ -24,7 +24,7 @@ export class InOperatorEvaluator extends DefaultBinaryOperatorEvaluator<
   }
   override doEvaluate(
     left: string | number,
-    right: Array<string | number>,
+    right: (string | number)[],
   ): boolean {
     return right.includes(left);
   }
@@ -37,8 +37,8 @@ const isLeftOperandMatchingValueRepresentationTypeguard: InternalValueRepresenta
 };
 
 const isRightOperandMatchingValueRepresentationTypeguard: InternalValueRepresentationTypeguard<
-  Array<string | number>
-> = (value: InternalValueRepresentation): value is Array<string | number> => {
+  (string | number)[]
+> = (value: InternalValueRepresentation): value is (string | number)[] => {
   return (
     Array.isArray(value) &&
     value.every(isLeftOperandMatchingValueRepresentationTypeguard)

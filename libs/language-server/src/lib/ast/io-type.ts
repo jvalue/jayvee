@@ -24,9 +24,9 @@ export function getIOType(blockIO: BlocktypeInput | BlocktypeOutput): IOType {
   );
 
   assert(
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
     Object.values(IOType).some((type) => type === ioTypeName),
     `IOType ${ioTypeName} does not exist.`,
   );
-
   return ioTypeName as IOType;
 }

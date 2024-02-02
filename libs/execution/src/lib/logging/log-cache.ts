@@ -30,7 +30,7 @@ export class LogCache {
     return this.logs.map((e) => e.message);
   }
 
-  public getLogs(): ReadonlyArray<LogEntry> {
+  public getLogs(): readonly LogEntry[] {
     return this.logs;
   }
 

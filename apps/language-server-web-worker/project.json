@@ -5,12 +5,13 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/language-server-web-worker",
         "main": "apps/language-server-web-worker/src/main.ts",
         "tsConfig": "apps/language-server-web-worker/tsconfig.app.json",
+        "webpackConfig": "apps/language-server-web-worker/webpack.config.js",
         "target": "web",
         "runtimeChunk": false,
         "vendorChunk": false,
@@ -18,14 +19,13 @@
         "generatePackageJson": true
       },
       "configurations": {
-        // https://nx.dev/recipes/executors/use-executor-configurations
         "dev": {},
         "prod": {}
       },
       "defaultConfiguration": "dev"
     },
     "serve": {
-      "executor": "@nrwl/js:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "language-server-web-worker:build"
       },
@@ -36,18 +36,14 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/language-server-web-worker/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/language-server-web-worker/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/language-server-web-worker/jest.config.ts"
       }
     },
     "publish": {

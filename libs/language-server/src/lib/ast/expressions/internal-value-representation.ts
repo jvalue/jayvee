@@ -17,7 +17,7 @@ import { CellRangeWrapper } from '../wrappers';
 
 export type InternalValueRepresentation =
   | AtomicInternalValueRepresentation
-  | Array<InternalValueRepresentation>
+  | InternalValueRepresentation[]
   | [];
 
 export type AtomicInternalValueRepresentation =

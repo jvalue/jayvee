@@ -10,6 +10,7 @@ import {
   PropertyAssignment,
   PropertySpecification,
   evaluatePropertyValue,
+  internalValueToString,
   isColumnWrapper,
   isRowWrapper,
 } from '../../../ast';
@@ -389,7 +390,7 @@ function checkPropertyValueOneOf(
     validationContext.accept(
       'error',
       `The value of property "${propName}" must be one of the following values: ${allowedValues
-        .map((v) => `"${v.toString()}"`)
+        .map((v) => `${internalValueToString(v)}`)
         .join(', ')}`,
       {
         node: property,
