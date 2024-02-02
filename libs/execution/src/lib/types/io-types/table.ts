@@ -33,7 +33,7 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
 
   private numberOfRows = 0;
 
-  private columns = new Map<string, TableColumn>();
+  private columns: Map<string, TableColumn> = new Map();
 
   public constructor(numberOfRows = 0) {
     this.numberOfRows = numberOfRows;
@@ -120,7 +120,7 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
       );
     }
 
-    const row = new Map<string, InternalValueRepresentation>();
+    const row: Map<string, InternalValueRepresentation> = new Map();
     [...this.columns.entries()].forEach(([columnName, column]) => {
       const value = column.values[rowId];
       assert(value !== undefined);

@@ -6,13 +6,13 @@ import { BlockExecutorMock } from '@jvalue/jayvee-execution/test';
 import * as nock from 'nock';
 
 export class HttpExtractorExecutorMock implements BlockExecutorMock {
-  private _nockScopes: nock.Scope[] = [];
+  private _nockScopes: Array<nock.Scope> = [];
 
-  get nockScopes(): nock.Scope[] {
+  get nockScopes(): Array<nock.Scope> {
     return this._nockScopes;
   }
 
-  setup(registerMocks: () => nock.Scope[]) {
+  setup(registerMocks: () => Array<nock.Scope>) {
     // setup nock
     if (!nock.isActive()) {
       nock.activate();

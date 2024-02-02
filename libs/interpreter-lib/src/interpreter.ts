@@ -27,7 +27,6 @@ import {
   RuntimeParameterProvider,
   createJayveeServices,
   initializeWorkspace,
-  internalValueToString,
 } from '@jvalue/jayvee-language-server';
 import * as chalk from 'chalk';
 import { NodeFileSystem } from 'langium/node';
@@ -183,14 +182,16 @@ async function interpretJayveeModel(
   loggerFactory: LoggerFactory,
   runOptions: InterpreterOptions,
 ): Promise<ExitCode> {
-  const pipelineRuns: Promise<ExitCode>[] = model.pipelines.map((pipeline) => {
-    return runPipeline(
-      pipeline,
-      runtimeParameterProvider,
-      loggerFactory,
-      runOptions,
-    );
-  });
+  const pipelineRuns: Array<Promise<ExitCode>> = model.pipelines.map(
+    (pipeline) => {
+      return runPipeline(
+        pipeline,
+        runtimeParameterProvider,
+        loggerFactory,
+        runOptions,
+      );
+    },
+  );
   const exitCodes = await Promise.all(pipelineRuns);
 
   if (exitCodes.includes(ExitCode.FAILURE)) {
@@ -268,7 +269,7 @@ export function logPipelineOverview(
   if (runtimeParameters.size > 0) {
     linesBuffer.push(`\tRuntime Parameters (${runtimeParameters.size}):`);
     for (const [key, value] of runtimeParameters.entries()) {
-      linesBuffer.push(`\t\t${key}: ${internalValueToString(value)}`);
+      linesBuffer.push(`\t\t${key}: ${value.toString()}`);
     }
   }
   linesBuffer.push(

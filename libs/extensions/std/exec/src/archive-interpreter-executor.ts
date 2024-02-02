@@ -130,10 +130,10 @@ export class ArchiveInterpreterExecutor extends AbstractBlockExecutor<
     const extName = path.extname(fileName);
 
     const mimeType =
-      inferMimeTypeFromFileExtensionString(extName) ??
+      inferMimeTypeFromFileExtensionString(extName) ||
       MimeType.APPLICATION_OCTET_STREAM;
     const fileExtension =
-      inferFileExtensionFromFileExtensionString(extName) ?? FileExtension.NONE;
+      inferFileExtensionFromFileExtensionString(extName) || FileExtension.NONE;
 
     return new BinaryFile(fileName, fileExtension, mimeType, content);
   }

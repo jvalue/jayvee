@@ -56,5 +56,3 @@ Thumbs.db
 # Generated Docusaurus files
 .docusaurus/
 .cache-loader/
-
-.nx/cache

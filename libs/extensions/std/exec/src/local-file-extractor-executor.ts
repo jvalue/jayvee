@@ -39,6 +39,13 @@ export class LocalFileExtractorExecutor extends AbstractBlockExecutor<
       PrimitiveValuetypes.Text,
     );
 
+    if (filePath.includes('..')) {
+      return R.err({
+        message: 'File path cannot include "..". Path traversal is restricted.',
+        diagnostic: { node: context.getCurrentNode(), property: 'filePath' },
+      });
+    }
+
     try {
       const rawData = await fs.readFile(filePath);
 

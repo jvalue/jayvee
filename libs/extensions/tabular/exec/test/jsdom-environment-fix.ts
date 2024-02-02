@@ -4,7 +4,7 @@
 
 import JSDOMEnvironment from 'jest-environment-jsdom';
 
-// @nx/jest/preset loads in jsdom environment which does not support a few node.js functions.
+// @nrwl/jest/preset loads in jsdom environment which does not support a few node.js functions.
 // This class adds these node.js functions.
 export default class JSDOMEnvironmentFix extends JSDOMEnvironment {
   constructor(...args: ConstructorParameters<typeof JSDOMEnvironment>) {

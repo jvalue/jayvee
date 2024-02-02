@@ -294,7 +294,6 @@ function isCompleteRowId(rowId: RowId | undefined) {
 }
 
 function parseCellReference(cellReference: string | CellReference): CellIndex {
-  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   let columnId: string | '*';
   let rowId: number | '*';
   if (typeof cellReference === 'string') {
@@ -332,7 +331,6 @@ function parseStringCellReference(cellReference: string): {
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
 function parseColumnId(columnId: string | '*'): number {
   if (columnId === '*') {
     return LAST_INDEX;

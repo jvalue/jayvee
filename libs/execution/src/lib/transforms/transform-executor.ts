@@ -89,7 +89,7 @@ export class TransformExecutor {
     const inputDetailsList = this.getInputDetails();
     const outputDetails = this.getOutputDetails();
 
-    const newColumn: InternalValueRepresentation[] = [];
+    const newColumn: Array<InternalValueRepresentation> = [];
     const rowsToDelete: number[] = [];
 
     for (let rowIndex = 0; rowIndex < numberOfRows; ++rowIndex) {

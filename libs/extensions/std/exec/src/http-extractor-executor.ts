@@ -151,7 +151,7 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
           const mimeType: MimeType | undefined =
             inferMimeTypeFromFileExtensionString(
               response.headers['content-type'],
-            ) ?? MimeType.APPLICATION_OCTET_STREAM;
+            ) || MimeType.APPLICATION_OCTET_STREAM;
 
           // Infer FileName and FileExtension from url, if not inferrable, then default to None
           // Get last element of URL assuming this is a filename
@@ -162,7 +162,7 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
           }
           const extName = path.extname(fileName);
           let fileExtension =
-            inferFileExtensionFromFileExtensionString(extName) ??
+            inferFileExtensionFromFileExtensionString(extName) ||
             FileExtension.NONE;
 
           // If FileExtension is not in url, try to infer extension from content-type, if not inferrable, then default to None
@@ -170,7 +170,7 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
             fileExtension =
               inferFileExtensionFromContentTypeString(
                 response.headers['content-type'],
-              ) ?? FileExtension.NONE;
+              ) || FileExtension.NONE;
           }
 
           // Create file and return file

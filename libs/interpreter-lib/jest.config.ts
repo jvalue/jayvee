@@ -5,15 +5,14 @@
 export default {
   displayName: 'jayvee-interpreter-lib',
   preset: '../../jest.preset.js',
-  globals: {},
+  globals: {
+    'ts-jest': {
+      tsconfig: '<rootDir>/tsconfig.spec.json',
+    },
+  },
   testEnvironment: 'node',
   transform: {
-    '^.+\\.[tj]sx?$': [
-      'ts-jest',
-      {
-        tsconfig: '<rootDir>/tsconfig.spec.json',
-      },
-    ],
+    '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/libs/@jvalue/jayvee-interpreter-lib',

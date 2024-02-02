@@ -29,7 +29,7 @@ export class Sheet implements IOTypeImplementation<IOType.SHEET> {
     }, 0);
   }
 
-  getData(): readonly (readonly string[])[] {
+  getData(): ReadonlyArray<ReadonlyArray<string>> {
     return this.data;
   }
 

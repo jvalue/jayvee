@@ -1,6 +1,5 @@
 ---
 sidebar_position: 1
-title: Getting Started
 ---
 
 # Introduction to Jayvee
@@ -25,7 +24,11 @@ npm install -g @jvalue/jayvee-interpreter@0.0.17
 
 ## Update
 
-Details about how to update Jayvee and the VSCode extension can be found [here](./update.md).
+Updating the interpreter is done by reinstalling it using `npm`. Make sure to also update the [VSCode plugin](#vscode-plugin) to match the installed interpreter if you use it.
+
+```bash
+npm install -g @jvalue/jayvee-interpreter
+```
 
 ## Usage
 
@@ -80,7 +83,7 @@ jv <file> -d --debug-granularity peek --debug-target MyExtractorBlock,MySinkBloc
 
 ## Examples
 
-You can find multiple examples with inline explanations [here](../examples/README.mdx). You can copy them to your local file system and execute them with the `jv` command on your command line (see [usage](#usage)).
+You can find multiple examples with inline explanations [here](./examples/README.mdx).
 
 ## VSCode Plugin
 

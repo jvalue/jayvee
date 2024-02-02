@@ -19,13 +19,12 @@ export default function prismIncludeLanguages(PrismObject) {
   // avoid polluting global namespace.
   // You can mutate PrismObject: registering plugins, deleting languages... As
   // long as you don't re-assign it
-  // eslint-disable-next-line no-undef
   globalThis.Prism = PrismObject;
   additionalLanguages.forEach((lang) => {
+    // eslint-disable-next-line global-require, import/no-dynamic-require
     require(`prismjs/components/prism-${lang}`);
   });
   // Add Jayvee language:
   require('./prism-jayvee.js');
-  // eslint-disable-next-line no-undef
   delete globalThis.Prism;
 }

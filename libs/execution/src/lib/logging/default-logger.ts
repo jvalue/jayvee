@@ -16,7 +16,7 @@ export class DefaultLogger extends Logger {
   constructor(
     protected readonly enableDebugLogging: boolean,
     protected loggingContext?: string,
-    protected depth = 0,
+    protected depth: number = 0,
   ) {
     super();
   }

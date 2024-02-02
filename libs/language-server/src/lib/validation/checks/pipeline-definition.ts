@@ -81,9 +81,9 @@ function doCheckMultipleBlockInputs(
     PipelineDefinition | CompositeBlocktypeDefinition
   >,
   block: BlockDefinition,
-  alreadyMarkedPipes: PipeWrapper[],
+  alreadyMarkedPipes: Array<PipeWrapper>,
   context: ValidationContext,
-): PipeWrapper[] {
+): Array<PipeWrapper> {
   const pipesFromParents = pipelineWrapper.getIngoingPipes(block);
   if (pipesFromParents.length > 1) {
     const parentBlockNames = pipesFromParents.map(

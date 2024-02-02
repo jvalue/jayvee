@@ -5,7 +5,7 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nx/esbuild:esbuild",
+      "executor": "@nrwl/esbuild:esbuild",
       "options": {
         "tsConfig": "apps/vs-code-extension/tsconfig.app.json",
         "outputPath": "dist/apps/vs-code-extension",
@@ -17,14 +17,8 @@
         "platform": "node",
         "format": ["cjs"],
         "assets": [
-          {
-            "input": "apps/vs-code-extension/assets",
-            "glob": "*",
-            "output": "/"
-          }
-        ],
-        "generatePackageJson": true,
-        "thirdParty": true
+          { "input": "apps/vs-code-extension/assets", "glob": "*", "output": "/" }
+        ]
       },
       "configurations": {
         "dev": {
@@ -44,14 +38,18 @@
       "defaultConfiguration": "dev"
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/vs-code-extension/**/*.ts"]
+      }
     },
     "test": {
-      "executor": "@nx/jest:jest",
+      "executor": "@nrwl/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/vs-code-extension/jest.config.ts"
+        "jestConfig": "apps/vs-code-extension/jest.config.ts",
+        "passWithNoTests": true
       }
     },
     "pack": {

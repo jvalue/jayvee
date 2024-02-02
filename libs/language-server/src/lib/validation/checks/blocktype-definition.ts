@@ -119,7 +119,7 @@ function checkNoDuplicateProperties(
     return;
   }
 
-  const propertyMap = new Map<string, BlocktypeProperty[]>();
+  const propertyMap: Map<string, BlocktypeProperty[]> = new Map();
   for (const property of blocktype.properties) {
     const propertyName = property.name;
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

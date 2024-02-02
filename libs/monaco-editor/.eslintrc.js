@@ -3,7 +3,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 module.exports = {
-  extends: ['plugin:@nx/react', '../../.eslintrc.json'],
+  extends: [
+    'plugin:@nrwl/nx/react',
+    '@jvalue/eslint-config-jvalue/react',
+    '../../.eslintrc.json',
+  ],
   ignorePatterns: ['!**/*', '/*.*', 'src/lib/*.monarch.ts'],
   parserOptions: {
     project: ['./tsconfig.lib.json'],

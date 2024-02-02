@@ -5,7 +5,7 @@
 import {
     writePackageJson, parsePackageJson, getOutputPath
 } from './shared-util.mjs';
-import { workspaceRoot } from "@nx/devkit";
+import { workspaceRoot } from "@nrwl/devkit";
 
 // Executing this script: node path/to/add-package-json-version.mjs {projectName}
 const [, , projectName] = process.argv;

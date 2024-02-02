@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {readFileSync, writeFileSync} from 'fs';
-import {readCachedProjectGraph} from "@nx/devkit";
+import {readCachedProjectGraph} from "@nrwl/devkit";
 import chalk from "chalk";
 
 export function invariant(condition, message) {

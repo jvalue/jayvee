@@ -26,9 +26,9 @@ export class UserDocGenerator
 {
   constructor(private services: JayveeServices) {}
 
-  generateValueTypesDoc(
-    valueTypes: Record<string, PrimitiveValuetype>,
-  ): string {
+  generateValueTypesDoc(valueTypes: {
+    [name: string]: PrimitiveValuetype;
+  }): string {
     const builder = new UserDocMarkdownBuilder()
       .docTitle('Built-in Valuetypes')
       .generationComment()

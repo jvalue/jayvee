@@ -5,7 +5,7 @@ import { execSync } from 'child_process';
 import {
     parsePackageJson, getSourcePath
 } from '../shared-util.mjs';
-import { workspaceRoot } from "@nx/devkit";
+import { workspaceRoot } from "@nrwl/devkit";
 
 // Executing this script: node path/to/prepare-new-version-snapshot.mjs
 

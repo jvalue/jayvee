@@ -39,6 +39,9 @@ jobs:
       - name: Build
         run: npx nx affected --target=build --configuration=prod --parallel=3
 
+      - name: Lint Nx specific workspace files
+        run: npx nx workspace-lint
+
       - name: Lint
         run: npx nx affected --target=lint --parallel=3 --maxWarnings=0
 
