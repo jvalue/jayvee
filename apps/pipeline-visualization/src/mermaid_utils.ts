@@ -33,21 +33,12 @@ export interface MermaidOptions {
   properties: boolean;
 }
 
-function escapeHtml(unsafe: string) {
-  return unsafe
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
-
 export function createMermaidLinks(
   pipeline: PipelineDefinition,
   mermaidOptions: MermaidOptions,
-) {
-  const processBlock = (block: BlockDefinition, depth = 0): string => {
-    const mermaidBuilder = new MermaidBuilder();
+  mermaidBuilder: MermaidBuilder,
+): MermaidBuilder {
+  const processBlock = (block: BlockDefinition): void => {
     const chainOfBlocks: string[] = [block.name];
     const compositeBlocks: BlockDefinition[] = [];
     let children: BlockDefinition[] = pipelineWrapper.getChildBlocks(block);
@@ -68,7 +59,7 @@ export function createMermaidLinks(
     mermaidBuilder.chain(chainOfBlocks);
     // process all composite blocks
     const compositesString = compositeBlocks
-      .map((compositeBlock) => processCompositeBlock(compositeBlock, depth + 1))
+      .map((compositeBlock) => processCompositeBlock(compositeBlock))
       .join('\n');
     // the pipeline branches here
     if (children.length > 1) {
@@ -81,21 +72,20 @@ export function createMermaidLinks(
         .map((child) => processBlock(child))
         .join('\n');
       mermaidBuilder.section(childrenString);
-      return mermaidBuilder.build();
+      //return mermaidBuilder.build();
     }
     if (compositesString) {
       mermaidBuilder.section(compositesString);
     }
-    return mermaidBuilder.build();
+    //return mermaidBuilder.build();
   };
 
-  const processCompositeBlock = (block: BlockDefinition, depth = 0): string => {
+  const processCompositeBlock = (block: BlockDefinition): void => {
     // the string representation of a composite blocks consists of:
     // header with name and direction
     // body with pipe of subblocks and optionally nested composite blocks
     // tail with keyword 'end'
-    const mermaidBuilder = new MermaidBuilder();
-    mermaidBuilder.compositeHeader(block, depth, subgraphDirection);
+    mermaidBuilder.compositeHeader(block, subgraphDirection);
     const subblocks: string[] = [];
     const compositeBlocks: BlockDefinition[] = [];
     assert(isCompositeBlocktypeDefinition(block.type.ref));
@@ -105,50 +95,43 @@ export function createMermaidLinks(
         compositeBlocks.push(subblock);
       }
     }
-    mermaidBuilder.compositeBody(subblocks, depth);
+    mermaidBuilder.compositeBody(subblocks);
     // process all composite blocks
     let compositesString = compositeBlocks
-      .map((compositeBlock) => processCompositeBlock(compositeBlock, depth + 1))
+      .map((compositeBlock) => processCompositeBlock(compositeBlock))
       .join('\n');
     if (compositesString) {
       mermaidBuilder.section(compositesString);
     }
-    mermaidBuilder.compositeTail(depth);
+    mermaidBuilder.compositeTail();
 
-    return mermaidBuilder.build();
+    //return mermaidBuilder.build();
   };
-  const mermaidBuilder = new MermaidBuilder();
   const pipelineWrapper = new PipelineWrapper(pipeline);
-  mermaidBuilder.pipelineHead(pipeline.name);
+  mermaidBuilder.pipelineHead(pipeline);
   for (const block of pipelineWrapper.getStartingBlocks()) {
-    mermaidBuilder.section(processBlock(block, 0));
+    processBlock(block);
   }
-  return mermaidBuilder.end().build();
+  mermaidBuilder.end();
+  return mermaidBuilder;
 }
 
 export function createMermaidNodes(
   pipeline: PipelineDefinition,
   mermaidOptions: MermaidOptions,
-) {
-  const mermaidBuilder = new MermaidBuilder();
-
+  mermaidBuilder: MermaidBuilder,
+): MermaidBuilder {
   const processBlock = (block: BlockDefinition) => {
     assert(block.type.ref !== undefined);
-    if (mermaidOptions.properties) {
-      let propertyString = '';
-      for (const property of block.body.properties) {
-        if (properties.includes(property.name)) {
-          if (isTextLiteral(property.value)) {
-            propertyString += `${property.name}: ${escapeHtml(
-              property.value.value,
-            )}\n`;
-          }
+    let blockProperties: Map<string, string> = new Map();
+    for (const property of block.body.properties) {
+      if (properties.includes(property.name)) {
+        if (isTextLiteral(property.value)) {
+          blockProperties.set(property.name, property.value.value);
         }
       }
-      mermaidBuilder.blockTypeWithProperties(block, propertyString);
-    } else {
-      mermaidBuilder.blockType(block);
     }
+    mermaidBuilder.blockType(block, blockProperties);
     const blocktype = new BlockTypeWrapper(block.type);
     if (!blocktype.hasInput()) {
       mermaidBuilder.classAssign(block, 'source');
@@ -169,31 +152,33 @@ export function createMermaidNodes(
   for (const block of pipeline.blocks) {
     processBlock(block);
   }
-  return mermaidBuilder.build();
+  return mermaidBuilder;
 }
 
 export function createMermaidRepresentation(
   model: JayveeModel,
   mermaidOptions: MermaidOptions,
 ) {
-  const mermaidBuilder = new MermaidBuilder();
-  mermaidBuilder.section(diagramType + ' ' + diagramDirection);
+  let mermaidBuilder = new MermaidBuilder(mermaidOptions);
+  mermaidBuilder.diagram(diagramType, diagramDirection);
   assert(model.pipelines[0] !== undefined);
   const pipeline = model.pipelines[0];
-  mermaidBuilder.section(createMermaidLinks(pipeline, mermaidOptions));
-  mermaidBuilder.newLine();
-  mermaidBuilder.section(createMermaidNodes(pipeline, mermaidOptions));
-  mermaidBuilder.newLine();
-  mermaidBuilder.section(setMermaidStyling());
+  mermaidBuilder = createMermaidLinks(pipeline, mermaidOptions, mermaidBuilder);
+  mermaidBuilder = createMermaidNodes(pipeline, mermaidOptions, mermaidBuilder);
+  mermaidBuilder = setMermaidStyling(mermaidBuilder);
   return mermaidBuilder.build();
 }
 
-export function setMermaidStyling() {
-  const styleDefs = [
+export function setMermaidStyling(
+  mermaidBuilder: MermaidBuilder,
+): MermaidBuilder {
+  mermaidBuilder.styles(
     'classDef source fill:#FF9999,stroke:#333,stroke-width:2px;',
+  );
+  mermaidBuilder.styles(
     'classDef sink fill:#BDFFA4,stroke:#333,stroke-width:2px;',
-  ];
-  return styleDefs.join('\n');
+  );
+  return mermaidBuilder;
 }
 
 export function setMermaidTheme() {
