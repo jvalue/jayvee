@@ -7,13 +7,19 @@ import {
   BlockDefinition,
   PipelineDefinition,
 } from '@jvalue/jayvee-language-server';
-import { MermaidOptions } from './mermaid_utils';
+
+export interface MermaidOptions {
+  mermaidFile: string;
+  styleFile: string;
+  compositeBlocks: boolean;
+  properties: boolean;
+}
 
 export class MermaidBuilder {
   protected linkLines: string[] = [];
   protected nodeLines: string[] = [];
   protected styleLines: string[] = [];
-  protected indent: number = 0;
+  protected indent = 0;
 
   constructor(protected options: MermaidOptions) {}
 
@@ -30,24 +36,28 @@ export class MermaidBuilder {
     this.linkLines.push(diagramType + ' ' + diagramDirection);
   }
 
-  pipelineHead(pipelinee: PipelineDefinition): MermaidBuilder {
-    this.linkLines.push('subgraph ' + pipelinee.name);
+  pipelineStart(pipeline: PipelineDefinition): MermaidBuilder {
+    this.linkLines.push('subgraph ' + pipeline.name);
     return this;
   }
 
   blockType(
     block: BlockDefinition,
     blockProperties: Map<string, string>,
+    isSubBlock: boolean,
   ): MermaidBuilder {
+    if (isSubBlock && !this.options.compositeBlocks) {
+      return this;
+    }
     assert(block.type.ref !== undefined);
     let propertyString = '';
     if (this.options.properties) {
       blockProperties.forEach((value, key) => {
-        propertyString += `${key}: ${this.escapeHtml(value)}\n`;
+        propertyString += `<br>${key}: ${this.escapeHtml(value)}`;
       });
     }
     this.nodeLines.push(
-      `${block.name}[${block.name}<br><i>${block.type.ref?.name}</i><br>${propertyString}]`,
+      `${block.name}[${block.name}<br><i>${block.type.ref.name}</i>${propertyString}]`,
     );
     return this;
   }
@@ -66,33 +76,43 @@ export class MermaidBuilder {
     block: BlockDefinition,
     subgraphDirection: string,
   ): MermaidBuilder {
-    this.indent = this.indent + 1;
-    this.linkLines.push(
-      `${'\t'.repeat(this.indent)}subgraph ${block.name}\n ${'\t'.repeat(
-        this.indent,
-      )}direction ${subgraphDirection}`,
-    );
+    if (this.options.compositeBlocks) {
+      this.indent = this.indent + 1;
+      this.linkLines.push(
+        `${'\t'.repeat(this.indent)}subgraph ${block.name}\n ${'\t'.repeat(
+          this.indent,
+        )}direction ${subgraphDirection}`,
+      );
+    }
     return this;
   }
 
   compositeBody(subblocks: string[]): MermaidBuilder {
-    this.linkLines.push(`${'\t'.repeat(this.indent)}` + subblocks.join('-->'));
+    if (this.options.compositeBlocks) {
+      this.linkLines.push(
+        `${'\t'.repeat(this.indent)}` + subblocks.join('-->'),
+      );
+    }
     return this;
   }
 
   compositeTail(): MermaidBuilder {
-    this.linkLines.push(`${'\t'.repeat(this.indent)}end`);
-    this.indent = this.indent - 1;
+    if (this.options.compositeBlocks) {
+      this.linkLines.push(`${'\t'.repeat(this.indent)}end`);
+      this.indent = this.indent - 1;
+    }
     return this;
   }
 
-  classAssign(block: BlockDefinition, className: string): MermaidBuilder {
+  classAssign(
+    block: BlockDefinition,
+    isSubBlock: boolean,
+    className: string,
+  ): MermaidBuilder {
+    if (isSubBlock && !this.options.compositeBlocks) {
+      return this;
+    }
     this.styleLines.push(`class ${block.name} ${className};`);
-    return this;
-  }
-
-  section(section: string): MermaidBuilder {
-    this.linkLines.push(section);
     return this;
   }
 
@@ -101,15 +121,10 @@ export class MermaidBuilder {
     return this;
   }
 
-  end(): MermaidBuilder {
+  pipelineEnd(): MermaidBuilder {
     this.linkLines.push('end');
     return this;
   }
-
-  /* newLine(): MermaidBuilder {
-    this.mermaidLines.push('');
-    return this;
-  } */
 
   build(): string {
     return (
