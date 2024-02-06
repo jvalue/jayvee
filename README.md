@@ -4,6 +4,8 @@ SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
 SPDX-License-Identifier: AGPL-3.0-only
 -->
 
+![Jayvee Mascot](./assets/mascot1.png)
+
 # Jayvee
 
 Jayvee is a domain-specific language (DSL) for automated processing of data pipelines.
