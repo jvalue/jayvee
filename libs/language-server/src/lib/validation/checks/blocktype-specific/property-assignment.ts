@@ -69,6 +69,13 @@ export function checkBlocktypeSpecificProperties(
         property,
         validationContext,
       );
+    case 'LocalFileExtractor':
+      return checkLocalFileExtractorProperty(
+        propName,
+        propValue,
+        property,
+        validationContext,
+      );
     case 'RowDeleter':
       return checkRowDeleterProperty(
         propName,
@@ -246,6 +253,27 @@ function checkHttpExtractorProperty(
       propName,
       property,
       validationContext,
+    );
+  }
+}
+
+function checkLocalFileExtractorProperty(
+  propName: string,
+  propValue: InternalValueRepresentation,
+  property: PropertyAssignment,
+  validationContext: ValidationContext,
+) {
+  if (
+    propName === 'filePath' &&
+    internalValueToString(propValue).includes('..')
+  ) {
+    validationContext.accept(
+      'error',
+      'File path cannot include "..". Path traversal is restricted.',
+      {
+        node: property,
+        property: 'value',
+      },
     );
   }
 }

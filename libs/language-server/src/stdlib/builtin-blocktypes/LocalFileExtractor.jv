@@ -1,0 +1,22 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* Extracts a `File` from the local file system.
+* 
+* @example Fetches a file from the given local path.
+* block CarsFileExtractor oftype LocalFileExtractor {
+*   filePath: "cars.csv";
+* }
+*/
+builtin blocktype LocalFileExtractor {
+	input default oftype None;
+	output default oftype File;
+	
+	/**
+	* The path to the file in the local file system to extract.
+	*/
+	property filePath oftype text;
+	
+}
