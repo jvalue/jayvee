@@ -9,42 +9,43 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import HomepageFeatures from '@site/src/components/HomepageFeatures';
 
+import MascotImageUrl from '@site/static/img/mascots/mascot1.png';
+
 import styles from './index.module.css';
 
 function HomepageHeader() {
   return (
     <div>
-      <TitleBanner/>
+      <TitleBanner />
     </div>
   );
 }
-
 
 function TitleBanner(): JSX.Element {
   return (
     <header className={clsx('hero hero--primary', styles.titleBanner)}>
       <div className="container">
         <div className={styles.titleBannerTitle}>
-          🥳 
-          <span className={styles.titleBannerTitleText}><b>Jayvee</b>'s alpha is now available!</span>
+          🥳
+          <span className={styles.titleBannerTitleText}>
+            <b>Jayvee</b>Alpha is now available!
+          </span>
           🎉
         </div>
 
         <div className={styles.titleBannerTagline}>
-          A <b>domain-specific language</b> for everyone to <b>participate</b> in building <b>data pipelines</b>!
+          A <b>domain-specific language</b> for everyone to <b>participate</b>{' '}
+          in building <b>data pipelines</b>!
         </div>
 
         <div className={styles.titleBannerButtons}>
-          <Link
-            className="button button--primary"
-            to="/docs/user/intro"
-          >
+          <span className="mascot-container">
+            <img src={MascotImageUrl} width="120px" />
+          </span>
+          <Link className="button button--primary" to="/docs/user/intro">
             Get Started
           </Link>
-          <Link
-            className="button button--info"
-            to="/docs/user/examples/cars"
-          >
+          <Link className="button button--info" to="/docs/user/examples/cars">
             Example
           </Link>
           <span className={styles.titleBannerButtonsGitHubButtonWrapper}>
@@ -59,7 +60,7 @@ function TitleBanner(): JSX.Element {
         </div>
       </div>
     </header>
-  )
+  );
 }
 
 export default function Home(): JSX.Element {
