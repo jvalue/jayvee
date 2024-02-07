@@ -265,6 +265,33 @@ describe('Validation of blocktype specific properties', () => {
     });
   });
 
+  describe('LocalFileExtractor blocktype', () => {
+    it('should diagnose no error on valid filePath parameter value', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/local-file-extractor/valid-valid-filepath-param.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
+    });
+
+    it('should diagnose error on invalid filePath parameter value', async () => {
+      const text = readJvTestAsset(
+        'property-assignment/blocktype-specific/local-file-extractor/invalid-invalid-filepath-param.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+      expect(validationAcceptorMock).toHaveBeenCalledWith(
+        'error',
+        'File path cannot include "..". Path traversal is restricted.',
+        expect.any(Object),
+      );
+    });
+  });
+
   describe('RowDeleter blocktype', () => {
     it('should diagnose error on deleting partial row', async () => {
       const text = readJvTestAsset(
