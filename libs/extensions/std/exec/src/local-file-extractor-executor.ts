@@ -16,6 +16,7 @@ import {
   None,
   implementsStatic,
   inferFileExtensionFromFileExtensionString,
+  inferMimeTypeFromFileExtensionString,
 } from '@jvalue/jayvee-execution';
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 
@@ -57,7 +58,9 @@ export class LocalFileExtractorExecutor extends AbstractBlockExecutor<
         FileExtension.NONE;
 
       // Infer Mimetype from FileExtension, if not inferrable, then default to application/octet-stream
-      const mimeType: MimeType | undefined = MimeType.APPLICATION_OCTET_STREAM;
+      const mimeType: MimeType | undefined =
+        inferMimeTypeFromFileExtensionString(fileExtension) ??
+        MimeType.APPLICATION_OCTET_STREAM;
 
       // Create file and return file
       const file = new BinaryFile(

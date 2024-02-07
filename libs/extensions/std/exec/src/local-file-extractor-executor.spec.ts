@@ -84,7 +84,7 @@ describe('Validation of LocalFileExtractorExecutor', () => {
           name: 'local-file-test.csv',
           extension: 'csv',
           ioType: IOType.FILE,
-          mimeType: R.MimeType.APPLICATION_OCTET_STREAM,
+          mimeType: R.MimeType.TEXT_CSV,
         }),
       );
     }
@@ -103,8 +103,8 @@ describe('Validation of LocalFileExtractorExecutor', () => {
     }
   });
 
-  it('should diagnose error on path traversal restricted', async () => {
-    const text = readJvTestAsset('invalid-path-traversal.jv');
+  it('should diagnose error on path traversal at the start of the path', async () => {
+    const text = readJvTestAsset('invalid-path-traversal-at-start.jv');
 
     const result = await parseAndExecuteExecutor(text);
 
@@ -116,8 +116,8 @@ describe('Validation of LocalFileExtractorExecutor', () => {
     }
   });
 
-  it('should diagnose error on path traversal restricted', async () => {
-    const text = readJvTestAsset('invalid-path-contains-traversal.jv');
+  it('should diagnose error on path traversal in the path', async () => {
+    const text = readJvTestAsset('invalid-path-traversal-in-path.jv');
 
     const result = await parseAndExecuteExecutor(text);
 
