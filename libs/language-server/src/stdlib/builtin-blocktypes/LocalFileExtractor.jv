@@ -5,7 +5,7 @@
 /**
 * Extracts a `File` from the local file system.
 * 
-* @example Fetches a file from the given local path.
+* @example Extracts a file from the given path on the local file system.
 * block CarsFileExtractor oftype LocalFileExtractor {
 *   filePath: "cars.csv";
 * }
@@ -15,7 +15,7 @@ builtin blocktype LocalFileExtractor {
 	output default oftype File;
 	
 	/**
-	* The path to the file in the local file system to extract.
+	* The path to the file in the local file system to extract. Path can not traverse up the directory tree.
 	*/
 	property filePath oftype text;
 	
