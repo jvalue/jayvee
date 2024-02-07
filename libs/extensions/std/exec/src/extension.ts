@@ -13,6 +13,7 @@ import { ArchiveInterpreterExecutor } from './archive-interpreter-executor';
 import { FilePickerExecutor } from './file-picker-executor';
 import { GtfsRTInterpreterExecutor } from './gtfs-rt-interpreter-executor';
 import { HttpExtractorExecutor } from './http-extractor-executor';
+import { LocalFileExtractorExecutor } from './local-file-extractor-executor';
 import { TextFileInterpreterExecutor } from './text-file-interpreter-executor';
 import { TextLineDeleterExecutor } from './text-line-deleter-executor';
 import { TextRangeSelectorExecutor } from './text-range-selector-executor';
@@ -33,6 +34,7 @@ export class StdExecExtension implements JayveeExecExtension {
       ArchiveInterpreterExecutor,
       FilePickerExecutor,
       GtfsRTInterpreterExecutor,
+      LocalFileExtractorExecutor,
     ];
   }
 }
