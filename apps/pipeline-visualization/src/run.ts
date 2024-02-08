@@ -17,11 +17,8 @@ import {
 } from '@jvalue/jayvee-language-server';
 import { NodeFileSystem } from 'langium/node';
 
-import {
-  MermaidOptions,
-  createMermaidRepresentation,
-  setMermaidTheme,
-} from './mermaid_utils';
+import { MermaidOptions } from './mermaid_builder';
+import { createMermaidRepresentation, setMermaidTheme } from './mermaid_utils';
 
 export async function doProcessOptions(
   fileName: string,
