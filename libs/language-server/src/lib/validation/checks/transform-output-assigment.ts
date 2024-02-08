@@ -18,6 +18,7 @@ import {
   isBinaryExpression,
   isExpressionLiteral,
   isReferenceLiteral,
+  isTernaryExpression,
   isTransformPortDefinition,
   isUnaryExpression,
 } from '../../ast/generated/ast';
@@ -121,6 +122,12 @@ export function extractReferenceLiterals(
       return [expression];
     }
     return [];
+  } else if (isTernaryExpression(expression)) {
+    return [
+      ...extractReferenceLiterals(expression.first),
+      ...extractReferenceLiterals(expression.second),
+      ...extractReferenceLiterals(expression.third),
+    ];
   } else if (isBinaryExpression(expression)) {
     return [
       ...extractReferenceLiterals(expression.left),

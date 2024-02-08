@@ -11,8 +11,8 @@ As a small practical example, you may also have a look at the [arithmetics examp
 
 ## Expressions in the grammar
 
-Expressions in the Jayvee grammar are defined in [`expression.langium`](https://github.com/jvalue/jayvee/blob/main/libs/language-server/src/grammar/expression.langium) and consist of operators (unary / binary) and literals.
-Unary operators only have a single operand (e.g. the `not` operator) whereas binary operators require two operands (e.g. the `*` operator).
+Expressions in the Jayvee grammar are defined in [`expression.langium`](https://github.com/jvalue/jayvee/blob/main/libs/language-server/src/grammar/expression.langium) and consist of operators (unary / binary / ternary) and literals.
+Unary operators only have a single operand (e.g. the `not` operator), binary operators require two operands (e.g. the `*` operator) and ternary operators require three operands.
 
 The grammar is written in a way that literals end up in the leaves of the resulting AST and the nodes above represent the operators.
 

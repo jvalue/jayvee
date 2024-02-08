@@ -15,6 +15,7 @@ import {
   isBinaryExpression,
   isExpressionLiteral,
   isFreeVariableLiteral,
+  isTernaryExpression,
   isUnaryExpression,
   isValueLiteral,
 } from '../ast';
@@ -135,6 +136,39 @@ function collectSubExpressionsWithoutFreeVariables(
       return [expression];
     }
     return [...leftSubExpressions, ...rightSubExpressions];
+  } else if (isTernaryExpression(expression)) {
+    const firstExpression = expression.first;
+    const secondExpression = expression.second;
+    const thirdExpression = expression.third;
+    const firstSubExpressions =
+      collectSubExpressionsWithoutFreeVariables(firstExpression);
+    const secondSubExpressions =
+      collectSubExpressionsWithoutFreeVariables(secondExpression);
+    const thirdSubExpressions =
+      collectSubExpressionsWithoutFreeVariables(thirdExpression);
+
+    const firstExpressionHasNoFreeVariables =
+      firstSubExpressions.length === 1 &&
+      firstSubExpressions[0] === firstExpression;
+    const secondExpressionHasNoFreeVariables =
+      secondSubExpressions.length === 1 &&
+      secondSubExpressions[0] === secondExpression;
+    const thirdExpressionHasNoFreeVariables =
+      thirdSubExpressions.length === 1 &&
+      thirdSubExpressions[0] === thirdExpression;
+
+    if (
+      firstExpressionHasNoFreeVariables &&
+      secondExpressionHasNoFreeVariables &&
+      thirdExpressionHasNoFreeVariables
+    ) {
+      return [expression];
+    }
+    return [
+      ...firstSubExpressions,
+      ...secondSubExpressions,
+      ...thirdSubExpressions,
+    ];
   }
   assertUnreachable(expression);
 }
