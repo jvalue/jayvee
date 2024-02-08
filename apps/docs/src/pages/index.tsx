@@ -28,7 +28,7 @@ function TitleBanner(): JSX.Element {
         <div className={styles.titleBannerTitle}>
           🥳
           <span className={styles.titleBannerTitleText}>
-            <b>Jayvee</b>Alpha is now available!
+            <b>Jayvee's</b> Alpha is now available!
           </span>
           🎉
         </div>
