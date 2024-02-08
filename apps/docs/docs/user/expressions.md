@@ -15,9 +15,9 @@ Expressions get evaluated at runtime by the interpreter to a [Built-in ValueType
 
 The following expression is evaluated to the `integer` `10`: `(2 + 3) * 2`
 
-The following expression is evaluated to the `integer` `3`: `floor (3.14)`
-
 The following expression is evaluated to the `boolean` `true`: `"Example" == "Example"`
+
+The following expression is evaluated to the `text` `I love Datypus`: `"I love platypuses" replace /platypuses/ with "Datypus"`
 
 ### List of Operators
 
@@ -57,6 +57,9 @@ The following expression is evaluated to the `boolean` `true`: `"Example" == "Ex
 #### Others (binary operators)
 - `matches` for a regex match, e.g., `"A07" matches /^[A-Z0-9]*$/` evaluates to `true`
 - `in` for inclusion in an array, e.g., `"a" in ["a", "b", "c"]` evaluates to `true`
+
+#### Text manipulation (ternary operators)
+- `replace [...] with [...]` replaces regex matches in a text with a string
 
 ### Operator Details
 
