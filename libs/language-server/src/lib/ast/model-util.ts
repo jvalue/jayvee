@@ -8,6 +8,7 @@ import {
   BinaryExpression,
   BuiltinBlocktypeDefinition,
   BuiltinConstrainttypeDefinition,
+  TernaryExpression,
   UnaryExpression,
   isBuiltinBlocktypeDefinition,
   isJayveeModel,
@@ -17,6 +18,7 @@ import { BlockTypeWrapper, ConstraintTypeWrapper } from './wrappers';
 
 export type UnaryExpressionOperator = UnaryExpression['operator'];
 export type BinaryExpressionOperator = BinaryExpression['operator'];
+export type TernaryExpressionOperator = TernaryExpression['operator'];
 
 export type AstTypeGuard<T extends AstNode = AstNode> = (
   obj: unknown,

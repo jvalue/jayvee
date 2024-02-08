@@ -5,10 +5,15 @@
 import { strict as assert } from 'assert';
 
 import { ValidationContext } from '../../validation/validation-context';
-import { BinaryExpression, UnaryExpression } from '../generated/ast';
+import {
+  BinaryExpression,
+  TernaryExpression,
+  UnaryExpression,
+} from '../generated/ast';
 // eslint-disable-next-line import/no-cycle
 import {
   BinaryExpressionOperator,
+  TernaryExpressionOperator,
   UnaryExpressionOperator,
 } from '../model-util';
 
@@ -23,7 +28,7 @@ import {
 } from './internal-value-representation';
 
 export interface OperatorEvaluator<
-  E extends UnaryExpression | BinaryExpression,
+  E extends UnaryExpression | BinaryExpression | TernaryExpression,
 > {
   readonly operator: E['operator'];
 
@@ -187,5 +192,84 @@ export abstract class BooleanShortCircuitOperatorEvaluator
     assert(typeof rightValue === 'boolean');
 
     return this.doEvaluate(leftValue, rightValue);
+  }
+}
+
+export abstract class DefaultTernaryOperatorEvaluator<
+  FirstValue extends InternalValueRepresentation,
+  SecondValue extends InternalValueRepresentation,
+  ThirdValue extends InternalValueRepresentation,
+  ReturnValue extends InternalValueRepresentation,
+> implements OperatorEvaluator<TernaryExpression>
+{
+  constructor(
+    public readonly operator: TernaryExpressionOperator,
+    private readonly firstValueTypeguard: InternalValueRepresentationTypeguard<FirstValue>,
+    private readonly secondValueTypeguard: InternalValueRepresentationTypeguard<SecondValue>,
+    private readonly thirdValueTypeguard: InternalValueRepresentationTypeguard<ThirdValue>,
+  ) {}
+
+  protected abstract doEvaluate(
+    firstValue: FirstValue,
+    secondValue: SecondValue,
+    thirdValue: ThirdValue,
+    expression: TernaryExpression,
+    context: ValidationContext | undefined,
+  ): ReturnValue | undefined;
+
+  evaluate(
+    expression: TernaryExpression,
+    evaluationContext: EvaluationContext,
+    strategy: EvaluationStrategy,
+    validationContext: ValidationContext | undefined,
+  ): ReturnValue | undefined {
+    // The following linting exception can be removed when a second tertiary operator is added
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    assert(expression.operator === this.operator);
+
+    const firstValue = evaluateExpression(
+      expression.first,
+      evaluationContext,
+      validationContext,
+      strategy,
+    );
+
+    if (strategy === EvaluationStrategy.LAZY && firstValue === undefined) {
+      return undefined;
+    }
+
+    const secondValue = evaluateExpression(
+      expression.second,
+      evaluationContext,
+      validationContext,
+      strategy,
+    );
+
+    const thirdValue = evaluateExpression(
+      expression.third,
+      evaluationContext,
+      validationContext,
+      strategy,
+    );
+
+    if (
+      firstValue === undefined ||
+      secondValue === undefined ||
+      thirdValue === undefined
+    ) {
+      return undefined;
+    }
+
+    assert(this.firstValueTypeguard(firstValue));
+    assert(this.secondValueTypeguard(secondValue));
+    assert(this.thirdValueTypeguard(thirdValue));
+
+    return this.doEvaluate(
+      firstValue,
+      secondValue,
+      thirdValue,
+      expression,
+      validationContext,
+    );
   }
 }

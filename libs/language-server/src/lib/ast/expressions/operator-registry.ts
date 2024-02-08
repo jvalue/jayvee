@@ -4,9 +4,14 @@
 
 /* eslint-disable import/no-cycle */
 
-import { BinaryExpression, UnaryExpression } from '../generated/ast';
+import {
+  BinaryExpression,
+  TernaryExpression,
+  UnaryExpression,
+} from '../generated/ast';
 import {
   BinaryExpressionOperator,
+  TernaryExpressionOperator,
   UnaryExpressionOperator,
 } from '../model-util';
 
@@ -30,6 +35,7 @@ import { NotOperatorEvaluator } from './evaluators/not-operator-evaluator';
 import { OrOperatorEvaluator } from './evaluators/or-operator-evaluator';
 import { PlusOperatorEvaluator } from './evaluators/plus-operator-evaluator';
 import { PowOperatorEvaluator } from './evaluators/pow-operator-evaluator';
+import { ReplaceOperatorEvaluator } from './evaluators/replace-operator-evaluator';
 import { RootOperatorEvaluator } from './evaluators/root-operator-evaluator';
 import { RoundOperatorEvaluator } from './evaluators/round-operator-evaluator';
 import { SqrtOperatorEvaluator } from './evaluators/sqrt-operator-evaluator';
@@ -38,6 +44,7 @@ import { XorOperatorEvaluator } from './evaluators/xor-operator-evaluator';
 import { OperatorEvaluator } from './operator-evaluator';
 import {
   BinaryOperatorTypeComputer,
+  TernaryOperatorTypeComputer,
   UnaryOperatorTypeComputer,
 } from './operator-type-computer';
 import { BasicArithmeticOperatorTypeComputer } from './type-computers/basic-arithmetic-operator-type-computer';
@@ -50,6 +57,7 @@ import { LogicalOperatorTypeComputer } from './type-computers/logical-operator-t
 import { MatchesOperatorTypeComputer } from './type-computers/matches-operator-type-computer';
 import { NotOperatorTypeComputer } from './type-computers/not-operator-type-computer';
 import { RelationalOperatorTypeComputer } from './type-computers/relational-operator-type-computer';
+import { ReplaceOperatorTypeComputer } from './type-computers/replace-operator-type-computer';
 import { SignOperatorTypeComputer } from './type-computers/sign-operator-type-computer';
 import { SqrtOperatorTypeComputer } from './type-computers/sqrt-operator-type-computer';
 
@@ -172,5 +180,20 @@ export const binaryOperatorRegistry: Record<
   or: {
     typeInference: new LogicalOperatorTypeComputer(),
     evaluation: new OrOperatorEvaluator(),
+  },
+};
+
+export interface TernaryOperatorEntry {
+  typeInference: TernaryOperatorTypeComputer;
+  evaluation: OperatorEvaluator<TernaryExpression>;
+}
+
+export const ternaryOperatorRegistry: Record<
+  TernaryExpressionOperator,
+  TernaryOperatorEntry
+> = {
+  replace: {
+    typeInference: new ReplaceOperatorTypeComputer(),
+    evaluation: new ReplaceOperatorEvaluator(),
   },
 };

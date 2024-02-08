@@ -10,9 +10,12 @@ import './terminal'
 import './transform'
 
 Expression:
-  OrExpression;
+  ReplaceExpression;
 
 // The nesting of the following rules implies the precedence of the operators:
+
+ReplaceExpression infers Expression:
+  OrExpression ({infer TernaryExpression.first=current} operator='replace' second=OrExpression 'with' third=OrExpression)*;
 
 OrExpression infers Expression:
   AndExpression ({infer BinaryExpression.left=current} operator='or' right=AndExpression)*;

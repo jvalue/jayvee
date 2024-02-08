@@ -3,7 +3,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { ValidationContext } from '../../validation/validation-context';
-import { BinaryExpression, UnaryExpression } from '../generated/ast';
+import {
+  BinaryExpression,
+  TernaryExpression,
+  UnaryExpression,
+} from '../generated/ast';
 import { type Valuetype } from '../wrappers/value-type/valuetype';
 
 export interface UnaryOperatorTypeComputer {
@@ -126,4 +130,101 @@ export function generateUnexpectedTypeMessage(
   actualType: Valuetype,
 ) {
   return `The operand needs to be of type ${expectedType.getName()} but is of type ${actualType.getName()}`;
+}
+
+export abstract class DefaultTernaryOperatorTypeComputer
+  implements TernaryOperatorTypeComputer
+{
+  constructor(
+    protected readonly expectedFirstOperandType: Valuetype,
+    protected readonly expectedSecondOperandType: Valuetype,
+    protected readonly expectedThirdOperandType: Valuetype,
+  ) {}
+
+  computeType(
+    firstOperandType: Valuetype,
+    secondOperandType: Valuetype,
+    thirdOperandType: Valuetype,
+    expression: TernaryExpression,
+    context: ValidationContext | undefined,
+  ): Valuetype | undefined {
+    let typeErrorOccurred = false;
+
+    if (!firstOperandType.isConvertibleTo(this.expectedFirstOperandType)) {
+      context?.accept(
+        'error',
+        generateUnexpectedTypeMessage(
+          this.expectedFirstOperandType,
+          firstOperandType,
+        ),
+        {
+          node: expression.first,
+        },
+      );
+      typeErrorOccurred = true;
+    }
+
+    if (!secondOperandType.isConvertibleTo(this.expectedSecondOperandType)) {
+      context?.accept(
+        'error',
+        generateUnexpectedTypeMessage(
+          this.expectedSecondOperandType,
+          secondOperandType,
+        ),
+        {
+          node: expression.second,
+        },
+      );
+      typeErrorOccurred = true;
+    }
+
+    if (!thirdOperandType.isConvertibleTo(this.expectedThirdOperandType)) {
+      context?.accept(
+        'error',
+        generateUnexpectedTypeMessage(
+          this.expectedThirdOperandType,
+          thirdOperandType,
+        ),
+        {
+          node: expression.third,
+        },
+      );
+      typeErrorOccurred = true;
+    }
+
+    if (typeErrorOccurred) {
+      return undefined;
+    }
+
+    return this.doComputeType(
+      firstOperandType,
+      secondOperandType,
+      thirdOperandType,
+    );
+  }
+
+  protected abstract doComputeType(
+    firstOperandType: Valuetype,
+    secondOperandType: Valuetype,
+    thirdOperandType: Valuetype,
+  ): Valuetype;
+}
+
+export interface TernaryOperatorTypeComputer {
+  /**
+   * Computes the type of a ternary operator by the type of its operands.
+   * @param firstType the type of the first operand
+   * @param secondType the type of the second operand
+   * @param thirdType the type of the third operand
+   * @param expression the expression to use for diagnostics
+   * @param context the validation context to use for diagnostics
+   * @returns the resulting type of the operator or `undefined` if the type could not be inferred
+   */
+  computeType(
+    firstType: Valuetype,
+    secondType: Valuetype,
+    thirdType: Valuetype,
+    expression: TernaryExpression,
+    context: ValidationContext | undefined,
+  ): Valuetype | undefined;
 }
