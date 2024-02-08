@@ -223,7 +223,7 @@ export abstract class DefaultTernaryOperatorEvaluator<
     strategy: EvaluationStrategy,
     validationContext: ValidationContext | undefined,
   ): ReturnValue | undefined {
-    // The following linting exception can be removed when a second tertiary operator is added
+    // The following linting exception can be removed when a second ternary operator is added
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     assert(expression.operator === this.operator);
 
