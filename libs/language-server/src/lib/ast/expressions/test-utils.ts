@@ -12,10 +12,25 @@ import { TransformDefinition } from '../generated/ast';
 import { EvaluationContext, evaluateExpression } from './evaluation';
 import { InternalValueRepresentation } from './internal-value-representation';
 
+export async function executeDefaultTextToTextExpression(
+  expression: string,
+  input: InternalValueRepresentation,
+) {
+  return executeExpressionTestHelper(
+    expression,
+    'inputValue',
+    'text',
+    input,
+    'text',
+  );
+}
+
 export async function executeExpressionTestHelper(
   expression: string,
   inputValueName: string,
+  inputValueType: 'text',
   inputValueValue: InternalValueRepresentation,
+  outputValueType: 'text',
 ): Promise<InternalValueRepresentation | undefined> {
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   const parse = parseHelper(services);
@@ -23,8 +38,8 @@ export async function executeExpressionTestHelper(
 
   const document = await parse(`
         transform TestTransform {
-            from ${inputValueName} oftype text;
-            to outputValue oftype text;
+            from ${inputValueName} oftype ${inputValueType};
+            to outputValue oftype ${outputValueType};
         
             outputValue: ${expression};
         }
