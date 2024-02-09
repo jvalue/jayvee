@@ -31,19 +31,20 @@ const [, , projectName] = process.argv;
 process.chdir(getOutputPath(projectName));
 
 const packageJson = parsePackageJson();
-invariant(packageJson.peerDependencies, 'Found no peer dependencies in package.json');
 
-for (const [packageName, packageVersion] of Object.entries(
-    packageJson.peerDependencies,
-)) {
-    const parsedVersion = parsePackageVersion(packageVersion);
-    let newVersion;
-    if (parsedVersion.major < 1) {
-        newVersion = `^0.${parsedVersion.minor}.0`;
-    } else {
-        newVersion = `^${parsedVersion.major}.0.0`;
+if (packageJson.peerDependencies) {
+    for (const [packageName, packageVersion] of Object.entries(
+        packageJson.peerDependencies,
+    )) {
+        const parsedVersion = parsePackageVersion(packageVersion);
+        let newVersion;
+        if (parsedVersion.major < 1) {
+            newVersion = `^0.${parsedVersion.minor}.0`;
+        } else {
+            newVersion = `^${parsedVersion.major}.0.0`;
+        }
+        packageJson.peerDependencies[packageName] = newVersion;
     }
-    packageJson.peerDependencies[packageName] = newVersion;
 }
 
 writePackageJson(packageJson);
