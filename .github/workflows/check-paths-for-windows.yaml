@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-only
 
-name: CI
+name: Check paths for windows
 
 on:
   push:
