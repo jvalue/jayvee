@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {getOutputPath, parsePackageJson, writePackageJson} from "../shared-util.mjs";
+import { getOutputPath, parsePackageJson, writePackageJson } from "../shared-util.mjs";
 
 // Executing this script: node path/to/delete-vscode-peer-dependency.mjs {projectName}
 const [, , projectName] = process.argv;
@@ -22,6 +22,8 @@ const packageJson = parsePackageJson();
 
   Since this package is a peer dependency of `monaco-languageclient` anyways, we can simply remove the entry for `vscode` to fix the problem.
 */
-delete packageJson.peerDependencies.vscode;
+if (packageJson.peerDependencies) {
+  delete packageJson.peerDependencies.vscode;
+}
 
 writePackageJson(packageJson);

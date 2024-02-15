@@ -26,6 +26,7 @@ import {
   isNumericLiteral,
   isReferenceLiteral,
   isRegexLiteral,
+  isTernaryExpression,
   isTextLiteral,
   isTransformDefinition,
   isTransformPortDefinition,
@@ -50,6 +51,7 @@ import { createValuetype } from '../wrappers/value-type/valuetype-util';
 
 import {
   binaryOperatorRegistry,
+  ternaryOperatorRegistry,
   unaryOperatorRegistry,
 } from './operator-registry';
 import { isEveryValueDefined } from './typeguards';
@@ -84,6 +86,28 @@ export function inferExpressionType(
     const operator = expression.operator;
     const typeComputer = binaryOperatorRegistry[operator].typeInference;
     return typeComputer.computeType(leftType, rightType, expression, context);
+  }
+  if (isTernaryExpression(expression)) {
+    const firstType = inferExpressionType(expression.first, context);
+    const secondType = inferExpressionType(expression.second, context);
+    const thirdType = inferExpressionType(expression.third, context);
+    if (
+      firstType === undefined ||
+      secondType === undefined ||
+      thirdType === undefined
+    ) {
+      return undefined;
+    }
+
+    const operator = expression.operator;
+    const typeComputer = ternaryOperatorRegistry[operator].typeInference;
+    return typeComputer.computeType(
+      firstType,
+      secondType,
+      thirdType,
+      expression,
+      context,
+    );
   }
   assertUnreachable(expression);
 }

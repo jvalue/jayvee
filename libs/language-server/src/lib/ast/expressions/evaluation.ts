@@ -26,6 +26,7 @@ import {
   isReferenceLiteral,
   isRegexLiteral,
   isRuntimeParameterLiteral,
+  isTernaryExpression,
   isTransformDefinition,
   isTransformPortDefinition,
   isUnaryExpression,
@@ -41,6 +42,7 @@ import { type InternalValueRepresentation } from './internal-value-representatio
 // eslint-disable-next-line import/no-cycle
 import {
   binaryOperatorRegistry,
+  ternaryOperatorRegistry,
   unaryOperatorRegistry,
 } from './operator-registry';
 import { isEveryValueDefined } from './typeguards';
@@ -221,6 +223,11 @@ export function evaluateExpression(
   if (isBinaryExpression(expression)) {
     const operator = expression.operator;
     const evaluator = binaryOperatorRegistry[operator].evaluation;
+    return evaluator.evaluate(expression, evaluationContext, strategy, context);
+  }
+  if (isTernaryExpression(expression)) {
+    const operator = expression.operator;
+    const evaluator = ternaryOperatorRegistry[operator].evaluation;
     return evaluator.evaluate(expression, evaluationContext, strategy, context);
   }
   assertUnreachable(expression);
