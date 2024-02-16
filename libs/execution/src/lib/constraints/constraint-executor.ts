@@ -4,7 +4,7 @@
 
 import { InternalValueRepresentation } from '@jvalue/jayvee-language-server';
 
-import { ExecutionContext } from '../execution-context';
+import { type ExecutionContext } from '../execution-context';
 
 export interface ConstraintExecutor {
   isValid(

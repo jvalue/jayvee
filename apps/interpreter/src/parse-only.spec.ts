@@ -6,10 +6,7 @@ import * as fs from 'node:fs';
 import * as path from 'path';
 import * as process from 'process';
 
-import {
-  clearBlockExecutorRegistry,
-  clearConstraintExecutorRegistry,
-} from '@jvalue/jayvee-execution/test';
+import { clearConstraintExecutorRegistry } from '@jvalue/jayvee-execution/test';
 import {
   RunOptions,
   interpretModel,
@@ -54,7 +51,6 @@ describe('Parse Only', () => {
     });
 
     // Reset jayvee specific stuff
-    clearBlockExecutorRegistry();
     clearConstraintExecutorRegistry();
   });
 

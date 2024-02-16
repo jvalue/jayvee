@@ -8,6 +8,7 @@ import { IOType, isBlockDefinition } from '@jvalue/jayvee-language-server';
 
 import { isBlockTargetedForDebugLogging } from '../debugging/debug-configuration';
 import { DebugLogVisitor } from '../debugging/debug-log-visitor';
+// eslint-disable-next-line import/no-cycle
 import { ExecutionContext } from '../execution-context';
 import { IOTypeImplementation } from '../types/io-types/io-type-implementation';
 

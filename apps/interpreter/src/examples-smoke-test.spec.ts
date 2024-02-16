@@ -5,7 +5,6 @@
 import * as path from 'path';
 
 import {
-  clearBlockExecutorRegistry,
   clearConstraintExecutorRegistry,
   processExitMockImplementation,
 } from '@jvalue/jayvee-execution/test';
@@ -74,7 +73,6 @@ describe('jv example smoke tests', () => {
     sqliteLoaderMock.restore();
 
     // Clear registries
-    clearBlockExecutorRegistry();
     clearConstraintExecutorRegistry();
   });
 

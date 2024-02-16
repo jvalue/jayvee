@@ -94,7 +94,10 @@ export async function executeBlock(
     return R.ok(null);
   }
 
-  const blockExecutor = createBlockExecutor(block);
+  const blockExecutor = createBlockExecutor(
+    block,
+    executionContext.executionExtension,
+  );
 
   const startTime = new Date();
 

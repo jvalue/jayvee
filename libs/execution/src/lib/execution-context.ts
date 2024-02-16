@@ -29,6 +29,8 @@ import {
   DebugGranularity,
   DebugTargets,
 } from './debugging/debug-configuration';
+// eslint-disable-next-line import/no-cycle
+import { JayveeExecExtension } from './extension';
 import { Logger } from './logging/logger';
 
 export type StackNode =
@@ -41,6 +43,7 @@ export class ExecutionContext {
 
   constructor(
     public readonly pipeline: PipelineDefinition,
+    public readonly executionExtension: JayveeExecExtension,
     public readonly logger: Logger,
     public readonly runOptions: {
       isDebugMode: boolean;

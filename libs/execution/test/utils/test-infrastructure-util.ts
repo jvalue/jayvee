@@ -10,19 +10,22 @@ import {
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 
 import {
+  BlockExecutorClass,
   CachedLogger,
   DebugGranularity,
   DebugTargets,
   ExecutionContext,
+  JayveeExecExtension,
   StackNode,
   Table,
   TableColumn,
-  blockExecutorRegistry,
   constraintExecutorRegistry,
 } from '../../src';
 
-export function clearBlockExecutorRegistry() {
-  blockExecutorRegistry.clear();
+export class TestExecExtension implements JayveeExecExtension {
+  getBlockExecutors(): BlockExecutorClass[] {
+    return [];
+  }
 }
 
 export function clearConstraintExecutorRegistry() {
@@ -58,6 +61,7 @@ export function getTestExecutionContext(
 
   const executionContext = new ExecutionContext(
     pipeline,
+    new TestExecExtension(),
     new CachedLogger(runOptions.isDebugMode, undefined, loggerPrintLogs),
     runOptions,
     new EvaluationContext(new RuntimeParameterProvider()),

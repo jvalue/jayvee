@@ -4,7 +4,8 @@
 
 import { strict as assert } from 'assert';
 
-import { getRegisteredBlockExecutors } from '@jvalue/jayvee-execution';
+import { getBlockExecutorClass } from '@jvalue/jayvee-execution';
+import { StdExecExtension } from '@jvalue/jayvee-extensions/std/exec';
 import {
   BlockTypeWrapper,
   createJayveeServices,
@@ -12,8 +13,6 @@ import {
   initializeWorkspace,
 } from '@jvalue/jayvee-language-server';
 import { NodeFileSystem } from 'langium/node';
-
-import { useStdExtension } from './interpreter';
 
 async function loadAllBuiltinBlocktypes(): Promise<BlockTypeWrapper[]> {
   const services = createJayveeServices(NodeFileSystem).Jayvee;
@@ -23,12 +22,13 @@ async function loadAllBuiltinBlocktypes(): Promise<BlockTypeWrapper[]> {
 
 describe('std extension', () => {
   it('should provide matching block executors for builtin block types', async () => {
-    useStdExtension();
     (await loadAllBuiltinBlocktypes()).forEach(
       (blockType: BlockTypeWrapper) => {
+        const execExtension = new StdExecExtension();
         console.info(`Looking for executor for blocktype ${blockType.type}`);
-        const matchingBlockExecutorClass = getRegisteredBlockExecutors().find(
-          (blockExecutorClass) => blockExecutorClass.type === blockType.type,
+        const matchingBlockExecutorClass = getBlockExecutorClass(
+          blockType.type,
+          execExtension,
         );
 
         expect(matchingBlockExecutorClass).toBeDefined();

@@ -6,9 +6,10 @@ import { strict as assert } from 'assert';
 
 import {
   BlockDefinition,
-  Registry,
   isCompositeBlocktypeDefinition,
 } from '@jvalue/jayvee-language-server';
+
+import { JayveeExecExtension } from '../extension';
 
 import { BlockExecutor } from './block-executor';
 import { BlockExecutorClass } from './block-executor-class';
@@ -19,34 +20,34 @@ import {
   getOutputType,
 } from './composite-block-executor';
 
-export const blockExecutorRegistry = new Registry<BlockExecutorClass>();
-
-export function registerBlockExecutor(executorClass: BlockExecutorClass) {
-  blockExecutorRegistry.register(executorClass.type, executorClass);
+export function getBlockExecutorClass(
+  blockTypeName: string,
+  execExtension: JayveeExecExtension,
+): BlockExecutorClass | undefined {
+  return execExtension
+    .getBlockExecutors()
+    .find((x: BlockExecutorClass) => x.type === blockTypeName);
 }
 
-export function getRegisteredBlockExecutors(): BlockExecutorClass[] {
-  return [...blockExecutorRegistry.getAll()];
-}
-
-export function createBlockExecutor(block: BlockDefinition): BlockExecutor {
+export function createBlockExecutor(
+  block: BlockDefinition,
+  execExtension: JayveeExecExtension,
+): BlockExecutor {
   const blockType = block.type.ref;
   assert(blockType !== undefined);
 
+  let blockExecutor = getBlockExecutorClass(blockType.name, execExtension);
+
   if (
-    !blockExecutorRegistry.get(blockType.name) &&
+    blockExecutor === undefined &&
     isCompositeBlocktypeDefinition(block.type.ref)
   ) {
-    const executorClass = createCompositeBlockExecutor(
+    blockExecutor = createCompositeBlockExecutor(
       getInputType(block.type.ref),
       getOutputType(block.type.ref),
       block,
     );
-
-    blockExecutorRegistry.register(block.type.ref.name, executorClass);
   }
-
-  const blockExecutor = blockExecutorRegistry.get(blockType.name);
 
   assert(
     blockExecutor !== undefined,

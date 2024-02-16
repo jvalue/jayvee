@@ -8,13 +8,13 @@ import * as R from '@jvalue/jayvee-execution';
 import {
   DebugGranularity,
   ExecutionContext,
+  JayveeExecExtension,
   Logger,
   executeBlocks,
   isDebugGranularity,
   logExecutionDuration,
   parseValueToInternalRepresentation,
   registerDefaultConstraintExecutors,
-  useExtension as useExecutionExtension,
 } from '@jvalue/jayvee-execution';
 import { StdExecExtension } from '@jvalue/jayvee-extensions/std/exec';
 import {
@@ -98,7 +98,6 @@ export async function parseModel(
     return { model, services, loggerFactory };
   }
 
-  useStdExtension();
   registerDefaultConstraintExecutors();
 
   services = createJayveeServices(NodeFileSystem).Jayvee;
@@ -136,6 +135,7 @@ export async function interpretModel(
 
   const interpretationExitCode = await interpretJayveeModel(
     model,
+    new StdExecExtension(),
     services.RuntimeParameterProvider,
     loggerFactory,
     {
@@ -173,12 +173,9 @@ function setupRuntimeParameterProvider(
   }
 }
 
-export function useStdExtension() {
-  useExecutionExtension(new StdExecExtension());
-}
-
 async function interpretJayveeModel(
   model: JayveeModel,
+  executionExtension: JayveeExecExtension,
   runtimeParameterProvider: RuntimeParameterProvider,
   loggerFactory: LoggerFactory,
   runOptions: InterpreterOptions,
@@ -186,6 +183,7 @@ async function interpretJayveeModel(
   const pipelineRuns: Promise<ExitCode>[] = model.pipelines.map((pipeline) => {
     return runPipeline(
       pipeline,
+      executionExtension,
       runtimeParameterProvider,
       loggerFactory,
       runOptions,
@@ -201,12 +199,14 @@ async function interpretJayveeModel(
 
 async function runPipeline(
   pipeline: PipelineDefinition,
+  executionExtension: JayveeExecExtension,
   runtimeParameterProvider: RuntimeParameterProvider,
   loggerFactory: LoggerFactory,
   runOptions: InterpreterOptions,
 ): Promise<ExitCode> {
   const executionContext = new ExecutionContext(
     pipeline,
+    executionExtension,
     loggerFactory.createLogger(),
     {
       isDebugMode: runOptions.debug,

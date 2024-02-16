@@ -2,13 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+// eslint-disable-next-line import/no-cycle
 import { BlockExecutorClass } from './blocks/block-executor-class';
-import { registerBlockExecutor } from './blocks/block-executor-registry';
 
 export interface JayveeExecExtension {
   getBlockExecutors(): BlockExecutorClass[];
-}
-
-export function useExtension(extension: JayveeExecExtension) {
-  extension.getBlockExecutors().forEach(registerBlockExecutor);
 }
