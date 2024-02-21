@@ -46,7 +46,7 @@
         "jestConfig": "apps/language-server-web-worker/jest.config.ts"
       }
     },
-    "publish": {
+    "pre-publish": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
@@ -54,7 +54,17 @@
           // Manually delete all dependencies in package.json because the "externalDependencies": "none" setting in "build" above seems to have no effect on the generated package.json
           "node tools/scripts/delete-dependencies.mjs language-server-web-worker",
           "node tools/scripts/add-package-json-version.mjs language-server-web-worker",
-          "node tools/scripts/publish.mjs language-server-web-worker"
+          "node tools/scripts/publish.mjs language-server-web-worker false" // dry-run
+        ],
+        "parallel": false
+      }
+    },
+    "publish": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["pre-publish"],
+      "options": {
+        "commands": [
+          "node tools/scripts/publish.mjs language-server-web-worker true"
         ],
         "parallel": false
       }

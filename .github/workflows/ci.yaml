@@ -44,3 +44,11 @@ jobs:
 
       - name: Test
         run: npx nx affected --target=test --parallel=3 --base=remotes/origin/main --head=HEAD --ci
+
+      # Ensure this works for future release publishing
+      - name: Publish Dry-Run
+        run: npx nx affected --target=pre-publish --parallel=3 --base=remotes/origin/main --head=HEAD --ci
+
+      # Ensure this works for future release publishing
+      - name: Pack VSCode Extension
+        run: npx nx run vs-code-extension:pack:prod
