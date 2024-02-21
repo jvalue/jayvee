@@ -5,6 +5,18 @@ title: Getting Started
 
 # Introduction to Jayvee
 
+import MascotImageUrl from '@site/static/img/mascots/mascot2.png';
+
+<div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'none', alignItems: 'center'}}>
+  <div>
+    <img src={MascotImageUrl} width="400px" style={{ float: 'left' }} />
+  </div>
+
+  <span className={"text--center"}>
+    <h2>"Making data engineering easy, reliable, and safe"</h2>
+  </span>
+</div>
+
 Jayvee is a domain-specific language (DSL) for automated processing of data pipelines.
 The Jayvee interpreter allows executing such data pipelines on local machines.
 Data engineers can use Jayvee and its interpreter to clean and preprocess data for later activities like data science or machine learning.
