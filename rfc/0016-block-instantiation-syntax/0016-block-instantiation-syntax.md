@@ -4,11 +4,11 @@ SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
 SPDX-License-Identifier: AGPL-3.0-only
 -->
 
-# RFC 0016: Instances vs Types
+# RFC 0016: Block Instantiation Syntax
 
 | | |
 |---|---|
-| Feature Tag | `instances-vs-types` |
+| Feature Tag | `block-instantiation-syntax` |
 | Status | `DISCUSSION` | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED -->
 | Responsible | `@rhazn` |
 <!-- 
@@ -30,7 +30,6 @@ This RFC introduces minimal syntax changes to allow the creation of block instan
 It is impossible to create multiple instances of the same block, limiting how complex a DAG can be described.
 
 ## Explanation
-The following explanations use blocks as an example but map directly to **Constraints** and **Valuetypes**. That is, constraints and valuetypes can also only be **defined** outside of pipelines and are valuetypes are **instantiated** inside of pipelines (constraints are only instantiated as part of valuetypes).
 
 ### Current state
 #### M2 level (focused on blocks only)
@@ -108,26 +107,26 @@ subgraph M0
     anonymousBlock3["anonymous"]
 end
 
-BuiltInBlocktype -."is subtype of".-> Blocktype
-CompositeBlocktype -."is subtype of".-> Blocktype
+BuiltInBlocktype --"subtype of"--> Blocktype
+CompositeBlocktype --"subtype of"--> Blocktype
 
-CarsPipeline --"instance of"--> Pipeline
-CSVExtractor --"instance of"--> CompositeBlocktype
-TableInterpreter --"instance of"--> BuiltInBlocktype
-SQLiteLoader --"instance of"--> BuiltInBlocktype
-CarsCSVExtractor --"instance of"--> Block
-CarsTableInterpreter --"instance of"--> Block
-CarsLoader --"instance of"--> Block
+CarsPipeline -."instance of".-> Pipeline
+CSVExtractor -."instance of".-> CompositeBlocktype
+TableInterpreter -."instance of".-> BuiltInBlocktype
+SQLiteLoader -."instance of".-> BuiltInBlocktype
+CarsCSVExtractor -."instance of".-> Block
+CarsTableInterpreter -."instance of".-> Block
+CarsLoader -."instance of".-> Block
 
-CarsCSVExtractor -."oftype".-> CSVExtractor
-CarsTableInterpreter -."oftype".-> TableInterpreter
-CarsLoader -."oftype".-> SQLiteLoader
+CarsCSVExtractor --"oftype"--> CSVExtractor
+CarsTableInterpreter --"oftype"--> TableInterpreter
+CarsLoader --"oftype"--> SQLiteLoader
 
-anonymousPipeline1 --"instance of"--> CarsPipeline
+anonymousPipeline1 -."instance of".-> CarsPipeline
 
-anonymousBlock1 --"instance of"--> CarsCSVExtractor
-anonymousBlock2 --"instance of"--> CarsTableInterpreter
-anonymousBlock3 --"instance of"--> CarsLoader
+anonymousBlock1 -."instance of".-> CarsCSVExtractor
+anonymousBlock2 -."instance of".-> CarsTableInterpreter
+anonymousBlock3 -."instance of".-> CarsLoader
 ```
 
 ##### As diagram excluding M2 level/instance of relationships
@@ -151,22 +150,21 @@ subgraph M0
     anonymousBlock3[" : CarsLoader"]
 end
 
-CarsCSVExtractor -."oftype : OftypeRelationship".-> CSVExtractor
-CarsTableInterpreter -."oftype : OftypeRelationship".-> TableInterpreter
-CarsLoader -."oftype : OftypeRelationship".-> SQLiteLoader
+CarsCSVExtractor --"oftype : OftypeRelationship"--> CSVExtractor
+CarsTableInterpreter --"oftype : OftypeRelationship"--> TableInterpreter
+CarsLoader --"oftype : OftypeRelationship"--> SQLiteLoader
 M0 ~~~ M1
 ```
 
 ### Proposed changes
 #### 1. Clarify naming
 - Across M-levels, we have only a `instance of` relationship
-- On M1 level, only the `oftype` relationship exists between `block`s and `blocktype`s because it is modelled at M2 level
+- The only other currently possible relationship is the `oftype` relationship between a `block` and a `blocktype` on M1 level. Other relationships are not possible since they are not modelled at M2 level.
 - Instantiation of M2 level concepts in M1 is done with language keywords
     - `composite blocktype <name>` / `builtin blocktype <name>`
 - We keep `block` as M1 level keyword to instantiate the M2 level `Block`
 - Users can describe M0 level entities in a Jayvee model
-    - Now by creating anonymous singleton instances of `block`s
-    - We call these instances **"block instances"**
+    - For blocks, we call these instances **"block instances"**
     - Pipes always connect block instances, never blocks
 
 #### 2. Enable creating named block instances
@@ -176,6 +174,8 @@ M0 ~~~ M1
     - `<block>` models a singleton instance of `<block>`, reusing the same syntax reuses the same instance
 
 #### 3. Allow only pipes and block instances in pipelines
+The following explanations use blocks as an example but map directly to **Constraints** and **Valuetypes**. That is, constraints and valuetypes can also only be defined outside of pipelines and are instantiated inside of pipelines.
+
 - Pipelines may only contain pipes and block instances, everything else has to be described outside of a pipeline
 
 New syntax (minimal cars example):
@@ -206,7 +206,7 @@ block CarsLoader oftype SQLiteLoader {
 }
 ```
 
-Composite blocks are a special case that use pipeline syntax to chain blocks. For the scope of this RFC, chaining pipeline syntax should **stay possible in pipelines and composite blocks** while **composite blocks are also be able to contain block definitions**. In a future enhancement (see Possible Future Changes/Enhancements), this should be split up with the introduction of packages (ref [RFC0015](../0015-multi-file-jayvee/0015-multi-file-jayvee.md)).
+Composite blocks are a special case that use a smiliar pipe syntax to chain blocks. For the scope of this RFC, chaining pipeline syntax should **stay possible in pipelines and composite blocks** while **composite blocks are also able to contain block definitions**. In a future enhancement (see Possible Future Changes/Enhancements), this should be split up with the introduction of packages (ref [RFC0015](../0015-multi-file-jayvee/0015-multi-file-jayvee.md)).
 
 #### 4. Allow only one DAG per pipeline
 - If a user creates two graphs in one pipeline, the pipeline definition becomes invalid
