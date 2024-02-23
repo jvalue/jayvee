@@ -49,7 +49,8 @@
       "options": {
         "commands": [
           "node tools/scripts/relax-peer-dependency-versions.mjs language-server",
-          "node tools/scripts/add-package-json-version.mjs language-server"
+          "node tools/scripts/add-package-json-version.mjs language-server",
+          "node tools/scripts/publish.mjs language-server false"
         ],
         "parallel": false
       }
@@ -58,7 +59,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["pre-publish"],
       "options": {
-        "commands": ["node tools/scripts/publish.mjs language-server"],
+        "commands": ["node tools/scripts/publish.mjs language-server true"],
         "parallel": false
       }
     },

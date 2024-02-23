@@ -32,7 +32,8 @@
       "options": {
         "commands": [
           "node tools/scripts/relax-peer-dependency-versions.mjs interpreter-lib",
-          "node tools/scripts/add-package-json-version.mjs interpreter-lib"
+          "node tools/scripts/add-package-json-version.mjs interpreter-lib",
+          "node tools/scripts/publish.mjs interpreter-lib false" // dry-run
         ],
         "parallel": false
       }
@@ -41,7 +42,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["pre-publish"],
       "options": {
-        "commands": ["node tools/scripts/publish.mjs interpreter-lib"],
+        "commands": ["node tools/scripts/publish.mjs interpreter-lib true"],
         "parallel": false
       }
     },

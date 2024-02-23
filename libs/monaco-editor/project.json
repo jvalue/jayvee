@@ -51,7 +51,8 @@
           "node tools/scripts/relax-peer-dependency-versions.mjs monaco-editor",
           "node tools/scripts/monaco-editor/delete-vscode-peer-dependency.mjs monaco-editor",
           "node tools/scripts/monaco-editor/relax-react-version.mjs monaco-editor",
-          "node tools/scripts/add-package-json-version.mjs monaco-editor"
+          "node tools/scripts/add-package-json-version.mjs monaco-editor",
+          "node tools/scripts/publish.mjs monaco-editor false" // dry-run
         ],
         "parallel": false
       }
@@ -60,7 +61,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["pre-publish"],
       "options": {
-        "commands": ["node tools/scripts/publish.mjs monaco-editor"],
+        "commands": ["node tools/scripts/publish.mjs monaco-editor true"],
         "parallel": false
       }
     },

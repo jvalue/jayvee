@@ -48,7 +48,8 @@
         "commands": [
           "node tools/scripts/interpreter/prepend-shebang.mjs interpreter main.js",
           "node tools/scripts/add-package-json-version.mjs interpreter",
-          "node tools/scripts/interpreter/rewrite-version-mainjs.mjs interpreter"
+          "node tools/scripts/interpreter/rewrite-version-mainjs.mjs interpreter",
+          "node tools/scripts/publish.mjs interpreter false" // dry-run
         ],
         "parallel": false
       }
@@ -57,7 +58,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["pre-publish"],
       "options": {
-        "commands": ["node tools/scripts/publish.mjs interpreter"],
+        "commands": ["node tools/scripts/publish.mjs interpreter true"],
         "parallel": false
       }
     },
