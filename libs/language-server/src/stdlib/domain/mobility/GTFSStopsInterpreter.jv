@@ -1,0 +1,40 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* A GTFSStopsInterpreter interprets a stops.txt file from an extracted ZIP file according to the GTFS standard
+* See https://gtfs.org/schedule/reference/#stopstxt
+*/
+composite blocktype GTFSStopsInterpreter {
+
+    input inputPort oftype FileSystem;
+    output outputPort oftype Table;
+
+    inputPort
+        -> StopsFilePicker
+        -> StopsTextFileInterpreter
+        -> StopsCSVInterpreter
+        -> StopsTableInterpreter
+        -> outputPort;
+
+    block StopsFilePicker oftype FilePicker {
+        path: "/stops.txt";
+    }
+
+    block StopsTextFileInterpreter oftype TextFileInterpreter { }
+    block StopsCSVInterpreter oftype CSVInterpreter { }
+
+    block StopsTableInterpreter oftype TableInterpreter {
+        header: true;
+        columns: [
+            "stop_id" oftype text,
+            "stop_name" oftype text,
+            "stop_desc" oftype text,
+            "stop_lat" oftype GTFSLatitude,
+            "stop_lon" oftype GTFSLongitude,
+            "zone_id" oftype text,
+            "stop_url" oftype text
+        ];
+    }
+}

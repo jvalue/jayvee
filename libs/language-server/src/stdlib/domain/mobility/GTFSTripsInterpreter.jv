@@ -1,0 +1,40 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* A GTFSTripsInterpreter interprets a trips.txt file from an extracted ZIP file according to the GTFS standard
+* See https://gtfs.org/schedule/reference/#tripstxt
+*/
+composite blocktype GTFSTripsInterpreter {
+
+    input inputPort oftype FileSystem;
+    output outputPort oftype Table;
+
+    inputPort
+        -> TripsFilePicker
+        -> TripsTextFileInterpreter
+        -> TripsCSVInterpreter
+        -> TripsTableInterpreter
+        -> outputPort;
+
+    block TripsFilePicker oftype FilePicker {
+        path: "/trips.txt";
+    }
+
+    block TripsTextFileInterpreter oftype TextFileInterpreter { }
+    block TripsCSVInterpreter oftype CSVInterpreter { }
+
+    block TripsTableInterpreter oftype TableInterpreter {
+        header: true;
+        columns: [
+            "route_id" oftype text,
+            "service_id" oftype text,
+            "trip_id" oftype text,
+            "trip_headsign" oftype text,
+            "direction_id" oftype text,
+            "block_id" oftype text,
+            "shape_id" oftype text
+        ];
+    }
+}
