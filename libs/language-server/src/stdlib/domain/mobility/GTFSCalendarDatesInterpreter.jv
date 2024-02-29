@@ -13,25 +13,25 @@ composite blocktype GTFSCalendarDatesInterpreter {
 
     inputPort
         -> CalendarDatesFilePicker
-		-> CalendarDatesTextFileInterpreter
-		-> CalendarDatesCSVInterpreter
-		-> CalendarDatesTableInterpreter
+        -> CalendarDatesTextFileInterpreter
+        -> CalendarDatesCSVInterpreter
+        -> CalendarDatesTableInterpreter
         -> outputPort;
 
     block CalendarDatesFilePicker oftype FilePicker {
-		path: "/calendar_dates.txt";
-	}
+        path: "/calendar_dates.txt";
+    }
 
     block CalendarDatesTextFileInterpreter oftype TextFileInterpreter { }
     block CalendarDatesCSVInterpreter oftype CSVInterpreter { }
 
     block CalendarDatesTableInterpreter oftype TableInterpreter {
-		header: true;
-		columns:[
-			"service_id" oftype text,
-			"date" oftype GTFSDate,
-			"exception_type" oftype GTFSEnumOneOrTwo // 1 - Service has been added for the specified date
-													 // 2 - Service has been removed for the specified date.
-		];
-	}
+        header: true;
+        columns: [
+            "service_id" oftype text,
+            "date" oftype GTFSDate,
+            "exception_type" oftype GTFSEnumOneOrTwo // 1 - Service has been added for the specified date
+                                                     // 2 - Service has been removed for the specified date.
+        ];
+    }
 }

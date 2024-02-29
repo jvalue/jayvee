@@ -13,28 +13,28 @@ composite blocktype GTFSTripsInterpreter {
 
     inputPort
         -> TripsFilePicker
-		-> TripsTextFileInterpreter
-		-> TripsCSVInterpreter
-		-> TripsTableInterpreter
+        -> TripsTextFileInterpreter
+        -> TripsCSVInterpreter
+        -> TripsTableInterpreter
         -> outputPort;
 
     block TripsFilePicker oftype FilePicker {
-		path: "/trips.txt";
-	}
+        path: "/trips.txt";
+    }
 
     block TripsTextFileInterpreter oftype TextFileInterpreter { }
     block TripsCSVInterpreter oftype CSVInterpreter { }
 
     block TripsTableInterpreter oftype TableInterpreter {
-		header: true;
-		columns:[
-			"route_id" oftype text,
-			"service_id" oftype text,
-			"trip_id" oftype text,
-			"trip_headsign" oftype text,
-			"direction_id" oftype text,
-			"block_id" oftype text,
-			"shape_id" oftype text
-		];
-	}
+        header: true;
+        columns: [
+            "route_id" oftype text,
+            "service_id" oftype text,
+            "trip_id" oftype text,
+            "trip_headsign" oftype text,
+            "direction_id" oftype text,
+            "block_id" oftype text,
+            "shape_id" oftype text
+        ];
+    }
 }

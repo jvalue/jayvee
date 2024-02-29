@@ -13,32 +13,32 @@ composite blocktype GTFSCalendarInterpreter {
 
     inputPort
         -> CalendarFilePicker
-		-> CalendarTextFileInterpreter
-		-> CalendarCSVInterpreter
-		-> CalendarTableInterpreter
+        -> CalendarTextFileInterpreter
+        -> CalendarCSVInterpreter
+        -> CalendarTableInterpreter
         -> outputPort;
 
     block CalendarFilePicker oftype FilePicker {
-		path: "/calendar.txt";
-	}
+        path: "/calendar.txt";
+    }
 
     block CalendarTextFileInterpreter oftype TextFileInterpreter { }
     block CalendarCSVInterpreter oftype CSVInterpreter { }
 
     block CalendarTableInterpreter oftype TableInterpreter {
-		header: true;
-		columns:[
-			"service_id" oftype text,
-			"monday" oftype GTFSEnumTwo, // 1 - Service is available for all Mondays in the date range.
-										 // 0 - Service is not available for Mondays in the date range.
-			"tuesday" oftype GTFSEnumTwo,
-			"wednesday" oftype GTFSEnumTwo,
-			"thursday" oftype GTFSEnumTwo,
-			"friday" oftype GTFSEnumTwo,
-			"saturday" oftype GTFSEnumTwo,
-			"sunday" oftype GTFSEnumTwo,
-			"start_date" oftype GTFSDate,
-			"end_date" oftype GTFSDate
-		];
-	}
+        header: true;
+        columns: [
+            "service_id" oftype text,
+            "monday" oftype GTFSEnumTwo, // 1 - Service is available for all Mondays in the date range.
+                                         // 0 - Service is not available for Mondays in the date range.
+            "tuesday" oftype GTFSEnumTwo,
+            "wednesday" oftype GTFSEnumTwo,
+            "thursday" oftype GTFSEnumTwo,
+            "friday" oftype GTFSEnumTwo,
+            "saturday" oftype GTFSEnumTwo,
+            "sunday" oftype GTFSEnumTwo,
+            "start_date" oftype GTFSDate,
+            "end_date" oftype GTFSDate
+        ];
+    }
 }

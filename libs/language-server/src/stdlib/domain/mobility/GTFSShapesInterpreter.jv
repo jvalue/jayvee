@@ -13,26 +13,26 @@ composite blocktype GTFSShapesInterpreter {
 
     inputPort
         -> ShapesFilePicker
-		-> ShapesTextFileInterpreter
-		-> ShapesCSVInterpreter
-		-> ShapesTableInterpreter
+        -> ShapesTextFileInterpreter
+        -> ShapesCSVInterpreter
+        -> ShapesTableInterpreter
         -> outputPort;
 
     block ShapesFilePicker oftype FilePicker {
-		path: "/shapes.txt";
-	}
+        path: "/shapes.txt";
+    }
 
     block ShapesTextFileInterpreter oftype TextFileInterpreter { }
     block ShapesCSVInterpreter oftype CSVInterpreter { }
 
     block ShapesTableInterpreter oftype TableInterpreter {
-		header: true;
-		columns:[
-			"shape_id" oftype text,
-			"shape_pt_lat" oftype GTFSLatitude,
-			"shape_pt_lon" oftype GTFSLongitude,
-			"shape_pt_sequence" oftype GTFSNonNegativeInteger,
-			"shape_dist_traveled" oftype text
-		];
-	}
+        header: true;
+        columns: [
+            "shape_id" oftype text,
+            "shape_pt_lat" oftype GTFSLatitude,
+            "shape_pt_lon" oftype GTFSLongitude,
+            "shape_pt_sequence" oftype GTFSNonNegativeInteger,
+            "shape_dist_traveled" oftype text
+        ];
+    }
 }

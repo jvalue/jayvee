@@ -13,30 +13,30 @@ composite blocktype GTFSRoutesInterpreter {
 
     inputPort
         -> RoutesFilePicker
-		-> RoutesTextFileInterpreter
-		-> RoutesCSVInterpreter
-		-> RoutesTableInterpreter
+        -> RoutesTextFileInterpreter
+        -> RoutesCSVInterpreter
+        -> RoutesTableInterpreter
         -> outputPort;
 
     block RoutesFilePicker oftype FilePicker {
-		path: "/routes.txt";
-	}
+        path: "/routes.txt";
+    }
 
     block RoutesTextFileInterpreter oftype TextFileInterpreter { }
     block RoutesCSVInterpreter oftype CSVInterpreter { }
 
     block RoutesTableInterpreter oftype TableInterpreter {
-		header: true;
-		columns:[
-			"route_id" oftype text,
-			"agency_id" oftype text,
-			"route_short_name" oftype text,
-			"route_long_name" oftype text,
-			"route_desc" oftype text,
-			"route_type" oftype integer, // Technically is an enum from 0 - 12
-			"route_url" oftype text,
-			"route_color" oftype text,
-			"route_text_color" oftype text
-		];
-	}
+        header: true;
+        columns: [
+            "route_id" oftype text,
+            "agency_id" oftype text,
+            "route_short_name" oftype text,
+            "route_long_name" oftype text,
+            "route_desc" oftype text,
+            "route_type" oftype integer, // Technically is an enum from 0 - 12
+            "route_url" oftype text,
+            "route_color" oftype text,
+            "route_text_color" oftype text
+        ];
+    }
 }

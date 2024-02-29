@@ -13,25 +13,25 @@ composite blocktype GTFSFrequenciesInterpreter {
 
     inputPort
         -> FrequenciesFilePicker
-		-> FrequenciesTextFileInterpreter
-		-> FrequenciesCSVInterpreter
-		-> FrequenciesTableInterpreter
+        -> FrequenciesTextFileInterpreter
+        -> FrequenciesCSVInterpreter
+        -> FrequenciesTableInterpreter
         -> outputPort;
 
     block FrequenciesFilePicker oftype FilePicker {
-		path: "/frequencies.txt";
-	}
+        path: "/frequencies.txt";
+    }
 
     block FrequenciesTextFileInterpreter oftype TextFileInterpreter { }
     block FrequenciesCSVInterpreter oftype CSVInterpreter { }
 
     block FrequenciesTableInterpreter oftype TableInterpreter {
-		header: true;
-		columns:[
-			"trip_id" oftype text,
-			"start_time" oftype GTFSTime,
-			"end_time" oftype GTFSTime,
-			"headway_secs" oftype GTFSNonNegativeInteger
-		];
-	}
+        header: true;
+        columns: [
+            "trip_id" oftype text,
+            "start_time" oftype GTFSTime,
+            "end_time" oftype GTFSTime,
+            "headway_secs" oftype GTFSNonNegativeInteger
+        ];
+    }
 }

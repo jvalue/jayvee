@@ -13,25 +13,25 @@ composite blocktype GTFSAgencyInterpreter {
 
     inputPort
         -> AgencyFilePicker
-		-> AgencyTextFileInterpreter
-		-> AgencyCSVInterpreter
-		-> AgencyTableInterpreter
+        -> AgencyTextFileInterpreter
+        -> AgencyCSVInterpreter
+        -> AgencyTableInterpreter
         -> outputPort;
 
     block AgencyFilePicker oftype FilePicker {
-		path: "/agency.txt";
-	}
+        path: "/agency.txt";
+    }
 
     block AgencyTextFileInterpreter oftype TextFileInterpreter { }
     block AgencyCSVInterpreter oftype CSVInterpreter { }
 
     block AgencyTableInterpreter oftype TableInterpreter {
-		header: true;
-		columns:[
-			"agency_id" oftype text, //Conditional columns are considered required for now
-			"agency_name" oftype text,
-			"agency_url" oftype GTFSUrl,
-			"agency_timezone" oftype text
-		];
-	}
+        header: true;
+        columns: [
+            "agency_id" oftype text, // Conditional columns are considered required for now
+            "agency_name" oftype text,
+            "agency_url" oftype GTFSUrl,
+            "agency_timezone" oftype text
+        ];
+    }
 }
