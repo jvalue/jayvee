@@ -29,8 +29,7 @@ import {
   DebugGranularity,
   DebugTargets,
 } from './debugging/debug-configuration';
-// eslint-disable-next-line import/no-cycle
-import { JayveeExecExtension } from './extension';
+import { type JayveeExecExtension } from './extension';
 import { Logger } from './logging/logger';
 
 export type StackNode =

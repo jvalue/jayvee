@@ -4,7 +4,6 @@
 
 import { ConstructorClass } from '@jvalue/jayvee-language-server';
 
-// eslint-disable-next-line import/no-cycle
 import { BlockExecutor } from './block-executor';
 
 export interface BlockExecutorClass<T extends BlockExecutor = BlockExecutor>

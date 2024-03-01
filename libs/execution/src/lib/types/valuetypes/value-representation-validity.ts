@@ -23,8 +23,7 @@ import {
 } from '@jvalue/jayvee-language-server';
 
 import { createConstraintExecutor } from '../../constraints/constraint-executor-registry';
-// eslint-disable-next-line import/no-cycle
-import { ExecutionContext } from '../../execution-context';
+import { type ExecutionContext } from '../../execution-context';
 
 export function isValidValueRepresentation(
   value: InternalValueRepresentation,

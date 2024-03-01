@@ -20,9 +20,8 @@ import {
   isCompositeBlocktypeDefinition,
 } from '@jvalue/jayvee-language-server';
 
-// eslint-disable-next-line import/no-cycle
-import { ExecutionContext } from '../execution-context';
-import { IOTypeImplementation } from '../types';
+import { type ExecutionContext } from '../execution-context';
+import { type IOTypeImplementation } from '../types';
 
 import { executeBlocks } from './block-execution-util';
 import { AbstractBlockExecutor, BlockExecutor } from './block-executor';

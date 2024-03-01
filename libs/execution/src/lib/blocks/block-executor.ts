@@ -4,26 +4,13 @@
 
 import { strict as assert } from 'assert';
 
-import {
-  BlockDefinition,
-  IOType,
-  isBlockDefinition,
-  isCompositeBlocktypeDefinition,
-} from '@jvalue/jayvee-language-server';
+import { IOType, isBlockDefinition } from '@jvalue/jayvee-language-server';
 
 import { isBlockTargetedForDebugLogging } from '../debugging/debug-configuration';
 import { DebugLogVisitor } from '../debugging/debug-log-visitor';
-// eslint-disable-next-line import/no-cycle
-import { ExecutionContext } from '../execution-context';
-import { JayveeExecExtension } from '../extension';
+import { type ExecutionContext } from '../execution-context';
 import { IOTypeImplementation } from '../types/io-types/io-type-implementation';
 
-// eslint-disable-next-line import/no-cycle
-import {
-  createCompositeBlockExecutor,
-  getInputType,
-  getOutputType,
-} from './composite-block-executor';
 import * as R from './execution-result';
 
 export interface BlockExecutor<
@@ -91,32 +78,4 @@ export abstract class AbstractBlockExecutor<I extends IOType, O extends IOType>
     input: IOTypeImplementation<I>,
     context: ExecutionContext,
   ): Promise<R.Result<IOTypeImplementation<O> | null>>;
-}
-
-export function createBlockExecutor(
-  block: BlockDefinition,
-  execExtension: JayveeExecExtension,
-): BlockExecutor {
-  const blockType = block.type.ref;
-  assert(blockType !== undefined);
-
-  let blockExecutor = execExtension.getExecutorForBlockType(blockType.name);
-
-  if (
-    blockExecutor === undefined &&
-    isCompositeBlocktypeDefinition(block.type.ref)
-  ) {
-    blockExecutor = createCompositeBlockExecutor(
-      getInputType(block.type.ref),
-      getOutputType(block.type.ref),
-      block,
-    );
-  }
-
-  assert(
-    blockExecutor !== undefined,
-    `No executor was registered for block type ${blockType.name}`,
-  );
-
-  return new blockExecutor();
 }
