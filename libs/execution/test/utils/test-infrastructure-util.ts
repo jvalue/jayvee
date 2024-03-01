@@ -22,7 +22,7 @@ import {
   constraintExecutorRegistry,
 } from '../../src';
 
-export class TestExecExtension implements JayveeExecExtension {
+export class TestExecExtension extends JayveeExecExtension {
   getBlockExecutors(): BlockExecutorClass[] {
     return [];
   }

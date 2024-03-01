@@ -9,7 +9,7 @@ import {
 
 import { PostgresLoaderExecutor, SQLiteLoaderExecutor } from './lib';
 
-export class RdbmsExecExtension implements JayveeExecExtension {
+export class RdbmsExecExtension extends JayveeExecExtension {
   getBlockExecutors(): BlockExecutorClass[] {
     return [PostgresLoaderExecutor, SQLiteLoaderExecutor];
   }

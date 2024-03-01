@@ -4,7 +4,6 @@
 
 import { strict as assert } from 'assert';
 
-import { getBlockExecutorClass } from '@jvalue/jayvee-execution';
 import { StdExecExtension } from '@jvalue/jayvee-extensions/std/exec';
 import {
   BlockTypeWrapper,
@@ -26,10 +25,8 @@ describe('std extension', () => {
       (blockType: BlockTypeWrapper) => {
         const execExtension = new StdExecExtension();
         console.info(`Looking for executor for blocktype ${blockType.type}`);
-        const matchingBlockExecutorClass = getBlockExecutorClass(
-          blockType.type,
-          execExtension,
-        );
+        const matchingBlockExecutorClass =
+          execExtension.getExecutorForBlockType(blockType.type);
 
         expect(matchingBlockExecutorClass).toBeDefined();
         assert(matchingBlockExecutorClass !== undefined);

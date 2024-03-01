@@ -48,7 +48,7 @@ import {
   JayveeExecExtension,
 } from '@jvalue/jayvee-execution';
 
-export class MyExecExtension implements JayveeExecExtension {
+export class MyExecExtension extends JayveeExecExtension {
   getBlockExecutors(): BlockExecutorClass[] {
     return [];
   }
@@ -72,7 +72,7 @@ In `libs/extensions/std/exec/src/extension.ts`:
 
 import { MyExecExtension } from '@jvalue/jayvee-extensions/<extension-name>/exec';
 
-export class StdExecExtension implements JayveeExecExtension {
+export class StdExecExtension extends JayveeExecExtension {
   private readonly wrappedExtensions: JayveeExecExtension[] = [
     // ...
     // Register your execution extension here:
@@ -177,7 +177,7 @@ In `libs/extensions/<extension-name>/exec/src/extension.ts`:
 
 import { MyExtractorExecutor } from './lib/my-extractor-executor';
 
-export class MyExecExtension implements JayveeExecExtension {
+export class MyExecExtension extends JayveeExecExtension {
   getBlockExecutors(): BlockExecutorClass[] {
     return [
       // ...

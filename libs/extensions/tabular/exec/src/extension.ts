@@ -17,7 +17,7 @@ import { TableInterpreterExecutor } from './lib/table-interpreter-executor';
 import { TableTransformerExecutor } from './lib/table-transformer-executor';
 import { XLSXInterpreterExecutor } from './lib/xlsx-interpreter-executor';
 
-export class TabularExecExtension implements JayveeExecExtension {
+export class TabularExecExtension extends JayveeExecExtension {
   getBlockExecutors(): BlockExecutorClass[] {
     return [
       CellWriterExecutor,

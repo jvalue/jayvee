@@ -18,7 +18,6 @@ import { ExecutionContext } from '../execution-context';
 import { JayveeExecExtension } from '../extension';
 import { IOTypeImplementation } from '../types/io-types/io-type-implementation';
 
-import { BlockExecutorClass } from './block-executor-class';
 // eslint-disable-next-line import/no-cycle
 import {
   createCompositeBlockExecutor,
@@ -101,7 +100,7 @@ export function createBlockExecutor(
   const blockType = block.type.ref;
   assert(blockType !== undefined);
 
-  let blockExecutor = getBlockExecutorClass(blockType.name, execExtension);
+  let blockExecutor = execExtension.getExecutorForBlockType(blockType.name);
 
   if (
     blockExecutor === undefined &&
@@ -120,13 +119,4 @@ export function createBlockExecutor(
   );
 
   return new blockExecutor();
-}
-
-export function getBlockExecutorClass(
-  blockTypeName: string,
-  execExtension: JayveeExecExtension,
-): BlockExecutorClass | undefined {
-  return execExtension
-    .getBlockExecutors()
-    .find((x: BlockExecutorClass) => x.type === blockTypeName);
 }
