@@ -18,5 +18,5 @@ composite blocktype GTFSExtractor {
 
     block FileExtractor oftype HttpExtractor { url: url; }
 
-	block ZipArchiveInterpreter oftype ArchiveInterpreter { archiveType: "zip"; }
+    block ZipArchiveInterpreter oftype ArchiveInterpreter { archiveType: "zip"; }
 }

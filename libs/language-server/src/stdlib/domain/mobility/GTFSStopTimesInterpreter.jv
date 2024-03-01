@@ -1,0 +1,42 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* A GTFSStopTimesInterpreter interprets a stop_times.txt file from an extracted ZIP file according to the GTFS standard
+* See https://gtfs.org/schedule/reference/#stop_timestxt
+*/
+composite blocktype GTFSStopTimesInterpreter {
+
+    input inputPort oftype FileSystem;
+    output outputPort oftype Table;
+
+    inputPort
+        -> StopTimesFilePicker
+        -> StopTimesTextFileInterpreter
+        -> StopTimesCSVInterpreter
+        -> StopTimesTableInterpreter
+        -> outputPort;
+
+    block StopTimesFilePicker oftype FilePicker {
+        path: "/stop_times.txt";
+    }
+
+    block StopTimesTextFileInterpreter oftype TextFileInterpreter { }
+    block StopTimesCSVInterpreter oftype CSVInterpreter { }
+
+    block StopTimesTableInterpreter oftype TableInterpreter {
+        header: true;
+        columns: [
+            "trip_id" oftype text,
+            "arrival_time" oftype GTFSTime,
+            "departure_time" oftype GTFSTime,
+            "stop_id" oftype text,
+            "stop_sequence" oftype GTFSNonNegativeInteger,
+            "stop_headsign" oftype text,
+            "pickup_type" oftype text,
+            "drop_off_time" oftype text,
+            "shape_dist_traveled" oftype text
+        ];
+    }
+}

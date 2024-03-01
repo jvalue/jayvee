@@ -1,0 +1,38 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* A GTFSFareRulesInterpreter interprets a fare_rules.txt file from an extracted ZIP file according to the GTFS standard
+* See https://gtfs.org/schedule/reference/#fare_rulestxt
+*/
+composite blocktype GTFSFareRulesInterpreter {
+
+    input inputPort oftype FileSystem;
+    output outputPort oftype Table;
+
+    inputPort
+        -> FareRulesFilePicker
+        -> FareRulesTextFileInterpreter
+        -> FareRulesCSVInterpreter
+        -> FareRulesTableInterpreter
+        -> outputPort;
+
+    block FareRulesFilePicker oftype FilePicker {
+        path: "/fare_rules.txt";
+    }
+
+    block FareRulesTextFileInterpreter oftype TextFileInterpreter { }
+    block FareRulesCSVInterpreter oftype CSVInterpreter { }
+
+    block FareRulesTableInterpreter oftype TableInterpreter {
+        header: true;
+        columns: [
+            "fare_id" oftype text,
+            "route_id" oftype text,
+            "origin_id" oftype text,
+            "destination_id" oftype text,
+            "contains_id" oftype text
+        ];
+    }
+}

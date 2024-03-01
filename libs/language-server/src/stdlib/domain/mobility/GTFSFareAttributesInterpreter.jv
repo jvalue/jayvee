@@ -1,0 +1,40 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* A GTFSFareAttributesInterpreter interprets a fare_attributes.txt file from an extracted ZIP file according to the GTFS standard
+* See https://gtfs.org/schedule/reference/#fare_attributestxt
+*/
+composite blocktype GTFSFareAttributesInterpreter {
+
+    input inputPort oftype FileSystem;
+    output outputPort oftype Table;
+
+    inputPort
+        -> FareAttributesFilePicker
+        -> FareAttributesTextFileInterpreter
+        -> FareAttributesCSVInterpreter
+        -> FareAttributesTableInterpreter
+        -> outputPort;
+
+    block FareAttributesFilePicker oftype FilePicker {
+        path: "/fare_attributes.txt";
+    }
+
+    block FareAttributesTextFileInterpreter oftype TextFileInterpreter { }
+    block FareAttributesCSVInterpreter oftype CSVInterpreter { }
+
+    block FareAttributesTableInterpreter oftype TableInterpreter {
+        header: true;
+        columns: [
+            "fare_id" oftype text,
+            "price" oftype GTFSNonNegativeDecimal,
+            "currency_type" oftype GTFSCurrency,
+            "payment_method" oftype GTFSEnumTwo, // 0 - Fare is paid on board.
+                                                 // 1 - Fare must be paid before boarding.
+            "transfers" oftype text, // Is required but can be empty (?!) so has to be modelled as text...
+            "transfer_duration" oftype text
+        ];
+    }
+}

@@ -1,0 +1,42 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* A GTFSRoutesInterpreter interprets a routes.txt file from an extracted ZIP file according to the GTFS standard
+* See https://gtfs.org/schedule/reference/#routestxt
+*/
+composite blocktype GTFSRoutesInterpreter {
+
+    input inputPort oftype FileSystem;
+    output outputPort oftype Table;
+
+    inputPort
+        -> RoutesFilePicker
+        -> RoutesTextFileInterpreter
+        -> RoutesCSVInterpreter
+        -> RoutesTableInterpreter
+        -> outputPort;
+
+    block RoutesFilePicker oftype FilePicker {
+        path: "/routes.txt";
+    }
+
+    block RoutesTextFileInterpreter oftype TextFileInterpreter { }
+    block RoutesCSVInterpreter oftype CSVInterpreter { }
+
+    block RoutesTableInterpreter oftype TableInterpreter {
+        header: true;
+        columns: [
+            "route_id" oftype text,
+            "agency_id" oftype text,
+            "route_short_name" oftype text,
+            "route_long_name" oftype text,
+            "route_desc" oftype text,
+            "route_type" oftype integer, // Technically is an enum from 0 - 12
+            "route_url" oftype text,
+            "route_color" oftype text,
+            "route_text_color" oftype text
+        ];
+    }
+}

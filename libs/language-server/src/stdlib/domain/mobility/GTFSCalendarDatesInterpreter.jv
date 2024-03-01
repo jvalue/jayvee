@@ -1,0 +1,37 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* A GTFSCalendarDatesInterpreter interprets a calendar_dates.txt file from an extracted ZIP file according to the GTFS standard
+* See https://gtfs.org/schedule/reference/#calendar_datestxt
+*/
+composite blocktype GTFSCalendarDatesInterpreter {
+
+    input inputPort oftype FileSystem;
+    output outputPort oftype Table;
+
+    inputPort
+        -> CalendarDatesFilePicker
+        -> CalendarDatesTextFileInterpreter
+        -> CalendarDatesCSVInterpreter
+        -> CalendarDatesTableInterpreter
+        -> outputPort;
+
+    block CalendarDatesFilePicker oftype FilePicker {
+        path: "/calendar_dates.txt";
+    }
+
+    block CalendarDatesTextFileInterpreter oftype TextFileInterpreter { }
+    block CalendarDatesCSVInterpreter oftype CSVInterpreter { }
+
+    block CalendarDatesTableInterpreter oftype TableInterpreter {
+        header: true;
+        columns: [
+            "service_id" oftype text,
+            "date" oftype GTFSDate,
+            "exception_type" oftype GTFSEnumOneOrTwo // 1 - Service has been added for the specified date
+                                                     // 2 - Service has been removed for the specified date.
+        ];
+    }
+}
