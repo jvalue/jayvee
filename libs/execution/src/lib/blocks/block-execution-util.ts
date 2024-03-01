@@ -9,12 +9,12 @@ import {
   PipelineWrapper,
 } from '@jvalue/jayvee-language-server';
 
+// eslint-disable-next-line import/no-cycle
 import { ExecutionContext } from '../execution-context';
 import { Logger } from '../logging/logger';
 import { IOTypeImplementation, NONE } from '../types';
 
-// eslint-disable-next-line import/no-cycle
-import { createBlockExecutor } from './block-executor-registry';
+import { createBlockExecutor } from './block-executor';
 import * as R from './execution-result';
 
 export interface ExecutionOrderItem {

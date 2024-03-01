@@ -3,4 +3,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 export * from './internal-representation-parsing';
+// eslint-disable-next-line import/no-cycle
 export * from './value-representation-validity';
