@@ -20,7 +20,7 @@ These kind of tests are mainly located inside the [language-server](https://gith
 The testing utils are located inside the `language-server` in a dedicated [test folder](https://github.com/jvalue/jayvee/tree/main/libs/language-server/src/test).  
 These utils can be imported using `@jvalue/jayvee-language-server/test` and contain the following parts:
 
-[**langium-utils.ts**](https://github.com/jvalue/jayvee/blob/main/libs/language-server/src/test/langium-utils.ts):  
+[**langium-utils.ts**](https://github.com/jvalue/jayvee/blob/main/libs/language-server/src/test/langium-utils.ts):
 This utils file contains two functions: 
 - `parseHelper` to simplify parsing the input (content of a *.jv file) and returning the corresponding `LangiumDocument`, and 
 - `validationHelper` parse and validate the created document. 
@@ -100,34 +100,23 @@ pipeline Pipeline {
 ### Existing tests
 Currently there are already tests for the following parts:
 - Language-server validation checks (located [here](https://github.com/jvalue/jayvee/tree/main/libs/language-server/src/lib/validation))
-- Language-server constraint validation (located [here](https://github.com/jvalue/jayvee/tree/dev/libs/language-server/src/lib/constraint))
-- Custom block (property) validation of the three existing extensions (std extension located [here](https://github.com/jvalue/jayvee/blob/dev/libs/extensions/std/lang/src))
-- Grammar validation tests for all official full examples from the [/example](https://github.com/jvalue/jayvee/tree/main/example) folder (located [here](https://github.com/jvalue/jayvee/blob/dev/libs/extensions/std/lang/src/example-validation.spec.ts))
-- Grammar validation tests for all block examples of the std extension (located [here](https://github.com/jvalue/jayvee/blob/dev/libs/extensions/std/lang/src/meta-inf-example-validation.spec.ts))
+- Language-server constraint validation (located [here](https://github.com/jvalue/jayvee/tree/main/libs/language-server/src/lib/constraint))
+- Custom block (property) validation of the three existing extensions (std extension located [here](https://github.com/jvalue/jayvee/blob/main/libs/extensions/std/lang/src))
+- Grammar validation tests for all official full examples from the [/example](https://github.com/jvalue/jayvee/tree/main/example) folder (located [here](https://github.com/jvalue/jayvee/blob/main/libs/extensions/std/lang/src/example-validation.spec.ts))
+- Grammar validation tests for all block examples of the std extension (located [here](https://github.com/jvalue/jayvee/blob/main/libs/extensions/std/lang/src/meta-inf-example-validation.spec.ts))
 
 ## Execution tests
-These kind of tests are mainly located inside the [interpreter](https://github.com/jvalue/jayvee/tree/main/libs/language-server), the [interpreter-lib](https://github.com/jvalue/jayvee/tree/dev/libs/interpreter-lib), the [execution lib](https://github.com/jvalue/jayvee/tree/dev/libs/execution) as well as the execution parts of each extension (for example [std/exec](https://github.com/jvalue/jayvee/tree/main/libs/extensions/std/exec)).
+These kind of tests are mainly located inside the [interpreter](https://github.com/jvalue/jayvee/tree/main/libs/language-server), the [interpreter-lib](https://github.com/jvalue/jayvee/tree/main/libs/interpreter-lib), the [execution lib](https://github.com/jvalue/jayvee/tree/main/libs/execution) as well as the execution parts of each extension (for example [std/exec](https://github.com/jvalue/jayvee/tree/main/libs/extensions/std/exec)).
 
 ### Testing utils
-The testing utils for execution tests are spread between the extensions, with the interfaces and base utils located inside the [execution lib](https://github.com/jvalue/jayvee/tree/dev/libs/execution).  
+The testing utils for execution tests are spread between the extensions, with the interfaces and base utils located inside the [execution lib](https://github.com/jvalue/jayvee/tree/main/libs/execution).  
 They can be imported using `@jvalue/jayvee-extensions/rdbms/test`, `@jvalue/jayvee-extensions/std/test` and `@jvalue/jayvee-execution/test`.
 
-[**utils.ts**](https://github.com/jvalue/jayvee/blob/dev/libs/execution/test/utils.ts):  
-At the moment this only contains two functions: 
-- `clearBlockExecutorRegistry` for clearing the registry containing all `BlockExecutor`s, and 
-- `clearConstraintExecutorRegistry` clearing the corresponding `ConstraintExecutor`s registry. 
-They are required in case the tested method initializes Jayvee itself (see [smoke test](#existing-tests-1)).
-
-[**test-logger.ts**](https://github.com/jvalue/jayvee/blob/dev/libs/execution/test/test-logger.ts):  
-This contains a subclass of the [`DefaultLogger`](https://github.com/jvalue/jayvee/blob/dev/libs/execution/src/lib/logging/default-logger.ts) used for tests which require a `Logger` implementation. The `TestLogger` contains the following tests functionality:
-- `getLogs`: retrieve the cached logs that the logger received.
-- `clearLogs`: clear the cached logs.
-
-[**block-executor-mocks.ts**](https://github.com/jvalue/jayvee/blob/dev/libs/execution/test/block-executor-mock.ts):  
+[**block-executor-mocks.ts**](https://github.com/jvalue/jayvee/blob/main/libs/execution/test/block-executor-mock.ts):  
 `BlockExecutorMock` interface for defining mocks for `AbstractBlockExecutor`. Generally only loader and executor blocks require mocks, because they interact with "the outside world" (i.e. `HttpExtractor` making http calls).  
 Due to how vastly different each `BlockExecutor` can be, this interface is very simple, containing only a `setup(...args: unknown[])` and a `restore()` method. See below for existing implementations.
 
-[**rdbms/exec/test**](https://github.com/jvalue/jayvee/tree/dev/libs/extensions/rdbms/exec/test):  
+[**rdbms/exec/test**](https://github.com/jvalue/jayvee/tree/main/libs/extensions/rdbms/exec/test):  
 Contains the implementation of `BlockExecutorMock` for `PostgresLoaderExecutor` and `SQLiteLoaderExecutor`.  
 Both of these executors are mocked using `jest.mock` to mock the corresponding libraries (`pg` and `sqlite3`)  
 **Usage:**
@@ -187,7 +176,7 @@ describe('Dummy describe', () => {
 });
 ```
 
-[**std/exec/test/mocks**](https://github.com/jvalue/jayvee/tree/dev/libs/extensions/std/exec/test):  
+[**std/exec/test/mocks**](https://github.com/jvalue/jayvee/tree/main/libs/extensions/std/exec/test):  
 Contains the implementation of `BlockExecutorMock` for `HttpExtractorExecutorMock`.  
 This implementation uses [nock](https://www.npmjs.com/package/nock) for mocking HTTP(S) responses.  
 The `setup` method is further specified requiring one parameter `registerMocks: () => Array<nock.Scope>`, which returns all used `nock.Scope` (i.e. the return value of `nock('<URL>')`), see usage below:  
@@ -251,4 +240,4 @@ describe('Dummy describe', () => {
 
 ### Existing tests
 Currently there are already tests for the following parts:
-- Smoke test for official examples (located [here](https://github.com/jvalue/jayvee/blob/dev/apps/interpreter/src/examples-smoke-test.spec.ts))
+- Smoke test for official examples (located [here](https://github.com/jvalue/jayvee/blob/main/apps/interpreter/src/examples-smoke-test.spec.ts))

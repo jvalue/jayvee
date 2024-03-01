@@ -14,22 +14,18 @@ import {
   CachedLogger,
   DebugGranularity,
   DebugTargets,
+  DefaultConstraintExtension,
   ExecutionContext,
   JayveeExecExtension,
   StackNode,
   Table,
   TableColumn,
-  constraintExecutorRegistry,
 } from '../../src';
 
 export class TestExecExtension extends JayveeExecExtension {
   getBlockExecutors(): BlockExecutorClass[] {
     return [];
   }
-}
-
-export function clearConstraintExecutorRegistry() {
-  constraintExecutorRegistry.clear();
 }
 
 export function processExitMockImplementation(code?: number) {
@@ -62,6 +58,7 @@ export function getTestExecutionContext(
   const executionContext = new ExecutionContext(
     pipeline,
     new TestExecExtension(),
+    new DefaultConstraintExtension(),
     new CachedLogger(runOptions.isDebugMode, undefined, loggerPrintLogs),
     runOptions,
     new EvaluationContext(new RuntimeParameterProvider()),

@@ -9,26 +9,22 @@ import {
 } from '@jvalue/jayvee-language-server';
 import { NodeFileSystem } from 'langium/node';
 
-import {
-  getRegisteredConstraintExecutors,
-  registerDefaultConstraintExecutors,
-} from './constraint-executor-registry';
+import { DefaultConstraintExtension } from './constraint-executor-extension';
 
-describe('default constraint executors', () => {
+describe('default constraint extension', () => {
   it('should include executors for all constraint types', async () => {
     // Create language services
     const services = createJayveeServices(NodeFileSystem).Jayvee;
     await initializeWorkspace(services);
 
-    registerDefaultConstraintExecutors();
+    const defaultConstraintExtension = new DefaultConstraintExtension();
 
     getAllBuiltinConstraintTypes(
       services.shared.workspace.LangiumDocuments,
     ).forEach((constraintType) => {
-      const matchingConstraintExecutorClass =
-        getRegisteredConstraintExecutors().find(
-          (c) => c.type === constraintType.type,
-        );
+      const matchingConstraintExecutorClass = defaultConstraintExtension
+        .getConstraintExecutors()
+        .find((c) => c.type === constraintType.type);
 
       expect(matchingConstraintExecutorClass).toBeDefined();
     });

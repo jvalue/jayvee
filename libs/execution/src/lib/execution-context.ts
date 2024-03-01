@@ -25,6 +25,7 @@ import {
 } from '@jvalue/jayvee-language-server';
 import { assertUnreachable, isReference } from 'langium';
 
+import { JayveeConstraintExtension } from './constraints';
 import {
   DebugGranularity,
   DebugTargets,
@@ -43,6 +44,7 @@ export class ExecutionContext {
   constructor(
     public readonly pipeline: PipelineDefinition,
     public readonly executionExtension: JayveeExecExtension,
+    public readonly constraintExtension: JayveeConstraintExtension,
     public readonly logger: Logger,
     public readonly runOptions: {
       isDebugMode: boolean;
