@@ -9,7 +9,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 | | |
 |---|---|
 | Feature Tag | `block-instantiation-syntax` |
-| Status | `DISCUSSION` | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED -->
+| Status | `ACCEPTED` | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED -->
 | Responsible | `@rhazn` |
 <!-- 
   Status Overview:
@@ -20,7 +20,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 ## Summary
-Following the [Design Principles](https://jvalue.github.io/jayvee/docs/dev/design-principles), Jayvee focuses on describing a goal state instead of how to get there. When creating pipelines, programmers use the pipe syntax `->` to connect previously defined `blocks`. Implicitely, the interpreter creates unnamed singleton instances of those blocks and executes them.
+Following our [Design Principles](https://jvalue.github.io/jayvee/docs/dev/design-principles), Jayvee focuses on describing a goal state instead of how to get there. When creating pipelines, programmers use the pipe syntax `->` to connect previously defined `blocks`. Implicitely, the interpreter creates unnamed singleton instances of those blocks and executes them.
 
 This implicit creation can lead to confusion between blocks and block instances. In addition, it makes it impossible to create more than one instance of a block, which will prevent the creation of more complex DAGs.
 
@@ -239,7 +239,7 @@ pipeline examplePipeline2 {
 
 ## Alternatives
 - Introduce explicit execution calls like `pipeline.execute();` or `instantiate <pipeline name>;`/`run <pipeline name>;` instead of implicitly executing pipelines
-  - Decided against because Jayvee is purely descriptive right now outside of expressions
+  - Decided against because Jayvee is purely declarative right now outside of expressions
 
 ## Possible Future Changes/Enhancements
 - After implementing [RFC0015](../0015-multi-file-jayvee/0015-multi-file-jayvee.md), reconsider disallowing block definitions in composite blocks and instead enforce only chained pipelines in composite blocks and distribute them and their block definitions using packages instead.
