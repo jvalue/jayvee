@@ -5,7 +5,7 @@
 import { internalValueToString } from '@jvalue/jayvee-language-server';
 
 import { Logger } from '../logging/logger';
-import { Workbook } from '../types';
+import { type Workbook } from '../types';
 import { FileSystem } from '../types/io-types/filesystem';
 import { BinaryFile } from '../types/io-types/filesystem-node-file-binary';
 import { TextFile } from '../types/io-types/filesystem-node-file-text';

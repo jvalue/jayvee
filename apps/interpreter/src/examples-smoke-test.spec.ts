@@ -4,11 +4,7 @@
 
 import * as path from 'path';
 
-import {
-  clearBlockExecutorRegistry,
-  clearConstraintExecutorRegistry,
-  processExitMockImplementation,
-} from '@jvalue/jayvee-execution/test';
+import { processExitMockImplementation } from '@jvalue/jayvee-execution/test';
 import {
   PostgresLoaderExecutorMock,
   SQLiteLoaderExecutorMock,
@@ -72,10 +68,6 @@ describe('jv example smoke tests', () => {
     httpExtractorMock.restore();
     postgresLoaderMock.restore();
     sqliteLoaderMock.restore();
-
-    // Clear registries
-    clearBlockExecutorRegistry();
-    clearConstraintExecutorRegistry();
   });
 
   it('should have no errors when executing cars.jv example', async () => {

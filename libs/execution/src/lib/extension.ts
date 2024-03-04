@@ -2,13 +2,54 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { strict as assert } from 'assert';
+
+import {
+  BlockDefinition,
+  isCompositeBlocktypeDefinition,
+} from '@jvalue/jayvee-language-server';
+
+import { type BlockExecutor } from './blocks';
 import { BlockExecutorClass } from './blocks/block-executor-class';
-import { registerBlockExecutor } from './blocks/block-executor-registry';
+import {
+  createCompositeBlockExecutor,
+  getInputType,
+  getOutputType,
+} from './blocks/composite-block-executor';
 
-export interface JayveeExecExtension {
-  getBlockExecutors(): BlockExecutorClass[];
-}
+export abstract class JayveeExecExtension {
+  abstract getBlockExecutors(): BlockExecutorClass[];
 
-export function useExtension(extension: JayveeExecExtension) {
-  extension.getBlockExecutors().forEach(registerBlockExecutor);
+  getExecutorForBlockType(
+    blockTypeName: string,
+  ): BlockExecutorClass | undefined {
+    return this.getBlockExecutors().find(
+      (x: BlockExecutorClass) => x.type === blockTypeName,
+    );
+  }
+
+  createBlockExecutor(block: BlockDefinition): BlockExecutor {
+    const blockType = block.type.ref;
+    assert(blockType !== undefined);
+
+    let blockExecutor = this.getExecutorForBlockType(blockType.name);
+
+    if (
+      blockExecutor === undefined &&
+      isCompositeBlocktypeDefinition(block.type.ref)
+    ) {
+      blockExecutor = createCompositeBlockExecutor(
+        getInputType(block.type.ref),
+        getOutputType(block.type.ref),
+        block,
+      );
+    }
+
+    assert(
+      blockExecutor !== undefined,
+      `No executor was registered for block type ${blockType.name}`,
+    );
+
+    return new blockExecutor();
+  }
 }

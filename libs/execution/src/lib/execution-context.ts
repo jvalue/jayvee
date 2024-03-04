@@ -25,10 +25,12 @@ import {
 } from '@jvalue/jayvee-language-server';
 import { assertUnreachable, isReference } from 'langium';
 
+import { JayveeConstraintExtension } from './constraints';
 import {
   DebugGranularity,
   DebugTargets,
 } from './debugging/debug-configuration';
+import { type JayveeExecExtension } from './extension';
 import { Logger } from './logging/logger';
 
 export type StackNode =
@@ -41,6 +43,8 @@ export class ExecutionContext {
 
   constructor(
     public readonly pipeline: PipelineDefinition,
+    public readonly executionExtension: JayveeExecExtension,
+    public readonly constraintExtension: JayveeConstraintExtension,
     public readonly logger: Logger,
     public readonly runOptions: {
       isDebugMode: boolean;

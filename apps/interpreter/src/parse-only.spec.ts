@@ -7,10 +7,6 @@ import * as path from 'path';
 import * as process from 'process';
 
 import {
-  clearBlockExecutorRegistry,
-  clearConstraintExecutorRegistry,
-} from '@jvalue/jayvee-execution/test';
-import {
   RunOptions,
   interpretModel,
   interpretString,
@@ -52,10 +48,6 @@ describe('Parse Only', () => {
     jest.spyOn(process, 'exit').mockImplementation(() => {
       throw new Error();
     });
-
-    // Reset jayvee specific stuff
-    clearBlockExecutorRegistry();
-    clearConstraintExecutorRegistry();
   });
 
   it('should exit with 0 on a valid option', async () => {

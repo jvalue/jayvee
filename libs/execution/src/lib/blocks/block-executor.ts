@@ -8,7 +8,7 @@ import { IOType, isBlockDefinition } from '@jvalue/jayvee-language-server';
 
 import { isBlockTargetedForDebugLogging } from '../debugging/debug-configuration';
 import { DebugLogVisitor } from '../debugging/debug-log-visitor';
-import { ExecutionContext } from '../execution-context';
+import { type ExecutionContext } from '../execution-context';
 import { IOTypeImplementation } from '../types/io-types/io-type-implementation';
 
 import * as R from './execution-result';

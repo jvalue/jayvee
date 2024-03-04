@@ -5,9 +5,9 @@
 import { strict as assert } from 'assert';
 
 export class Registry<C> {
-  private readonly registry = new Map<string, C>();
+  protected readonly registry = new Map<string, C>();
 
-  register(key: string, classToRegister: C) {
+  protected register(key: string, classToRegister: C) {
     assert(
       !this.registry.has(key),
       `Multiple keys "${key}" were registered, expected at most one register call per key`,
@@ -15,21 +15,21 @@ export class Registry<C> {
     this.registry.set(key, classToRegister);
   }
 
-  getAll(): C[] {
+  protected getAll(): C[] {
     return [...this.registry.values()];
   }
 
-  getAllEntries(): { key: string; value: C }[] {
+  protected getAllEntries(): { key: string; value: C }[] {
     return [...this.registry.entries()].map(([k, v]) => {
       return { key: k, value: v };
     });
   }
 
-  get(key: string): C | undefined {
+  protected get(key: string): C | undefined {
     return this.registry.get(key);
   }
 
-  clear() {
+  protected clear() {
     this.registry.clear();
   }
 }

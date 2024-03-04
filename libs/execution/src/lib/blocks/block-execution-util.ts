@@ -9,12 +9,10 @@ import {
   PipelineWrapper,
 } from '@jvalue/jayvee-language-server';
 
-import { ExecutionContext } from '../execution-context';
+import { type ExecutionContext } from '../execution-context';
 import { Logger } from '../logging/logger';
 import { IOTypeImplementation, NONE } from '../types';
 
-// eslint-disable-next-line import/no-cycle
-import { createBlockExecutor } from './block-executor-registry';
 import * as R from './execution-result';
 
 export interface ExecutionOrderItem {
@@ -94,7 +92,8 @@ export async function executeBlock(
     return R.ok(null);
   }
 
-  const blockExecutor = createBlockExecutor(block);
+  const blockExecutor =
+    executionContext.executionExtension.createBlockExecutor(block);
 
   const startTime = new Date();
 

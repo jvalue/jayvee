@@ -7,14 +7,15 @@ import { strict as assert } from 'assert';
 import * as R from '@jvalue/jayvee-execution';
 import {
   DebugGranularity,
+  DefaultConstraintExtension,
   ExecutionContext,
+  JayveeConstraintExtension,
+  JayveeExecExtension,
   Logger,
   executeBlocks,
   isDebugGranularity,
   logExecutionDuration,
   parseValueToInternalRepresentation,
-  registerDefaultConstraintExecutors,
-  useExtension as useExecutionExtension,
 } from '@jvalue/jayvee-execution';
 import { StdExecExtension } from '@jvalue/jayvee-extensions/std/exec';
 import {
@@ -98,9 +99,6 @@ export async function parseModel(
     return { model, services, loggerFactory };
   }
 
-  useStdExtension();
-  registerDefaultConstraintExecutors();
-
   services = createJayveeServices(NodeFileSystem).Jayvee;
   await initializeWorkspace(services);
   setupJayveeServices(services, options.env);
@@ -136,6 +134,8 @@ export async function interpretModel(
 
   const interpretationExitCode = await interpretJayveeModel(
     model,
+    new StdExecExtension(),
+    new DefaultConstraintExtension(),
     services.RuntimeParameterProvider,
     loggerFactory,
     {
@@ -173,12 +173,10 @@ function setupRuntimeParameterProvider(
   }
 }
 
-export function useStdExtension() {
-  useExecutionExtension(new StdExecExtension());
-}
-
 async function interpretJayveeModel(
   model: JayveeModel,
+  executionExtension: JayveeExecExtension,
+  constraintExtension: JayveeConstraintExtension,
   runtimeParameterProvider: RuntimeParameterProvider,
   loggerFactory: LoggerFactory,
   runOptions: InterpreterOptions,
@@ -186,6 +184,8 @@ async function interpretJayveeModel(
   const pipelineRuns: Promise<ExitCode>[] = model.pipelines.map((pipeline) => {
     return runPipeline(
       pipeline,
+      executionExtension,
+      constraintExtension,
       runtimeParameterProvider,
       loggerFactory,
       runOptions,
@@ -201,12 +201,16 @@ async function interpretJayveeModel(
 
 async function runPipeline(
   pipeline: PipelineDefinition,
+  executionExtension: JayveeExecExtension,
+  constraintExtension: JayveeConstraintExtension,
   runtimeParameterProvider: RuntimeParameterProvider,
   loggerFactory: LoggerFactory,
   runOptions: InterpreterOptions,
 ): Promise<ExitCode> {
   const executionContext = new ExecutionContext(
     pipeline,
+    executionExtension,
+    constraintExtension,
     loggerFactory.createLogger(),
     {
       isDebugMode: runOptions.debug,

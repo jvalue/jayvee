@@ -18,7 +18,7 @@ import { TextFileInterpreterExecutor } from './text-file-interpreter-executor';
 import { TextLineDeleterExecutor } from './text-line-deleter-executor';
 import { TextRangeSelectorExecutor } from './text-range-selector-executor';
 
-export class StdExecExtension implements JayveeExecExtension {
+export class StdExecExtension extends JayveeExecExtension {
   private readonly wrappedExtensions: JayveeExecExtension[] = [
     new TabularExecExtension(),
     new RdbmsExecExtension(),
