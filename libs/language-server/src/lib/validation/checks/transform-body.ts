@@ -7,19 +7,19 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { EvaluationContext } from '../../ast/expressions/evaluation';
+import { EvaluationContext } from '../../ast/expressions/evaluation.js';
 import {
   TransformBody,
   TransformPortDefinition,
   isTransformPortDefinition,
-} from '../../ast/generated/ast';
-import { ValidationContext } from '../validation-context';
-import { checkUniqueNames } from '../validation-util';
+} from '../../ast/generated/ast.js';
+import { ValidationContext } from '../validation-context.js';
+import { checkUniqueNames } from '../validation-util.js';
 
 import {
   extractReferenceLiterals,
   validateTransformOutputAssignment,
-} from './transform-output-assigment';
+} from './transform-output-assigment.js';
 
 export function validateTransformBody(
   transformBody: TransformBody,

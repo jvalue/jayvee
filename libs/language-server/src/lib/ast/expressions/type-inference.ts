@@ -6,7 +6,7 @@ import { strict as assert } from 'assert';
 
 import { assertUnreachable } from 'langium';
 
-import { ValidationContext } from '../../validation/validation-context';
+import { ValidationContext } from '../../validation/validation-context.js';
 import {
   CollectionLiteral,
   Expression,
@@ -34,27 +34,26 @@ import {
   isValueKeywordLiteral,
   isValueLiteral,
   isValuetypeAssignmentLiteral,
-} from '../generated/ast';
-// eslint-disable-next-line import/no-cycle
-import { getNextAstNodeContainer } from '../model-util';
+} from '../generated/ast.js';
+import { getNextAstNodeContainer } from '../model-util.js';
 import {
   AtomicValuetype,
   CollectionValuetype,
   PrimitiveValuetype,
   isAtomicValuetype,
   isPrimitiveValuetype,
-} from '../wrappers';
-import { EmptyCollection } from '../wrappers/value-type/primitive/collection/empty-collection-valuetype';
-import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-valuetypes';
-import { type Valuetype } from '../wrappers/value-type/valuetype';
-import { createValuetype } from '../wrappers/value-type/valuetype-util';
+} from '../wrappers/index.js';
+import { EmptyCollection } from '../wrappers/value-type/primitive/collection/empty-collection-valuetype.js';
+import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-valuetypes.js';
+import { createValuetype } from '../wrappers/value-type/valuetype-util.js';
+import { type Valuetype } from '../wrappers/value-type/valuetype.js';
 
 import {
   binaryOperatorRegistry,
   ternaryOperatorRegistry,
   unaryOperatorRegistry,
-} from './operator-registry';
-import { isEveryValueDefined } from './typeguards';
+} from './operator-registry.js';
+import { isEveryValueDefined } from './typeguards.js';
 
 export function inferExpressionType(
   expression: Expression | undefined,

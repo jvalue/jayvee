@@ -7,8 +7,8 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { ColumnId } from '../../ast/generated/ast';
-import { ValidationContext } from '../validation-context';
+import { ColumnId } from '../../ast/generated/ast.js';
+import { ValidationContext } from '../validation-context.js';
 
 export function validateColumnId(
   columnId: ColumnId,

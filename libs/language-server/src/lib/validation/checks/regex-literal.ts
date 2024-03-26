@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { RegexLiteral } from '../../ast/generated/ast';
-import { ValidationContext } from '../validation-context';
+import { RegexLiteral } from '../../ast/generated/ast.js';
+import { ValidationContext } from '../validation-context.js';
 
 /**
  * See https://jvalue.github.io/jayvee/docs/dev/guides/working-with-the-ast/ for why the following ESLint rule is disabled for this file.

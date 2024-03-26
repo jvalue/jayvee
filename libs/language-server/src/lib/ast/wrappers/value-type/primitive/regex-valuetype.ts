@@ -2,11 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
-// eslint-disable-next-line import/no-cycle
-import { ValuetypeVisitor } from '../valuetype';
+import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation.js';
+import { ValuetypeVisitor } from '../valuetype.js';
 
-import { PrimitiveValuetype } from './primitive-valuetype';
+import { PrimitiveValuetype } from './primitive-valuetype.js';
 
 class RegexValuetypeImpl extends PrimitiveValuetype<RegExp> {
   acceptVisitor<R>(visitor: ValuetypeVisitor<R>): R {

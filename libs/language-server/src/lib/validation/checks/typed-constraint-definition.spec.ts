@@ -10,16 +10,16 @@ import {
   ValidationContext,
   createJayveeServices,
   initializeWorkspace,
-} from '../../../lib';
+} from '../../../lib/index.js';
 import {
   ParseHelperOptions,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../test';
+} from '../../../test/index.js';
 
-import { validateTypedConstraintDefinition } from './typed-constraint-definition';
+import { validateTypedConstraintDefinition } from './typed-constraint-definition.js';
 
 describe('Validation of ConstraintDefinition (typed syntax)', () => {
   let parse: (

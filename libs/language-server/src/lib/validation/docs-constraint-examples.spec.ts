@@ -4,10 +4,10 @@
 
 import { NodeFileSystem } from 'langium/node';
 
-import { validationHelper } from '../../test/langium-utils';
-import { getAllBuiltinConstraintTypes } from '../ast';
-import { initializeWorkspace } from '../builtin-library';
-import { createJayveeServices } from '../jayvee-module';
+import { validationHelper } from '../../test/langium-utils.js';
+import { getAllBuiltinConstraintTypes } from '../ast/index.js';
+import { initializeWorkspace } from '../builtin-library/index.js';
+import { createJayveeServices } from '../jayvee-module.js';
 
 describe('Validation of docs examples of ConstraintTypes', () => {
   it('should have no validation errors', async () => {

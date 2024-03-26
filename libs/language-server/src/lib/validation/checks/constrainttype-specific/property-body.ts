@@ -7,8 +7,8 @@ import {
   PrimitiveValuetypes,
   PropertyBody,
   evaluatePropertyValue,
-} from '../../../ast';
-import { ValidationContext } from '../../validation-context';
+} from '../../../ast/index.js';
+import { ValidationContext } from '../../validation-context.js';
 
 export function checkConstraintTypeSpecificPropertyBody(
   propertyBody: PropertyBody,

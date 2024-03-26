@@ -2,13 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { createValuetype } from '../../ast';
 import {
   ValuetypeReference,
   isBuiltinBlocktypeDefinition,
   isBuiltinConstrainttypeDefinition,
-} from '../../ast/generated/ast';
-import { ValidationContext } from '../validation-context';
+} from '../../ast/generated/ast.js';
+import { createValuetype } from '../../ast/index.js';
+import { ValidationContext } from '../validation-context.js';
 
 export function validateValuetypeReference(
   valuetypeRef: ValuetypeReference,
@@ -22,14 +22,12 @@ function checkGenericsMatchDefinition(
   valuetypeRef: ValuetypeReference,
   context: ValidationContext,
 ): void {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const valuetypeDefinition = valuetypeRef.reference?.ref;
   if (valuetypeDefinition === undefined) {
     return;
   }
 
   const requiredGenerics =
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     valuetypeDefinition.genericDefinition?.generics?.length ?? 0;
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const givenGenerics = valuetypeRef?.genericRefs?.length ?? 0;

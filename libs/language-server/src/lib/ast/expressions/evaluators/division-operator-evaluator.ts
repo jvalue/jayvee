@@ -4,11 +4,10 @@
 
 import { strict as assert } from 'assert';
 
-import { ValidationContext } from '../../../validation/validation-context';
-import { BinaryExpression } from '../../generated/ast';
-// eslint-disable-next-line import/no-cycle
-import { DefaultBinaryOperatorEvaluator } from '../operator-evaluator';
-import { NUMBER_TYPEGUARD } from '../typeguards';
+import { ValidationContext } from '../../../validation/validation-context.js';
+import { BinaryExpression } from '../../generated/ast.js';
+import { DefaultBinaryOperatorEvaluator } from '../operator-evaluator.js';
+import { NUMBER_TYPEGUARD } from '../typeguards.js';
 
 export class DivisionOperatorEvaluator extends DefaultBinaryOperatorEvaluator<
   number,

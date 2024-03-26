@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { RangeLiteral } from '../../ast/generated/ast';
-import { CellRangeWrapper } from '../../ast/wrappers/cell-range-wrapper';
-import { ValidationContext } from '../validation-context';
+import { RangeLiteral } from '../../ast/generated/ast.js';
+import { CellRangeWrapper } from '../../ast/wrappers/cell-range-wrapper.js';
+import { ValidationContext } from '../validation-context.js';
 
 export function validateRangeLiteral(
   range: RangeLiteral,

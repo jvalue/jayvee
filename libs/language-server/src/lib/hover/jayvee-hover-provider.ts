@@ -15,8 +15,8 @@ import {
   isBuiltinBlocktypeDefinition,
   isBuiltinConstrainttypeDefinition,
   isPropertyAssignment,
-} from '../ast';
-import { LspDocGenerator } from '../docs/lsp-doc-generator';
+} from '../ast/index.js';
+import { LspDocGenerator } from '../docs/lsp-doc-generator.js';
 
 export class JayveeHoverProvider extends AstNodeHoverProvider {
   override getAstNodeHoverContent(

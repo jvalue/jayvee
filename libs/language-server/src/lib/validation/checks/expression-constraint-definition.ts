@@ -7,12 +7,12 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { EvaluationContext } from '../../ast/expressions/evaluation';
-import { inferExpressionType } from '../../ast/expressions/type-inference';
-import { ExpressionConstraintDefinition } from '../../ast/generated/ast';
-import { PrimitiveValuetypes } from '../../ast/wrappers/value-type/primitive/primitive-valuetypes';
-import { ValidationContext } from '../validation-context';
-import { checkExpressionSimplification } from '../validation-util';
+import { EvaluationContext } from '../../ast/expressions/evaluation.js';
+import { inferExpressionType } from '../../ast/expressions/type-inference.js';
+import { ExpressionConstraintDefinition } from '../../ast/generated/ast.js';
+import { PrimitiveValuetypes } from '../../ast/wrappers/value-type/primitive/primitive-valuetypes.js';
+import { ValidationContext } from '../validation-context.js';
+import { checkExpressionSimplification } from '../validation-util.js';
 
 export function validateExpressionConstraintDefinition(
   constraint: ExpressionConstraintDefinition,

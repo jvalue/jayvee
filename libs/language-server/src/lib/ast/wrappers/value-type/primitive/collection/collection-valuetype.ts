@@ -7,16 +7,15 @@ import { strict as assert } from 'assert';
 import {
   type AtomicInternalValueRepresentation,
   type InternalValueRepresentation,
-} from '../../../../expressions/internal-value-representation';
-import { ValuetypeReference } from '../../../../generated/ast';
-// eslint-disable-next-line import/no-cycle
-import { Valuetype, ValuetypeVisitor } from '../../valuetype';
-import { createValuetype } from '../../valuetype-util';
+} from '../../../../expressions/internal-value-representation.js';
+import { ValuetypeReference } from '../../../../generated/ast.js';
+import { createValuetype } from '../../valuetype-util.js';
+import { Valuetype, ValuetypeVisitor } from '../../valuetype.js';
 
 import {
   AbstractCollectionValuetype,
   ToArray,
-} from './abstract-collection-valuetype';
+} from './abstract-collection-valuetype.js';
 
 export class CollectionValuetype<
   I extends InternalValueRepresentation = InternalValueRepresentation,

@@ -2,8 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line import/no-cycle
-export * from './valuetype';
-export { type AtomicValuetype, isAtomicValuetype } from './atomic-valuetype';
-export * from './primitive';
-export * from './valuetype-util';
+export * from './valuetype.js';
+export { type AtomicValuetype, isAtomicValuetype } from './atomic-valuetype.js';
+export * from './primitive/index.js';
+export * from './valuetype-util.js';

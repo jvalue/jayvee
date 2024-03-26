@@ -4,22 +4,21 @@
 
 import { strict as assert } from 'assert';
 
-import { ValuetypeDefinition } from '../../../generated/ast';
+import { ValuetypeDefinition } from '../../../generated/ast.js';
 
-// eslint-disable-next-line import/no-cycle
-import { Boolean, BooleanValuetype } from './boolean-valuetype';
-import { CellRange, CellRangeValuetype } from './cell-range-valuetype';
-import { Constraint, ConstraintValuetype } from './constraint-valuetype';
-import { Decimal, DecimalValuetype } from './decimal-valuetype';
-import { Integer, IntegerValuetype } from './integer-valuetype';
-import { PrimitiveValuetype } from './primitive-valuetype';
-import { Regex, RegexValuetype } from './regex-valuetype';
-import { Text, TextValuetype } from './text-valuetype';
-import { Transform, TransformValuetype } from './transform-valuetype';
+import { Boolean, BooleanValuetype } from './boolean-valuetype.js';
+import { CellRange, CellRangeValuetype } from './cell-range-valuetype.js';
+import { Constraint, ConstraintValuetype } from './constraint-valuetype.js';
+import { Decimal, DecimalValuetype } from './decimal-valuetype.js';
+import { Integer, IntegerValuetype } from './integer-valuetype.js';
+import { PrimitiveValuetype } from './primitive-valuetype.js';
+import { Regex, RegexValuetype } from './regex-valuetype.js';
+import { Text, TextValuetype } from './text-valuetype.js';
+import { Transform, TransformValuetype } from './transform-valuetype.js';
 import {
   ValuetypeAssignment,
   ValuetypeAssignmentValuetype,
-} from './valuetype-assignment-valuetype';
+} from './valuetype-assignment-valuetype.js';
 
 export const PrimitiveValuetypes: {
   Boolean: BooleanValuetype;

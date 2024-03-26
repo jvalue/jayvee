@@ -4,13 +4,13 @@
 
 import { NodeFileSystem } from 'langium/node';
 
-import { parseHelper } from '../../../test/langium-utils';
-import { createJayveeServices } from '../../jayvee-module';
-import { RuntimeParameterProvider } from '../../services';
-import { TransformDefinition } from '../generated/ast';
+import { parseHelper } from '../../../test/langium-utils.js';
+import { createJayveeServices } from '../../jayvee-module.js';
+import { RuntimeParameterProvider } from '../../services/index.js';
+import { TransformDefinition } from '../generated/ast.js';
 
-import { EvaluationContext, evaluateExpression } from './evaluation';
-import { InternalValueRepresentation } from './internal-value-representation';
+import { EvaluationContext, evaluateExpression } from './evaluation.js';
+import { InternalValueRepresentation } from './internal-value-representation.js';
 
 export async function executeDefaultTextToTextExpression(
   expression: string,

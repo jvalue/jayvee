@@ -25,7 +25,8 @@
         "main": "libs/language-server/src/index.ts",
         "tsConfig": "libs/language-server/tsconfig.lib.json",
         "platform": "neutral",
-        "assets": ["libs/language-server/*.md"]
+        "assets": ["libs/language-server/*.md"],
+        "format": ["esm", "cjs"]
       },
       "configurations": {
         "dev": {},

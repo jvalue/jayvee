@@ -2,14 +2,14 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-export * from './expressions';
+export * from './expressions/index.js';
 
-export * from './generated/ast';
-export * from './generated/grammar';
-export * from './generated/module';
+export * from './generated/ast.js';
+export * from './generated/grammar.js';
+export * from './generated/module.js';
 
-export * from './wrappers';
+export * from './wrappers/index.js';
 
-export * from './model-util';
+export * from './model-util.js';
 
-export * from './io-type';
+export * from './io-type.js';

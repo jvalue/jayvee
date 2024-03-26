@@ -2,16 +2,16 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { BlockTypeWrapper, PipelineWrapper } from '../../ast';
-import { EvaluationContext } from '../../ast/expressions/evaluation';
+import { EvaluationContext } from '../../ast/expressions/evaluation.js';
 import {
   BlockDefinition,
   CompositeBlocktypeDefinition,
-} from '../../ast/generated/ast';
-import { ValidationContext } from '../validation-context';
+} from '../../ast/generated/ast.js';
+import { BlockTypeWrapper, PipelineWrapper } from '../../ast/index.js';
+import { ValidationContext } from '../validation-context.js';
 
-import { validateBlocktypeDefinition } from './blocktype-definition';
-import { checkMultipleBlockInputs } from './pipeline-definition';
+import { validateBlocktypeDefinition } from './blocktype-definition.js';
+import { checkMultipleBlockInputs } from './pipeline-definition.js';
 
 export function validateCompositeBlockTypeDefinition(
   blockType: CompositeBlocktypeDefinition,
@@ -94,7 +94,6 @@ function doCheckDefinedBlockIsUsed(
   block: BlockDefinition,
   context: ValidationContext,
 ): void {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (block.type === undefined || !BlockTypeWrapper.canBeWrapped(block.type)) {
     return;
   }

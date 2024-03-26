@@ -10,9 +10,9 @@ import {
   BlockDefinition,
   BlocktypePipeline,
   PipeDefinition,
-} from '../generated/ast';
+} from '../generated/ast.js';
 
-import { AstNodeWrapper } from './ast-node-wrapper';
+import { AstNodeWrapper } from './ast-node-wrapper.js';
 
 export class PipeWrapper<
   T extends PipeDefinition | BlocktypePipeline =

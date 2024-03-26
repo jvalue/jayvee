@@ -2,15 +2,15 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as assert from 'assert';
-import { readFileSync } from 'fs';
-import * as path from 'path';
+import * as assert from 'node:assert';
+import { readFileSync } from 'node:fs';
+import * as path from 'node:path';
 
 import { AstNode, LangiumDocument, ValidationAcceptor } from 'langium';
 import { WorkspaceFolder } from 'vscode-languageserver-protocol';
 
-import { JayveeServices } from '../lib';
-import { initializeWorkspace } from '../lib/builtin-library/jayvee-workspace-manager';
+import { initializeWorkspace } from '../lib/builtin-library/jayvee-workspace-manager.js';
+import { JayveeServices } from '../lib/index.js';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export const validationAcceptorMockImpl: ValidationAcceptor = () => {};

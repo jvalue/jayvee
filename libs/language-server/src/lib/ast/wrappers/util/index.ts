@@ -9,12 +9,11 @@ import {
   ReferenceableBlocktypeDefinition,
   isBuiltinConstrainttypeDefinition,
   isReferenceableBlocktypeDefinition,
-} from '../../generated/ast';
-// eslint-disable-next-line import/no-cycle
-import { BlockTypeWrapper } from '../typed-object/blocktype-wrapper';
-import { ConstraintTypeWrapper } from '../typed-object/constrainttype-wrapper';
+} from '../../generated/ast.js';
+import { BlockTypeWrapper } from '../typed-object/blocktype-wrapper.js';
+import { ConstraintTypeWrapper } from '../typed-object/constrainttype-wrapper.js';
 
-export * from './column-id-util';
+export * from './column-id-util.js';
 
 /**
  * Creates a @see TypedObjectWrapper wrapper object based on the given type reference.

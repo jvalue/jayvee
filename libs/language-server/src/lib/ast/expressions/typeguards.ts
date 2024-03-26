@@ -5,7 +5,7 @@
 import {
   type InternalValueRepresentation,
   type InternalValueRepresentationTypeguard,
-} from './internal-value-representation';
+} from './internal-value-representation.js';
 
 export const INTERNAL_VALUE_REPRESENTATION_TYPEGUARD: InternalValueRepresentationTypeguard<
   InternalValueRepresentation

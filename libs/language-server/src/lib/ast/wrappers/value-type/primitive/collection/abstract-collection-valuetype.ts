@@ -2,9 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../../../expressions/internal-value-representation';
-// eslint-disable-next-line import/no-cycle
-import { PrimitiveValuetype } from '../primitive-valuetype';
+import { type InternalValueRepresentation } from '../../../../expressions/internal-value-representation.js';
+import { PrimitiveValuetype } from '../primitive-valuetype.js';
 
 export type ToArray<I extends InternalValueRepresentation | undefined> =
   I extends InternalValueRepresentation ? I[] : [];

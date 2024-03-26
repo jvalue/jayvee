@@ -6,14 +6,14 @@ import {
   BlockTypeWrapper,
   ConstraintTypeWrapper,
   TypedObjectWrapper,
-} from '../ast';
+} from '../ast/index.js';
 
 import {
   JayveeBlockTypeDocGenerator,
   JayveeConstraintTypeDocGenerator,
   JayveePropertyDocGenerator,
-} from './jayvee-doc-generator';
-import { MarkdownBuilder } from './markdown-builder';
+} from './jayvee-doc-generator.js';
+import { MarkdownBuilder } from './markdown-builder.js';
 
 export class LspDocGenerator
   implements

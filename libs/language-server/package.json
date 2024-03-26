@@ -1,6 +1,8 @@
 {
   "name": "@jvalue/jayvee-language-server",
-  "main": "./src/index.js",
+  "type": "module",
+  "node": ">=17",
+  "exports": "./src/index.js",
   "bugs": {
     "url": "https://github.com/jvalue/jayvee/issues"
   },

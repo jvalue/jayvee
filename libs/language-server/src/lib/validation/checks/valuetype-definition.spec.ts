@@ -11,16 +11,16 @@ import {
   ValidationContext,
   ValuetypeDefinition,
   createJayveeServices,
-} from '../../../lib';
+} from '../../../lib/index.js';
 import {
   ParseHelperOptions,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../test';
+} from '../../../test/index.js';
 
-import { validateValuetypeDefinition } from './valuetype-definition';
+import { validateValuetypeDefinition } from './valuetype-definition.js';
 
 describe('Validation of ValuetypeDefinition', () => {
   let parse: (

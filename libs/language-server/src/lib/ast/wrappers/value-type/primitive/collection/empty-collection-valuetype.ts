@@ -2,12 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../../../expressions/internal-value-representation';
-import { type Valuetype, type ValuetypeVisitor } from '../../valuetype';
+import { type InternalValueRepresentation } from '../../../../expressions/internal-value-representation.js';
+import { type Valuetype, type ValuetypeVisitor } from '../../valuetype.js';
 
-// eslint-disable-next-line import/no-cycle
-import { AbstractCollectionValuetype } from './abstract-collection-valuetype';
-import { CollectionValuetype } from './collection-valuetype';
+import { AbstractCollectionValuetype } from './abstract-collection-valuetype.js';
+import { CollectionValuetype } from './collection-valuetype.js';
 
 class EmptyCollectionValuetypeImpl extends AbstractCollectionValuetype<undefined> {
   override isConvertibleTo(target: Valuetype): boolean {

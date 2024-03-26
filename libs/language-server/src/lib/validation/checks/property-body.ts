@@ -7,20 +7,20 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { TypedObjectWrapper, getTypedObjectWrapper } from '../../ast';
-import { EvaluationContext } from '../../ast/expressions/evaluation';
+import { EvaluationContext } from '../../ast/expressions/evaluation.js';
 import {
   PropertyAssignment,
   PropertyBody,
   isBlockDefinition,
   isTypedConstraintDefinition,
-} from '../../ast/generated/ast';
-import { ValidationContext } from '../validation-context';
-import { checkUniqueNames } from '../validation-util';
+} from '../../ast/generated/ast.js';
+import { TypedObjectWrapper, getTypedObjectWrapper } from '../../ast/index.js';
+import { ValidationContext } from '../validation-context.js';
+import { checkUniqueNames } from '../validation-util.js';
 
-import { checkBlocktypeSpecificPropertyBody } from './blocktype-specific/property-body';
-import { checkConstraintTypeSpecificPropertyBody } from './constrainttype-specific/property-body';
-import { validatePropertyAssignment } from './property-assignment';
+import { checkBlocktypeSpecificPropertyBody } from './blocktype-specific/property-body.js';
+import { checkConstraintTypeSpecificPropertyBody } from './constrainttype-specific/property-body.js';
+import { validatePropertyAssignment } from './property-assignment.js';
 
 export function validatePropertyBody(
   propertyBody: PropertyBody,

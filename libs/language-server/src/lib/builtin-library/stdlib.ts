@@ -2,10 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { IOType, PrimitiveValuetype } from '../ast';
-import { PrimitiveValuetypes } from '../ast/wrappers/value-type/primitive/primitive-valuetypes';
+import { IOType, PrimitiveValuetype } from '../ast/index.js';
+import { PrimitiveValuetypes } from '../ast/wrappers/value-type/primitive/primitive-valuetypes.js';
 
-import { PartialStdLib } from './generated/partial-stdlib';
+import { PartialStdLib } from './generated/partial-stdlib.js';
 
 export function getBuiltinValuetypesLib() {
   const primitiveValuetypes = Object.values(PrimitiveValuetypes).map(

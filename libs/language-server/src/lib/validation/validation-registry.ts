@@ -10,27 +10,27 @@ import {
   ValidationRegistry,
 } from 'langium';
 
-import { EvaluationContext } from '../ast';
-import { JayveeAstType } from '../ast/generated/ast';
-import type { JayveeServices } from '../jayvee-module';
-import { RuntimeParameterProvider } from '../services';
+import { JayveeAstType } from '../ast/generated/ast.js';
+import { EvaluationContext } from '../ast/index.js';
+import type { JayveeServices } from '../jayvee-module.js';
+import { RuntimeParameterProvider } from '../services/index.js';
 
-import { validateBlockDefinition } from './checks/block-definition';
-import { validateBlocktypeDefinition } from './checks/blocktype-definition';
-import { validateColumnId } from './checks/column-id';
-import { validateCompositeBlockTypeDefinition } from './checks/composite-blocktype-definition';
-import { validateExpressionConstraintDefinition } from './checks/expression-constraint-definition';
-import { validateJayveeModel } from './checks/jayvee-model';
-import { validatePipeDefinition } from './checks/pipe-definition';
-import { validatePipelineDefinition } from './checks/pipeline-definition';
-import { validatePropertyBody } from './checks/property-body';
-import { validateRangeLiteral } from './checks/range-literal';
-import { validateRegexLiteral } from './checks/regex-literal';
-import { validateTransformBody } from './checks/transform-body';
-import { validateTypedConstraintDefinition } from './checks/typed-constraint-definition';
-import { validateValuetypeDefinition } from './checks/valuetype-definition';
-import { validateValuetypeReference } from './checks/valuetype-reference';
-import { ValidationContext } from './validation-context';
+import { validateBlockDefinition } from './checks/block-definition.js';
+import { validateBlocktypeDefinition } from './checks/blocktype-definition.js';
+import { validateColumnId } from './checks/column-id.js';
+import { validateCompositeBlockTypeDefinition } from './checks/composite-blocktype-definition.js';
+import { validateExpressionConstraintDefinition } from './checks/expression-constraint-definition.js';
+import { validateJayveeModel } from './checks/jayvee-model.js';
+import { validatePipeDefinition } from './checks/pipe-definition.js';
+import { validatePipelineDefinition } from './checks/pipeline-definition.js';
+import { validatePropertyBody } from './checks/property-body.js';
+import { validateRangeLiteral } from './checks/range-literal.js';
+import { validateRegexLiteral } from './checks/regex-literal.js';
+import { validateTransformBody } from './checks/transform-body.js';
+import { validateTypedConstraintDefinition } from './checks/typed-constraint-definition.js';
+import { validateValuetypeDefinition } from './checks/valuetype-definition.js';
+import { validateValuetypeReference } from './checks/valuetype-reference.js';
+import { ValidationContext } from './validation-context.js';
 
 /**
  * Registry for validation checks.
@@ -68,7 +68,7 @@ export class JayveeValidationRegistry extends ValidationRegistry {
         this.runtimeParameterProvider,
       );
 
-      this.doRegister(type, this.wrapValidationException(wrappedCheck, this));
+      this.addEntry(type, { check: wrappedCheck, category: 'fast' }); // TODO: make sure this still works after upgrade to Langium 2.0
     }
   }
 

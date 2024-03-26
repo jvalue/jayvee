@@ -8,10 +8,10 @@ import {
   BlockDefinition,
   CompositeBlocktypeDefinition,
   PipelineDefinition,
-} from '../generated/ast';
+} from '../generated/ast.js';
 
-import { AstNodeWrapper } from './ast-node-wrapper';
-import { PipeWrapper, createWrappersFromPipeChain } from './pipe-wrapper';
+import { AstNodeWrapper } from './ast-node-wrapper.js';
+import { PipeWrapper, createWrappersFromPipeChain } from './pipe-wrapper.js';
 
 export class PipelineWrapper<
   T extends PipelineDefinition | CompositeBlocktypeDefinition,

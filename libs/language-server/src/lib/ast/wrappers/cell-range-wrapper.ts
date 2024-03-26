@@ -20,13 +20,13 @@ import {
   isColumnLiteral,
   isRangeLiteral,
   isRowLiteral,
-} from '../generated/ast';
+} from '../generated/ast.js';
 
-import { AstNodeWrapper } from './ast-node-wrapper';
+import { AstNodeWrapper } from './ast-node-wrapper.js';
 import {
   columnCharactersAsIndex,
   columnIndexAsCharacters,
-} from './util/column-id-util';
+} from './util/column-id-util.js';
 
 export const LAST_INDEX = Number.MAX_SAFE_INTEGER;
 

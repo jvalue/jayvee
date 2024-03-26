@@ -10,8 +10,8 @@ import {
   ReferenceableBlocktypeDefinition,
   createValuetype,
   evaluateExpression,
-} from '../../ast';
-import { ValidationContext } from '../validation-context';
+} from '../../ast/index.js';
+import { ValidationContext } from '../validation-context.js';
 
 export function validateBlocktypeDefinition(
   blocktype: ReferenceableBlocktypeDefinition,

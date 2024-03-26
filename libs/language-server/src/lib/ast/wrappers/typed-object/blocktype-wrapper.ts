@@ -6,18 +6,20 @@ import { strict as assert } from 'assert';
 
 import { Reference, isReference } from 'langium';
 
-import { RuntimeParameterProvider } from '../../../services';
-// eslint-disable-next-line import/no-cycle
-import { EvaluationContext, evaluateExpression } from '../../expressions';
-import { ReferenceableBlocktypeDefinition } from '../../generated/ast';
-import { IOType, getIOType } from '../../io-type';
-import { createValuetype } from '../value-type';
+import { RuntimeParameterProvider } from '../../../services/index.js';
+import {
+  EvaluationContext,
+  evaluateExpression,
+} from '../../expressions/index.js';
+import { ReferenceableBlocktypeDefinition } from '../../generated/ast.js';
+import { IOType, getIOType } from '../../io-type.js';
+import { createValuetype } from '../value-type/index.js';
 
 import {
   ExampleDoc,
   PropertySpecification,
   TypedObjectWrapper,
-} from './typed-object-wrapper';
+} from './typed-object-wrapper.js';
 
 interface BlockDocs {
   description?: string;
@@ -86,9 +88,7 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlocktypeD
     }
 
     if (
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       blocktypeDefinition.properties === undefined ||
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       blocktypeDefinition.name === undefined ||
       blocktypeDefinition.inputs[0] === undefined ||
       blocktypeDefinition.outputs[0] === undefined

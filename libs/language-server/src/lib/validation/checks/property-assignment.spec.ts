@@ -14,16 +14,16 @@ import {
   ValidationContext,
   createJayveeServices,
   getTypedObjectWrapper,
-} from '../../../lib';
+} from '../../../lib/index.js';
 import {
   ParseHelperOptions,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../test';
+} from '../../../test/index.js';
 
-import { validatePropertyAssignment } from './property-assignment';
+import { validatePropertyAssignment } from './property-assignment.js';
 
 describe('Validation of PropertyAssignment', () => {
   let parse: (

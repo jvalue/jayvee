@@ -9,8 +9,8 @@
 
 import { assertUnreachable } from 'langium';
 
-import { EvaluationContext } from '../../ast/expressions/evaluation';
-import { inferExpressionType } from '../../ast/expressions/type-inference';
+import { EvaluationContext } from '../../ast/expressions/evaluation.js';
+import { inferExpressionType } from '../../ast/expressions/type-inference.js';
 import {
   Expression,
   ReferenceLiteral,
@@ -21,10 +21,10 @@ import {
   isTernaryExpression,
   isTransformPortDefinition,
   isUnaryExpression,
-} from '../../ast/generated/ast';
-import { createValuetype } from '../../ast/wrappers/value-type/valuetype-util';
-import { ValidationContext } from '../validation-context';
-import { checkExpressionSimplification } from '../validation-util';
+} from '../../ast/generated/ast.js';
+import { createValuetype } from '../../ast/wrappers/value-type/valuetype-util.js';
+import { ValidationContext } from '../validation-context.js';
+import { checkExpressionSimplification } from '../validation-util.js';
 
 export function validateTransformOutputAssignment(
   outputAssignment: TransformOutputAssignment,

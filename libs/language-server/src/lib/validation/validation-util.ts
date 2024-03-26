@@ -18,9 +18,9 @@ import {
   isTernaryExpression,
   isUnaryExpression,
   isValueLiteral,
-} from '../ast';
+} from '../ast/index.js';
 
-import { ValidationContext } from './validation-context';
+import { ValidationContext } from './validation-context.js';
 
 export type NamedAstNode = AstNode & { name: string };
 
@@ -55,7 +55,6 @@ function groupNodesByName(
   const nodesByName = new MultiMap<string, NamedAstNode>();
 
   for (const node of nodes) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (node?.name !== undefined) {
       nodesByName.add(node.name, node);
     }

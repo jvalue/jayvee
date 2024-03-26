@@ -2,9 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line import/no-cycle
-import { DefaultUnaryOperatorEvaluator } from '../operator-evaluator';
-import { BOOLEAN_TYPEGUARD } from '../typeguards';
+import { DefaultUnaryOperatorEvaluator } from '../operator-evaluator.js';
+import { BOOLEAN_TYPEGUARD } from '../typeguards.js';
 
 export class NotOperatorEvaluator extends DefaultUnaryOperatorEvaluator<
   boolean,

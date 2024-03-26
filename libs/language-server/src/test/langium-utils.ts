@@ -15,7 +15,7 @@ import {
 import { Diagnostic } from 'vscode-languageserver';
 import { URI } from 'vscode-uri';
 
-import { initializeWorkspace } from '../lib/builtin-library/jayvee-workspace-manager';
+import { initializeWorkspace } from '../lib/builtin-library/jayvee-workspace-manager.js';
 
 export interface ParseHelperOptions extends BuildOptions {
   documentUri?: string;
@@ -57,7 +57,8 @@ export function validationHelper<T extends AstNode = AstNode>(
 ): (input: string) => Promise<ValidationResult<T>> {
   const parse = parseHelper<T>(services);
   return async (input) => {
-    const document = await parse(input, { validationChecks: 'all' });
+    const document = await parse(input, {}); // TODO: figure out how to mitigate the missing { validationChecks: 'all' } that went away with Langium 2.0
+
     return { document, diagnostics: document.diagnostics ?? [] };
   };
 }

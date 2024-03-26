@@ -6,18 +6,18 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  PropertyBody,
-  ValidationContext,
-  checkUniqueNames,
-  createJayveeServices,
-} from '..';
-import {
   ParseHelperOptions,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../test';
+} from '../../test/index.js';
+import {
+  PropertyBody,
+  ValidationContext,
+  checkUniqueNames,
+  createJayveeServices,
+} from '../index.js';
 
 describe('Validation of validation-utils', () => {
   let parse: (

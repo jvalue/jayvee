@@ -4,7 +4,7 @@
 
 import { strict as assert } from 'assert';
 
-import { BlocktypeInput, BlocktypeOutput } from './generated/ast';
+import { BlocktypeInput, BlocktypeOutput } from './generated/ast.js';
 
 export enum IOType {
   NONE = 'None',
@@ -24,7 +24,6 @@ export function getIOType(blockIO: BlocktypeInput | BlocktypeOutput): IOType {
   );
 
   assert(
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
     Object.values(IOType).some((type) => type === ioTypeName),
     `IOType ${ioTypeName} does not exist.`,
   );

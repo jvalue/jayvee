@@ -2,8 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line import/no-cycle
-import { BooleanShortCircuitOperatorEvaluator } from '../operator-evaluator';
+import { BooleanShortCircuitOperatorEvaluator } from '../operator-evaluator.js';
 
 export class OrOperatorEvaluator extends BooleanShortCircuitOperatorEvaluator {
   constructor() {

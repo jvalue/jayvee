@@ -12,7 +12,7 @@ import {
 import { WorkspaceFolder } from 'vscode-languageserver';
 import { URI } from 'vscode-uri';
 
-import { getStdLib } from './stdlib';
+import { getStdLib } from './stdlib.js';
 
 export class JayveeWorkspaceManager extends DefaultWorkspaceManager {
   private documentFactory: LangiumDocumentFactory;

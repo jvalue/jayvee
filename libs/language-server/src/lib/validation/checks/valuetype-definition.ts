@@ -12,6 +12,10 @@ import { strict as assert } from 'assert';
 import { assertUnreachable } from 'langium';
 
 import {
+  ValuetypeDefinition,
+  ValuetypeGenericDefinition,
+} from '../../ast/generated/ast.js';
+import {
   CollectionLiteral,
   CollectionValuetype,
   ConstraintDefinition,
@@ -24,12 +28,8 @@ import {
   inferExpressionType,
   isExpressionConstraintDefinition,
   isTypedConstraintDefinition,
-} from '../../ast';
-import {
-  ValuetypeDefinition,
-  ValuetypeGenericDefinition,
-} from '../../ast/generated/ast';
-import { ValidationContext } from '../validation-context';
+} from '../../ast/index.js';
+import { ValidationContext } from '../validation-context.js';
 
 export function validateValuetypeDefinition(
   valuetype: ValuetypeDefinition,

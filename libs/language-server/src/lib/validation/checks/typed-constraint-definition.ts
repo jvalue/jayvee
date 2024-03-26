@@ -7,9 +7,9 @@
  * See https://jvalue.github.io/jayvee/docs/dev/guides/working-with-the-ast/ for why the following ESLint rule is disabled for this file.
  */
 
-import { TypedConstraintDefinition } from '../../ast/generated/ast';
-import { ConstraintTypeWrapper } from '../../ast/wrappers/typed-object/constrainttype-wrapper';
-import { ValidationContext } from '../validation-context';
+import { TypedConstraintDefinition } from '../../ast/generated/ast.js';
+import { ConstraintTypeWrapper } from '../../ast/wrappers/typed-object/constrainttype-wrapper.js';
+import { ValidationContext } from '../validation-context.js';
 
 export function validateTypedConstraintDefinition(
   constraint: TypedConstraintDefinition,

@@ -6,22 +6,22 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
+  ParseHelperOptions,
+  expectNoParserAndLexerErrors,
+  parseHelper,
+  readJvTestAssetHelper,
+  validationAcceptorMockImpl,
+} from '../../../../test/index.js';
+import {
   EvaluationContext,
   PropertyBody,
   RuntimeParameterProvider,
   ValidationContext,
   createJayveeServices,
   getTypedObjectWrapper,
-} from '../../..';
-import {
-  ParseHelperOptions,
-  expectNoParserAndLexerErrors,
-  parseHelper,
-  readJvTestAssetHelper,
-  validationAcceptorMockImpl,
-} from '../../../../test';
+} from '../../../index.js';
 
-import { checkConstraintTypeSpecificPropertyBody } from './property-body';
+import { checkConstraintTypeSpecificPropertyBody } from './property-body.js';
 
 describe('Validation of constraint type specific property bodies', () => {
   let parse: (

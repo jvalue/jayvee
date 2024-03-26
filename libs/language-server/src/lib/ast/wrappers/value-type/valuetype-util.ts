@@ -9,14 +9,12 @@ import {
   ValuetypeReference,
   isValuetypeDefinition,
   isValuetypeReference,
-} from '../../generated/ast';
+} from '../../generated/ast.js';
 
-// eslint-disable-next-line import/no-cycle
-import { AtomicValuetype } from './atomic-valuetype';
-// eslint-disable-next-line import/no-cycle
-import { createPrimitiveValuetype } from './primitive';
-import { createCollectionValuetype } from './primitive/collection/collection-valuetype';
-import { Valuetype } from './valuetype';
+import { AtomicValuetype } from './atomic-valuetype.js';
+import { createCollectionValuetype } from './primitive/collection/collection-valuetype.js';
+import { createPrimitiveValuetype } from './primitive/index.js';
+import { Valuetype } from './valuetype.js';
 
 /**
  * Returns the matching valuetype instance for a given valuetype keyword or definition.

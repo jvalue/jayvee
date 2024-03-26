@@ -2,11 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../expressions/internal-value-representation';
-import { ValuetypeDefinition } from '../../generated/ast';
+import { type InternalValueRepresentation } from '../../expressions/internal-value-representation.js';
+import { ValuetypeDefinition } from '../../generated/ast.js';
 
-// eslint-disable-next-line import/no-cycle
-import { AtomicValuetype } from './atomic-valuetype';
+import { AtomicValuetype } from './atomic-valuetype.js';
 import {
   type BooleanValuetype,
   type CellRangeValuetype,
@@ -19,7 +18,7 @@ import {
   type TextValuetype,
   type TransformValuetype,
   type ValuetypeAssignmentValuetype,
-} from './primitive';
+} from './primitive/index.js';
 
 export type ValuetypeAstNode = ValuetypeDefinition;
 

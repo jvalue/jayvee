@@ -13,9 +13,9 @@ import {
   internalValueToString,
   isColumnWrapper,
   isRowWrapper,
-} from '../../../ast';
-import { ValidationContext } from '../../validation-context';
-import { checkUniqueNames } from '../../validation-util';
+} from '../../../ast/index.js';
+import { ValidationContext } from '../../validation-context.js';
+import { checkUniqueNames } from '../../validation-util.js';
 
 export function checkBlocktypeSpecificProperties(
   property: PropertyAssignment,

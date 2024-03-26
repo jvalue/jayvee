@@ -2,5 +2,5 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-export { getStdLib } from './stdlib';
-export * from './jayvee-workspace-manager';
+export { getStdLib } from './stdlib.js';
+export * from './jayvee-workspace-manager.js';

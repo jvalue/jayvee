@@ -4,20 +4,21 @@
 
 import { strict as assert } from 'assert';
 
-// eslint-disable-next-line import/no-cycle
 import {
   EvaluationContext,
   evaluateExpression,
-} from '../../expressions/evaluation';
-import { type InternalValueRepresentation } from '../../expressions/internal-value-representation';
-import { ConstraintDefinition, ValuetypeDefinition } from '../../generated/ast';
-import { AstNodeWrapper } from '../ast-node-wrapper';
+} from '../../expressions/evaluation.js';
+import { type InternalValueRepresentation } from '../../expressions/internal-value-representation.js';
+import {
+  ConstraintDefinition,
+  ValuetypeDefinition,
+} from '../../generated/ast.js';
+import { AstNodeWrapper } from '../ast-node-wrapper.js';
 
-// eslint-disable-next-line import/no-cycle
-import { CollectionValuetype } from './primitive';
-import { PrimitiveValuetypes } from './primitive/primitive-valuetypes';
-import { AbstractValuetype, Valuetype, ValuetypeVisitor } from './valuetype';
-import { createValuetype } from './valuetype-util';
+import { CollectionValuetype } from './primitive/index.js';
+import { PrimitiveValuetypes } from './primitive/primitive-valuetypes.js';
+import { createValuetype } from './valuetype-util.js';
+import { AbstractValuetype, Valuetype, ValuetypeVisitor } from './valuetype.js';
 
 export class AtomicValuetype
   extends AbstractValuetype<InternalValueRepresentation>

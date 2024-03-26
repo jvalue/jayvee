@@ -6,21 +6,21 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  BuiltinBlocktypeDefinition,
-  EvaluationContext,
-  RuntimeParameterProvider,
-  ValidationContext,
-  createJayveeServices,
-} from '../..';
-import {
   ParseHelperOptions,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../test';
+} from '../../../test/index.js';
+import {
+  BuiltinBlocktypeDefinition,
+  EvaluationContext,
+  RuntimeParameterProvider,
+  ValidationContext,
+  createJayveeServices,
+} from '../../index.js';
 
-import { validateBlocktypeDefinition } from './blocktype-definition';
+import { validateBlocktypeDefinition } from './blocktype-definition.js';
 
 describe('Validation of BuiltinBlocktypeDefinition', () => {
   let parse: (

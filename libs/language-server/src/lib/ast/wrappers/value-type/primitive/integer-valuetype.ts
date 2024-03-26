@@ -2,12 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
-// eslint-disable-next-line import/no-cycle
-import { Valuetype, ValuetypeVisitor } from '../valuetype';
+import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation.js';
+import { Valuetype, ValuetypeVisitor } from '../valuetype.js';
 
-import { Decimal } from './decimal-valuetype';
-import { PrimitiveValuetype } from './primitive-valuetype';
+import { Decimal } from './decimal-valuetype.js';
+import { PrimitiveValuetype } from './primitive-valuetype.js';
 
 class IntegerValuetypeImpl extends PrimitiveValuetype<number> {
   override isConvertibleTo(target: Valuetype): boolean {

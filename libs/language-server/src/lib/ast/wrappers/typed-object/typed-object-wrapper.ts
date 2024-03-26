@@ -4,13 +4,12 @@
 
 import { AstNode } from 'langium';
 
-import { ValidationContext } from '../../../validation/validation-context';
-// eslint-disable-next-line import/no-cycle
-import { EvaluationContext } from '../../expressions/evaluation';
-import { InternalValueRepresentation } from '../../expressions/internal-value-representation';
-import { PropertyAssignment, PropertyBody } from '../../generated/ast';
-import { AstNodeWrapper } from '../ast-node-wrapper';
-import { Valuetype } from '../value-type';
+import { ValidationContext } from '../../../validation/validation-context.js';
+import { EvaluationContext } from '../../expressions/evaluation.js';
+import { InternalValueRepresentation } from '../../expressions/internal-value-representation.js';
+import { PropertyAssignment, PropertyBody } from '../../generated/ast.js';
+import { AstNodeWrapper } from '../ast-node-wrapper.js';
+import { Valuetype } from '../value-type/index.js';
 
 export interface PropertySpecification<
   I extends InternalValueRepresentation = InternalValueRepresentation,

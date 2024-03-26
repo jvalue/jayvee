@@ -2,13 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line import/no-cycle
 export {
   CollectionValuetype,
   isCollectionValuetype,
-} from './collection-valuetype';
+} from './collection-valuetype.js';
 
 export {
   type EmptyCollectionValuetype,
   isEmptyCollectionValuetype,
-} from './empty-collection-valuetype';
+} from './empty-collection-valuetype.js';

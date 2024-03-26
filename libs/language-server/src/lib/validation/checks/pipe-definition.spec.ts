@@ -9,16 +9,16 @@ import {
   PipeDefinition,
   ValidationContext,
   createJayveeServices,
-} from '../../../lib';
+} from '../../../lib/index.js';
 import {
   ParseHelperOptions,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../test';
+} from '../../../test/index.js';
 
-import { validatePipeDefinition } from './pipe-definition';
+import { validatePipeDefinition } from './pipe-definition.js';
 
 describe('Validation of PipeDefinition', () => {
   let parse: (

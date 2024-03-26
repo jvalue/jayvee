@@ -17,11 +17,6 @@ import {
 import { CompletionItemKind } from 'vscode-languageserver';
 
 import {
-  TypedObjectWrapper,
-  createValuetype,
-  getTypedObjectWrapper,
-} from '../ast';
-import {
   BlockDefinition,
   ConstraintDefinition,
   PropertyAssignment,
@@ -32,12 +27,17 @@ import {
   isJayveeModel,
   isPropertyAssignment,
   isPropertyBody,
-} from '../ast/generated/ast';
+} from '../ast/generated/ast.js';
+import {
+  TypedObjectWrapper,
+  createValuetype,
+  getTypedObjectWrapper,
+} from '../ast/index.js';
 import {
   getAllBuiltinBlocktypes,
   getAllBuiltinConstraintTypes,
-} from '../ast/model-util';
-import { LspDocGenerator } from '../docs/lsp-doc-generator';
+} from '../ast/model-util.js';
+import { LspDocGenerator } from '../docs/lsp-doc-generator.js';
 
 const RIGHT_ARROW_SYMBOL = '\u{2192}';
 

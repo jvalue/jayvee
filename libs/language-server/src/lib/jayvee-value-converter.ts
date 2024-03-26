@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { CstNode, DefaultValueConverter, ValueType } from 'langium';
-import { AbstractRule } from 'langium/lib/grammar/generated/ast';
+import { AbstractRule } from 'node_modules/langium/lib/grammar/generated/ast.js'; // TODO: wtf, why is this happening
 
 export class JayveeValueConverter extends DefaultValueConverter {
   protected override runConverter(

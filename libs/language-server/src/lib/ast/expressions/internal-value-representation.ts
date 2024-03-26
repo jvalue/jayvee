@@ -11,9 +11,8 @@ import {
   isConstraintDefinition,
   isTransformDefinition,
   isValuetypeAssignment,
-} from '../generated/ast';
-// eslint-disable-next-line import/no-cycle
-import { CellRangeWrapper } from '../wrappers';
+} from '../generated/ast.js';
+import { CellRangeWrapper } from '../wrappers/index.js';
 
 export type InternalValueRepresentation =
   | AtomicInternalValueRepresentation

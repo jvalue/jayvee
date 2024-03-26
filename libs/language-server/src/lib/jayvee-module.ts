@@ -17,13 +17,13 @@ import {
 import {
   JayveeGeneratedModule,
   JayveeGeneratedSharedModule,
-} from './ast/generated/module';
-import { JayveeWorkspaceManager } from './builtin-library/jayvee-workspace-manager';
-import { JayveeCompletionProvider } from './completion/jayvee-completion-provider';
-import { JayveeHoverProvider } from './hover/jayvee-hover-provider';
-import { JayveeValueConverter } from './jayvee-value-converter';
-import { RuntimeParameterProvider } from './services/runtime-parameter-provider';
-import { JayveeValidationRegistry } from './validation/validation-registry';
+} from './ast/generated/module.js';
+import { JayveeWorkspaceManager } from './builtin-library/jayvee-workspace-manager.js';
+import { JayveeCompletionProvider } from './completion/jayvee-completion-provider.js';
+import { JayveeHoverProvider } from './hover/jayvee-hover-provider.js';
+import { JayveeValueConverter } from './jayvee-value-converter.js';
+import { RuntimeParameterProvider } from './services/runtime-parameter-provider.js';
+import { JayveeValidationRegistry } from './validation/validation-registry.js';
 
 /**
  * Declaration of custom services - add your own service classes here.

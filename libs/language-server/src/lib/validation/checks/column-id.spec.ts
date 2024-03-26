@@ -9,16 +9,16 @@ import {
   ColumnId,
   ValidationContext,
   createJayveeServices,
-} from '../../../lib';
+} from '../../../lib/index.js';
 import {
   ParseHelperOptions,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../test';
+} from '../../../test/index.js';
 
-import { validateColumnId } from './column-id';
+import { validateColumnId } from './column-id.js';
 
 describe('Validation of ColumnId', () => {
   let parse: (

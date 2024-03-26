@@ -9,16 +9,16 @@ import {
   RangeLiteral,
   ValidationContext,
   createJayveeServices,
-} from '../../../lib';
+} from '../../../lib/index.js';
 import {
   ParseHelperOptions,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../test';
+} from '../../../test/index.js';
 
-import { validateRangeLiteral } from './range-literal';
+import { validateRangeLiteral } from './range-literal.js';
 
 describe('Validation of RangeLiteral', () => {
   let parse: (

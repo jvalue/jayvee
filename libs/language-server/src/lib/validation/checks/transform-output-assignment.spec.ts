@@ -11,16 +11,16 @@ import {
   TransformOutputAssignment,
   ValidationContext,
   createJayveeServices,
-} from '../../../lib';
+} from '../../../lib/index.js';
 import {
   ParseHelperOptions,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../test';
+} from '../../../test/index.js';
 
-import { validateTransformOutputAssignment } from './transform-output-assigment';
+import { validateTransformOutputAssignment } from './transform-output-assigment.js';
 
 describe('Validation of TransformOutputAssignment', () => {
   let parse: (

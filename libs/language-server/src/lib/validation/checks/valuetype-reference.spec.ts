@@ -8,20 +8,20 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  ValidationContext,
-  ValuetypeDefinition,
-  ValuetypeReference,
-  createJayveeServices,
-} from '../..';
-import {
   ParseHelperOptions,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../test';
+} from '../../../test/index.js';
+import {
+  ValidationContext,
+  ValuetypeDefinition,
+  ValuetypeReference,
+  createJayveeServices,
+} from '../../index.js';
 
-import { validateValuetypeReference } from './valuetype-reference';
+import { validateValuetypeReference } from './valuetype-reference.js';
 
 describe('Validation of ValuetypeReference', () => {
   let parse: (

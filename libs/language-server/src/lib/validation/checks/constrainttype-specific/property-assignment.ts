@@ -8,8 +8,8 @@ import {
   PropertyAssignment,
   PropertySpecification,
   evaluatePropertyValue,
-} from '../../../ast';
-import { ValidationContext } from '../../validation-context';
+} from '../../../ast/index.js';
+import { ValidationContext } from '../../validation-context.js';
 
 export function checkConstraintTypeSpecificProperties(
   property: PropertyAssignment,

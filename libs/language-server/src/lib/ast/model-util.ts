@@ -12,9 +12,8 @@ import {
   UnaryExpression,
   isBuiltinBlocktypeDefinition,
   isJayveeModel,
-} from './generated/ast';
-// eslint-disable-next-line import/no-cycle
-import { BlockTypeWrapper, ConstraintTypeWrapper } from './wrappers';
+} from './generated/ast.js';
+import { BlockTypeWrapper, ConstraintTypeWrapper } from './wrappers/index.js';
 
 export type UnaryExpressionOperator = UnaryExpression['operator'];
 export type BinaryExpressionOperator = BinaryExpression['operator'];

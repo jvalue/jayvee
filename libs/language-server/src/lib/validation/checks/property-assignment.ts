@@ -8,20 +8,20 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
 import {
+  PropertyAssignment,
+  isBlocktypeProperty,
+  isRuntimeParameterLiteral,
+} from '../../ast/generated/ast.js';
+import {
   EvaluationContext,
   PropertySpecification,
   TypedObjectWrapper,
   inferExpressionType,
-} from '../../ast';
-import {
-  PropertyAssignment,
-  isBlocktypeProperty,
-  isRuntimeParameterLiteral,
-} from '../../ast/generated/ast';
-import { ValidationContext } from '../validation-context';
-import { checkExpressionSimplification } from '../validation-util';
+} from '../../ast/index.js';
+import { ValidationContext } from '../validation-context.js';
+import { checkExpressionSimplification } from '../validation-util.js';
 
-import { checkBlocktypeSpecificProperties } from './blocktype-specific/property-assignment';
+import { checkBlocktypeSpecificProperties } from './blocktype-specific/property-assignment.js';
 
 export function validatePropertyAssignment(
   property: PropertyAssignment,

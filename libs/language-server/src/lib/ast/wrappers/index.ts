@@ -2,14 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line import/no-cycle
-export * from './util';
-export * from './value-type';
+export * from './util/index.js';
+export * from './value-type/index.js';
 
-export * from './ast-node-wrapper';
-export * from './cell-range-wrapper';
+export * from './ast-node-wrapper.js';
+export * from './cell-range-wrapper.js';
 
-export * from './typed-object';
+export * from './typed-object/index.js';
 
-export * from './pipe-wrapper';
-export * from './pipeline-wrapper';
+export * from './pipe-wrapper.js';
+export * from './pipeline-wrapper.js';

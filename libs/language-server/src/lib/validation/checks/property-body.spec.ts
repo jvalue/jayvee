@@ -11,16 +11,16 @@ import {
   RuntimeParameterProvider,
   ValidationContext,
   createJayveeServices,
-} from '../../../lib';
+} from '../../../lib/index.js';
 import {
   ParseHelperOptions,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../test';
+} from '../../../test/index.js';
 
-import { validatePropertyBody } from './property-body';
+import { validatePropertyBody } from './property-body.js';
 
 describe('Validation PropertyBody', () => {
   let parse: (

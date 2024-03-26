@@ -11,16 +11,16 @@ import {
   TransformBody,
   ValidationContext,
   createJayveeServices,
-} from '../../../lib';
+} from '../../../lib/index.js';
 import {
   ParseHelperOptions,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../test';
+} from '../../../test/index.js';
 
-import { validateTransformBody } from './transform-body';
+import { validateTransformBody } from './transform-body.js';
 
 describe('Validation of TransformBody', () => {
   let parse: (

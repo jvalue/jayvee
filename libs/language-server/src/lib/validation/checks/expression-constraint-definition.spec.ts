@@ -11,16 +11,16 @@ import {
   RuntimeParameterProvider,
   ValidationContext,
   createJayveeServices,
-} from '../../../lib';
+} from '../../../lib/index.js';
 import {
   ParseHelperOptions,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../test';
+} from '../../../test/index.js';
 
-import { validateExpressionConstraintDefinition } from './expression-constraint-definition';
+import { validateExpressionConstraintDefinition } from './expression-constraint-definition.js';
 
 describe('Validation of ConstraintDefinition (expression syntax)', () => {
   let parse: (

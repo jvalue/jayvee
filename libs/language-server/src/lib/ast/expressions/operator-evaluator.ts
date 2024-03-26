@@ -4,28 +4,27 @@
 
 import { strict as assert } from 'assert';
 
-import { ValidationContext } from '../../validation/validation-context';
+import { ValidationContext } from '../../validation/validation-context.js';
 import {
   BinaryExpression,
   TernaryExpression,
   UnaryExpression,
-} from '../generated/ast';
-// eslint-disable-next-line import/no-cycle
+} from '../generated/ast.js';
 import {
   BinaryExpressionOperator,
   TernaryExpressionOperator,
   UnaryExpressionOperator,
-} from '../model-util';
+} from '../model-util.js';
 
 import {
   EvaluationContext,
   EvaluationStrategy,
   evaluateExpression,
-} from './evaluation';
+} from './evaluation.js';
 import {
   InternalValueRepresentation,
   InternalValueRepresentationTypeguard,
-} from './internal-value-representation';
+} from './internal-value-representation.js';
 
 export interface OperatorEvaluator<
   E extends UnaryExpression | BinaryExpression | TernaryExpression,

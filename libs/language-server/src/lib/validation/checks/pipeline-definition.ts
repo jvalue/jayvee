@@ -2,14 +2,18 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { BlockTypeWrapper, PipeWrapper, PipelineWrapper } from '../../ast';
 import {
   BlockDefinition,
   CompositeBlocktypeDefinition,
   PipelineDefinition,
-} from '../../ast/generated/ast';
-import { ValidationContext } from '../validation-context';
-import { checkUniqueNames } from '../validation-util';
+} from '../../ast/generated/ast.js';
+import {
+  BlockTypeWrapper,
+  PipeWrapper,
+  PipelineWrapper,
+} from '../../ast/index.js';
+import { ValidationContext } from '../validation-context.js';
+import { checkUniqueNames } from '../validation-util.js';
 
 export function validatePipelineDefinition(
   pipeline: PipelineDefinition,
@@ -143,7 +147,6 @@ function doCheckDefinedBlockIsUsed(
   block: BlockDefinition,
   context: ValidationContext,
 ): void {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (block.type === undefined || !BlockTypeWrapper.canBeWrapped(block.type)) {
     return;
   }

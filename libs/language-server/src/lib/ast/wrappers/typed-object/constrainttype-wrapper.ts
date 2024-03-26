@@ -6,20 +6,19 @@ import { strict as assert } from 'assert';
 
 import { Reference, isReference } from 'langium';
 
-import { RuntimeParameterProvider } from '../../../services';
-// eslint-disable-next-line import/no-cycle
+import { RuntimeParameterProvider } from '../../../services/index.js';
 import {
   EvaluationContext,
   evaluateExpression,
-} from '../../expressions/evaluation';
-import { BuiltinConstrainttypeDefinition } from '../../generated/ast';
-import { Valuetype, createValuetype } from '../value-type';
+} from '../../expressions/evaluation.js';
+import { BuiltinConstrainttypeDefinition } from '../../generated/ast.js';
+import { Valuetype, createValuetype } from '../value-type/index.js';
 
 import {
   ExampleDoc,
   PropertySpecification,
   TypedObjectWrapper,
-} from './typed-object-wrapper';
+} from './typed-object-wrapper.js';
 
 interface ConstraintDocs {
   description?: string;
@@ -82,11 +81,8 @@ export class ConstraintTypeWrapper extends TypedObjectWrapper<BuiltinConstraintt
     }
 
     if (
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       constraintTypeDefinition.properties === undefined ||
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       constraintTypeDefinition.name === undefined ||
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       constraintTypeDefinition.valuetype === undefined
     ) {
       return false;

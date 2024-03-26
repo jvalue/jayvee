@@ -6,21 +6,21 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  CompositeBlocktypeDefinition,
-  EvaluationContext,
-  RuntimeParameterProvider,
-  ValidationContext,
-  createJayveeServices,
-} from '../..';
-import {
   ParseHelperOptions,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../test';
+} from '../../../test/index.js';
+import {
+  CompositeBlocktypeDefinition,
+  EvaluationContext,
+  RuntimeParameterProvider,
+  ValidationContext,
+  createJayveeServices,
+} from '../../index.js';
 
-import { validateCompositeBlockTypeDefinition } from './composite-blocktype-definition';
+import { validateCompositeBlockTypeDefinition } from './composite-blocktype-definition.js';
 
 describe('Validation of CompositeBlocktypeDefinition', () => {
   let parse: (

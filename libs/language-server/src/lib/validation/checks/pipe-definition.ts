@@ -7,10 +7,10 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { PipeDefinition } from '../../ast/generated/ast';
-import { createWrappersFromPipeChain } from '../../ast/wrappers/pipe-wrapper';
-import { BlockTypeWrapper } from '../../ast/wrappers/typed-object/blocktype-wrapper';
-import { ValidationContext } from '../validation-context';
+import { PipeDefinition } from '../../ast/generated/ast.js';
+import { createWrappersFromPipeChain } from '../../ast/wrappers/pipe-wrapper.js';
+import { BlockTypeWrapper } from '../../ast/wrappers/typed-object/blocktype-wrapper.js';
+import { ValidationContext } from '../validation-context.js';
 
 export function validatePipeDefinition(
   pipe: PipeDefinition,

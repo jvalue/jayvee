@@ -6,8 +6,8 @@ import { strict as assert } from 'assert';
 
 import { assertUnreachable } from 'langium';
 
-import { RuntimeParameterProvider } from '../../services';
-import { ValidationContext } from '../../validation/validation-context';
+import { RuntimeParameterProvider } from '../../services/index.js';
+import { ValidationContext } from '../../validation/validation-context.js';
 import {
   Expression,
   FreeVariableLiteral,
@@ -32,20 +32,18 @@ import {
   isUnaryExpression,
   isValueKeywordLiteral,
   isValueLiteral,
-} from '../generated/ast';
-import { CellRangeWrapper } from '../wrappers/cell-range-wrapper';
-// eslint-disable-next-line import/no-cycle
-import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-valuetypes';
-import { type Valuetype } from '../wrappers/value-type/valuetype';
+} from '../generated/ast.js';
+import { CellRangeWrapper } from '../wrappers/cell-range-wrapper.js';
+import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-valuetypes.js';
+import { type Valuetype } from '../wrappers/value-type/valuetype.js';
 
-import { type InternalValueRepresentation } from './internal-value-representation';
-// eslint-disable-next-line import/no-cycle
+import { type InternalValueRepresentation } from './internal-value-representation.js';
 import {
   binaryOperatorRegistry,
   ternaryOperatorRegistry,
   unaryOperatorRegistry,
-} from './operator-registry';
-import { isEveryValueDefined } from './typeguards';
+} from './operator-registry.js';
+import { isEveryValueDefined } from './typeguards.js';
 
 export enum EvaluationStrategy {
   EXHAUSTIVE,
