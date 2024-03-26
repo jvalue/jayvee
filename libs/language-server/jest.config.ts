@@ -14,6 +14,7 @@ export default {
       },
     ],
   },
+  transformIgnorePatterns: ['node_modules/(ng-dynamic)'],
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../coverage/libs/language-server',
 };
