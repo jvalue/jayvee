@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { strict as assert } from 'assert';
-import * as zlib from 'node:zlib';
 import * as path from 'path';
+import { gunzipSync } from 'zlib';
 
 import * as R from '@jvalue/jayvee-execution';
 import {
@@ -69,7 +69,7 @@ export class ArchiveInterpreterExecutor extends AbstractBlockExecutor<
     context.logger.logDebug(`Loading gz file from binary content`);
     try {
       const fs = new InMemoryFileSystem();
-      const archivedObject = zlib.gunzipSync(archiveFile.content);
+      const archivedObject = gunzipSync(archiveFile.content);
 
       const extNameArchive = path.extname(archiveFile.name);
 
@@ -97,9 +97,8 @@ export class ArchiveInterpreterExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<FileSystem>> {
     context.logger.logDebug(`Loading zip file from binary content`);
     try {
-      const jszip = JSZip();
       const fs = new InMemoryFileSystem();
-      const archivedObjects = await jszip.loadAsync(archiveFile.content);
+      const archivedObjects = await JSZip.loadAsync(archiveFile.content);
       for (const [relPath, archivedObject] of Object.entries(
         archivedObjects.files,
       )) {

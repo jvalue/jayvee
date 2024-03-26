@@ -5,12 +5,13 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nx/js:tsc",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/extensions/tabular/exec",
         "main": "libs/extensions/tabular/exec/src/index.ts",
         "tsConfig": "libs/extensions/tabular/exec/tsconfig.lib.json",
+        "platform": "neutral",
         "assets": ["libs/extensions/tabular/exec/*.md"]
       }
     },

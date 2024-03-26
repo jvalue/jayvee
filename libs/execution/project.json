@@ -5,12 +5,13 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nx/js:tsc",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/execution",
         "main": "libs/execution/src/index.ts",
         "tsConfig": "libs/execution/tsconfig.lib.json",
+        "platform": "neutral",
         "assets": ["libs/execution/*.md"]
       }
     },

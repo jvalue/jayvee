@@ -18,12 +18,14 @@
     },
     "build": {
       "dependsOn": ["generate"],
-      "executor": "@nx/js:tsc",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/language-server",
         "main": "libs/language-server/src/index.ts",
-        "tsConfig": "libs/language-server/tsconfig.lib.json"
+        "tsConfig": "libs/language-server/tsconfig.lib.json",
+        "platform": "neutral",
+        "assets": ["libs/language-server/*.md"]
       },
       "configurations": {
         "dev": {},

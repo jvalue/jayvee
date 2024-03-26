@@ -14,7 +14,7 @@ import {
 
 import { StandardLibraryFileSystemProvider } from './standard-library-file-system-provider';
 
-let client: LanguageClient;
+let client: LanguageClient | undefined;
 
 // This function is called when the extension is activated.
 export function activate(context: vscode.ExtensionContext): void {
@@ -24,7 +24,10 @@ export function activate(context: vscode.ExtensionContext): void {
 
 // This function is called when the extension is deactivated.
 export function deactivate(): Thenable<void> | undefined {
-  return client.stop();
+  if (client) {
+    return client.stop();
+  }
+  return undefined;
 }
 
 function startLanguageClient(context: vscode.ExtensionContext): LanguageClient {

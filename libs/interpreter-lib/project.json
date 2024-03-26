@@ -5,13 +5,13 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nx/js:tsc",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "external": "none",
         "outputPath": "dist/libs/interpreter-lib",
         "main": "libs/interpreter-lib/src/index.ts",
         "tsConfig": "libs/interpreter-lib/tsconfig.lib.json",
+        "platform": "node",
         "assets": ["libs/interpreter-lib/*.md"]
       }
     },

@@ -5,12 +5,13 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nx/js:tsc",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/extensions/rdbms/exec",
         "main": "libs/extensions/rdbms/exec/src/index.ts",
         "tsConfig": "libs/extensions/rdbms/exec/tsconfig.lib.json",
+        "platform": "neutral",
         "assets": ["libs/extensions/rdbms/exec/*.md"]
       }
     },
