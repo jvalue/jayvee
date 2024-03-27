@@ -16,6 +16,10 @@
         "external": ["vscode"],
         "platform": "node",
         "format": ["cjs"],
+        "outExtension": {
+          ".js": ".cjs"
+        },
+        "loader": { ".ts": "ts" },
         "assets": [
           {
             "input": "apps/vs-code-extension/assets",

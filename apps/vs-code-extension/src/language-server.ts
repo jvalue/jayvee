@@ -5,7 +5,10 @@
 import { createJayveeServices } from '@jvalue/jayvee-language-server';
 import { startLanguageServer } from 'langium';
 import { NodeFileSystem } from 'langium/node';
-import { ProposedFeatures, createConnection } from 'vscode-languageserver/node';
+import {
+  ProposedFeatures,
+  createConnection,
+} from 'vscode-languageserver/node.js';
 
 // Create a connection to the client
 const connection = createConnection(ProposedFeatures.all);

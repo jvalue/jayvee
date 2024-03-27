@@ -10,9 +10,9 @@ import {
   LanguageClientOptions,
   ServerOptions,
   TransportKind,
-} from 'vscode-languageclient/node';
+} from 'vscode-languageclient/node.js';
 
-import { StandardLibraryFileSystemProvider } from './standard-library-file-system-provider';
+import { StandardLibraryFileSystemProvider } from './standard-library-file-system-provider.js';
 
 let client: LanguageClient | undefined;
 

@@ -1,5 +1,6 @@
 {
   "name": "jayvee",
+  "type": "module",
   "displayName": "Jayvee",
   "description": "Support for the Jayvee language",
   "engines": {
