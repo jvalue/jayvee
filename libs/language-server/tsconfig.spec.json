@@ -1,9 +1,8 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "noEmit": false,
     "types": ["jest", "node"],
-    "module": "Node16",
-    "moduleResolution": "Node16",
   },
   "include": ["jest.config.ts", "**/*.test.ts", "**/*.spec.ts", "**/*.d.ts", "./src/test/**/*.ts"]
 }

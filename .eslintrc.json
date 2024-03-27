@@ -1,10 +1,13 @@
 {
   "root": true,
+  "parser": "@typescript-eslint/parser",
   "extends": "@jvalue/eslint-config-jvalue",
   "ignorePatterns": ["**/*"],
-  "plugins": ["@nx"],
+  "plugins": ["@nx", "@typescript-eslint"],
   "parserOptions": {
-    "project": ["./tsconfig.base.json"]
+    "project": ["./tsconfig.base.json"],
+    "sourceType": "module",
+    "ecmaVersion": 6
   },
   "overrides": [
     {
