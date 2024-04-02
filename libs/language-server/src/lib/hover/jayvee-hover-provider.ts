@@ -8,7 +8,6 @@ import { Hover } from 'vscode-languageserver-protocol';
 import {
   BuiltinBlocktypeDefinition,
   BuiltinConstrainttypeDefinition,
-  ConstraintTypeWrapper,
   PropertyAssignment,
   type WrapperFactory,
   isBuiltinBlocktypeDefinition,
@@ -67,10 +66,12 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   private getConstraintTypeMarkdownDoc(
     constraintTypeDefinition: BuiltinConstrainttypeDefinition,
   ): string | undefined {
-    if (!ConstraintTypeWrapper.canBeWrapped(constraintTypeDefinition)) {
+    if (!this.wrapperFactory.canWrapConstraintType(constraintTypeDefinition)) {
       return;
     }
-    const constraintType = new ConstraintTypeWrapper(constraintTypeDefinition);
+    const constraintType = this.wrapperFactory.wrapConstraintType(
+      constraintTypeDefinition,
+    );
 
     const lspDocBuilder = new LspDocGenerator();
     return lspDocBuilder.generateConstraintTypeDoc(constraintType);

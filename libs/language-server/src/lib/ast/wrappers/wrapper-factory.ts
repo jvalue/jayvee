@@ -46,6 +46,32 @@ export class WrapperFactory {
     return new BlockTypeWrapper(toBeWrapped, this.operatorEvaluatorRegistry);
   }
 
+  canWrapConstraintType(
+    toBeWrapped:
+      | BuiltinConstrainttypeDefinition
+      | Reference<BuiltinConstrainttypeDefinition>,
+  ): boolean {
+    return ConstraintTypeWrapper.canBeWrapped(toBeWrapped);
+  }
+
+  wrapConstraintType(
+    toBeWrapped:
+      | BuiltinConstrainttypeDefinition
+      | Reference<BuiltinConstrainttypeDefinition>,
+  ): ConstraintTypeWrapper {
+    assert(
+      this.canWrapConstraintType(toBeWrapped),
+      `ConstraintType ${
+        (isReference(toBeWrapped) ? toBeWrapped.ref?.name : toBeWrapped.name) ??
+        '<unresolved reference>'
+      } cannot be wrapped`,
+    );
+    return new ConstraintTypeWrapper(
+      toBeWrapped,
+      this.operatorEvaluatorRegistry,
+    );
+  }
+
   /**
    * Creates a @see TypedObjectWrapper wrapper object based on the given type reference.
    */
@@ -68,10 +94,10 @@ export class WrapperFactory {
       }
       return this.wrapBlockType(type);
     } else if (isBuiltinConstrainttypeDefinition(type)) {
-      if (!ConstraintTypeWrapper.canBeWrapped(type)) {
+      if (!this.canWrapConstraintType(type)) {
         return undefined;
       }
-      return new ConstraintTypeWrapper(type);
+      return this.wrapConstraintType(type);
     }
     assertUnreachable(type);
   }

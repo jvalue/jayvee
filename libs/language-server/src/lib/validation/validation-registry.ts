@@ -20,6 +20,7 @@ import {
   PipeDefinition,
   PipelineDefinition,
   PropertyBody,
+  ValuetypeDefinition,
 } from '../ast/generated/ast';
 import type { JayveeServices } from '../jayvee-module';
 import { RuntimeParameterProvider } from '../services';
@@ -89,7 +90,17 @@ export class JayveeValidationRegistry extends ValidationRegistry {
         ),
       RangeLiteral: validateRangeLiteral,
       RegexLiteral: validateRegexLiteral,
-      ValuetypeDefinition: validateValuetypeDefinition,
+      ValuetypeDefinition: (
+        valuetype: ValuetypeDefinition,
+        validationContext: ValidationContext,
+        evaluationContext: EvaluationContext,
+      ) =>
+        validateValuetypeDefinition(
+          valuetype,
+          validationContext,
+          evaluationContext,
+          services.WrapperFactory,
+        ),
       ValuetypeReference: validateValuetypeReference,
       TransformBody: validateTransformBody,
     });

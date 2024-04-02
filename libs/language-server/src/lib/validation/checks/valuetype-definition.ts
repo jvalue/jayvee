@@ -15,10 +15,10 @@ import {
   CollectionLiteral,
   CollectionValuetype,
   ConstraintDefinition,
-  ConstraintTypeWrapper,
   EvaluationContext,
   PrimitiveValuetypes,
   Valuetype,
+  WrapperFactory,
   createValuetype,
   evaluateExpression,
   inferExpressionType,
@@ -35,12 +35,14 @@ export function validateValuetypeDefinition(
   valuetype: ValuetypeDefinition,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
   checkSupertypeCycle(valuetype, validationContext);
   checkConstraintsCollectionValues(
     valuetype,
     validationContext,
     evaluationContext,
+    wrapperFactory,
   );
   checkGenericsHaveNoDuplicate(valuetype, validationContext);
 }
@@ -68,6 +70,7 @@ function checkConstraintsCollectionValues(
   valuetype: ValuetypeDefinition,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
   const constraintCollection = valuetype?.constraints;
   if (constraintCollection === undefined) {
@@ -107,6 +110,7 @@ function checkConstraintsCollectionValues(
       constraintCollection,
       index,
       validationContext,
+      wrapperFactory,
     );
   });
 }
@@ -117,9 +121,13 @@ function checkConstraintMatchesValuetype(
   diagnosticNode: CollectionLiteral,
   diagnosticIndex: number,
   context: ValidationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
   const actualValuetype = createValuetype(valuetypeDefinition);
-  const compatibleValuetype = getCompatibleValuetype(constraint);
+  const compatibleValuetype = getCompatibleValuetype(
+    constraint,
+    wrapperFactory,
+  );
 
   if (actualValuetype === undefined || compatibleValuetype === undefined) {
     return;
@@ -142,12 +150,13 @@ function checkConstraintMatchesValuetype(
 
 function getCompatibleValuetype(
   constraint: ConstraintDefinition,
+  wrapperFactory: WrapperFactory,
 ): Valuetype | undefined {
   if (isTypedConstraintDefinition(constraint)) {
-    if (ConstraintTypeWrapper.canBeWrapped(constraint.type)) {
+    if (wrapperFactory.canWrapConstraintType(constraint.type)) {
       return undefined;
     }
-    return new ConstraintTypeWrapper(constraint.type).on;
+    return wrapperFactory.wrapConstraintType(constraint.type).on;
   } else if (isExpressionConstraintDefinition(constraint)) {
     return createValuetype(constraint?.valuetype);
   }

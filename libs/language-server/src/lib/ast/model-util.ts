@@ -89,6 +89,7 @@ export function getAllBuiltinBlocktypes(
  */
 export function getAllBuiltinConstraintTypes(
   documentService: LangiumDocuments,
+  wrapperFactory: WrapperFactory,
 ): ConstraintTypeWrapper[] {
   const allBuiltinConstraintTypes: ConstraintTypeWrapper[] = [];
   const visitedBuiltinConstraintTypeDefinitions =
@@ -108,9 +109,9 @@ export function getAllBuiltinConstraintTypes(
           return;
         }
 
-        if (ConstraintTypeWrapper.canBeWrapped(constraintTypeDefinition)) {
+        if (wrapperFactory.canWrapConstraintType(constraintTypeDefinition)) {
           allBuiltinConstraintTypes.push(
-            new ConstraintTypeWrapper(constraintTypeDefinition),
+            wrapperFactory.wrapConstraintType(constraintTypeDefinition),
           );
           visitedBuiltinConstraintTypeDefinitions.add(constraintTypeDefinition);
         }

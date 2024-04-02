@@ -7,7 +7,6 @@ import { strict as assert } from 'assert';
 import {
   BlockDefinition,
   ConstraintDefinition,
-  ConstraintTypeWrapper,
   EvaluationContext,
   InternalValueRepresentation,
   PipelineDefinition,
@@ -153,13 +152,7 @@ export class ExecutionContext {
 
     assert(isReference(currentNode.type));
     if (isTypedConstraintDefinition(currentNode)) {
-      assert(
-        ConstraintTypeWrapper.canBeWrapped(currentNode.type),
-        `ConstraintType ${
-          currentNode.type.ref?.name ?? '<unresolved reference>'
-        } cannot be wrapped`,
-      );
-      return new ConstraintTypeWrapper(currentNode.type);
+      return this.wrapperFactory.wrapConstraintType(currentNode.type);
     } else if (isBlockDefinition(currentNode)) {
       return this.wrapperFactory.wrapBlockType(currentNode.type);
     }

@@ -10,7 +10,7 @@ import { RuntimeParameterProvider } from '../../../services';
 // eslint-disable-next-line import/no-cycle
 import { evaluateExpression } from '../../expressions/evaluate-expression';
 import { EvaluationContext } from '../../expressions/evaluation-context';
-import { DefaultExpressionEvaluatorRegistry } from '../../expressions/operator-registry';
+import { ExpressionEvaluatorRegistry } from '../../expressions/operator-registry';
 import { BuiltinConstrainttypeDefinition } from '../../generated/ast';
 import { Valuetype, createValuetype } from '../value-type';
 
@@ -29,10 +29,17 @@ export class ConstraintTypeWrapper extends TypedObjectWrapper<BuiltinConstraintt
   docs: ConstraintDocs = {};
   readonly on: Valuetype;
 
+  /**
+   * Creates a ConstraintTypeWrapper if possible. Otherwise, throws error.
+   * Use @see canBeWrapped to check whether wrapping will be successful.
+   *
+   * Use @see WrapperFactory for instantiation instead of calling this constructor directly.
+   */
   constructor(
     toBeWrapped:
       | BuiltinConstrainttypeDefinition
       | Reference<BuiltinConstrainttypeDefinition>,
+    operatorEvaluatiorRegistry: ExpressionEvaluatorRegistry,
   ) {
     const constraintTypeDefinition = isReference(toBeWrapped)
       ? toBeWrapped.ref
@@ -54,7 +61,7 @@ export class ConstraintTypeWrapper extends TypedObjectWrapper<BuiltinConstraintt
         property.defaultValue,
         new EvaluationContext(
           new RuntimeParameterProvider(),
-          new DefaultExpressionEvaluatorRegistry(), // TODO: refactor wrappers as service and inject  services.ExpressionEvaluatorRegistry
+          operatorEvaluatiorRegistry,
         ),
       );
       if (defaultValue !== undefined) {

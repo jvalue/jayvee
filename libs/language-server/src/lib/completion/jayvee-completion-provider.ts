@@ -114,6 +114,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
   ): MaybePromise<void> {
     const constraintTypes = getAllBuiltinConstraintTypes(
       this.langiumDocumentService,
+      this.wrapperFactory,
     );
     constraintTypes.forEach((constraintType) => {
       const lspDocBuilder = new LspDocGenerator();

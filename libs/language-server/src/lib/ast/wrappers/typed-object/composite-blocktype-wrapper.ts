@@ -9,6 +9,12 @@ import { CompositeBlocktypeDefinition } from '../../generated/ast';
 import { BlockTypeWrapper } from './blocktype-wrapper';
 
 export class CompositeBlocktypeWrapper extends BlockTypeWrapper {
+  /**
+   * Creates a CompositeBlocktypeWrapper if possible. Otherwise, throws error.
+   * Use @see canBeWrapped to check whether wrapping will be successful.
+   *
+   * Use @see WrapperFactory for instantiation instead of calling this constructor directly.
+   */
   constructor(
     private blockTypeDefinition: CompositeBlocktypeDefinition,
     operatorEvaluatiorRegistry: ExpressionEvaluatorRegistry,

@@ -21,6 +21,7 @@ describe('default constraint extension', () => {
 
     getAllBuiltinConstraintTypes(
       services.shared.workspace.LangiumDocuments,
+      services.WrapperFactory,
     ).forEach((constraintType) => {
       const matchingConstraintExecutorClass = defaultConstraintExtension
         .getConstraintExecutors()

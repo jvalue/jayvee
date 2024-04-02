@@ -12,6 +12,7 @@ import {
   RuntimeParameterProvider,
   ValidationContext,
   ValuetypeDefinition,
+  WrapperFactory,
   createJayveeServices,
 } from '../../../lib';
 import {
@@ -48,16 +49,25 @@ describe('Validation of ValuetypeDefinition', () => {
       'valuetypes@0',
     ) as ValuetypeDefinition;
 
+    const operatorTypeComputerRegistry = new DefaultTypeComputerRegistry();
+    const operatorEvaluatorRegistry = new DefaultExpressionEvaluatorRegistry();
+    const wrapperFactory = new WrapperFactory({
+      operators: {
+        ExpressionEvaluatorRegistry: operatorEvaluatorRegistry,
+      },
+    });
+
     validateValuetypeDefinition(
       valuetypeDefinition,
       new ValidationContext(
         validationAcceptorMock,
-        new DefaultTypeComputerRegistry(),
+        operatorTypeComputerRegistry,
       ),
       new EvaluationContext(
         new RuntimeParameterProvider(),
-        new DefaultExpressionEvaluatorRegistry(),
+        operatorEvaluatorRegistry,
       ),
+      wrapperFactory,
     );
   }
 
