@@ -14,8 +14,8 @@ import {
   RuntimeParameterProvider,
   TypedObjectWrapper,
   ValidationContext,
+  WrapperFactory,
   createJayveeServices,
-  getTypedObjectWrapper,
 } from '../../../lib';
 import {
   ParseHelperOptions,
@@ -52,7 +52,16 @@ describe('Validation of PropertyAssignment', () => {
     ) as PropertyBody;
 
     const type = propertyBody.$container.type;
-    const wrapper = getTypedObjectWrapper(type);
+
+    const operatorEvaluatorRegistry = new DefaultExpressionEvaluatorRegistry();
+    const operatorTypeComputerRegistry = new DefaultTypeComputerRegistry();
+    const wrapperFactory = new WrapperFactory({
+      operators: {
+        ExpressionEvaluatorRegistry: operatorEvaluatorRegistry,
+      },
+    });
+
+    const wrapper = wrapperFactory.wrapTypedObject(type);
     expect(wrapper).toBeDefined();
 
     const propertyAssignment = locator.getAstNode<PropertyAssignment>(
@@ -65,11 +74,11 @@ describe('Validation of PropertyAssignment', () => {
       wrapper as TypedObjectWrapper,
       new ValidationContext(
         validationAcceptorMock,
-        new DefaultTypeComputerRegistry(),
+        operatorTypeComputerRegistry,
       ),
       new EvaluationContext(
         new RuntimeParameterProvider(),
-        new DefaultExpressionEvaluatorRegistry(),
+        operatorEvaluatorRegistry,
       ),
     );
   }

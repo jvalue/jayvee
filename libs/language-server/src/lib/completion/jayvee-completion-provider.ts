@@ -10,17 +10,12 @@ import {
   CompletionValueItem,
   DefaultCompletionProvider,
   LangiumDocuments,
-  LangiumServices,
   MaybePromise,
   NextFeature,
 } from 'langium';
 import { CompletionItemKind } from 'vscode-languageserver';
 
-import {
-  TypedObjectWrapper,
-  createValuetype,
-  getTypedObjectWrapper,
-} from '../ast';
+import { TypedObjectWrapper, WrapperFactory, createValuetype } from '../ast';
 import {
   BlockDefinition,
   ConstraintDefinition,
@@ -38,15 +33,18 @@ import {
   getAllBuiltinConstraintTypes,
 } from '../ast/model-util';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
+import { type JayveeServices } from '../jayvee-module';
 
 const RIGHT_ARROW_SYMBOL = '\u{2192}';
 
 export class JayveeCompletionProvider extends DefaultCompletionProvider {
   protected langiumDocumentService: LangiumDocuments;
+  protected readonly wrapperFactory: WrapperFactory;
 
-  constructor(services: LangiumServices) {
+  constructor(services: JayveeServices) {
     super(services);
     this.langiumDocumentService = services.shared.workspace.LangiumDocuments;
+    this.wrapperFactory = services.WrapperFactory;
   }
 
   override completionFor(
@@ -88,7 +86,10 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     context: CompletionContext,
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
-    const blockTypes = getAllBuiltinBlocktypes(this.langiumDocumentService);
+    const blockTypes = getAllBuiltinBlocktypes(
+      this.langiumDocumentService,
+      this.wrapperFactory,
+    );
     blockTypes.forEach((blockType) => {
       const lspDocBuilder = new LspDocGenerator();
       const markdownDoc = lspDocBuilder.generateBlockTypeDoc(blockType);
@@ -168,7 +169,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       container = astNode.$container.$container;
     }
 
-    const wrapper = getTypedObjectWrapper(container.type);
+    const wrapper = this.wrapperFactory.wrapTypedObject(container.type);
     if (wrapper === undefined) {
       return;
     }

@@ -6,9 +6,11 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
+  DefaultExpressionEvaluatorRegistry,
   DefaultTypeComputerRegistry,
   PipeDefinition,
   ValidationContext,
+  WrapperFactory,
   createJayveeServices,
 } from '../../../lib';
 import {
@@ -51,6 +53,11 @@ describe('Validation of PipeDefinition', () => {
         validationAcceptorMock,
         new DefaultTypeComputerRegistry(),
       ),
+      new WrapperFactory({
+        operators: {
+          ExpressionEvaluatorRegistry: new DefaultExpressionEvaluatorRegistry(),
+        },
+      }),
     );
   }
 

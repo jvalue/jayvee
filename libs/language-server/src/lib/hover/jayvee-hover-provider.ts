@@ -6,19 +6,26 @@ import { AstNode, AstNodeHoverProvider, MaybePromise } from 'langium';
 import { Hover } from 'vscode-languageserver-protocol';
 
 import {
-  BlockTypeWrapper,
   BuiltinBlocktypeDefinition,
   BuiltinConstrainttypeDefinition,
   ConstraintTypeWrapper,
   PropertyAssignment,
-  getTypedObjectWrapper,
+  type WrapperFactory,
   isBuiltinBlocktypeDefinition,
   isBuiltinConstrainttypeDefinition,
   isPropertyAssignment,
 } from '../ast';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
+import { type JayveeServices } from '../jayvee-module';
 
 export class JayveeHoverProvider extends AstNodeHoverProvider {
+  protected readonly wrapperFactory: WrapperFactory;
+
+  constructor(services: JayveeServices) {
+    super(services);
+    this.wrapperFactory = services.WrapperFactory;
+  }
+
   override getAstNodeHoverContent(
     astNode: AstNode,
   ): MaybePromise<Hover | undefined> {
@@ -48,10 +55,10 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   private getBlockTypeMarkdownDoc(
     blockTypeDefinition: BuiltinBlocktypeDefinition,
   ): string | undefined {
-    if (!BlockTypeWrapper.canBeWrapped(blockTypeDefinition)) {
+    if (!this.wrapperFactory.canWrapBlockType(blockTypeDefinition)) {
       return;
     }
-    const blockType = new BlockTypeWrapper(blockTypeDefinition);
+    const blockType = this.wrapperFactory.wrapBlockType(blockTypeDefinition);
 
     const lspDocBuilder = new LspDocGenerator();
     return lspDocBuilder.generateBlockTypeDoc(blockType);
@@ -73,7 +80,7 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
     property: PropertyAssignment,
   ): string | undefined {
     const container = property.$container.$container;
-    const wrapper = getTypedObjectWrapper(container.type);
+    const wrapper = this.wrapperFactory.wrapTypedObject(container.type);
     if (wrapper === undefined) {
       return;
     }

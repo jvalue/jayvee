@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { BlockTypeWrapper, PipeWrapper, PipelineWrapper } from '../../ast';
+import { PipeWrapper, PipelineWrapper, type WrapperFactory } from '../../ast';
 import {
   BlockDefinition,
   CompositeBlocktypeDefinition,
@@ -14,6 +14,7 @@ import { checkUniqueNames } from '../validation-util';
 export function validatePipelineDefinition(
   pipeline: PipelineDefinition,
   context: ValidationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
   checkStartingBlocks(pipeline, context);
   checkUniqueNames(pipeline.blocks, context);
@@ -22,7 +23,7 @@ export function validatePipelineDefinition(
   checkUniqueNames(pipeline.constraints, context);
 
   checkMultipleBlockInputs(pipeline, context);
-  checkDefinedBlocksAreUsed(pipeline, context);
+  checkDefinedBlocksAreUsed(pipeline, context, wrapperFactory);
 }
 
 function checkStartingBlocks(
@@ -124,6 +125,7 @@ function doCheckMultipleBlockInputs(
 export function checkDefinedBlocksAreUsed(
   pipeline: PipelineDefinition | CompositeBlocktypeDefinition,
   context: ValidationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
   if (!PipelineWrapper.canBeWrapped(pipeline)) {
     return;
@@ -132,7 +134,7 @@ export function checkDefinedBlocksAreUsed(
 
   const containedBlocks = pipeline.blocks;
   for (const block of containedBlocks) {
-    doCheckDefinedBlockIsUsed(pipelineWrapper, block, context);
+    doCheckDefinedBlockIsUsed(pipelineWrapper, block, context, wrapperFactory);
   }
 }
 
@@ -142,12 +144,16 @@ function doCheckDefinedBlockIsUsed(
   >,
   block: BlockDefinition,
   context: ValidationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (block.type === undefined || !BlockTypeWrapper.canBeWrapped(block.type)) {
+  if (
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    block.type === undefined ||
+    !wrapperFactory.canWrapBlockType(block.type)
+  ) {
     return;
   }
-  const blockType = new BlockTypeWrapper(block.type);
+  const blockType = wrapperFactory.wrapBlockType(block.type);
 
   const isExtractorBlock = !blockType.hasInput();
   if (!isExtractorBlock) {

@@ -6,7 +6,6 @@ import { strict as assert } from 'assert';
 
 import {
   BlockDefinition,
-  BlockTypeWrapper,
   ConstraintDefinition,
   ConstraintTypeWrapper,
   EvaluationContext,
@@ -15,6 +14,7 @@ import {
   PropertyAssignment,
   TransformDefinition,
   Valuetype,
+  type WrapperFactory,
   evaluatePropertyValue,
   isBlockDefinition,
   isExpressionConstraintDefinition,
@@ -46,6 +46,7 @@ export class ExecutionContext {
     public readonly executionExtension: JayveeExecExtension,
     public readonly constraintExtension: JayveeConstraintExtension,
     public readonly logger: Logger,
+    public readonly wrapperFactory: WrapperFactory,
     public readonly runOptions: {
       isDebugMode: boolean;
       debugGranularity: DebugGranularity;
@@ -160,13 +161,7 @@ export class ExecutionContext {
       );
       return new ConstraintTypeWrapper(currentNode.type);
     } else if (isBlockDefinition(currentNode)) {
-      assert(
-        BlockTypeWrapper.canBeWrapped(currentNode.type),
-        `Blocktype ${
-          currentNode.type.ref?.name ?? '<unresolved reference>'
-        } cannot be wrapped`,
-      );
-      return new BlockTypeWrapper(currentNode.type);
+      return this.wrapperFactory.wrapBlockType(currentNode.type);
     }
     assertUnreachable(currentNode);
   }

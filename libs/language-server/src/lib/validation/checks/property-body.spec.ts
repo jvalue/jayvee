@@ -12,6 +12,7 @@ import {
   PropertyBody,
   RuntimeParameterProvider,
   ValidationContext,
+  WrapperFactory,
   createJayveeServices,
 } from '../../../lib';
 import {
@@ -48,16 +49,23 @@ describe('Validation PropertyBody', () => {
       'pipelines@0/blocks@0/body',
     ) as PropertyBody;
 
+    const expressionEvaluatorRegistry =
+      new DefaultExpressionEvaluatorRegistry();
+    const typeComputerRegistry = new DefaultTypeComputerRegistry();
+    const wrapperFactory = new WrapperFactory({
+      operators: {
+        ExpressionEvaluatorRegistry: expressionEvaluatorRegistry,
+      },
+    });
+
     validatePropertyBody(
       propertyBody,
-      new ValidationContext(
-        validationAcceptorMock,
-        new DefaultTypeComputerRegistry(),
-      ),
+      new ValidationContext(validationAcceptorMock, typeComputerRegistry),
       new EvaluationContext(
         new RuntimeParameterProvider(),
-        new DefaultExpressionEvaluatorRegistry(),
+        expressionEvaluatorRegistry,
       ),
+      wrapperFactory,
     );
   }
 

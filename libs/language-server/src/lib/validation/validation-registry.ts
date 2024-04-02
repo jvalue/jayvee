@@ -15,7 +15,12 @@ import {
   ExpressionEvaluatorRegistry,
   TypeComputerRegistry,
 } from '../ast';
-import { JayveeAstType } from '../ast/generated/ast';
+import {
+  JayveeAstType,
+  PipeDefinition,
+  PipelineDefinition,
+  PropertyBody,
+} from '../ast/generated/ast';
 import type { JayveeServices } from '../jayvee-module';
 import { RuntimeParameterProvider } from '../services';
 
@@ -60,9 +65,28 @@ export class JayveeValidationRegistry extends ValidationRegistry {
       TypedConstraintDefinition: validateTypedConstraintDefinition,
       ExpressionConstraintDefinition: validateExpressionConstraintDefinition,
       JayveeModel: validateJayveeModel,
-      PipeDefinition: validatePipeDefinition,
-      PipelineDefinition: validatePipelineDefinition,
-      PropertyBody: validatePropertyBody,
+      PipeDefinition: (model: PipeDefinition, context: ValidationContext) =>
+        validatePipeDefinition(model, context, services.WrapperFactory),
+      PipelineDefinition: (
+        pipeline: PipelineDefinition,
+        validationContext: ValidationContext,
+      ) =>
+        validatePipelineDefinition(
+          pipeline,
+          validationContext,
+          services.WrapperFactory,
+        ),
+      PropertyBody: (
+        propertyBody: PropertyBody,
+        validationContext: ValidationContext,
+        evaluationContext: EvaluationContext,
+      ) =>
+        validatePropertyBody(
+          propertyBody,
+          validationContext,
+          evaluationContext,
+          services.WrapperFactory,
+        ),
       RangeLiteral: validateRangeLiteral,
       RegexLiteral: validateRegexLiteral,
       ValuetypeDefinition: validateValuetypeDefinition,

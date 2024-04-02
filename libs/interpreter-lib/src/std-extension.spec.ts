@@ -16,7 +16,10 @@ import { NodeFileSystem } from 'langium/node';
 async function loadAllBuiltinBlocktypes(): Promise<BlockTypeWrapper[]> {
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   await initializeWorkspace(services);
-  return getAllBuiltinBlocktypes(services.shared.workspace.LangiumDocuments);
+  return getAllBuiltinBlocktypes(
+    services.shared.workspace.LangiumDocuments,
+    services.WrapperFactory,
+  );
 }
 
 describe('std extension', () => {

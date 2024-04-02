@@ -7,6 +7,7 @@ import {
   EvaluationContext,
   PipelineDefinition,
   RuntimeParameterProvider,
+  WrapperFactory,
 } from '@jvalue/jayvee-language-server';
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 
@@ -56,15 +57,20 @@ export function getTestExecutionContext(
     'pipelines@0',
   ) as PipelineDefinition;
 
+  const expressionEvaluatorRegistry = new DefaultExpressionEvaluatorRegistry();
+
   const executionContext = new ExecutionContext(
     pipeline,
     new TestExecExtension(),
     new DefaultConstraintExtension(),
     new CachedLogger(runOptions.isDebugMode, undefined, loggerPrintLogs),
+    new WrapperFactory({
+      operators: { ExpressionEvaluatorRegistry: expressionEvaluatorRegistry },
+    }),
     runOptions,
     new EvaluationContext(
       new RuntimeParameterProvider(),
-      new DefaultExpressionEvaluatorRegistry(),
+      expressionEvaluatorRegistry,
     ),
   );
 

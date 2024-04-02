@@ -6,9 +6,11 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
+  DefaultExpressionEvaluatorRegistry,
   DefaultTypeComputerRegistry,
   PipelineDefinition,
   ValidationContext,
+  WrapperFactory,
   createJayveeServices,
 } from '../../../lib';
 import {
@@ -45,12 +47,21 @@ describe('Validation of PipelineDefinition', () => {
       'pipelines@0',
     ) as PipelineDefinition;
 
+    const operatorEvaluatorRegistry = new DefaultExpressionEvaluatorRegistry();
+    const operatorTypeComputerRegistry = new DefaultTypeComputerRegistry();
+    const wrapperFactory = new WrapperFactory({
+      operators: {
+        ExpressionEvaluatorRegistry: operatorEvaluatorRegistry,
+      },
+    });
+
     validatePipelineDefinition(
       pipeline,
       new ValidationContext(
         validationAcceptorMock,
-        new DefaultTypeComputerRegistry(),
+        operatorTypeComputerRegistry,
       ),
+      wrapperFactory,
     );
   }
 

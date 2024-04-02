@@ -9,7 +9,7 @@ import {
   ReferenceableBlocktypeDefinition,
   RuntimeParameterLiteral,
   ValidationContext,
-  getTypedObjectWrapper,
+  type WrapperFactory,
 } from '@jvalue/jayvee-language-server';
 import { Reference } from 'langium';
 
@@ -17,6 +17,7 @@ export function validateRuntimeParameterLiteral(
   runtimeParameter: RuntimeParameterLiteral,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ) {
   checkRuntimeParameterValuePresence(
     runtimeParameter,
@@ -31,6 +32,7 @@ export function validateRuntimeParameterLiteral(
     runtimeParameter,
     validationContext,
     evaluationContext,
+    wrapperFactory,
   );
 }
 
@@ -59,6 +61,7 @@ function checkRuntimeParameterValueParsing(
   runtimeParameter: RuntimeParameterLiteral,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ) {
   const enclosingPropertyBody = getEnclosingPropertyBody(runtimeParameter);
   const type:
@@ -67,7 +70,7 @@ function checkRuntimeParameterValueParsing(
     | undefined =
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     enclosingPropertyBody.$container?.type;
-  const wrapper = getTypedObjectWrapper(type);
+  const wrapper = wrapperFactory.wrapTypedObject(type);
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const propertyName = runtimeParameter.$container?.name;

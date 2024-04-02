@@ -7,21 +7,23 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
+import { type WrapperFactory } from '../../ast';
 import { PipeDefinition } from '../../ast/generated/ast';
 import { createWrappersFromPipeChain } from '../../ast/wrappers/pipe-wrapper';
-import { BlockTypeWrapper } from '../../ast/wrappers/typed-object/blocktype-wrapper';
 import { ValidationContext } from '../validation-context';
 
 export function validatePipeDefinition(
   pipe: PipeDefinition,
   context: ValidationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
-  checkBlockCompatibility(pipe, context);
+  checkBlockCompatibility(pipe, context, wrapperFactory);
 }
 
 function checkBlockCompatibility(
   pipe: PipeDefinition,
   context: ValidationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
   const pipeWrappers = createWrappersFromPipeChain(pipe);
   for (const pipeWrapper of pipeWrappers) {
@@ -29,13 +31,13 @@ function checkBlockCompatibility(
     const toBlockTypeDefinition = pipeWrapper.to?.type;
 
     if (
-      !BlockTypeWrapper.canBeWrapped(fromBlockTypeDefinition) ||
-      !BlockTypeWrapper.canBeWrapped(toBlockTypeDefinition)
+      !wrapperFactory.canWrapBlockType(fromBlockTypeDefinition) ||
+      !wrapperFactory.canWrapBlockType(toBlockTypeDefinition)
     ) {
       continue;
     }
-    const fromBlockType = new BlockTypeWrapper(fromBlockTypeDefinition);
-    const toBlockType = new BlockTypeWrapper(toBlockTypeDefinition);
+    const fromBlockType = wrapperFactory.wrapBlockType(fromBlockTypeDefinition);
+    const toBlockType = wrapperFactory.wrapBlockType(toBlockTypeDefinition);
 
     const isFromBlockLoader = !fromBlockType.hasOutput();
     const isToBlockExtractor = !toBlockType.hasInput();

@@ -9,8 +9,8 @@ import { Reference, isReference } from 'langium';
 import { RuntimeParameterProvider } from '../../../services';
 // eslint-disable-next-line import/no-cycle
 import {
-  DefaultExpressionEvaluatorRegistry,
   EvaluationContext,
+  ExpressionEvaluatorRegistry,
   evaluateExpression,
 } from '../../expressions';
 import { ReferenceableBlocktypeDefinition } from '../../generated/ast';
@@ -34,10 +34,17 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlocktypeD
   readonly inputType: IOType;
   readonly outputType: IOType;
 
+  /**
+   * Creates a BlockTypeWrapper if possible. Otherwise, throws error.
+   * Use @see canBeWrapped to check whether wrapping will be successful.
+   *
+   * Use @see WrapperFactory for instantiation instead of calling this constructor directly.
+   */
   constructor(
     toBeWrapped:
       | ReferenceableBlocktypeDefinition
       | Reference<ReferenceableBlocktypeDefinition>,
+    operatorEvaluatiorRegistry: ExpressionEvaluatorRegistry,
   ) {
     const blocktypeDefinition = isReference(toBeWrapped)
       ? toBeWrapped.ref
@@ -59,7 +66,7 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlocktypeD
         property.defaultValue,
         new EvaluationContext(
           new RuntimeParameterProvider(),
-          new DefaultExpressionEvaluatorRegistry(), // TODO: refactor wrappers as service and inject  services.ExpressionEvaluatorRegistry
+          operatorEvaluatiorRegistry,
         ),
       );
       if (defaultValue !== undefined) {

@@ -76,21 +76,6 @@ export interface TypeComputerRegistry {
   ternary: Record<TernaryExpressionOperator, TernaryOperatorTypeComputer>;
 }
 
-export interface UnaryOperatorEntry {
-  typeInference: UnaryOperatorTypeComputer;
-  evaluation: OperatorEvaluator<UnaryExpression>;
-}
-
-export interface BinaryOperatorEntry {
-  typeInference: BinaryOperatorTypeComputer;
-  evaluation: OperatorEvaluator<BinaryExpression>;
-}
-
-export interface TernaryOperatorEntry {
-  typeInference: TernaryOperatorTypeComputer;
-  evaluation: OperatorEvaluator<TernaryExpression>;
-}
-
 export class DefaultExpressionEvaluatorRegistry
   implements ExpressionEvaluatorRegistry
 {

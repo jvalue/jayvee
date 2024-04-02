@@ -11,7 +11,11 @@ import {
   isJayveeModel,
 } from './generated/ast';
 // eslint-disable-next-line import/no-cycle
-import { BlockTypeWrapper, ConstraintTypeWrapper } from './wrappers';
+import {
+  BlockTypeWrapper,
+  ConstraintTypeWrapper,
+  type WrapperFactory,
+} from './wrappers';
 
 export type AstTypeGuard<T extends AstNode = AstNode> = (
   obj: unknown,
@@ -44,6 +48,7 @@ export function getNextAstNodeContainer<T extends AstNode>(
  */
 export function getAllBuiltinBlocktypes(
   documentService: LangiumDocuments,
+  wrapperFactory: WrapperFactory,
 ): BlockTypeWrapper[] {
   const allBuiltinBlocktypes: BlockTypeWrapper[] = [];
   const visitedBuiltinBlocktypeDefinitions =
@@ -66,8 +71,10 @@ export function getAllBuiltinBlocktypes(
           return;
         }
 
-        if (BlockTypeWrapper.canBeWrapped(blocktypeDefinition)) {
-          allBuiltinBlocktypes.push(new BlockTypeWrapper(blocktypeDefinition));
+        if (wrapperFactory.canWrapBlockType(blocktypeDefinition)) {
+          allBuiltinBlocktypes.push(
+            wrapperFactory.wrapBlockType(blocktypeDefinition),
+          );
           visitedBuiltinBlocktypeDefinitions.add(blocktypeDefinition);
         }
       });

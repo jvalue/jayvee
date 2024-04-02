@@ -25,7 +25,9 @@ import {
   JayveeServices,
   PipelineDefinition,
   PipelineWrapper,
+  RuntimeParameterLiteral,
   RuntimeParameterProvider,
+  ValidationContext,
   createJayveeServices,
   initializeWorkspace,
   internalValueToString,
@@ -158,7 +160,17 @@ function setupJayveeServices(
   );
 
   services.validation.ValidationRegistry.registerJayveeValidationChecks({
-    RuntimeParameterLiteral: validateRuntimeParameterLiteral,
+    RuntimeParameterLiteral: (
+      runtimeParameter: RuntimeParameterLiteral,
+      validationContext: ValidationContext,
+      evaluationContext: EvaluationContext,
+    ) =>
+      validateRuntimeParameterLiteral(
+        runtimeParameter,
+        validationContext,
+        evaluationContext,
+        services.WrapperFactory,
+      ),
   });
 }
 
@@ -212,6 +224,7 @@ async function runPipeline(
     executionExtension,
     constraintExtension,
     loggerFactory.createLogger(),
+    jayveeServices.WrapperFactory,
     {
       isDebugMode: runOptions.debug,
       debugGranularity: runOptions.debugGranularity,

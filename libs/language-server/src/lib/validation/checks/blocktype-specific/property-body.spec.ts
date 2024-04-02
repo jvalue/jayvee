@@ -12,8 +12,8 @@ import {
   PropertyBody,
   RuntimeParameterProvider,
   ValidationContext,
+  WrapperFactory,
   createJayveeServices,
-  getTypedObjectWrapper,
 } from '../../..';
 import {
   ParseHelperOptions,
@@ -49,18 +49,28 @@ describe('Validation of blocktype specific property bodies', () => {
       'pipelines@0/blocks@0/body',
     ) as PropertyBody;
 
-    const wrapper = getTypedObjectWrapper(propertyBody.$container.type);
+    const operatorEvaluatorRegistry = new DefaultExpressionEvaluatorRegistry();
+    const operatorTypeComputerRegistry = new DefaultTypeComputerRegistry();
+    const wrapperFactory = new WrapperFactory({
+      operators: {
+        ExpressionEvaluatorRegistry: operatorEvaluatorRegistry,
+      },
+    });
+
+    const wrapper = wrapperFactory.wrapTypedObject(
+      propertyBody.$container.type,
+    );
     expect(wrapper).toBeDefined();
 
     checkBlocktypeSpecificPropertyBody(
       propertyBody,
       new ValidationContext(
         validationAcceptorMock,
-        new DefaultTypeComputerRegistry(),
+        operatorTypeComputerRegistry,
       ),
       new EvaluationContext(
         new RuntimeParameterProvider(),
-        new DefaultExpressionEvaluatorRegistry(),
+        operatorEvaluatorRegistry,
       ),
     );
   }

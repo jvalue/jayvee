@@ -7,7 +7,7 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { TypedObjectWrapper, getTypedObjectWrapper } from '../../ast';
+import { TypedObjectWrapper, type WrapperFactory } from '../../ast';
 import { EvaluationContext } from '../../ast/expressions/evaluation-context';
 import {
   PropertyAssignment,
@@ -26,11 +26,12 @@ export function validatePropertyBody(
   propertyBody: PropertyBody,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
   const properties = propertyBody?.properties ?? [];
   checkUniqueNames(properties, validationContext);
 
-  const wrapper = inferTypedObjectWrapper(propertyBody);
+  const wrapper = inferTypedObjectWrapper(propertyBody, wrapperFactory);
   if (wrapper === undefined) {
     return;
   }
@@ -63,9 +64,10 @@ export function validatePropertyBody(
 
 function inferTypedObjectWrapper(
   propertyBody: PropertyBody,
+  wrapperFactory: WrapperFactory,
 ): TypedObjectWrapper | undefined {
   const type = propertyBody.$container?.type.ref;
-  return getTypedObjectWrapper(type);
+  return wrapperFactory.wrapTypedObject(type);
 }
 
 function checkPropertyCompleteness(
