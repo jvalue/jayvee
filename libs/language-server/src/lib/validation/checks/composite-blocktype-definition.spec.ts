@@ -12,6 +12,7 @@ import {
   EvaluationContext,
   RuntimeParameterProvider,
   ValidationContext,
+  WrapperFactory,
   createJayveeServices,
 } from '../..';
 import {
@@ -48,16 +49,26 @@ describe('Validation of CompositeBlocktypeDefinition', () => {
       'blocktypes@0',
     ) as CompositeBlocktypeDefinition;
 
+    const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
+    const operatorTypeComputerRegistry =
+      new DefaultOperatorTypeComputerRegistry();
+    const wrapperFactory = new WrapperFactory({
+      operators: {
+        EvaluatorRegistry: operatorEvaluatorRegistry,
+      },
+    });
+
     validateCompositeBlockTypeDefinition(
       blocktype,
       new ValidationContext(
         validationAcceptorMock,
-        new DefaultOperatorTypeComputerRegistry(),
+        operatorTypeComputerRegistry,
       ),
       new EvaluationContext(
         new RuntimeParameterProvider(),
-        new DefaultOperatorEvaluatorRegistry(),
+        operatorEvaluatorRegistry,
       ),
+      wrapperFactory,
     );
   }
 

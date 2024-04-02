@@ -21,7 +21,8 @@ import {
 
 import { AstNodeWrapper } from './ast-node-wrapper';
 // eslint-disable-next-line import/no-cycle
-import { BlockTypeWrapper, ConstraintTypeWrapper } from './typed-object';
+import { BlockTypeWrapper } from './typed-object/blocktype-wrapper';
+import { ConstraintTypeWrapper } from './typed-object/constrainttype-wrapper';
 
 abstract class AstNodeWrapperFactory<
   N extends AstNode & { name: string },

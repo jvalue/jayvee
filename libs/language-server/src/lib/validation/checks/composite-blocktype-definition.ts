@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { BlockTypeWrapper, PipelineWrapper } from '../../ast';
+import { PipelineWrapper, type WrapperFactory } from '../../ast';
 import { EvaluationContext } from '../../ast/expressions/evaluation-context';
 import {
   BlockDefinition,
@@ -17,13 +17,14 @@ export function validateCompositeBlockTypeDefinition(
   blockType: CompositeBlocktypeDefinition,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
   validateBlocktypeDefinition(blockType, validationContext, evaluationContext);
   checkHasPipeline(blockType, validationContext);
   checkExactlyOnePipeline(blockType, validationContext);
 
   checkMultipleBlockInputs(blockType, validationContext);
-  checkDefinedBlocksAreUsed(blockType, validationContext);
+  checkDefinedBlocksAreUsed(blockType, validationContext, wrapperFactory);
 }
 
 function checkHasPipeline(
@@ -72,6 +73,7 @@ function checkExactlyOnePipeline(
 export function checkDefinedBlocksAreUsed(
   blocktypeDefinition: CompositeBlocktypeDefinition,
   context: ValidationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
   if (!PipelineWrapper.canBeWrapped(blocktypeDefinition)) {
     return;
@@ -85,7 +87,7 @@ export function checkDefinedBlocksAreUsed(
 
   const containedBlocks = blocktypeDefinition.blocks;
   for (const block of containedBlocks) {
-    doCheckDefinedBlockIsUsed(pipelineWrapper, block, context);
+    doCheckDefinedBlockIsUsed(pipelineWrapper, block, context, wrapperFactory);
   }
 }
 
@@ -93,9 +95,13 @@ function doCheckDefinedBlockIsUsed(
   pipelineWrapper: PipelineWrapper<CompositeBlocktypeDefinition>,
   block: BlockDefinition,
   context: ValidationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (block.type === undefined || !BlockTypeWrapper.canBeWrapped(block.type)) {
+  if (
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    block.type === undefined ||
+    !wrapperFactory.BlockType.canWrap(block.type)
+  ) {
     return;
   }
   const pipes = pipelineWrapper.astNode.pipes;

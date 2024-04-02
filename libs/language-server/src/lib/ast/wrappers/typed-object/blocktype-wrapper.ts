@@ -10,7 +10,7 @@ import { RuntimeParameterProvider } from '../../../services';
 // eslint-disable-next-line import/no-cycle
 import {
   EvaluationContext,
-  OperatorEvaluatorRegistry,
+  type OperatorEvaluatorRegistry,
   evaluateExpression,
 } from '../../expressions';
 import { ReferenceableBlocktypeDefinition } from '../../generated/ast';
