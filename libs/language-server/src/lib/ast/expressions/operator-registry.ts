@@ -61,7 +61,7 @@ import { ReplaceOperatorTypeComputer } from './type-computers/replace-operator-t
 import { SignOperatorTypeComputer } from './type-computers/sign-operator-type-computer';
 import { SqrtOperatorTypeComputer } from './type-computers/sqrt-operator-type-computer';
 
-export interface ExpressionEvaluatorRegistry {
+export interface OperatorEvaluatorRegistry {
   unary: Record<UnaryExpressionOperator, OperatorEvaluator<UnaryExpression>>;
   binary: Record<BinaryExpressionOperator, OperatorEvaluator<BinaryExpression>>;
   ternary: Record<
@@ -70,14 +70,14 @@ export interface ExpressionEvaluatorRegistry {
   >;
 }
 
-export interface TypeComputerRegistry {
+export interface OperatorTypeComputerRegistry {
   unary: Record<UnaryExpressionOperator, UnaryOperatorTypeComputer>;
   binary: Record<BinaryExpressionOperator, BinaryOperatorTypeComputer>;
   ternary: Record<TernaryExpressionOperator, TernaryOperatorTypeComputer>;
 }
 
-export class DefaultExpressionEvaluatorRegistry
-  implements ExpressionEvaluatorRegistry
+export class DefaultOperatorEvaluatorRegistry
+  implements OperatorEvaluatorRegistry
 {
   unary = {
     not: new NotOperatorEvaluator(),
@@ -113,7 +113,9 @@ export class DefaultExpressionEvaluatorRegistry
   };
 }
 
-export class DefaultTypeComputerRegistry implements TypeComputerRegistry {
+export class DefaultOperatorTypeComputerRegistry
+  implements OperatorTypeComputerRegistry
+{
   unary = {
     not: new NotOperatorTypeComputer(),
     '+': new SignOperatorTypeComputer(),

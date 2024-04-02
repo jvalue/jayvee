@@ -232,7 +232,7 @@ async function runPipeline(
     },
     new EvaluationContext(
       jayveeServices.RuntimeParameterProvider,
-      jayveeServices.operators.ExpressionEvaluatorRegistry,
+      jayveeServices.operators.EvaluatorRegistry,
     ),
   );
 

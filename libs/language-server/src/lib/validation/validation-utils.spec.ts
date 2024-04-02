@@ -6,7 +6,7 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  DefaultTypeComputerRegistry,
+  DefaultOperatorTypeComputerRegistry,
   PropertyBody,
   ValidationContext,
   checkUniqueNames,
@@ -73,7 +73,7 @@ describe('Validation of validation-utils', () => {
         propertyBody.properties,
         new ValidationContext(
           validationAcceptorMock,
-          new DefaultTypeComputerRegistry(),
+          new DefaultOperatorTypeComputerRegistry(),
         ),
       );
 
@@ -92,7 +92,7 @@ describe('Validation of validation-utils', () => {
         propertyBody.properties,
         new ValidationContext(
           validationAcceptorMock,
-          new DefaultTypeComputerRegistry(),
+          new DefaultOperatorTypeComputerRegistry(),
         ),
       );
 

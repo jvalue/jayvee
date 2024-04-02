@@ -7,7 +7,7 @@ import { NodeFileSystem } from 'langium/node';
 
 import {
   ColumnId,
-  DefaultTypeComputerRegistry,
+  DefaultOperatorTypeComputerRegistry,
   ValidationContext,
   createJayveeServices,
 } from '../../../lib';
@@ -49,7 +49,7 @@ describe('Validation of ColumnId', () => {
       columnId,
       new ValidationContext(
         validationAcceptorMock,
-        new DefaultTypeComputerRegistry(),
+        new DefaultOperatorTypeComputerRegistry(),
       ),
     );
   }

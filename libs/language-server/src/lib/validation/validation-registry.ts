@@ -12,8 +12,8 @@ import {
 
 import {
   EvaluationContext,
-  ExpressionEvaluatorRegistry,
-  TypeComputerRegistry,
+  OperatorEvaluatorRegistry,
+  OperatorTypeComputerRegistry,
 } from '../ast';
 import {
   JayveeAstType,
@@ -47,16 +47,15 @@ import { ValidationContext } from './validation-context';
  */
 export class JayveeValidationRegistry extends ValidationRegistry {
   private readonly runtimeParameterProvider;
-  private readonly typeComputerRegistry: TypeComputerRegistry;
-  private readonly expressionEvaluatorRegistry: ExpressionEvaluatorRegistry;
+  private readonly typeComputerRegistry: OperatorTypeComputerRegistry;
+  private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry;
 
   constructor(services: JayveeServices) {
     super(services);
 
     this.runtimeParameterProvider = services.RuntimeParameterProvider;
     this.typeComputerRegistry = services.operators.TypeComputerRegistry;
-    this.expressionEvaluatorRegistry =
-      services.operators.ExpressionEvaluatorRegistry;
+    this.operatorEvaluatorRegistry = services.operators.EvaluatorRegistry;
 
     this.registerJayveeValidationChecks({
       BuiltinBlocktypeDefinition: validateBlocktypeDefinition,
@@ -112,7 +111,7 @@ export class JayveeValidationRegistry extends ValidationRegistry {
         check as JayveeValidationCheck,
         this.runtimeParameterProvider,
         this.typeComputerRegistry,
-        this.expressionEvaluatorRegistry,
+        this.operatorEvaluatorRegistry,
       );
 
       this.doRegister(type, this.wrapValidationException(wrappedCheck, this));
@@ -122,8 +121,8 @@ export class JayveeValidationRegistry extends ValidationRegistry {
   private wrapJayveeValidationCheck<T extends AstNode = AstNode>(
     check: JayveeValidationCheck<T>,
     runtimeParameterProvider: RuntimeParameterProvider,
-    typeComputerRegistry: TypeComputerRegistry,
-    expressionEvaluatorRegistry: ExpressionEvaluatorRegistry,
+    typeComputerRegistry: OperatorTypeComputerRegistry,
+    operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
   ): ValidationCheck<T> {
     return (node: T, accept: ValidationAcceptor): MaybePromise<void> => {
       const validationContext = new ValidationContext(
@@ -132,7 +131,7 @@ export class JayveeValidationRegistry extends ValidationRegistry {
       );
       const evaluationContext = new EvaluationContext(
         runtimeParameterProvider,
-        expressionEvaluatorRegistry,
+        operatorEvaluatorRegistry,
       );
       return check(node, validationContext, evaluationContext);
     };

@@ -6,8 +6,8 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  DefaultExpressionEvaluatorRegistry,
-  DefaultTypeComputerRegistry,
+  DefaultOperatorEvaluatorRegistry,
+  DefaultOperatorTypeComputerRegistry,
   EvaluationContext,
   PropertyBody,
   PropertySpecification,
@@ -51,11 +51,12 @@ describe('Validation of blocktype specific properties', () => {
       'pipelines@0/blocks@0/body',
     ) as PropertyBody;
 
-    const operatorEvaluatorRegistry = new DefaultExpressionEvaluatorRegistry();
-    const operatorTypeComputerRegistry = new DefaultTypeComputerRegistry();
+    const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
+    const operatorTypeComputerRegistry =
+      new DefaultOperatorTypeComputerRegistry();
     const wrapperFactory = new WrapperFactory({
       operators: {
-        ExpressionEvaluatorRegistry: operatorEvaluatorRegistry,
+        EvaluatorRegistry: operatorEvaluatorRegistry,
       },
     });
 

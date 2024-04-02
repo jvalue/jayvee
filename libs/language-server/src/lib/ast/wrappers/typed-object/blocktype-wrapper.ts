@@ -10,7 +10,7 @@ import { RuntimeParameterProvider } from '../../../services';
 // eslint-disable-next-line import/no-cycle
 import {
   EvaluationContext,
-  ExpressionEvaluatorRegistry,
+  OperatorEvaluatorRegistry,
   evaluateExpression,
 } from '../../expressions';
 import { ReferenceableBlocktypeDefinition } from '../../generated/ast';
@@ -44,7 +44,7 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlocktypeD
     toBeWrapped:
       | ReferenceableBlocktypeDefinition
       | Reference<ReferenceableBlocktypeDefinition>,
-    operatorEvaluatiorRegistry: ExpressionEvaluatorRegistry,
+    operatorEvaluatiorRegistry: OperatorEvaluatorRegistry,
   ) {
     const blocktypeDefinition = isReference(toBeWrapped)
       ? toBeWrapped.ref

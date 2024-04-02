@@ -10,7 +10,7 @@ import { RuntimeParameterProvider } from '../../../services';
 // eslint-disable-next-line import/no-cycle
 import { evaluateExpression } from '../../expressions/evaluate-expression';
 import { EvaluationContext } from '../../expressions/evaluation-context';
-import { ExpressionEvaluatorRegistry } from '../../expressions/operator-registry';
+import { OperatorEvaluatorRegistry } from '../../expressions/operator-registry';
 import { BuiltinConstrainttypeDefinition } from '../../generated/ast';
 import { Valuetype, createValuetype } from '../value-type';
 
@@ -39,7 +39,7 @@ export class ConstraintTypeWrapper extends TypedObjectWrapper<BuiltinConstraintt
     toBeWrapped:
       | BuiltinConstrainttypeDefinition
       | Reference<BuiltinConstrainttypeDefinition>,
-    operatorEvaluatiorRegistry: ExpressionEvaluatorRegistry,
+    operatorEvaluatiorRegistry: OperatorEvaluatorRegistry,
   ) {
     const constraintTypeDefinition = isReference(toBeWrapped)
       ? toBeWrapped.ref

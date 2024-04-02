@@ -6,8 +6,8 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  DefaultExpressionEvaluatorRegistry,
-  DefaultTypeComputerRegistry,
+  DefaultOperatorEvaluatorRegistry,
+  DefaultOperatorTypeComputerRegistry,
   EvaluationContext,
   ExpressionConstraintDefinition,
   RuntimeParameterProvider,
@@ -53,11 +53,11 @@ describe('Validation of ConstraintDefinition (expression syntax)', () => {
       expressionConstraint,
       new ValidationContext(
         validationAcceptorMock,
-        new DefaultTypeComputerRegistry(),
+        new DefaultOperatorTypeComputerRegistry(),
       ),
       new EvaluationContext(
         new RuntimeParameterProvider(),
-        new DefaultExpressionEvaluatorRegistry(),
+        new DefaultOperatorEvaluatorRegistry(),
       ),
     );
   }

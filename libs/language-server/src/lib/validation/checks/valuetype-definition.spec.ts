@@ -6,8 +6,8 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  DefaultExpressionEvaluatorRegistry,
-  DefaultTypeComputerRegistry,
+  DefaultOperatorEvaluatorRegistry,
+  DefaultOperatorTypeComputerRegistry,
   EvaluationContext,
   RuntimeParameterProvider,
   ValidationContext,
@@ -49,11 +49,12 @@ describe('Validation of ValuetypeDefinition', () => {
       'valuetypes@0',
     ) as ValuetypeDefinition;
 
-    const operatorTypeComputerRegistry = new DefaultTypeComputerRegistry();
-    const operatorEvaluatorRegistry = new DefaultExpressionEvaluatorRegistry();
+    const operatorTypeComputerRegistry =
+      new DefaultOperatorTypeComputerRegistry();
+    const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
     const wrapperFactory = new WrapperFactory({
       operators: {
-        ExpressionEvaluatorRegistry: operatorEvaluatorRegistry,
+        EvaluatorRegistry: operatorEvaluatorRegistry,
       },
     });
 

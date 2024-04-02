@@ -8,7 +8,7 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  DefaultTypeComputerRegistry,
+  DefaultOperatorTypeComputerRegistry,
   ValidationContext,
   ValuetypeDefinition,
   ValuetypeReference,
@@ -87,7 +87,7 @@ describe('Validation of ValuetypeReference', () => {
           valuetypeRef,
           new ValidationContext(
             validationAcceptorMock,
-            new DefaultTypeComputerRegistry(),
+            new DefaultOperatorTypeComputerRegistry(),
           ),
         );
       },
@@ -107,7 +107,7 @@ describe('Validation of ValuetypeReference', () => {
           valuetypeRef,
           new ValidationContext(
             validationAcceptorMock,
-            new DefaultTypeComputerRegistry(),
+            new DefaultOperatorTypeComputerRegistry(),
           ),
         );
       },
@@ -127,7 +127,7 @@ describe('Validation of ValuetypeReference', () => {
           valuetypeRef,
           new ValidationContext(
             validationAcceptorMock,
-            new DefaultTypeComputerRegistry(),
+            new DefaultOperatorTypeComputerRegistry(),
           ),
         );
       },
@@ -147,7 +147,7 @@ describe('Validation of ValuetypeReference', () => {
           valuetypeRef,
           new ValidationContext(
             validationAcceptorMock,
-            new DefaultTypeComputerRegistry(),
+            new DefaultOperatorTypeComputerRegistry(),
           ),
         );
       },
@@ -172,7 +172,7 @@ describe('Validation of ValuetypeReference', () => {
           valuetypeRef,
           new ValidationContext(
             validationAcceptorMock,
-            new DefaultTypeComputerRegistry(),
+            new DefaultOperatorTypeComputerRegistry(),
           ),
         );
       },
@@ -197,7 +197,7 @@ describe('Validation of ValuetypeReference', () => {
           valuetypeRef,
           new ValidationContext(
             validationAcceptorMock,
-            new DefaultTypeComputerRegistry(),
+            new DefaultOperatorTypeComputerRegistry(),
           ),
         );
       },
@@ -222,7 +222,7 @@ describe('Validation of ValuetypeReference', () => {
           valuetypeRef,
           new ValidationContext(
             validationAcceptorMock,
-            new DefaultTypeComputerRegistry(),
+            new DefaultOperatorTypeComputerRegistry(),
           ),
         );
       },
@@ -247,7 +247,7 @@ describe('Validation of ValuetypeReference', () => {
           valuetypeRef,
           new ValidationContext(
             validationAcceptorMock,
-            new DefaultTypeComputerRegistry(),
+            new DefaultOperatorTypeComputerRegistry(),
           ),
         );
       },
@@ -285,7 +285,7 @@ describe('Validation of ValuetypeReference', () => {
       valuetypeRef,
       new ValidationContext(
         validationAcceptorMock,
-        new DefaultTypeComputerRegistry(),
+        new DefaultOperatorTypeComputerRegistry(),
       ),
     );
 
@@ -314,7 +314,7 @@ describe('Validation of ValuetypeReference', () => {
       valuetypeRef,
       new ValidationContext(
         validationAcceptorMock,
-        new DefaultTypeComputerRegistry(),
+        new DefaultOperatorTypeComputerRegistry(),
       ),
     );
 

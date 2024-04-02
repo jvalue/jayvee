@@ -11,7 +11,7 @@ import {
   isReference,
 } from 'langium';
 
-import { type ExpressionEvaluatorRegistry } from '../expressions';
+import { type OperatorEvaluatorRegistry } from '../expressions';
 import {
   BuiltinConstrainttypeDefinition,
   type ReferenceableBlocktypeDefinition,
@@ -42,16 +42,15 @@ abstract class AstNodeWrapperFactory<
 }
 
 export class WrapperFactory {
-  private readonly operatorEvaluatorRegistry;
+  private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry;
 
   readonly BlockType: BlockTypeWrapperFactory;
   readonly ConstraintType: ConstraintTypeWrapperFactory;
 
   constructor(services: {
-    operators: { ExpressionEvaluatorRegistry: ExpressionEvaluatorRegistry };
+    operators: { EvaluatorRegistry: OperatorEvaluatorRegistry };
   }) {
-    this.operatorEvaluatorRegistry =
-      services.operators.ExpressionEvaluatorRegistry;
+    this.operatorEvaluatorRegistry = services.operators.EvaluatorRegistry;
 
     this.BlockType = new BlockTypeWrapperFactory(
       this.operatorEvaluatorRegistry,
@@ -97,7 +96,7 @@ class BlockTypeWrapperFactory extends AstNodeWrapperFactory<
   BlockTypeWrapper
 > {
   constructor(
-    private readonly operatorEvaluatorRegistry: ExpressionEvaluatorRegistry,
+    private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
   ) {
     super();
   }
@@ -123,7 +122,7 @@ class ConstraintTypeWrapperFactory extends AstNodeWrapperFactory<
   ConstraintTypeWrapper
 > {
   constructor(
-    private readonly operatorEvaluatorRegistry: ExpressionEvaluatorRegistry,
+    private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
   ) {
     super();
   }

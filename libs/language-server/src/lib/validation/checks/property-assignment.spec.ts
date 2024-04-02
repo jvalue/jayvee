@@ -6,8 +6,8 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  DefaultExpressionEvaluatorRegistry,
-  DefaultTypeComputerRegistry,
+  DefaultOperatorEvaluatorRegistry,
+  DefaultOperatorTypeComputerRegistry,
   EvaluationContext,
   PropertyAssignment,
   PropertyBody,
@@ -53,11 +53,12 @@ describe('Validation of PropertyAssignment', () => {
 
     const type = propertyBody.$container.type;
 
-    const operatorEvaluatorRegistry = new DefaultExpressionEvaluatorRegistry();
-    const operatorTypeComputerRegistry = new DefaultTypeComputerRegistry();
+    const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
+    const operatorTypeComputerRegistry =
+      new DefaultOperatorTypeComputerRegistry();
     const wrapperFactory = new WrapperFactory({
       operators: {
-        ExpressionEvaluatorRegistry: operatorEvaluatorRegistry,
+        EvaluatorRegistry: operatorEvaluatorRegistry,
       },
     });
 

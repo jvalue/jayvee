@@ -24,7 +24,7 @@ import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-
 import { type Valuetype } from '../wrappers/value-type/valuetype';
 
 import { type InternalValueRepresentation } from './internal-value-representation';
-import { type ExpressionEvaluatorRegistry } from './operator-registry';
+import { type OperatorEvaluatorRegistry } from './operator-registry';
 
 export class EvaluationContext {
   private readonly variableValues = new Map<
@@ -36,7 +36,7 @@ export class EvaluationContext {
 
   constructor(
     public readonly runtimeParameterProvider: RuntimeParameterProvider,
-    public readonly operatorRegistry: ExpressionEvaluatorRegistry,
+    public readonly operatorRegistry: OperatorEvaluatorRegistry,
   ) {}
 
   getValueFor(

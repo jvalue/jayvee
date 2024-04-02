@@ -7,8 +7,8 @@ import { NodeFileSystem } from 'langium/node';
 
 import {
   BuiltinBlocktypeDefinition,
-  DefaultExpressionEvaluatorRegistry,
-  DefaultTypeComputerRegistry,
+  DefaultOperatorEvaluatorRegistry,
+  DefaultOperatorTypeComputerRegistry,
   EvaluationContext,
   RuntimeParameterProvider,
   ValidationContext,
@@ -52,11 +52,11 @@ describe('Validation of BuiltinBlocktypeDefinition', () => {
       blocktype,
       new ValidationContext(
         validationAcceptorMock,
-        new DefaultTypeComputerRegistry(),
+        new DefaultOperatorTypeComputerRegistry(),
       ),
       new EvaluationContext(
         new RuntimeParameterProvider(),
-        new DefaultExpressionEvaluatorRegistry(),
+        new DefaultOperatorEvaluatorRegistry(),
       ),
     );
   }

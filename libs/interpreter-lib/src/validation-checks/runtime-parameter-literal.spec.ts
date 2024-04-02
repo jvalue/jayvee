@@ -6,8 +6,8 @@ import * as path from 'path';
 
 import { parseValueToInternalRepresentation } from '@jvalue/jayvee-execution';
 import {
-  DefaultExpressionEvaluatorRegistry,
-  DefaultTypeComputerRegistry,
+  DefaultOperatorEvaluatorRegistry,
+  DefaultOperatorTypeComputerRegistry,
   EvaluationContext,
   RuntimeParameterLiteral,
   RuntimeParameterProvider,
@@ -63,11 +63,12 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
       }
     }
 
-    const operatorEvaluatorRegistry = new DefaultExpressionEvaluatorRegistry();
-    const operatorTypeComputerRegistry = new DefaultTypeComputerRegistry();
+    const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
+    const operatorTypeComputerRegistry =
+      new DefaultOperatorTypeComputerRegistry();
     const wrapperFactory = new WrapperFactory({
       operators: {
-        ExpressionEvaluatorRegistry: operatorEvaluatorRegistry,
+        EvaluatorRegistry: operatorEvaluatorRegistry,
       },
     });
 

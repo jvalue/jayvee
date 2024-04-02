@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type ExpressionEvaluatorRegistry } from '../../expressions/operator-registry';
+import { type OperatorEvaluatorRegistry } from '../../expressions/operator-registry';
 import { CompositeBlocktypeDefinition } from '../../generated/ast';
 
 // eslint-disable-next-line import/no-cycle
@@ -17,7 +17,7 @@ export class CompositeBlocktypeWrapper extends BlockTypeWrapper {
    */
   constructor(
     private blockTypeDefinition: CompositeBlocktypeDefinition,
-    operatorEvaluatiorRegistry: ExpressionEvaluatorRegistry,
+    operatorEvaluatiorRegistry: OperatorEvaluatorRegistry,
   ) {
     super(blockTypeDefinition, operatorEvaluatiorRegistry);
   }

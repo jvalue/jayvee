@@ -6,7 +6,7 @@ import { AstNode, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  DefaultTypeComputerRegistry,
+  DefaultOperatorTypeComputerRegistry,
   JayveeModel,
   ValidationContext,
   createJayveeServices,
@@ -44,7 +44,7 @@ describe('Validation of JayveeModel', () => {
       jayveeModel,
       new ValidationContext(
         validationAcceptorMock,
-        new DefaultTypeComputerRegistry(),
+        new DefaultOperatorTypeComputerRegistry(),
       ),
     );
   }

@@ -12,7 +12,7 @@ import { TransformDefinition } from '../generated/ast';
 import { evaluateExpression } from './evaluate-expression';
 import { EvaluationContext } from './evaluation-context';
 import { InternalValueRepresentation } from './internal-value-representation';
-import { DefaultExpressionEvaluatorRegistry } from './operator-registry';
+import { DefaultOperatorEvaluatorRegistry } from './operator-registry';
 
 export async function executeDefaultTextToTextExpression(
   expression: string,
@@ -55,7 +55,7 @@ export async function executeExpressionTestHelper(
   const runTimeParameterProvider = new RuntimeParameterProvider();
   const evaluationContext = new EvaluationContext(
     runTimeParameterProvider,
-    new DefaultExpressionEvaluatorRegistry(),
+    new DefaultOperatorEvaluatorRegistry(),
   );
 
   evaluationContext.setValueForReference(inputValueName, inputValueValue);

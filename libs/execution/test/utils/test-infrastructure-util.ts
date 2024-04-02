@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  DefaultExpressionEvaluatorRegistry,
+  DefaultOperatorEvaluatorRegistry,
   EvaluationContext,
   PipelineDefinition,
   RuntimeParameterProvider,
@@ -57,7 +57,7 @@ export function getTestExecutionContext(
     'pipelines@0',
   ) as PipelineDefinition;
 
-  const expressionEvaluatorRegistry = new DefaultExpressionEvaluatorRegistry();
+  const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
 
   const executionContext = new ExecutionContext(
     pipeline,
@@ -65,12 +65,12 @@ export function getTestExecutionContext(
     new DefaultConstraintExtension(),
     new CachedLogger(runOptions.isDebugMode, undefined, loggerPrintLogs),
     new WrapperFactory({
-      operators: { ExpressionEvaluatorRegistry: expressionEvaluatorRegistry },
+      operators: { EvaluatorRegistry: operatorEvaluatorRegistry },
     }),
     runOptions,
     new EvaluationContext(
       new RuntimeParameterProvider(),
-      expressionEvaluatorRegistry,
+      operatorEvaluatorRegistry,
     ),
   );
 

@@ -6,8 +6,8 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  DefaultExpressionEvaluatorRegistry,
-  DefaultTypeComputerRegistry,
+  DefaultOperatorEvaluatorRegistry,
+  DefaultOperatorTypeComputerRegistry,
   PipeDefinition,
   ValidationContext,
   WrapperFactory,
@@ -51,11 +51,11 @@ describe('Validation of PipeDefinition', () => {
       pipe,
       new ValidationContext(
         validationAcceptorMock,
-        new DefaultTypeComputerRegistry(),
+        new DefaultOperatorTypeComputerRegistry(),
       ),
       new WrapperFactory({
         operators: {
-          ExpressionEvaluatorRegistry: new DefaultExpressionEvaluatorRegistry(),
+          EvaluatorRegistry: new DefaultOperatorEvaluatorRegistry(),
         },
       }),
     );

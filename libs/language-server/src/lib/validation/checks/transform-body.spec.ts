@@ -6,8 +6,8 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  DefaultExpressionEvaluatorRegistry,
-  DefaultTypeComputerRegistry,
+  DefaultOperatorEvaluatorRegistry,
+  DefaultOperatorTypeComputerRegistry,
   EvaluationContext,
   RuntimeParameterProvider,
   TransformBody,
@@ -52,11 +52,11 @@ describe('Validation of TransformBody', () => {
       transformBody,
       new ValidationContext(
         validationAcceptorMock,
-        new DefaultTypeComputerRegistry(),
+        new DefaultOperatorTypeComputerRegistry(),
       ),
       new EvaluationContext(
         new RuntimeParameterProvider(),
-        new DefaultExpressionEvaluatorRegistry(),
+        new DefaultOperatorEvaluatorRegistry(),
       ),
     );
   }
