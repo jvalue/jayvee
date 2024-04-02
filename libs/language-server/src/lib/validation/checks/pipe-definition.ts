@@ -31,13 +31,15 @@ function checkBlockCompatibility(
     const toBlockTypeDefinition = pipeWrapper.to?.type;
 
     if (
-      !wrapperFactory.canWrapBlockType(fromBlockTypeDefinition) ||
-      !wrapperFactory.canWrapBlockType(toBlockTypeDefinition)
+      !wrapperFactory.BlockType.canWrap(fromBlockTypeDefinition) ||
+      !wrapperFactory.BlockType.canWrap(toBlockTypeDefinition)
     ) {
       continue;
     }
-    const fromBlockType = wrapperFactory.wrapBlockType(fromBlockTypeDefinition);
-    const toBlockType = wrapperFactory.wrapBlockType(toBlockTypeDefinition);
+    const fromBlockType = wrapperFactory.BlockType.wrap(
+      fromBlockTypeDefinition,
+    );
+    const toBlockType = wrapperFactory.BlockType.wrap(toBlockTypeDefinition);
 
     const isFromBlockLoader = !fromBlockType.hasOutput();
     const isToBlockExtractor = !toBlockType.hasInput();

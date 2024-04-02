@@ -71,9 +71,9 @@ export function getAllBuiltinBlocktypes(
           return;
         }
 
-        if (wrapperFactory.canWrapBlockType(blocktypeDefinition)) {
+        if (wrapperFactory.BlockType.canWrap(blocktypeDefinition)) {
           allBuiltinBlocktypes.push(
-            wrapperFactory.wrapBlockType(blocktypeDefinition),
+            wrapperFactory.BlockType.wrap(blocktypeDefinition),
           );
           visitedBuiltinBlocktypeDefinitions.add(blocktypeDefinition);
         }
@@ -109,9 +109,9 @@ export function getAllBuiltinConstraintTypes(
           return;
         }
 
-        if (wrapperFactory.canWrapConstraintType(constraintTypeDefinition)) {
+        if (wrapperFactory.ConstraintType.canWrap(constraintTypeDefinition)) {
           allBuiltinConstraintTypes.push(
-            wrapperFactory.wrapConstraintType(constraintTypeDefinition),
+            wrapperFactory.ConstraintType.wrap(constraintTypeDefinition),
           );
           visitedBuiltinConstraintTypeDefinitions.add(constraintTypeDefinition);
         }

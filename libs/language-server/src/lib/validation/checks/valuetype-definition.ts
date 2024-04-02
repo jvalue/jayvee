@@ -153,10 +153,10 @@ function getCompatibleValuetype(
   wrapperFactory: WrapperFactory,
 ): Valuetype | undefined {
   if (isTypedConstraintDefinition(constraint)) {
-    if (wrapperFactory.canWrapConstraintType(constraint.type)) {
+    if (wrapperFactory.ConstraintType.canWrap(constraint.type)) {
       return undefined;
     }
-    return wrapperFactory.wrapConstraintType(constraint.type).on;
+    return wrapperFactory.ConstraintType.wrap(constraint.type).on;
   } else if (isExpressionConstraintDefinition(constraint)) {
     return createValuetype(constraint?.valuetype);
   }

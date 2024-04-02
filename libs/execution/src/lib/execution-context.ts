@@ -152,9 +152,9 @@ export class ExecutionContext {
 
     assert(isReference(currentNode.type));
     if (isTypedConstraintDefinition(currentNode)) {
-      return this.wrapperFactory.wrapConstraintType(currentNode.type);
+      return this.wrapperFactory.ConstraintType.wrap(currentNode.type);
     } else if (isBlockDefinition(currentNode)) {
-      return this.wrapperFactory.wrapBlockType(currentNode.type);
+      return this.wrapperFactory.BlockType.wrap(currentNode.type);
     }
     assertUnreachable(currentNode);
   }

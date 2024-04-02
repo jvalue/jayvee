@@ -54,10 +54,10 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   private getBlockTypeMarkdownDoc(
     blockTypeDefinition: BuiltinBlocktypeDefinition,
   ): string | undefined {
-    if (!this.wrapperFactory.canWrapBlockType(blockTypeDefinition)) {
+    if (!this.wrapperFactory.BlockType.canWrap(blockTypeDefinition)) {
       return;
     }
-    const blockType = this.wrapperFactory.wrapBlockType(blockTypeDefinition);
+    const blockType = this.wrapperFactory.BlockType.wrap(blockTypeDefinition);
 
     const lspDocBuilder = new LspDocGenerator();
     return lspDocBuilder.generateBlockTypeDoc(blockType);
@@ -66,10 +66,10 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   private getConstraintTypeMarkdownDoc(
     constraintTypeDefinition: BuiltinConstrainttypeDefinition,
   ): string | undefined {
-    if (!this.wrapperFactory.canWrapConstraintType(constraintTypeDefinition)) {
+    if (!this.wrapperFactory.ConstraintType.canWrap(constraintTypeDefinition)) {
       return;
     }
-    const constraintType = this.wrapperFactory.wrapConstraintType(
+    const constraintType = this.wrapperFactory.ConstraintType.wrap(
       constraintTypeDefinition,
     );
 

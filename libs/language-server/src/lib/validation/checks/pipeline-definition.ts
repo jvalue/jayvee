@@ -149,11 +149,11 @@ function doCheckDefinedBlockIsUsed(
   if (
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     block.type === undefined ||
-    !wrapperFactory.canWrapBlockType(block.type)
+    !wrapperFactory.BlockType.canWrap(block.type)
   ) {
     return;
   }
-  const blockType = wrapperFactory.wrapBlockType(block.type);
+  const blockType = wrapperFactory.BlockType.wrap(block.type);
 
   const isExtractorBlock = !blockType.hasInput();
   if (!isExtractorBlock) {
