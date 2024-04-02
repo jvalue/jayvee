@@ -7,7 +7,7 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { type WrapperFactory } from '../../ast';
+import { type EvaluationContext, type WrapperFactory } from '../../ast';
 import { PipeDefinition } from '../../ast/generated/ast';
 import { createWrappersFromPipeChain } from '../../ast/wrappers/pipe-wrapper';
 import { ValidationContext } from '../validation-context';
@@ -15,6 +15,7 @@ import { ValidationContext } from '../validation-context';
 export function validatePipeDefinition(
   pipe: PipeDefinition,
   context: ValidationContext,
+  evaluationContext: EvaluationContext,
   wrapperFactory: WrapperFactory,
 ): void {
   checkBlockCompatibility(pipe, context, wrapperFactory);

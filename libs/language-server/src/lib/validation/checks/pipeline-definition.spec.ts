@@ -8,7 +8,9 @@ import { NodeFileSystem } from 'langium/node';
 import {
   DefaultOperatorEvaluatorRegistry,
   DefaultOperatorTypeComputerRegistry,
+  EvaluationContext,
   PipelineDefinition,
+  RuntimeParameterProvider,
   ValidationContext,
   WrapperFactory,
   createJayveeServices,
@@ -61,6 +63,10 @@ describe('Validation of PipelineDefinition', () => {
       new ValidationContext(
         validationAcceptorMock,
         operatorTypeComputerRegistry,
+      ),
+      new EvaluationContext(
+        new RuntimeParameterProvider(),
+        operatorEvaluatorRegistry,
       ),
       wrapperFactory,
     );

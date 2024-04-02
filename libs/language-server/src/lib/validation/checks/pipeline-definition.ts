@@ -2,7 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { PipeWrapper, PipelineWrapper, type WrapperFactory } from '../../ast';
+import {
+  type EvaluationContext,
+  PipeWrapper,
+  PipelineWrapper,
+  type WrapperFactory,
+} from '../../ast';
 import {
   BlockDefinition,
   CompositeBlocktypeDefinition,
@@ -13,17 +18,18 @@ import { checkUniqueNames } from '../validation-util';
 
 export function validatePipelineDefinition(
   pipeline: PipelineDefinition,
-  context: ValidationContext,
+  validationContext: ValidationContext,
+  evaluationContext: EvaluationContext,
   wrapperFactory: WrapperFactory,
 ): void {
-  checkStartingBlocks(pipeline, context);
-  checkUniqueNames(pipeline.blocks, context);
-  checkUniqueNames(pipeline.transforms, context);
-  checkUniqueNames(pipeline.valuetypes, context);
-  checkUniqueNames(pipeline.constraints, context);
+  checkStartingBlocks(pipeline, validationContext);
+  checkUniqueNames(pipeline.blocks, validationContext);
+  checkUniqueNames(pipeline.transforms, validationContext);
+  checkUniqueNames(pipeline.valuetypes, validationContext);
+  checkUniqueNames(pipeline.constraints, validationContext);
 
-  checkMultipleBlockInputs(pipeline, context);
-  checkDefinedBlocksAreUsed(pipeline, context, wrapperFactory);
+  checkMultipleBlockInputs(pipeline, validationContext);
+  checkDefinedBlocksAreUsed(pipeline, validationContext, wrapperFactory);
 }
 
 function checkStartingBlocks(
