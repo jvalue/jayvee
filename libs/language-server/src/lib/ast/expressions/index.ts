@@ -2,9 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line import/no-cycle
-export * from './evaluation';
+export * from './evaluation-strategy';
+export * from './evaluation-context';
 export * from './internal-value-representation';
 export * from './operator-registry';
 export * from './type-inference';
 export * from './typeguards';
+export * from './evaluate-expression';

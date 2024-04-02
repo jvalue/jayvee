@@ -5,20 +5,13 @@
 import { AstNode, LangiumDocuments } from 'langium';
 
 import {
-  BinaryExpression,
   BuiltinBlocktypeDefinition,
   BuiltinConstrainttypeDefinition,
-  TernaryExpression,
-  UnaryExpression,
   isBuiltinBlocktypeDefinition,
   isJayveeModel,
 } from './generated/ast';
 // eslint-disable-next-line import/no-cycle
 import { BlockTypeWrapper, ConstraintTypeWrapper } from './wrappers';
-
-export type UnaryExpressionOperator = UnaryExpression['operator'];
-export type BinaryExpressionOperator = BinaryExpression['operator'];
-export type TernaryExpressionOperator = TernaryExpression['operator'];
 
 export type AstTypeGuard<T extends AstNode = AstNode> = (
   obj: unknown,

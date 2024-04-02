@@ -9,7 +9,8 @@ import { createJayveeServices } from '../../jayvee-module';
 import { RuntimeParameterProvider } from '../../services';
 import { TransformDefinition } from '../generated/ast';
 
-import { EvaluationContext, evaluateExpression } from './evaluation';
+import { EvaluationContext } from './evaluation-context';
+import { evaluateExpression } from './evaluate-expression';
 import { InternalValueRepresentation } from './internal-value-representation';
 
 export async function executeDefaultTextToTextExpression(

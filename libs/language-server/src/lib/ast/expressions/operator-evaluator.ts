@@ -6,26 +6,23 @@ import { strict as assert } from 'assert';
 
 import { ValidationContext } from '../../validation/validation-context';
 import {
-  BinaryExpression,
-  TernaryExpression,
-  UnaryExpression,
+  type BinaryExpression,
+  type TernaryExpression,
+  type UnaryExpression,
 } from '../generated/ast';
-// eslint-disable-next-line import/no-cycle
-import {
-  BinaryExpressionOperator,
-  TernaryExpressionOperator,
-  UnaryExpressionOperator,
-} from '../model-util';
 
+import { evaluateExpression } from './evaluate-expression';
+import { type EvaluationContext } from './evaluation-context';
+import { EvaluationStrategy } from './evaluation-strategy';
 import {
-  EvaluationContext,
-  EvaluationStrategy,
-  evaluateExpression,
-} from './evaluation';
-import {
-  InternalValueRepresentation,
-  InternalValueRepresentationTypeguard,
+  type InternalValueRepresentation,
+  type InternalValueRepresentationTypeguard,
 } from './internal-value-representation';
+import {
+  type BinaryExpressionOperator,
+  type TernaryExpressionOperator,
+  type UnaryExpressionOperator,
+} from './operator-types';
 
 export interface OperatorEvaluator<
   E extends UnaryExpression | BinaryExpression | TernaryExpression,
@@ -233,10 +230,7 @@ export abstract class DefaultTernaryOperatorEvaluator<
       validationContext,
       strategy,
     );
-
-    if (strategy === EvaluationStrategy.LAZY && firstValue === undefined) {
-      return undefined;
-    }
+    EvaluationContext
 
     const secondValue = evaluateExpression(
       expression.second,

@@ -5,15 +5,10 @@
 /* eslint-disable import/no-cycle */
 
 import {
-  BinaryExpression,
-  TernaryExpression,
-  UnaryExpression,
+  type BinaryExpression,
+  type TernaryExpression,
+  type UnaryExpression,
 } from '../generated/ast';
-import {
-  BinaryExpressionOperator,
-  TernaryExpressionOperator,
-  UnaryExpressionOperator,
-} from '../model-util';
 
 import { AdditionOperatorEvaluator } from './evaluators/addition-operator-evaluator';
 import { AndOperatorEvaluator } from './evaluators/and-operator-evaluator';
@@ -41,12 +36,17 @@ import { RoundOperatorEvaluator } from './evaluators/round-operator-evaluator';
 import { SqrtOperatorEvaluator } from './evaluators/sqrt-operator-evaluator';
 import { SubtractionOperatorEvaluator } from './evaluators/subtraction-operator-evaluator';
 import { XorOperatorEvaluator } from './evaluators/xor-operator-evaluator';
-import { OperatorEvaluator } from './operator-evaluator';
+import { type OperatorEvaluator } from './operator-evaluator';
 import {
-  BinaryOperatorTypeComputer,
-  TernaryOperatorTypeComputer,
-  UnaryOperatorTypeComputer,
+  type BinaryOperatorTypeComputer,
+  type TernaryOperatorTypeComputer,
+  type UnaryOperatorTypeComputer,
 } from './operator-type-computer';
+import {
+  type BinaryExpressionOperator,
+  type TernaryExpressionOperator,
+  type UnaryExpressionOperator,
+} from './operator-types';
 import { BasicArithmeticOperatorTypeComputer } from './type-computers/basic-arithmetic-operator-type-computer';
 import { DivisionOperatorTypeComputer } from './type-computers/division-operator-type-computer';
 import { EqualityOperatorTypeComputer } from './type-computers/equality-operator-type-computer';
