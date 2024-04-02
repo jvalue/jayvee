@@ -35,6 +35,7 @@ import {
   isValueLiteral,
   isValuetypeAssignmentLiteral,
 } from '../generated/ast';
+// eslint-disable-next-line import/no-cycle
 import { getNextAstNodeContainer } from '../model-util';
 import {
   AtomicValuetype,
@@ -48,16 +49,11 @@ import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-
 import { type Valuetype } from '../wrappers/value-type/valuetype';
 import { createValuetype } from '../wrappers/value-type/valuetype-util';
 
-import {
-  binaryOperatorRegistry,
-  ternaryOperatorRegistry,
-  unaryOperatorRegistry,
-} from './operator-registry';
 import { isEveryValueDefined } from './typeguards';
 
 export function inferExpressionType(
   expression: Expression | undefined,
-  context: ValidationContext | undefined,
+  context: ValidationContext,
 ): Valuetype | undefined {
   if (expression === undefined) {
     return undefined;
@@ -72,7 +68,7 @@ export function inferExpressionType(
     }
 
     const operator = expression.operator;
-    const typeComputer = unaryOperatorRegistry[operator].typeInference;
+    const typeComputer = context.typeComputerRegistry.unary[operator];
     return typeComputer.computeType(innerType, expression, context);
   }
   if (isBinaryExpression(expression)) {
@@ -83,7 +79,7 @@ export function inferExpressionType(
     }
 
     const operator = expression.operator;
-    const typeComputer = binaryOperatorRegistry[operator].typeInference;
+    const typeComputer = context.typeComputerRegistry.binary[operator];
     return typeComputer.computeType(leftType, rightType, expression, context);
   }
   if (isTernaryExpression(expression)) {
@@ -99,7 +95,7 @@ export function inferExpressionType(
     }
 
     const operator = expression.operator;
-    const typeComputer = ternaryOperatorRegistry[operator].typeInference;
+    const typeComputer = context.typeComputerRegistry.ternary[operator];
     return typeComputer.computeType(
       firstType,
       secondType,
@@ -116,7 +112,7 @@ export function inferExpressionType(
  */
 function inferTypeFromExpressionLiteral(
   expression: ExpressionLiteral,
-  context: ValidationContext | undefined,
+  context: ValidationContext,
 ): Valuetype | undefined {
   if (isValueLiteral(expression)) {
     if (isTextLiteral(expression)) {
@@ -160,7 +156,7 @@ function inferNumericType(expression: NumericLiteral): Valuetype {
 
 function inferCollectionType(
   collection: CollectionLiteral,
-  context: ValidationContext | undefined,
+  context: ValidationContext,
 ): Valuetype | undefined {
   const elementValuetypes = inferCollectionElementTypes(collection, context);
   if (elementValuetypes === undefined) {
@@ -186,7 +182,7 @@ function inferCollectionType(
     pickCommonPrimitiveValuetype(primitiveValuetypes);
 
   if (commonPrimitiveValuetype === undefined) {
-    context?.accept(
+    context.accept(
       'error',
       'The type of the collection cannot be inferred from its elements',
       {
@@ -205,7 +201,7 @@ function inferCollectionType(
 
 function inferCollectionElementTypes(
   collection: CollectionLiteral,
-  context: ValidationContext | undefined,
+  context: ValidationContext,
 ): Valuetype[] | undefined {
   const elementValuetypes = collection.values.map((value) =>
     inferExpressionType(value, context),

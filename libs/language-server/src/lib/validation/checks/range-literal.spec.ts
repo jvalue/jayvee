@@ -6,6 +6,7 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
+  DefaultTypeComputerRegistry,
   RangeLiteral,
   ValidationContext,
   createJayveeServices,
@@ -46,7 +47,10 @@ describe('Validation of RangeLiteral', () => {
 
     validateRangeLiteral(
       rangeLiteral,
-      new ValidationContext(validationAcceptorMock),
+      new ValidationContext(
+        validationAcceptorMock,
+        new DefaultTypeComputerRegistry(),
+      ),
     );
   }
 

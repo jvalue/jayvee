@@ -6,6 +6,7 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
+  DefaultTypeComputerRegistry,
   TypedConstraintDefinition,
   ValidationContext,
   createJayveeServices,
@@ -47,7 +48,10 @@ describe('Validation of ConstraintDefinition (typed syntax)', () => {
 
     validateTypedConstraintDefinition(
       typedConstraint,
-      new ValidationContext(validationAcceptorMock),
+      new ValidationContext(
+        validationAcceptorMock,
+        new DefaultTypeComputerRegistry(),
+      ),
     );
   }
 

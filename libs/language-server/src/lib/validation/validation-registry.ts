@@ -10,7 +10,11 @@ import {
   ValidationRegistry,
 } from 'langium';
 
-import { EvaluationContext } from '../ast';
+import {
+  EvaluationContext,
+  ExpressionEvaluatorRegistry,
+  TypeComputerRegistry,
+} from '../ast';
 import { JayveeAstType } from '../ast/generated/ast';
 import type { JayveeServices } from '../jayvee-module';
 import { RuntimeParameterProvider } from '../services';
@@ -37,10 +41,16 @@ import { ValidationContext } from './validation-context';
  */
 export class JayveeValidationRegistry extends ValidationRegistry {
   private readonly runtimeParameterProvider;
+  private readonly typeComputerRegistry: TypeComputerRegistry;
+  private readonly expressionEvaluatorRegistry: ExpressionEvaluatorRegistry;
+
   constructor(services: JayveeServices) {
     super(services);
 
     this.runtimeParameterProvider = services.RuntimeParameterProvider;
+    this.typeComputerRegistry = services.operators.TypeComputerRegistry;
+    this.expressionEvaluatorRegistry =
+      services.operators.ExpressionEvaluatorRegistry;
 
     this.registerJayveeValidationChecks({
       BuiltinBlocktypeDefinition: validateBlocktypeDefinition,
@@ -66,6 +76,8 @@ export class JayveeValidationRegistry extends ValidationRegistry {
       const wrappedCheck = this.wrapJayveeValidationCheck(
         check as JayveeValidationCheck,
         this.runtimeParameterProvider,
+        this.typeComputerRegistry,
+        this.expressionEvaluatorRegistry,
       );
 
       this.doRegister(type, this.wrapValidationException(wrappedCheck, this));
@@ -75,10 +87,18 @@ export class JayveeValidationRegistry extends ValidationRegistry {
   private wrapJayveeValidationCheck<T extends AstNode = AstNode>(
     check: JayveeValidationCheck<T>,
     runtimeParameterProvider: RuntimeParameterProvider,
+    typeComputerRegistry: TypeComputerRegistry,
+    expressionEvaluatorRegistry: ExpressionEvaluatorRegistry,
   ): ValidationCheck<T> {
     return (node: T, accept: ValidationAcceptor): MaybePromise<void> => {
-      const validationContext = new ValidationContext(accept);
-      const evaluationContext = new EvaluationContext(runtimeParameterProvider);
+      const validationContext = new ValidationContext(
+        accept,
+        typeComputerRegistry,
+      );
+      const evaluationContext = new EvaluationContext(
+        runtimeParameterProvider,
+        expressionEvaluatorRegistry,
+      );
       return check(node, validationContext, evaluationContext);
     };
   }

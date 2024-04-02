@@ -8,7 +8,7 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
 import { TypedObjectWrapper, getTypedObjectWrapper } from '../../ast';
-import { EvaluationContext } from '../../ast/expressions/evaluation';
+import { EvaluationContext } from '../../ast/expressions/evaluation-context';
 import {
   PropertyAssignment,
   PropertyBody,

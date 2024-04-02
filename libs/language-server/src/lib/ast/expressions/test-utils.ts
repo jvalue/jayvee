@@ -9,9 +9,10 @@ import { createJayveeServices } from '../../jayvee-module';
 import { RuntimeParameterProvider } from '../../services';
 import { TransformDefinition } from '../generated/ast';
 
-import { EvaluationContext } from './evaluation-context';
 import { evaluateExpression } from './evaluate-expression';
+import { EvaluationContext } from './evaluation-context';
 import { InternalValueRepresentation } from './internal-value-representation';
+import { DefaultExpressionEvaluatorRegistry } from './operator-registry';
 
 export async function executeDefaultTextToTextExpression(
   expression: string,
@@ -52,7 +53,10 @@ export async function executeExpressionTestHelper(
   ) as TransformDefinition;
 
   const runTimeParameterProvider = new RuntimeParameterProvider();
-  const evaluationContext = new EvaluationContext(runTimeParameterProvider);
+  const evaluationContext = new EvaluationContext(
+    runTimeParameterProvider,
+    new DefaultExpressionEvaluatorRegistry(),
+  );
 
   evaluationContext.setValueForReference(inputValueName, inputValueValue);
 

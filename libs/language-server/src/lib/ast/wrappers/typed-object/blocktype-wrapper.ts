@@ -8,7 +8,11 @@ import { Reference, isReference } from 'langium';
 
 import { RuntimeParameterProvider } from '../../../services';
 // eslint-disable-next-line import/no-cycle
-import { EvaluationContext, evaluateExpression } from '../../expressions';
+import {
+  DefaultExpressionEvaluatorRegistry,
+  EvaluationContext,
+  evaluateExpression,
+} from '../../expressions';
 import { ReferenceableBlocktypeDefinition } from '../../generated/ast';
 import { IOType, getIOType } from '../../io-type';
 import { createValuetype } from '../value-type';
@@ -53,7 +57,10 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlocktypeD
 
       const defaultValue = evaluateExpression(
         property.defaultValue,
-        new EvaluationContext(new RuntimeParameterProvider()),
+        new EvaluationContext(
+          new RuntimeParameterProvider(),
+          new DefaultExpressionEvaluatorRegistry(), // TODO: refactor wrappers as service and inject  services.ExpressionEvaluatorRegistry
+        ),
       );
       if (defaultValue !== undefined) {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

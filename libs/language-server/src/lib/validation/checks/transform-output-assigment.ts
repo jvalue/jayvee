@@ -9,7 +9,7 @@
 
 import { assertUnreachable } from 'langium';
 
-import { EvaluationContext } from '../../ast/expressions/evaluation';
+import { EvaluationContext } from '../../ast/expressions/evaluation-context';
 import { inferExpressionType } from '../../ast/expressions/type-inference';
 import {
   Expression,

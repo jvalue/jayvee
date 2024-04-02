@@ -136,7 +136,7 @@ export async function interpretModel(
     model,
     new StdExecExtension(),
     new DefaultConstraintExtension(),
-    services.RuntimeParameterProvider,
+    services,
     loggerFactory,
     {
       debug: options.debug,
@@ -177,7 +177,7 @@ async function interpretJayveeModel(
   model: JayveeModel,
   executionExtension: JayveeExecExtension,
   constraintExtension: JayveeConstraintExtension,
-  runtimeParameterProvider: RuntimeParameterProvider,
+  jayveeServices: JayveeServices,
   loggerFactory: LoggerFactory,
   runOptions: InterpreterOptions,
 ): Promise<ExitCode> {
@@ -186,7 +186,7 @@ async function interpretJayveeModel(
       pipeline,
       executionExtension,
       constraintExtension,
-      runtimeParameterProvider,
+      jayveeServices,
       loggerFactory,
       runOptions,
     );
@@ -203,7 +203,7 @@ async function runPipeline(
   pipeline: PipelineDefinition,
   executionExtension: JayveeExecExtension,
   constraintExtension: JayveeConstraintExtension,
-  runtimeParameterProvider: RuntimeParameterProvider,
+  jayveeServices: JayveeServices,
   loggerFactory: LoggerFactory,
   runOptions: InterpreterOptions,
 ): Promise<ExitCode> {
@@ -217,12 +217,15 @@ async function runPipeline(
       debugGranularity: runOptions.debugGranularity,
       debugTargets: runOptions.debugTargets,
     },
-    new EvaluationContext(runtimeParameterProvider),
+    new EvaluationContext(
+      jayveeServices.RuntimeParameterProvider,
+      jayveeServices.operators.ExpressionEvaluatorRegistry,
+    ),
   );
 
   logPipelineOverview(
     pipeline,
-    runtimeParameterProvider,
+    jayveeServices.RuntimeParameterProvider,
     executionContext.logger,
   );
 

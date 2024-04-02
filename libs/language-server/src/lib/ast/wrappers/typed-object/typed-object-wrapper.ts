@@ -4,9 +4,9 @@
 
 import { AstNode } from 'langium';
 
-import { ValidationContext } from '../../../validation/validation-context';
+import { type ValidationContext } from '../../../validation/validation-context';
+import { type EvaluationContext } from '../../expressions/evaluation-context';
 // eslint-disable-next-line import/no-cycle
-import { EvaluationContext } from '../../expressions/evaluation';
 import { InternalValueRepresentation } from '../../expressions/internal-value-representation';
 import { PropertyAssignment, PropertyBody } from '../../generated/ast';
 import { AstNodeWrapper } from '../ast-node-wrapper';

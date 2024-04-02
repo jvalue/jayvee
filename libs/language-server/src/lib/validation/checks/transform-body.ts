@@ -7,7 +7,7 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { EvaluationContext } from '../../ast/expressions/evaluation';
+import { EvaluationContext } from '../../ast/expressions/evaluation-context';
 import {
   TransformBody,
   TransformPortDefinition,

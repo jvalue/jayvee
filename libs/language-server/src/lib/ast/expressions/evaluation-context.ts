@@ -19,10 +19,12 @@ import {
   isTransformPortDefinition,
   isValueKeywordLiteral,
 } from '../generated/ast';
+// eslint-disable-next-line import/no-cycle
 import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-valuetypes';
 import { type Valuetype } from '../wrappers/value-type/valuetype';
 
 import { type InternalValueRepresentation } from './internal-value-representation';
+import { type ExpressionEvaluatorRegistry } from './operator-registry';
 
 export class EvaluationContext {
   private readonly variableValues = new Map<
@@ -34,6 +36,7 @@ export class EvaluationContext {
 
   constructor(
     public readonly runtimeParameterProvider: RuntimeParameterProvider,
+    public readonly operatorRegistry: ExpressionEvaluatorRegistry,
   ) {}
 
   getValueFor(

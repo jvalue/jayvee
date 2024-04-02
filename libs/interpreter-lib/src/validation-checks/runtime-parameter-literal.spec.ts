@@ -6,6 +6,8 @@ import * as path from 'path';
 
 import { parseValueToInternalRepresentation } from '@jvalue/jayvee-execution';
 import {
+  DefaultExpressionEvaluatorRegistry,
+  DefaultTypeComputerRegistry,
   EvaluationContext,
   RuntimeParameterLiteral,
   RuntimeParameterProvider,
@@ -62,8 +64,14 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
 
     validateRuntimeParameterLiteral(
       runtimeParameter,
-      new ValidationContext(validationAcceptorMock),
-      new EvaluationContext(runtimeProvider),
+      new ValidationContext(
+        validationAcceptorMock,
+        new DefaultTypeComputerRegistry(),
+      ),
+      new EvaluationContext(
+        runtimeProvider,
+        new DefaultExpressionEvaluatorRegistry(),
+      ),
     );
   }
 

@@ -6,6 +6,7 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
+  DefaultTypeComputerRegistry,
   PipeDefinition,
   ValidationContext,
   createJayveeServices,
@@ -44,7 +45,13 @@ describe('Validation of PipeDefinition', () => {
       'pipelines@0/pipes@0',
     ) as PipeDefinition;
 
-    validatePipeDefinition(pipe, new ValidationContext(validationAcceptorMock));
+    validatePipeDefinition(
+      pipe,
+      new ValidationContext(
+        validationAcceptorMock,
+        new DefaultTypeComputerRegistry(),
+      ),
+    );
   }
 
   beforeAll(() => {

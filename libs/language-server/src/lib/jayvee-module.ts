@@ -15,6 +15,12 @@ import {
 } from 'langium';
 
 import {
+  DefaultExpressionEvaluatorRegistry,
+  DefaultTypeComputerRegistry,
+  ExpressionEvaluatorRegistry,
+  TypeComputerRegistry,
+} from './ast/expressions/operator-registry';
+import {
   JayveeGeneratedModule,
   JayveeGeneratedSharedModule,
 } from './ast/generated/module';
@@ -31,6 +37,10 @@ import { JayveeValidationRegistry } from './validation/validation-registry';
 
 export interface JayveeAddedServices {
   RuntimeParameterProvider: RuntimeParameterProvider;
+  operators: {
+    TypeComputerRegistry: TypeComputerRegistry;
+    ExpressionEvaluatorRegistry: ExpressionEvaluatorRegistry;
+  };
   validation: {
     ValidationRegistry: JayveeValidationRegistry;
   };
@@ -66,6 +76,10 @@ export const JayveeModule: Module<
       new JayveeHoverProvider(services),
   },
   RuntimeParameterProvider: () => new RuntimeParameterProvider(),
+  operators: {
+    TypeComputerRegistry: () => new DefaultTypeComputerRegistry(),
+    ExpressionEvaluatorRegistry: () => new DefaultExpressionEvaluatorRegistry(),
+  },
 };
 
 export const JayveeSharedModule: Module<

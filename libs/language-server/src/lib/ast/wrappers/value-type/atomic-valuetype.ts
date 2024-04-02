@@ -5,10 +5,8 @@
 import { strict as assert } from 'assert';
 
 // eslint-disable-next-line import/no-cycle
-import {
-  EvaluationContext,
-  evaluateExpression,
-} from '../../expressions/evaluation';
+import { evaluateExpression } from '../../expressions/evaluate-expression';
+import { type EvaluationContext } from '../../expressions/evaluation-context';
 import { type InternalValueRepresentation } from '../../expressions/internal-value-representation';
 import { ConstraintDefinition, ValuetypeDefinition } from '../../generated/ast';
 import { AstNodeWrapper } from '../ast-node-wrapper';
@@ -17,6 +15,7 @@ import { AstNodeWrapper } from '../ast-node-wrapper';
 import { CollectionValuetype } from './primitive';
 import { PrimitiveValuetypes } from './primitive/primitive-valuetypes';
 import { AbstractValuetype, Valuetype, ValuetypeVisitor } from './valuetype';
+// eslint-disable-next-line import/no-cycle
 import { createValuetype } from './valuetype-util';
 
 export class AtomicValuetype

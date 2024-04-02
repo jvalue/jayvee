@@ -6,6 +6,8 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
+  DefaultExpressionEvaluatorRegistry,
+  DefaultTypeComputerRegistry,
   EvaluationContext,
   PropertyAssignment,
   PropertyBody,
@@ -61,8 +63,14 @@ describe('Validation of PropertyAssignment', () => {
     validatePropertyAssignment(
       propertyAssignment,
       wrapper as TypedObjectWrapper,
-      new ValidationContext(validationAcceptorMock),
-      new EvaluationContext(new RuntimeParameterProvider()),
+      new ValidationContext(
+        validationAcceptorMock,
+        new DefaultTypeComputerRegistry(),
+      ),
+      new EvaluationContext(
+        new RuntimeParameterProvider(),
+        new DefaultExpressionEvaluatorRegistry(),
+      ),
     );
   }
 

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
+  DefaultExpressionEvaluatorRegistry,
   EvaluationContext,
   PipelineDefinition,
   RuntimeParameterProvider,
@@ -61,7 +62,10 @@ export function getTestExecutionContext(
     new DefaultConstraintExtension(),
     new CachedLogger(runOptions.isDebugMode, undefined, loggerPrintLogs),
     runOptions,
-    new EvaluationContext(new RuntimeParameterProvider()),
+    new EvaluationContext(
+      new RuntimeParameterProvider(),
+      new DefaultExpressionEvaluatorRegistry(),
+    ),
   );
 
   initialStack.forEach((node) => executionContext.enterNode(node));

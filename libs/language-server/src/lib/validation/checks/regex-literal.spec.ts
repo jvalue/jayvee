@@ -6,6 +6,7 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
+  DefaultTypeComputerRegistry,
   RegexLiteral,
   ValidationContext,
   createJayveeServices,
@@ -46,7 +47,10 @@ describe('Validation of RegexLiteral', () => {
 
     validateRegexLiteral(
       regexLiteral,
-      new ValidationContext(validationAcceptorMock),
+      new ValidationContext(
+        validationAcceptorMock,
+        new DefaultTypeComputerRegistry(),
+      ),
     );
   }
 

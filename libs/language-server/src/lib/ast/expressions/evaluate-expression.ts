@@ -26,11 +26,6 @@ import { CellRangeWrapper, Valuetype } from '../wrappers';
 import { type EvaluationContext } from './evaluation-context';
 import { EvaluationStrategy } from './evaluation-strategy';
 import { type InternalValueRepresentation } from './internal-value-representation';
-import {
-  binaryOperatorRegistry,
-  ternaryOperatorRegistry,
-  unaryOperatorRegistry,
-} from './operator-registry';
 import { isEveryValueDefined } from './typeguards';
 
 export function evaluatePropertyValue<T extends InternalValueRepresentation>(
@@ -101,17 +96,17 @@ export function evaluateExpression(
   }
   if (isUnaryExpression(expression)) {
     const operator = expression.operator;
-    const evaluator = unaryOperatorRegistry[operator].evaluation;
+    const evaluator = evaluationContext.operatorRegistry.unary[operator];
     return evaluator.evaluate(expression, evaluationContext, strategy, context);
   }
   if (isBinaryExpression(expression)) {
     const operator = expression.operator;
-    const evaluator = binaryOperatorRegistry[operator].evaluation;
+    const evaluator = evaluationContext.operatorRegistry.binary[operator];
     return evaluator.evaluate(expression, evaluationContext, strategy, context);
   }
   if (isTernaryExpression(expression)) {
     const operator = expression.operator;
-    const evaluator = ternaryOperatorRegistry[operator].evaluation;
+    const evaluator = evaluationContext.operatorRegistry.ternary[operator];
     return evaluator.evaluate(expression, evaluationContext, strategy, context);
   }
   assertUnreachable(expression);

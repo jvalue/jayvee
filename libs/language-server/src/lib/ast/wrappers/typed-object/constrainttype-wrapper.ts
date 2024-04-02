@@ -8,10 +8,9 @@ import { Reference, isReference } from 'langium';
 
 import { RuntimeParameterProvider } from '../../../services';
 // eslint-disable-next-line import/no-cycle
-import {
-  EvaluationContext,
-  evaluateExpression,
-} from '../../expressions/evaluation';
+import { evaluateExpression } from '../../expressions/evaluate-expression';
+import { EvaluationContext } from '../../expressions/evaluation-context';
+import { DefaultExpressionEvaluatorRegistry } from '../../expressions/operator-registry';
 import { BuiltinConstrainttypeDefinition } from '../../generated/ast';
 import { Valuetype, createValuetype } from '../value-type';
 
@@ -53,7 +52,10 @@ export class ConstraintTypeWrapper extends TypedObjectWrapper<BuiltinConstraintt
 
       const defaultValue = evaluateExpression(
         property.defaultValue,
-        new EvaluationContext(new RuntimeParameterProvider()),
+        new EvaluationContext(
+          new RuntimeParameterProvider(),
+          new DefaultExpressionEvaluatorRegistry(), // TODO: refactor wrappers as service and inject  services.ExpressionEvaluatorRegistry
+        ),
       );
       if (defaultValue !== undefined) {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

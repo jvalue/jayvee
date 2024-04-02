@@ -7,6 +7,7 @@ import { NodeFileSystem } from 'langium/node';
 
 import {
   ColumnId,
+  DefaultTypeComputerRegistry,
   ValidationContext,
   createJayveeServices,
 } from '../../../lib';
@@ -44,7 +45,13 @@ describe('Validation of ColumnId', () => {
       'pipelines@0/blocks@0/body/properties@0/value/columnId',
     ) as ColumnId;
 
-    validateColumnId(columnId, new ValidationContext(validationAcceptorMock));
+    validateColumnId(
+      columnId,
+      new ValidationContext(
+        validationAcceptorMock,
+        new DefaultTypeComputerRegistry(),
+      ),
+    );
   }
 
   beforeAll(() => {

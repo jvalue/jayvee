@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { BlockTypeWrapper, PipelineWrapper } from '../../ast';
-import { EvaluationContext } from '../../ast/expressions/evaluation';
+import { EvaluationContext } from '../../ast/expressions/evaluation-context';
 import {
   BlockDefinition,
   CompositeBlocktypeDefinition,

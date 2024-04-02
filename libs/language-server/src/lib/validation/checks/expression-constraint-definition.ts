@@ -7,7 +7,7 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { EvaluationContext } from '../../ast/expressions/evaluation';
+import { EvaluationContext } from '../../ast/expressions/evaluation-context';
 import { inferExpressionType } from '../../ast/expressions/type-inference';
 import { ExpressionConstraintDefinition } from '../../ast/generated/ast';
 import { PrimitiveValuetypes } from '../../ast/wrappers/value-type/primitive/primitive-valuetypes';

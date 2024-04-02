@@ -7,6 +7,8 @@ import { NodeFileSystem } from 'langium/node';
 
 import {
   CompositeBlocktypeDefinition,
+  DefaultExpressionEvaluatorRegistry,
+  DefaultTypeComputerRegistry,
   EvaluationContext,
   RuntimeParameterProvider,
   ValidationContext,
@@ -48,8 +50,14 @@ describe('Validation of CompositeBlocktypeDefinition', () => {
 
     validateCompositeBlockTypeDefinition(
       blocktype,
-      new ValidationContext(validationAcceptorMock),
-      new EvaluationContext(new RuntimeParameterProvider()),
+      new ValidationContext(
+        validationAcceptorMock,
+        new DefaultTypeComputerRegistry(),
+      ),
+      new EvaluationContext(
+        new RuntimeParameterProvider(),
+        new DefaultExpressionEvaluatorRegistry(),
+      ),
     );
   }
 

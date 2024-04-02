@@ -11,6 +11,7 @@ import {
   type UnaryExpression,
 } from '../generated/ast';
 
+// eslint-disable-next-line import/no-cycle
 import { evaluateExpression } from './evaluate-expression';
 import { type EvaluationContext } from './evaluation-context';
 import { EvaluationStrategy } from './evaluation-strategy';
@@ -230,7 +231,6 @@ export abstract class DefaultTernaryOperatorEvaluator<
       validationContext,
       strategy,
     );
-    EvaluationContext
 
     const secondValue = evaluateExpression(
       expression.second,

@@ -6,6 +6,8 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
+  DefaultExpressionEvaluatorRegistry,
+  DefaultTypeComputerRegistry,
   EvaluationContext,
   PropertyBody,
   PropertySpecification,
@@ -61,8 +63,14 @@ describe('Validation of blocktype specific properties', () => {
       checkBlocktypeSpecificProperties(
         propertyAssignment,
         propertySpec as PropertySpecification,
-        new ValidationContext(validationAcceptorMock),
-        new EvaluationContext(new RuntimeParameterProvider()),
+        new ValidationContext(
+          validationAcceptorMock,
+          new DefaultTypeComputerRegistry(),
+        ),
+        new EvaluationContext(
+          new RuntimeParameterProvider(),
+          new DefaultExpressionEvaluatorRegistry(),
+        ),
       );
     });
   }

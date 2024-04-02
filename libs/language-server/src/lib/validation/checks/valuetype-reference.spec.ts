@@ -8,6 +8,7 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
+  DefaultTypeComputerRegistry,
   ValidationContext,
   ValuetypeDefinition,
   ValuetypeReference,
@@ -84,7 +85,10 @@ describe('Validation of ValuetypeReference', () => {
       (valuetypeRef) => {
         validateValuetypeReference(
           valuetypeRef,
-          new ValidationContext(validationAcceptorMock),
+          new ValidationContext(
+            validationAcceptorMock,
+            new DefaultTypeComputerRegistry(),
+          ),
         );
       },
     );
@@ -101,7 +105,10 @@ describe('Validation of ValuetypeReference', () => {
       (valuetypeRef) => {
         validateValuetypeReference(
           valuetypeRef,
-          new ValidationContext(validationAcceptorMock),
+          new ValidationContext(
+            validationAcceptorMock,
+            new DefaultTypeComputerRegistry(),
+          ),
         );
       },
     );
@@ -118,7 +125,10 @@ describe('Validation of ValuetypeReference', () => {
       (valuetypeRef) => {
         validateValuetypeReference(
           valuetypeRef,
-          new ValidationContext(validationAcceptorMock),
+          new ValidationContext(
+            validationAcceptorMock,
+            new DefaultTypeComputerRegistry(),
+          ),
         );
       },
     );
@@ -135,7 +145,10 @@ describe('Validation of ValuetypeReference', () => {
       (valuetypeRef) => {
         validateValuetypeReference(
           valuetypeRef,
-          new ValidationContext(validationAcceptorMock),
+          new ValidationContext(
+            validationAcceptorMock,
+            new DefaultTypeComputerRegistry(),
+          ),
         );
       },
     );
@@ -157,7 +170,10 @@ describe('Validation of ValuetypeReference', () => {
       (valuetypeRef) => {
         validateValuetypeReference(
           valuetypeRef,
-          new ValidationContext(validationAcceptorMock),
+          new ValidationContext(
+            validationAcceptorMock,
+            new DefaultTypeComputerRegistry(),
+          ),
         );
       },
     );
@@ -179,7 +195,10 @@ describe('Validation of ValuetypeReference', () => {
       (valuetypeRef) => {
         validateValuetypeReference(
           valuetypeRef,
-          new ValidationContext(validationAcceptorMock),
+          new ValidationContext(
+            validationAcceptorMock,
+            new DefaultTypeComputerRegistry(),
+          ),
         );
       },
     );
@@ -201,7 +220,10 @@ describe('Validation of ValuetypeReference', () => {
       (valuetypeRef) => {
         validateValuetypeReference(
           valuetypeRef,
-          new ValidationContext(validationAcceptorMock),
+          new ValidationContext(
+            validationAcceptorMock,
+            new DefaultTypeComputerRegistry(),
+          ),
         );
       },
     );
@@ -223,7 +245,10 @@ describe('Validation of ValuetypeReference', () => {
       (valuetypeRef) => {
         validateValuetypeReference(
           valuetypeRef,
-          new ValidationContext(validationAcceptorMock),
+          new ValidationContext(
+            validationAcceptorMock,
+            new DefaultTypeComputerRegistry(),
+          ),
         );
       },
     );
@@ -258,7 +283,10 @@ describe('Validation of ValuetypeReference', () => {
 
     validateValuetypeReference(
       valuetypeRef,
-      new ValidationContext(validationAcceptorMock),
+      new ValidationContext(
+        validationAcceptorMock,
+        new DefaultTypeComputerRegistry(),
+      ),
     );
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
@@ -284,7 +312,10 @@ describe('Validation of ValuetypeReference', () => {
 
     validateValuetypeReference(
       valuetypeRef,
-      new ValidationContext(validationAcceptorMock),
+      new ValidationContext(
+        validationAcceptorMock,
+        new DefaultTypeComputerRegistry(),
+      ),
     );
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);

@@ -6,6 +6,8 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
+  DefaultExpressionEvaluatorRegistry,
+  DefaultTypeComputerRegistry,
   EvaluationContext,
   PropertyBody,
   RuntimeParameterProvider,
@@ -52,8 +54,14 @@ describe('Validation of constraint type specific property bodies', () => {
 
     checkConstraintTypeSpecificPropertyBody(
       propertyBody,
-      new ValidationContext(validationAcceptorMock),
-      new EvaluationContext(new RuntimeParameterProvider()),
+      new ValidationContext(
+        validationAcceptorMock,
+        new DefaultTypeComputerRegistry(),
+      ),
+      new EvaluationContext(
+        new RuntimeParameterProvider(),
+        new DefaultExpressionEvaluatorRegistry(),
+      ),
     );
   }
 
