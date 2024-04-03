@@ -56,11 +56,7 @@ describe('Validation of PropertyAssignment', () => {
     const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
     const operatorTypeComputerRegistry =
       new DefaultOperatorTypeComputerRegistry();
-    const wrapperFactory = new WrapperFactory({
-      operators: {
-        EvaluatorRegistry: operatorEvaluatorRegistry,
-      },
-    });
+    const wrapperFactory = new WrapperFactory(operatorEvaluatorRegistry);
 
     const wrapper = wrapperFactory.wrapTypedObject(type);
     expect(wrapper).toBeDefined();

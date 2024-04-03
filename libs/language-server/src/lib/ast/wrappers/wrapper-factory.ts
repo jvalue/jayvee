@@ -43,16 +43,12 @@ abstract class AstNodeWrapperFactory<
 }
 
 export class WrapperFactory {
-  private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry;
-
   readonly BlockType: BlockTypeWrapperFactory;
   readonly ConstraintType: ConstraintTypeWrapperFactory;
 
-  constructor(services: {
-    operators: { EvaluatorRegistry: OperatorEvaluatorRegistry };
-  }) {
-    this.operatorEvaluatorRegistry = services.operators.EvaluatorRegistry;
-
+  constructor(
+    private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
+  ) {
     this.BlockType = new BlockTypeWrapperFactory(
       this.operatorEvaluatorRegistry,
     );

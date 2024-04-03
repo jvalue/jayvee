@@ -52,11 +52,7 @@ describe('Validation of ValuetypeDefinition', () => {
     const operatorTypeComputerRegistry =
       new DefaultOperatorTypeComputerRegistry();
     const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
-    const wrapperFactory = new WrapperFactory({
-      operators: {
-        EvaluatorRegistry: operatorEvaluatorRegistry,
-      },
-    });
+    const wrapperFactory = new WrapperFactory(operatorEvaluatorRegistry);
 
     validateValuetypeDefinition(
       valuetypeDefinition,

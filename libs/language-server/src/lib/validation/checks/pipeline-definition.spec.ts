@@ -52,11 +52,7 @@ describe('Validation of PipelineDefinition', () => {
     const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
     const operatorTypeComputerRegistry =
       new DefaultOperatorTypeComputerRegistry();
-    const wrapperFactory = new WrapperFactory({
-      operators: {
-        EvaluatorRegistry: operatorEvaluatorRegistry,
-      },
-    });
+    const wrapperFactory = new WrapperFactory(operatorEvaluatorRegistry);
 
     validatePipelineDefinition(
       pipeline,

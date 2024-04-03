@@ -51,11 +51,7 @@ describe('Validation PropertyBody', () => {
 
     const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
     const typeComputerRegistry = new DefaultOperatorTypeComputerRegistry();
-    const wrapperFactory = new WrapperFactory({
-      operators: {
-        EvaluatorRegistry: operatorEvaluatorRegistry,
-      },
-    });
+    const wrapperFactory = new WrapperFactory(operatorEvaluatorRegistry);
 
     validatePropertyBody(
       propertyBody,

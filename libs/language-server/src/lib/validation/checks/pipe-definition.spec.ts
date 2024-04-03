@@ -61,11 +61,7 @@ describe('Validation of PipeDefinition', () => {
         new RuntimeParameterProvider(),
         operatorEvaluatorRegistry,
       ),
-      new WrapperFactory({
-        operators: {
-          EvaluatorRegistry: operatorEvaluatorRegistry,
-        },
-      }),
+      new WrapperFactory(operatorEvaluatorRegistry),
     );
   }
 

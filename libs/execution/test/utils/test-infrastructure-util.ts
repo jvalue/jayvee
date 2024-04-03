@@ -64,9 +64,7 @@ export function getTestExecutionContext(
     new TestExecExtension(),
     new DefaultConstraintExtension(),
     new CachedLogger(runOptions.isDebugMode, undefined, loggerPrintLogs),
-    new WrapperFactory({
-      operators: { EvaluatorRegistry: operatorEvaluatorRegistry },
-    }),
+    new WrapperFactory(operatorEvaluatorRegistry),
     runOptions,
     new EvaluationContext(
       new RuntimeParameterProvider(),

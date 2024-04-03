@@ -33,9 +33,9 @@ import { RuntimeParameterProvider } from './services/runtime-parameter-provider'
 import { JayveeValidationRegistry } from './validation/validation-registry';
 
 /**
- * Declaration of custom services - add your own service classes here.
+ * Declaration of custom services for the Jayvee language.
+ * https://langium.org/docs/configuration-services/#adding-new-services
  */
-
 export interface JayveeAddedServices {
   RuntimeParameterProvider: RuntimeParameterProvider;
   operators: {
@@ -82,7 +82,8 @@ export const JayveeModule: Module<
     TypeComputerRegistry: () => new DefaultOperatorTypeComputerRegistry(),
     EvaluatorRegistry: () => new DefaultOperatorEvaluatorRegistry(),
   },
-  WrapperFactory: (services) => new WrapperFactory(services),
+  WrapperFactory: (services) =>
+    new WrapperFactory(services.operators.EvaluatorRegistry),
 };
 
 export const JayveeSharedModule: Module<
