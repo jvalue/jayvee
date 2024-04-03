@@ -17,6 +17,6 @@ export { type ConstraintTypeWrapper } from './typed-object/constrainttype-wrappe
 export * from './typed-object/typed-object-wrapper';
 
 export * from './pipe-wrapper';
-export * from './pipeline-wrapper';
+export { type PipelineWrapper } from './pipeline-wrapper';
 
 export * from './wrapper-factory';

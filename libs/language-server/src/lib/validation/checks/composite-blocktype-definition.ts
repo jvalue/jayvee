@@ -23,7 +23,7 @@ export function validateCompositeBlockTypeDefinition(
   checkHasPipeline(blockType, validationContext);
   checkExactlyOnePipeline(blockType, validationContext);
 
-  checkMultipleBlockInputs(blockType, validationContext);
+  checkMultipleBlockInputs(blockType, validationContext, wrapperFactory);
   checkDefinedBlocksAreUsed(blockType, validationContext, wrapperFactory);
 }
 
@@ -75,10 +75,10 @@ export function checkDefinedBlocksAreUsed(
   context: ValidationContext,
   wrapperFactory: WrapperFactory,
 ): void {
-  if (!PipelineWrapper.canBeWrapped(blocktypeDefinition)) {
+  if (!wrapperFactory.Pipeline.canWrap(blocktypeDefinition)) {
     return;
   }
-  const pipelineWrapper = new PipelineWrapper(blocktypeDefinition);
+  const pipelineWrapper = wrapperFactory.Pipeline.wrap(blocktypeDefinition);
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (blocktypeDefinition.blocks === undefined) {

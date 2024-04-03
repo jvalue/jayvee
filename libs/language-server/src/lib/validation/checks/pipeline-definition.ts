@@ -22,24 +22,25 @@ export function validatePipelineDefinition(
   evaluationContext: EvaluationContext,
   wrapperFactory: WrapperFactory,
 ): void {
-  checkStartingBlocks(pipeline, validationContext);
+  checkStartingBlocks(pipeline, validationContext, wrapperFactory);
   checkUniqueNames(pipeline.blocks, validationContext);
   checkUniqueNames(pipeline.transforms, validationContext);
   checkUniqueNames(pipeline.valuetypes, validationContext);
   checkUniqueNames(pipeline.constraints, validationContext);
 
-  checkMultipleBlockInputs(pipeline, validationContext);
+  checkMultipleBlockInputs(pipeline, validationContext, wrapperFactory);
   checkDefinedBlocksAreUsed(pipeline, validationContext, wrapperFactory);
 }
 
 function checkStartingBlocks(
   pipeline: PipelineDefinition,
   context: ValidationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
-  if (!PipelineWrapper.canBeWrapped(pipeline)) {
+  if (!wrapperFactory.Pipeline.canWrap(pipeline)) {
     return;
   }
-  const pipelineWrapper = new PipelineWrapper(pipeline);
+  const pipelineWrapper = wrapperFactory.Pipeline.wrap(pipeline);
 
   const startingBlocks = pipelineWrapper.getStartingBlocks();
   if (startingBlocks.length === 0) {
@@ -57,11 +58,12 @@ function checkStartingBlocks(
 export function checkMultipleBlockInputs(
   pipeline: PipelineDefinition | CompositeBlocktypeDefinition,
   context: ValidationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
-  if (!PipelineWrapper.canBeWrapped(pipeline)) {
+  if (!wrapperFactory.Pipeline.canWrap(pipeline)) {
     return;
   }
-  const pipelineWrapper = new PipelineWrapper(pipeline);
+  const pipelineWrapper = wrapperFactory.Pipeline.wrap(pipeline);
 
   const startingBlocks = pipelineWrapper.getStartingBlocks();
   let alreadyMarkedPipes: PipeWrapper[] = [];
@@ -133,10 +135,10 @@ export function checkDefinedBlocksAreUsed(
   context: ValidationContext,
   wrapperFactory: WrapperFactory,
 ): void {
-  if (!PipelineWrapper.canBeWrapped(pipeline)) {
+  if (!wrapperFactory.Pipeline.canWrap(pipeline)) {
     return;
   }
-  const pipelineWrapper = new PipelineWrapper(pipeline);
+  const pipelineWrapper = wrapperFactory.Pipeline.wrap(pipeline);
 
   const containedBlocks = pipeline.blocks;
   for (const block of containedBlocks) {

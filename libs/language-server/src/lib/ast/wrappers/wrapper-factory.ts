@@ -14,12 +14,15 @@ import {
 import { type OperatorEvaluatorRegistry } from '../expressions';
 import {
   BuiltinConstrainttypeDefinition,
+  CompositeBlocktypeDefinition,
+  PipelineDefinition,
   type ReferenceableBlocktypeDefinition,
   isBuiltinConstrainttypeDefinition,
   isReferenceableBlocktypeDefinition,
 } from '../generated/ast';
 
 import { AstNodeWrapper } from './ast-node-wrapper';
+import { PipelineWrapper } from './pipeline-wrapper';
 // eslint-disable-next-line import/no-cycle
 import { BlockTypeWrapper } from './typed-object/blocktype-wrapper';
 import { ConstraintTypeWrapper } from './typed-object/constrainttype-wrapper';
@@ -45,6 +48,7 @@ abstract class AstNodeWrapperFactory<
 export class WrapperFactory {
   readonly BlockType: BlockTypeWrapperFactory;
   readonly ConstraintType: ConstraintTypeWrapperFactory;
+  readonly Pipeline: PipelineWrapperFactory;
 
   constructor(
     private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
@@ -55,6 +59,7 @@ export class WrapperFactory {
     this.ConstraintType = new ConstraintTypeWrapperFactory(
       this.operatorEvaluatorRegistry,
     );
+    this.Pipeline = new PipelineWrapperFactory();
   }
 
   /**
@@ -140,5 +145,28 @@ class ConstraintTypeWrapperFactory extends AstNodeWrapperFactory<
       toBeWrapped,
       this.operatorEvaluatorRegistry,
     );
+  }
+}
+
+class PipelineWrapperFactory extends AstNodeWrapperFactory<
+  PipelineDefinition | CompositeBlocktypeDefinition,
+  PipelineWrapper<PipelineDefinition | CompositeBlocktypeDefinition>
+> {
+  canWrap(
+    toBeWrapped: PipelineDefinition | CompositeBlocktypeDefinition,
+  ): boolean {
+    return PipelineWrapper.canBeWrapped(toBeWrapped);
+  }
+
+  override wrap<T extends PipelineDefinition | CompositeBlocktypeDefinition>( // override to adjust typing
+    toBeWrapped: T | Reference<T>,
+  ): PipelineWrapper<T> {
+    return super.wrap(toBeWrapped) as PipelineWrapper<T>; // implementation forwards to doWrap, so typing will be correct
+  }
+
+  doWrap<T extends PipelineDefinition | CompositeBlocktypeDefinition>(
+    toBeWrapped: T,
+  ): PipelineWrapper<T> {
+    return new PipelineWrapper(toBeWrapped);
   }
 }

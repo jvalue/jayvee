@@ -24,10 +24,10 @@ import {
   JayveeModel,
   JayveeServices,
   PipelineDefinition,
-  PipelineWrapper,
   RuntimeParameterLiteral,
   RuntimeParameterProvider,
   ValidationContext,
+  WrapperFactory,
   createJayveeServices,
   initializeWorkspace,
   internalValueToString,
@@ -240,6 +240,7 @@ async function runPipeline(
     pipeline,
     jayveeServices.RuntimeParameterProvider,
     executionContext.logger,
+    jayveeServices.WrapperFactory,
   );
 
   const startTime = new Date();
@@ -264,8 +265,9 @@ export function logPipelineOverview(
   pipeline: PipelineDefinition,
   runtimeParameterProvider: RuntimeParameterProvider,
   logger: Logger,
+  wrapperFactory: WrapperFactory,
 ) {
-  const pipelineWrapper = new PipelineWrapper(pipeline);
+  const pipelineWrapper = wrapperFactory.Pipeline.wrap(pipeline);
 
   const toString = (block: BlockDefinition, depth = 0): string => {
     const blockTypeName = block.type.ref?.name;
