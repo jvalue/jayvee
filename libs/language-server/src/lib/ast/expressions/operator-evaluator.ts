@@ -10,6 +10,7 @@ import {
   type TernaryExpression,
   type UnaryExpression,
 } from '../generated/ast';
+import { type WrapperFactory } from '../wrappers';
 
 // eslint-disable-next-line import/no-cycle
 import { evaluateExpression } from './evaluate-expression';
@@ -36,6 +37,7 @@ export interface OperatorEvaluator<
   evaluate(
     expression: E,
     evaluationContext: EvaluationContext,
+    wrapperFactory: WrapperFactory,
     strategy: EvaluationStrategy,
     validationContext: ValidationContext | undefined,
   ): InternalValueRepresentation | undefined;
@@ -60,6 +62,7 @@ export abstract class DefaultUnaryOperatorEvaluator<
   evaluate(
     expression: UnaryExpression,
     evaluationContext: EvaluationContext,
+    wrapperFactory: WrapperFactory,
     strategy: EvaluationStrategy,
     validationContext: ValidationContext | undefined,
   ): T | undefined {
@@ -67,6 +70,7 @@ export abstract class DefaultUnaryOperatorEvaluator<
     const operandValue = evaluateExpression(
       expression.expression,
       evaluationContext,
+      wrapperFactory,
       validationContext,
       strategy,
     );
@@ -102,6 +106,7 @@ export abstract class DefaultBinaryOperatorEvaluator<
   evaluate(
     expression: BinaryExpression,
     evaluationContext: EvaluationContext,
+    wrapperFactory: WrapperFactory,
     strategy: EvaluationStrategy,
     validationContext: ValidationContext | undefined,
   ): T | undefined {
@@ -109,6 +114,7 @@ export abstract class DefaultBinaryOperatorEvaluator<
     const leftValue = evaluateExpression(
       expression.left,
       evaluationContext,
+      wrapperFactory,
       validationContext,
       strategy,
     );
@@ -118,6 +124,7 @@ export abstract class DefaultBinaryOperatorEvaluator<
     const rightValue = evaluateExpression(
       expression.right,
       evaluationContext,
+      wrapperFactory,
       validationContext,
       strategy,
     );
@@ -158,6 +165,7 @@ export abstract class BooleanShortCircuitOperatorEvaluator
   evaluate(
     expression: BinaryExpression,
     evaluationContext: EvaluationContext,
+    wrapperFactory: WrapperFactory,
     strategy: EvaluationStrategy,
     validationContext: ValidationContext | undefined,
   ): boolean | undefined {
@@ -165,6 +173,7 @@ export abstract class BooleanShortCircuitOperatorEvaluator
     const leftValue = evaluateExpression(
       expression.left,
       evaluationContext,
+      wrapperFactory,
       validationContext,
       strategy,
     );
@@ -181,6 +190,7 @@ export abstract class BooleanShortCircuitOperatorEvaluator
     const rightValue = evaluateExpression(
       expression.right,
       evaluationContext,
+      wrapperFactory,
       validationContext,
       strategy,
     );
@@ -218,6 +228,7 @@ export abstract class DefaultTernaryOperatorEvaluator<
   evaluate(
     expression: TernaryExpression,
     evaluationContext: EvaluationContext,
+    wrapperFactory: WrapperFactory,
     strategy: EvaluationStrategy,
     validationContext: ValidationContext | undefined,
   ): ReturnValue | undefined {
@@ -228,6 +239,7 @@ export abstract class DefaultTernaryOperatorEvaluator<
     const firstValue = evaluateExpression(
       expression.first,
       evaluationContext,
+      wrapperFactory,
       validationContext,
       strategy,
     );
@@ -235,6 +247,7 @@ export abstract class DefaultTernaryOperatorEvaluator<
     const secondValue = evaluateExpression(
       expression.second,
       evaluationContext,
+      wrapperFactory,
       validationContext,
       strategy,
     );
@@ -242,6 +255,7 @@ export abstract class DefaultTernaryOperatorEvaluator<
     const thirdValue = evaluateExpression(
       expression.third,
       evaluationContext,
+      wrapperFactory,
       validationContext,
       strategy,
     );

@@ -8,6 +8,7 @@ import {
   BlocktypeProperty,
   EvaluationContext,
   ReferenceableBlocktypeDefinition,
+  WrapperFactory,
   createValuetype,
   evaluateExpression,
 } from '../../ast';
@@ -17,6 +18,7 @@ export function validateBlocktypeDefinition(
   blocktype: ReferenceableBlocktypeDefinition,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
   checkNoMultipleInputs(blocktype, validationContext);
   checkNoMultipleOutputs(blocktype, validationContext);
@@ -27,6 +29,7 @@ export function validateBlocktypeDefinition(
     blocktype,
     validationContext,
     evaluationContext,
+    wrapperFactory,
   );
 }
 
@@ -148,8 +151,9 @@ function checkNoDuplicateProperties(
 
 function checkPropertiesDefaultValuesHaveCorrectType(
   blocktype: ReferenceableBlocktypeDefinition,
-  context: ValidationContext,
+  validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (blocktype.properties === undefined) {
@@ -161,8 +165,9 @@ function checkPropertiesDefaultValuesHaveCorrectType(
     .forEach((property) =>
       checkPropertyDefaultValuesHasCorrectType(
         property,
-        context,
+        validationContext,
         evaluationContext,
+        wrapperFactory,
       ),
     );
 }
@@ -171,6 +176,7 @@ function checkPropertyDefaultValuesHasCorrectType(
   property: BlocktypeProperty,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
   const defaultValueExpression = property.defaultValue;
   if (defaultValueExpression === undefined) {
@@ -180,6 +186,7 @@ function checkPropertyDefaultValuesHasCorrectType(
   const evaluatedExpression = evaluateExpression(
     defaultValueExpression,
     evaluationContext,
+    wrapperFactory,
     validationContext,
   );
   if (evaluatedExpression === undefined) {

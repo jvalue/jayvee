@@ -7,6 +7,7 @@ import {
   EvaluationContext,
   PrimitiveValuetypes,
   PropertyBody,
+  WrapperFactory,
   evaluatePropertyValue,
 } from '../../../ast';
 import { ValidationContext } from '../../validation-context';
@@ -15,6 +16,7 @@ export function checkBlocktypeSpecificPropertyBody(
   propertyBody: PropertyBody,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ) {
   switch (propertyBody.$container.type.ref?.name) {
     case 'TextRangeSelector':
@@ -22,18 +24,21 @@ export function checkBlocktypeSpecificPropertyBody(
         propertyBody,
         validationContext,
         evaluationContext,
+        wrapperFactory,
       );
     case 'CellWriter':
       return checkCellWriterPropertyBody(
         propertyBody,
         validationContext,
         evaluationContext,
+        wrapperFactory,
       );
     case 'TableTransformer':
       return checkTableTransformerPropertyBody(
         propertyBody,
         validationContext,
         evaluationContext,
+        wrapperFactory,
       );
     default:
   }
@@ -43,6 +48,7 @@ function checkTextRangeSelectorPropertyBody(
   propertyBody: PropertyBody,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ) {
   const lineFromProperty = propertyBody.properties.find(
     (p) => p.name === 'lineFrom',
@@ -58,11 +64,13 @@ function checkTextRangeSelectorPropertyBody(
   const lineFrom = evaluatePropertyValue(
     lineFromProperty,
     evaluationContext,
+    wrapperFactory,
     PrimitiveValuetypes.Integer,
   );
   const lineTo = evaluatePropertyValue(
     lineToProperty,
     evaluationContext,
+    wrapperFactory,
     PrimitiveValuetypes.Integer,
   );
   if (lineFrom === undefined || lineTo === undefined) {
@@ -84,6 +92,7 @@ function checkCellWriterPropertyBody(
   propertyBody: PropertyBody,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ) {
   const writeProperty = propertyBody.properties.find((p) => p.name === 'write');
   const atProperty = propertyBody.properties.find((p) => p.name === 'at');
@@ -95,12 +104,14 @@ function checkCellWriterPropertyBody(
   const writeValues = evaluatePropertyValue(
     writeProperty,
     evaluationContext,
+    wrapperFactory,
     new CollectionValuetype(PrimitiveValuetypes.Text),
   );
 
   const atValue = evaluatePropertyValue(
     atProperty,
     evaluationContext,
+    wrapperFactory,
     PrimitiveValuetypes.CellRange,
   );
 
@@ -126,11 +137,13 @@ function checkTableTransformerPropertyBody(
   propertyBody: PropertyBody,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ) {
   checkInputColumnsMatchTransformationPorts(
     propertyBody,
     validationContext,
     evaluationContext,
+    wrapperFactory,
   );
 }
 
@@ -138,6 +151,7 @@ function checkInputColumnsMatchTransformationPorts(
   propertyBody: PropertyBody,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
   const useProperty = propertyBody.properties.find((x) => x.name === 'use');
   const inputColumnsProperty = propertyBody.properties.find(
@@ -151,11 +165,13 @@ function checkInputColumnsMatchTransformationPorts(
   const transform = evaluatePropertyValue(
     useProperty,
     evaluationContext,
+    wrapperFactory,
     PrimitiveValuetypes.Transform,
   );
   const inputColumns = evaluatePropertyValue(
     inputColumnsProperty,
     evaluationContext,
+    wrapperFactory,
     new CollectionValuetype(PrimitiveValuetypes.Text),
   );
 

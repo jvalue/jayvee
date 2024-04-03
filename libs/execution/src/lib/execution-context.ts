@@ -99,6 +99,7 @@ export class ExecutionContext {
     const propertyValue = evaluatePropertyValue(
       property,
       this.evaluationContext,
+      this.wrapperFactory,
       valuetype,
     );
     assert(propertyValue !== undefined);

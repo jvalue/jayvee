@@ -77,6 +77,7 @@ describe('Validation of PropertyAssignment', () => {
         new RuntimeParameterProvider(),
         operatorEvaluatorRegistry,
       ),
+      wrapperFactory,
     );
   }
 

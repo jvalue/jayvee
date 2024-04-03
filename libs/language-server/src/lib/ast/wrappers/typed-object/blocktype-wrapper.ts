@@ -16,6 +16,7 @@ import {
 import { ReferenceableBlocktypeDefinition } from '../../generated/ast';
 import { IOType, getIOType } from '../../io-type';
 import { createValuetype } from '../value-type';
+import { type WrapperFactory } from '../wrapper-factory';
 
 import {
   ExampleDoc,
@@ -45,6 +46,7 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlocktypeD
       | ReferenceableBlocktypeDefinition
       | Reference<ReferenceableBlocktypeDefinition>,
     operatorEvaluatiorRegistry: OperatorEvaluatorRegistry,
+    wrapperFactory: WrapperFactory,
   ) {
     const blocktypeDefinition = isReference(toBeWrapped)
       ? toBeWrapped.ref
@@ -68,6 +70,7 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlocktypeD
           new RuntimeParameterProvider(),
           operatorEvaluatiorRegistry,
         ),
+        wrapperFactory,
       );
       if (defaultValue !== undefined) {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

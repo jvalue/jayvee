@@ -78,6 +78,7 @@ describe('Validation of constraint type specific properties', () => {
           new RuntimeParameterProvider(),
           operatorEvaluatorRegistry,
         ),
+        wrapperFactory,
       );
     });
   }

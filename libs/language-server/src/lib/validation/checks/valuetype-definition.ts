@@ -99,6 +99,7 @@ function checkConstraintsCollectionValues(
   const constraints = evaluateExpression(
     constraintCollection,
     evaluationContext,
+    wrapperFactory,
     validationContext,
   );
   assert(expectedType.isInternalValueRepresentation(constraints));

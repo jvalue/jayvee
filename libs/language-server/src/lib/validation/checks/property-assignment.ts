@@ -11,6 +11,7 @@ import {
   EvaluationContext,
   PropertySpecification,
   TypedObjectWrapper,
+  WrapperFactory,
   inferExpressionType,
 } from '../../ast';
 import {
@@ -28,6 +29,7 @@ export function validatePropertyAssignment(
   wrapper: TypedObjectWrapper,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
   const propertySpec = wrapper.getPropertySpecification(property?.name);
 
@@ -41,6 +43,7 @@ export function validatePropertyAssignment(
     propertySpec,
     validationContext,
     evaluationContext,
+    wrapperFactory,
   );
 
   if (validationContext.hasErrorOccurred()) {
@@ -52,6 +55,7 @@ export function validatePropertyAssignment(
     propertySpec,
     validationContext,
     evaluationContext,
+    wrapperFactory,
   );
 }
 
@@ -77,6 +81,7 @@ function checkPropertyValueTyping(
   propertySpec: PropertySpecification,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
   const propertyType = propertySpec.type;
   const propertyValue = property?.value;
@@ -123,5 +128,6 @@ function checkPropertyValueTyping(
     propertyValue,
     validationContext,
     evaluationContext,
+    wrapperFactory,
   );
 }

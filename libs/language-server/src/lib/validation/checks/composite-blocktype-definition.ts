@@ -19,7 +19,12 @@ export function validateCompositeBlockTypeDefinition(
   evaluationContext: EvaluationContext,
   wrapperFactory: WrapperFactory,
 ): void {
-  validateBlocktypeDefinition(blockType, validationContext, evaluationContext);
+  validateBlocktypeDefinition(
+    blockType,
+    validationContext,
+    evaluationContext,
+    wrapperFactory,
+  );
   checkHasPipeline(blockType, validationContext);
   checkExactlyOnePipeline(blockType, validationContext);
 

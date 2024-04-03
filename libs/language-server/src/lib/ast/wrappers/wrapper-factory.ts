@@ -15,6 +15,7 @@ import { type OperatorEvaluatorRegistry } from '../expressions';
 import {
   BlocktypePipeline,
   BuiltinConstrainttypeDefinition,
+  CellRangeLiteral,
   CompositeBlocktypeDefinition,
   PipeDefinition,
   PipelineDefinition,
@@ -24,6 +25,7 @@ import {
 } from '../generated/ast';
 
 import { AstNodeWrapper } from './ast-node-wrapper';
+import { CellRangeWrapper } from './cell-range-wrapper';
 import { PipeWrapper } from './pipe-wrapper';
 import { PipelineWrapper } from './pipeline-wrapper';
 // eslint-disable-next-line import/no-cycle
@@ -62,15 +64,19 @@ export class WrapperFactory {
   readonly ConstraintType: ConstraintTypeWrapperFactory;
   readonly Pipeline: PipelineWrapperFactory;
   readonly Pipe: PipeWrapperFactory;
+  readonly CellRange: CellRangeWrapperFactory;
 
   constructor(
     private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
   ) {
+    this.CellRange = new CellRangeWrapperFactory();
     this.BlockType = new BlockTypeWrapperFactory(
       this.operatorEvaluatorRegistry,
+      this,
     );
     this.ConstraintType = new ConstraintTypeWrapperFactory(
       this.operatorEvaluatorRegistry,
+      this,
     );
     this.Pipe = new PipeWrapperFactory();
     this.Pipeline = new PipelineWrapperFactory(this.Pipe);
@@ -107,12 +113,25 @@ export class WrapperFactory {
   }
 }
 
+class CellRangeWrapperFactory extends AstNodeWrapperFactory<
+  CellRangeLiteral,
+  CellRangeWrapper
+> {
+  canWrap(toBeWrapped: CellRangeLiteral): boolean {
+    return CellRangeWrapper.canBeWrapped(toBeWrapped);
+  }
+  doWrap(toBeWrapped: CellRangeLiteral): CellRangeWrapper {
+    return new CellRangeWrapper(toBeWrapped);
+  }
+}
+
 class BlockTypeWrapperFactory extends AstNodeWrapperFactory<
   ReferenceableBlocktypeDefinition,
   BlockTypeWrapper
 > {
   constructor(
     private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
+    private readonly wrapperFactory: WrapperFactory,
   ) {
     super();
   }
@@ -129,7 +148,11 @@ class BlockTypeWrapperFactory extends AstNodeWrapperFactory<
       | ReferenceableBlocktypeDefinition
       | Reference<ReferenceableBlocktypeDefinition>,
   ): BlockTypeWrapper {
-    return new BlockTypeWrapper(toBeWrapped, this.operatorEvaluatorRegistry);
+    return new BlockTypeWrapper(
+      toBeWrapped,
+      this.operatorEvaluatorRegistry,
+      this.wrapperFactory,
+    );
   }
 }
 
@@ -139,6 +162,7 @@ class ConstraintTypeWrapperFactory extends AstNodeWrapperFactory<
 > {
   constructor(
     private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
+    private readonly wrapperFactory: WrapperFactory,
   ) {
     super();
   }
@@ -158,6 +182,7 @@ class ConstraintTypeWrapperFactory extends AstNodeWrapperFactory<
     return new ConstraintTypeWrapper(
       toBeWrapped,
       this.operatorEvaluatorRegistry,
+      this.wrapperFactory,
     );
   }
 }

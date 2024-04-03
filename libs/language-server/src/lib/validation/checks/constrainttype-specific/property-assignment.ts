@@ -7,6 +7,7 @@ import {
   PrimitiveValuetypes,
   PropertyAssignment,
   PropertySpecification,
+  WrapperFactory,
   evaluatePropertyValue,
 } from '../../../ast';
 import { ValidationContext } from '../../validation-context';
@@ -16,11 +17,13 @@ export function checkConstraintTypeSpecificProperties(
   propertySpec: PropertySpecification,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ) {
   const propName = property.name;
   const propValue = evaluatePropertyValue(
     property,
     evaluationContext,
+    wrapperFactory,
     propertySpec.type,
   );
   if (propValue === undefined) {
@@ -34,6 +37,7 @@ export function checkConstraintTypeSpecificProperties(
         property,
         validationContext,
         evaluationContext,
+        wrapperFactory,
       );
     default:
   }
@@ -44,12 +48,23 @@ function checkLengthConstraintProperty(
   property: PropertyAssignment,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ) {
   if (propName === 'minLength') {
-    checkNonNegative(property, validationContext, evaluationContext);
+    checkNonNegative(
+      property,
+      validationContext,
+      evaluationContext,
+      wrapperFactory,
+    );
   }
   if (propName === 'maxLength') {
-    checkNonNegative(property, validationContext, evaluationContext);
+    checkNonNegative(
+      property,
+      validationContext,
+      evaluationContext,
+      wrapperFactory,
+    );
   }
 }
 
@@ -57,10 +72,12 @@ function checkNonNegative(
   property: PropertyAssignment,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ) {
   const value = evaluatePropertyValue(
     property,
     evaluationContext,
+    wrapperFactory,
     PrimitiveValuetypes.Integer,
   );
   if (value === undefined) {

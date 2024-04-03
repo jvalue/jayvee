@@ -203,6 +203,10 @@ export class CellRangeWrapper<N extends CellRangeLiteral = CellRangeLiteral>
   }
 }
 
+export function isCellRangeWrapper(obj: unknown): obj is CellRangeWrapper {
+  return obj instanceof CellRangeWrapper;
+}
+
 export type ColumnWrapper = CellRangeWrapper<ColumnLiteral | RangeLiteral>;
 
 export function isColumnWrapper(

@@ -9,6 +9,7 @@
 
 import { assertUnreachable } from 'langium';
 
+import { type WrapperFactory } from '../../ast';
 import { EvaluationContext } from '../../ast/expressions/evaluation-context';
 import { inferExpressionType } from '../../ast/expressions/type-inference';
 import {
@@ -30,11 +31,13 @@ export function validateTransformOutputAssignment(
   outputAssignment: TransformOutputAssignment,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
   checkOutputValueTyping(
     outputAssignment,
     validationContext,
     evaluationContext,
+    wrapperFactory,
   );
   checkOutputNotInAssignmentExpression(outputAssignment, validationContext);
 }
@@ -43,6 +46,7 @@ function checkOutputValueTyping(
   outputAssignment: TransformOutputAssignment,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
   const assignmentExpression = outputAssignment?.expression;
   if (assignmentExpression === undefined) {
@@ -82,6 +86,7 @@ function checkOutputValueTyping(
     assignmentExpression,
     validationContext,
     evaluationContext,
+    wrapperFactory,
   );
 }
 

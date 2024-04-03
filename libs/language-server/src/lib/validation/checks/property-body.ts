@@ -48,6 +48,7 @@ export function validatePropertyBody(
       wrapper,
       validationContext,
       evaluationContext,
+      wrapperFactory,
     );
   }
   if (validationContext.hasErrorOccurred()) {
@@ -59,6 +60,7 @@ export function validatePropertyBody(
     wrapper,
     validationContext,
     evaluationContext,
+    wrapperFactory,
   );
 }
 
@@ -99,6 +101,7 @@ function checkCustomPropertyValidation(
   wrapper: TypedObjectWrapper,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
   wrapper.validate(propertyBody, validationContext, evaluationContext);
 
@@ -107,12 +110,14 @@ function checkCustomPropertyValidation(
       propertyBody,
       validationContext,
       evaluationContext,
+      wrapperFactory,
     );
   } else if (isTypedConstraintDefinition(propertyBody.$container)) {
     checkConstraintTypeSpecificPropertyBody(
       propertyBody,
       validationContext,
       evaluationContext,
+      wrapperFactory,
     );
   }
 }

@@ -28,7 +28,11 @@ export class ExpressionConstraintExecutor
 
     context.evaluationContext.setValueForValueKeyword(value);
 
-    const result = evaluateExpression(expression, context.evaluationContext);
+    const result = evaluateExpression(
+      expression,
+      context.evaluationContext,
+      context.wrapperFactory,
+    );
     assert(PrimitiveValuetypes.Boolean.isInternalValueRepresentation(result));
 
     context.evaluationContext.deleteValueForValueKeyword();

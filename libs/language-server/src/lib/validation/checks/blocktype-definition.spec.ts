@@ -12,6 +12,7 @@ import {
   EvaluationContext,
   RuntimeParameterProvider,
   ValidationContext,
+  WrapperFactory,
   createJayveeServices,
 } from '../..';
 import {
@@ -48,6 +49,9 @@ describe('Validation of BuiltinBlocktypeDefinition', () => {
       'blocktypes@0',
     ) as BuiltinBlocktypeDefinition;
 
+    const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
+    const wrapperFactory = new WrapperFactory(operatorEvaluatorRegistry);
+
     validateBlocktypeDefinition(
       blocktype,
       new ValidationContext(
@@ -56,8 +60,9 @@ describe('Validation of BuiltinBlocktypeDefinition', () => {
       ),
       new EvaluationContext(
         new RuntimeParameterProvider(),
-        new DefaultOperatorEvaluatorRegistry(),
+        operatorEvaluatorRegistry,
       ),
+      wrapperFactory,
     );
   }
 

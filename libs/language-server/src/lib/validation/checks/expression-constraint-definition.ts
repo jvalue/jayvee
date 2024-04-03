@@ -7,6 +7,7 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
+import { type WrapperFactory } from '../../ast';
 import { EvaluationContext } from '../../ast/expressions/evaluation-context';
 import { inferExpressionType } from '../../ast/expressions/type-inference';
 import { ExpressionConstraintDefinition } from '../../ast/generated/ast';
@@ -18,14 +19,21 @@ export function validateExpressionConstraintDefinition(
   constraint: ExpressionConstraintDefinition,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
-  checkConstraintExpression(constraint, validationContext, evaluationContext);
+  checkConstraintExpression(
+    constraint,
+    validationContext,
+    evaluationContext,
+    wrapperFactory,
+  );
 }
 
 function checkConstraintExpression(
   constraint: ExpressionConstraintDefinition,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
   const expression = constraint?.expression;
   const inferredType = inferExpressionType(expression, validationContext);
@@ -49,5 +57,6 @@ function checkConstraintExpression(
     expression,
     validationContext,
     evaluationContext,
+    wrapperFactory,
   );
 }

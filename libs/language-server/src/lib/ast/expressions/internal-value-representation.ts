@@ -13,7 +13,7 @@ import {
   isValuetypeAssignment,
 } from '../generated/ast';
 // eslint-disable-next-line import/no-cycle
-import { CellRangeWrapper } from '../wrappers';
+import { CellRangeWrapper, isCellRangeWrapper } from '../wrappers';
 
 export type InternalValueRepresentation =
   | AtomicInternalValueRepresentation
@@ -70,7 +70,7 @@ export function internalValueToString(
   if (valueRepresentation instanceof RegExp) {
     return valueRepresentation.source;
   }
-  if (valueRepresentation instanceof CellRangeWrapper) {
+  if (isCellRangeWrapper(valueRepresentation)) {
     return valueRepresentation.toString();
   }
   if (isConstraintDefinition(valueRepresentation)) {

@@ -12,6 +12,7 @@ import {
   RuntimeParameterProvider,
   TransformOutputAssignment,
   ValidationContext,
+  WrapperFactory,
   createJayveeServices,
 } from '../../../lib';
 import {
@@ -49,6 +50,9 @@ describe('Validation of TransformOutputAssignment', () => {
         'transforms@0/body/outputAssignments@0',
       ) as TransformOutputAssignment;
 
+    const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
+    const wrapperFactory = new WrapperFactory(operatorEvaluatorRegistry);
+
     validateTransformOutputAssignment(
       transformOutputAssignment,
       new ValidationContext(
@@ -57,8 +61,9 @@ describe('Validation of TransformOutputAssignment', () => {
       ),
       new EvaluationContext(
         new RuntimeParameterProvider(),
-        new DefaultOperatorEvaluatorRegistry(),
+        operatorEvaluatorRegistry,
       ),
+      wrapperFactory,
     );
   }
 

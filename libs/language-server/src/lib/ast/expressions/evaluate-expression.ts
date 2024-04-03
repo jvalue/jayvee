@@ -25,7 +25,7 @@ import {
   isValueLiteral,
 } from '../generated/ast';
 // eslint-disable-next-line import/no-cycle
-import { CellRangeWrapper, Valuetype } from '../wrappers';
+import { Valuetype, type WrapperFactory } from '../wrappers';
 
 import { type EvaluationContext } from './evaluation-context';
 import { EvaluationStrategy } from './evaluation-strategy';
@@ -35,6 +35,7 @@ import { isEveryValueDefined } from './typeguards';
 export function evaluatePropertyValue<T extends InternalValueRepresentation>(
   property: PropertyAssignment,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
   valuetype: Valuetype<T>,
 ): T | undefined {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -62,7 +63,11 @@ export function evaluatePropertyValue<T extends InternalValueRepresentation>(
       );
     }
   } else if (isExpression(propertyValue)) {
-    result = evaluateExpression(propertyValue, evaluationContext);
+    result = evaluateExpression(
+      propertyValue,
+      evaluationContext,
+      wrapperFactory,
+    );
   } else {
     assertUnreachable(propertyValue);
   }
@@ -79,6 +84,7 @@ export function evaluatePropertyValue<T extends InternalValueRepresentation>(
 export function evaluateExpression(
   expression: Expression | undefined,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
   context: ValidationContext | undefined = undefined,
   strategy: EvaluationStrategy = EvaluationStrategy.LAZY,
 ): InternalValueRepresentation | undefined {
@@ -92,6 +98,7 @@ export function evaluateExpression(
       return evaluateValueLiteral(
         expression,
         evaluationContext,
+        wrapperFactory,
         context,
         strategy,
       );
@@ -101,17 +108,35 @@ export function evaluateExpression(
   if (isUnaryExpression(expression)) {
     const operator = expression.operator;
     const evaluator = evaluationContext.operatorRegistry.unary[operator];
-    return evaluator.evaluate(expression, evaluationContext, strategy, context);
+    return evaluator.evaluate(
+      expression,
+      evaluationContext,
+      wrapperFactory,
+      strategy,
+      context,
+    );
   }
   if (isBinaryExpression(expression)) {
     const operator = expression.operator;
     const evaluator = evaluationContext.operatorRegistry.binary[operator];
-    return evaluator.evaluate(expression, evaluationContext, strategy, context);
+    return evaluator.evaluate(
+      expression,
+      evaluationContext,
+      wrapperFactory,
+      strategy,
+      context,
+    );
   }
   if (isTernaryExpression(expression)) {
     const operator = expression.operator;
     const evaluator = evaluationContext.operatorRegistry.ternary[operator];
-    return evaluator.evaluate(expression, evaluationContext, strategy, context);
+    return evaluator.evaluate(
+      expression,
+      evaluationContext,
+      wrapperFactory,
+      strategy,
+      context,
+    );
   }
   assertUnreachable(expression);
 }
@@ -119,12 +144,19 @@ export function evaluateExpression(
 function evaluateValueLiteral(
   expression: ValueLiteral,
   evaluationContext: EvaluationContext,
-  context: ValidationContext | undefined = undefined,
+  wrapperFactory: WrapperFactory,
+  validationContext: ValidationContext | undefined = undefined,
   strategy: EvaluationStrategy = EvaluationStrategy.LAZY,
 ): InternalValueRepresentation | undefined {
   if (isCollectionLiteral(expression)) {
     const evaluatedCollection = expression.values.map((v) =>
-      evaluateExpression(v, evaluationContext, context, strategy),
+      evaluateExpression(
+        v,
+        evaluationContext,
+        wrapperFactory,
+        validationContext,
+        strategy,
+      ),
     );
     if (!isEveryValueDefined(evaluatedCollection)) {
       return undefined;
@@ -132,10 +164,10 @@ function evaluateValueLiteral(
     return evaluatedCollection;
   }
   if (isCellRangeLiteral(expression)) {
-    if (!CellRangeWrapper.canBeWrapped(expression)) {
+    if (!wrapperFactory.CellRange.canWrap(expression)) {
       return undefined;
     }
-    return new CellRangeWrapper(expression);
+    return wrapperFactory.CellRange.wrap(expression);
   }
   if (isRegexLiteral(expression)) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

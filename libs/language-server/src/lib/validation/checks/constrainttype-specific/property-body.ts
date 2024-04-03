@@ -6,6 +6,7 @@ import {
   EvaluationContext,
   PrimitiveValuetypes,
   PropertyBody,
+  type WrapperFactory,
   evaluatePropertyValue,
 } from '../../../ast';
 import { ValidationContext } from '../../validation-context';
@@ -14,6 +15,7 @@ export function checkConstraintTypeSpecificPropertyBody(
   propertyBody: PropertyBody,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ) {
   switch (propertyBody.$container.type.ref?.name) {
     case 'LengthConstraint':
@@ -21,12 +23,14 @@ export function checkConstraintTypeSpecificPropertyBody(
         propertyBody,
         validationContext,
         evaluationContext,
+        wrapperFactory,
       );
     case 'RangeConstraint':
       return checkRangeConstraintPropertyBody(
         propertyBody,
         validationContext,
         evaluationContext,
+        wrapperFactory,
       );
     default:
   }
@@ -36,6 +40,7 @@ function checkLengthConstraintPropertyBody(
   propertyBody: PropertyBody,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ) {
   const minLengthProperty = propertyBody.properties.find(
     (p) => p.name === 'minLength',
@@ -51,11 +56,13 @@ function checkLengthConstraintPropertyBody(
   const minLength = evaluatePropertyValue(
     minLengthProperty,
     evaluationContext,
+    wrapperFactory,
     PrimitiveValuetypes.Integer,
   );
   const maxLength = evaluatePropertyValue(
     maxLengthProperty,
     evaluationContext,
+    wrapperFactory,
     PrimitiveValuetypes.Integer,
   );
   if (minLength === undefined || maxLength === undefined) {
@@ -77,6 +84,7 @@ function checkRangeConstraintPropertyBody(
   propertyBody: PropertyBody,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ) {
   const lowerBoundProperty = propertyBody.properties.find(
     (p) => p.name === 'lowerBound',
@@ -92,11 +100,13 @@ function checkRangeConstraintPropertyBody(
   const lowerBound = evaluatePropertyValue(
     lowerBoundProperty,
     evaluationContext,
+    wrapperFactory,
     PrimitiveValuetypes.Decimal,
   );
   const upperBound = evaluatePropertyValue(
     upperBoundProperty,
     evaluationContext,
+    wrapperFactory,
     PrimitiveValuetypes.Decimal,
   );
   if (lowerBound === undefined || upperBound === undefined) {
@@ -127,6 +137,7 @@ function checkRangeConstraintPropertyBody(
       const expressionValue = evaluatePropertyValue(
         lowerBoundInclusiveProperty,
         evaluationContext,
+        wrapperFactory,
         PrimitiveValuetypes.Boolean,
       );
       if (expressionValue === undefined) {
@@ -140,6 +151,7 @@ function checkRangeConstraintPropertyBody(
       const expressionValue = evaluatePropertyValue(
         upperBoundInclusiveProperty,
         evaluationContext,
+        wrapperFactory,
         PrimitiveValuetypes.Boolean,
       );
       if (expressionValue === undefined) {

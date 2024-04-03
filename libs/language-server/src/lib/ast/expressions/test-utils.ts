@@ -8,6 +8,7 @@ import { parseHelper } from '../../../test/langium-utils';
 import { createJayveeServices } from '../../jayvee-module';
 import { RuntimeParameterProvider } from '../../services';
 import { TransformDefinition } from '../generated/ast';
+import { WrapperFactory } from '../wrappers';
 
 import { evaluateExpression } from './evaluate-expression';
 import { EvaluationContext } from './evaluation-context';
@@ -53,6 +54,7 @@ export async function executeExpressionTestHelper(
   ) as TransformDefinition;
 
   const runTimeParameterProvider = new RuntimeParameterProvider();
+  const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
   const evaluationContext = new EvaluationContext(
     runTimeParameterProvider,
     new DefaultOperatorEvaluatorRegistry(),
@@ -64,5 +66,6 @@ export async function executeExpressionTestHelper(
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     transform.body.outputAssignments[0]!.expression,
     evaluationContext,
+    new WrapperFactory(operatorEvaluatorRegistry),
   );
 }

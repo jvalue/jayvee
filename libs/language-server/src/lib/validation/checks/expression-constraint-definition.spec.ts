@@ -12,6 +12,7 @@ import {
   ExpressionConstraintDefinition,
   RuntimeParameterProvider,
   ValidationContext,
+  WrapperFactory,
   createJayveeServices,
 } from '../../../lib';
 import {
@@ -49,6 +50,9 @@ describe('Validation of ConstraintDefinition (expression syntax)', () => {
         'constraints@0',
       ) as ExpressionConstraintDefinition;
 
+    const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
+    const wrapperFactory = new WrapperFactory(operatorEvaluatorRegistry);
+
     validateExpressionConstraintDefinition(
       expressionConstraint,
       new ValidationContext(
@@ -57,8 +61,9 @@ describe('Validation of ConstraintDefinition (expression syntax)', () => {
       ),
       new EvaluationContext(
         new RuntimeParameterProvider(),
-        new DefaultOperatorEvaluatorRegistry(),
+        operatorEvaluatorRegistry,
       ),
+      wrapperFactory,
     );
   }
 

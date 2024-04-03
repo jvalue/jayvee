@@ -7,6 +7,7 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
+import { WrapperFactory } from '../../ast';
 import { EvaluationContext } from '../../ast/expressions/evaluation-context';
 import {
   TransformBody,
@@ -25,6 +26,7 @@ export function validateTransformBody(
   transformBody: TransformBody,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
   checkUniqueNames(transformBody.ports, validationContext, 'transform port');
   checkUniqueOutputAssignments(transformBody, validationContext);
@@ -38,6 +40,7 @@ export function validateTransformBody(
       property,
       validationContext,
       evaluationContext,
+      wrapperFactory,
     );
   }
 }

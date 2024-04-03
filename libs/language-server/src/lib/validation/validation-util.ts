@@ -10,6 +10,7 @@ import {
   EvaluationContext,
   EvaluationStrategy,
   Expression,
+  WrapperFactory,
   evaluateExpression,
   internalValueToString,
   isBinaryExpression,
@@ -68,6 +69,7 @@ export function checkExpressionSimplification(
   expression: Expression,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ): void {
   const simplifiableSubExpressions = collectSubExpressionsWithoutFreeVariables(
     expression,
@@ -77,6 +79,7 @@ export function checkExpressionSimplification(
     const evaluatedExpression = evaluateExpression(
       expression,
       evaluationContext,
+      wrapperFactory,
       validationContext,
       EvaluationStrategy.EXHAUSTIVE,
     );

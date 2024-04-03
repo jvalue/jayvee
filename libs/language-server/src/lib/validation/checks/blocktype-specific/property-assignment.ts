@@ -9,6 +9,7 @@ import {
   PrimitiveValuetypes,
   PropertyAssignment,
   PropertySpecification,
+  type WrapperFactory,
   evaluatePropertyValue,
   internalValueToString,
   isColumnWrapper,
@@ -22,11 +23,13 @@ export function checkBlocktypeSpecificProperties(
   propertySpec: PropertySpecification,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ) {
   const propName = property.name;
   const propValue = evaluatePropertyValue(
     property,
     evaluationContext,
+    wrapperFactory,
     propertySpec.type,
   );
   if (propValue === undefined) {
@@ -47,6 +50,7 @@ export function checkBlocktypeSpecificProperties(
         property,
         validationContext,
         evaluationContext,
+        wrapperFactory,
       );
     case 'ColumnDeleter':
       return checkColumnDeleterProperty(
@@ -54,6 +58,7 @@ export function checkBlocktypeSpecificProperties(
         property,
         validationContext,
         evaluationContext,
+        wrapperFactory,
       );
     case 'GtfsRTInterpreter':
       return checkGtfsRTInterpreterProperty(
@@ -82,6 +87,7 @@ export function checkBlocktypeSpecificProperties(
         property,
         validationContext,
         evaluationContext,
+        wrapperFactory,
       );
     case 'TableInterpreter':
       return checkTableInterpreterProperty(
@@ -89,6 +95,7 @@ export function checkBlocktypeSpecificProperties(
         property,
         validationContext,
         evaluationContext,
+        wrapperFactory,
       );
     case 'TextFileInterpreter':
       return checkTextFileInterpreterProperty(
@@ -103,6 +110,7 @@ export function checkBlocktypeSpecificProperties(
         property,
         validationContext,
         evaluationContext,
+        wrapperFactory,
       );
     case 'TextRangeSelector':
       return checkTextRangeSelectorProperty(
@@ -138,11 +146,13 @@ function checkCellWriterProperty(
   property: PropertyAssignment,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ) {
   if (propName === 'at') {
     const cellRange = evaluatePropertyValue(
       property,
       evaluationContext,
+      wrapperFactory,
       PrimitiveValuetypes.CellRange,
     );
     if (cellRange === undefined) {
@@ -166,11 +176,13 @@ function checkColumnDeleterProperty(
   property: PropertyAssignment,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ) {
   if (propName === 'delete') {
     const cellRanges = evaluatePropertyValue(
       property,
       evaluationContext,
+      wrapperFactory,
       new CollectionValuetype(PrimitiveValuetypes.CellRange),
     );
 
@@ -283,11 +295,13 @@ function checkRowDeleterProperty(
   property: PropertyAssignment,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ) {
   if (propName === 'delete') {
     const cellRanges = evaluatePropertyValue(
       property,
       evaluationContext,
+      wrapperFactory,
       new CollectionValuetype(PrimitiveValuetypes.CellRange),
     );
 
@@ -310,11 +324,13 @@ function checkTableInterpreterProperty(
   property: PropertyAssignment,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ) {
   if (propName === 'columns') {
     const valuetypeAssignments = evaluatePropertyValue(
       property,
       evaluationContext,
+      wrapperFactory,
       new CollectionValuetype(PrimitiveValuetypes.ValuetypeAssignment),
     );
     if (valuetypeAssignments === undefined) {
@@ -362,12 +378,14 @@ function checkTextLineDeleterProperty(
   property: PropertyAssignment,
   validationContext: ValidationContext,
   evaluationContext: EvaluationContext,
+  wrapperFactory: WrapperFactory,
 ) {
   if (propName === 'lines') {
     const minTextLineIndex = 1;
     const lines = evaluatePropertyValue(
       property,
       evaluationContext,
+      wrapperFactory,
       new CollectionValuetype(PrimitiveValuetypes.Integer),
     );
     lines?.forEach((value, index) => {

@@ -13,6 +13,7 @@ import { EvaluationContext } from '../../expressions/evaluation-context';
 import { type OperatorEvaluatorRegistry } from '../../expressions/operator-registry';
 import { BuiltinConstrainttypeDefinition } from '../../generated/ast';
 import { Valuetype, createValuetype } from '../value-type';
+import { type WrapperFactory } from '../wrapper-factory';
 
 import {
   ExampleDoc,
@@ -40,6 +41,7 @@ export class ConstraintTypeWrapper extends TypedObjectWrapper<BuiltinConstraintt
       | BuiltinConstrainttypeDefinition
       | Reference<BuiltinConstrainttypeDefinition>,
     operatorEvaluatiorRegistry: OperatorEvaluatorRegistry,
+    wrapperFactory: WrapperFactory,
   ) {
     const constraintTypeDefinition = isReference(toBeWrapped)
       ? toBeWrapped.ref
@@ -63,6 +65,7 @@ export class ConstraintTypeWrapper extends TypedObjectWrapper<BuiltinConstraintt
           new RuntimeParameterProvider(),
           operatorEvaluatiorRegistry,
         ),
+        wrapperFactory,
       );
       if (defaultValue !== undefined) {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

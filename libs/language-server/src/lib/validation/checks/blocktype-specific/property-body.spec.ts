@@ -69,6 +69,7 @@ describe('Validation of blocktype specific property bodies', () => {
         new RuntimeParameterProvider(),
         operatorEvaluatorRegistry,
       ),
+      wrapperFactory,
     );
   }
 

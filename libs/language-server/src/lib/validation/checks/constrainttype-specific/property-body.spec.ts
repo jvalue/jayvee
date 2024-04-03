@@ -69,6 +69,7 @@ describe('Validation of constraint type specific property bodies', () => {
         new RuntimeParameterProvider(),
         operatorEvaluatorRegistry,
       ),
+      wrapperFactory,
     );
   }
 

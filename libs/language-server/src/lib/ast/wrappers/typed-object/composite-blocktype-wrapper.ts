@@ -4,6 +4,7 @@
 
 import { type OperatorEvaluatorRegistry } from '../../expressions/operator-registry';
 import { CompositeBlocktypeDefinition } from '../../generated/ast';
+import { type WrapperFactory } from '../wrapper-factory';
 
 // eslint-disable-next-line import/no-cycle
 import { BlockTypeWrapper } from './blocktype-wrapper';
@@ -18,8 +19,9 @@ export class CompositeBlocktypeWrapper extends BlockTypeWrapper {
   constructor(
     private blockTypeDefinition: CompositeBlocktypeDefinition,
     operatorEvaluatiorRegistry: OperatorEvaluatorRegistry,
+    wrapperFactory: WrapperFactory,
   ) {
-    super(blockTypeDefinition, operatorEvaluatiorRegistry);
+    super(blockTypeDefinition, operatorEvaluatiorRegistry, wrapperFactory);
   }
 
   override getMissingRequiredPropertyNames(
