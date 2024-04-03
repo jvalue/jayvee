@@ -15,7 +15,11 @@ import {
 } from 'langium';
 import { CompletionItemKind } from 'vscode-languageserver';
 
-import { TypedObjectWrapper, WrapperFactory, createValuetype } from '../ast';
+import {
+  TypedObjectWrapper,
+  type WrapperFactory,
+  createValuetype,
+} from '../ast';
 import {
   BlockDefinition,
   ConstraintDefinition,
