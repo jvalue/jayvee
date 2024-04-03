@@ -8,21 +8,10 @@ export * from './value-type';
 /* Exports of directory './typed-object'; only exporting types to force usage of WrapperFactory */
 export { type AstNodeWrapper } from './ast-node-wrapper';
 export {
-  CellIndex,
-  CellIndexBounds,
   type CellRangeWrapper,
   type CellWrapper,
   type ColumnWrapper,
   type RowWrapper,
-  getColumnIndex,
-  getRowIndex,
-  isColumnWrapper,
-  isRowWrapper,
-  isCellWrapper,
-  isCellRangeWrapper,
-  columnIndexToString,
-  getCellIndex,
-  rowIndexToString,
 } from './cell-range-wrapper';
 export { type PipeWrapper } from './pipe-wrapper';
 export { type PipelineWrapper } from './pipeline-wrapper';

@@ -3,3 +3,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 export * from './column-id-util';
+export * from './cell-index';
+export * from './cell-range-util';

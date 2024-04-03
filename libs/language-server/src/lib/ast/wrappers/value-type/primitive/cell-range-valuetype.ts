@@ -3,10 +3,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
-import {
-  type CellRangeWrapper,
-  isCellRangeWrapper,
-} from '../../cell-range-wrapper';
+import { type CellRangeWrapper } from '../../cell-range-wrapper';
+import { isCellRangeWrapper } from '../../util/cell-range-util';
 // eslint-disable-next-line import/no-cycle
 import { ValuetypeVisitor } from '../valuetype';
 
