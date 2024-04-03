@@ -9,7 +9,6 @@
 
 import { type EvaluationContext, type WrapperFactory } from '../../ast';
 import { PipeDefinition } from '../../ast/generated/ast';
-import { createWrappersFromPipeChain } from '../../ast/wrappers/pipe-wrapper';
 import { ValidationContext } from '../validation-context';
 
 export function validatePipeDefinition(
@@ -26,7 +25,7 @@ function checkBlockCompatibility(
   context: ValidationContext,
   wrapperFactory: WrapperFactory,
 ): void {
-  const pipeWrappers = createWrappersFromPipeChain(pipe);
+  const pipeWrappers = wrapperFactory.Pipe.wrapAll(pipe);
   for (const pipeWrapper of pipeWrappers) {
     const fromBlockTypeDefinition = pipeWrapper.from?.type;
     const toBlockTypeDefinition = pipeWrapper.to?.type;

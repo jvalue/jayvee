@@ -16,7 +16,7 @@ export { type CompositeBlocktypeWrapper } from './typed-object/composite-blockty
 export { type ConstraintTypeWrapper } from './typed-object/constrainttype-wrapper';
 export * from './typed-object/typed-object-wrapper';
 
-export * from './pipe-wrapper';
+export { type PipeWrapper } from './pipe-wrapper';
 export { type PipelineWrapper } from './pipeline-wrapper';
 
 export * from './wrapper-factory';

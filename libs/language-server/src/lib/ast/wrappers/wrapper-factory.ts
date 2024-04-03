@@ -13,8 +13,10 @@ import {
 
 import { type OperatorEvaluatorRegistry } from '../expressions';
 import {
+  BlocktypePipeline,
   BuiltinConstrainttypeDefinition,
   CompositeBlocktypeDefinition,
+  PipeDefinition,
   PipelineDefinition,
   type ReferenceableBlocktypeDefinition,
   isBuiltinConstrainttypeDefinition,
@@ -22,33 +24,44 @@ import {
 } from '../generated/ast';
 
 import { AstNodeWrapper } from './ast-node-wrapper';
+import { PipeWrapper } from './pipe-wrapper';
 import { PipelineWrapper } from './pipeline-wrapper';
 // eslint-disable-next-line import/no-cycle
 import { BlockTypeWrapper } from './typed-object/blocktype-wrapper';
 import { ConstraintTypeWrapper } from './typed-object/constrainttype-wrapper';
 
 abstract class AstNodeWrapperFactory<
-  N extends AstNode & { name: string },
+  N extends AstNode,
   W extends AstNodeWrapper<N>,
 > {
   abstract canWrap(toBeWrapped: N | Reference<N>): boolean;
+  abstract doWrap(toBeWrapped: N | Reference<N>): W;
+
   wrap(toBeWrapped: N | Reference<N>): W {
     assert(
       this.canWrap(toBeWrapped),
-      `AstNode ${
-        (isReference(toBeWrapped) ? toBeWrapped.ref?.name : toBeWrapped.name) ??
-        '<unresolved reference>'
-      } cannot be wrapped`,
+      `AstNode ${this.getName(toBeWrapped)} cannot be wrapped`,
     );
     return this.doWrap(toBeWrapped);
   }
-  abstract doWrap(toBeWrapped: N | Reference<N>): W;
+
+  private getName(toBeWrapped: N | Reference<N>): string {
+    const node = isReference(toBeWrapped) ? toBeWrapped.ref : toBeWrapped;
+    if (node === undefined) {
+      return '<unresolved reference>';
+    }
+    if ('name' in node && typeof node.name === 'string') {
+      return node.name;
+    }
+    return '<unnamed ast node>';
+  }
 }
 
 export class WrapperFactory {
   readonly BlockType: BlockTypeWrapperFactory;
   readonly ConstraintType: ConstraintTypeWrapperFactory;
   readonly Pipeline: PipelineWrapperFactory;
+  readonly Pipe: PipeWrapperFactory;
 
   constructor(
     private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
@@ -59,7 +72,8 @@ export class WrapperFactory {
     this.ConstraintType = new ConstraintTypeWrapperFactory(
       this.operatorEvaluatorRegistry,
     );
-    this.Pipeline = new PipelineWrapperFactory();
+    this.Pipe = new PipeWrapperFactory();
+    this.Pipeline = new PipelineWrapperFactory(this.Pipe);
   }
 
   /**
@@ -152,10 +166,14 @@ class PipelineWrapperFactory extends AstNodeWrapperFactory<
   PipelineDefinition | CompositeBlocktypeDefinition,
   PipelineWrapper<PipelineDefinition | CompositeBlocktypeDefinition>
 > {
+  constructor(private pipeWrapperFactory: IPipeWrapperFactory) {
+    super();
+  }
+
   canWrap(
     toBeWrapped: PipelineDefinition | CompositeBlocktypeDefinition,
   ): boolean {
-    return PipelineWrapper.canBeWrapped(toBeWrapped);
+    return PipelineWrapper.canBeWrapped(toBeWrapped, this.pipeWrapperFactory);
   }
 
   override wrap<T extends PipelineDefinition | CompositeBlocktypeDefinition>( // override to adjust typing
@@ -167,6 +185,70 @@ class PipelineWrapperFactory extends AstNodeWrapperFactory<
   doWrap<T extends PipelineDefinition | CompositeBlocktypeDefinition>(
     toBeWrapped: T,
   ): PipelineWrapper<T> {
-    return new PipelineWrapper(toBeWrapped);
+    return new PipelineWrapper(toBeWrapped, this.pipeWrapperFactory);
+  }
+}
+
+export interface IPipeWrapperFactory {
+  canWrap(
+    toBeWrapped: PipeDefinition | BlocktypePipeline,
+    chainIndex: number,
+  ): boolean;
+
+  wrap<T extends PipeDefinition | BlocktypePipeline>(
+    toBeWrapped: T,
+    chainIndex: number,
+  ): PipeWrapper<T>;
+
+  doWrap<T extends PipeDefinition | BlocktypePipeline>(
+    toBeWrapped: T,
+    chainIndex: number,
+  ): PipeWrapper<T>;
+
+  wrapAll<T extends PipeDefinition | BlocktypePipeline>(
+    toBeWrapped: T,
+  ): PipeWrapper<T>[];
+}
+class PipeWrapperFactory implements IPipeWrapperFactory {
+  // does not extend AstNodeWrapperFactory as requires argument chainIndex for wrapping
+
+  canWrap(
+    toBeWrapped: PipeDefinition | BlocktypePipeline,
+    chainIndex: number,
+  ): boolean {
+    return PipeWrapper.canBeWrapped(toBeWrapped, chainIndex);
+  }
+
+  wrap<T extends PipeDefinition | BlocktypePipeline>(
+    toBeWrapped: T,
+    chainIndex: number,
+  ): PipeWrapper<T> {
+    assert(this.canWrap(toBeWrapped, chainIndex), `Pipe cannot be wrapped`);
+    return this.doWrap(toBeWrapped, chainIndex);
+  }
+
+  doWrap<T extends PipeDefinition | BlocktypePipeline>(
+    toBeWrapped: T,
+    chainIndex: number,
+  ): PipeWrapper<T> {
+    return new PipeWrapper(toBeWrapped, chainIndex);
+  }
+
+  wrapAll<T extends PipeDefinition | BlocktypePipeline>(
+    toBeWrapped: T,
+  ): PipeWrapper<T>[] {
+    const result: PipeWrapper<T>[] = [];
+    for (
+      let chainIndex = 0;
+      chainIndex < toBeWrapped.blocks.length - 1;
+      ++chainIndex
+    ) {
+      if (!this.canWrap(toBeWrapped, chainIndex)) {
+        continue;
+      }
+      const pipeWrapper = this.wrap(toBeWrapped, chainIndex);
+      result.push(pipeWrapper);
+    }
+    return result;
   }
 }

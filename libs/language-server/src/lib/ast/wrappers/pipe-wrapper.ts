@@ -69,17 +69,3 @@ export class PipeWrapper<
     );
   }
 }
-
-export function createWrappersFromPipeChain<
-  A extends PipeDefinition | BlocktypePipeline,
->(pipe: A): PipeWrapper<A>[] {
-  const result: PipeWrapper<A>[] = [];
-  for (let chainIndex = 0; chainIndex < pipe.blocks.length - 1; ++chainIndex) {
-    if (!PipeWrapper.canBeWrapped(pipe, chainIndex)) {
-      continue;
-    }
-    const pipeWrapper = new PipeWrapper(pipe, chainIndex);
-    result.push(pipeWrapper);
-  }
-  return result;
-}
