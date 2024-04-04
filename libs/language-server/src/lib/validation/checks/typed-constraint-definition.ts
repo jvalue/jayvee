@@ -9,19 +9,19 @@
 
 import { TypedConstraintDefinition } from '../../ast/generated/ast';
 import { ConstraintTypeWrapper } from '../../ast/wrappers/typed-object/constrainttype-wrapper';
-import { ValidationContext } from '../validation-context';
+import { type JayveeValidationProps } from '../validation-registry';
 
 export function validateTypedConstraintDefinition(
   constraint: TypedConstraintDefinition,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
-  checkConstraintType(constraint, context);
+  checkConstraintType(constraint, props);
   // TODO: add custom validations
 }
 
 function checkConstraintType(
   constraint: TypedConstraintDefinition,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
   const constraintType = constraint?.type;
   if (constraintType === undefined) {
@@ -30,7 +30,7 @@ function checkConstraintType(
 
   const canCreateWrapper = ConstraintTypeWrapper.canBeWrapped(constraintType);
   if (!canCreateWrapper) {
-    context.accept(
+    props.validationContext.accept(
       'error',
       `Unknown constraint type '${constraintType.$refText ?? ''}'`,
       {

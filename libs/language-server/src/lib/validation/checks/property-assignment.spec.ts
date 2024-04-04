@@ -6,19 +6,14 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  DefaultOperatorEvaluatorRegistry,
-  DefaultOperatorTypeComputerRegistry,
-  EvaluationContext,
   PropertyAssignment,
   PropertyBody,
-  RuntimeParameterProvider,
   TypedObjectWrapper,
-  ValidationContext,
-  WrapperFactory,
   createJayveeServices,
 } from '../../../lib';
 import {
   ParseHelperOptions,
+  createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
@@ -53,12 +48,8 @@ describe('Validation of PropertyAssignment', () => {
 
     const type = propertyBody.$container.type;
 
-    const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
-    const operatorTypeComputerRegistry =
-      new DefaultOperatorTypeComputerRegistry();
-    const wrapperFactory = new WrapperFactory(operatorEvaluatorRegistry);
-
-    const wrapper = wrapperFactory.wrapTypedObject(type);
+    const props = createJayveeValidationProps(validationAcceptorMock);
+    const wrapper = props.wrapperFactory.wrapTypedObject(type);
     expect(wrapper).toBeDefined();
 
     const propertyAssignment = locator.getAstNode<PropertyAssignment>(
@@ -69,15 +60,7 @@ describe('Validation of PropertyAssignment', () => {
     validatePropertyAssignment(
       propertyAssignment,
       wrapper as TypedObjectWrapper,
-      new ValidationContext(
-        validationAcceptorMock,
-        operatorTypeComputerRegistry,
-      ),
-      new EvaluationContext(
-        new RuntimeParameterProvider(),
-        operatorEvaluatorRegistry,
-      ),
-      wrapperFactory,
+      props,
     );
   }
 

@@ -5,18 +5,10 @@
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import {
-  DefaultOperatorEvaluatorRegistry,
-  DefaultOperatorTypeComputerRegistry,
-  EvaluationContext,
-  RuntimeParameterProvider,
-  TransformOutputAssignment,
-  ValidationContext,
-  WrapperFactory,
-  createJayveeServices,
-} from '../../../lib';
+import { TransformOutputAssignment, createJayveeServices } from '../../../lib';
 import {
   ParseHelperOptions,
+  createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
@@ -50,20 +42,9 @@ describe('Validation of TransformOutputAssignment', () => {
         'transforms@0/body/outputAssignments@0',
       ) as TransformOutputAssignment;
 
-    const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
-    const wrapperFactory = new WrapperFactory(operatorEvaluatorRegistry);
-
     validateTransformOutputAssignment(
       transformOutputAssignment,
-      new ValidationContext(
-        validationAcceptorMock,
-        new DefaultOperatorTypeComputerRegistry(),
-      ),
-      new EvaluationContext(
-        new RuntimeParameterProvider(),
-        operatorEvaluatorRegistry,
-      ),
-      wrapperFactory,
+      createJayveeValidationProps(validationAcceptorMock),
     );
   }
 

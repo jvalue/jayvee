@@ -3,18 +3,18 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { JayveeModel } from '../../ast/generated/ast';
-import { ValidationContext } from '../validation-context';
+import { type JayveeValidationProps } from '../validation-registry';
 import { checkUniqueNames } from '../validation-util';
 
 export function validateJayveeModel(
   model: JayveeModel,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
-  checkUniqueNames(model.pipelines, context);
-  checkUniqueNames(model.transforms, context);
-  checkUniqueNames(model.valuetypes, context);
-  checkUniqueNames(model.constraints, context);
-  checkUniqueNames(model.blocktypes, context);
-  checkUniqueNames(model.constrainttypes, context);
-  checkUniqueNames(model.iotypes, context);
+  checkUniqueNames(model.pipelines, props.validationContext);
+  checkUniqueNames(model.transforms, props.validationContext);
+  checkUniqueNames(model.valuetypes, props.validationContext);
+  checkUniqueNames(model.constraints, props.validationContext);
+  checkUniqueNames(model.blocktypes, props.validationContext);
+  checkUniqueNames(model.constrainttypes, props.validationContext);
+  checkUniqueNames(model.iotypes, props.validationContext);
 }

@@ -2,49 +2,41 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  type EvaluationContext,
-  PipeWrapper,
-  PipelineWrapper,
-  type WrapperFactory,
-} from '../../ast';
+import { PipeWrapper, PipelineWrapper } from '../../ast';
 import {
   BlockDefinition,
   CompositeBlocktypeDefinition,
   PipelineDefinition,
 } from '../../ast/generated/ast';
-import { ValidationContext } from '../validation-context';
+import { type JayveeValidationProps } from '../validation-registry';
 import { checkUniqueNames } from '../validation-util';
 
 export function validatePipelineDefinition(
   pipeline: PipelineDefinition,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
-  wrapperFactory: WrapperFactory,
+  props: JayveeValidationProps,
 ): void {
-  checkStartingBlocks(pipeline, validationContext, wrapperFactory);
-  checkUniqueNames(pipeline.blocks, validationContext);
-  checkUniqueNames(pipeline.transforms, validationContext);
-  checkUniqueNames(pipeline.valuetypes, validationContext);
-  checkUniqueNames(pipeline.constraints, validationContext);
+  checkStartingBlocks(pipeline, props);
+  checkUniqueNames(pipeline.blocks, props.validationContext);
+  checkUniqueNames(pipeline.transforms, props.validationContext);
+  checkUniqueNames(pipeline.valuetypes, props.validationContext);
+  checkUniqueNames(pipeline.constraints, props.validationContext);
 
-  checkMultipleBlockInputs(pipeline, validationContext, wrapperFactory);
-  checkDefinedBlocksAreUsed(pipeline, validationContext, wrapperFactory);
+  checkMultipleBlockInputs(pipeline, props);
+  checkDefinedBlocksAreUsed(pipeline, props);
 }
 
 function checkStartingBlocks(
   pipeline: PipelineDefinition,
-  context: ValidationContext,
-  wrapperFactory: WrapperFactory,
+  props: JayveeValidationProps,
 ): void {
-  if (!wrapperFactory.Pipeline.canWrap(pipeline)) {
+  if (!props.wrapperFactory.Pipeline.canWrap(pipeline)) {
     return;
   }
-  const pipelineWrapper = wrapperFactory.Pipeline.wrap(pipeline);
+  const pipelineWrapper = props.wrapperFactory.Pipeline.wrap(pipeline);
 
   const startingBlocks = pipelineWrapper.getStartingBlocks();
   if (startingBlocks.length === 0) {
-    context.accept(
+    props.validationContext.accept(
       'error',
       `An extractor block is required for this pipeline`,
       {
@@ -57,13 +49,12 @@ function checkStartingBlocks(
 
 export function checkMultipleBlockInputs(
   pipeline: PipelineDefinition | CompositeBlocktypeDefinition,
-  context: ValidationContext,
-  wrapperFactory: WrapperFactory,
+  props: JayveeValidationProps,
 ): void {
-  if (!wrapperFactory.Pipeline.canWrap(pipeline)) {
+  if (!props.wrapperFactory.Pipeline.canWrap(pipeline)) {
     return;
   }
-  const pipelineWrapper = wrapperFactory.Pipeline.wrap(pipeline);
+  const pipelineWrapper = props.wrapperFactory.Pipeline.wrap(pipeline);
 
   const startingBlocks = pipelineWrapper.getStartingBlocks();
   let alreadyMarkedPipes: PipeWrapper[] = [];
@@ -72,7 +63,7 @@ export function checkMultipleBlockInputs(
       pipelineWrapper,
       startingBlock,
       alreadyMarkedPipes,
-      context,
+      props,
     );
   }
 }
@@ -91,7 +82,7 @@ function doCheckMultipleBlockInputs(
   >,
   block: BlockDefinition,
   alreadyMarkedPipes: PipeWrapper[],
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): PipeWrapper[] {
   const pipesFromParents = pipelineWrapper.getIngoingPipes(block);
   if (pipesFromParents.length > 1) {
@@ -105,7 +96,7 @@ function doCheckMultipleBlockInputs(
         continue;
       }
 
-      context.accept(
+      props.validationContext.accept(
         'error',
         `At most one pipe can be connected to the input of a block. Currently, the following ${
           pipesFromParents.length
@@ -123,7 +114,7 @@ function doCheckMultipleBlockInputs(
       pipelineWrapper,
       child,
       alreadyMarkedPipes,
-      context,
+      props,
     );
   }
 
@@ -132,17 +123,16 @@ function doCheckMultipleBlockInputs(
 
 export function checkDefinedBlocksAreUsed(
   pipeline: PipelineDefinition | CompositeBlocktypeDefinition,
-  context: ValidationContext,
-  wrapperFactory: WrapperFactory,
+  props: JayveeValidationProps,
 ): void {
-  if (!wrapperFactory.Pipeline.canWrap(pipeline)) {
+  if (!props.wrapperFactory.Pipeline.canWrap(pipeline)) {
     return;
   }
-  const pipelineWrapper = wrapperFactory.Pipeline.wrap(pipeline);
+  const pipelineWrapper = props.wrapperFactory.Pipeline.wrap(pipeline);
 
   const containedBlocks = pipeline.blocks;
   for (const block of containedBlocks) {
-    doCheckDefinedBlockIsUsed(pipelineWrapper, block, context, wrapperFactory);
+    doCheckDefinedBlockIsUsed(pipelineWrapper, block, props);
   }
 }
 
@@ -151,23 +141,22 @@ function doCheckDefinedBlockIsUsed(
     PipelineDefinition | CompositeBlocktypeDefinition
   >,
   block: BlockDefinition,
-  context: ValidationContext,
-  wrapperFactory: WrapperFactory,
+  props: JayveeValidationProps,
 ): void {
   if (
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     block.type === undefined ||
-    !wrapperFactory.BlockType.canWrap(block.type)
+    !props.wrapperFactory.BlockType.canWrap(block.type)
   ) {
     return;
   }
-  const blockType = wrapperFactory.BlockType.wrap(block.type);
+  const blockType = props.wrapperFactory.BlockType.wrap(block.type);
 
   const isExtractorBlock = !blockType.hasInput();
   if (!isExtractorBlock) {
     const parents = pipelineWrapper.getParentBlocks(block);
     if (parents.length === 0) {
-      context.accept(
+      props.validationContext.accept(
         'warning',
         `A pipe should be connected to the input of this block`,
         {
@@ -182,7 +171,7 @@ function doCheckDefinedBlockIsUsed(
   if (!isLoaderBlock) {
     const children = pipelineWrapper.getChildBlocks(block);
     if (children.length === 0) {
-      context.accept(
+      props.validationContext.accept(
         'warning',
         `A pipe should be connected to the output of this block`,
         {

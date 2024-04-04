@@ -8,18 +8,18 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
 import { ColumnId } from '../../ast/generated/ast';
-import { ValidationContext } from '../validation-context';
+import { type JayveeValidationProps } from '../validation-registry';
 
 export function validateColumnId(
   columnId: ColumnId,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
-  checkColumnIdSyntax(columnId, context);
+  checkColumnIdSyntax(columnId, props);
 }
 
 function checkColumnIdSyntax(
   columnId: ColumnId,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
   if (columnId?.value === undefined || columnId?.value === '*') {
     return;
@@ -27,7 +27,7 @@ function checkColumnIdSyntax(
 
   const columnIdRegex = /^[A-Z]+$/;
   if (!columnIdRegex.test(columnId.value)) {
-    context.accept(
+    props.validationContext.accept(
       'error',
       'Columns need to be denoted via capital letters or the * character',
       {

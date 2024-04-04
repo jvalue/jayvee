@@ -5,18 +5,10 @@
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import {
-  CompositeBlocktypeDefinition,
-  DefaultOperatorEvaluatorRegistry,
-  DefaultOperatorTypeComputerRegistry,
-  EvaluationContext,
-  RuntimeParameterProvider,
-  ValidationContext,
-  WrapperFactory,
-  createJayveeServices,
-} from '../..';
+import { CompositeBlocktypeDefinition, createJayveeServices } from '../..';
 import {
   ParseHelperOptions,
+  createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
@@ -49,22 +41,9 @@ describe('Validation of CompositeBlocktypeDefinition', () => {
       'blocktypes@0',
     ) as CompositeBlocktypeDefinition;
 
-    const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
-    const operatorTypeComputerRegistry =
-      new DefaultOperatorTypeComputerRegistry();
-    const wrapperFactory = new WrapperFactory(operatorEvaluatorRegistry);
-
     validateCompositeBlockTypeDefinition(
       blocktype,
-      new ValidationContext(
-        validationAcceptorMock,
-        operatorTypeComputerRegistry,
-      ),
-      new EvaluationContext(
-        new RuntimeParameterProvider(),
-        operatorEvaluatorRegistry,
-      ),
-      wrapperFactory,
+      createJayveeValidationProps(validationAcceptorMock),
     );
   }
 

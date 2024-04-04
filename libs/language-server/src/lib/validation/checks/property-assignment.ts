@@ -8,10 +8,8 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
 import {
-  EvaluationContext,
   PropertySpecification,
   TypedObjectWrapper,
-  WrapperFactory,
   inferExpressionType,
 } from '../../ast';
 import {
@@ -19,7 +17,7 @@ import {
   isBlocktypeProperty,
   isRuntimeParameterLiteral,
 } from '../../ast/generated/ast';
-import { ValidationContext } from '../validation-context';
+import { type JayveeValidationProps } from '../validation-registry';
 import { checkExpressionSimplification } from '../validation-util';
 
 import { checkBlocktypeSpecificProperties } from './blocktype-specific/property-assignment';
@@ -27,45 +25,31 @@ import { checkBlocktypeSpecificProperties } from './blocktype-specific/property-
 export function validatePropertyAssignment(
   property: PropertyAssignment,
   wrapper: TypedObjectWrapper,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
-  wrapperFactory: WrapperFactory,
+  props: JayveeValidationProps,
 ): void {
   const propertySpec = wrapper.getPropertySpecification(property?.name);
 
-  checkPropertyNameValidity(property, propertySpec, validationContext);
+  checkPropertyNameValidity(property, propertySpec, props);
 
   if (propertySpec === undefined) {
     return;
   }
-  checkPropertyValueTyping(
-    property,
-    propertySpec,
-    validationContext,
-    evaluationContext,
-    wrapperFactory,
-  );
+  checkPropertyValueTyping(property, propertySpec, props);
 
-  if (validationContext.hasErrorOccurred()) {
+  if (props.validationContext.hasErrorOccurred()) {
     return;
   }
 
-  checkBlocktypeSpecificProperties(
-    property,
-    propertySpec,
-    validationContext,
-    evaluationContext,
-    wrapperFactory,
-  );
+  checkBlocktypeSpecificProperties(property, propertySpec, props);
 }
 
 function checkPropertyNameValidity(
   property: PropertyAssignment,
   propertySpec: PropertySpecification | undefined,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
   if (propertySpec === undefined) {
-    context.accept(
+    props.validationContext.accept(
       'error',
       `Invalid property name "${property?.name ?? ''}".`,
       {
@@ -79,9 +63,7 @@ function checkPropertyNameValidity(
 function checkPropertyValueTyping(
   property: PropertyAssignment,
   propertySpec: PropertySpecification,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
-  wrapperFactory: WrapperFactory,
+  props: JayveeValidationProps,
 ): void {
   const propertyType = propertySpec.type;
   const propertyValue = property?.value;
@@ -91,7 +73,7 @@ function checkPropertyValueTyping(
 
   if (isRuntimeParameterLiteral(propertyValue)) {
     if (!propertyType.isAllowedAsRuntimeParameter()) {
-      validationContext.accept(
+      props.validationContext.accept(
         'error',
         `Runtime parameters are not allowed for properties of type ${propertyType.getName()}`,
         {
@@ -106,13 +88,16 @@ function checkPropertyValueTyping(
     return;
   }
 
-  const inferredType = inferExpressionType(propertyValue, validationContext);
+  const inferredType = inferExpressionType(
+    propertyValue,
+    props.validationContext,
+  );
   if (inferredType === undefined) {
     return;
   }
 
   if (!inferredType.isConvertibleTo(propertyType)) {
-    validationContext.accept(
+    props.validationContext.accept(
       'error',
       `The value of property "${
         property.name
@@ -124,10 +109,5 @@ function checkPropertyValueTyping(
     return;
   }
 
-  checkExpressionSimplification(
-    propertyValue,
-    validationContext,
-    evaluationContext,
-    wrapperFactory,
-  );
+  checkExpressionSimplification(propertyValue, props);
 }

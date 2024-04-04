@@ -103,7 +103,11 @@ export class JayveeValidationRegistry extends ValidationRegistry {
         runtimeParameterProvider,
         operatorEvaluatorRegistry,
       );
-      return check(node, validationContext, evaluationContext, wrapperFactory);
+      return check(node, {
+        validationContext: validationContext,
+        evaluationContext: evaluationContext,
+        wrapperFactory: wrapperFactory,
+      });
     };
   }
 }
@@ -114,9 +118,12 @@ export type JayveeValidationChecks<T = JayveeAstType> = {
   AstNode?: ValidationCheck<AstNode>;
 };
 
+export interface JayveeValidationProps {
+  validationContext: ValidationContext;
+  evaluationContext: EvaluationContext;
+  wrapperFactory: WrapperFactory;
+}
 export type JayveeValidationCheck<T extends AstNode = AstNode> = (
   node: T,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
-  wrapperFactory: WrapperFactory,
+  props: JayveeValidationProps,
 ) => MaybePromise<void>;

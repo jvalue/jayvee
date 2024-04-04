@@ -5,18 +5,10 @@
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import {
-  DefaultOperatorEvaluatorRegistry,
-  DefaultOperatorTypeComputerRegistry,
-  EvaluationContext,
-  RuntimeParameterProvider,
-  TransformBody,
-  ValidationContext,
-  WrapperFactory,
-  createJayveeServices,
-} from '../../../lib';
+import { TransformBody, createJayveeServices } from '../../../lib';
 import {
   ParseHelperOptions,
+  createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
@@ -49,20 +41,9 @@ describe('Validation of TransformBody', () => {
       'transforms@0/body',
     ) as TransformBody;
 
-    const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
-    const wrapperFactory = new WrapperFactory(operatorEvaluatorRegistry);
-
     validateTransformBody(
       transformBody,
-      new ValidationContext(
-        validationAcceptorMock,
-        new DefaultOperatorTypeComputerRegistry(),
-      ),
-      new EvaluationContext(
-        new RuntimeParameterProvider(),
-        operatorEvaluatorRegistry,
-      ),
-      wrapperFactory,
+      createJayveeValidationProps(validationAcceptorMock),
     );
   }
 

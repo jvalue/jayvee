@@ -7,14 +7,12 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { type WrapperFactory } from '../../ast';
-import { EvaluationContext } from '../../ast/expressions/evaluation-context';
 import {
   TransformBody,
   TransformPortDefinition,
   isTransformPortDefinition,
 } from '../../ast/generated/ast';
-import { ValidationContext } from '../validation-context';
+import { type JayveeValidationProps } from '../validation-registry';
 import { checkUniqueNames } from '../validation-util';
 
 import {
@@ -24,30 +22,27 @@ import {
 
 export function validateTransformBody(
   transformBody: TransformBody,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
-  wrapperFactory: WrapperFactory,
+  props: JayveeValidationProps,
 ): void {
-  checkUniqueNames(transformBody.ports, validationContext, 'transform port');
-  checkUniqueOutputAssignments(transformBody, validationContext);
+  checkUniqueNames(
+    transformBody.ports,
+    props.validationContext,
+    'transform port',
+  );
+  checkUniqueOutputAssignments(transformBody, props);
 
-  checkSingleOutputPort(transformBody, validationContext);
+  checkSingleOutputPort(transformBody, props);
 
-  checkAreInputsUsed(transformBody, validationContext);
+  checkAreInputsUsed(transformBody, props);
 
   for (const property of transformBody.outputAssignments) {
-    validateTransformOutputAssignment(
-      property,
-      validationContext,
-      evaluationContext,
-      wrapperFactory,
-    );
+    validateTransformOutputAssignment(property, props);
   }
 }
 
 function checkUniqueOutputAssignments(
   transformBody: TransformBody,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
   const assignedOutputPorts = transformBody?.outputAssignments ?? [];
   const definedOutputPorts =
@@ -59,7 +54,7 @@ function checkUniqueOutputAssignments(
     );
 
     if (usedInAssignments.length === 0) {
-      context.accept(
+      props.validationContext.accept(
         'error',
         'An output assignment is required for this port',
         { node: definedOutputPort, property: 'name' },
@@ -68,10 +63,14 @@ function checkUniqueOutputAssignments(
 
     if (usedInAssignments.length > 1) {
       usedInAssignments.forEach((usedAssignment) => {
-        context.accept('error', 'At most one assignment per output port', {
-          node: usedAssignment,
-          property: 'outPortName',
-        });
+        props.validationContext.accept(
+          'error',
+          'At most one assignment per output port',
+          {
+            node: usedAssignment,
+            property: 'outPortName',
+          },
+        );
       });
     }
   }
@@ -79,7 +78,7 @@ function checkUniqueOutputAssignments(
 
 function checkSingleOutputPort(
   transformBody: TransformBody,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
   const ports = transformBody.ports?.filter((x) => x.kind === 'to');
   if (ports === undefined) {
@@ -88,23 +87,31 @@ function checkSingleOutputPort(
 
   if (ports.length > 1) {
     ports.forEach((port) => {
-      context.accept('error', `More than one output port is defined`, {
-        node: port,
-      });
+      props.validationContext.accept(
+        'error',
+        `More than one output port is defined`,
+        {
+          node: port,
+        },
+      );
     });
   }
 
   if (ports.length === 0) {
-    context.accept('error', `There has to be a single output port`, {
-      node: transformBody.$container,
-      property: 'name',
-    });
+    props.validationContext.accept(
+      'error',
+      `There has to be a single output port`,
+      {
+        node: transformBody.$container,
+        property: 'name',
+      },
+    );
   }
 }
 
 function checkAreInputsUsed(
   transformBody: TransformBody,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
   const inputs = transformBody.ports?.filter((x) => x.kind === 'from');
   const outputAssignments = transformBody?.outputAssignments;
@@ -133,9 +140,13 @@ function checkAreInputsUsed(
 
     if (!referencedPortNames.includes(input.name)) {
       if (isOutputPortComplete(input)) {
-        context.accept('warning', 'This input port is never used', {
-          node: input,
-        });
+        props.validationContext.accept(
+          'warning',
+          'This input port is never used',
+          {
+            node: input,
+          },
+        );
       }
     }
   });

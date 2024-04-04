@@ -4,28 +4,28 @@
 
 import { RangeLiteral } from '../../ast/generated/ast';
 import { CellRangeWrapper } from '../../ast/wrappers/cell-range-wrapper';
-import { ValidationContext } from '../validation-context';
+import { type JayveeValidationProps } from '../validation-registry';
 
 export function validateRangeLiteral(
   range: RangeLiteral,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
   if (!CellRangeWrapper.canBeWrapped(range)) {
     return;
   }
   const wrappedRange = new CellRangeWrapper(range);
-  checkRangeLimits(wrappedRange, context);
+  checkRangeLimits(wrappedRange, props);
 }
 
 function checkRangeLimits(
   range: CellRangeWrapper,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
   if (
     range.from.columnIndex > range.to.columnIndex ||
     range.from.rowIndex > range.to.rowIndex
   ) {
-    context.accept(
+    props.validationContext.accept(
       'error',
       `Cell ranges need to be spanned from top-left to bottom-right`,
       {

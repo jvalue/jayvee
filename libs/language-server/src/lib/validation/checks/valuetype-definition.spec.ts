@@ -5,18 +5,10 @@
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import {
-  DefaultOperatorEvaluatorRegistry,
-  DefaultOperatorTypeComputerRegistry,
-  EvaluationContext,
-  RuntimeParameterProvider,
-  ValidationContext,
-  ValuetypeDefinition,
-  WrapperFactory,
-  createJayveeServices,
-} from '../../../lib';
+import { ValuetypeDefinition, createJayveeServices } from '../../../lib';
 import {
   ParseHelperOptions,
+  createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
@@ -49,22 +41,9 @@ describe('Validation of ValuetypeDefinition', () => {
       'valuetypes@0',
     ) as ValuetypeDefinition;
 
-    const operatorTypeComputerRegistry =
-      new DefaultOperatorTypeComputerRegistry();
-    const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
-    const wrapperFactory = new WrapperFactory(operatorEvaluatorRegistry);
-
     validateValuetypeDefinition(
       valuetypeDefinition,
-      new ValidationContext(
-        validationAcceptorMock,
-        operatorTypeComputerRegistry,
-      ),
-      new EvaluationContext(
-        new RuntimeParameterProvider(),
-        operatorEvaluatorRegistry,
-      ),
-      wrapperFactory,
+      createJayveeValidationProps(validationAcceptorMock),
     );
   }
 

@@ -5,14 +5,10 @@
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import {
-  DefaultOperatorTypeComputerRegistry,
-  RangeLiteral,
-  ValidationContext,
-  createJayveeServices,
-} from '../../../lib';
+import { RangeLiteral, createJayveeServices } from '../../../lib';
 import {
   ParseHelperOptions,
+  createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
@@ -47,10 +43,7 @@ describe('Validation of RangeLiteral', () => {
 
     validateRangeLiteral(
       rangeLiteral,
-      new ValidationContext(
-        validationAcceptorMock,
-        new DefaultOperatorTypeComputerRegistry(),
-      ),
+      createJayveeValidationProps(validationAcceptorMock),
     );
   }
 

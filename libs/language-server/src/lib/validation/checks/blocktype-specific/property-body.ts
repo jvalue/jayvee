@@ -4,51 +4,30 @@
 
 import {
   CollectionValuetype,
-  EvaluationContext,
   PrimitiveValuetypes,
   PropertyBody,
-  WrapperFactory,
   evaluatePropertyValue,
 } from '../../../ast';
-import { ValidationContext } from '../../validation-context';
+import { type JayveeValidationProps } from '../../validation-registry';
 
 export function checkBlocktypeSpecificPropertyBody(
   propertyBody: PropertyBody,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
-  wrapperFactory: WrapperFactory,
+  props: JayveeValidationProps,
 ) {
   switch (propertyBody.$container.type.ref?.name) {
     case 'TextRangeSelector':
-      return checkTextRangeSelectorPropertyBody(
-        propertyBody,
-        validationContext,
-        evaluationContext,
-        wrapperFactory,
-      );
+      return checkTextRangeSelectorPropertyBody(propertyBody, props);
     case 'CellWriter':
-      return checkCellWriterPropertyBody(
-        propertyBody,
-        validationContext,
-        evaluationContext,
-        wrapperFactory,
-      );
+      return checkCellWriterPropertyBody(propertyBody, props);
     case 'TableTransformer':
-      return checkTableTransformerPropertyBody(
-        propertyBody,
-        validationContext,
-        evaluationContext,
-        wrapperFactory,
-      );
+      return checkTableTransformerPropertyBody(propertyBody, props);
     default:
   }
 }
 
 function checkTextRangeSelectorPropertyBody(
   propertyBody: PropertyBody,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
-  wrapperFactory: WrapperFactory,
+  props: JayveeValidationProps,
 ) {
   const lineFromProperty = propertyBody.properties.find(
     (p) => p.name === 'lineFrom',
@@ -63,14 +42,14 @@ function checkTextRangeSelectorPropertyBody(
 
   const lineFrom = evaluatePropertyValue(
     lineFromProperty,
-    evaluationContext,
-    wrapperFactory,
+    props.evaluationContext,
+    props.wrapperFactory,
     PrimitiveValuetypes.Integer,
   );
   const lineTo = evaluatePropertyValue(
     lineToProperty,
-    evaluationContext,
-    wrapperFactory,
+    props.evaluationContext,
+    props.wrapperFactory,
     PrimitiveValuetypes.Integer,
   );
   if (lineFrom === undefined || lineTo === undefined) {
@@ -79,7 +58,7 @@ function checkTextRangeSelectorPropertyBody(
 
   if (lineFrom > lineTo) {
     [lineFromProperty, lineToProperty].forEach((property) => {
-      validationContext.accept(
+      props.validationContext.accept(
         'error',
         'The lower line number needs to be smaller or equal to the upper line number',
         { node: property.value },
@@ -90,9 +69,7 @@ function checkTextRangeSelectorPropertyBody(
 
 function checkCellWriterPropertyBody(
   propertyBody: PropertyBody,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
-  wrapperFactory: WrapperFactory,
+  props: JayveeValidationProps,
 ) {
   const writeProperty = propertyBody.properties.find((p) => p.name === 'write');
   const atProperty = propertyBody.properties.find((p) => p.name === 'at');
@@ -103,15 +80,15 @@ function checkCellWriterPropertyBody(
 
   const writeValues = evaluatePropertyValue(
     writeProperty,
-    evaluationContext,
-    wrapperFactory,
+    props.evaluationContext,
+    props.wrapperFactory,
     new CollectionValuetype(PrimitiveValuetypes.Text),
   );
 
   const atValue = evaluatePropertyValue(
     atProperty,
-    evaluationContext,
-    wrapperFactory,
+    props.evaluationContext,
+    props.wrapperFactory,
     PrimitiveValuetypes.CellRange,
   );
 
@@ -124,7 +101,7 @@ function checkCellWriterPropertyBody(
 
   if (numberOfCells !== numberOfValuesToWrite) {
     [writeProperty, atProperty].forEach((propertyNode) => {
-      validationContext.accept(
+      props.validationContext.accept(
         'warning',
         `The number of values to write (${numberOfValuesToWrite}) does not match the number of cells (${numberOfCells})`,
         { node: propertyNode.value },
@@ -135,23 +112,14 @@ function checkCellWriterPropertyBody(
 
 function checkTableTransformerPropertyBody(
   propertyBody: PropertyBody,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
-  wrapperFactory: WrapperFactory,
+  props: JayveeValidationProps,
 ) {
-  checkInputColumnsMatchTransformationPorts(
-    propertyBody,
-    validationContext,
-    evaluationContext,
-    wrapperFactory,
-  );
+  checkInputColumnsMatchTransformationPorts(propertyBody, props);
 }
 
 function checkInputColumnsMatchTransformationPorts(
   propertyBody: PropertyBody,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
-  wrapperFactory: WrapperFactory,
+  props: JayveeValidationProps,
 ): void {
   const useProperty = propertyBody.properties.find((x) => x.name === 'use');
   const inputColumnsProperty = propertyBody.properties.find(
@@ -164,14 +132,14 @@ function checkInputColumnsMatchTransformationPorts(
 
   const transform = evaluatePropertyValue(
     useProperty,
-    evaluationContext,
-    wrapperFactory,
+    props.evaluationContext,
+    props.wrapperFactory,
     PrimitiveValuetypes.Transform,
   );
   const inputColumns = evaluatePropertyValue(
     inputColumnsProperty,
-    evaluationContext,
-    wrapperFactory,
+    props.evaluationContext,
+    props.wrapperFactory,
     new CollectionValuetype(PrimitiveValuetypes.Text),
   );
 
@@ -191,7 +159,7 @@ function checkInputColumnsMatchTransformationPorts(
   const numberInputColumns = inputColumns.length;
 
   if (numberTransformPorts !== numberInputColumns) {
-    validationContext.accept(
+    props.validationContext.accept(
       'error',
       `Expected ${numberTransformPorts} columns but only got ${numberInputColumns}`,
       {

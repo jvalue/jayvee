@@ -68,15 +68,17 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
       new DefaultOperatorTypeComputerRegistry();
     const wrapperFactory = new WrapperFactory(operatorEvaluatorRegistry);
 
-    validateRuntimeParameterLiteral(
-      runtimeParameter,
-      new ValidationContext(
+    validateRuntimeParameterLiteral(runtimeParameter, {
+      validationContext: new ValidationContext(
         validationAcceptorMock,
         operatorTypeComputerRegistry,
       ),
-      new EvaluationContext(runtimeProvider, operatorEvaluatorRegistry),
-      wrapperFactory,
-    );
+      evaluationContext: new EvaluationContext(
+        runtimeProvider,
+        operatorEvaluatorRegistry,
+      ),
+      wrapperFactory: wrapperFactory,
+    });
   }
 
   beforeAll(async () => {

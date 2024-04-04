@@ -15,10 +15,8 @@ import {
   CollectionLiteral,
   CollectionValuetype,
   ConstraintDefinition,
-  EvaluationContext,
   PrimitiveValuetypes,
   Valuetype,
-  WrapperFactory,
   createValuetype,
   evaluateExpression,
   inferExpressionType,
@@ -29,33 +27,26 @@ import {
   ValuetypeDefinition,
   ValuetypeGenericDefinition,
 } from '../../ast/generated/ast';
-import { ValidationContext } from '../validation-context';
+import { type JayveeValidationProps } from '../validation-registry';
 
 export function validateValuetypeDefinition(
   valuetype: ValuetypeDefinition,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
-  wrapperFactory: WrapperFactory,
+  props: JayveeValidationProps,
 ): void {
-  checkSupertypeCycle(valuetype, validationContext);
-  checkConstraintsCollectionValues(
-    valuetype,
-    validationContext,
-    evaluationContext,
-    wrapperFactory,
-  );
-  checkGenericsHaveNoDuplicate(valuetype, validationContext);
+  checkSupertypeCycle(valuetype, props);
+  checkConstraintsCollectionValues(valuetype, props);
+  checkGenericsHaveNoDuplicate(valuetype, props);
 }
 
 function checkSupertypeCycle(
   valuetypeDefinition: ValuetypeDefinition,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
   const hasCycle =
     createValuetype(valuetypeDefinition)?.hasSupertypeCycle() ?? false;
   if (hasCycle) {
     assert(!valuetypeDefinition.isBuiltin);
-    context.accept(
+    props.validationContext.accept(
       'error',
       'Could not construct this valuetype since there is a cycle in the (transitive) "oftype" relation.',
       {
@@ -68,9 +59,7 @@ function checkSupertypeCycle(
 
 function checkConstraintsCollectionValues(
   valuetype: ValuetypeDefinition,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
-  wrapperFactory: WrapperFactory,
+  props: JayveeValidationProps,
 ): void {
   const constraintCollection = valuetype?.constraints;
   if (constraintCollection === undefined) {
@@ -79,14 +68,14 @@ function checkConstraintsCollectionValues(
 
   const inferredCollectionType = inferExpressionType(
     constraintCollection,
-    validationContext,
+    props.validationContext,
   );
   const expectedType = new CollectionValuetype(PrimitiveValuetypes.Constraint);
   if (inferredCollectionType === undefined) {
     return;
   }
   if (!inferredCollectionType.isConvertibleTo(expectedType)) {
-    validationContext.accept(
+    props.validationContext.accept(
       'error',
       `The value needs to be of type ${expectedType.getName()} but is of type ${inferredCollectionType.getName()}`,
       {
@@ -98,9 +87,9 @@ function checkConstraintsCollectionValues(
 
   const constraints = evaluateExpression(
     constraintCollection,
-    evaluationContext,
-    wrapperFactory,
-    validationContext,
+    props.evaluationContext,
+    props.wrapperFactory,
+    props.validationContext,
   );
   assert(expectedType.isInternalValueRepresentation(constraints));
 
@@ -110,8 +99,7 @@ function checkConstraintsCollectionValues(
       constraint,
       constraintCollection,
       index,
-      validationContext,
-      wrapperFactory,
+      props,
     );
   });
 }
@@ -121,21 +109,17 @@ function checkConstraintMatchesValuetype(
   constraint: ConstraintDefinition,
   diagnosticNode: CollectionLiteral,
   diagnosticIndex: number,
-  context: ValidationContext,
-  wrapperFactory: WrapperFactory,
+  props: JayveeValidationProps,
 ): void {
   const actualValuetype = createValuetype(valuetypeDefinition);
-  const compatibleValuetype = getCompatibleValuetype(
-    constraint,
-    wrapperFactory,
-  );
+  const compatibleValuetype = getCompatibleValuetype(constraint, props);
 
   if (actualValuetype === undefined || compatibleValuetype === undefined) {
     return;
   }
 
   if (!actualValuetype.isConvertibleTo(compatibleValuetype)) {
-    context.accept(
+    props.validationContext.accept(
       'error',
       `This valuetype ${actualValuetype.getName()} is not convertible to the type ${compatibleValuetype.getName()} of the constraint "${
         constraint.name
@@ -151,13 +135,13 @@ function checkConstraintMatchesValuetype(
 
 function getCompatibleValuetype(
   constraint: ConstraintDefinition,
-  wrapperFactory: WrapperFactory,
+  props: JayveeValidationProps,
 ): Valuetype | undefined {
   if (isTypedConstraintDefinition(constraint)) {
-    if (wrapperFactory.ConstraintType.canWrap(constraint.type)) {
+    if (props.wrapperFactory.ConstraintType.canWrap(constraint.type)) {
       return undefined;
     }
-    return wrapperFactory.ConstraintType.wrap(constraint.type).on;
+    return props.wrapperFactory.ConstraintType.wrap(constraint.type).on;
   } else if (isExpressionConstraintDefinition(constraint)) {
     return createValuetype(constraint?.valuetype);
   }
@@ -166,7 +150,7 @@ function getCompatibleValuetype(
 
 function checkGenericsHaveNoDuplicate(
   valuetypeDefinition: ValuetypeDefinition,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
   const generics = valuetypeDefinition.genericDefinition?.generics;
   if (generics === undefined) {
@@ -176,10 +160,14 @@ function checkGenericsHaveNoDuplicate(
   const duplicates = getDuplicateGenerics(generics);
 
   duplicates.forEach((generic) => {
-    context.accept('error', `Generic parameter ${generic.name} is not unique`, {
-      node: generic,
-      property: 'name',
-    });
+    props.validationContext.accept(
+      'error',
+      `Generic parameter ${generic.name} is not unique`,
+      {
+        node: generic,
+        property: 'name',
+      },
+    );
   });
 }
 

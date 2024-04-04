@@ -9,7 +9,16 @@ import * as path from 'path';
 import { AstNode, LangiumDocument, ValidationAcceptor } from 'langium';
 import { WorkspaceFolder } from 'vscode-languageserver-protocol';
 
-import { JayveeServices } from '../lib';
+import {
+  DefaultOperatorEvaluatorRegistry,
+  DefaultOperatorTypeComputerRegistry,
+  EvaluationContext,
+  JayveeServices,
+  type JayveeValidationProps,
+  RuntimeParameterProvider,
+  ValidationContext,
+  WrapperFactory,
+} from '../lib';
 import { initializeWorkspace } from '../lib/builtin-library/jayvee-workspace-manager';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -56,4 +65,25 @@ export async function loadTestExtensions(
     name: path.basename(file),
   }));
   return initializeWorkspace(services, extensions);
+}
+
+export function createJayveeValidationProps(
+  validationAcceptor: ValidationAcceptor,
+): JayveeValidationProps {
+  const operatorTypeComputerRegistry =
+    new DefaultOperatorTypeComputerRegistry();
+  const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
+  const wrapperFactory = new WrapperFactory(operatorEvaluatorRegistry);
+
+  return {
+    validationContext: new ValidationContext(
+      validationAcceptor,
+      operatorTypeComputerRegistry,
+    ),
+    evaluationContext: new EvaluationContext(
+      new RuntimeParameterProvider(),
+      operatorEvaluatorRegistry,
+    ),
+    wrapperFactory: wrapperFactory,
+  };
 }

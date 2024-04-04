@@ -7,10 +7,8 @@ import { strict as assert } from 'assert';
 import { AstNode, MultiMap, assertUnreachable } from 'langium';
 
 import {
-  EvaluationContext,
   EvaluationStrategy,
   Expression,
-  WrapperFactory,
   evaluateExpression,
   internalValueToString,
   isBinaryExpression,
@@ -22,6 +20,7 @@ import {
 } from '../ast';
 
 import { ValidationContext } from './validation-context';
+import { type JayveeValidationProps } from './validation-registry';
 
 export type NamedAstNode = AstNode & { name: string };
 
@@ -67,9 +66,7 @@ function groupNodesByName(
 
 export function checkExpressionSimplification(
   expression: Expression,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
-  wrapperFactory: WrapperFactory,
+  props: JayveeValidationProps,
 ): void {
   const simplifiableSubExpressions = collectSubExpressionsWithoutFreeVariables(
     expression,
@@ -78,14 +75,14 @@ export function checkExpressionSimplification(
   simplifiableSubExpressions.forEach((expression) => {
     const evaluatedExpression = evaluateExpression(
       expression,
-      evaluationContext,
-      wrapperFactory,
-      validationContext,
+      props.evaluationContext,
+      props.wrapperFactory,
+      props.validationContext,
       EvaluationStrategy.EXHAUSTIVE,
     );
     assert(evaluatedExpression !== undefined);
 
-    validationContext.accept(
+    props.validationContext.accept(
       'info',
       `The expression can be simplified to ${internalValueToString(
         evaluatedExpression,

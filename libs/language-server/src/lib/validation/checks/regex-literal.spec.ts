@@ -5,14 +5,10 @@
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import {
-  DefaultOperatorTypeComputerRegistry,
-  RegexLiteral,
-  ValidationContext,
-  createJayveeServices,
-} from '../../../lib';
+import { RegexLiteral, createJayveeServices } from '../../../lib';
 import {
   ParseHelperOptions,
+  createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
@@ -47,10 +43,7 @@ describe('Validation of RegexLiteral', () => {
 
     validateRegexLiteral(
       regexLiteral,
-      new ValidationContext(
-        validationAcceptorMock,
-        new DefaultOperatorTypeComputerRegistry(),
-      ),
+      createJayveeValidationProps(validationAcceptorMock),
     );
   }
 

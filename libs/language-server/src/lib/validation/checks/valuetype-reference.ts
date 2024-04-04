@@ -8,19 +8,19 @@ import {
   isBuiltinBlocktypeDefinition,
   isBuiltinConstrainttypeDefinition,
 } from '../../ast/generated/ast';
-import { ValidationContext } from '../validation-context';
+import { type JayveeValidationProps } from '../validation-registry';
 
 export function validateValuetypeReference(
   valuetypeRef: ValuetypeReference,
-  validationContext: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
-  checkGenericsMatchDefinition(valuetypeRef, validationContext);
-  checkIsValuetypeReferenceable(valuetypeRef, validationContext);
+  checkGenericsMatchDefinition(valuetypeRef, props);
+  checkIsValuetypeReferenceable(valuetypeRef, props);
 }
 
 function checkGenericsMatchDefinition(
   valuetypeRef: ValuetypeReference,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const valuetypeDefinition = valuetypeRef.reference?.ref;
@@ -35,7 +35,7 @@ function checkGenericsMatchDefinition(
   const givenGenerics = valuetypeRef?.genericRefs?.length ?? 0;
 
   if (givenGenerics !== requiredGenerics) {
-    context.accept(
+    props.validationContext.accept(
       'error',
       `The referenced valuetype ${valuetypeDefinition.name} requires ${requiredGenerics} generic parameters but found ${givenGenerics}.`,
       {
@@ -47,7 +47,7 @@ function checkGenericsMatchDefinition(
 
 function checkIsValuetypeReferenceable(
   valuetypeRef: ValuetypeReference,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
   const valuetype = createValuetype(valuetypeRef);
   if (valuetype === undefined) {
@@ -65,7 +65,7 @@ function checkIsValuetypeReferenceable(
     return;
   }
 
-  context.accept(
+  props.validationContext.accept(
     'error',
     `Valuetype ${valuetype.getName()} cannot be referenced in this context`,
     {

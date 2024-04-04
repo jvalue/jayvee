@@ -6,19 +6,14 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  DefaultOperatorEvaluatorRegistry,
-  DefaultOperatorTypeComputerRegistry,
-  EvaluationContext,
   PropertyBody,
   PropertySpecification,
-  RuntimeParameterProvider,
   TypedObjectWrapper,
-  ValidationContext,
-  WrapperFactory,
   createJayveeServices,
 } from '../../..';
 import {
   ParseHelperOptions,
+  createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
@@ -51,12 +46,8 @@ describe('Validation of blocktype specific properties', () => {
       'pipelines@0/blocks@0/body',
     ) as PropertyBody;
 
-    const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
-    const operatorTypeComputerRegistry =
-      new DefaultOperatorTypeComputerRegistry();
-    const wrapperFactory = new WrapperFactory(operatorEvaluatorRegistry);
-
-    const wrapper = wrapperFactory.wrapTypedObject(
+    const props = createJayveeValidationProps(validationAcceptorMock);
+    const wrapper = props.wrapperFactory.wrapTypedObject(
       propertyBody.$container.type,
     );
     expect(wrapper).toBeDefined();
@@ -70,15 +61,7 @@ describe('Validation of blocktype specific properties', () => {
       checkBlocktypeSpecificProperties(
         propertyAssignment,
         propertySpec as PropertySpecification,
-        new ValidationContext(
-          validationAcceptorMock,
-          operatorTypeComputerRegistry,
-        ),
-        new EvaluationContext(
-          new RuntimeParameterProvider(),
-          operatorEvaluatorRegistry,
-        ),
-        wrapperFactory,
+        props,
       );
     });
   }

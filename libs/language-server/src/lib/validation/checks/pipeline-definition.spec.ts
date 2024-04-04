@@ -5,18 +5,10 @@
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import {
-  DefaultOperatorEvaluatorRegistry,
-  DefaultOperatorTypeComputerRegistry,
-  EvaluationContext,
-  PipelineDefinition,
-  RuntimeParameterProvider,
-  ValidationContext,
-  WrapperFactory,
-  createJayveeServices,
-} from '../../../lib';
+import { PipelineDefinition, createJayveeServices } from '../../../lib';
 import {
   ParseHelperOptions,
+  createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
@@ -49,22 +41,9 @@ describe('Validation of PipelineDefinition', () => {
       'pipelines@0',
     ) as PipelineDefinition;
 
-    const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
-    const operatorTypeComputerRegistry =
-      new DefaultOperatorTypeComputerRegistry();
-    const wrapperFactory = new WrapperFactory(operatorEvaluatorRegistry);
-
     validatePipelineDefinition(
       pipeline,
-      new ValidationContext(
-        validationAcceptorMock,
-        operatorTypeComputerRegistry,
-      ),
-      new EvaluationContext(
-        new RuntimeParameterProvider(),
-        operatorEvaluatorRegistry,
-      ),
-      wrapperFactory,
+      createJayveeValidationProps(validationAcceptorMock),
     );
   }
 

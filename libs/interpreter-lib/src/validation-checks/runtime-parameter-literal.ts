@@ -4,42 +4,28 @@
 
 import {
   BuiltinConstrainttypeDefinition,
-  EvaluationContext,
+  type JayveeValidationProps,
   PropertyBody,
   ReferenceableBlocktypeDefinition,
   RuntimeParameterLiteral,
-  ValidationContext,
-  type WrapperFactory,
 } from '@jvalue/jayvee-language-server';
 import { Reference } from 'langium';
 
 export function validateRuntimeParameterLiteral(
   runtimeParameter: RuntimeParameterLiteral,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
-  wrapperFactory: WrapperFactory,
+  props: JayveeValidationProps,
 ) {
-  checkRuntimeParameterValuePresence(
-    runtimeParameter,
-    validationContext,
-    evaluationContext,
-  );
-  if (validationContext.hasErrorOccurred()) {
+  checkRuntimeParameterValuePresence(runtimeParameter, props);
+  if (props.validationContext.hasErrorOccurred()) {
     return;
   }
 
-  checkRuntimeParameterValueParsing(
-    runtimeParameter,
-    validationContext,
-    evaluationContext,
-    wrapperFactory,
-  );
+  checkRuntimeParameterValueParsing(runtimeParameter, props);
 }
 
 function checkRuntimeParameterValuePresence(
   runtimeParameter: RuntimeParameterLiteral,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
+  props: JayveeValidationProps,
 ) {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const runtimeParameterName = runtimeParameter?.name;
@@ -48,8 +34,10 @@ function checkRuntimeParameterValuePresence(
     return;
   }
 
-  if (!evaluationContext.hasValueForRuntimeParameter(runtimeParameterName)) {
-    validationContext.accept(
+  if (
+    !props.evaluationContext.hasValueForRuntimeParameter(runtimeParameterName)
+  ) {
+    props.validationContext.accept(
       'error',
       `A value needs to be provided by adding "-e ${runtimeParameterName}=<value>" to the command.`,
       { node: runtimeParameter },
@@ -59,9 +47,7 @@ function checkRuntimeParameterValuePresence(
 
 function checkRuntimeParameterValueParsing(
   runtimeParameter: RuntimeParameterLiteral,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
-  wrapperFactory: WrapperFactory,
+  props: JayveeValidationProps,
 ) {
   const enclosingPropertyBody = getEnclosingPropertyBody(runtimeParameter);
   const type:
@@ -70,7 +56,7 @@ function checkRuntimeParameterValueParsing(
     | undefined =
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     enclosingPropertyBody.$container?.type;
-  const wrapper = wrapperFactory.wrapTypedObject(type);
+  const wrapper = props.wrapperFactory.wrapTypedObject(type);
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const propertyName = runtimeParameter.$container?.name;
@@ -93,16 +79,17 @@ function checkRuntimeParameterValueParsing(
     return;
   }
 
-  const runtimeParameterValue = evaluationContext.getValueForRuntimeParameter(
-    runtimeParameterName,
-    valuetype,
-  );
+  const runtimeParameterValue =
+    props.evaluationContext.getValueForRuntimeParameter(
+      runtimeParameterName,
+      valuetype,
+    );
   if (runtimeParameterValue === undefined) {
     const rawValue =
-      evaluationContext.runtimeParameterProvider.getRawValue(
+      props.evaluationContext.runtimeParameterProvider.getRawValue(
         runtimeParameterName,
       );
-    validationContext.accept(
+    props.validationContext.accept(
       'error',
       `Unable to parse the value "${
         rawValue ?? ''

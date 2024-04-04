@@ -3,44 +3,28 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  EvaluationContext,
   PrimitiveValuetypes,
   PropertyBody,
-  type WrapperFactory,
   evaluatePropertyValue,
 } from '../../../ast';
-import { ValidationContext } from '../../validation-context';
+import { type JayveeValidationProps } from '../../validation-registry';
 
 export function checkConstraintTypeSpecificPropertyBody(
   propertyBody: PropertyBody,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
-  wrapperFactory: WrapperFactory,
+  props: JayveeValidationProps,
 ) {
   switch (propertyBody.$container.type.ref?.name) {
     case 'LengthConstraint':
-      return checkLengthConstraintPropertyBody(
-        propertyBody,
-        validationContext,
-        evaluationContext,
-        wrapperFactory,
-      );
+      return checkLengthConstraintPropertyBody(propertyBody, props);
     case 'RangeConstraint':
-      return checkRangeConstraintPropertyBody(
-        propertyBody,
-        validationContext,
-        evaluationContext,
-        wrapperFactory,
-      );
+      return checkRangeConstraintPropertyBody(propertyBody, props);
     default:
   }
 }
 
 function checkLengthConstraintPropertyBody(
   propertyBody: PropertyBody,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
-  wrapperFactory: WrapperFactory,
+  props: JayveeValidationProps,
 ) {
   const minLengthProperty = propertyBody.properties.find(
     (p) => p.name === 'minLength',
@@ -55,14 +39,14 @@ function checkLengthConstraintPropertyBody(
 
   const minLength = evaluatePropertyValue(
     minLengthProperty,
-    evaluationContext,
-    wrapperFactory,
+    props.evaluationContext,
+    props.wrapperFactory,
     PrimitiveValuetypes.Integer,
   );
   const maxLength = evaluatePropertyValue(
     maxLengthProperty,
-    evaluationContext,
-    wrapperFactory,
+    props.evaluationContext,
+    props.wrapperFactory,
     PrimitiveValuetypes.Integer,
   );
   if (minLength === undefined || maxLength === undefined) {
@@ -71,7 +55,7 @@ function checkLengthConstraintPropertyBody(
 
   if (minLength > maxLength) {
     [minLengthProperty, maxLengthProperty].forEach((property) => {
-      validationContext.accept(
+      props.validationContext.accept(
         'error',
         'The minimum length needs to be smaller or equal to the maximum length',
         { node: property.value },
@@ -82,9 +66,7 @@ function checkLengthConstraintPropertyBody(
 
 function checkRangeConstraintPropertyBody(
   propertyBody: PropertyBody,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
-  wrapperFactory: WrapperFactory,
+  props: JayveeValidationProps,
 ) {
   const lowerBoundProperty = propertyBody.properties.find(
     (p) => p.name === 'lowerBound',
@@ -99,14 +81,14 @@ function checkRangeConstraintPropertyBody(
 
   const lowerBound = evaluatePropertyValue(
     lowerBoundProperty,
-    evaluationContext,
-    wrapperFactory,
+    props.evaluationContext,
+    props.wrapperFactory,
     PrimitiveValuetypes.Decimal,
   );
   const upperBound = evaluatePropertyValue(
     upperBoundProperty,
-    evaluationContext,
-    wrapperFactory,
+    props.evaluationContext,
+    props.wrapperFactory,
     PrimitiveValuetypes.Decimal,
   );
   if (lowerBound === undefined || upperBound === undefined) {
@@ -115,7 +97,7 @@ function checkRangeConstraintPropertyBody(
 
   if (lowerBound > upperBound) {
     [lowerBoundProperty, upperBoundProperty].forEach((property) => {
-      validationContext.accept(
+      props.validationContext.accept(
         'error',
         'The lower bound needs to be smaller or equal to the upper bound',
         { node: property.value },
@@ -136,8 +118,8 @@ function checkRangeConstraintPropertyBody(
     if (lowerBoundInclusiveProperty !== undefined) {
       const expressionValue = evaluatePropertyValue(
         lowerBoundInclusiveProperty,
-        evaluationContext,
-        wrapperFactory,
+        props.evaluationContext,
+        props.wrapperFactory,
         PrimitiveValuetypes.Boolean,
       );
       if (expressionValue === undefined) {
@@ -150,8 +132,8 @@ function checkRangeConstraintPropertyBody(
     if (upperBoundInclusiveProperty !== undefined) {
       const expressionValue = evaluatePropertyValue(
         upperBoundInclusiveProperty,
-        evaluationContext,
-        wrapperFactory,
+        props.evaluationContext,
+        props.wrapperFactory,
         PrimitiveValuetypes.Boolean,
       );
       if (expressionValue === undefined) {
@@ -163,13 +145,13 @@ function checkRangeConstraintPropertyBody(
     const errorMessage =
       'Lower and upper bounds need to be inclusive if they are identical';
     if (!lowerBoundInclusive) {
-      validationContext.accept('error', errorMessage, {
+      props.validationContext.accept('error', errorMessage, {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         node: lowerBoundInclusiveProperty!.value,
       });
     }
     if (!upperBoundInclusive) {
-      validationContext.accept('error', errorMessage, {
+      props.validationContext.accept('error', errorMessage, {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         node: upperBoundInclusiveProperty!.value,
       });
