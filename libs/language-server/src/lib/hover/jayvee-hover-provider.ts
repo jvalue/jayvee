@@ -81,7 +81,7 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
     property: PropertyAssignment,
   ): string | undefined {
     const container = property.$container.$container;
-    const wrapper = this.wrapperFactory.wrapTypedObject(container.type);
+    const wrapper = this.wrapperFactory.TypedObject.wrap(container.type);
     if (wrapper === undefined) {
       return;
     }

@@ -174,7 +174,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       container = astNode.$container.$container;
     }
 
-    const wrapper = this.wrapperFactory.wrapTypedObject(container.type);
+    const wrapper = this.wrapperFactory.TypedObject.wrap(container.type);
     if (wrapper === undefined) {
       return;
     }

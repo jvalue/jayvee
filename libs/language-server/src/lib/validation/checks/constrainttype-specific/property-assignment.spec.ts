@@ -48,7 +48,7 @@ describe('Validation of constraint type specific properties', () => {
 
     const props = createJayveeValidationProps(validationAcceptorMock);
 
-    const wrapper = props.wrapperFactory.wrapTypedObject(
+    const wrapper = props.wrapperFactory.TypedObject.wrap(
       propertyBody.$container.type,
     );
     expect(wrapper).toBeDefined();

@@ -49,7 +49,7 @@ describe('Validation of PropertyAssignment', () => {
     const type = propertyBody.$container.type;
 
     const props = createJayveeValidationProps(validationAcceptorMock);
-    const wrapper = props.wrapperFactory.wrapTypedObject(type);
+    const wrapper = props.wrapperFactory.TypedObject.wrap(type);
     expect(wrapper).toBeDefined();
 
     const propertyAssignment = locator.getAstNode<PropertyAssignment>(

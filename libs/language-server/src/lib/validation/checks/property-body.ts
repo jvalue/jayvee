@@ -49,7 +49,7 @@ function inferTypedObjectWrapper(
   props: JayveeValidationProps,
 ): TypedObjectWrapper | undefined {
   const type = propertyBody.$container?.type.ref;
-  return props.wrapperFactory.wrapTypedObject(type);
+  return props.wrapperFactory.TypedObject.wrap(type);
 }
 
 function checkPropertyCompleteness(

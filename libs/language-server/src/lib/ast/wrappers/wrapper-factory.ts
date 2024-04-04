@@ -65,6 +65,7 @@ export class WrapperFactory {
   readonly Pipeline: PipelineWrapperFactory;
   readonly Pipe: PipeWrapperFactory;
   readonly CellRange: CellRangeWrapperFactory;
+  readonly TypedObject: TypedObjectWrapperFactory;
 
   constructor(
     private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
@@ -80,36 +81,10 @@ export class WrapperFactory {
     );
     this.Pipe = new PipeWrapperFactory();
     this.Pipeline = new PipelineWrapperFactory(this.Pipe);
-  }
-
-  /**
-   * Creates a @see TypedObjectWrapper wrapper object based on the given type reference.
-   */
-  wrapTypedObject(
-    typeRef:
-      | Reference<ReferenceableBlocktypeDefinition>
-      | Reference<BuiltinConstrainttypeDefinition>
-      | BuiltinConstrainttypeDefinition
-      | ReferenceableBlocktypeDefinition
-      | undefined,
-  ): BlockTypeWrapper | ConstraintTypeWrapper | undefined {
-    const type = isReference(typeRef) ? typeRef.ref : typeRef;
-    if (type === undefined) {
-      return undefined;
-    }
-
-    if (isReferenceableBlocktypeDefinition(type)) {
-      if (!this.BlockType.canWrap(type)) {
-        return undefined;
-      }
-      return this.BlockType.wrap(type);
-    } else if (isBuiltinConstrainttypeDefinition(type)) {
-      if (!this.ConstraintType.canWrap(type)) {
-        return undefined;
-      }
-      return this.ConstraintType.wrap(type);
-    }
-    assertUnreachable(type);
+    this.TypedObject = new TypedObjectWrapperFactory(
+      this.BlockType,
+      this.ConstraintType,
+    );
   }
 }
 
@@ -234,6 +209,7 @@ export interface IPipeWrapperFactory {
     toBeWrapped: T,
   ): PipeWrapper<T>[];
 }
+
 class PipeWrapperFactory implements IPipeWrapperFactory {
   // does not extend AstNodeWrapperFactory as requires argument chainIndex for wrapping
 
@@ -275,5 +251,44 @@ class PipeWrapperFactory implements IPipeWrapperFactory {
       result.push(pipeWrapper);
     }
     return result;
+  }
+}
+
+class TypedObjectWrapperFactory {
+  // does not extend AstNodeWrapperFactory as behavior differs, e.g., no thrown error, allowing undefined as parameter
+  constructor(
+    private readonly blockTypeWrapperFactory: BlockTypeWrapperFactory,
+    private readonly constraintTypeWrapperFactory: ConstraintTypeWrapperFactory,
+  ) {}
+
+  /**
+   * Creates a wrapper for the typed object.
+   * Returns undefined if wrapping is not possible (does not throw an error).
+   */
+  wrap(
+    toBeWrapped:
+      | Reference<ReferenceableBlocktypeDefinition>
+      | Reference<BuiltinConstrainttypeDefinition>
+      | BuiltinConstrainttypeDefinition
+      | ReferenceableBlocktypeDefinition
+      | undefined,
+  ): BlockTypeWrapper | ConstraintTypeWrapper | undefined {
+    const type = isReference(toBeWrapped) ? toBeWrapped.ref : toBeWrapped;
+    if (type === undefined) {
+      return undefined;
+    }
+
+    if (isReferenceableBlocktypeDefinition(type)) {
+      if (!this.blockTypeWrapperFactory.canWrap(type)) {
+        return undefined;
+      }
+      return this.blockTypeWrapperFactory.wrap(type);
+    } else if (isBuiltinConstrainttypeDefinition(type)) {
+      if (!this.constraintTypeWrapperFactory.canWrap(type)) {
+        return undefined;
+      }
+      return this.constraintTypeWrapperFactory.wrap(type);
+    }
+    assertUnreachable(type);
   }
 }
