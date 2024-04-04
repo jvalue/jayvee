@@ -244,6 +244,10 @@ export abstract class DefaultTernaryOperatorEvaluator<
       strategy,
     );
 
+    if (strategy === EvaluationStrategy.LAZY && firstValue === undefined) {
+      return undefined;
+    }
+
     const secondValue = evaluateExpression(
       expression.second,
       evaluationContext,

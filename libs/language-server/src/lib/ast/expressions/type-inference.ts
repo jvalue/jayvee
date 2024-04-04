@@ -53,39 +53,51 @@ import { isEveryValueDefined } from './typeguards';
 
 export function inferExpressionType(
   expression: Expression | undefined,
-  context: ValidationContext,
+  validationContext: ValidationContext,
 ): Valuetype | undefined {
   if (expression === undefined) {
     return undefined;
   }
   if (isExpressionLiteral(expression)) {
-    return inferTypeFromExpressionLiteral(expression, context);
+    return inferTypeFromExpressionLiteral(expression, validationContext);
   }
   if (isUnaryExpression(expression)) {
-    const innerType = inferExpressionType(expression.expression, context);
+    const innerType = inferExpressionType(
+      expression.expression,
+      validationContext,
+    );
     if (innerType === undefined) {
       return undefined;
     }
 
     const operator = expression.operator;
-    const typeComputer = context.typeComputerRegistry.unary[operator];
-    return typeComputer.computeType(innerType, expression, context);
+    const typeComputer = validationContext.typeComputerRegistry.unary[operator];
+    return typeComputer.computeType(innerType, expression, validationContext);
   }
   if (isBinaryExpression(expression)) {
-    const leftType = inferExpressionType(expression.left, context);
-    const rightType = inferExpressionType(expression.right, context);
+    const leftType = inferExpressionType(expression.left, validationContext);
+    const rightType = inferExpressionType(expression.right, validationContext);
     if (leftType === undefined || rightType === undefined) {
       return undefined;
     }
 
     const operator = expression.operator;
-    const typeComputer = context.typeComputerRegistry.binary[operator];
-    return typeComputer.computeType(leftType, rightType, expression, context);
+    const typeComputer =
+      validationContext.typeComputerRegistry.binary[operator];
+    return typeComputer.computeType(
+      leftType,
+      rightType,
+      expression,
+      validationContext,
+    );
   }
   if (isTernaryExpression(expression)) {
-    const firstType = inferExpressionType(expression.first, context);
-    const secondType = inferExpressionType(expression.second, context);
-    const thirdType = inferExpressionType(expression.third, context);
+    const firstType = inferExpressionType(expression.first, validationContext);
+    const secondType = inferExpressionType(
+      expression.second,
+      validationContext,
+    );
+    const thirdType = inferExpressionType(expression.third, validationContext);
     if (
       firstType === undefined ||
       secondType === undefined ||
@@ -95,13 +107,14 @@ export function inferExpressionType(
     }
 
     const operator = expression.operator;
-    const typeComputer = context.typeComputerRegistry.ternary[operator];
+    const typeComputer =
+      validationContext.typeComputerRegistry.ternary[operator];
     return typeComputer.computeType(
       firstType,
       secondType,
       thirdType,
       expression,
-      context,
+      validationContext,
     );
   }
   assertUnreachable(expression);
@@ -112,7 +125,7 @@ export function inferExpressionType(
  */
 function inferTypeFromExpressionLiteral(
   expression: ExpressionLiteral,
-  context: ValidationContext,
+  validationContext: ValidationContext,
 ): Valuetype | undefined {
   if (isValueLiteral(expression)) {
     if (isTextLiteral(expression)) {
@@ -128,12 +141,12 @@ function inferTypeFromExpressionLiteral(
     } else if (isValuetypeAssignmentLiteral(expression)) {
       return PrimitiveValuetypes.ValuetypeAssignment;
     } else if (isCollectionLiteral(expression)) {
-      return inferCollectionType(expression, context);
+      return inferCollectionType(expression, validationContext);
     }
     assertUnreachable(expression);
   } else if (isFreeVariableLiteral(expression)) {
     if (isValueKeywordLiteral(expression)) {
-      return inferTypeFromValueKeyword(expression, context);
+      return inferTypeFromValueKeyword(expression, validationContext);
     } else if (isReferenceLiteral(expression)) {
       return inferTypeFromReferenceLiteral(expression);
     }
@@ -156,9 +169,12 @@ function inferNumericType(expression: NumericLiteral): Valuetype {
 
 function inferCollectionType(
   collection: CollectionLiteral,
-  context: ValidationContext,
+  validationContext: ValidationContext,
 ): Valuetype | undefined {
-  const elementValuetypes = inferCollectionElementTypes(collection, context);
+  const elementValuetypes = inferCollectionElementTypes(
+    collection,
+    validationContext,
+  );
   if (elementValuetypes === undefined) {
     return undefined;
   }
@@ -182,7 +198,7 @@ function inferCollectionType(
     pickCommonPrimitiveValuetype(primitiveValuetypes);
 
   if (commonPrimitiveValuetype === undefined) {
-    context.accept(
+    validationContext.accept(
       'error',
       'The type of the collection cannot be inferred from its elements',
       {
@@ -201,10 +217,10 @@ function inferCollectionType(
 
 function inferCollectionElementTypes(
   collection: CollectionLiteral,
-  context: ValidationContext,
+  validationContext: ValidationContext,
 ): Valuetype[] | undefined {
   const elementValuetypes = collection.values.map((value) =>
-    inferExpressionType(value, context),
+    inferExpressionType(value, validationContext),
   );
   if (!isEveryValueDefined(elementValuetypes)) {
     return undefined;
@@ -291,14 +307,14 @@ function areAllTypesEqual(types: Valuetype[]): boolean {
 
 function inferTypeFromValueKeyword(
   expression: ValueKeywordLiteral,
-  context: ValidationContext | undefined,
+  validationContext: ValidationContext,
 ): Valuetype | undefined {
   const expressionConstraintContainer = getNextAstNodeContainer(
     expression,
     isExpressionConstraintDefinition,
   );
   if (expressionConstraintContainer === undefined) {
-    context?.accept(
+    validationContext.accept(
       'error',
       'The value keyword is not allowed in this context',
       {
@@ -316,7 +332,7 @@ function inferTypeFromValueKeyword(
 
   if (expression.lengthAccess) {
     if (!valuetype.isConvertibleTo(PrimitiveValuetypes.Text)) {
-      context?.accept(
+      validationContext.accept(
         'error',
         'The length can only be accessed from text values ',
         {

@@ -5,7 +5,8 @@
 // eslint-disable-next-line import/no-cycle
 export * from './value-type';
 
-/* Exports of directory './typed-object'; only exporting types to force usage of WrapperFactory */
+/* Note: Only export types if possible to enforce usage of WrapperFactory outside this directory */
+
 export { type AstNodeWrapper } from './ast-node-wrapper';
 export {
   type CellRangeWrapper,
