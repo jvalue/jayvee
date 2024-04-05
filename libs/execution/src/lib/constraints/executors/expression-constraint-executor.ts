@@ -31,7 +31,7 @@ export class ExpressionConstraintExecutor
     const result = evaluateExpression(
       expression,
       context.evaluationContext,
-      context.wrapperFactory,
+      context.wrapperFactories,
     );
     assert(PrimitiveValuetypes.Boolean.isInternalValueRepresentation(result));
 

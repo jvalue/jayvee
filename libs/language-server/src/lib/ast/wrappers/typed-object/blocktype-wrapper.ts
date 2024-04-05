@@ -16,7 +16,7 @@ import {
 import { ReferenceableBlocktypeDefinition } from '../../generated/ast';
 import { IOType, getIOType } from '../../io-type';
 import { createValuetype } from '../value-type';
-import { type WrapperFactory } from '../wrapper-factory';
+import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
 
 import {
   ExampleDoc,
@@ -39,14 +39,14 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlocktypeD
    * Creates a BlockTypeWrapper if possible. Otherwise, throws error.
    * Use @see canBeWrapped to check whether wrapping will be successful.
    *
-   * Use @see WrapperFactory for instantiation instead of calling this constructor directly.
+   * Use @see WrapperFactoryProvider for instantiation instead of calling this constructor directly.
    */
   constructor(
     toBeWrapped:
       | ReferenceableBlocktypeDefinition
       | Reference<ReferenceableBlocktypeDefinition>,
     operatorEvaluatiorRegistry: OperatorEvaluatorRegistry,
-    wrapperFactory: WrapperFactory,
+    wrapperFactories: WrapperFactoryProvider,
   ) {
     const blocktypeDefinition = isReference(toBeWrapped)
       ? toBeWrapped.ref
@@ -70,7 +70,7 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlocktypeD
           new RuntimeParameterProvider(),
           operatorEvaluatiorRegistry,
         ),
-        wrapperFactory,
+        wrapperFactories,
       );
       if (defaultValue !== undefined) {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

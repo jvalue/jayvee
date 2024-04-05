@@ -25,7 +25,7 @@ export function checkBlocktypeSpecificProperties(
   const propValue = evaluatePropertyValue(
     property,
     props.evaluationContext,
-    props.wrapperFactory,
+    props.wrapperFactories,
     propertySpec.type,
   );
   if (propValue === undefined) {
@@ -111,7 +111,7 @@ function checkCellWriterProperty(
     const cellRange = evaluatePropertyValue(
       property,
       props.evaluationContext,
-      props.wrapperFactory,
+      props.wrapperFactories,
       PrimitiveValuetypes.CellRange,
     );
     if (cellRange === undefined) {
@@ -139,7 +139,7 @@ function checkColumnDeleterProperty(
     const cellRanges = evaluatePropertyValue(
       property,
       props.evaluationContext,
-      props.wrapperFactory,
+      props.wrapperFactories,
       new CollectionValuetype(PrimitiveValuetypes.CellRange),
     );
 
@@ -256,7 +256,7 @@ function checkRowDeleterProperty(
     const cellRanges = evaluatePropertyValue(
       property,
       props.evaluationContext,
-      props.wrapperFactory,
+      props.wrapperFactories,
       new CollectionValuetype(PrimitiveValuetypes.CellRange),
     );
 
@@ -283,7 +283,7 @@ function checkTableInterpreterProperty(
     const valuetypeAssignments = evaluatePropertyValue(
       property,
       props.evaluationContext,
-      props.wrapperFactory,
+      props.wrapperFactories,
       new CollectionValuetype(PrimitiveValuetypes.ValuetypeAssignment),
     );
     if (valuetypeAssignments === undefined) {
@@ -336,7 +336,7 @@ function checkTextLineDeleterProperty(
     const lines = evaluatePropertyValue(
       property,
       props.evaluationContext,
-      props.wrapperFactory,
+      props.wrapperFactories,
       new CollectionValuetype(PrimitiveValuetypes.Integer),
     );
     lines?.forEach((value, index) => {

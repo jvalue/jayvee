@@ -24,4 +24,4 @@ export { type ConstraintTypeWrapper } from './typed-object/constrainttype-wrappe
 export * from './typed-object/typed-object-wrapper';
 
 export * from './util';
-export * from './wrapper-factory';
+export * from './wrapper-factory-provider';

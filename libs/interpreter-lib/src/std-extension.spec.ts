@@ -18,7 +18,7 @@ async function loadAllBuiltinBlocktypes(): Promise<BlockTypeWrapper[]> {
   await initializeWorkspace(services);
   return getAllBuiltinBlocktypes(
     services.shared.workspace.LangiumDocuments,
-    services.WrapperFactory,
+    services.WrapperFactories,
   );
 }
 

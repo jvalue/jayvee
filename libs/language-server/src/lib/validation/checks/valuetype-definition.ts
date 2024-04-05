@@ -88,7 +88,7 @@ function checkConstraintsCollectionValues(
   const constraints = evaluateExpression(
     constraintCollection,
     props.evaluationContext,
-    props.wrapperFactory,
+    props.wrapperFactories,
     props.validationContext,
   );
   assert(expectedType.isInternalValueRepresentation(constraints));
@@ -138,10 +138,10 @@ function getCompatibleValuetype(
   props: JayveeValidationProps,
 ): Valuetype | undefined {
   if (isTypedConstraintDefinition(constraint)) {
-    if (props.wrapperFactory.ConstraintType.canWrap(constraint.type)) {
+    if (props.wrapperFactories.ConstraintType.canWrap(constraint.type)) {
       return undefined;
     }
-    return props.wrapperFactory.ConstraintType.wrap(constraint.type).on;
+    return props.wrapperFactories.ConstraintType.wrap(constraint.type).on;
   } else if (isExpressionConstraintDefinition(constraint)) {
     return createValuetype(constraint?.valuetype);
   }

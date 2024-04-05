@@ -10,7 +10,7 @@ import { type EvaluationContext } from '../../expressions/evaluation-context';
 import { type InternalValueRepresentation } from '../../expressions/internal-value-representation';
 import { ConstraintDefinition, ValuetypeDefinition } from '../../generated/ast';
 import { AstNodeWrapper } from '../ast-node-wrapper';
-import { type WrapperFactory } from '../wrapper-factory';
+import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
 
 // eslint-disable-next-line import/no-cycle
 import { CollectionValuetype } from './primitive';
@@ -33,7 +33,7 @@ export class AtomicValuetype
 
   getConstraints(
     context: EvaluationContext,
-    wrapperFactory: WrapperFactory,
+    wrapperFactories: WrapperFactoryProvider,
   ): ConstraintDefinition[] {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const constraintCollection = this.astNode?.constraints;
@@ -42,7 +42,7 @@ export class AtomicValuetype
       PrimitiveValuetypes.Constraint,
     );
     const constraints =
-      evaluateExpression(constraintCollection, context, wrapperFactory) ?? [];
+      evaluateExpression(constraintCollection, context, wrapperFactories) ?? [];
     if (!constraintCollectionType.isInternalValueRepresentation(constraints)) {
       return [];
     }

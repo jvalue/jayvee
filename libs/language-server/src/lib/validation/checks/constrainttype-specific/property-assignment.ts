@@ -19,7 +19,7 @@ export function checkConstraintTypeSpecificProperties(
   const propValue = evaluatePropertyValue(
     property,
     props.evaluationContext,
-    props.wrapperFactory,
+    props.wrapperFactories,
     propertySpec.type,
   );
   if (propValue === undefined) {
@@ -53,7 +53,7 @@ function checkNonNegative(
   const value = evaluatePropertyValue(
     property,
     props.evaluationContext,
-    props.wrapperFactory,
+    props.wrapperFactories,
     PrimitiveValuetypes.Integer,
   );
   if (value === undefined) {

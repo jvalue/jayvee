@@ -7,7 +7,7 @@ import {
   EvaluationContext,
   PipelineDefinition,
   RuntimeParameterProvider,
-  WrapperFactory,
+  WrapperFactoryProvider,
 } from '@jvalue/jayvee-language-server';
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 
@@ -64,7 +64,7 @@ export function getTestExecutionContext(
     new TestExecExtension(),
     new DefaultConstraintExtension(),
     new CachedLogger(runOptions.isDebugMode, undefined, loggerPrintLogs),
-    new WrapperFactory(operatorEvaluatorRegistry),
+    new WrapperFactoryProvider(operatorEvaluatorRegistry),
     runOptions,
     new EvaluationContext(
       new RuntimeParameterProvider(),

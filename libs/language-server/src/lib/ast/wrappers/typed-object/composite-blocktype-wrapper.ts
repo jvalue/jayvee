@@ -4,7 +4,7 @@
 
 import { type OperatorEvaluatorRegistry } from '../../expressions/operator-registry';
 import { CompositeBlocktypeDefinition } from '../../generated/ast';
-import { type WrapperFactory } from '../wrapper-factory';
+import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
 
 // eslint-disable-next-line import/no-cycle
 import { BlockTypeWrapper } from './blocktype-wrapper';
@@ -14,14 +14,14 @@ export class CompositeBlocktypeWrapper extends BlockTypeWrapper {
    * Creates a CompositeBlocktypeWrapper if possible. Otherwise, throws error.
    * Use @see canBeWrapped to check whether wrapping will be successful.
    *
-   * Use @see WrapperFactory for instantiation instead of calling this constructor directly.
+   * Use @see WrapperFactoryProvider for instantiation instead of calling this constructor directly.
    */
   constructor(
     private blockTypeDefinition: CompositeBlocktypeDefinition,
     operatorEvaluatiorRegistry: OperatorEvaluatorRegistry,
-    wrapperFactory: WrapperFactory,
+    wrapperFactories: WrapperFactoryProvider,
   ) {
-    super(blockTypeDefinition, operatorEvaluatiorRegistry, wrapperFactory);
+    super(blockTypeDefinition, operatorEvaluatiorRegistry, wrapperFactories);
   }
 
   override getMissingRequiredPropertyNames(

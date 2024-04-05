@@ -24,7 +24,7 @@ import {
   JayveeGeneratedModule,
   JayveeGeneratedSharedModule,
 } from './ast/generated/module';
-import { WrapperFactory } from './ast/wrappers/wrapper-factory';
+import { WrapperFactoryProvider } from './ast/wrappers/wrapper-factory-provider';
 import { JayveeWorkspaceManager } from './builtin-library/jayvee-workspace-manager';
 import { JayveeCompletionProvider } from './completion/jayvee-completion-provider';
 import { JayveeHoverProvider } from './hover/jayvee-hover-provider';
@@ -42,7 +42,7 @@ export interface JayveeAddedServices {
     TypeComputerRegistry: OperatorTypeComputerRegistry;
     EvaluatorRegistry: OperatorEvaluatorRegistry;
   };
-  WrapperFactory: WrapperFactory;
+  WrapperFactories: WrapperFactoryProvider;
   validation: {
     ValidationRegistry: JayveeValidationRegistry;
   };
@@ -82,8 +82,8 @@ export const JayveeModule: Module<
     TypeComputerRegistry: () => new DefaultOperatorTypeComputerRegistry(),
     EvaluatorRegistry: () => new DefaultOperatorEvaluatorRegistry(),
   },
-  WrapperFactory: (services) =>
-    new WrapperFactory(services.operators.EvaluatorRegistry),
+  WrapperFactories: (services) =>
+    new WrapperFactoryProvider(services.operators.EvaluatorRegistry),
 };
 
 export const JayveeSharedModule: Module<

@@ -25,7 +25,7 @@ import {
   JayveeServices,
   PipelineDefinition,
   RuntimeParameterProvider,
-  WrapperFactory,
+  WrapperFactoryProvider,
   createJayveeServices,
   initializeWorkspace,
   internalValueToString,
@@ -212,7 +212,7 @@ async function runPipeline(
     executionExtension,
     constraintExtension,
     loggerFactory.createLogger(),
-    jayveeServices.WrapperFactory,
+    jayveeServices.WrapperFactories,
     {
       isDebugMode: runOptions.debug,
       debugGranularity: runOptions.debugGranularity,
@@ -228,7 +228,7 @@ async function runPipeline(
     pipeline,
     jayveeServices.RuntimeParameterProvider,
     executionContext.logger,
-    jayveeServices.WrapperFactory,
+    jayveeServices.WrapperFactories,
   );
 
   const startTime = new Date();
@@ -253,9 +253,9 @@ export function logPipelineOverview(
   pipeline: PipelineDefinition,
   runtimeParameterProvider: RuntimeParameterProvider,
   logger: Logger,
-  wrapperFactory: WrapperFactory,
+  wrapperFactories: WrapperFactoryProvider,
 ) {
-  const pipelineWrapper = wrapperFactory.Pipeline.wrap(pipeline);
+  const pipelineWrapper = wrapperFactories.Pipeline.wrap(pipeline);
 
   const toString = (block: BlockDefinition, depth = 0): string => {
     const blockTypeName = block.type.ref?.name;

@@ -29,10 +29,10 @@ function checkStartingBlocks(
   pipeline: PipelineDefinition,
   props: JayveeValidationProps,
 ): void {
-  if (!props.wrapperFactory.Pipeline.canWrap(pipeline)) {
+  if (!props.wrapperFactories.Pipeline.canWrap(pipeline)) {
     return;
   }
-  const pipelineWrapper = props.wrapperFactory.Pipeline.wrap(pipeline);
+  const pipelineWrapper = props.wrapperFactories.Pipeline.wrap(pipeline);
 
   const startingBlocks = pipelineWrapper.getStartingBlocks();
   if (startingBlocks.length === 0) {
@@ -51,10 +51,10 @@ export function checkMultipleBlockInputs(
   pipeline: PipelineDefinition | CompositeBlocktypeDefinition,
   props: JayveeValidationProps,
 ): void {
-  if (!props.wrapperFactory.Pipeline.canWrap(pipeline)) {
+  if (!props.wrapperFactories.Pipeline.canWrap(pipeline)) {
     return;
   }
-  const pipelineWrapper = props.wrapperFactory.Pipeline.wrap(pipeline);
+  const pipelineWrapper = props.wrapperFactories.Pipeline.wrap(pipeline);
 
   const startingBlocks = pipelineWrapper.getStartingBlocks();
   let alreadyMarkedPipes: PipeWrapper[] = [];
@@ -125,10 +125,10 @@ export function checkDefinedBlocksAreUsed(
   pipeline: PipelineDefinition | CompositeBlocktypeDefinition,
   props: JayveeValidationProps,
 ): void {
-  if (!props.wrapperFactory.Pipeline.canWrap(pipeline)) {
+  if (!props.wrapperFactories.Pipeline.canWrap(pipeline)) {
     return;
   }
-  const pipelineWrapper = props.wrapperFactory.Pipeline.wrap(pipeline);
+  const pipelineWrapper = props.wrapperFactories.Pipeline.wrap(pipeline);
 
   const containedBlocks = pipeline.blocks;
   for (const block of containedBlocks) {
@@ -146,11 +146,11 @@ function doCheckDefinedBlockIsUsed(
   if (
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     block.type === undefined ||
-    !props.wrapperFactory.BlockType.canWrap(block.type)
+    !props.wrapperFactories.BlockType.canWrap(block.type)
   ) {
     return;
   }
-  const blockType = props.wrapperFactory.BlockType.wrap(block.type);
+  const blockType = props.wrapperFactories.BlockType.wrap(block.type);
 
   const isExtractorBlock = !blockType.hasInput();
   if (!isExtractorBlock) {

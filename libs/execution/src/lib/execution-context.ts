@@ -13,7 +13,7 @@ import {
   PropertyAssignment,
   TransformDefinition,
   Valuetype,
-  type WrapperFactory,
+  type WrapperFactoryProvider,
   evaluatePropertyValue,
   isBlockDefinition,
   isExpressionConstraintDefinition,
@@ -45,7 +45,7 @@ export class ExecutionContext {
     public readonly executionExtension: JayveeExecExtension,
     public readonly constraintExtension: JayveeConstraintExtension,
     public readonly logger: Logger,
-    public readonly wrapperFactory: WrapperFactory,
+    public readonly wrapperFactories: WrapperFactoryProvider,
     public readonly runOptions: {
       isDebugMode: boolean;
       debugGranularity: DebugGranularity;
@@ -99,7 +99,7 @@ export class ExecutionContext {
     const propertyValue = evaluatePropertyValue(
       property,
       this.evaluationContext,
-      this.wrapperFactory,
+      this.wrapperFactories,
       valuetype,
     );
     assert(propertyValue !== undefined);
@@ -153,9 +153,9 @@ export class ExecutionContext {
 
     assert(isReference(currentNode.type));
     if (isTypedConstraintDefinition(currentNode)) {
-      return this.wrapperFactory.ConstraintType.wrap(currentNode.type);
+      return this.wrapperFactories.ConstraintType.wrap(currentNode.type);
     } else if (isBlockDefinition(currentNode)) {
-      return this.wrapperFactory.BlockType.wrap(currentNode.type);
+      return this.wrapperFactories.BlockType.wrap(currentNode.type);
     }
     assertUnreachable(currentNode);
   }

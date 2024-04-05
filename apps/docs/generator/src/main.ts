@@ -35,7 +35,7 @@ function generateBlockTypeDocs(
 ): void {
   const blockTypes = getAllBuiltinBlocktypes(
     services.shared.workspace.LangiumDocuments,
-    services.WrapperFactory,
+    services.WrapperFactories,
   );
 
   const docsPath = join(
@@ -73,7 +73,7 @@ function generateConstraintTypeDocs(
   );
   const constraintTypes = getAllBuiltinConstraintTypes(
     services.shared.workspace.LangiumDocuments,
-    services.WrapperFactory,
+    services.WrapperFactories,
   );
 
   for (const constraintType of constraintTypes) {

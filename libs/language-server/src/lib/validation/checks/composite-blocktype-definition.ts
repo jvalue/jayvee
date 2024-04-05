@@ -71,11 +71,11 @@ export function checkDefinedBlocksAreUsed(
   blocktypeDefinition: CompositeBlocktypeDefinition,
   props: JayveeValidationProps,
 ): void {
-  if (!props.wrapperFactory.Pipeline.canWrap(blocktypeDefinition)) {
+  if (!props.wrapperFactories.Pipeline.canWrap(blocktypeDefinition)) {
     return;
   }
   const pipelineWrapper =
-    props.wrapperFactory.Pipeline.wrap(blocktypeDefinition);
+    props.wrapperFactories.Pipeline.wrap(blocktypeDefinition);
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (blocktypeDefinition.blocks === undefined) {
@@ -96,7 +96,7 @@ function doCheckDefinedBlockIsUsed(
   if (
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     block.type === undefined ||
-    !props.wrapperFactory.BlockType.canWrap(block.type)
+    !props.wrapperFactories.BlockType.canWrap(block.type)
   ) {
     return;
   }

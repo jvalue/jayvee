@@ -76,7 +76,7 @@ export function checkExpressionSimplification(
     const evaluatedExpression = evaluateExpression(
       expression,
       props.evaluationContext,
-      props.wrapperFactory,
+      props.wrapperFactories,
       props.validationContext,
       EvaluationStrategy.EXHAUSTIVE,
     );

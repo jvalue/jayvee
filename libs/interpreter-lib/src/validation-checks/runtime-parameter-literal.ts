@@ -56,7 +56,7 @@ function checkRuntimeParameterValueParsing(
     | undefined =
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     enclosingPropertyBody.$container?.type;
-  const wrapper = props.wrapperFactory.TypedObject.wrap(type);
+  const wrapper = props.wrapperFactories.TypedObject.wrap(type);
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const propertyName = runtimeParameter.$container?.name;

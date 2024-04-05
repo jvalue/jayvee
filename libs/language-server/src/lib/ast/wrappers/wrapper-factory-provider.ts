@@ -59,7 +59,7 @@ abstract class AstNodeWrapperFactory<
   }
 }
 
-export class WrapperFactory {
+export class WrapperFactoryProvider {
   readonly BlockType: BlockTypeWrapperFactory;
   readonly ConstraintType: ConstraintTypeWrapperFactory;
   readonly Pipeline: PipelineWrapperFactory;
@@ -106,7 +106,7 @@ class BlockTypeWrapperFactory extends AstNodeWrapperFactory<
 > {
   constructor(
     private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
-    private readonly wrapperFactory: WrapperFactory,
+    private readonly wrapperFactories: WrapperFactoryProvider,
   ) {
     super();
   }
@@ -126,7 +126,7 @@ class BlockTypeWrapperFactory extends AstNodeWrapperFactory<
     return new BlockTypeWrapper(
       toBeWrapped,
       this.operatorEvaluatorRegistry,
-      this.wrapperFactory,
+      this.wrapperFactories,
     );
   }
 }
@@ -137,7 +137,7 @@ class ConstraintTypeWrapperFactory extends AstNodeWrapperFactory<
 > {
   constructor(
     private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
-    private readonly wrapperFactory: WrapperFactory,
+    private readonly wrapperFactories: WrapperFactoryProvider,
   ) {
     super();
   }
@@ -157,7 +157,7 @@ class ConstraintTypeWrapperFactory extends AstNodeWrapperFactory<
     return new ConstraintTypeWrapper(
       toBeWrapped,
       this.operatorEvaluatorRegistry,
-      this.wrapperFactory,
+      this.wrapperFactories,
     );
   }
 }

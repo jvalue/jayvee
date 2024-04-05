@@ -17,7 +17,7 @@ import { CompletionItemKind } from 'vscode-languageserver';
 
 import {
   TypedObjectWrapper,
-  type WrapperFactory,
+  type WrapperFactoryProvider,
   createValuetype,
 } from '../ast';
 import {
@@ -43,12 +43,12 @@ const RIGHT_ARROW_SYMBOL = '\u{2192}';
 
 export class JayveeCompletionProvider extends DefaultCompletionProvider {
   protected langiumDocumentService: LangiumDocuments;
-  protected readonly wrapperFactory: WrapperFactory;
+  protected readonly wrapperFactories: WrapperFactoryProvider;
 
   constructor(services: JayveeServices) {
     super(services);
     this.langiumDocumentService = services.shared.workspace.LangiumDocuments;
-    this.wrapperFactory = services.WrapperFactory;
+    this.wrapperFactories = services.WrapperFactories;
   }
 
   override completionFor(
@@ -92,7 +92,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
   ): MaybePromise<void> {
     const blockTypes = getAllBuiltinBlocktypes(
       this.langiumDocumentService,
-      this.wrapperFactory,
+      this.wrapperFactories,
     );
     blockTypes.forEach((blockType) => {
       const lspDocBuilder = new LspDocGenerator();
@@ -118,7 +118,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
   ): MaybePromise<void> {
     const constraintTypes = getAllBuiltinConstraintTypes(
       this.langiumDocumentService,
-      this.wrapperFactory,
+      this.wrapperFactories,
     );
     constraintTypes.forEach((constraintType) => {
       const lspDocBuilder = new LspDocGenerator();
@@ -174,7 +174,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       container = astNode.$container.$container;
     }
 
-    const wrapper = this.wrapperFactory.TypedObject.wrap(container.type);
+    const wrapper = this.wrapperFactories.TypedObject.wrap(container.type);
     if (wrapper === undefined) {
       return;
     }

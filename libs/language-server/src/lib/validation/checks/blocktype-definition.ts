@@ -168,7 +168,7 @@ function checkPropertyDefaultValuesHasCorrectType(
   const evaluatedExpression = evaluateExpression(
     defaultValueExpression,
     props.evaluationContext,
-    props.wrapperFactory,
+    props.wrapperFactories,
     props.validationContext,
   );
   if (evaluatedExpression === undefined) {

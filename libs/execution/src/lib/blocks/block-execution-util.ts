@@ -34,7 +34,7 @@ export async function executeBlocks(
   initialInputValue: IOTypeImplementation | undefined = undefined,
 ): Promise<R.Result<ExecutionOrderItem[]>> {
   const pipelineWrapper =
-    executionContext.wrapperFactory.Pipeline.wrap(pipesContainer);
+    executionContext.wrapperFactories.Pipeline.wrap(pipesContainer);
   const executionOrder: {
     block: BlockDefinition;
     value: IOTypeImplementation | null;

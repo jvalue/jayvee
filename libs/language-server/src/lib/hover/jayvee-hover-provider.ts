@@ -9,7 +9,7 @@ import {
   BuiltinBlocktypeDefinition,
   BuiltinConstrainttypeDefinition,
   PropertyAssignment,
-  type WrapperFactory,
+  type WrapperFactoryProvider,
   isBuiltinBlocktypeDefinition,
   isBuiltinConstrainttypeDefinition,
   isPropertyAssignment,
@@ -18,11 +18,11 @@ import { LspDocGenerator } from '../docs/lsp-doc-generator';
 import { type JayveeServices } from '../jayvee-module';
 
 export class JayveeHoverProvider extends AstNodeHoverProvider {
-  protected readonly wrapperFactory: WrapperFactory;
+  protected readonly wrapperFactories: WrapperFactoryProvider;
 
   constructor(services: JayveeServices) {
     super(services);
-    this.wrapperFactory = services.WrapperFactory;
+    this.wrapperFactories = services.WrapperFactories;
   }
 
   override getAstNodeHoverContent(
@@ -54,10 +54,10 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   private getBlockTypeMarkdownDoc(
     blockTypeDefinition: BuiltinBlocktypeDefinition,
   ): string | undefined {
-    if (!this.wrapperFactory.BlockType.canWrap(blockTypeDefinition)) {
+    if (!this.wrapperFactories.BlockType.canWrap(blockTypeDefinition)) {
       return;
     }
-    const blockType = this.wrapperFactory.BlockType.wrap(blockTypeDefinition);
+    const blockType = this.wrapperFactories.BlockType.wrap(blockTypeDefinition);
 
     const lspDocBuilder = new LspDocGenerator();
     return lspDocBuilder.generateBlockTypeDoc(blockType);
@@ -66,10 +66,12 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   private getConstraintTypeMarkdownDoc(
     constraintTypeDefinition: BuiltinConstrainttypeDefinition,
   ): string | undefined {
-    if (!this.wrapperFactory.ConstraintType.canWrap(constraintTypeDefinition)) {
+    if (
+      !this.wrapperFactories.ConstraintType.canWrap(constraintTypeDefinition)
+    ) {
       return;
     }
-    const constraintType = this.wrapperFactory.ConstraintType.wrap(
+    const constraintType = this.wrapperFactories.ConstraintType.wrap(
       constraintTypeDefinition,
     );
 
@@ -81,7 +83,7 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
     property: PropertyAssignment,
   ): string | undefined {
     const container = property.$container.$container;
-    const wrapper = this.wrapperFactory.TypedObject.wrap(container.type);
+    const wrapper = this.wrapperFactories.TypedObject.wrap(container.type);
     if (wrapper === undefined) {
       return;
     }

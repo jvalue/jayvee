@@ -12,7 +12,7 @@ import {
   RuntimeParameterLiteral,
   RuntimeParameterProvider,
   ValidationContext,
-  WrapperFactory,
+  WrapperFactoryProvider,
   createJayveeServices,
 } from '@jvalue/jayvee-language-server';
 import {
@@ -66,7 +66,9 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
     const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
     const operatorTypeComputerRegistry =
       new DefaultOperatorTypeComputerRegistry();
-    const wrapperFactory = new WrapperFactory(operatorEvaluatorRegistry);
+    const wrapperFactories = new WrapperFactoryProvider(
+      operatorEvaluatorRegistry,
+    );
 
     validateRuntimeParameterLiteral(runtimeParameter, {
       validationContext: new ValidationContext(
@@ -77,7 +79,7 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
         runtimeProvider,
         operatorEvaluatorRegistry,
       ),
-      wrapperFactory: wrapperFactory,
+      wrapperFactories: wrapperFactories,
     });
   }
 

@@ -13,7 +13,7 @@ import { EvaluationContext } from '../../expressions/evaluation-context';
 import { type OperatorEvaluatorRegistry } from '../../expressions/operator-registry';
 import { BuiltinConstrainttypeDefinition } from '../../generated/ast';
 import { Valuetype, createValuetype } from '../value-type';
-import { type WrapperFactory } from '../wrapper-factory';
+import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
 
 import {
   ExampleDoc,
@@ -34,14 +34,14 @@ export class ConstraintTypeWrapper extends TypedObjectWrapper<BuiltinConstraintt
    * Creates a ConstraintTypeWrapper if possible. Otherwise, throws error.
    * Use @see canBeWrapped to check whether wrapping will be successful.
    *
-   * Use @see WrapperFactory for instantiation instead of calling this constructor directly.
+   * Use @see WrapperFactoryProvider for instantiation instead of calling this constructor directly.
    */
   constructor(
     toBeWrapped:
       | BuiltinConstrainttypeDefinition
       | Reference<BuiltinConstrainttypeDefinition>,
     operatorEvaluatiorRegistry: OperatorEvaluatorRegistry,
-    wrapperFactory: WrapperFactory,
+    wrapperFactories: WrapperFactoryProvider,
   ) {
     const constraintTypeDefinition = isReference(toBeWrapped)
       ? toBeWrapped.ref
@@ -65,7 +65,7 @@ export class ConstraintTypeWrapper extends TypedObjectWrapper<BuiltinConstraintt
           new RuntimeParameterProvider(),
           operatorEvaluatiorRegistry,
         ),
-        wrapperFactory,
+        wrapperFactories,
       );
       if (defaultValue !== undefined) {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

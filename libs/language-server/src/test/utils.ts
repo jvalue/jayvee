@@ -17,7 +17,7 @@ import {
   type JayveeValidationProps,
   RuntimeParameterProvider,
   ValidationContext,
-  WrapperFactory,
+  WrapperFactoryProvider,
 } from '../lib';
 import { initializeWorkspace } from '../lib/builtin-library/jayvee-workspace-manager';
 
@@ -73,7 +73,9 @@ export function createJayveeValidationProps(
   const operatorTypeComputerRegistry =
     new DefaultOperatorTypeComputerRegistry();
   const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
-  const wrapperFactory = new WrapperFactory(operatorEvaluatorRegistry);
+  const wrapperFactories = new WrapperFactoryProvider(
+    operatorEvaluatorRegistry,
+  );
 
   return {
     validationContext: new ValidationContext(
@@ -84,6 +86,6 @@ export function createJayveeValidationProps(
       new RuntimeParameterProvider(),
       operatorEvaluatorRegistry,
     ),
-    wrapperFactory: wrapperFactory,
+    wrapperFactories: wrapperFactories,
   };
 }

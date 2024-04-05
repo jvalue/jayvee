@@ -25,7 +25,7 @@ import {
   isValueLiteral,
 } from '../generated/ast';
 // eslint-disable-next-line import/no-cycle
-import { Valuetype, type WrapperFactory } from '../wrappers';
+import { Valuetype, type WrapperFactoryProvider } from '../wrappers';
 
 import { type EvaluationContext } from './evaluation-context';
 import { EvaluationStrategy } from './evaluation-strategy';
@@ -35,7 +35,7 @@ import { isEveryValueDefined } from './typeguards';
 export function evaluatePropertyValue<T extends InternalValueRepresentation>(
   property: PropertyAssignment,
   evaluationContext: EvaluationContext,
-  wrapperFactory: WrapperFactory,
+  wrapperFactories: WrapperFactoryProvider,
   valuetype: Valuetype<T>,
 ): T | undefined {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -66,7 +66,7 @@ export function evaluatePropertyValue<T extends InternalValueRepresentation>(
     result = evaluateExpression(
       propertyValue,
       evaluationContext,
-      wrapperFactory,
+      wrapperFactories,
     );
   } else {
     assertUnreachable(propertyValue);
@@ -84,7 +84,7 @@ export function evaluatePropertyValue<T extends InternalValueRepresentation>(
 export function evaluateExpression(
   expression: Expression | undefined,
   evaluationContext: EvaluationContext,
-  wrapperFactory: WrapperFactory,
+  wrapperFactories: WrapperFactoryProvider,
   context: ValidationContext | undefined = undefined,
   strategy: EvaluationStrategy = EvaluationStrategy.LAZY,
 ): InternalValueRepresentation | undefined {
@@ -98,7 +98,7 @@ export function evaluateExpression(
       return evaluateValueLiteral(
         expression,
         evaluationContext,
-        wrapperFactory,
+        wrapperFactories,
         context,
         strategy,
       );
@@ -111,7 +111,7 @@ export function evaluateExpression(
     return evaluator.evaluate(
       expression,
       evaluationContext,
-      wrapperFactory,
+      wrapperFactories,
       strategy,
       context,
     );
@@ -122,7 +122,7 @@ export function evaluateExpression(
     return evaluator.evaluate(
       expression,
       evaluationContext,
-      wrapperFactory,
+      wrapperFactories,
       strategy,
       context,
     );
@@ -133,7 +133,7 @@ export function evaluateExpression(
     return evaluator.evaluate(
       expression,
       evaluationContext,
-      wrapperFactory,
+      wrapperFactories,
       strategy,
       context,
     );
@@ -144,7 +144,7 @@ export function evaluateExpression(
 function evaluateValueLiteral(
   expression: ValueLiteral,
   evaluationContext: EvaluationContext,
-  wrapperFactory: WrapperFactory,
+  wrapperFactories: WrapperFactoryProvider,
   validationContext: ValidationContext | undefined = undefined,
   strategy: EvaluationStrategy = EvaluationStrategy.LAZY,
 ): InternalValueRepresentation | undefined {
@@ -153,7 +153,7 @@ function evaluateValueLiteral(
       evaluateExpression(
         v,
         evaluationContext,
-        wrapperFactory,
+        wrapperFactories,
         validationContext,
         strategy,
       ),
@@ -164,10 +164,10 @@ function evaluateValueLiteral(
     return evaluatedCollection;
   }
   if (isCellRangeLiteral(expression)) {
-    if (!wrapperFactory.CellRange.canWrap(expression)) {
+    if (!wrapperFactories.CellRange.canWrap(expression)) {
       return undefined;
     }
-    return wrapperFactory.CellRange.wrap(expression);
+    return wrapperFactories.CellRange.wrap(expression);
   }
   if (isRegexLiteral(expression)) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

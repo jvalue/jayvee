@@ -100,7 +100,7 @@ export class TransformExecutor {
         newValue = evaluateExpression(
           this.getOutputAssignment().expression,
           context.evaluationContext,
-          context.wrapperFactory,
+          context.wrapperFactories,
         );
       } catch (e) {
         if (e instanceof Error) {

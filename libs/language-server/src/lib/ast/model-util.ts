@@ -14,7 +14,7 @@ import {
 import {
   BlockTypeWrapper,
   ConstraintTypeWrapper,
-  type WrapperFactory,
+  type WrapperFactoryProvider,
 } from './wrappers';
 
 export type AstTypeGuard<T extends AstNode = AstNode> = (
@@ -48,7 +48,7 @@ export function getNextAstNodeContainer<T extends AstNode>(
  */
 export function getAllBuiltinBlocktypes(
   documentService: LangiumDocuments,
-  wrapperFactory: WrapperFactory,
+  wrapperFactories: WrapperFactoryProvider,
 ): BlockTypeWrapper[] {
   const allBuiltinBlocktypes: BlockTypeWrapper[] = [];
   const visitedBuiltinBlocktypeDefinitions =
@@ -71,9 +71,9 @@ export function getAllBuiltinBlocktypes(
           return;
         }
 
-        if (wrapperFactory.BlockType.canWrap(blocktypeDefinition)) {
+        if (wrapperFactories.BlockType.canWrap(blocktypeDefinition)) {
           allBuiltinBlocktypes.push(
-            wrapperFactory.BlockType.wrap(blocktypeDefinition),
+            wrapperFactories.BlockType.wrap(blocktypeDefinition),
           );
           visitedBuiltinBlocktypeDefinitions.add(blocktypeDefinition);
         }
@@ -89,7 +89,7 @@ export function getAllBuiltinBlocktypes(
  */
 export function getAllBuiltinConstraintTypes(
   documentService: LangiumDocuments,
-  wrapperFactory: WrapperFactory,
+  wrapperFactories: WrapperFactoryProvider,
 ): ConstraintTypeWrapper[] {
   const allBuiltinConstraintTypes: ConstraintTypeWrapper[] = [];
   const visitedBuiltinConstraintTypeDefinitions =
@@ -109,9 +109,9 @@ export function getAllBuiltinConstraintTypes(
           return;
         }
 
-        if (wrapperFactory.ConstraintType.canWrap(constraintTypeDefinition)) {
+        if (wrapperFactories.ConstraintType.canWrap(constraintTypeDefinition)) {
           allBuiltinConstraintTypes.push(
-            wrapperFactory.ConstraintType.wrap(constraintTypeDefinition),
+            wrapperFactories.ConstraintType.wrap(constraintTypeDefinition),
           );
           visitedBuiltinConstraintTypeDefinitions.add(constraintTypeDefinition);
         }

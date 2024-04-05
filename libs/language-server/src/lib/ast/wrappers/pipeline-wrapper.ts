@@ -12,7 +12,7 @@ import {
 
 import { AstNodeWrapper } from './ast-node-wrapper';
 import { PipeWrapper } from './pipe-wrapper';
-import { type IPipeWrapperFactory } from './wrapper-factory';
+import { type IPipeWrapperFactory } from './wrapper-factory-provider';
 
 export class PipelineWrapper<
   T extends PipelineDefinition | CompositeBlocktypeDefinition,

@@ -21,21 +21,21 @@ function checkBlockCompatibility(
   pipe: PipeDefinition,
   props: JayveeValidationProps,
 ): void {
-  const pipeWrappers = props.wrapperFactory.Pipe.wrapAll(pipe);
+  const pipeWrappers = props.wrapperFactories.Pipe.wrapAll(pipe);
   for (const pipeWrapper of pipeWrappers) {
     const fromBlockTypeDefinition = pipeWrapper.from?.type;
     const toBlockTypeDefinition = pipeWrapper.to?.type;
 
     if (
-      !props.wrapperFactory.BlockType.canWrap(fromBlockTypeDefinition) ||
-      !props.wrapperFactory.BlockType.canWrap(toBlockTypeDefinition)
+      !props.wrapperFactories.BlockType.canWrap(fromBlockTypeDefinition) ||
+      !props.wrapperFactories.BlockType.canWrap(toBlockTypeDefinition)
     ) {
       continue;
     }
-    const fromBlockType = props.wrapperFactory.BlockType.wrap(
+    const fromBlockType = props.wrapperFactories.BlockType.wrap(
       fromBlockTypeDefinition,
     );
-    const toBlockType = props.wrapperFactory.BlockType.wrap(
+    const toBlockType = props.wrapperFactories.BlockType.wrap(
       toBlockTypeDefinition,
     );
 
