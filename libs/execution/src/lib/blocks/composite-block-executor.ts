@@ -12,9 +12,9 @@ import {
   EvaluationContext,
   IOType,
   InternalValueRepresentation,
-  Valuetype,
+  ValueType,
   WrapperFactoryProvider,
-  createValuetype,
+  createValueType,
   evaluateExpression,
   evaluatePropertyValue,
   getIOType,
@@ -121,11 +121,11 @@ export function createCompositeBlockExecutor(
       context: ExecutionContext,
     ) {
       properties.forEach((blocktypeProperty) => {
-        const valueType = createValuetype(blocktypeProperty.valueType);
+        const valueType = createValueType(blocktypeProperty.valueType);
 
         assert(
           valueType,
-          `Can not create valuetype for blocktype property ${blocktypeProperty.name}`,
+          `Can not create value type for blocktype property ${blocktypeProperty.name}`,
         );
 
         const propertyValue = this.getPropertyValueFromBlockOrDefault(
@@ -151,7 +151,7 @@ export function createCompositeBlockExecutor(
 
     private getPropertyValueFromBlockOrDefault(
       name: string,
-      valueType: Valuetype,
+      valueType: ValueType,
       block: BlockDefinition,
       properties: BlocktypeProperty[],
       evaluationContext: EvaluationContext,

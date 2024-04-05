@@ -14,7 +14,7 @@ import {
   JayveeServices,
   JayveeValueTypesDocGenerator,
   MarkdownBuilder,
-  PrimitiveValuetype,
+  PrimitiveValueType,
   PropertySpecification,
 } from '@jvalue/jayvee-language-server';
 
@@ -27,20 +27,20 @@ export class UserDocGenerator
   constructor(private services: JayveeServices) {}
 
   generateValueTypesDoc(
-    valueTypes: Record<string, PrimitiveValuetype>,
+    valueTypes: Record<string, PrimitiveValueType>,
   ): string {
     const builder = new UserDocMarkdownBuilder()
-      .docTitle('Built-in Valuetypes')
+      .docTitle('Built-in ValueTypes')
       .generationComment()
       .description(
         `
 For an introduction to valuetypes, see the [Core Concepts](../core-concepts).
 Built-in valuetypes come with the basic version of Jayvee.
-They are the basis for more restricted [Primitive Valuetypes](./primitive-valuetypes)
-that fullfil [Constraints](./primitive-valuetypes#constraints).`.trim(),
+They are the basis for more restricted [Primitive Valuetypes](./primitive-value-types)
+that fullfil [Constraints](./primitive-value-types#constraints).`.trim(),
         1,
       )
-      .heading('Available built-in valuetypes', 1);
+      .heading('Available built-in value types', 1);
 
     Object.entries(valueTypes)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars

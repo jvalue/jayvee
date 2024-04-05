@@ -145,7 +145,7 @@ describe('Validation of BuiltinBlocktypeDefinition', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
-      `This default value is not compatible with valuetype decimal`,
+      `This default value is not compatible with value type decimal`,
       expect.any(Object),
     );
   });

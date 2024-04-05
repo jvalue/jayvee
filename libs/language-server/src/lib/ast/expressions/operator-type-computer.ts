@@ -8,7 +8,7 @@ import {
   TernaryExpression,
   UnaryExpression,
 } from '../generated/ast';
-import { type Valuetype } from '../wrappers/value-type/valuetype';
+import { type ValueType } from '../wrappers/value-type/value-type';
 
 export interface UnaryOperatorTypeComputer {
   /**
@@ -19,22 +19,22 @@ export interface UnaryOperatorTypeComputer {
    * @returns the resulting type of the operator or `undefined` if the type could not be inferred
    */
   computeType(
-    operandType: Valuetype,
+    operandType: ValueType,
     expression: UnaryExpression,
     context: ValidationContext | undefined,
-  ): Valuetype | undefined;
+  ): ValueType | undefined;
 }
 
 export abstract class DefaultUnaryOperatorTypeComputer
   implements UnaryOperatorTypeComputer
 {
-  constructor(protected readonly expectedOperandType: Valuetype) {}
+  constructor(protected readonly expectedOperandType: ValueType) {}
 
   computeType(
-    operandType: Valuetype,
+    operandType: ValueType,
     expression: UnaryExpression,
     context: ValidationContext | undefined,
-  ): Valuetype | undefined {
+  ): ValueType | undefined {
     if (!operandType.isConvertibleTo(this.expectedOperandType)) {
       context?.accept(
         'error',
@@ -48,7 +48,7 @@ export abstract class DefaultUnaryOperatorTypeComputer
     return this.doComputeType(operandType);
   }
 
-  protected abstract doComputeType(operandType: Valuetype): Valuetype;
+  protected abstract doComputeType(operandType: ValueType): ValueType;
 }
 
 export interface BinaryOperatorTypeComputer {
@@ -61,27 +61,27 @@ export interface BinaryOperatorTypeComputer {
    * @returns the resulting type of the operator or `undefined` if the type could not be inferred
    */
   computeType(
-    leftType: Valuetype,
-    rightType: Valuetype,
+    leftType: ValueType,
+    rightType: ValueType,
     expression: BinaryExpression,
     context: ValidationContext | undefined,
-  ): Valuetype | undefined;
+  ): ValueType | undefined;
 }
 
 export abstract class DefaultBinaryOperatorTypeComputer
   implements BinaryOperatorTypeComputer
 {
   constructor(
-    protected readonly expectedLeftOperandType: Valuetype,
-    protected readonly expectedRightOperandType: Valuetype,
+    protected readonly expectedLeftOperandType: ValueType,
+    protected readonly expectedRightOperandType: ValueType,
   ) {}
 
   computeType(
-    leftOperandType: Valuetype,
-    rightOperandType: Valuetype,
+    leftOperandType: ValueType,
+    rightOperandType: ValueType,
     expression: BinaryExpression,
     context: ValidationContext | undefined,
-  ): Valuetype | undefined {
+  ): ValueType | undefined {
     let typeErrorOccurred = false;
 
     if (!leftOperandType.isConvertibleTo(this.expectedLeftOperandType)) {
@@ -120,14 +120,14 @@ export abstract class DefaultBinaryOperatorTypeComputer
   }
 
   protected abstract doComputeType(
-    leftOperandType: Valuetype,
-    rightOperandType: Valuetype,
-  ): Valuetype;
+    leftOperandType: ValueType,
+    rightOperandType: ValueType,
+  ): ValueType;
 }
 
 export function generateUnexpectedTypeMessage(
-  expectedType: Valuetype,
-  actualType: Valuetype,
+  expectedType: ValueType,
+  actualType: ValueType,
 ) {
   return `The operand needs to be of type ${expectedType.getName()} but is of type ${actualType.getName()}`;
 }
@@ -136,18 +136,18 @@ export abstract class DefaultTernaryOperatorTypeComputer
   implements TernaryOperatorTypeComputer
 {
   constructor(
-    protected readonly expectedFirstOperandType: Valuetype,
-    protected readonly expectedSecondOperandType: Valuetype,
-    protected readonly expectedThirdOperandType: Valuetype,
+    protected readonly expectedFirstOperandType: ValueType,
+    protected readonly expectedSecondOperandType: ValueType,
+    protected readonly expectedThirdOperandType: ValueType,
   ) {}
 
   computeType(
-    firstOperandType: Valuetype,
-    secondOperandType: Valuetype,
-    thirdOperandType: Valuetype,
+    firstOperandType: ValueType,
+    secondOperandType: ValueType,
+    thirdOperandType: ValueType,
     expression: TernaryExpression,
     context: ValidationContext | undefined,
-  ): Valuetype | undefined {
+  ): ValueType | undefined {
     let typeErrorOccurred = false;
 
     if (!firstOperandType.isConvertibleTo(this.expectedFirstOperandType)) {
@@ -204,10 +204,10 @@ export abstract class DefaultTernaryOperatorTypeComputer
   }
 
   protected abstract doComputeType(
-    firstOperandType: Valuetype,
-    secondOperandType: Valuetype,
-    thirdOperandType: Valuetype,
-  ): Valuetype;
+    firstOperandType: ValueType,
+    secondOperandType: ValueType,
+    thirdOperandType: ValueType,
+  ): ValueType;
 }
 
 export interface TernaryOperatorTypeComputer {
@@ -221,10 +221,10 @@ export interface TernaryOperatorTypeComputer {
    * @returns the resulting type of the operator or `undefined` if the type could not be inferred
    */
   computeType(
-    firstType: Valuetype,
-    secondType: Valuetype,
-    thirdType: Valuetype,
+    firstType: ValueType,
+    secondType: ValueType,
+    thirdType: ValueType,
     expression: TernaryExpression,
     context: ValidationContext | undefined,
-  ): Valuetype | undefined;
+  ): ValueType | undefined;
 }

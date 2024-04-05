@@ -21,16 +21,16 @@ import {
   IOType,
   InternalValueRepresentation,
   PrimitiveValuetypes,
-  Valuetype,
+  ValueType,
   ValuetypeAssignment,
-  createValuetype,
+  createValueType,
   rowIndexToString,
 } from '@jvalue/jayvee-language-server';
 
 export interface ColumnDefinitionEntry {
   sheetColumnIndex: number;
   columnName: string;
-  valuetype: Valuetype;
+  valueType: ValueType;
   astNode: ValuetypeAssignment;
 }
 
@@ -125,7 +125,7 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
     columnEntries.forEach((columnEntry) => {
       table.addColumn(columnEntry.columnName, {
         values: [],
-        valuetype: columnEntry.valuetype,
+        valueType: columnEntry.valueType,
       });
     });
 
@@ -164,13 +164,13 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
       const sheetColumnIndex = columnEntry.sheetColumnIndex;
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const value = sheetRow[sheetColumnIndex]!;
-      const valuetype = columnEntry.valuetype;
+      const valueType = columnEntry.valueType;
 
-      const parsedValue = this.parseAndValidateValue(value, valuetype, context);
+      const parsedValue = this.parseAndValidateValue(value, valueType, context);
       if (parsedValue === undefined) {
         const currentCellIndex = new CellIndex(sheetColumnIndex, sheetRowIndex);
         context.logger.logDebug(
-          `Invalid value at cell ${currentCellIndex.toString()}: "${value}" does not match the type ${columnEntry.valuetype.getName()}`,
+          `Invalid value at cell ${currentCellIndex.toString()}: "${value}" does not match the type ${columnEntry.valueType.getName()}`,
         );
         invalidRow = true;
         return;
@@ -189,15 +189,15 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
 
   private parseAndValidateValue(
     value: string,
-    valuetype: Valuetype,
+    valueType: ValueType,
     context: ExecutionContext,
   ): InternalValueRepresentation | undefined {
-    const parsedValue = parseValueToInternalRepresentation(value, valuetype);
+    const parsedValue = parseValueToInternalRepresentation(value, valueType);
     if (parsedValue === undefined) {
       return undefined;
     }
 
-    if (!isValidValueRepresentation(parsedValue, valuetype, context)) {
+    if (!isValidValueRepresentation(parsedValue, valueType, context)) {
       return undefined;
     }
     return parsedValue;
@@ -208,12 +208,12 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
   ): ColumnDefinitionEntry[] {
     return columnDefinitions.map<ColumnDefinitionEntry>(
       (columnDefinition, columnDefinitionIndex) => {
-        const columnValuetype = createValuetype(columnDefinition.type);
+        const columnValuetype = createValueType(columnDefinition.type);
         assert(columnValuetype !== undefined);
         return {
           sheetColumnIndex: columnDefinitionIndex,
           columnName: columnDefinition.name,
-          valuetype: columnValuetype,
+          valueType: columnValuetype,
           astNode: columnDefinition,
         };
       },
@@ -238,13 +238,13 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
         );
         continue;
       }
-      const columnValuetype = createValuetype(columnDefinition.type);
+      const columnValuetype = createValueType(columnDefinition.type);
       assert(columnValuetype !== undefined);
 
       columnEntries.push({
         sheetColumnIndex: indexOfMatchingHeader,
         columnName: columnDefinition.name,
-        valuetype: columnValuetype,
+        valueType: columnValuetype,
         astNode: columnDefinition,
       });
     }

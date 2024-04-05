@@ -12,7 +12,7 @@ import { evaluateExpression } from '../../expressions/evaluate-expression';
 import { EvaluationContext } from '../../expressions/evaluation-context';
 import { type OperatorEvaluatorRegistry } from '../../expressions/operator-registry';
 import { BuiltinConstrainttypeDefinition } from '../../generated/ast';
-import { Valuetype, createValuetype } from '../value-type';
+import { ValueType, createValueType } from '../value-type';
 import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
 
 import {
@@ -28,7 +28,7 @@ interface ConstraintDocs {
 
 export class ConstraintTypeWrapper extends TypedObjectWrapper<BuiltinConstrainttypeDefinition> {
   docs: ConstraintDocs = {};
-  readonly on: Valuetype;
+  readonly on: ValueType;
 
   /**
    * Creates a ConstraintTypeWrapper if possible. Otherwise, throws error.
@@ -52,11 +52,11 @@ export class ConstraintTypeWrapper extends TypedObjectWrapper<BuiltinConstraintt
 
     const properties: Record<string, PropertySpecification> = {};
     for (const property of constraintTypeDefinition.properties) {
-      const valuetype = createValuetype(property.valueType);
-      assert(valuetype !== undefined);
+      const valueType = createValueType(property.valueType);
+      assert(valueType !== undefined);
 
       properties[property.name] = {
-        type: valuetype,
+        type: valueType,
       };
 
       const defaultValue = evaluateExpression(
@@ -75,9 +75,9 @@ export class ConstraintTypeWrapper extends TypedObjectWrapper<BuiltinConstraintt
 
     super(constraintTypeDefinition, constraintTypeName, properties, undefined);
 
-    const valuetype = createValuetype(constraintTypeDefinition.valuetype);
-    assert(valuetype !== undefined);
-    this.on = valuetype;
+    const valueType = createValueType(constraintTypeDefinition.valueType);
+    assert(valueType !== undefined);
+    this.on = valueType;
   }
 
   static canBeWrapped(
@@ -99,7 +99,7 @@ export class ConstraintTypeWrapper extends TypedObjectWrapper<BuiltinConstraintt
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       constraintTypeDefinition.name === undefined ||
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      constraintTypeDefinition.valuetype === undefined
+      constraintTypeDefinition.valueType === undefined
     ) {
       return false;
     }

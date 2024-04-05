@@ -4,15 +4,15 @@
 
 import { ValidationContext } from '../../../validation/validation-context';
 import { BinaryExpression } from '../../generated/ast';
-import { type Valuetype } from '../../wrappers/value-type';
+import { type ValueType } from '../../wrappers/value-type';
 // eslint-disable-next-line import/no-cycle
-import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/primitive-valuetypes';
+import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/primitive-value-types';
 import { BinaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class EqualityOperatorTypeComputer
   implements BinaryOperatorTypeComputer
 {
-  private readonly ALLOWED_OPERAND_TYPES: Valuetype[] = [
+  private readonly ALLOWED_OPERAND_TYPES: ValueType[] = [
     PrimitiveValuetypes.Boolean,
     PrimitiveValuetypes.Text,
     PrimitiveValuetypes.Integer,
@@ -20,11 +20,11 @@ export class EqualityOperatorTypeComputer
   ];
 
   computeType(
-    leftOperandType: Valuetype,
-    rightOperandType: Valuetype,
+    leftOperandType: ValueType,
+    rightOperandType: ValueType,
     expression: BinaryExpression,
     context: ValidationContext | undefined,
-  ): Valuetype | undefined {
+  ): ValueType | undefined {
     const isLeftOperandTypeValid =
       this.ALLOWED_OPERAND_TYPES.includes(leftOperandType);
     const isRightOperandTypeValid =

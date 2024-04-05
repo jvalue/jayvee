@@ -25,7 +25,7 @@ import {
   isValueLiteral,
 } from '../generated/ast';
 // eslint-disable-next-line import/no-cycle
-import { Valuetype, type WrapperFactoryProvider } from '../wrappers';
+import { ValueType, type WrapperFactoryProvider } from '../wrappers';
 
 import { type EvaluationContext } from './evaluation-context';
 import { EvaluationStrategy } from './evaluation-strategy';
@@ -36,7 +36,7 @@ export function evaluatePropertyValue<T extends InternalValueRepresentation>(
   property: PropertyAssignment,
   evaluationContext: EvaluationContext,
   wrapperFactories: WrapperFactoryProvider,
-  valuetype: Valuetype<T>,
+  valueType: ValueType<T>,
 ): T | undefined {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const propertyValue = property?.value;
@@ -59,7 +59,7 @@ export function evaluatePropertyValue<T extends InternalValueRepresentation>(
     } else {
       result = evaluationContext.getValueForRuntimeParameter(
         runtimeParameterName,
-        valuetype,
+        valueType,
       );
     }
   } else if (isExpression(propertyValue)) {
@@ -73,10 +73,10 @@ export function evaluatePropertyValue<T extends InternalValueRepresentation>(
   }
 
   assert(
-    result === undefined || valuetype.isInternalValueRepresentation(result),
+    result === undefined || valueType.isInternalValueRepresentation(result),
     `Evaluation result ${
       result?.toString() ?? 'undefined'
-    } is not valid: Neither undefined, nor of type ${valuetype.getName()}`,
+    } is not valid: Neither undefined, nor of type ${valueType.getName()}`,
   );
   return result;
 }

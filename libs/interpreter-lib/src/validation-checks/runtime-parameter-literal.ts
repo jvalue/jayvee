@@ -70,7 +70,7 @@ function checkRuntimeParameterValueParsing(
     return;
   }
 
-  const valuetype = propertySpec.type;
+  const valueType = propertySpec.type;
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const runtimeParameterName = runtimeParameter?.name;
@@ -82,7 +82,7 @@ function checkRuntimeParameterValueParsing(
   const runtimeParameterValue =
     props.evaluationContext.getValueForRuntimeParameter(
       runtimeParameterName,
-      valuetype,
+      valueType,
     );
   if (runtimeParameterValue === undefined) {
     const rawValue =
@@ -93,7 +93,7 @@ function checkRuntimeParameterValueParsing(
       'error',
       `Unable to parse the value "${
         rawValue ?? ''
-      }" as ${valuetype.getName()}.`,
+      }" as ${valueType.getName()}.`,
       { node: runtimeParameter },
     );
   }

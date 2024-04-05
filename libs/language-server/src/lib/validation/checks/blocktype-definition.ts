@@ -7,7 +7,7 @@ import { strict as assert } from 'assert';
 import {
   BlocktypeProperty,
   ReferenceableBlocktypeDefinition,
-  createValuetype,
+  createValueType,
   evaluateExpression,
 } from '../../ast';
 import { type JayveeValidationProps } from '../validation-registry';
@@ -183,13 +183,13 @@ function checkPropertyDefaultValuesHasCorrectType(
     return;
   }
 
-  const expectedValuetype = createValuetype(property.valueType);
+  const expectedValuetype = createValueType(property.valueType);
   assert(expectedValuetype !== undefined);
 
   if (!expectedValuetype.isInternalValueRepresentation(evaluatedExpression)) {
     props.validationContext.accept(
       'error',
-      `This default value is not compatible with valuetype ${expectedValuetype.getName()}`,
+      `This default value is not compatible with value type ${expectedValuetype.getName()}`,
       {
         node: property,
         property: 'defaultValue',

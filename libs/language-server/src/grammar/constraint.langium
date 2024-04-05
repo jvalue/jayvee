@@ -4,7 +4,7 @@
 
 import './property'
 import './terminal'
-import './valuetype'
+import './value-type'
 import './expression'
 
 ConstraintDefinition:
@@ -14,12 +14,12 @@ TypedConstraintDefinition:
   'constraint' name=ID 'oftype' type=[BuiltinConstrainttypeDefinition] body=PropertyBody;
 
 ExpressionConstraintDefinition:
-  'constraint' name=ID 'on' valuetype=ValuetypeReference ':' expression=Expression ';';
+  'constraint' name=ID 'on' valueType=ValueTypeReference ':' expression=Expression ';';
 
 BuiltinConstrainttypeDefinition:
-  'builtin' 'constrainttype' name=ID 'on' valuetype=ValuetypeReference '{'
+  'builtin' 'constrainttype' name=ID 'on' valueType=ValueTypeReference '{'
     (properties+=ConstrainttypeProperty)*
 '}';
 
 ConstrainttypeProperty:
-    'property' name=ID 'oftype' valueType=ValuetypeReference (':' defaultValue=Expression)? ';';
+    'property' name=ID 'oftype' valueType=ValueTypeReference (':' defaultValue=Expression)? ';';

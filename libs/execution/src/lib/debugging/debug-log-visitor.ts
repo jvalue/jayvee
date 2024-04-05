@@ -39,7 +39,7 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
 
     const headers = [...table.getColumns().entries()]
       .map(([columnName, column]) => {
-        return `${columnName} (${column.valuetype.getName()})`;
+        return `${columnName} (${column.valueType.getName()})`;
       })
       .join(' | ');
     this.log(`[Header] ${headers}`);

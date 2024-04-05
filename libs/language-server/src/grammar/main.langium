@@ -4,19 +4,19 @@
 
 grammar Jayvee
 
-import './blocktype'
+import './block-type'
 import './pipeline'
 import './terminal'
 import './property'
-import './valuetype'
+import './value-type'
 import './constraint'
 import './transform'
-import './iotype'
+import './io-type'
 
 entry JayveeModel:
   (
     pipelines+=PipelineDefinition
-    | valuetypes+=(CustomValuetypeDefinition | BuiltinValuetypeDefinition)
+    | valueTypes+=(CustomValuetypeDefinition | BuiltinValuetypeDefinition)
     | constraints+=ConstraintDefinition
     | transforms+=TransformDefinition
     | blocktypes+=ReferenceableBlocktypeDefinition

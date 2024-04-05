@@ -280,17 +280,17 @@ function checkTableInterpreterProperty(
   props: JayveeValidationProps,
 ) {
   if (propName === 'columns') {
-    const valuetypeAssignments = evaluatePropertyValue(
+    const valueTypeAssignments = evaluatePropertyValue(
       property,
       props.evaluationContext,
       props.wrapperFactories,
       new CollectionValuetype(PrimitiveValuetypes.ValuetypeAssignment),
     );
-    if (valuetypeAssignments === undefined) {
+    if (valueTypeAssignments === undefined) {
       return;
     }
 
-    checkUniqueNames(valuetypeAssignments, props.validationContext, 'column');
+    checkUniqueNames(valueTypeAssignments, props.validationContext, 'column');
   }
 }
 

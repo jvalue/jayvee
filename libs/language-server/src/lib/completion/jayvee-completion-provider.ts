@@ -18,14 +18,14 @@ import { CompletionItemKind } from 'vscode-languageserver';
 import {
   TypedObjectWrapper,
   type WrapperFactoryProvider,
-  createValuetype,
+  createValueType,
 } from '../ast';
 import {
   BlockDefinition,
   ConstraintDefinition,
   PropertyAssignment,
   PropertyBody,
-  ValuetypeReference,
+  ValueTypeReference,
   isBlockDefinition,
   isConstraintDefinition,
   isJayveeModel,
@@ -70,7 +70,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
         return this.completionForConstraintType(context, acceptor);
       }
 
-      const isValuetypeDefinitionCompletion = next.type === ValuetypeReference;
+      const isValuetypeDefinitionCompletion = next.type === ValueTypeReference;
       if (isValuetypeDefinitionCompletion) {
         return this.completionForValuetype(context, acceptor);
       }
@@ -149,13 +149,13 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
         if (!isJayveeModel(parsedDocument)) {
           throw new Error('Expected parsed document to be a JayveeModel');
         }
-        parsedDocument.valuetypes.forEach((valuetypeDefinition) => {
-          const valuetype = createValuetype(valuetypeDefinition);
-          if (valuetype !== undefined && valuetype.isReferenceableByUser()) {
+        parsedDocument.valueTypes.forEach((valueTypeDefinition) => {
+          const valueType = createValueType(valueTypeDefinition);
+          if (valueType !== undefined && valueType.isReferenceableByUser()) {
             acceptor(context, {
-              label: valuetypeDefinition.name,
+              label: valueTypeDefinition.name,
               kind: CompletionItemKind.Class,
-              detail: `(valuetype)`,
+              detail: `(valueType)`,
             });
           }
         });

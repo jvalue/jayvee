@@ -2,10 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import './blocktype'
-import './cellrange'
+import './block-type'
+import './cell-range'
 import './constraint'
-import './valuetype'
+import './value-type'
 import './terminal'
 import './transform'
 

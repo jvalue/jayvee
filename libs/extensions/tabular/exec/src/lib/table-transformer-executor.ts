@@ -116,10 +116,10 @@ export class TableTransformerExecutor extends AbstractBlockExecutor<
       assert(matchingInputDetails !== undefined);
 
       if (
-        !inputColumn.valuetype.isConvertibleTo(matchingInputDetails.valuetype)
+        !inputColumn.valueType.isConvertibleTo(matchingInputDetails.valueType)
       ) {
         return R.err({
-          message: `Type ${inputColumn.valuetype.getName()} of column "${inputColumnName}" is not convertible to type ${matchingInputDetails.valuetype.getName()}`,
+          message: `Type ${inputColumn.valueType.getName()} of column "${inputColumnName}" is not convertible to type ${matchingInputDetails.valueType.getName()}`,
           diagnostic: {
             node: context.getOrFailProperty('use'),
           },
@@ -182,9 +182,9 @@ export class TableTransformerExecutor extends AbstractBlockExecutor<
       );
 
       // log if output column type changes
-      if (!outputColumn.valuetype.equals(transformOutputDetails.valuetype)) {
+      if (!outputColumn.valueType.equals(transformOutputDetails.valueType)) {
         context.logger.logInfo(
-          `Column "${outputColumnName}" will change its type from ${outputColumn.valuetype.getName()} to ${transformOutputDetails.valuetype.getName()}`,
+          `Column "${outputColumnName}" will change its type from ${outputColumn.valueType.getName()} to ${transformOutputDetails.valueType.getName()}`,
         );
       }
     }

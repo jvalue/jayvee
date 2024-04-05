@@ -23,7 +23,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 ## Summary
 
 This RFC introduces the possibility of distributing a Jayvee program over multiple files.
-This feature will foster reuse of valuetypes, blocks, and other elements.
+This feature will foster reuse of value types, blocks, and other elements.
 Inherent to this feature is a concept of how scoping and naming is handled for nested structures.
 This RFC introduces two concepts:
 
@@ -115,12 +115,12 @@ Elements within a package can be of visibility `package-published` by using the 
 
 ```
 publish package MyDomainPackage {
-  // definition of a new valuetype as part of the package
+  // definition of a new value type as part of the package
   publish valuetype MyDomainSpecificValuetype1 {
-    // ... details of valuetype
+    // ... details of value type
   }
 
-  // reference to an existing valuetype to make it part of the package
+  // reference to an existing value type to make it part of the package
   publish MyDomainSpecificValuetype2;
 
   // ... possibly more elements

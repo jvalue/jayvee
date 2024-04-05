@@ -4,7 +4,7 @@
 
 import './block'
 import './transform'
-import './valuetype'
+import './value-type'
 import './constraint'
 import './terminal'
 
@@ -13,7 +13,7 @@ PipelineDefinition:
     (
       blocks+=BlockDefinition
       | pipes+=PipeDefinition
-      | valuetypes+=CustomValuetypeDefinition
+      | valueTypes+=CustomValuetypeDefinition
       | constraints+=ConstraintDefinition
       | transforms+=TransformDefinition
     )*

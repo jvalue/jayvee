@@ -15,7 +15,7 @@ import {
 } from '../../expressions';
 import { ReferenceableBlocktypeDefinition } from '../../generated/ast';
 import { IOType, getIOType } from '../../io-type';
-import { createValuetype } from '../value-type';
+import { createValueType } from '../value-type';
 import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
 
 import {
@@ -57,11 +57,11 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlocktypeD
 
     const properties: Record<string, PropertySpecification> = {};
     for (const property of blocktypeDefinition.properties) {
-      const valuetype = createValuetype(property.valueType);
-      assert(valuetype !== undefined);
+      const valueType = createValueType(property.valueType);
+      assert(valueType !== undefined);
 
       properties[property.name] = {
-        type: valuetype,
+        type: valueType,
       };
 
       const defaultValue = evaluateExpression(

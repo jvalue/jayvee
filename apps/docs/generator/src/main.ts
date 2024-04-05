@@ -93,12 +93,19 @@ function generateValueTypeDocs(
   services: JayveeServices,
   rootPath: string,
 ): void {
-  const docsPath = join(rootPath, 'apps', 'docs', 'docs', 'user', 'valuetypes');
+  const docsPath = join(
+    rootPath,
+    'apps',
+    'docs',
+    'docs',
+    'user',
+    'value-types',
+  );
   const userDocBuilder = new UserDocGenerator(services);
   const valueTypeDoc =
     userDocBuilder.generateValueTypesDoc(PrimitiveValuetypes);
 
-  const fileName = `builtin-valuetypes.md`;
+  const fileName = `builtin-value-types.md`;
   writeFileSync(join(docsPath, fileName), valueTypeDoc, {
     flag: 'w',
   });

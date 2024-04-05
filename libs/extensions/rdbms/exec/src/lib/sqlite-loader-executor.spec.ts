@@ -123,14 +123,14 @@ describe('Validation of SQLiteLoaderExecutor', () => {
           columnName: 'Column1',
           column: {
             values: ['value 1'],
-            valuetype: PrimitiveValuetypes.Text,
+            valueType: PrimitiveValuetypes.Text,
           },
         },
         {
           columnName: 'Column2',
           column: {
             values: [20.2],
-            valuetype: PrimitiveValuetypes.Decimal,
+            valueType: PrimitiveValuetypes.Decimal,
           },
         },
       ],
@@ -173,14 +173,14 @@ describe('Validation of SQLiteLoaderExecutor', () => {
           columnName: 'Column1',
           column: {
             values: ['value 1'],
-            valuetype: PrimitiveValuetypes.Text,
+            valueType: PrimitiveValuetypes.Text,
           },
         },
         {
           columnName: 'Column2',
           column: {
             values: [20.2],
-            valuetype: PrimitiveValuetypes.Decimal,
+            valueType: PrimitiveValuetypes.Decimal,
           },
         },
       ],

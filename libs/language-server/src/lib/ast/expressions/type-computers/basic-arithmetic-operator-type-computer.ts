@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type Valuetype } from '../../wrappers/value-type';
+import { type ValueType } from '../../wrappers/value-type';
 // eslint-disable-next-line import/no-cycle
-import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/primitive-valuetypes';
+import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/primitive-value-types';
 import { DefaultBinaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class BasicArithmeticOperatorTypeComputer extends DefaultBinaryOperatorTypeComputer {
@@ -13,9 +13,9 @@ export class BasicArithmeticOperatorTypeComputer extends DefaultBinaryOperatorTy
   }
 
   override doComputeType(
-    leftOperandType: Valuetype,
-    rightOperandType: Valuetype,
-  ): Valuetype {
+    leftOperandType: ValueType,
+    rightOperandType: ValueType,
+  ): ValueType {
     if (
       leftOperandType === PrimitiveValuetypes.Integer &&
       rightOperandType === PrimitiveValuetypes.Integer

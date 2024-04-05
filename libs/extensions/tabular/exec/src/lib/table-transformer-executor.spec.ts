@@ -47,17 +47,17 @@ describe('Validation of TableTransformerExecutor', () => {
       {
         columnName: 'index',
         sheetColumnIndex: 0,
-        valuetype: PrimitiveValuetypes.Integer,
+        valueType: PrimitiveValuetypes.Integer,
       },
       {
         columnName: 'name',
         sheetColumnIndex: 1,
-        valuetype: PrimitiveValuetypes.Text,
+        valueType: PrimitiveValuetypes.Text,
       },
       {
         columnName: 'flag',
         sheetColumnIndex: 2,
-        valuetype: PrimitiveValuetypes.Boolean,
+        valueType: PrimitiveValuetypes.Boolean,
       },
     ]);
   }
@@ -162,7 +162,7 @@ describe('Validation of TableTransformerExecutor', () => {
       expect(result.right.getColumn('index')).toEqual(
         expect.objectContaining({
           values: [false, true, true, true, true, true],
-          valuetype: PrimitiveValuetypes.Boolean,
+          valueType: PrimitiveValuetypes.Boolean,
         }),
       );
     }
@@ -175,7 +175,7 @@ describe('Validation of TableTransformerExecutor', () => {
       {
         columnName: 'index',
         sheetColumnIndex: 0,
-        valuetype: PrimitiveValuetypes.Integer,
+        valueType: PrimitiveValuetypes.Integer,
       },
     ]);
     const result = await parseAndExecuteExecutor(text, testTable);

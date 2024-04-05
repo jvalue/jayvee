@@ -84,9 +84,9 @@ describe('Validation of JayveeModel', () => {
     );
   });
 
-  it('should diagnose error on non unique valuetypes', async () => {
+  it('should diagnose error on non unique value types', async () => {
     const text = readJvTestAsset(
-      'jayvee-model/invalid-non-unique-valuetypes.jv',
+      'jayvee-model/invalid-non-unique-value-types.jv',
     );
 
     await parseAndValidateJayveeModel(text);
@@ -99,9 +99,9 @@ describe('Validation of JayveeModel', () => {
     );
   });
 
-  it('should diagnose error on non unique valuetypes (naming collision with builtin)', async () => {
+  it('should diagnose error on non unique value types (naming collision with builtin)', async () => {
     const text = readJvTestAsset(
-      'jayvee-model/invalid-duplicate-name-with-builtin-valuetype.jv',
+      'jayvee-model/invalid-duplicate-name-with-builtin-value-type.jv',
     );
 
     await parseAndValidateJayveeModel(text);

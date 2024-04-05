@@ -20,8 +20,8 @@ import {
   isValueKeywordLiteral,
 } from '../generated/ast';
 // eslint-disable-next-line import/no-cycle
-import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-valuetypes';
-import { type Valuetype } from '../wrappers/value-type/valuetype';
+import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-value-types';
+import { type ValueType } from '../wrappers/value-type/value-type';
 
 import { type InternalValueRepresentation } from './internal-value-representation';
 import { type OperatorEvaluatorRegistry } from './operator-registry';
@@ -91,9 +91,9 @@ export class EvaluationContext {
 
   getValueForRuntimeParameter<I extends InternalValueRepresentation>(
     key: string,
-    valuetype: Valuetype<I>,
+    valueType: ValueType<I>,
   ): I | undefined {
-    return this.runtimeParameterProvider.getParsedValue(key, valuetype);
+    return this.runtimeParameterProvider.getParsedValue(key, valueType);
   }
 
   setValueForValueKeyword(value: InternalValueRepresentation) {

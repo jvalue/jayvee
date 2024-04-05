@@ -33,8 +33,8 @@ import { validateRangeLiteral } from './checks/range-literal';
 import { validateRegexLiteral } from './checks/regex-literal';
 import { validateTransformBody } from './checks/transform-body';
 import { validateTypedConstraintDefinition } from './checks/typed-constraint-definition';
-import { validateValuetypeDefinition } from './checks/valuetype-definition';
-import { validateValuetypeReference } from './checks/valuetype-reference';
+import { validateValueTypeDefinition } from './checks/value-type-definition';
+import { validateValueTypeReference } from './checks/value-type-reference';
 import { ValidationContext } from './validation-context';
 
 /**
@@ -67,8 +67,8 @@ export class JayveeValidationRegistry extends ValidationRegistry {
       PropertyBody: validatePropertyBody,
       RangeLiteral: validateRangeLiteral,
       RegexLiteral: validateRegexLiteral,
-      ValuetypeDefinition: validateValuetypeDefinition,
-      ValuetypeReference: validateValuetypeReference,
+      ValuetypeDefinition: validateValueTypeDefinition,
+      ValueTypeReference: validateValueTypeReference,
       TransformBody: validateTransformBody,
     });
   }
