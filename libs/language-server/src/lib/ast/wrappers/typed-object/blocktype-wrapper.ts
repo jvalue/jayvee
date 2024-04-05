@@ -8,10 +8,15 @@ import { Reference, isReference } from 'langium';
 
 import { RuntimeParameterProvider } from '../../../services';
 // eslint-disable-next-line import/no-cycle
-import { EvaluationContext, evaluateExpression } from '../../expressions';
+import {
+  EvaluationContext,
+  type OperatorEvaluatorRegistry,
+  evaluateExpression,
+} from '../../expressions';
 import { ReferenceableBlocktypeDefinition } from '../../generated/ast';
 import { IOType, getIOType } from '../../io-type';
 import { createValuetype } from '../value-type';
+import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
 
 import {
   ExampleDoc,
@@ -30,10 +35,18 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlocktypeD
   readonly inputType: IOType;
   readonly outputType: IOType;
 
+  /**
+   * Creates a BlockTypeWrapper if possible. Otherwise, throws error.
+   * Use @see canBeWrapped to check whether wrapping will be successful.
+   *
+   * Use @see WrapperFactoryProvider for instantiation instead of calling this constructor directly.
+   */
   constructor(
     toBeWrapped:
       | ReferenceableBlocktypeDefinition
       | Reference<ReferenceableBlocktypeDefinition>,
+    operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
+    wrapperFactories: WrapperFactoryProvider,
   ) {
     const blocktypeDefinition = isReference(toBeWrapped)
       ? toBeWrapped.ref
@@ -53,7 +66,11 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlocktypeD
 
       const defaultValue = evaluateExpression(
         property.defaultValue,
-        new EvaluationContext(new RuntimeParameterProvider()),
+        new EvaluationContext(
+          new RuntimeParameterProvider(),
+          operatorEvaluatorRegistry,
+        ),
+        wrapperFactories,
       );
       if (defaultValue !== undefined) {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

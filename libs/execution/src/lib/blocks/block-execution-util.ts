@@ -6,7 +6,6 @@ import {
   BlockDefinition,
   CompositeBlocktypeDefinition,
   PipelineDefinition,
-  PipelineWrapper,
 } from '@jvalue/jayvee-language-server';
 
 import { type ExecutionContext } from '../execution-context';
@@ -34,7 +33,8 @@ export async function executeBlocks(
   pipesContainer: CompositeBlocktypeDefinition | PipelineDefinition,
   initialInputValue: IOTypeImplementation | undefined = undefined,
 ): Promise<R.Result<ExecutionOrderItem[]>> {
-  const pipelineWrapper = new PipelineWrapper(pipesContainer);
+  const pipelineWrapper =
+    executionContext.wrapperFactories.Pipeline.wrap(pipesContainer);
   const executionOrder: {
     block: BlockDefinition;
     value: IOTypeImplementation | null;

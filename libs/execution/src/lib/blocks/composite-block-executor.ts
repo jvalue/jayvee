@@ -13,6 +13,7 @@ import {
   IOType,
   InternalValueRepresentation,
   Valuetype,
+  WrapperFactoryProvider,
   createValuetype,
   evaluateExpression,
   evaluatePropertyValue,
@@ -133,6 +134,7 @@ export function createCompositeBlockExecutor(
           block,
           properties,
           context.evaluationContext,
+          context.wrapperFactories,
         );
 
         assert(
@@ -153,6 +155,7 @@ export function createCompositeBlockExecutor(
       block: BlockDefinition,
       properties: BlocktypeProperty[],
       evaluationContext: EvaluationContext,
+      wrapperFactories: WrapperFactoryProvider,
     ): InternalValueRepresentation | undefined {
       const propertyFromBlock = block.body.properties.find(
         (property) => property.name === name,
@@ -162,6 +165,7 @@ export function createCompositeBlockExecutor(
         const value = evaluatePropertyValue(
           propertyFromBlock,
           evaluationContext,
+          wrapperFactories,
           valueType,
         );
 
@@ -181,6 +185,7 @@ export function createCompositeBlockExecutor(
       return evaluateExpression(
         propertyFromBlockType.defaultValue,
         evaluationContext,
+        wrapperFactories,
       );
     }
   };

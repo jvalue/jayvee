@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { RegexLiteral } from '../../ast/generated/ast';
-import { ValidationContext } from '../validation-context';
+import { type JayveeValidationProps } from '../validation-registry';
 
 /**
  * See https://jvalue.github.io/jayvee/docs/dev/guides/working-with-the-ast/ for why the following ESLint rule is disabled for this file.
@@ -12,14 +12,14 @@ import { ValidationContext } from '../validation-context';
 
 export function validateRegexLiteral(
   regex: RegexLiteral,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
-  checkRegexParsability(regex, context);
+  checkRegexParsability(regex, props);
 }
 
 function checkRegexParsability(
   regex: RegexLiteral,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
   const regexValue = regex?.value;
   if (regexValue === undefined) {
@@ -29,11 +29,15 @@ function checkRegexParsability(
     new RegExp(regexValue);
   } catch (error) {
     if (error instanceof SyntaxError) {
-      context.accept('error', `A parsing error occurred: ${error.message}`, {
-        node: regex,
-      });
+      props.validationContext.accept(
+        'error',
+        `A parsing error occurred: ${error.message}`,
+        {
+          node: regex,
+        },
+      );
     } else {
-      context.accept(
+      props.validationContext.accept(
         'error',
         `An unknown parsing error occurred: ${JSON.stringify(error)}.`,
         {

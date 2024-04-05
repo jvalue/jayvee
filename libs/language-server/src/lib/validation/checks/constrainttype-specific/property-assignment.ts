@@ -3,24 +3,23 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  EvaluationContext,
   PrimitiveValuetypes,
   PropertyAssignment,
   PropertySpecification,
   evaluatePropertyValue,
 } from '../../../ast';
-import { ValidationContext } from '../../validation-context';
+import { type JayveeValidationProps } from '../../validation-registry';
 
 export function checkConstraintTypeSpecificProperties(
   property: PropertyAssignment,
   propertySpec: PropertySpecification,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
+  props: JayveeValidationProps,
 ) {
   const propName = property.name;
   const propValue = evaluatePropertyValue(
     property,
-    evaluationContext,
+    props.evaluationContext,
+    props.wrapperFactories,
     propertySpec.type,
   );
   if (propValue === undefined) {
@@ -29,12 +28,7 @@ export function checkConstraintTypeSpecificProperties(
 
   switch (property.$container.$container.type.ref?.name) {
     case 'LengthConstraint':
-      return checkLengthConstraintProperty(
-        propName,
-        property,
-        validationContext,
-        evaluationContext,
-      );
+      return checkLengthConstraintProperty(propName, property, props);
     default:
   }
 }
@@ -42,25 +36,24 @@ export function checkConstraintTypeSpecificProperties(
 function checkLengthConstraintProperty(
   propName: string,
   property: PropertyAssignment,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
+  props: JayveeValidationProps,
 ) {
   if (propName === 'minLength') {
-    checkNonNegative(property, validationContext, evaluationContext);
+    checkNonNegative(property, props);
   }
   if (propName === 'maxLength') {
-    checkNonNegative(property, validationContext, evaluationContext);
+    checkNonNegative(property, props);
   }
 }
 
 function checkNonNegative(
   property: PropertyAssignment,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
+  props: JayveeValidationProps,
 ) {
   const value = evaluatePropertyValue(
     property,
-    evaluationContext,
+    props.evaluationContext,
+    props.wrapperFactories,
     PrimitiveValuetypes.Integer,
   );
   if (value === undefined) {
@@ -68,7 +61,7 @@ function checkNonNegative(
   }
 
   if (value < 0) {
-    validationContext.accept(
+    props.validationContext.accept(
       'error',
       `Bounds for "${property.name}" need to be equal or greater than zero`,
       {

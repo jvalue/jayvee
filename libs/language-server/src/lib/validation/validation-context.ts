@@ -4,10 +4,15 @@
 
 import { AstNode, DiagnosticInfo, ValidationAcceptor } from 'langium';
 
+import { type OperatorTypeComputerRegistry } from '../ast/expressions/operator-registry';
+
 export class ValidationContext {
   private errorOccurred = false;
 
-  constructor(private readonly validationAcceptor: ValidationAcceptor) {}
+  constructor(
+    private readonly validationAcceptor: ValidationAcceptor,
+    public readonly typeComputerRegistry: OperatorTypeComputerRegistry,
+  ) {}
 
   accept: ValidationAcceptor = <N extends AstNode>(
     severity: 'error' | 'warning' | 'info' | 'hint',

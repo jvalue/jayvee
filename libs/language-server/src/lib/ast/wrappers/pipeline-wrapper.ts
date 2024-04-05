@@ -11,7 +11,8 @@ import {
 } from '../generated/ast';
 
 import { AstNodeWrapper } from './ast-node-wrapper';
-import { PipeWrapper, createWrappersFromPipeChain } from './pipe-wrapper';
+import { PipeWrapper } from './pipe-wrapper';
+import { type IPipeWrapperFactory } from './wrapper-factory-provider';
 
 export class PipelineWrapper<
   T extends PipelineDefinition | CompositeBlocktypeDefinition,
@@ -21,7 +22,7 @@ export class PipelineWrapper<
 
   allPipes: PipeWrapper[] = [];
 
-  constructor(pipesContainer: T) {
+  constructor(pipesContainer: T, pipeWrapperFactory: IPipeWrapperFactory) {
     this.astNode = pipesContainer;
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -31,12 +32,13 @@ export class PipelineWrapper<
     }
 
     this.allPipes = pipesContainer.pipes.flatMap((pipe) =>
-      createWrappersFromPipeChain(pipe),
+      pipeWrapperFactory.wrapAll(pipe),
     );
   }
 
   static canBeWrapped(
     pipesContainer: PipelineDefinition | CompositeBlocktypeDefinition,
+    pipeWrapperFactory: IPipeWrapperFactory,
   ): boolean {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (pipesContainer.pipes === undefined) {
@@ -49,7 +51,7 @@ export class PipelineWrapper<
         chainIndex < pipeDefinition.blocks.length - 1;
         ++chainIndex
       ) {
-        if (!PipeWrapper.canBeWrapped(pipeDefinition, chainIndex)) {
+        if (!pipeWrapperFactory.canWrap(pipeDefinition, chainIndex)) {
           return false;
         }
       }

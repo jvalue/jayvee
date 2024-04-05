@@ -9,7 +9,6 @@
 
 import { assertUnreachable } from 'langium';
 
-import { EvaluationContext } from '../../ast/expressions/evaluation';
 import { inferExpressionType } from '../../ast/expressions/type-inference';
 import {
   Expression,
@@ -23,26 +22,20 @@ import {
   isUnaryExpression,
 } from '../../ast/generated/ast';
 import { createValuetype } from '../../ast/wrappers/value-type/valuetype-util';
-import { ValidationContext } from '../validation-context';
+import { type JayveeValidationProps } from '../validation-registry';
 import { checkExpressionSimplification } from '../validation-util';
 
 export function validateTransformOutputAssignment(
   outputAssignment: TransformOutputAssignment,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
+  props: JayveeValidationProps,
 ): void {
-  checkOutputValueTyping(
-    outputAssignment,
-    validationContext,
-    evaluationContext,
-  );
-  checkOutputNotInAssignmentExpression(outputAssignment, validationContext);
+  checkOutputValueTyping(outputAssignment, props);
+  checkOutputNotInAssignmentExpression(outputAssignment, props);
 }
 
 function checkOutputValueTyping(
   outputAssignment: TransformOutputAssignment,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
+  props: JayveeValidationProps,
 ): void {
   const assignmentExpression = outputAssignment?.expression;
   if (assignmentExpression === undefined) {
@@ -56,7 +49,7 @@ function checkOutputValueTyping(
 
   const inferredType = inferExpressionType(
     assignmentExpression,
-    validationContext,
+    props.validationContext,
   );
   if (inferredType === undefined) {
     return;
@@ -68,7 +61,7 @@ function checkOutputValueTyping(
   }
 
   if (!inferredType.isConvertibleTo(expectedType)) {
-    validationContext.accept(
+    props.validationContext.accept(
       'error',
       `The value needs to be of type ${expectedType.getName()} but is of type ${inferredType.getName()}`,
       {
@@ -78,16 +71,12 @@ function checkOutputValueTyping(
     return;
   }
 
-  checkExpressionSimplification(
-    assignmentExpression,
-    validationContext,
-    evaluationContext,
-  );
+  checkExpressionSimplification(assignmentExpression, props);
 }
 
 function checkOutputNotInAssignmentExpression(
   outputAssignment: TransformOutputAssignment,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
   const referenceLiterals = extractReferenceLiterals(
     outputAssignment?.expression,
@@ -99,7 +88,7 @@ function checkOutputNotInAssignmentExpression(
       return;
     }
     if (referenced?.kind === 'to') {
-      context.accept(
+      props.validationContext.accept(
         'error',
         'Output ports are not allowed in this expression',
         {

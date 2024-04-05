@@ -10,7 +10,6 @@ import {
   CompletionValueItem,
   DefaultCompletionProvider,
   LangiumDocuments,
-  LangiumServices,
   MaybePromise,
   NextFeature,
 } from 'langium';
@@ -18,8 +17,8 @@ import { CompletionItemKind } from 'vscode-languageserver';
 
 import {
   TypedObjectWrapper,
+  type WrapperFactoryProvider,
   createValuetype,
-  getTypedObjectWrapper,
 } from '../ast';
 import {
   BlockDefinition,
@@ -38,15 +37,18 @@ import {
   getAllBuiltinConstraintTypes,
 } from '../ast/model-util';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
+import { type JayveeServices } from '../jayvee-module';
 
 const RIGHT_ARROW_SYMBOL = '\u{2192}';
 
 export class JayveeCompletionProvider extends DefaultCompletionProvider {
   protected langiumDocumentService: LangiumDocuments;
+  protected readonly wrapperFactories: WrapperFactoryProvider;
 
-  constructor(services: LangiumServices) {
+  constructor(services: JayveeServices) {
     super(services);
     this.langiumDocumentService = services.shared.workspace.LangiumDocuments;
+    this.wrapperFactories = services.WrapperFactories;
   }
 
   override completionFor(
@@ -88,7 +90,10 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     context: CompletionContext,
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
-    const blockTypes = getAllBuiltinBlocktypes(this.langiumDocumentService);
+    const blockTypes = getAllBuiltinBlocktypes(
+      this.langiumDocumentService,
+      this.wrapperFactories,
+    );
     blockTypes.forEach((blockType) => {
       const lspDocBuilder = new LspDocGenerator();
       const markdownDoc = lspDocBuilder.generateBlockTypeDoc(blockType);
@@ -113,6 +118,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
   ): MaybePromise<void> {
     const constraintTypes = getAllBuiltinConstraintTypes(
       this.langiumDocumentService,
+      this.wrapperFactories,
     );
     constraintTypes.forEach((constraintType) => {
       const lspDocBuilder = new LspDocGenerator();
@@ -168,7 +174,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       container = astNode.$container.$container;
     }
 
-    const wrapper = getTypedObjectWrapper(container.type);
+    const wrapper = this.wrapperFactories.TypedObject.wrap(container.type);
     if (wrapper === undefined) {
       return;
     }

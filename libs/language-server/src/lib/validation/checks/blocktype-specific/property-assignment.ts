@@ -4,7 +4,6 @@
 
 import {
   CollectionValuetype,
-  EvaluationContext,
   InternalValueRepresentation,
   PrimitiveValuetypes,
   PropertyAssignment,
@@ -14,19 +13,19 @@ import {
   isColumnWrapper,
   isRowWrapper,
 } from '../../../ast';
-import { ValidationContext } from '../../validation-context';
+import { type JayveeValidationProps } from '../../validation-registry';
 import { checkUniqueNames } from '../../validation-util';
 
 export function checkBlocktypeSpecificProperties(
   property: PropertyAssignment,
   propertySpec: PropertySpecification,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
+  props: JayveeValidationProps,
 ) {
   const propName = property.name;
   const propValue = evaluatePropertyValue(
     property,
-    evaluationContext,
+    props.evaluationContext,
+    props.wrapperFactories,
     propertySpec.type,
   );
   if (propValue === undefined) {
@@ -39,77 +38,47 @@ export function checkBlocktypeSpecificProperties(
         propName,
         propValue,
         property,
-        validationContext,
+        props,
       );
     case 'CellWriter':
-      return checkCellWriterProperty(
-        propName,
-        property,
-        validationContext,
-        evaluationContext,
-      );
+      return checkCellWriterProperty(propName, property, props);
     case 'ColumnDeleter':
-      return checkColumnDeleterProperty(
-        propName,
-        property,
-        validationContext,
-        evaluationContext,
-      );
+      return checkColumnDeleterProperty(propName, property, props);
     case 'GtfsRTInterpreter':
       return checkGtfsRTInterpreterProperty(
         propName,
         propValue,
         property,
-        validationContext,
+        props,
       );
     case 'HttpExtractor':
-      return checkHttpExtractorProperty(
-        propName,
-        propValue,
-        property,
-        validationContext,
-      );
+      return checkHttpExtractorProperty(propName, propValue, property, props);
     case 'LocalFileExtractor':
       return checkLocalFileExtractorProperty(
         propName,
         propValue,
         property,
-        validationContext,
+        props,
       );
     case 'RowDeleter':
-      return checkRowDeleterProperty(
-        propName,
-        property,
-        validationContext,
-        evaluationContext,
-      );
+      return checkRowDeleterProperty(propName, property, props);
     case 'TableInterpreter':
-      return checkTableInterpreterProperty(
-        propName,
-        property,
-        validationContext,
-        evaluationContext,
-      );
+      return checkTableInterpreterProperty(propName, property, props);
     case 'TextFileInterpreter':
       return checkTextFileInterpreterProperty(
         propName,
         propValue,
         property,
-        validationContext,
+        props,
       );
     case 'TextLineDeleter':
-      return checkTextLineDeleterProperty(
-        propName,
-        property,
-        validationContext,
-        evaluationContext,
-      );
+      return checkTextLineDeleterProperty(propName, property, props);
     case 'TextRangeSelector':
       return checkTextRangeSelectorProperty(
         propName,
         propValue,
         property,
-        validationContext,
+        props,
       );
     default:
   }
@@ -119,7 +88,7 @@ function checkArchiveInterpreterProperty(
   propName: string,
   propValue: InternalValueRepresentation,
   property: PropertyAssignment,
-  validationContext: ValidationContext,
+  props: JayveeValidationProps,
 ) {
   const allowedArchiveTypes: InternalValueRepresentation[] = ['zip', 'gz'];
   if (propName === 'archiveType') {
@@ -128,7 +97,7 @@ function checkArchiveInterpreterProperty(
       allowedArchiveTypes,
       propName,
       property,
-      validationContext,
+      props,
     );
   }
 }
@@ -136,13 +105,13 @@ function checkArchiveInterpreterProperty(
 function checkCellWriterProperty(
   propName: string,
   property: PropertyAssignment,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
+  props: JayveeValidationProps,
 ) {
   if (propName === 'at') {
     const cellRange = evaluatePropertyValue(
       property,
-      evaluationContext,
+      props.evaluationContext,
+      props.wrapperFactories,
       PrimitiveValuetypes.CellRange,
     );
     if (cellRange === undefined) {
@@ -150,7 +119,7 @@ function checkCellWriterProperty(
     }
 
     if (!cellRange.isOneDimensional()) {
-      validationContext.accept(
+      props.validationContext.accept(
         'error',
         'The cell range needs to be one-dimensional',
         {
@@ -164,19 +133,19 @@ function checkCellWriterProperty(
 function checkColumnDeleterProperty(
   propName: string,
   property: PropertyAssignment,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
+  props: JayveeValidationProps,
 ) {
   if (propName === 'delete') {
     const cellRanges = evaluatePropertyValue(
       property,
-      evaluationContext,
+      props.evaluationContext,
+      props.wrapperFactories,
       new CollectionValuetype(PrimitiveValuetypes.CellRange),
     );
 
     cellRanges?.forEach((cellRange) => {
       if (!isColumnWrapper(cellRange)) {
-        validationContext.accept(
+        props.validationContext.accept(
           'error',
           'An entire column needs to be selected',
           {
@@ -192,7 +161,7 @@ function checkGtfsRTInterpreterProperty(
   propName: string,
   propValue: InternalValueRepresentation,
   property: PropertyAssignment,
-  validationContext: ValidationContext,
+  props: JayveeValidationProps,
 ) {
   const allowedEntities: InternalValueRepresentation[] = [
     'trip_update',
@@ -205,7 +174,7 @@ function checkGtfsRTInterpreterProperty(
       allowedEntities,
       propName,
       property,
-      validationContext,
+      props,
     );
   }
 }
@@ -214,12 +183,12 @@ function checkHttpExtractorProperty(
   propName: string,
   propValue: InternalValueRepresentation,
   property: PropertyAssignment,
-  validationContext: ValidationContext,
+  props: JayveeValidationProps,
 ) {
   if (propName === 'retries') {
     const minRetryValue = 0;
     if (typeof propValue === 'number' && propValue < minRetryValue) {
-      validationContext.accept(
+      props.validationContext.accept(
         'error',
         `The value of property "${propName}" must not be smaller than ${minRetryValue}`,
         {
@@ -232,7 +201,7 @@ function checkHttpExtractorProperty(
   if (propName === 'retryBackoffMilliseconds') {
     const minBackoffValue = 1000;
     if (typeof propValue === 'number' && propValue < minBackoffValue) {
-      validationContext.accept(
+      props.validationContext.accept(
         'error',
         `The value of property "${propName}" must not be smaller than ${minBackoffValue}`,
         {
@@ -252,7 +221,7 @@ function checkHttpExtractorProperty(
       allowedRetryStrategies,
       propName,
       property,
-      validationContext,
+      props,
     );
   }
 }
@@ -261,13 +230,13 @@ function checkLocalFileExtractorProperty(
   propName: string,
   propValue: InternalValueRepresentation,
   property: PropertyAssignment,
-  validationContext: ValidationContext,
+  props: JayveeValidationProps,
 ) {
   if (
     propName === 'filePath' &&
     internalValueToString(propValue).includes('..')
   ) {
-    validationContext.accept(
+    props.validationContext.accept(
       'error',
       'File path cannot include "..". Path traversal is restricted.',
       {
@@ -281,19 +250,19 @@ function checkLocalFileExtractorProperty(
 function checkRowDeleterProperty(
   propName: string,
   property: PropertyAssignment,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
+  props: JayveeValidationProps,
 ) {
   if (propName === 'delete') {
     const cellRanges = evaluatePropertyValue(
       property,
-      evaluationContext,
+      props.evaluationContext,
+      props.wrapperFactories,
       new CollectionValuetype(PrimitiveValuetypes.CellRange),
     );
 
     cellRanges?.forEach((cellRange) => {
       if (!isRowWrapper(cellRange)) {
-        validationContext.accept(
+        props.validationContext.accept(
           'error',
           'An entire row needs to be selected',
           {
@@ -308,20 +277,20 @@ function checkRowDeleterProperty(
 function checkTableInterpreterProperty(
   propName: string,
   property: PropertyAssignment,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
+  props: JayveeValidationProps,
 ) {
   if (propName === 'columns') {
     const valuetypeAssignments = evaluatePropertyValue(
       property,
-      evaluationContext,
+      props.evaluationContext,
+      props.wrapperFactories,
       new CollectionValuetype(PrimitiveValuetypes.ValuetypeAssignment),
     );
     if (valuetypeAssignments === undefined) {
       return;
     }
 
-    checkUniqueNames(valuetypeAssignments, validationContext, 'column');
+    checkUniqueNames(valuetypeAssignments, props.validationContext, 'column');
   }
 }
 
@@ -329,7 +298,7 @@ function checkTextFileInterpreterProperty(
   propName: string,
   propValue: InternalValueRepresentation,
   property: PropertyAssignment,
-  validationContext: ValidationContext,
+  props: JayveeValidationProps,
 ) {
   // https://developer.mozilla.org/en-US/docs/Web/API/Encoding_API/Encodings
   const allowedEncodings: InternalValueRepresentation[] = [
@@ -352,7 +321,7 @@ function checkTextFileInterpreterProperty(
       allowedEncodings,
       propName,
       property,
-      validationContext,
+      props,
     );
   }
 }
@@ -360,19 +329,19 @@ function checkTextFileInterpreterProperty(
 function checkTextLineDeleterProperty(
   propName: string,
   property: PropertyAssignment,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
+  props: JayveeValidationProps,
 ) {
   if (propName === 'lines') {
     const minTextLineIndex = 1;
     const lines = evaluatePropertyValue(
       property,
-      evaluationContext,
+      props.evaluationContext,
+      props.wrapperFactories,
       new CollectionValuetype(PrimitiveValuetypes.Integer),
     );
     lines?.forEach((value, index) => {
       if (value < minTextLineIndex) {
-        validationContext.accept(
+        props.validationContext.accept(
           'error',
           `Line numbers need to be greater than zero`,
           {
@@ -390,12 +359,12 @@ function checkTextRangeSelectorProperty(
   propName: string,
   propValue: InternalValueRepresentation,
   property: PropertyAssignment,
-  validationContext: ValidationContext,
+  props: JayveeValidationProps,
 ) {
   const minLineIndex = 1;
   if (propName === 'lineFrom' || propName === 'lineTo') {
     if (typeof propValue === 'number' && propValue < minLineIndex) {
-      validationContext.accept(
+      props.validationContext.accept(
         'error',
         `The value of property "${propName}" must not be smaller than ${minLineIndex}`,
         {
@@ -412,10 +381,10 @@ function checkPropertyValueOneOf(
   allowedValues: InternalValueRepresentation[],
   propName: string,
   property: PropertyAssignment,
-  validationContext: ValidationContext,
+  props: JayveeValidationProps,
 ) {
   if (!allowedValues.includes(propValue)) {
-    validationContext.accept(
+    props.validationContext.accept(
       'error',
       `The value of property "${propName}" must be one of the following values: ${allowedValues
         .map((v) => `${internalValueToString(v)}`)

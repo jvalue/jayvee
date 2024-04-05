@@ -8,13 +8,13 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  ValidationContext,
   ValuetypeDefinition,
   ValuetypeReference,
   createJayveeServices,
 } from '../..';
 import {
   ParseHelperOptions,
+  createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
@@ -84,7 +84,7 @@ describe('Validation of ValuetypeReference', () => {
       (valuetypeRef) => {
         validateValuetypeReference(
           valuetypeRef,
-          new ValidationContext(validationAcceptorMock),
+          createJayveeValidationProps(validationAcceptorMock),
         );
       },
     );
@@ -101,7 +101,7 @@ describe('Validation of ValuetypeReference', () => {
       (valuetypeRef) => {
         validateValuetypeReference(
           valuetypeRef,
-          new ValidationContext(validationAcceptorMock),
+          createJayveeValidationProps(validationAcceptorMock),
         );
       },
     );
@@ -118,7 +118,7 @@ describe('Validation of ValuetypeReference', () => {
       (valuetypeRef) => {
         validateValuetypeReference(
           valuetypeRef,
-          new ValidationContext(validationAcceptorMock),
+          createJayveeValidationProps(validationAcceptorMock),
         );
       },
     );
@@ -135,7 +135,7 @@ describe('Validation of ValuetypeReference', () => {
       (valuetypeRef) => {
         validateValuetypeReference(
           valuetypeRef,
-          new ValidationContext(validationAcceptorMock),
+          createJayveeValidationProps(validationAcceptorMock),
         );
       },
     );
@@ -157,7 +157,7 @@ describe('Validation of ValuetypeReference', () => {
       (valuetypeRef) => {
         validateValuetypeReference(
           valuetypeRef,
-          new ValidationContext(validationAcceptorMock),
+          createJayveeValidationProps(validationAcceptorMock),
         );
       },
     );
@@ -179,7 +179,7 @@ describe('Validation of ValuetypeReference', () => {
       (valuetypeRef) => {
         validateValuetypeReference(
           valuetypeRef,
-          new ValidationContext(validationAcceptorMock),
+          createJayveeValidationProps(validationAcceptorMock),
         );
       },
     );
@@ -201,7 +201,7 @@ describe('Validation of ValuetypeReference', () => {
       (valuetypeRef) => {
         validateValuetypeReference(
           valuetypeRef,
-          new ValidationContext(validationAcceptorMock),
+          createJayveeValidationProps(validationAcceptorMock),
         );
       },
     );
@@ -223,7 +223,7 @@ describe('Validation of ValuetypeReference', () => {
       (valuetypeRef) => {
         validateValuetypeReference(
           valuetypeRef,
-          new ValidationContext(validationAcceptorMock),
+          createJayveeValidationProps(validationAcceptorMock),
         );
       },
     );
@@ -258,7 +258,7 @@ describe('Validation of ValuetypeReference', () => {
 
     validateValuetypeReference(
       valuetypeRef,
-      new ValidationContext(validationAcceptorMock),
+      createJayveeValidationProps(validationAcceptorMock),
     );
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
@@ -284,7 +284,7 @@ describe('Validation of ValuetypeReference', () => {
 
     validateValuetypeReference(
       valuetypeRef,
-      new ValidationContext(validationAcceptorMock),
+      createJayveeValidationProps(validationAcceptorMock),
     );
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);

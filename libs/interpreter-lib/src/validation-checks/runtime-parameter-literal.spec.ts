@@ -6,10 +6,13 @@ import * as path from 'path';
 
 import { parseValueToInternalRepresentation } from '@jvalue/jayvee-execution';
 import {
+  DefaultOperatorEvaluatorRegistry,
+  DefaultOperatorTypeComputerRegistry,
   EvaluationContext,
   RuntimeParameterLiteral,
   RuntimeParameterProvider,
   ValidationContext,
+  WrapperFactoryProvider,
   createJayveeServices,
 } from '@jvalue/jayvee-language-server';
 import {
@@ -60,11 +63,24 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
       }
     }
 
-    validateRuntimeParameterLiteral(
-      runtimeParameter,
-      new ValidationContext(validationAcceptorMock),
-      new EvaluationContext(runtimeProvider),
+    const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
+    const operatorTypeComputerRegistry =
+      new DefaultOperatorTypeComputerRegistry();
+    const wrapperFactories = new WrapperFactoryProvider(
+      operatorEvaluatorRegistry,
     );
+
+    validateRuntimeParameterLiteral(runtimeParameter, {
+      validationContext: new ValidationContext(
+        validationAcceptorMock,
+        operatorTypeComputerRegistry,
+      ),
+      evaluationContext: new EvaluationContext(
+        runtimeProvider,
+        operatorEvaluatorRegistry,
+      ),
+      wrapperFactories: wrapperFactories,
+    });
   }
 
   beforeAll(async () => {

@@ -6,33 +6,27 @@ import { strict as assert } from 'assert';
 
 import {
   BlocktypeProperty,
-  EvaluationContext,
   ReferenceableBlocktypeDefinition,
   createValuetype,
   evaluateExpression,
 } from '../../ast';
-import { ValidationContext } from '../validation-context';
+import { type JayveeValidationProps } from '../validation-registry';
 
 export function validateBlocktypeDefinition(
   blocktype: ReferenceableBlocktypeDefinition,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
+  props: JayveeValidationProps,
 ): void {
-  checkNoMultipleInputs(blocktype, validationContext);
-  checkNoMultipleOutputs(blocktype, validationContext);
-  checkOneInput(blocktype, validationContext);
-  checkOneOutput(blocktype, validationContext);
-  checkNoDuplicateProperties(blocktype, validationContext);
-  checkPropertiesDefaultValuesHaveCorrectType(
-    blocktype,
-    validationContext,
-    evaluationContext,
-  );
+  checkNoMultipleInputs(blocktype, props);
+  checkNoMultipleOutputs(blocktype, props);
+  checkOneInput(blocktype, props);
+  checkOneOutput(blocktype, props);
+  checkNoDuplicateProperties(blocktype, props);
+  checkPropertiesDefaultValuesHaveCorrectType(blocktype, props);
 }
 
 function checkNoMultipleInputs(
   blocktype: ReferenceableBlocktypeDefinition,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (blocktype.inputs === undefined) {
@@ -41,7 +35,7 @@ function checkNoMultipleInputs(
 
   if (blocktype.inputs.length > 1) {
     blocktype.inputs.forEach((inputDefinition) => {
-      context.accept(
+      props.validationContext.accept(
         'error',
         `Found more than one input definition in blocktype '${blocktype.name}'`,
         {
@@ -54,7 +48,7 @@ function checkNoMultipleInputs(
 
 function checkNoMultipleOutputs(
   blocktype: ReferenceableBlocktypeDefinition,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (blocktype.outputs === undefined) {
@@ -63,7 +57,7 @@ function checkNoMultipleOutputs(
 
   if (blocktype.outputs.length > 1) {
     blocktype.outputs.forEach((outputDefinition) => {
-      context.accept(
+      props.validationContext.accept(
         'error',
         `Found more than one output definition in blocktype '${blocktype.name}'`,
         {
@@ -76,13 +70,13 @@ function checkNoMultipleOutputs(
 
 function checkOneInput(
   blocktype: ReferenceableBlocktypeDefinition,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const numberOfInputs = blocktype.inputs?.length ?? 0;
 
   if (numberOfInputs < 1) {
-    context.accept(
+    props.validationContext.accept(
       'error',
       `Found no input in blocktype '${blocktype.name}' - consider using iotype "none" if the blocktype consumes no input`,
       {
@@ -94,13 +88,13 @@ function checkOneInput(
 
 function checkOneOutput(
   blocktype: ReferenceableBlocktypeDefinition,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const numberOfOutputs = blocktype.outputs?.length ?? 0;
 
   if (numberOfOutputs < 1) {
-    context.accept(
+    props.validationContext.accept(
       'error',
       `Found no output in blocktype '${blocktype.name}' - consider using iotype "none" if the blocktype produces no output`,
       {
@@ -112,7 +106,7 @@ function checkOneOutput(
 
 function checkNoDuplicateProperties(
   blocktype: ReferenceableBlocktypeDefinition,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (blocktype.properties === undefined) {
@@ -134,7 +128,7 @@ function checkNoDuplicateProperties(
     .filter((properties) => properties.length > 1)
     .forEach((properties) => {
       properties.forEach((property) => {
-        context.accept(
+        props.validationContext.accept(
           'error',
           `Property '${property.name}' in blocktype '${blocktype.name}' is defined multiple times`,
           {
@@ -148,8 +142,7 @@ function checkNoDuplicateProperties(
 
 function checkPropertiesDefaultValuesHaveCorrectType(
   blocktype: ReferenceableBlocktypeDefinition,
-  context: ValidationContext,
-  evaluationContext: EvaluationContext,
+  props: JayveeValidationProps,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (blocktype.properties === undefined) {
@@ -159,18 +152,13 @@ function checkPropertiesDefaultValuesHaveCorrectType(
   blocktype.properties
     .filter((property) => property.defaultValue !== undefined)
     .forEach((property) =>
-      checkPropertyDefaultValuesHasCorrectType(
-        property,
-        context,
-        evaluationContext,
-      ),
+      checkPropertyDefaultValuesHasCorrectType(property, props),
     );
 }
 
 function checkPropertyDefaultValuesHasCorrectType(
   property: BlocktypeProperty,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
+  props: JayveeValidationProps,
 ): void {
   const defaultValueExpression = property.defaultValue;
   if (defaultValueExpression === undefined) {
@@ -179,14 +167,19 @@ function checkPropertyDefaultValuesHasCorrectType(
 
   const evaluatedExpression = evaluateExpression(
     defaultValueExpression,
-    evaluationContext,
-    validationContext,
+    props.evaluationContext,
+    props.wrapperFactories,
+    props.validationContext,
   );
   if (evaluatedExpression === undefined) {
-    validationContext.accept('error', `Could not evaluate this expression.`, {
-      node: property,
-      property: 'defaultValue',
-    });
+    props.validationContext.accept(
+      'error',
+      `Could not evaluate this expression.`,
+      {
+        node: property,
+        property: 'defaultValue',
+      },
+    );
     return;
   }
 
@@ -194,7 +187,7 @@ function checkPropertyDefaultValuesHasCorrectType(
   assert(expectedValuetype !== undefined);
 
   if (!expectedValuetype.isInternalValueRepresentation(evaluatedExpression)) {
-    validationContext.accept(
+    props.validationContext.accept(
       'error',
       `This default value is not compatible with valuetype ${expectedValuetype.getName()}`,
       {

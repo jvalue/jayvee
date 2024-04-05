@@ -15,9 +15,16 @@ import {
 } from 'langium';
 
 import {
+  DefaultOperatorEvaluatorRegistry,
+  DefaultOperatorTypeComputerRegistry,
+  OperatorEvaluatorRegistry,
+  OperatorTypeComputerRegistry,
+} from './ast/expressions/operator-registry';
+import {
   JayveeGeneratedModule,
   JayveeGeneratedSharedModule,
 } from './ast/generated/module';
+import { WrapperFactoryProvider } from './ast/wrappers/wrapper-factory-provider';
 import { JayveeWorkspaceManager } from './builtin-library/jayvee-workspace-manager';
 import { JayveeCompletionProvider } from './completion/jayvee-completion-provider';
 import { JayveeHoverProvider } from './hover/jayvee-hover-provider';
@@ -26,11 +33,16 @@ import { RuntimeParameterProvider } from './services/runtime-parameter-provider'
 import { JayveeValidationRegistry } from './validation/validation-registry';
 
 /**
- * Declaration of custom services - add your own service classes here.
+ * Declaration of custom services for the Jayvee language.
+ * https://langium.org/docs/configuration-services/#adding-new-services
  */
-
 export interface JayveeAddedServices {
   RuntimeParameterProvider: RuntimeParameterProvider;
+  operators: {
+    TypeComputerRegistry: OperatorTypeComputerRegistry;
+    EvaluatorRegistry: OperatorEvaluatorRegistry;
+  };
+  WrapperFactories: WrapperFactoryProvider;
   validation: {
     ValidationRegistry: JayveeValidationRegistry;
   };
@@ -60,12 +72,18 @@ export const JayveeModule: Module<
     ValidationRegistry: (services) => new JayveeValidationRegistry(services),
   },
   lsp: {
-    CompletionProvider: (services: LangiumServices) =>
+    CompletionProvider: (services: JayveeServices) =>
       new JayveeCompletionProvider(services),
-    HoverProvider: (services: LangiumServices) =>
+    HoverProvider: (services: JayveeServices) =>
       new JayveeHoverProvider(services),
   },
   RuntimeParameterProvider: () => new RuntimeParameterProvider(),
+  operators: {
+    TypeComputerRegistry: () => new DefaultOperatorTypeComputerRegistry(),
+    EvaluatorRegistry: () => new DefaultOperatorEvaluatorRegistry(),
+  },
+  WrapperFactories: (services) =>
+    new WrapperFactoryProvider(services.operators.EvaluatorRegistry),
 };
 
 export const JayveeSharedModule: Module<

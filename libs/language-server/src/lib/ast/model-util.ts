@@ -5,20 +5,17 @@
 import { AstNode, LangiumDocuments } from 'langium';
 
 import {
-  BinaryExpression,
   BuiltinBlocktypeDefinition,
   BuiltinConstrainttypeDefinition,
-  TernaryExpression,
-  UnaryExpression,
   isBuiltinBlocktypeDefinition,
   isJayveeModel,
 } from './generated/ast';
 // eslint-disable-next-line import/no-cycle
-import { BlockTypeWrapper, ConstraintTypeWrapper } from './wrappers';
-
-export type UnaryExpressionOperator = UnaryExpression['operator'];
-export type BinaryExpressionOperator = BinaryExpression['operator'];
-export type TernaryExpressionOperator = TernaryExpression['operator'];
+import {
+  BlockTypeWrapper,
+  ConstraintTypeWrapper,
+  type WrapperFactoryProvider,
+} from './wrappers';
 
 export type AstTypeGuard<T extends AstNode = AstNode> = (
   obj: unknown,
@@ -51,6 +48,7 @@ export function getNextAstNodeContainer<T extends AstNode>(
  */
 export function getAllBuiltinBlocktypes(
   documentService: LangiumDocuments,
+  wrapperFactories: WrapperFactoryProvider,
 ): BlockTypeWrapper[] {
   const allBuiltinBlocktypes: BlockTypeWrapper[] = [];
   const visitedBuiltinBlocktypeDefinitions =
@@ -73,8 +71,10 @@ export function getAllBuiltinBlocktypes(
           return;
         }
 
-        if (BlockTypeWrapper.canBeWrapped(blocktypeDefinition)) {
-          allBuiltinBlocktypes.push(new BlockTypeWrapper(blocktypeDefinition));
+        if (wrapperFactories.BlockType.canWrap(blocktypeDefinition)) {
+          allBuiltinBlocktypes.push(
+            wrapperFactories.BlockType.wrap(blocktypeDefinition),
+          );
           visitedBuiltinBlocktypeDefinitions.add(blocktypeDefinition);
         }
       });
@@ -89,6 +89,7 @@ export function getAllBuiltinBlocktypes(
  */
 export function getAllBuiltinConstraintTypes(
   documentService: LangiumDocuments,
+  wrapperFactories: WrapperFactoryProvider,
 ): ConstraintTypeWrapper[] {
   const allBuiltinConstraintTypes: ConstraintTypeWrapper[] = [];
   const visitedBuiltinConstraintTypeDefinitions =
@@ -108,9 +109,9 @@ export function getAllBuiltinConstraintTypes(
           return;
         }
 
-        if (ConstraintTypeWrapper.canBeWrapped(constraintTypeDefinition)) {
+        if (wrapperFactories.ConstraintType.canWrap(constraintTypeDefinition)) {
           allBuiltinConstraintTypes.push(
-            new ConstraintTypeWrapper(constraintTypeDefinition),
+            wrapperFactories.ConstraintType.wrap(constraintTypeDefinition),
           );
           visitedBuiltinConstraintTypeDefinitions.add(constraintTypeDefinition);
         }

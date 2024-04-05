@@ -6,17 +6,14 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  EvaluationContext,
   PropertyAssignment,
   PropertyBody,
-  RuntimeParameterProvider,
   TypedObjectWrapper,
-  ValidationContext,
   createJayveeServices,
-  getTypedObjectWrapper,
 } from '../../../lib';
 import {
   ParseHelperOptions,
+  createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
@@ -50,7 +47,9 @@ describe('Validation of PropertyAssignment', () => {
     ) as PropertyBody;
 
     const type = propertyBody.$container.type;
-    const wrapper = getTypedObjectWrapper(type);
+
+    const props = createJayveeValidationProps(validationAcceptorMock);
+    const wrapper = props.wrapperFactories.TypedObject.wrap(type);
     expect(wrapper).toBeDefined();
 
     const propertyAssignment = locator.getAstNode<PropertyAssignment>(
@@ -61,8 +60,7 @@ describe('Validation of PropertyAssignment', () => {
     validatePropertyAssignment(
       propertyAssignment,
       wrapper as TypedObjectWrapper,
-      new ValidationContext(validationAcceptorMock),
-      new EvaluationContext(new RuntimeParameterProvider()),
+      props,
     );
   }
 

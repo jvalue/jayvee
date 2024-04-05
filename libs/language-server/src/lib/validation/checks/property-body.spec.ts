@@ -5,15 +5,10 @@
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import {
-  EvaluationContext,
-  PropertyBody,
-  RuntimeParameterProvider,
-  ValidationContext,
-  createJayveeServices,
-} from '../../../lib';
+import { PropertyBody, createJayveeServices } from '../../../lib';
 import {
   ParseHelperOptions,
+  createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
@@ -48,8 +43,7 @@ describe('Validation PropertyBody', () => {
 
     validatePropertyBody(
       propertyBody,
-      new ValidationContext(validationAcceptorMock),
-      new EvaluationContext(new RuntimeParameterProvider()),
+      createJayveeValidationProps(validationAcceptorMock),
     );
   }
 

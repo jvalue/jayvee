@@ -5,15 +5,10 @@
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import {
-  EvaluationContext,
-  RuntimeParameterProvider,
-  ValidationContext,
-  ValuetypeDefinition,
-  createJayveeServices,
-} from '../../../lib';
+import { ValuetypeDefinition, createJayveeServices } from '../../../lib';
 import {
   ParseHelperOptions,
+  createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
@@ -48,8 +43,7 @@ describe('Validation of ValuetypeDefinition', () => {
 
     validateValuetypeDefinition(
       valuetypeDefinition,
-      new ValidationContext(validationAcceptorMock),
-      new EvaluationContext(new RuntimeParameterProvider()),
+      createJayveeValidationProps(validationAcceptorMock),
     );
   }
 

@@ -24,8 +24,8 @@ import {
   JayveeModel,
   JayveeServices,
   PipelineDefinition,
-  PipelineWrapper,
   RuntimeParameterProvider,
+  WrapperFactoryProvider,
   createJayveeServices,
   initializeWorkspace,
   internalValueToString,
@@ -136,7 +136,7 @@ export async function interpretModel(
     model,
     new StdExecExtension(),
     new DefaultConstraintExtension(),
-    services.RuntimeParameterProvider,
+    services,
     loggerFactory,
     {
       debug: options.debug,
@@ -177,7 +177,7 @@ async function interpretJayveeModel(
   model: JayveeModel,
   executionExtension: JayveeExecExtension,
   constraintExtension: JayveeConstraintExtension,
-  runtimeParameterProvider: RuntimeParameterProvider,
+  jayveeServices: JayveeServices,
   loggerFactory: LoggerFactory,
   runOptions: InterpreterOptions,
 ): Promise<ExitCode> {
@@ -186,7 +186,7 @@ async function interpretJayveeModel(
       pipeline,
       executionExtension,
       constraintExtension,
-      runtimeParameterProvider,
+      jayveeServices,
       loggerFactory,
       runOptions,
     );
@@ -203,7 +203,7 @@ async function runPipeline(
   pipeline: PipelineDefinition,
   executionExtension: JayveeExecExtension,
   constraintExtension: JayveeConstraintExtension,
-  runtimeParameterProvider: RuntimeParameterProvider,
+  jayveeServices: JayveeServices,
   loggerFactory: LoggerFactory,
   runOptions: InterpreterOptions,
 ): Promise<ExitCode> {
@@ -212,18 +212,23 @@ async function runPipeline(
     executionExtension,
     constraintExtension,
     loggerFactory.createLogger(),
+    jayveeServices.WrapperFactories,
     {
       isDebugMode: runOptions.debug,
       debugGranularity: runOptions.debugGranularity,
       debugTargets: runOptions.debugTargets,
     },
-    new EvaluationContext(runtimeParameterProvider),
+    new EvaluationContext(
+      jayveeServices.RuntimeParameterProvider,
+      jayveeServices.operators.EvaluatorRegistry,
+    ),
   );
 
   logPipelineOverview(
     pipeline,
-    runtimeParameterProvider,
+    jayveeServices.RuntimeParameterProvider,
     executionContext.logger,
+    jayveeServices.WrapperFactories,
   );
 
   const startTime = new Date();
@@ -248,8 +253,9 @@ export function logPipelineOverview(
   pipeline: PipelineDefinition,
   runtimeParameterProvider: RuntimeParameterProvider,
   logger: Logger,
+  wrapperFactories: WrapperFactoryProvider,
 ) {
-  const pipelineWrapper = new PipelineWrapper(pipeline);
+  const pipelineWrapper = wrapperFactories.Pipeline.wrap(pipeline);
 
   const toString = (block: BlockDefinition, depth = 0): string => {
     const blockTypeName = block.type.ref?.name;

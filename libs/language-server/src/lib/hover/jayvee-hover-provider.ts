@@ -6,19 +6,25 @@ import { AstNode, AstNodeHoverProvider, MaybePromise } from 'langium';
 import { Hover } from 'vscode-languageserver-protocol';
 
 import {
-  BlockTypeWrapper,
   BuiltinBlocktypeDefinition,
   BuiltinConstrainttypeDefinition,
-  ConstraintTypeWrapper,
   PropertyAssignment,
-  getTypedObjectWrapper,
+  type WrapperFactoryProvider,
   isBuiltinBlocktypeDefinition,
   isBuiltinConstrainttypeDefinition,
   isPropertyAssignment,
 } from '../ast';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
+import { type JayveeServices } from '../jayvee-module';
 
 export class JayveeHoverProvider extends AstNodeHoverProvider {
+  protected readonly wrapperFactories: WrapperFactoryProvider;
+
+  constructor(services: JayveeServices) {
+    super(services);
+    this.wrapperFactories = services.WrapperFactories;
+  }
+
   override getAstNodeHoverContent(
     astNode: AstNode,
   ): MaybePromise<Hover | undefined> {
@@ -48,10 +54,10 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   private getBlockTypeMarkdownDoc(
     blockTypeDefinition: BuiltinBlocktypeDefinition,
   ): string | undefined {
-    if (!BlockTypeWrapper.canBeWrapped(blockTypeDefinition)) {
+    if (!this.wrapperFactories.BlockType.canWrap(blockTypeDefinition)) {
       return;
     }
-    const blockType = new BlockTypeWrapper(blockTypeDefinition);
+    const blockType = this.wrapperFactories.BlockType.wrap(blockTypeDefinition);
 
     const lspDocBuilder = new LspDocGenerator();
     return lspDocBuilder.generateBlockTypeDoc(blockType);
@@ -60,10 +66,14 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   private getConstraintTypeMarkdownDoc(
     constraintTypeDefinition: BuiltinConstrainttypeDefinition,
   ): string | undefined {
-    if (!ConstraintTypeWrapper.canBeWrapped(constraintTypeDefinition)) {
+    if (
+      !this.wrapperFactories.ConstraintType.canWrap(constraintTypeDefinition)
+    ) {
       return;
     }
-    const constraintType = new ConstraintTypeWrapper(constraintTypeDefinition);
+    const constraintType = this.wrapperFactories.ConstraintType.wrap(
+      constraintTypeDefinition,
+    );
 
     const lspDocBuilder = new LspDocGenerator();
     return lspDocBuilder.generateConstraintTypeDoc(constraintType);
@@ -73,7 +83,7 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
     property: PropertyAssignment,
   ): string | undefined {
     const container = property.$container.$container;
-    const wrapper = getTypedObjectWrapper(container.type);
+    const wrapper = this.wrapperFactories.TypedObject.wrap(container.type);
     if (wrapper === undefined) {
       return;
     }

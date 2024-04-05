@@ -5,13 +5,10 @@
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import {
-  PipeDefinition,
-  ValidationContext,
-  createJayveeServices,
-} from '../../../lib';
+import { PipeDefinition, createJayveeServices } from '../../../lib';
 import {
   ParseHelperOptions,
+  createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
@@ -44,7 +41,10 @@ describe('Validation of PipeDefinition', () => {
       'pipelines@0/pipes@0',
     ) as PipeDefinition;
 
-    validatePipeDefinition(pipe, new ValidationContext(validationAcceptorMock));
+    validatePipeDefinition(
+      pipe,
+      createJayveeValidationProps(validationAcceptorMock),
+    );
   }
 
   beforeAll(() => {

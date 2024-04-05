@@ -21,6 +21,7 @@ describe('Validation of docs examples of ConstraintTypes', () => {
 
     const allConstraintTypes = getAllBuiltinConstraintTypes(
       services.shared.workspace.LangiumDocuments,
+      services.WrapperFactories,
     );
     expect(allConstraintTypes.length).toBeGreaterThan(0);
 

@@ -5,13 +5,10 @@
 import { AstNode, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import {
-  JayveeModel,
-  ValidationContext,
-  createJayveeServices,
-} from '../../../lib';
+import { JayveeModel, createJayveeServices } from '../../../lib';
 import {
   ParseHelperOptions,
+  createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
@@ -41,7 +38,7 @@ describe('Validation of JayveeModel', () => {
 
     validateJayveeModel(
       jayveeModel,
-      new ValidationContext(validationAcceptorMock),
+      createJayveeValidationProps(validationAcceptorMock),
     );
   }
 

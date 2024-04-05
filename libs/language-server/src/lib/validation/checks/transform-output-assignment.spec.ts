@@ -5,15 +5,10 @@
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import {
-  EvaluationContext,
-  RuntimeParameterProvider,
-  TransformOutputAssignment,
-  ValidationContext,
-  createJayveeServices,
-} from '../../../lib';
+import { TransformOutputAssignment, createJayveeServices } from '../../../lib';
 import {
   ParseHelperOptions,
+  createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
@@ -49,8 +44,7 @@ describe('Validation of TransformOutputAssignment', () => {
 
     validateTransformOutputAssignment(
       transformOutputAssignment,
-      new ValidationContext(validationAcceptorMock),
-      new EvaluationContext(new RuntimeParameterProvider()),
+      createJayveeValidationProps(validationAcceptorMock),
     );
   }
 

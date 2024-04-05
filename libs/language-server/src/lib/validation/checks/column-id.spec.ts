@@ -5,13 +5,10 @@
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import {
-  ColumnId,
-  ValidationContext,
-  createJayveeServices,
-} from '../../../lib';
+import { ColumnId, createJayveeServices } from '../../../lib';
 import {
   ParseHelperOptions,
+  createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
@@ -44,7 +41,10 @@ describe('Validation of ColumnId', () => {
       'pipelines@0/blocks@0/body/properties@0/value/columnId',
     ) as ColumnId;
 
-    validateColumnId(columnId, new ValidationContext(validationAcceptorMock));
+    validateColumnId(
+      columnId,
+      createJayveeValidationProps(validationAcceptorMock),
+    );
   }
 
   beforeAll(() => {

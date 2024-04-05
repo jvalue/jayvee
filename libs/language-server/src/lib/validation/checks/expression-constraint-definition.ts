@@ -7,35 +7,32 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { EvaluationContext } from '../../ast/expressions/evaluation';
 import { inferExpressionType } from '../../ast/expressions/type-inference';
 import { ExpressionConstraintDefinition } from '../../ast/generated/ast';
 import { PrimitiveValuetypes } from '../../ast/wrappers/value-type/primitive/primitive-valuetypes';
-import { ValidationContext } from '../validation-context';
+import { type JayveeValidationProps } from '../validation-registry';
 import { checkExpressionSimplification } from '../validation-util';
 
 export function validateExpressionConstraintDefinition(
   constraint: ExpressionConstraintDefinition,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
+  props: JayveeValidationProps,
 ): void {
-  checkConstraintExpression(constraint, validationContext, evaluationContext);
+  checkConstraintExpression(constraint, props);
 }
 
 function checkConstraintExpression(
   constraint: ExpressionConstraintDefinition,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
+  props: JayveeValidationProps,
 ): void {
   const expression = constraint?.expression;
-  const inferredType = inferExpressionType(expression, validationContext);
+  const inferredType = inferExpressionType(expression, props.validationContext);
   if (inferredType === undefined) {
     return;
   }
 
   const expectedType = PrimitiveValuetypes.Boolean;
   if (!inferredType.isConvertibleTo(expectedType)) {
-    validationContext.accept(
+    props.validationContext.accept(
       'error',
       `The value needs to be of type ${expectedType.getName()} but is of type ${inferredType.getName()}`,
       {
@@ -45,9 +42,5 @@ function checkConstraintExpression(
     return;
   }
 
-  checkExpressionSimplification(
-    expression,
-    validationContext,
-    evaluationContext,
-  );
+  checkExpressionSimplification(expression, props);
 }

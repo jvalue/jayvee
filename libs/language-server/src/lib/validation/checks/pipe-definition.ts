@@ -8,52 +8,70 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
 import { PipeDefinition } from '../../ast/generated/ast';
-import { createWrappersFromPipeChain } from '../../ast/wrappers/pipe-wrapper';
-import { BlockTypeWrapper } from '../../ast/wrappers/typed-object/blocktype-wrapper';
-import { ValidationContext } from '../validation-context';
+import { type JayveeValidationProps } from '../validation-registry';
 
 export function validatePipeDefinition(
   pipe: PipeDefinition,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
-  checkBlockCompatibility(pipe, context);
+  checkBlockCompatibility(pipe, props);
 }
 
 function checkBlockCompatibility(
   pipe: PipeDefinition,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
-  const pipeWrappers = createWrappersFromPipeChain(pipe);
+  const pipeWrappers = props.wrapperFactories.Pipe.wrapAll(pipe);
   for (const pipeWrapper of pipeWrappers) {
     const fromBlockTypeDefinition = pipeWrapper.from?.type;
     const toBlockTypeDefinition = pipeWrapper.to?.type;
 
     if (
-      !BlockTypeWrapper.canBeWrapped(fromBlockTypeDefinition) ||
-      !BlockTypeWrapper.canBeWrapped(toBlockTypeDefinition)
+      !props.wrapperFactories.BlockType.canWrap(fromBlockTypeDefinition) ||
+      !props.wrapperFactories.BlockType.canWrap(toBlockTypeDefinition)
     ) {
       continue;
     }
-    const fromBlockType = new BlockTypeWrapper(fromBlockTypeDefinition);
-    const toBlockType = new BlockTypeWrapper(toBlockTypeDefinition);
+    const fromBlockType = props.wrapperFactories.BlockType.wrap(
+      fromBlockTypeDefinition,
+    );
+    const toBlockType = props.wrapperFactories.BlockType.wrap(
+      toBlockTypeDefinition,
+    );
 
     const isFromBlockLoader = !fromBlockType.hasOutput();
     const isToBlockExtractor = !toBlockType.hasInput();
 
     if (isFromBlockLoader) {
       const errorMessage = `Block "${pipeWrapper.from?.name}" cannot be connected to other blocks. Its blocktype "${fromBlockType.astNode.name}" has output type "${fromBlockType.outputType}".`;
-      context.accept('error', errorMessage, pipeWrapper.getFromDiagnostic());
+      props.validationContext.accept(
+        'error',
+        errorMessage,
+        pipeWrapper.getFromDiagnostic(),
+      );
     }
 
     if (isToBlockExtractor) {
       const errorMessage = `Block "${pipeWrapper.to?.name}" cannot be connected to from other blocks. Its blocktype "${toBlockType.astNode.name}" has input type "${toBlockType.inputType}".`;
-      context.accept('error', errorMessage, pipeWrapper.getToDiagnostic());
+      props.validationContext.accept(
+        'error',
+        errorMessage,
+        pipeWrapper.getToDiagnostic(),
+      );
     }
 
     if (!fromBlockType.canBeConnectedTo(toBlockType)) {
       const errorMessage = `The output type "${fromBlockType.outputType}" of block "${pipeWrapper.from?.name}" (of type "${fromBlockType.astNode.name}") is not compatible with the input type "${toBlockType.inputType}" of block "${pipeWrapper.to?.name}" (of type "${toBlockType.astNode.name}")`;
-      context.accept('error', errorMessage, pipeWrapper.getFromDiagnostic());
-      context.accept('error', errorMessage, pipeWrapper.getToDiagnostic());
+      props.validationContext.accept(
+        'error',
+        errorMessage,
+        pipeWrapper.getFromDiagnostic(),
+      );
+      props.validationContext.accept(
+        'error',
+        errorMessage,
+        pipeWrapper.getToDiagnostic(),
+      );
     }
   }
 }

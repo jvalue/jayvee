@@ -23,80 +23,8 @@ import {
 } from '../generated/ast';
 
 import { AstNodeWrapper } from './ast-node-wrapper';
-import {
-  columnCharactersAsIndex,
-  columnIndexAsCharacters,
-} from './util/column-id-util';
-
-export const LAST_INDEX = Number.MAX_SAFE_INTEGER;
-
-export class CellIndex {
-  constructor(
-    public readonly columnIndex: number,
-    public readonly rowIndex: number,
-  ) {}
-
-  toString(): string {
-    return `${columnIndexToString(this.columnIndex)}${rowIndexToString(
-      this.rowIndex,
-    )}`;
-  }
-
-  hasRelativeIndexes(): boolean {
-    return this.columnIndex === LAST_INDEX || this.rowIndex === LAST_INDEX;
-  }
-
-  resolveRelativeIndexes(bounds: CellIndexBounds): CellIndex {
-    let columnIndex = this.columnIndex;
-    if (columnIndex === LAST_INDEX) {
-      columnIndex = bounds.lastColumnIndex;
-    }
-    let rowIndex = this.rowIndex;
-    if (rowIndex === LAST_INDEX) {
-      rowIndex = bounds.lastRowIndex;
-    }
-    return new CellIndex(columnIndex, rowIndex);
-  }
-
-  isInBounds(bounds: CellIndexBounds): boolean {
-    const columnInBounds = this.isIndexInBounds(
-      this.columnIndex,
-      bounds.lastColumnIndex,
-    );
-    const rowInBounds = this.isIndexInBounds(
-      this.rowIndex,
-      bounds.lastRowIndex,
-    );
-
-    return columnInBounds && rowInBounds;
-  }
-
-  private isIndexInBounds(index: number, max: number): boolean {
-    if (max < 0) {
-      return false;
-    }
-    return index === LAST_INDEX || index <= max;
-  }
-}
-
-export function columnIndexToString(columnIndex: number): string {
-  if (columnIndex === LAST_INDEX) {
-    return '*';
-  }
-  return columnIndexAsCharacters(columnIndex);
-}
-
-export function rowIndexToString(rowIndex: number): string {
-  if (rowIndex === LAST_INDEX) {
-    return '*';
-  }
-  return `${rowIndex + 1}`;
-}
-
-export interface CellIndexBounds {
-  lastColumnIndex: number;
-  lastRowIndex: number;
-}
+import { CellIndex, CellIndexBounds, LAST_INDEX } from './util/cell-index';
+import { columnCharactersAsIndex } from './util/column-id-util';
 
 export class CellRangeWrapper<N extends CellRangeLiteral = CellRangeLiteral>
   implements AstNodeWrapper<N>
@@ -204,72 +132,8 @@ export class CellRangeWrapper<N extends CellRangeLiteral = CellRangeLiteral>
 }
 
 export type ColumnWrapper = CellRangeWrapper<ColumnLiteral | RangeLiteral>;
-
-export function isColumnWrapper(
-  cellRange: CellRangeWrapper,
-): cellRange is ColumnWrapper {
-  if (isColumnLiteral(cellRange.astNode)) {
-    return true;
-  }
-  if (isRangeLiteral(cellRange.astNode)) {
-    return (
-      cellRange.from.columnIndex === cellRange.to.columnIndex &&
-      cellRange.from.rowIndex === 0 &&
-      cellRange.to.rowIndex === LAST_INDEX
-    );
-  }
-  return false;
-}
-
-export function getColumnIndex(column: ColumnWrapper): number {
-  assert(isColumnWrapper(column));
-  return column.from.columnIndex;
-}
-
 export type RowWrapper = CellRangeWrapper<RowLiteral | RangeLiteral>;
-
-export function isRowWrapper(
-  cellRange: CellRangeWrapper,
-): cellRange is RowWrapper {
-  if (isRowLiteral(cellRange.astNode)) {
-    return true;
-  }
-  if (isRangeLiteral(cellRange.astNode)) {
-    return (
-      cellRange.from.rowIndex === cellRange.to.rowIndex &&
-      cellRange.from.columnIndex === 0 &&
-      cellRange.to.columnIndex === LAST_INDEX
-    );
-  }
-  return false;
-}
-
-export function getRowIndex(row: RowWrapper): number {
-  assert(isRowWrapper(row));
-  return row.from.rowIndex;
-}
-
 export type CellWrapper = CellRangeWrapper<CellLiteral | RangeLiteral>;
-
-export function isCellWrapper(
-  cellRange: CellRangeWrapper,
-): cellRange is CellWrapper {
-  if (isCellLiteral(cellRange.astNode)) {
-    return true;
-  }
-  if (isRangeLiteral(cellRange.astNode)) {
-    return (
-      cellRange.from.columnIndex === cellRange.to.columnIndex &&
-      cellRange.from.rowIndex === cellRange.to.rowIndex
-    );
-  }
-  return false;
-}
-
-export function getCellIndex(cell: CellWrapper): CellIndex {
-  assert(isCellWrapper(cell));
-  return cell.from;
-}
 
 function isCompleteCellReference(
   cellReference: string | CellReference | undefined,

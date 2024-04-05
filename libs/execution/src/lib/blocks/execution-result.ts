@@ -21,17 +21,17 @@ export type Err = E.Left<ExecutionErrorDetails>;
 export type Ok<T> = E.Right<T>;
 
 /**
- * Creates an @Ok object from a data object typed T.
+ * Creates an @see Ok object from a data object typed T.
  * @param data the data object
- * @returns the created @Ok object
+ * @returns the created @see Ok object
  */
 export function ok<T>(data: T): Result<T> {
   return E.right(data);
 }
 /**
- * Creates an @Err object from a @ExecutionErrorDetails object.
- * @param details the @ExecutionErrorDetails object
- * @returns the created @Err object
+ * Creates an @see Err object from a @see ExecutionErrorDetails object.
+ * @param details the @see ExecutionErrorDetails object
+ * @returns the created @see Err object
  */
 export function err<T>(details: ExecutionErrorDetails): Result<T> {
   return E.left(details);

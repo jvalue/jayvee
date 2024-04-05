@@ -8,12 +8,12 @@ import { Reference, isReference } from 'langium';
 
 import { RuntimeParameterProvider } from '../../../services';
 // eslint-disable-next-line import/no-cycle
-import {
-  EvaluationContext,
-  evaluateExpression,
-} from '../../expressions/evaluation';
+import { evaluateExpression } from '../../expressions/evaluate-expression';
+import { EvaluationContext } from '../../expressions/evaluation-context';
+import { type OperatorEvaluatorRegistry } from '../../expressions/operator-registry';
 import { BuiltinConstrainttypeDefinition } from '../../generated/ast';
 import { Valuetype, createValuetype } from '../value-type';
+import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
 
 import {
   ExampleDoc,
@@ -30,10 +30,18 @@ export class ConstraintTypeWrapper extends TypedObjectWrapper<BuiltinConstraintt
   docs: ConstraintDocs = {};
   readonly on: Valuetype;
 
+  /**
+   * Creates a ConstraintTypeWrapper if possible. Otherwise, throws error.
+   * Use @see canBeWrapped to check whether wrapping will be successful.
+   *
+   * Use @see WrapperFactoryProvider for instantiation instead of calling this constructor directly.
+   */
   constructor(
     toBeWrapped:
       | BuiltinConstrainttypeDefinition
       | Reference<BuiltinConstrainttypeDefinition>,
+    operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
+    wrapperFactories: WrapperFactoryProvider,
   ) {
     const constraintTypeDefinition = isReference(toBeWrapped)
       ? toBeWrapped.ref
@@ -53,7 +61,11 @@ export class ConstraintTypeWrapper extends TypedObjectWrapper<BuiltinConstraintt
 
       const defaultValue = evaluateExpression(
         property.defaultValue,
-        new EvaluationContext(new RuntimeParameterProvider()),
+        new EvaluationContext(
+          new RuntimeParameterProvider(),
+          operatorEvaluatorRegistry,
+        ),
+        wrapperFactories,
       );
       if (defaultValue !== undefined) {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

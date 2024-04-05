@@ -6,15 +6,14 @@ import { strict as assert } from 'assert';
 
 import {
   BlockDefinition,
-  BlockTypeWrapper,
   ConstraintDefinition,
-  ConstraintTypeWrapper,
   EvaluationContext,
   InternalValueRepresentation,
   PipelineDefinition,
   PropertyAssignment,
   TransformDefinition,
   Valuetype,
+  type WrapperFactoryProvider,
   evaluatePropertyValue,
   isBlockDefinition,
   isExpressionConstraintDefinition,
@@ -46,6 +45,7 @@ export class ExecutionContext {
     public readonly executionExtension: JayveeExecExtension,
     public readonly constraintExtension: JayveeConstraintExtension,
     public readonly logger: Logger,
+    public readonly wrapperFactories: WrapperFactoryProvider,
     public readonly runOptions: {
       isDebugMode: boolean;
       debugGranularity: DebugGranularity;
@@ -99,6 +99,7 @@ export class ExecutionContext {
     const propertyValue = evaluatePropertyValue(
       property,
       this.evaluationContext,
+      this.wrapperFactories,
       valuetype,
     );
     assert(propertyValue !== undefined);
@@ -152,21 +153,9 @@ export class ExecutionContext {
 
     assert(isReference(currentNode.type));
     if (isTypedConstraintDefinition(currentNode)) {
-      assert(
-        ConstraintTypeWrapper.canBeWrapped(currentNode.type),
-        `ConstraintType ${
-          currentNode.type.ref?.name ?? '<unresolved reference>'
-        } cannot be wrapped`,
-      );
-      return new ConstraintTypeWrapper(currentNode.type);
+      return this.wrapperFactories.ConstraintType.wrap(currentNode.type);
     } else if (isBlockDefinition(currentNode)) {
-      assert(
-        BlockTypeWrapper.canBeWrapped(currentNode.type),
-        `Blocktype ${
-          currentNode.type.ref?.name ?? '<unresolved reference>'
-        } cannot be wrapped`,
-      );
-      return new BlockTypeWrapper(currentNode.type);
+      return this.wrapperFactories.BlockType.wrap(currentNode.type);
     }
     assertUnreachable(currentNode);
   }

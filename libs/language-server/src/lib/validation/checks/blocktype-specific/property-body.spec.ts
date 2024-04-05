@@ -5,16 +5,10 @@
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import {
-  EvaluationContext,
-  PropertyBody,
-  RuntimeParameterProvider,
-  ValidationContext,
-  createJayveeServices,
-  getTypedObjectWrapper,
-} from '../../..';
+import { PropertyBody, createJayveeServices } from '../../..';
 import {
   ParseHelperOptions,
+  createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
@@ -47,14 +41,14 @@ describe('Validation of blocktype specific property bodies', () => {
       'pipelines@0/blocks@0/body',
     ) as PropertyBody;
 
-    const wrapper = getTypedObjectWrapper(propertyBody.$container.type);
+    const props = createJayveeValidationProps(validationAcceptorMock);
+
+    const wrapper = props.wrapperFactories.TypedObject.wrap(
+      propertyBody.$container.type,
+    );
     expect(wrapper).toBeDefined();
 
-    checkBlocktypeSpecificPropertyBody(
-      propertyBody,
-      new ValidationContext(validationAcceptorMock),
-      new EvaluationContext(new RuntimeParameterProvider()),
-    );
+    checkBlocktypeSpecificPropertyBody(propertyBody, props);
   }
 
   beforeAll(() => {

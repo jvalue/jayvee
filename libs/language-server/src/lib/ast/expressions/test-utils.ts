@@ -8,9 +8,12 @@ import { parseHelper } from '../../../test/langium-utils';
 import { createJayveeServices } from '../../jayvee-module';
 import { RuntimeParameterProvider } from '../../services';
 import { TransformDefinition } from '../generated/ast';
+import { WrapperFactoryProvider } from '../wrappers';
 
-import { EvaluationContext, evaluateExpression } from './evaluation';
+import { evaluateExpression } from './evaluate-expression';
+import { EvaluationContext } from './evaluation-context';
 import { InternalValueRepresentation } from './internal-value-representation';
+import { DefaultOperatorEvaluatorRegistry } from './operator-registry';
 
 export async function executeDefaultTextToTextExpression(
   expression: string,
@@ -51,7 +54,11 @@ export async function executeExpressionTestHelper(
   ) as TransformDefinition;
 
   const runTimeParameterProvider = new RuntimeParameterProvider();
-  const evaluationContext = new EvaluationContext(runTimeParameterProvider);
+  const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
+  const evaluationContext = new EvaluationContext(
+    runTimeParameterProvider,
+    new DefaultOperatorEvaluatorRegistry(),
+  );
 
   evaluationContext.setValueForReference(inputValueName, inputValueValue);
 
@@ -59,5 +66,6 @@ export async function executeExpressionTestHelper(
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     transform.body.outputAssignments[0]!.expression,
     evaluationContext,
+    new WrapperFactoryProvider(operatorEvaluatorRegistry),
   );
 }

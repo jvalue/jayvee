@@ -3,9 +3,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
+  DefaultOperatorEvaluatorRegistry,
   EvaluationContext,
   PipelineDefinition,
   RuntimeParameterProvider,
+  WrapperFactoryProvider,
 } from '@jvalue/jayvee-language-server';
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 
@@ -55,13 +57,19 @@ export function getTestExecutionContext(
     'pipelines@0',
   ) as PipelineDefinition;
 
+  const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
+
   const executionContext = new ExecutionContext(
     pipeline,
     new TestExecExtension(),
     new DefaultConstraintExtension(),
     new CachedLogger(runOptions.isDebugMode, undefined, loggerPrintLogs),
+    new WrapperFactoryProvider(operatorEvaluatorRegistry),
     runOptions,
-    new EvaluationContext(new RuntimeParameterProvider()),
+    new EvaluationContext(
+      new RuntimeParameterProvider(),
+      operatorEvaluatorRegistry,
+    ),
   );
 
   initialStack.forEach((node) => executionContext.enterNode(node));

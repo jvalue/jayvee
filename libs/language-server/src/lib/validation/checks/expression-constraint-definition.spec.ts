@@ -6,14 +6,12 @@ import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  EvaluationContext,
   ExpressionConstraintDefinition,
-  RuntimeParameterProvider,
-  ValidationContext,
   createJayveeServices,
 } from '../../../lib';
 import {
   ParseHelperOptions,
+  createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
@@ -49,8 +47,7 @@ describe('Validation of ConstraintDefinition (expression syntax)', () => {
 
     validateExpressionConstraintDefinition(
       expressionConstraint,
-      new ValidationContext(validationAcceptorMock),
-      new EvaluationContext(new RuntimeParameterProvider()),
+      createJayveeValidationProps(validationAcceptorMock),
     );
   }
 

@@ -2,33 +2,31 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { BlockTypeWrapper, PipelineWrapper } from '../../ast';
-import { EvaluationContext } from '../../ast/expressions/evaluation';
+import { PipelineWrapper } from '../../ast';
 import {
   BlockDefinition,
   CompositeBlocktypeDefinition,
 } from '../../ast/generated/ast';
-import { ValidationContext } from '../validation-context';
+import { type JayveeValidationProps } from '../validation-registry';
 
 import { validateBlocktypeDefinition } from './blocktype-definition';
 import { checkMultipleBlockInputs } from './pipeline-definition';
 
 export function validateCompositeBlockTypeDefinition(
   blockType: CompositeBlocktypeDefinition,
-  validationContext: ValidationContext,
-  evaluationContext: EvaluationContext,
+  props: JayveeValidationProps,
 ): void {
-  validateBlocktypeDefinition(blockType, validationContext, evaluationContext);
-  checkHasPipeline(blockType, validationContext);
-  checkExactlyOnePipeline(blockType, validationContext);
+  validateBlocktypeDefinition(blockType, props);
+  checkHasPipeline(blockType, props);
+  checkExactlyOnePipeline(blockType, props);
 
-  checkMultipleBlockInputs(blockType, validationContext);
-  checkDefinedBlocksAreUsed(blockType, validationContext);
+  checkMultipleBlockInputs(blockType, props);
+  checkDefinedBlocksAreUsed(blockType, props);
 }
 
 function checkHasPipeline(
   blockType: CompositeBlocktypeDefinition,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (blockType.pipes === undefined) {
@@ -36,7 +34,7 @@ function checkHasPipeline(
   }
 
   if (blockType.pipes.length === 0) {
-    context.accept(
+    props.validationContext.accept(
       'error',
       `Composite blocktypes must define one pipeline '${blockType.name}'`,
       {
@@ -49,7 +47,7 @@ function checkHasPipeline(
 
 function checkExactlyOnePipeline(
   blockType: CompositeBlocktypeDefinition,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (blockType.pipes === undefined) {
@@ -58,7 +56,7 @@ function checkExactlyOnePipeline(
 
   if (blockType.pipes.length > 1) {
     blockType.pipes.forEach((pipe) => {
-      context.accept(
+      props.validationContext.accept(
         'error',
         `Found more than one pipeline definition in composite blocktype '${blockType.name}'`,
         {
@@ -71,12 +69,13 @@ function checkExactlyOnePipeline(
 
 export function checkDefinedBlocksAreUsed(
   blocktypeDefinition: CompositeBlocktypeDefinition,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
-  if (!PipelineWrapper.canBeWrapped(blocktypeDefinition)) {
+  if (!props.wrapperFactories.Pipeline.canWrap(blocktypeDefinition)) {
     return;
   }
-  const pipelineWrapper = new PipelineWrapper(blocktypeDefinition);
+  const pipelineWrapper =
+    props.wrapperFactories.Pipeline.wrap(blocktypeDefinition);
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (blocktypeDefinition.blocks === undefined) {
@@ -85,17 +84,20 @@ export function checkDefinedBlocksAreUsed(
 
   const containedBlocks = blocktypeDefinition.blocks;
   for (const block of containedBlocks) {
-    doCheckDefinedBlockIsUsed(pipelineWrapper, block, context);
+    doCheckDefinedBlockIsUsed(pipelineWrapper, block, props);
   }
 }
 
 function doCheckDefinedBlockIsUsed(
   pipelineWrapper: PipelineWrapper<CompositeBlocktypeDefinition>,
   block: BlockDefinition,
-  context: ValidationContext,
+  props: JayveeValidationProps,
 ): void {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (block.type === undefined || !BlockTypeWrapper.canBeWrapped(block.type)) {
+  if (
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    block.type === undefined ||
+    !props.wrapperFactories.BlockType.canWrap(block.type)
+  ) {
     return;
   }
   const pipes = pipelineWrapper.astNode.pipes;
@@ -108,7 +110,7 @@ function doCheckDefinedBlockIsUsed(
   if (!isConnectedToInput) {
     const parents = pipelineWrapper.getParentBlocks(block);
     if (parents.length === 0) {
-      context.accept(
+      props.validationContext.accept(
         'warning',
         `A pipe should be connected to the input of this block`,
         {
@@ -127,7 +129,7 @@ function doCheckDefinedBlockIsUsed(
   if (!isConnectedToOutput) {
     const children = pipelineWrapper.getChildBlocks(block);
     if (children.length === 0) {
-      context.accept(
+      props.validationContext.accept(
         'warning',
         `A pipe should be connected to the output of this block`,
         {

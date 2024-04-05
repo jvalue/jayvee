@@ -7,12 +7,12 @@ import { NodeFileSystem } from 'langium/node';
 
 import {
   TypedConstraintDefinition,
-  ValidationContext,
   createJayveeServices,
   initializeWorkspace,
 } from '../../../lib';
 import {
   ParseHelperOptions,
+  createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
@@ -47,7 +47,7 @@ describe('Validation of ConstraintDefinition (typed syntax)', () => {
 
     validateTypedConstraintDefinition(
       typedConstraint,
-      new ValidationContext(validationAcceptorMock),
+      createJayveeValidationProps(validationAcceptorMock),
     );
   }
 
