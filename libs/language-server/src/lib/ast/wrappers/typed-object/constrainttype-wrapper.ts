@@ -40,7 +40,7 @@ export class ConstraintTypeWrapper extends TypedObjectWrapper<BuiltinConstraintt
     toBeWrapped:
       | BuiltinConstrainttypeDefinition
       | Reference<BuiltinConstrainttypeDefinition>,
-    operatorEvaluatiorRegistry: OperatorEvaluatorRegistry,
+    operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
     wrapperFactories: WrapperFactoryProvider,
   ) {
     const constraintTypeDefinition = isReference(toBeWrapped)
@@ -63,7 +63,7 @@ export class ConstraintTypeWrapper extends TypedObjectWrapper<BuiltinConstraintt
         property.defaultValue,
         new EvaluationContext(
           new RuntimeParameterProvider(),
-          operatorEvaluatiorRegistry,
+          operatorEvaluatorRegistry,
         ),
         wrapperFactories,
       );

@@ -45,7 +45,7 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlocktypeD
     toBeWrapped:
       | ReferenceableBlocktypeDefinition
       | Reference<ReferenceableBlocktypeDefinition>,
-    operatorEvaluatiorRegistry: OperatorEvaluatorRegistry,
+    operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
     wrapperFactories: WrapperFactoryProvider,
   ) {
     const blocktypeDefinition = isReference(toBeWrapped)
@@ -68,7 +68,7 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlocktypeD
         property.defaultValue,
         new EvaluationContext(
           new RuntimeParameterProvider(),
-          operatorEvaluatiorRegistry,
+          operatorEvaluatorRegistry,
         ),
         wrapperFactories,
       );

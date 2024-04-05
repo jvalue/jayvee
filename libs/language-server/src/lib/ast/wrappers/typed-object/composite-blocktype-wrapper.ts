@@ -18,10 +18,10 @@ export class CompositeBlocktypeWrapper extends BlockTypeWrapper {
    */
   constructor(
     private blockTypeDefinition: CompositeBlocktypeDefinition,
-    operatorEvaluatiorRegistry: OperatorEvaluatorRegistry,
+    operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
     wrapperFactories: WrapperFactoryProvider,
   ) {
-    super(blockTypeDefinition, operatorEvaluatiorRegistry, wrapperFactories);
+    super(blockTypeDefinition, operatorEvaluatorRegistry, wrapperFactories);
   }
 
   override getMissingRequiredPropertyNames(
