@@ -22,6 +22,7 @@ import { InOperatorEvaluator } from './evaluators/in-operator-evaluator';
 import { InequalityOperatorEvaluator } from './evaluators/inequality-operator-evaluator';
 import { LessEqualOperatorEvaluator } from './evaluators/less-equal-operator-evaluator';
 import { LessThanOperatorEvaluator } from './evaluators/less-than-operator-evaluator';
+import { LowercaseOperatorEvaluator } from './evaluators/lowercase-operator-evaluator';
 import { MatchesOperatorEvaluator } from './evaluators/matches-operator-evaluator';
 import { MinusOperatorEvaluator } from './evaluators/minus-operator-evaluator';
 import { ModuloOperatorEvaluator } from './evaluators/modulo-operator-evaluator';
@@ -35,6 +36,7 @@ import { RootOperatorEvaluator } from './evaluators/root-operator-evaluator';
 import { RoundOperatorEvaluator } from './evaluators/round-operator-evaluator';
 import { SqrtOperatorEvaluator } from './evaluators/sqrt-operator-evaluator';
 import { SubtractionOperatorEvaluator } from './evaluators/subtraction-operator-evaluator';
+import { UppercaseOperatorEvaluator } from './evaluators/uppercase-operator-evaluator';
 import { XorOperatorEvaluator } from './evaluators/xor-operator-evaluator';
 import { type OperatorEvaluator } from './operator-evaluator';
 import {
@@ -60,6 +62,7 @@ import { RelationalOperatorTypeComputer } from './type-computers/relational-oper
 import { ReplaceOperatorTypeComputer } from './type-computers/replace-operator-type-computer';
 import { SignOperatorTypeComputer } from './type-computers/sign-operator-type-computer';
 import { SqrtOperatorTypeComputer } from './type-computers/sqrt-operator-type-computer';
+import { StringTransformTypeComputer } from './type-computers/string-transform-type-computer';
 
 export interface OperatorEvaluatorRegistry {
   unary: Record<UnaryExpressionOperator, OperatorEvaluator<UnaryExpression>>;
@@ -87,6 +90,8 @@ export class DefaultOperatorEvaluatorRegistry
     floor: new FloorOperatorEvaluator(),
     ceil: new CeilOperatorEvaluator(),
     round: new RoundOperatorEvaluator(),
+    lowercase: new LowercaseOperatorEvaluator(),
+    uppercase: new UppercaseOperatorEvaluator(),
   };
   binary = {
     pow: new PowOperatorEvaluator(),
@@ -124,6 +129,8 @@ export class DefaultOperatorTypeComputerRegistry
     floor: new IntegerConversionOperatorTypeComputer(),
     ceil: new IntegerConversionOperatorTypeComputer(),
     round: new IntegerConversionOperatorTypeComputer(),
+    lowercase: new StringTransformTypeComputer(),
+    uppercase: new StringTransformTypeComputer(),
   };
   binary = {
     pow: new ExponentialOperatorTypeComputer(),
