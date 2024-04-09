@@ -54,7 +54,7 @@ block GasReserveHttpExtractor oftype HttpExtractor {
 
 In the example above, the `url` property of type `text` is defined by the corresponding `HttpExtractor` _block type_.
 
-_Blocks_ can be either defined as part of the language, called _built-in_ or defined as composition of existing _blocks_ by users in Jayvee, called _composite block types_. See the documentation for [_composite block types_](./composite-blocks.md).
+_Blocks_ can be either defined as part of the language, called _built-in_ or defined as composition of existing _blocks_ by users in Jayvee, called _composite block types_. See the documentation for [_composite block types_](./composite-block-types.md).
 
 ## Value types
 
