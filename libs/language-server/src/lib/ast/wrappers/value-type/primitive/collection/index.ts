@@ -4,11 +4,11 @@
 
 // eslint-disable-next-line import/no-cycle
 export {
-  CollectionValuetype,
-  isCollectionValuetype,
-} from './collection-valuetype';
+  CollectionValueType as CollectionValuetype,
+  isCollectionValueType as isCollectionValuetype,
+} from './collection-value-type';
 
 export {
-  type EmptyCollectionValuetype,
-  isEmptyCollectionValuetype,
-} from './empty-collection-valuetype';
+  type EmptyCollectionValueType as EmptyCollectionValuetype,
+  isEmptyCollectionValueType as isEmptyCollectionValuetype,
+} from './empty-collection-value-type';

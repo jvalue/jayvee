@@ -10,12 +10,12 @@ import { type EvaluationContext } from '../../expressions/evaluation-context';
 import { InternalValueRepresentation } from '../../expressions/internal-value-representation';
 import { PropertyAssignment, PropertyBody } from '../../generated/ast';
 import { AstNodeWrapper } from '../ast-node-wrapper';
-import { Valuetype } from '../value-type';
+import { ValueType } from '../value-type';
 
 export interface PropertySpecification<
   I extends InternalValueRepresentation = InternalValueRepresentation,
 > {
-  type: Valuetype<I>;
+  type: ValueType<I>;
   defaultValue?: I;
   validation?: (
     property: PropertyAssignment,

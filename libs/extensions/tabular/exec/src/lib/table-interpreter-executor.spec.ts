@@ -160,8 +160,8 @@ describe('Validation of TableInterpreterExecutor', () => {
       }
     });
 
-    it('should diagnose skipping row on wrong cell valuetype', async () => {
-      const text = readJvTestAsset('valid-wrong-valuetype-with-header.jv');
+    it('should diagnose skipping row on wrong cell value type', async () => {
+      const text = readJvTestAsset('valid-wrong-value-type-with-header.jv');
 
       const testWorkbook = await readTestWorkbook('test-with-header.xlsx');
       const result = await parseAndExecuteExecutor(
@@ -277,8 +277,8 @@ describe('Validation of TableInterpreterExecutor', () => {
       }
     });
 
-    it('should diagnose skipping row on wrong cell valuetype', async () => {
-      const text = readJvTestAsset('valid-wrong-valuetype-without-header.jv');
+    it('should diagnose skipping row on wrong cell value type', async () => {
+      const text = readJvTestAsset('valid-wrong-value-type-without-header.jv');
 
       const testWorkbook = await readTestWorkbook('test-without-header.xlsx');
       const result = await parseAndExecuteExecutor(

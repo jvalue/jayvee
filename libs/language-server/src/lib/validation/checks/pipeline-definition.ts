@@ -18,7 +18,7 @@ export function validatePipelineDefinition(
   checkStartingBlocks(pipeline, props);
   checkUniqueNames(pipeline.blocks, props.validationContext);
   checkUniqueNames(pipeline.transforms, props.validationContext);
-  checkUniqueNames(pipeline.valuetypes, props.validationContext);
+  checkUniqueNames(pipeline.valueTypes, props.validationContext);
   checkUniqueNames(pipeline.constraints, props.validationContext);
 
   checkMultipleBlockInputs(pipeline, props);

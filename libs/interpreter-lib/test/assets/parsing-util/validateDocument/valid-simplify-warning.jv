@@ -28,5 +28,5 @@ builtin blocktype TestProperty {
   property booleanProperty oftype boolean: false;
   property regexProperty oftype Regex: /\r?\n/;
   property textCollectionProperty oftype Collection<text>: [];
-  property valuetypeAssignmentProperty oftype ValuetypeAssignment: "test" oftype text;
+  property valueTypeAssignmentProperty oftype ValuetypeAssignment: "test" oftype text;
 }

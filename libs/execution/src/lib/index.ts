@@ -8,7 +8,7 @@ export * from './transforms';
 export * from './types';
 export * from './util';
 export * from './debugging';
-export * from './types/valuetypes/visitors';
+export * from './types/value-types/visitors';
 
 export * from './execution-context';
 export * from './extension';

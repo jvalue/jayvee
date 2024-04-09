@@ -9,8 +9,8 @@ import {
   TransformDefinition,
   TransformOutputAssignment,
   TransformPortDefinition,
-  Valuetype,
-  createValuetype,
+  ValueType,
+  createValueType,
   evaluateExpression,
 } from '@jvalue/jayvee-language-server';
 
@@ -20,7 +20,7 @@ import { TableColumn } from '../types/io-types/table';
 
 export interface PortDetails {
   port: TransformPortDefinition;
-  valuetype: Valuetype;
+  valueType: ValueType;
 }
 
 export class TransformExecutor {
@@ -39,16 +39,16 @@ export class TransformExecutor {
 
   private getPortDetails(kind: TransformPortDefinition['kind']): {
     port: TransformPortDefinition;
-    valuetype: Valuetype;
+    valueType: ValueType;
   }[] {
     const ports = this.transform.body.ports.filter((x) => x.kind === kind);
     const portDetails = ports.map((port) => {
-      const valuetypeNode = port.valueType;
-      const valuetype = createValuetype(valuetypeNode);
-      assert(valuetype !== undefined);
+      const valueTypeNode = port.valueType;
+      const valueType = createValueType(valueTypeNode);
+      assert(valueType !== undefined);
       return {
         port: port,
-        valuetype: valuetype,
+        valueType: valueType,
       };
     });
 
@@ -118,7 +118,7 @@ export class TransformExecutor {
         );
         rowsToDelete.push(rowIndex);
       } else if (
-        !isValidValueRepresentation(newValue, outputDetails.valuetype, context)
+        !isValidValueRepresentation(newValue, outputDetails.valueType, context)
       ) {
         assert(
           typeof newValue === 'string' ||
@@ -128,7 +128,7 @@ export class TransformExecutor {
         context.logger.logDebug(
           `Invalid value in row ${
             rowIndex + 1
-          }: "${newValue.toString()}" does not match the type ${outputDetails.valuetype.getName()}`,
+          }: "${newValue.toString()}" does not match the type ${outputDetails.valueType.getName()}`,
         );
         rowsToDelete.push(rowIndex);
       } else {
@@ -142,7 +142,7 @@ export class TransformExecutor {
       rowsToDelete: rowsToDelete,
       resultingColumn: {
         values: newColumn,
-        valuetype: outputDetails.valuetype,
+        valueType: outputDetails.valueType,
       },
     };
   }

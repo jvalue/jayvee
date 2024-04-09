@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type Valuetype } from '../../wrappers/value-type';
+import { type ValueType } from '../../wrappers/value-type';
 // eslint-disable-next-line import/no-cycle
-import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/primitive-valuetypes';
+import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/primitive-value-types';
 import { DefaultTernaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class ReplaceOperatorTypeComputer extends DefaultTernaryOperatorTypeComputer {
@@ -16,7 +16,7 @@ export class ReplaceOperatorTypeComputer extends DefaultTernaryOperatorTypeCompu
     );
   }
 
-  override doComputeType(): Valuetype {
+  override doComputeType(): ValueType {
     return PrimitiveValuetypes.Text;
   }
 }

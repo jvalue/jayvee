@@ -9,14 +9,14 @@ import { BinaryExpression } from '../../generated/ast';
 // eslint-disable-next-line import/no-cycle
 import {
   CollectionValuetype,
-  type Valuetype,
+  type ValueType,
   isCollectionValuetype,
 } from '../../wrappers/value-type';
-import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/primitive-valuetypes';
+import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/primitive-value-types';
 import { BinaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class InOperatorTypeComputer implements BinaryOperatorTypeComputer {
-  private readonly ALLOWED_LEFT_OPERAND_TYPES: Valuetype[] = [
+  private readonly ALLOWED_LEFT_OPERAND_TYPES: ValueType[] = [
     PrimitiveValuetypes.Text,
     PrimitiveValuetypes.Integer,
     PrimitiveValuetypes.Decimal,
@@ -25,11 +25,11 @@ export class InOperatorTypeComputer implements BinaryOperatorTypeComputer {
     this.ALLOWED_LEFT_OPERAND_TYPES.map((v) => new CollectionValuetype(v));
 
   computeType(
-    leftOperandType: Valuetype,
-    rightOperandType: Valuetype,
+    leftOperandType: ValueType,
+    rightOperandType: ValueType,
     expression: BinaryExpression,
     context: ValidationContext | undefined,
-  ): Valuetype | undefined {
+  ): ValueType | undefined {
     const isLeftOperandTypeValid =
       this.ALLOWED_LEFT_OPERAND_TYPES.includes(leftOperandType);
     const isRightOperandTypeValid = this.ALLOWED_RIGHT_OPERAND_TYPES.some((v) =>

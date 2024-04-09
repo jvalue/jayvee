@@ -3,7 +3,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 // eslint-disable-next-line import/no-cycle
-export * from './valuetype';
-export { type AtomicValuetype, isAtomicValuetype } from './atomic-valuetype';
+export * from './value-type';
+export {
+  type AtomicValueType as AtomicValuetype,
+  isAtomicValuetype,
+} from './atomic-value-type';
 export * from './primitive';
-export * from './valuetype-util';
+export * from './value-type-util';

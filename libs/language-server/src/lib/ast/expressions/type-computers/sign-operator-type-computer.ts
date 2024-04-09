@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type Valuetype } from '../../wrappers/value-type';
+import { type ValueType } from '../../wrappers/value-type';
 // eslint-disable-next-line import/no-cycle
-import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/primitive-valuetypes';
+import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/primitive-value-types';
 import { DefaultUnaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class SignOperatorTypeComputer extends DefaultUnaryOperatorTypeComputer {
@@ -12,7 +12,7 @@ export class SignOperatorTypeComputer extends DefaultUnaryOperatorTypeComputer {
     super(PrimitiveValuetypes.Decimal);
   }
 
-  override doComputeType(operandType: Valuetype): Valuetype {
+  override doComputeType(operandType: ValueType): ValueType {
     return operandType;
   }
 }

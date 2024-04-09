@@ -40,21 +40,21 @@ import { getNextAstNodeContainer } from '../model-util';
 import {
   AtomicValuetype,
   CollectionValuetype,
-  PrimitiveValuetype,
+  PrimitiveValueType,
   isAtomicValuetype,
-  isPrimitiveValuetype,
+  isPrimitiveValueType,
 } from '../wrappers';
-import { EmptyCollection } from '../wrappers/value-type/primitive/collection/empty-collection-valuetype';
-import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-valuetypes';
-import { type Valuetype } from '../wrappers/value-type/valuetype';
-import { createValuetype } from '../wrappers/value-type/valuetype-util';
+import { EmptyCollection } from '../wrappers/value-type/primitive/collection/empty-collection-value-type';
+import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-value-types';
+import { type ValueType } from '../wrappers/value-type/value-type';
+import { createValueType } from '../wrappers/value-type/value-type-util';
 
 import { isEveryValueDefined } from './typeguards';
 
 export function inferExpressionType(
   expression: Expression | undefined,
   validationContext: ValidationContext,
-): Valuetype | undefined {
+): ValueType | undefined {
   if (expression === undefined) {
     return undefined;
   }
@@ -121,12 +121,12 @@ export function inferExpressionType(
 }
 
 /**
- * @returns the resolved valuetype or undefined (e.g. if a reference is not resolved)
+ * @returns the resolved value type or undefined (e.g. if a reference is not resolved)
  */
 function inferTypeFromExpressionLiteral(
   expression: ExpressionLiteral,
   validationContext: ValidationContext,
-): Valuetype | undefined {
+): ValueType | undefined {
   if (isValueLiteral(expression)) {
     if (isTextLiteral(expression)) {
       return PrimitiveValuetypes.Text;
@@ -160,7 +160,7 @@ function inferTypeFromExpressionLiteral(
  * Thus, the inferred type might differ from the literal type.
  * E.g., 3.0 is currently interpreted as integer but is a DecimalLiteral.
  */
-function inferNumericType(expression: NumericLiteral): Valuetype {
+function inferNumericType(expression: NumericLiteral): ValueType {
   if (Number.isInteger(expression.value)) {
     return PrimitiveValuetypes.Integer;
   }
@@ -170,7 +170,7 @@ function inferNumericType(expression: NumericLiteral): Valuetype {
 function inferCollectionType(
   collection: CollectionLiteral,
   validationContext: ValidationContext,
-): Valuetype | undefined {
+): ValueType | undefined {
   const elementValuetypes = inferCollectionElementTypes(
     collection,
     validationContext,
@@ -218,7 +218,7 @@ function inferCollectionType(
 function inferCollectionElementTypes(
   collection: CollectionLiteral,
   validationContext: ValidationContext,
-): Valuetype[] | undefined {
+): ValueType[] | undefined {
   const elementValuetypes = collection.values.map((value) =>
     inferExpressionType(value, validationContext),
   );
@@ -228,29 +228,29 @@ function inferCollectionElementTypes(
   return elementValuetypes;
 }
 
-type ValuetypeHierarchyStack = [PrimitiveValuetype, ...AtomicValuetype[]];
+type ValuetypeHierarchyStack = [PrimitiveValueType, ...AtomicValuetype[]];
 
 function getValuetypeHierarchyStack(
-  valuetype: Valuetype,
+  valueType: ValueType,
 ): ValuetypeHierarchyStack {
-  if (isPrimitiveValuetype(valuetype)) {
-    return [valuetype];
-  } else if (isAtomicValuetype(valuetype)) {
-    const supertype = valuetype.getSupertype();
+  if (isPrimitiveValueType(valueType)) {
+    return [valueType];
+  } else if (isAtomicValuetype(valueType)) {
+    const supertype = valueType.getSupertype();
     assert(supertype !== undefined);
-    return [...getValuetypeHierarchyStack(supertype), valuetype];
+    return [...getValuetypeHierarchyStack(supertype), valueType];
   }
   throw new Error(
-    'Should be unreachable, encountered an unknown kind of valuetype',
+    'Should be unreachable, encountered an unknown kind of value type',
   );
 }
 
 function pickCommonPrimitiveValuetype(
-  primitiveValuetypes: PrimitiveValuetype[],
-): PrimitiveValuetype | undefined {
+  primitiveValuetypes: PrimitiveValueType[],
+): PrimitiveValueType | undefined {
   assert(primitiveValuetypes.length > 0);
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  let resultingType: PrimitiveValuetype = primitiveValuetypes[0]!;
+  let resultingType: PrimitiveValueType = primitiveValuetypes[0]!;
   for (let i = 1; i < primitiveValuetypes.length; ++i) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const currentType = primitiveValuetypes[i]!;
@@ -265,7 +265,7 @@ function pickCommonPrimitiveValuetype(
       continue;
     }
 
-    // Unable to convert the valuetypes into each other, so there is no common primitive valuetype
+    // Unable to convert the value types into each other, so there is no common primitive value type
     return undefined;
   }
   return resultingType;
@@ -273,18 +273,18 @@ function pickCommonPrimitiveValuetype(
 
 function pickCommonAtomicValuetype(
   stacks: ValuetypeHierarchyStack[],
-): Valuetype | undefined {
+): ValueType | undefined {
   const minimumStackLength = Math.min(...stacks.map((stack) => stack.length));
 
-  let resultingType: Valuetype | undefined = undefined;
+  let resultingType: ValueType | undefined = undefined;
   for (let stackLevel = 1; stackLevel < minimumStackLength; ++stackLevel) {
-    const typesOfCurrentLevel: Valuetype[] = stacks.map(
+    const typesOfCurrentLevel: ValueType[] = stacks.map(
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       (stack) => stack[stackLevel]!,
     );
 
     if (!areAllTypesEqual(typesOfCurrentLevel)) {
-      // Return the common valuetype of the previous level
+      // Return the common value type of the previous level
       return resultingType;
     }
 
@@ -294,7 +294,7 @@ function pickCommonAtomicValuetype(
   return resultingType;
 }
 
-function areAllTypesEqual(types: Valuetype[]): boolean {
+function areAllTypesEqual(types: ValueType[]): boolean {
   for (let i = 1; i < types.length; i++) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     if (!types[i - 1]!.equals(types[i]!)) {
@@ -308,7 +308,7 @@ function areAllTypesEqual(types: Valuetype[]): boolean {
 function inferTypeFromValueKeyword(
   expression: ValueKeywordLiteral,
   validationContext: ValidationContext,
-): Valuetype | undefined {
+): ValueType | undefined {
   const expressionConstraintContainer = getNextAstNodeContainer(
     expression,
     isExpressionConstraintDefinition,
@@ -325,13 +325,13 @@ function inferTypeFromValueKeyword(
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  const valuetype = createValuetype(expressionConstraintContainer?.valuetype);
-  if (valuetype === undefined) {
+  const valueType = createValueType(expressionConstraintContainer?.valueType);
+  if (valueType === undefined) {
     return undefined;
   }
 
   if (expression.lengthAccess) {
-    if (!valuetype.isConvertibleTo(PrimitiveValuetypes.Text)) {
+    if (!valueType.isConvertibleTo(PrimitiveValuetypes.Text)) {
       validationContext.accept(
         'error',
         'The length can only be accessed from text values ',
@@ -344,12 +344,12 @@ function inferTypeFromValueKeyword(
     }
     return PrimitiveValuetypes.Integer;
   }
-  return valuetype;
+  return valueType;
 }
 
 function inferTypeFromReferenceLiteral(
   expression: ReferenceLiteral,
-): Valuetype | undefined {
+): ValueType | undefined {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const referenced = expression?.value?.ref;
   if (referenced === undefined) {
@@ -371,7 +371,7 @@ function inferTypeFromReferenceLiteral(
     if (valueType === undefined) {
       return undefined;
     }
-    return createValuetype(valueType);
+    return createValueType(valueType);
   }
   assertUnreachable(referenced);
 }

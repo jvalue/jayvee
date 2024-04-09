@@ -21,7 +21,7 @@ import {
   isTransformPortDefinition,
   isUnaryExpression,
 } from '../../ast/generated/ast';
-import { createValuetype } from '../../ast/wrappers/value-type/valuetype-util';
+import { createValueType } from '../../ast/wrappers/value-type/value-type-util';
 import { type JayveeValidationProps } from '../validation-registry';
 import { checkExpressionSimplification } from '../validation-util';
 
@@ -55,7 +55,7 @@ function checkOutputValueTyping(
     return;
   }
 
-  const expectedType = createValuetype(outputType);
+  const expectedType = createValueType(outputType);
   if (expectedType === undefined) {
     return;
   }

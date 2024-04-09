@@ -111,14 +111,14 @@ describe('Validation of TransformExecutor', () => {
           columnName: 'Column1',
           column: {
             values: ['value 1'],
-            valuetype: PrimitiveValuetypes.Text,
+            valueType: PrimitiveValuetypes.Text,
           },
         },
         {
           columnName: 'Column2',
           column: {
             values: [20.2],
-            valuetype: PrimitiveValuetypes.Decimal,
+            valueType: PrimitiveValuetypes.Decimal,
           },
         },
       ],
@@ -133,7 +133,7 @@ describe('Validation of TransformExecutor', () => {
     );
 
     expect(result.rowsToDelete).toHaveLength(0);
-    expect(result.resultingColumn.valuetype).toEqual(
+    expect(result.resultingColumn.valueType).toEqual(
       PrimitiveValuetypes.Integer,
     );
     expect(result.resultingColumn.values).toHaveLength(1);
@@ -151,14 +151,14 @@ describe('Validation of TransformExecutor', () => {
           columnName: 'Column1',
           column: {
             values: ['value 1'],
-            valuetype: PrimitiveValuetypes.Text,
+            valueType: PrimitiveValuetypes.Text,
           },
         },
         {
           columnName: 'Column2',
           column: {
             values: [20.0],
-            valuetype: PrimitiveValuetypes.Decimal,
+            valueType: PrimitiveValuetypes.Decimal,
           },
         },
       ],
@@ -174,7 +174,7 @@ describe('Validation of TransformExecutor', () => {
 
     expect(result.rowsToDelete).toHaveLength(1);
     expect(result.rowsToDelete).toEqual(expect.arrayContaining([0]));
-    expect(result.resultingColumn.valuetype).toEqual(PrimitiveValuetypes.Text);
+    expect(result.resultingColumn.valueType).toEqual(PrimitiveValuetypes.Text);
     expect(result.resultingColumn.values).toHaveLength(0);
   });
 
@@ -189,21 +189,21 @@ describe('Validation of TransformExecutor', () => {
           columnName: 'Column1',
           column: {
             values: ['value 1'],
-            valuetype: PrimitiveValuetypes.Text,
+            valueType: PrimitiveValuetypes.Text,
           },
         },
         {
           columnName: 'Column2',
           column: {
             values: [20.2],
-            valuetype: PrimitiveValuetypes.Decimal,
+            valueType: PrimitiveValuetypes.Decimal,
           },
         },
         {
           columnName: 'Column3',
           column: {
             values: [85.978],
-            valuetype: PrimitiveValuetypes.Decimal,
+            valueType: PrimitiveValuetypes.Decimal,
           },
         },
       ],
@@ -218,7 +218,7 @@ describe('Validation of TransformExecutor', () => {
     );
 
     expect(result.rowsToDelete).toHaveLength(0);
-    expect(result.resultingColumn.valuetype).toEqual(
+    expect(result.resultingColumn.valueType).toEqual(
       PrimitiveValuetypes.Integer,
     );
     expect(result.resultingColumn.values).toHaveLength(1);
@@ -238,14 +238,14 @@ describe('Validation of TransformExecutor', () => {
           columnName: 'Column1',
           column: {
             values: ['value 1'],
-            valuetype: PrimitiveValuetypes.Text,
+            valueType: PrimitiveValuetypes.Text,
           },
         },
         {
           columnName: 'Column2',
           column: {
             values: [20.2],
-            valuetype: PrimitiveValuetypes.Decimal,
+            valueType: PrimitiveValuetypes.Decimal,
           },
         },
       ],
@@ -281,14 +281,14 @@ describe('Validation of TransformExecutor', () => {
           columnName: 'Column1',
           column: {
             values: ['value 1'],
-            valuetype: PrimitiveValuetypes.Text,
+            valueType: PrimitiveValuetypes.Text,
           },
         },
         {
           columnName: 'Column2',
           column: {
             values: [20.2],
-            valuetype: PrimitiveValuetypes.Decimal,
+            valueType: PrimitiveValuetypes.Decimal,
           },
         },
       ],
@@ -303,7 +303,7 @@ describe('Validation of TransformExecutor', () => {
     );
 
     expect(result.rowsToDelete).toHaveLength(1);
-    expect(result.resultingColumn.valuetype).toEqual(
+    expect(result.resultingColumn.valueType).toEqual(
       PrimitiveValuetypes.Integer,
     );
     expect(result.resultingColumn.values).toHaveLength(0);
@@ -320,14 +320,14 @@ describe('Validation of TransformExecutor', () => {
           columnName: 'Column1',
           column: {
             values: ['value 1', 'value 2'],
-            valuetype: PrimitiveValuetypes.Text,
+            valueType: PrimitiveValuetypes.Text,
           },
         },
         {
           columnName: 'Column2',
           column: {
             values: ['20.2', 20.1],
-            valuetype: PrimitiveValuetypes.Decimal,
+            valueType: PrimitiveValuetypes.Decimal,
           },
         },
       ],
@@ -342,7 +342,7 @@ describe('Validation of TransformExecutor', () => {
     );
 
     expect(result.rowsToDelete).toHaveLength(1);
-    expect(result.resultingColumn.valuetype).toEqual(
+    expect(result.resultingColumn.valueType).toEqual(
       PrimitiveValuetypes.Integer,
     );
     expect(result.resultingColumn.values).toHaveLength(1);
@@ -360,21 +360,21 @@ describe('Validation of TransformExecutor', () => {
           columnName: 'Column1',
           column: {
             values: ['value 1'],
-            valuetype: PrimitiveValuetypes.Text,
+            valueType: PrimitiveValuetypes.Text,
           },
         },
         {
           columnName: 'Column2',
           column: {
             values: [20.2],
-            valuetype: PrimitiveValuetypes.Decimal,
+            valueType: PrimitiveValuetypes.Decimal,
           },
         },
         {
           columnName: 'Column3',
           column: {
             values: [85.978],
-            valuetype: PrimitiveValuetypes.Decimal,
+            valueType: PrimitiveValuetypes.Decimal,
           },
         },
       ],
@@ -389,7 +389,7 @@ describe('Validation of TransformExecutor', () => {
     );
 
     expect(result.rowsToDelete).toHaveLength(1);
-    expect(result.resultingColumn.valuetype).toEqual(
+    expect(result.resultingColumn.valueType).toEqual(
       PrimitiveValuetypes.Decimal,
     );
     expect(result.resultingColumn.values).toHaveLength(0);

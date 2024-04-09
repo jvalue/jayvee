@@ -9,7 +9,7 @@ Expressions in Jayvee are arbitrarily nested statements. They consist of:
 - variables (e.g., declared by `from` properties in [Transforms](./transforms.md))
 - operators (e.g., `*` or `sqrt`)
 
-Expressions get evaluated at runtime by the interpreter to a [Built-in ValueType](./valuetypes/builtin-valuetypes).
+Expressions get evaluated at runtime by the interpreter to a [Built-in ValueType](./value-types/builtin-value-types).
 
 ### Example
 

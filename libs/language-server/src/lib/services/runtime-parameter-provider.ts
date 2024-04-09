@@ -3,13 +3,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { type InternalValueRepresentation } from '../ast/expressions/internal-value-representation';
-import { type Valuetype } from '../ast/wrappers/value-type/valuetype';
+import { type ValueType } from '../ast/wrappers/value-type/value-type';
 
 export type InternalValueRepresentationParser = <
   I extends InternalValueRepresentation,
 >(
   value: string,
-  valuetype: Valuetype<I>,
+  valueType: ValueType<I>,
 ) => I | undefined;
 
 export class RuntimeParameterProvider {
@@ -23,13 +23,13 @@ export class RuntimeParameterProvider {
 
   getParsedValue<I extends InternalValueRepresentation>(
     key: string,
-    valuetype: Valuetype<I>,
+    valueType: ValueType<I>,
   ): I | undefined {
     const stringValue = this.getRawValue(key);
     if (stringValue === undefined) {
       return undefined;
     }
-    return this.valueParser?.(stringValue, valuetype);
+    return this.valueParser?.(stringValue, valueType);
   }
 
   getRawValue(key: string): string | undefined {

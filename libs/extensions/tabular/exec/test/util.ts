@@ -12,7 +12,7 @@ import {
 } from '@jvalue/jayvee-execution';
 import {
   InternalValueRepresentation,
-  Valuetype,
+  ValueType,
 } from '@jvalue/jayvee-language-server';
 import * as exceljs from 'exceljs';
 
@@ -51,7 +51,7 @@ export async function createWorkbookFromLocalExcelFile(
 
 export type ReducedColumnDefinitionEntry = Pick<
   ColumnDefinitionEntry,
-  'sheetColumnIndex' | 'columnName' | 'valuetype'
+  'sheetColumnIndex' | 'columnName' | 'valueType'
 >;
 
 /**
@@ -75,7 +75,7 @@ export async function createTableFromLocalExcelFile(
   columnDefinitions.forEach((columnDefinition) => {
     table.addColumn(columnDefinition.columnName, {
       values: [],
-      valuetype: columnDefinition.valuetype,
+      valueType: columnDefinition.valueType,
     });
   });
 
@@ -99,9 +99,9 @@ function constructTableRow(
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const columnDefinition = columnDefinitions[colNumber - 1]!;
       const value = cell.text;
-      const valuetype = columnDefinition.valuetype;
+      const valueType = columnDefinition.valueType;
 
-      const parsedValue = parseAndValidatePrimitiveValue(value, valuetype);
+      const parsedValue = parseAndValidatePrimitiveValue(value, valueType);
       if (parsedValue === undefined) {
         return;
       }
@@ -113,9 +113,9 @@ function constructTableRow(
 }
 function parseAndValidatePrimitiveValue(
   value: string,
-  valuetype: Valuetype,
+  valueType: ValueType,
 ): InternalValueRepresentation | undefined {
-  const parsedValue = parseValueToInternalRepresentation(value, valuetype);
+  const parsedValue = parseValueToInternalRepresentation(value, valueType);
   if (parsedValue === undefined) {
     return undefined;
   }

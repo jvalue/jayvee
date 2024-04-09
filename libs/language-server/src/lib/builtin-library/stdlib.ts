@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { IOType, PrimitiveValuetype } from '../ast';
-import { PrimitiveValuetypes } from '../ast/wrappers/value-type/primitive/primitive-valuetypes';
+import { IOType, PrimitiveValueType } from '../ast';
+import { PrimitiveValuetypes } from '../ast/wrappers/value-type/primitive/primitive-value-types';
 
 import { PartialStdLib } from './generated/partial-stdlib';
 
@@ -16,7 +16,7 @@ export function getBuiltinValuetypesLib() {
 builtin valuetype Collection<ElementType>;`;
 
   return {
-    'builtin:///stdlib/builtin-valuetypes.jv': [
+    'builtin:///stdlib/builtin-value-types.jv': [
       ...primitiveValuetypes,
       collectionValuetype,
     ].join('\n\n'),
@@ -24,7 +24,7 @@ builtin valuetype Collection<ElementType>;`;
 }
 
 export const IOtypesLib = {
-  'builtin:///stdlib/iotypes.jv': Object.values(IOType)
+  'builtin:///stdlib/io-types.jv': Object.values(IOType)
     .map((iotype) => `builtin iotype ${iotype};`)
     .join('\n\n'),
 };
@@ -37,17 +37,17 @@ export function getStdLib() {
   };
 }
 
-function parseBuiltinValuetypeToJayvee(valuetype: PrimitiveValuetype): string {
+function parseBuiltinValuetypeToJayvee(valueType: PrimitiveValueType): string {
   const lines: string[] = [];
 
-  const userDoc = valuetype.getUserDoc();
+  const userDoc = valueType.getUserDoc();
   if (userDoc !== undefined) {
     lines.push(parseAsComment(userDoc));
   }
-  if (!valuetype.isReferenceableByUser()) {
+  if (!valueType.isReferenceableByUser()) {
     lines.push(parseAsComment('For internal use only.'));
   }
-  lines.push(`builtin valuetype ${valuetype.getName()};`);
+  lines.push(`builtin valuetype ${valueType.getName()};`);
 
   return lines.join('\n');
 }

@@ -61,10 +61,10 @@ Blocks can be either defined as part of the language, called `builtin` or define
 A `ValueType` is the definition of a data type of the processed data.
 Some `Blocks` use `ValueTypes` to define logic (like filtering or assessing the data type in a data sink).
 We differentiate the following types of `ValueTypes`:
-- `Built-in ValueTypes` come with the basic version of Jayvee. See [Built-in Valuetypes](./valuetypes/builtin-valuetypes).
+- `Built-in ValueTypes` come with the basic version of Jayvee. See [Built-in Valuetypes](./value-types/builtin-value-types).
 - `Primitive ValueTypes` can be defined by the user to model domain-specific data types and represent a single value.
   `Constraints` can be added to a `Primitive ValueType`.
-See [Primitive Valuetypes](./valuetypes/primitive-valuetypes).
+See [Primitive Valuetypes](./value-types/primitive-value-types).
 - `Compound ValueTypes`: UPCOMING.
 
 ```jayvee

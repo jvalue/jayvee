@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import 'terminal'
-import 'valuetype'
+import 'value-type'
 import 'expression'
 
 TransformDefinition:
@@ -13,7 +13,7 @@ TransformBody:
   '{' (ports+=TransformPortDefinition)* (outputAssignments+=TransformOutputAssignment)* '}';
 
 TransformPortDefinition:
-  kind=('from' | 'to') name=ID 'oftype' valueType=ValuetypeReference ';'; 
+  kind=('from' | 'to') name=ID 'oftype' valueType=ValueTypeReference ';'; 
  
 TransformOutputAssignment:
   outPortName=[TransformPortDefinition] ':' expression=Expression ';';

@@ -7,11 +7,11 @@ import { strict as assert } from 'assert';
 import {
   IOType,
   InternalValueRepresentation,
-  Valuetype,
+  ValueType,
 } from '@jvalue/jayvee-language-server';
 
-import { SQLColumnTypeVisitor } from '../valuetypes/visitors/sql-column-type-visitor';
-import { SQLValueRepresentationVisitor } from '../valuetypes/visitors/sql-value-representation-visitor';
+import { SQLColumnTypeVisitor } from '../value-types/visitors/sql-column-type-visitor';
+import { SQLValueRepresentationVisitor } from '../value-types/visitors/sql-value-representation-visitor';
 
 import { IOTypeImplementation, IoTypeVisitor } from './io-type-implementation';
 
@@ -19,7 +19,7 @@ export interface TableColumn<
   T extends InternalValueRepresentation = InternalValueRepresentation,
 > {
   values: T[];
-  valuetype: Valuetype;
+  valueType: ValueType;
 }
 
 export type TableRow = Record<string, InternalValueRepresentation>;
@@ -67,7 +67,7 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
       const column = this.columns.get(columnName);
       assert(column !== undefined);
 
-      assert(column.valuetype.isInternalValueRepresentation(value));
+      assert(column.valueType.isInternalValueRepresentation(value));
       column.values.push(value);
     });
 
@@ -144,7 +144,7 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
         const column = this.columns.get(columnName);
         const entry = column?.values[rowIndex];
         assert(entry !== undefined);
-        const formattedValue = column?.valuetype.acceptVisitor(
+        const formattedValue = column?.valueType.acceptVisitor(
           valueRepresentationVisitor,
         )(entry);
         assert(formattedValue !== undefined);
@@ -165,7 +165,7 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
 
     const columns = [...this.columns.entries()];
     const columnStatements = columns.map(([columnName, column]) => {
-      return `"${columnName}" ${column.valuetype.acceptVisitor(
+      return `"${columnName}" ${column.valueType.acceptVisitor(
         columnTypeVisitor,
       )}`;
     });
@@ -181,7 +181,7 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     [...this.columns.entries()].forEach(([columnName, column]) => {
       cloned.addColumn(columnName, {
         values: structuredClone(column.values),
-        valuetype: column.valuetype,
+        valueType: column.valueType,
       });
     });
 

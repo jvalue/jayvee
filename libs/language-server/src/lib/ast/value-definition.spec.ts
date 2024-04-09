@@ -27,7 +27,7 @@ describe('Parsing of ValuetypeDefinition', () => {
 
   it('should diagnose error on missing builtin keyword', async () => {
     const text = readJvTestAsset(
-      'valuetype-definition/invalid-missing-builtin-keyword.jv',
+      'value-type-definition/invalid-missing-builtin-keyword.jv',
     );
 
     const document = await parse(text);
@@ -37,9 +37,9 @@ describe('Parsing of ValuetypeDefinition', () => {
     );
   });
 
-  it('should diagnose error on unallowed body for builtin valuetypes', async () => {
+  it('should diagnose error on unallowed body for builtin value types', async () => {
     const text = readJvTestAsset(
-      'valuetype-definition/invalid-unallowed-builtin-body.jv',
+      'value-type-definition/invalid-unallowed-builtin-body.jv',
     );
 
     const document = await parse(text);
@@ -51,7 +51,7 @@ describe('Parsing of ValuetypeDefinition', () => {
 
   it('should diagnose error on empty generic', async () => {
     const text = readJvTestAsset(
-      'valuetype-definition/invalid-missing-generic.jv',
+      'value-type-definition/invalid-missing-generic.jv',
     );
 
     const document = await parse(text);
@@ -63,7 +63,7 @@ describe('Parsing of ValuetypeDefinition', () => {
 
   it('should diagnose no error on generic', async () => {
     const text = readJvTestAsset(
-      'valuetype-definition/valid-builtin-valuetype-generic.jv',
+      'value-type-definition/valid-builtin-value-type-generic.jv',
     );
 
     const document = await parse(text);

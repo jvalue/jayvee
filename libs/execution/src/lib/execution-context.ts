@@ -12,7 +12,7 @@ import {
   PipelineDefinition,
   PropertyAssignment,
   TransformDefinition,
-  Valuetype,
+  ValueType,
   type WrapperFactoryProvider,
   evaluatePropertyValue,
   isBlockDefinition,
@@ -88,19 +88,19 @@ export class ExecutionContext {
 
   public getPropertyValue<I extends InternalValueRepresentation>(
     propertyName: string,
-    valuetype: Valuetype<I>,
+    valueType: ValueType<I>,
   ): I {
     const property = this.getProperty(propertyName);
 
     if (property === undefined) {
-      return this.getDefaultPropertyValue(propertyName, valuetype);
+      return this.getDefaultPropertyValue(propertyName, valueType);
     }
 
     const propertyValue = evaluatePropertyValue(
       property,
       this.evaluationContext,
       this.wrapperFactories,
-      valuetype,
+      valueType,
     );
     assert(propertyValue !== undefined);
     return propertyValue;
@@ -132,7 +132,7 @@ export class ExecutionContext {
 
   private getDefaultPropertyValue<I extends InternalValueRepresentation>(
     propertyName: string,
-    valuetype: Valuetype<I>,
+    valueType: ValueType<I>,
   ): I {
     const wrapper = this.getWrapperOfCurrentNode();
     const propertySpec = wrapper.getPropertySpecification(propertyName);
@@ -140,7 +140,7 @@ export class ExecutionContext {
 
     const defaultValue = propertySpec.defaultValue;
     assert(defaultValue !== undefined);
-    assert(valuetype.isInternalValueRepresentation(defaultValue));
+    assert(valueType.isInternalValueRepresentation(defaultValue));
 
     return defaultValue;
   }

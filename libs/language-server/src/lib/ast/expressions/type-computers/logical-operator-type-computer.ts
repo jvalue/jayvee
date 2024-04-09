@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type Valuetype } from '../../wrappers/value-type';
+import { type ValueType } from '../../wrappers/value-type';
 // eslint-disable-next-line import/no-cycle
-import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/primitive-valuetypes';
+import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/primitive-value-types';
 import { DefaultBinaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class LogicalOperatorTypeComputer extends DefaultBinaryOperatorTypeComputer {
@@ -12,7 +12,7 @@ export class LogicalOperatorTypeComputer extends DefaultBinaryOperatorTypeComput
     super(PrimitiveValuetypes.Boolean, PrimitiveValuetypes.Boolean);
   }
 
-  protected override doComputeType(): Valuetype {
+  protected override doComputeType(): ValueType {
     return PrimitiveValuetypes.Boolean;
   }
 }
