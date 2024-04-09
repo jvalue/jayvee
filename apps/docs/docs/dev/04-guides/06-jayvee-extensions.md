@@ -86,9 +86,9 @@ export class StdExecExtension extends JayveeExecExtension {
 
 ### Add a new block type in a Jayvee extension
 
-#### 1. Create a builtin block type
+#### 1. Create a built-in block type
 
-Define the syntax of the new _block type_ in the [language server's builtin _block types_](https://github.com/jvalue/jayvee/tree/main/libs/language-server/src/stdlib/builtin-blocktypes).
+Define the syntax of the new _block type_ in the [language server's built-in _block types_](https://github.com/jvalue/jayvee/tree/main/libs/language-server/src/stdlib/builtin-blocktypes).
 
 The following example defines a block type `MyExtractor` with a text property called `url` and a property `retries` with a default value:
 
