@@ -33,10 +33,10 @@ Right now, we can only "parse" values but not manipulate them in order to clean 
 
 ```
 transform <name> {
-  from <inputName> oftype <valueType>;
-  to <outputName> oftype <valueType>;
+  from <inputName> oftype <valuetype>;
+  to <outputName> oftype <valuetype>;
 
-  <outputName>: <expression producing output value type>;
+  <outputName>: <expression producing output valuetype>;
 }
 ```
 
@@ -88,7 +88,7 @@ Storing interim results can improve coding experience.
 ```
 transform <name> {
   // inputs and outputs
-  var <varBane> oftype <valueType>: <expression producing value type>; // alternative: infer type automatically 
+  var <varBane> oftype <valuetype>: <expression producing valuetype>; // alternative: infer type automatically 
   // use variable to compute outputs
 }
 ```
@@ -97,7 +97,7 @@ transform <name> {
 
 Composite ValueTypes could be served with this implementation by extending the assignment statement:
 ```
-// "MyStreet" and "7b" => composite value type
+// "MyStreet" and "7b" => composite valuetype
 transform AddressComposer {
   from streetName oftype text;
   from houseNumber oftype text;

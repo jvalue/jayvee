@@ -39,7 +39,7 @@ This allows users to look up inputs, outputs and properties without having to lo
 - `property` keyword to define a property with a name and a type
   - Optionally, a default value can be assigned
 - Adds new keywords for existing property types:
-  - Valuetypes: `regex`, `cellrange` / `row` / `column` / `cell`, `valueTypeAssignment`
+  - Valuetypes: `regex`, `cellrange` / `row` / `column` / `cell`, `valuetypeAssignment`
   - Typed collections: `collection<type>`
     - Nested collections are not supported for now
   - IO types: `file`, `fileSystem`, `textFile`, `sheet`, `table`
@@ -147,7 +147,7 @@ builtin blocktype TableInterpreter {
     input oftype sheet;
 
     property header oftype boolean;
-    property columns oftype collection<valueTypeAssignment>;
+    property columns oftype collection<valuetypeAssignment>;
 
     output oftype table;
 }
@@ -174,20 +174,20 @@ builtin blocktype PostgresLoader {
 
 ## Drawbacks
 
-- Adds value type keywords for properties, but these types cannot be assigned to table columns (e.g. `regex`)
+- Adds valuetype keywords for properties, but these types cannot be assigned to table columns (e.g. `regex`)
 
 ## Alternatives
 
 - Not having declarations for builtin block types at all
-- No mixing of property value types and column value types
+- No mixing of property valuetypes and column valuetypes
 - Using a less verbose syntax (e.g. omit `property` keyword or use a shorthand operator instead of `oftype` keyword)
 
 ## Possible Future Changes/Enhancements
 
-- Usage of custom value types for typing properties
+- Usage of custom valuetypes for typing properties
   - Constraints could then be used to validate property values
   - Properties could be considered inputs of a block, so property values can be provided dynamically by pipes
-- Include semantics for validating property values beyond value types
+- Include semantics for validating property values beyond valuetypes
 - Introduce a standard for documenting blocktypes in the code
 - Possibility to declare multiple named inputs and outputs for blocktypes
 - Can serve as a foundation for composite blocktypes, e.g.:

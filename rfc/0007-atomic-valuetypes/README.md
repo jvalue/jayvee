@@ -8,7 +8,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 |             |                     |
 |-------------|---------------------|
-| Feature Tag | `atomic-value-types` |
+| Feature Tag | `atomic-valuetypes` |
 | Status      | `ACCEPTED`        |
 | Responsible | `@felix-oq`         |
 <!-- 
@@ -21,17 +21,17 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 ## Summary
 
-This RFC introduces an initial, limited value type concept that allows users to define custom atomic value types 
-based on builtin primitive value types. Common constraints can be defined and applied to value types, allowing to restrict the 
-set of valid values for a given value type.
+This RFC introduces an initial, limited valuetype concept that allows users to define custom atomic valuetypes 
+based on builtin primitive valuetypes. Common constraints can be defined and applied to valuetypes, allowing to restrict the 
+set of valid values for a given valuetype.
 
 ## Motivation
 
 As open data is not bound to a particular domain, users need a way to define domain-specific semantics in regard 
-to values. This RFC proposes a domain-agnostic way to accomplish this using user-defined value types.
+to values. This RFC proposes a domain-agnostic way to accomplish this using user-defined valuetypes.
 
-A value type is used to define a set of valid values, so invalid values can easily be identified. In many cases, it 
-is sufficient to specify a value type based on a primitive value type (like `text` or `decimal`) and apply 
+A valuetype is used to define a set of valid values, so invalid values can easily be identified. In many cases, it 
+is sufficient to specify a valuetype based on a primitive valuetype (like `text` or `decimal`) and apply 
 constraints to further limit the set of values. Consider the following excerpt from a [dataset found on mobilithek.info](
 https://mobilithek.info/offers/-8739430008147831066):
 
@@ -41,31 +41,31 @@ https://mobilithek.info/offers/-8739430008147831066):
 | 8001510 | TDSA  | de:08237:8009:2 |  Dornstetten-Aach  |   RV    |  8,48291  |  48,4733  | DB Station und Service AG |              |  neu   |
 | 8001966 | MFOL  | de:09187:90183  |     Feldolling     | nur DPN | 11,852244 | 47,895336 | DB Station und Service AG |              |  neu   |
 
-Some values in the columns could be described using value types, e.g. `Laenge` and `Breite` are decimals ranging 
-from -90 to 90 as they are supposed to be geographic coordinates. Further examples for value types will be addressed 
+Some values in the columns could be described using valuetypes, e.g. `Laenge` and `Breite` are decimals ranging 
+from -90 to 90 as they are supposed to be geographic coordinates. Further examples for valuetypes will be addressed 
 in upcoming sections.
 
 ## Explanation
 
-### User-defined value types based on primitive value types
+### User-defined valuetypes based on primitive valuetypes
 
-Valuetypes are defined using the `value type` keyword, giving a name and specifying the underlying primitive value type. 
-constraints can be added via the `constraints` collection, see [this upcoming section](#adding-constraints-to-value types)
+Valuetypes are defined using the `valuetype` keyword, giving a name and specifying the underlying primitive valuetype. 
+constraints can be added via the `constraints` collection, see [this upcoming section](#adding-constraints-to-valuetypes)
 for details.
 
 Here are some examples:
 
 ```jayvee
-value type IFOPT oftype text {
+valuetype IFOPT oftype text {
    constraints: [ ... ];
 }
 
-value type Longitude oftype decimal {
+valuetype Longitude oftype decimal {
    constraints: [ ... ];
 }
 ```
 
-### Defining constraints for value types
+### Defining constraints for valuetypes
 
 Constraints can be defined using the `constraint` keyword, providing a name and by selecting the type of 
 constraint. There are several builtin constraints to choose from, see
@@ -99,7 +99,7 @@ constraint GeographicCoordinateRange oftype RangeConstraint {
 
 There are a number of constraints that are built into the language. They should be sufficient to cover most use cases.
 
-##### For any primitive value type
+##### For any primitive valuetype
 
 **`WhitelistConstraint`**: Configured via a collection of values to be considered valid. Any other values are 
 considered invalid.
@@ -117,12 +117,12 @@ considered invalid.
 **`RangeConstraint`**: Configured via a lower and an upper bound (each either inclusive or exclusive). Only values in 
 that range are considered valid.
 
-### Adding constraints to value types
+### Adding constraints to valuetypes
 
-To add constraints to a value type, they have to be added to the `constraints` collection of that value type:
+To add constraints to a valuetype, they have to be added to the `constraints` collection of that valuetype:
 
 ```jayvee
-value type MyValuetype oftype text {
+valuetype MyValuetype oftype text {
    constraints: [
        MyRegexConstraint,
        MyLengthConstraint
@@ -138,17 +138,17 @@ constraint MyLengthConstraint oftype LengthConstraint {
 }
 ```
 
-Note that the constraints have to be suitable regarding the primitive value type.
+Note that the constraints have to be suitable regarding the primitive valuetype.
 
 ### Syntactic sugar for common constraints
 
 There are syntactic sugar variants for common constraints. They can be used within the `constraints` collection of 
-a value type. Using such a syntax implicitly creates a corresponding constraint with no name.
+a valuetype. Using such a syntax implicitly creates a corresponding constraint with no name.
 
 #### For `RegexConstraint`:
 
 ```jayvee
-value type IFOPT oftype text {
+valuetype IFOPT oftype text {
    constraints: [
        /[a-z]{2}:\d+:\d+(:\d+)?/
    ];
@@ -160,7 +160,7 @@ value type IFOPT oftype text {
 Enumeration of all valid values, each separated with `|`:
 
 ```jayvee
-value type DB_Traffic oftype text {
+valuetype DB_Traffic oftype text {
    constraints: [
        "FV" | "RV" | "nur DPN"
    ];
@@ -170,7 +170,7 @@ value type DB_Traffic oftype text {
 #### For `RangeConstraint`:
 
 ```jayvee
-value type Longitude oftype decimal {
+valuetype Longitude oftype decimal {
    constraints: [
        -90 <= value <= 90
    ];
@@ -182,9 +182,9 @@ desugars to `-90 <= value AND value <= 90`.
 
 Note that it is also allowed to use `<` instead of `<=` for exclusive bounds.
 
-### Assigning value types to columns
+### Assigning valuetypes to columns
 
-The assignment of a user-defined value type to a column is similar to how it is done with primitive value types:
+The assignment of a user-defined valuetype to a column is similar to how it is done with primitive valuetypes:
 
 ```jayvee
 block DbStopsTableInterpreter oftype TableInterpreter {
@@ -192,7 +192,7 @@ block DbStopsTableInterpreter oftype TableInterpreter {
     columns: [
         "EVA_NR" oftype integer,
         "DS100" oftype text,
-        // Here we assign a user-defined value type to the column "IFOPT"
+        // Here we assign a user-defined valuetype to the column "IFOPT"
         "IFOPT" oftype IFOPT,
         "NAME" oftype text,
         "Verkehr" oftype DB_Traffic,
@@ -214,12 +214,12 @@ block DbStopsTableInterpreter oftype TableInterpreter {
 ## Alternatives
 
 - Allow arbitrary constraints using boolean expressions that can be combined with boolean operators
-  - Unsure how this could be expressed, esp. when constraints of a value type are written down as a collection
+  - Unsure how this could be expressed, esp. when constraints of a valuetype are written down as a collection
   - The syntactic sugar versions in this RFC could be turned into inline boolean expressions
 
 ## Possible Future Changes/Enhancements
 
-- Introduce enums as a language feature rather than implicitly via a `text` value type with a `WhitelistConstraint` 
+- Introduce enums as a language feature rather than implicitly via a `text` valuetype with a `WhitelistConstraint` 
   applied
 - Readers and writers to handle different value representations
 - Mechanisms for handling invalid values

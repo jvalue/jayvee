@@ -174,7 +174,7 @@ M0 ~~~ M1
     - `<block>` models a singleton instance of `<block>`, reusing the same syntax reuses the same instance
 
 #### 3. Allow only pipes and block instances in pipelines
-The following explanations use blocks as an example but map directly to **Constraints** and **Valuetypes**. That is, constraints and value types can also only be defined outside of pipelines and are instantiated inside of pipelines.
+The following explanations use blocks as an example but map directly to **Constraints** and **Valuetypes**. That is, constraints and valuetypes can also only be defined outside of pipelines and are instantiated inside of pipelines.
 
 - Pipelines may only contain pipes and block instances, everything else has to be described outside of a pipeline
 
