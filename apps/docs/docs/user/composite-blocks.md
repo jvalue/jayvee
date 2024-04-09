@@ -2,21 +2,24 @@
 sidebar_position: 4
 ---
 
-# Composite Blocks
+# Composite Block Types
 
-Composite blocks are a way to create new blocktypes in Jayvee by combining the functionality of existing blocks and pipes. By relying on composite blocks instead of implementing more builtin blocks in a language interpreter, Jayvee supports easy extension by users.
+_Composite block types_ are a way to create new _block types_ in Jayvee by combining the functionality of existing _blocks_ and _pipes_. By relying on _composite block types_ instead of implementing more _builtin block types_ in a language interpreter, Jayvee supports easy extension by users.
 
-Composite blocks define:
-- with the `property` keyword: properties with a name and [value type](./core-concepts.md#valuetypes), optionally a default value
-- with the `input` keyword: one input with a name and io type (that can be None)
-- with the `output` keyword: one output with a name and io type (that can be None)
-- one pipeline definition, starting from the input (using its name) and ending in the output (again using its name)
-- all blocks that are used in the pipeline definition (either builtin or other composite blocks)
+_Composite block types_ define:
+
+- with the `property` keyword: properties with a name and [value type](./core-concepts.md#value%20types), optionally a default value
+- with the `input` keyword: one input with a name and _io type_ (that can be `None`)
+- with the `output` keyword: one output with a name and _io type_ (that can be `None`)
+- one _pipeline_ definition, starting from the input (using its name) and ending in the output (again using its name)
+- all _blocks_ that are used in the _pipeline_ definition (either _blocks_ of _builtin_ or _composite block types_)
 
 ## Example
-As an example, the common use-case of extracting a CSV file from a webserver using HTTP. With builtin blocks, a pipeline would start with a HttpExtractor source that downloads a file from the internet and outputs a binary file. This file must be interpreted as text (using a TextFileInterpreter) and finally as Sheet (using a CSVInterpreter). 
 
-### Implementation with builtin blocks
+As an example, the common use-case of extracting a CSV file from a web server using HTTP. With _builtin block types_, a _pipeline_ would start with a `HttpExtractor` source that downloads a file from the internet and outputs a binary file. This file must be interpreted as text (using a `TextFileInterpreter`) and finally as `Sheet` (using a `CSVInterpreter`).
+
+### Implementation with builtin block types
+
 ```mermaid
 flowchart LR
     A[HttpExtractor] --> B(TextFileInterpreter)
@@ -25,13 +28,13 @@ flowchart LR
     D --> E[SQLiteSink]
 ```
 
-A pipeline with builtin blocks is very verbose:
+A _pipeline_ with _blocks_ using _builtin block types_ is very verbose:
 
 ```jayvee
 pipeline CarsPipeline {
 	CarsExtractor
         -> CarsTextFileInterpreter
-	    -> CarsCSVInterpreter 
+	    -> CarsCSVInterpreter
 	   	-> CarsTableInterpreter
 		-> CarsLoader;
 
@@ -48,12 +51,12 @@ pipeline CarsPipeline {
 }
 ```
 
-### Refactoring using composite blocks
+### Refactoring using composite block types
 
-The common use-case of downloading a CSV file using HTTP can be refactored into a composite block. Note that we define all properties of the builtin blocks that are used as properties of the new CSVExtractor blocktype (but add fallback values). If some internal configuration is always the same, we could also not expose it as a property of the new blocktype.
+The common use-case of downloading a CSV file using HTTP can be refactored into a _composite block type_. Note that we define all properties of the _builtin blocks_ that are used as properties of the new `CSVExtractor` _block type_ (but add fallback values). If some internal configuration is always the same, we could also not expose it as a property of the new _block type_.
 
 ```jayvee
-// Define a new blocktype named CSVExtractor outside of the pipeline
+// Define a new block type named CSVExtractor outside of the pipeline
 composite blocktype CSVExtractor {
     // Properties of the CSVExtractor, some with default values
     property url oftype text;
@@ -84,7 +87,7 @@ composite blocktype CSVExtractor {
 }
 ```
 
-With the new CSVExtractor composite blocktype, the pipeline now looks like this.
+With the new `CSVExtractor` _composite block type_, the _pipeline_ now looks like this.
 
 ```mermaid
 flowchart LR
@@ -97,7 +100,7 @@ flowchart LR
 end
 ```
 
-If the CSVExtractor is available in the scope of the `CarsPipeline` from before (e.g., by defining it above the pipeline), it can then be used to shorten the actual pipeline code.
+If the `CSVExtractor` is available in the scope of the `CarsPipeline` from before (e.g., by defining it above the _pipeline_), it can then be used to shorten the actual _pipeline_ code.
 
 ```jayvee
 pipeline CarsPipeline {

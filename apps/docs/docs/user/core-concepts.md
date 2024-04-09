@@ -4,13 +4,13 @@ sidebar_position: 2
 
 # Core Concepts
 
-The core concepts of Jayvee are `Pipelines`, `Blocks`, and `ValueTypes`.
+The core concepts of Jayvee are _pipelines_, _blocks_, and _value types_.
 
 ## Pipelines
 
-A `Pipeline` is a sequence of different computing steps, the `Blocks`.
-The default output of a block becomes the default input of the next block, building a chain of computing steps.
-In the scope of a `Pipeline`, you can connect these blocks via the `pipe` syntax:
+A _pipeline_ is a sequence of different computing steps, the _blocks_.
+The default output of a _block_ becomes the default input of the next _block_, building a chain of computing steps.
+In the scope of a _pipeline_, you can connect these _blocks_ via the _pipe_ syntax:
 
 ```jayvee
 pipeline CarsPipeline {
@@ -26,14 +26,14 @@ pipeline CarsPipeline {
 
 ## Blocks
 
-A `Block` is a processing step within a `Pipeline`.
+A _block_ is a processing step within a _pipeline_.
 It can have a default input and a default output.
-We differentiate the following types of `Blocks`:
-- `ExtractorBlocks` do not have a default input but only a default output. They model a **data source**.
-- `TransformatorBlocks` have a default input and a default output. They model a **transformation**.
-- `LoaderBlocks` do have a default input but nor a default output. They model a **data sink**.
+We differentiate the following types of _blocks_:
+- _Extractor blocks_ do not have a default input but only a default output. They model a **data source**.
+- _Transformator blocks_ have a default input and a default output. They model a **transformation**.
+- _Loader blocks_ do have a default input but nor a default output. They model a **data sink**.
 
-The general structure of a `Pipeline` consisting of different blocks is the following:
+The general structure of a _pipeline_ consisting of different blocks is the following:
 
 ```mermaid
 flowchart LR
@@ -42,8 +42,8 @@ flowchart LR
     C --> D(LoaderBlock)
 ```
 
-The common syntax of blocks is at its core a key-value map to provide configuration to the block.
-The availability of property keys and their respective `ValueTypes` is determined by the type of the `Block` - indicated by the identifier after the keyword `oftype`:
+The common syntax of _blocks_ is at its core a key-value map to provide configuration to the _block_.
+The availability of property keys and their respective _value types_ is determined by the type of the _block_, called _block type_ - indicated by the identifier after the keyword `oftype`:
 
 ```jayvee
 block GasReserveHttpExtractor oftype HttpExtractor {
@@ -52,20 +52,20 @@ block GasReserveHttpExtractor oftype HttpExtractor {
 } 
 ```
 
-In the example above, the `url` property of type `text` is defined by the corresponding `HttpExtractor` block type.
+In the example above, the `url` property of type `text` is defined by the corresponding `HttpExtractor` _block type_.
 
-Blocks can be either defined as part of the language, called `builtin` or defined as composition of existing blocks by users in Jayvee, called `composite`. See the documentation for [Composite Blocks](./composite-blocks.md).
+_Blocks_ can be either defined as part of the language, called _builtin_ or defined as composition of existing _blocks_ by users in Jayvee, called _composite block types_. See the documentation for [_composite block types_](./composite-blocks.md).
 
-## ValueTypes
+## Value types
 
-A `ValueType` is the definition of a data type of the processed data.
-Some `Blocks` use `ValueTypes` to define logic (like filtering or assessing the data type in a data sink).
-We differentiate the following types of `ValueTypes`:
-- `Built-in ValueTypes` come with the basic version of Jayvee. See [Built-in Valuetypes](./value-types/builtin-value-types).
-- `Primitive ValueTypes` can be defined by the user to model domain-specific data types and represent a single value.
-  `Constraints` can be added to a `Primitive ValueType`.
-See [Primitive Valuetypes](./value-types/primitive-value-types).
-- `Compound ValueTypes`: UPCOMING.
+A _value type_ is the definition of a data type of the processed data.
+Some _blocks_ use _value types_ to define logic (like filtering or assessing the data type in a data sink).
+We differentiate the following kinds of _value types_:
+- _Built-in value types_ come with the basic version of Jayvee. See [built-in value types](./value-types/builtin-value-types).
+- _Primitive value types_ can be defined by the user to model domain-specific data types and represent a single value.
+  _Constraints_ can be added to a _primitive value types_.
+See [primitive value types](./value-types/primitive-value-types).
+- _Compound value types_: UPCOMING.
 
 ```jayvee
 valuetype GasFillLevel oftype integer {
@@ -77,7 +77,7 @@ constraint GasFillLevelRange on decimal:
 ```
 
 ## Transforms
-`Transforms` are used to transform data from one `ValueType` to a different one. For more details, see [Transforms](./transforms.md).
+_Transforms_ are used to transform data from one _value type_ to a different one. For more details, see [transforms](./transforms.md).
 
 ```jayvee
 transform CelsiusToKelvin {

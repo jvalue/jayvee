@@ -4,8 +4,8 @@ sidebar_position: 8
 
 # Transforms
 
-Transforms are a concept in Jayvee to define the transformation of individual values.
-They are similar to functions in programming languages, i.e. they perform computations on some input values and produce output values. Transform work by mapping input values to outputs using [expressions](./expressions.md).
+_Transforms_ are a concept in Jayvee to define the transformation of individual values.
+They are similar to functions in programming languages, i.e. they perform computations on some input values and produce output values. _Transforms_ work by mapping input values to outputs using [expressions](./expressions.md).
 
 :::info Important
 
@@ -23,23 +23,23 @@ For the future, it is planned to support arbitrary numbers for outputs as well.
 
 ## Syntax
 
-The general syntax of transforms looks like this:
+The general syntax of _transforms_ looks like this:
 
 ```jayvee
 transform <name> {
-  from <inputName> oftype <inputValuetype>;
-  to <outputName> oftype <outputValuetype>;
+  from <inputName> oftype <inputValueType>;
+  to <outputName> oftype <outputValueType>;
 
   <outputName>: <expression>;
 }
 ```
 
-The `transform` keyword is used to define a transform and give it a name.
-The curly braces denote the body of the transform.
+The `transform` keyword is used to define a _transform_ and give it a name.
+The curly braces denote the body of the _transform_.
 
 The body first contains the definitions of input and output ports.
 Input ports are defined using the `from` keyword whereas output ports use the `to` keyword.
-Next, they are given a name and, after the `oftype` keyword, typed with a valuetype.
+Next, they are given a name and, after the `oftype` keyword, typed with a _value type_.
 
 Below, there needs to be an output assignment for each output port.
 The output assignment defines how a particular output value is computed.
@@ -60,7 +60,7 @@ transform CelsiusToKelvin {
 }
 ```
 
-The following transform converts a text based status into a boolean value, `true` if the text is `Active`, `false` for any other value:
+The following _transform_ converts a text based status into a boolean value, `true` if the text is `Active`, `false` for any other value:
 
 ```jayvee
 transform StatusToBoolean {
