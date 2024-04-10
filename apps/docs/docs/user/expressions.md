@@ -58,6 +58,10 @@ The following expression is evaluated to the `text` `I love Datypus`: `"I love p
 - `matches` for a regex match, e.g., `"A07" matches /^[A-Z0-9]*$/` evaluates to `true`
 - `in` for inclusion in an array, e.g., `"a" in ["a", "b", "c"]` evaluates to `true`
 
+#### Text manipulation (unary operators)
+- `lowercase` converts all alphabetic characters in a text to lowercase
+- `uppercase` converts all alphabetic characters in a text to uppercase
+
 #### Text manipulation (ternary operators)
 - `replace [...] with [...]` replaces regex matches in a text with a string
 

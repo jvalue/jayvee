@@ -53,7 +53,7 @@ PrimaryExpression infers Expression:
   | ExpressionLiteral;
 
 UnaryExpression:
-  operator=('not' | '+' | '-' | 'sqrt' | 'floor' | 'ceil' | 'round') expression=PrimaryExpression;
+  operator=('not' | '+' | '-' | 'sqrt' | 'floor' | 'ceil' | 'round' | 'lowercase' | 'uppercase') expression=PrimaryExpression;
 
 ExpressionLiteral:
   ValueLiteral | FreeVariableLiteral;
