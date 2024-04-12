@@ -107,13 +107,13 @@ describe('Validation of PipeDefinition', () => {
       expect(validationAcceptorMock).toHaveBeenNthCalledWith(
         1,
         'error',
-        'Block "BlockTo" cannot be connected to other blocks. Its blocktype "TestFileLoader" has output type "None".',
+        'Block "BlockTo" cannot be connected to other blocks. Its block type "TestFileLoader" has output type "None".',
         expect.any(Object),
       );
       expect(validationAcceptorMock).toHaveBeenNthCalledWith(
         2,
         'error',
-        'Block "BlockFrom" cannot be connected to from other blocks. Its blocktype "TestFileExtractor" has input type "None".',
+        'Block "BlockFrom" cannot be connected to from other blocks. Its block type "TestFileExtractor" has input type "None".',
         expect.any(Object),
       );
     });

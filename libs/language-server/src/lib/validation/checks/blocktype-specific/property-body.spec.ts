@@ -17,7 +17,7 @@ import {
 
 import { checkBlockTypeSpecificPropertyBody } from './property-body';
 
-describe('Validation of blocktype specific property bodies', () => {
+describe('Validation of block type specific property bodies', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
@@ -64,7 +64,7 @@ describe('Validation of blocktype specific property bodies', () => {
     validationAcceptorMock.mockReset();
   });
 
-  describe('TextRangeSelector blocktype', () => {
+  describe('TextRangeSelector block type', () => {
     it('should diagnose error on lineFrom > lineTo', async () => {
       const text = readJvTestAsset(
         'property-body/blocktype-specific/text-range-selector/invalid-lineFrom-greater-lineTo.jv',
@@ -91,7 +91,7 @@ describe('Validation of blocktype specific property bodies', () => {
     });
   });
 
-  describe('CellWriter blocktype', () => {
+  describe('CellWriter block type', () => {
     it('should diagnose error on number of write values does not match cell range', async () => {
       const text = readJvTestAsset(
         'property-body/blocktype-specific/cell-writer/invalid-write-length-does-not-match-cell-range.jv',
@@ -125,7 +125,7 @@ describe('Validation of blocktype specific property bodies', () => {
     });
   });
 
-  describe('TableTransformer blocktype', () => {
+  describe('TableTransformer block type', () => {
     it('should diagnose error on number of input columns do not match transform input ports', async () => {
       const text = readJvTestAsset(
         'property-body/blocktype-specific/table-transformer/invalid-input-columns-transform-port-missmatch.jv',

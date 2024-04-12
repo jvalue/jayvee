@@ -37,7 +37,7 @@ function checkNoMultipleInputs(
     blocktype.inputs.forEach((inputDefinition) => {
       props.validationContext.accept(
         'error',
-        `Found more than one input definition in blocktype '${blocktype.name}'`,
+        `Found more than one input definition in block type '${blocktype.name}'`,
         {
           node: inputDefinition,
         },
@@ -59,7 +59,7 @@ function checkNoMultipleOutputs(
     blocktype.outputs.forEach((outputDefinition) => {
       props.validationContext.accept(
         'error',
-        `Found more than one output definition in blocktype '${blocktype.name}'`,
+        `Found more than one output definition in block type '${blocktype.name}'`,
         {
           node: outputDefinition,
         },
@@ -78,7 +78,7 @@ function checkOneInput(
   if (numberOfInputs < 1) {
     props.validationContext.accept(
       'error',
-      `Found no input in blocktype '${blocktype.name}' - consider using iotype "none" if the blocktype consumes no input`,
+      `Found no input in block type '${blocktype.name}' - consider using iotype "none" if the block type consumes no input`,
       {
         node: blocktype,
       },
@@ -96,7 +96,7 @@ function checkOneOutput(
   if (numberOfOutputs < 1) {
     props.validationContext.accept(
       'error',
-      `Found no output in blocktype '${blocktype.name}' - consider using iotype "none" if the blocktype produces no output`,
+      `Found no output in block type '${blocktype.name}' - consider using iotype "none" if the block type produces no output`,
       {
         node: blocktype,
       },
@@ -130,7 +130,7 @@ function checkNoDuplicateProperties(
       properties.forEach((property) => {
         props.validationContext.accept(
           'error',
-          `Property '${property.name}' in blocktype '${blocktype.name}' is defined multiple times`,
+          `Property '${property.name}' in block type '${blocktype.name}' is defined multiple times`,
           {
             node: property,
             property: 'name',

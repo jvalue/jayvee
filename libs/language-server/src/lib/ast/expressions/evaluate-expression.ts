@@ -44,7 +44,7 @@ export function evaluatePropertyValue<T extends InternalValueRepresentation>(
   assert(propertyValue !== undefined);
 
   if (isBlockTypeProperty(propertyValue)) {
-    // Properties of blocktypes are always undefined
+    // Properties of block types are always undefined
     // because they are set in the block that instantiates the block type
     return undefined;
   }

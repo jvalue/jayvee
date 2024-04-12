@@ -22,7 +22,7 @@ import {
 
 import { checkBlockTypeSpecificProperties } from './property-assignment';
 
-describe('Validation of blocktype specific properties', () => {
+describe('Validation of block type specific properties', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
@@ -79,7 +79,7 @@ describe('Validation of blocktype specific properties', () => {
     validationAcceptorMock.mockReset();
   });
 
-  describe('ArchiveInterpreter blocktype', () => {
+  describe('ArchiveInterpreter block type', () => {
     it('should diagnose no error on valid archiveType parameter value', async () => {
       const text = readJvTestAsset(
         'property-assignment/blocktype-specific/archive-interpreter/valid-valid-archivetype-param.jv',
@@ -106,7 +106,7 @@ describe('Validation of blocktype specific properties', () => {
     });
   });
 
-  describe('CellWriter blocktype', () => {
+  describe('CellWriter block type', () => {
     it('should diagnose error on wrong dimension for at parameter', async () => {
       const text = readJvTestAsset(
         'property-assignment/blocktype-specific/cell-writer/invalid-wrong-at-dimension.jv',
@@ -133,7 +133,7 @@ describe('Validation of blocktype specific properties', () => {
     });
   });
 
-  describe('ColumnDeleter blocktype', () => {
+  describe('ColumnDeleter block type', () => {
     it('should diagnose error on deleting partial column', async () => {
       const text = readJvTestAsset(
         'property-assignment/blocktype-specific/column-deleter/invalid-partial-column-delete.jv',
@@ -160,7 +160,7 @@ describe('Validation of blocktype specific properties', () => {
     });
   });
 
-  describe('GtfsRTInterpreter blocktype', () => {
+  describe('GtfsRTInterpreter block type', () => {
     it('should diagnose no error on valid entity parameter value', async () => {
       const text = readJvTestAsset(
         'property-assignment/blocktype-specific/gtfs-rt-interpreter/valid-valid-entity-param.jv',
@@ -187,7 +187,7 @@ describe('Validation of blocktype specific properties', () => {
     });
   });
 
-  describe('HttpExtractor blocktype', () => {
+  describe('HttpExtractor block type', () => {
     it('should diagnose no error on valid retries parameter value', async () => {
       const text = readJvTestAsset(
         'property-assignment/blocktype-specific/http-extractor/valid-valid-retries-param.jv',
@@ -264,7 +264,7 @@ describe('Validation of blocktype specific properties', () => {
     });
   });
 
-  describe('LocalFileExtractor blocktype', () => {
+  describe('LocalFileExtractor block type', () => {
     it('should diagnose no error on valid filePath parameter value', async () => {
       const text = readJvTestAsset(
         'property-assignment/blocktype-specific/local-file-extractor/valid-valid-filepath-param.jv',
@@ -291,7 +291,7 @@ describe('Validation of blocktype specific properties', () => {
     });
   });
 
-  describe('RowDeleter blocktype', () => {
+  describe('RowDeleter block type', () => {
     it('should diagnose error on deleting partial row', async () => {
       const text = readJvTestAsset(
         'property-assignment/blocktype-specific/row-deleter/invalid-partial-row-delete.jv',
@@ -318,7 +318,7 @@ describe('Validation of blocktype specific properties', () => {
     });
   });
 
-  describe('TableInterpreter blocktype', () => {
+  describe('TableInterpreter block type', () => {
     it('should diagnose error on non unique column names', async () => {
       const text = readJvTestAsset(
         'property-assignment/blocktype-specific/table-interpreter/invalid-non-unique-column-names.jv',
@@ -352,7 +352,7 @@ describe('Validation of blocktype specific properties', () => {
     });
   });
 
-  describe('TextFileInterpreter blocktype', () => {
+  describe('TextFileInterpreter block type', () => {
     it('should diagnose no error on valid encoding parameter value', async () => {
       const text = readJvTestAsset(
         'property-assignment/blocktype-specific/text-file-interpreter/valid-utf8-encoding-param.jv',
@@ -379,7 +379,7 @@ describe('Validation of blocktype specific properties', () => {
     });
   });
 
-  describe('TextLineDeleter blocktype', () => {
+  describe('TextLineDeleter block type', () => {
     it('should diagnose no error on valid lines parameter value', async () => {
       const text = readJvTestAsset(
         'property-assignment/blocktype-specific/text-line-deleter/valid-postive-line-number.jv',
@@ -406,7 +406,7 @@ describe('Validation of blocktype specific properties', () => {
     });
   });
 
-  describe('TextRangeSelector blocktype', () => {
+  describe('TextRangeSelector block type', () => {
     it('should diagnose no error on valid lineFrom parameter value', async () => {
       const text = readJvTestAsset(
         'property-assignment/blocktype-specific/text-range-selector/valid-postive-lineFrom-number.jv',

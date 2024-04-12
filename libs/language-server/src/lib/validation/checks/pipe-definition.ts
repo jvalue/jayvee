@@ -43,7 +43,7 @@ function checkBlockCompatibility(
     const isToBlockExtractor = !toBlockType.hasInput();
 
     if (isFromBlockLoader) {
-      const errorMessage = `Block "${pipeWrapper.from?.name}" cannot be connected to other blocks. Its blocktype "${fromBlockType.astNode.name}" has output type "${fromBlockType.outputType}".`;
+      const errorMessage = `Block "${pipeWrapper.from?.name}" cannot be connected to other blocks. Its block type "${fromBlockType.astNode.name}" has output type "${fromBlockType.outputType}".`;
       props.validationContext.accept(
         'error',
         errorMessage,
@@ -52,7 +52,7 @@ function checkBlockCompatibility(
     }
 
     if (isToBlockExtractor) {
-      const errorMessage = `Block "${pipeWrapper.to?.name}" cannot be connected to from other blocks. Its blocktype "${toBlockType.astNode.name}" has input type "${toBlockType.inputType}".`;
+      const errorMessage = `Block "${pipeWrapper.to?.name}" cannot be connected to from other blocks. Its block type "${toBlockType.astNode.name}" has input type "${toBlockType.inputType}".`;
       props.validationContext.accept(
         'error',
         errorMessage,

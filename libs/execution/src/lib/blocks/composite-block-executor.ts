@@ -125,7 +125,7 @@ export function createCompositeBlockExecutor(
 
         assert(
           valueType,
-          `Can not create value type for blocktype property ${blocktypeProperty.name}`,
+          `Can not create value type for block type property ${blocktypeProperty.name}`,
         );
 
         const propertyValue = this.getPropertyValueFromBlockOrDefault(
@@ -139,7 +139,7 @@ export function createCompositeBlockExecutor(
 
         assert(
           propertyValue !== undefined,
-          `Can not get value for blocktype property ${blocktypeProperty.name}`,
+          `Can not get value for block type property ${blocktypeProperty.name}`,
         );
 
         context.evaluationContext.setValueForReference(

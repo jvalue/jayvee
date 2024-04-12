@@ -60,7 +60,7 @@ describe('Validation of CompositeBlockTypeDefinition', () => {
     validationAcceptorMock.mockReset();
   });
 
-  it('should diagnose error on missing pipeline in composite blocktype', async () => {
+  it('should diagnose error on missing pipeline in composite block type', async () => {
     const text = readJvTestAsset(
       'composite-blocktype-definition/invalid-composite-blocktype-no-pipeline.jv',
     );
@@ -70,12 +70,12 @@ describe('Validation of CompositeBlockTypeDefinition', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
-      `Composite blocktypes must define one pipeline 'TestBlock'`,
+      `Composite block types must define one pipeline 'TestBlock'`,
       expect.any(Object),
     );
   });
 
-  it('should diagnose error on multiple pipelines in composite blocktype', async () => {
+  it('should diagnose error on multiple pipelines in composite block type', async () => {
     const text = readJvTestAsset(
       'composite-blocktype-definition/invalid-composite-blocktype-multiple-pipelines.jv',
     );
@@ -85,12 +85,12 @@ describe('Validation of CompositeBlockTypeDefinition', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
-      `Found more than one pipeline definition in composite blocktype 'TestBlock'`,
+      `Found more than one pipeline definition in composite block type 'TestBlock'`,
       expect.any(Object),
     );
   });
 
-  it('should have no error on valid extractor blocktype definition', async () => {
+  it('should have no error on valid extractor block type definition', async () => {
     const text = readJvTestAsset(
       'composite-blocktype-definition/valid-composite-blocktype-extractor.jv',
     );
@@ -100,7 +100,7 @@ describe('Validation of CompositeBlockTypeDefinition', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
 
-  it('should have no error on valid extractor blocktype definition using recursion', async () => {
+  it('should have no error on valid extractor block type definition using recursion', async () => {
     const text = readJvTestAsset(
       'composite-blocktype-definition/valid-composite-blocktype-recursive.jv',
     );

@@ -36,7 +36,7 @@ function checkHasPipeline(
   if (blockType.pipes.length === 0) {
     props.validationContext.accept(
       'error',
-      `Composite blocktypes must define one pipeline '${blockType.name}'`,
+      `Composite block types must define one pipeline '${blockType.name}'`,
       {
         node: blockType,
         property: 'name',
@@ -58,7 +58,7 @@ function checkExactlyOnePipeline(
     blockType.pipes.forEach((pipe) => {
       props.validationContext.accept(
         'error',
-        `Found more than one pipeline definition in composite blocktype '${blockType.name}'`,
+        `Found more than one pipeline definition in composite block type '${blockType.name}'`,
         {
           node: pipe,
         },

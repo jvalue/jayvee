@@ -27,7 +27,7 @@ describe('std extension', () => {
     (await loadAllBuiltinBlockTypes()).forEach(
       (blockType: BlockTypeWrapper) => {
         const execExtension = new StdExecExtension();
-        console.info(`Looking for executor for blocktype ${blockType.type}`);
+        console.info(`Looking for executor for block type ${blockType.type}`);
         const matchingBlockExecutorClass =
           execExtension.getExecutorForBlockType(blockType.type);
 
