@@ -56,7 +56,7 @@ pipeline CarsPipeline {
 The common use-case of downloading a CSV file using HTTP can be refactored into a _composite block type_. Note that we define all properties of the _built-in blocks_ that are used as properties of the new `CSVExtractor` _block type_ (but add fallback values). If some internal configuration is always the same, we could also not expose it as a property of the new _block type_.
 
 ```jayvee
-// Define a new block type named CSVExtractor outside of the pipeline
+// Define a new composite block type named CSVExtractor outside of the pipeline
 composite blocktype CSVExtractor {
     // Properties of the CSVExtractor, some with default values
     property url oftype text;
