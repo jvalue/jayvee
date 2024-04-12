@@ -46,7 +46,7 @@ pipeline ElectricVehiclesPipeline {
 		header: true;
 		columns: [
 			// 4. Here, a user-deifned value type is used to describe this column.
-			// The capital letter indicates that the value type is not builtin
+			// The capital letter indicates that the value type is not built-in
 			// by convention. The value type itself is defined further below. 
     		"VIN (1-10)" oftype VehicleIdentificationNumber10,
 			"County" oftype text,

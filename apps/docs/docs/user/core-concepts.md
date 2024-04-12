@@ -61,7 +61,7 @@ _Blocks_ can be either defined as part of the language, called _built-in_ or def
 A _value type_ is the definition of a data type of the processed data.
 Some _blocks_ use _value types_ to define logic (like filtering or assessing the data type in a data sink).
 We differentiate the following kinds of _value types_:
-- _Built-in value types_ come with the basic version of Jayvee. See [built-in value types](./value-types/builtin-value-types).
+- _Built-in value types_ come with the basic version of Jayvee. See [built-in value types](./value-types/built-in-value-types).
 - _Primitive value types_ can be defined by the user to model domain-specific data types and represent a single value.
   _Constraints_ can be added to a _primitive value types_.
 See [primitive value types](./value-types/primitive-value-types).
