@@ -278,7 +278,7 @@ describe('Validation of ValueTypeReference', () => {
     expectNoParserAndLexerErrors(document);
     const valueTypeRef = locator.getAstNode<ValueTypeReference>(
       document.parseResult.value,
-      `blocktypes@0/properties@0/valueType`,
+      `blockTypes@0/properties@0/valueType`,
     );
     assert(valueTypeRef !== undefined);
 

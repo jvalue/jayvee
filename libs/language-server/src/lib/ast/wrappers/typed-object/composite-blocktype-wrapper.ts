@@ -33,11 +33,11 @@ export class CompositeBlockTypeWrapper extends BlockTypeWrapper {
 
     // We assume block type properties that have an expression as default value can be evaluated during runtime
     return missingRequiredPropertyNames.filter((propertyName) => {
-      const blocktypeProperty = this.blockTypeDefinition.properties.find(
-        (blocktypeProperty) => blocktypeProperty.name === propertyName,
+      const blockTypeProperty = this.blockTypeDefinition.properties.find(
+        (blockTypeProperty) => blockTypeProperty.name === propertyName,
       );
 
-      return blocktypeProperty?.defaultValue === undefined;
+      return blockTypeProperty?.defaultValue === undefined;
     });
   }
 }

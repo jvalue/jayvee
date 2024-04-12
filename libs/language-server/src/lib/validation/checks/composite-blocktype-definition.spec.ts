@@ -36,13 +36,13 @@ describe('Validation of CompositeBlockTypeDefinition', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const blocktype = locator.getAstNode<CompositeBlockTypeDefinition>(
+    const blockType = locator.getAstNode<CompositeBlockTypeDefinition>(
       document.parseResult.value,
-      'blocktypes@0',
+      'blockTypes@0',
     ) as CompositeBlockTypeDefinition;
 
     validateCompositeBlockTypeDefinition(
-      blocktype,
+      blockType,
       createJayveeValidationProps(validationAcceptorMock),
     );
   }

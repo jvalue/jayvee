@@ -68,21 +68,21 @@ function checkExactlyOnePipeline(
 }
 
 export function checkDefinedBlocksAreUsed(
-  blocktypeDefinition: CompositeBlockTypeDefinition,
+  blockTypeDefinition: CompositeBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
-  if (!props.wrapperFactories.Pipeline.canWrap(blocktypeDefinition)) {
+  if (!props.wrapperFactories.Pipeline.canWrap(blockTypeDefinition)) {
     return;
   }
   const pipelineWrapper =
-    props.wrapperFactories.Pipeline.wrap(blocktypeDefinition);
+    props.wrapperFactories.Pipeline.wrap(blockTypeDefinition);
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (blocktypeDefinition.blocks === undefined) {
+  if (blockTypeDefinition.blocks === undefined) {
     return;
   }
 
-  const containedBlocks = blocktypeDefinition.blocks;
+  const containedBlocks = blockTypeDefinition.blocks;
   for (const block of containedBlocks) {
     doCheckDefinedBlockIsUsed(pipelineWrapper, block, props);
   }

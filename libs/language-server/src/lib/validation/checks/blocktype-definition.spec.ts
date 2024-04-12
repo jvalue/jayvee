@@ -36,13 +36,13 @@ describe('Validation of BuiltinBlockTypeDefinition', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const blocktype = locator.getAstNode<BuiltinBlockTypeDefinition>(
+    const blockType = locator.getAstNode<BuiltinBlockTypeDefinition>(
       document.parseResult.value,
-      'blocktypes@0',
+      'blockTypes@0',
     ) as BuiltinBlockTypeDefinition;
 
     validateBlockTypeDefinition(
-      blocktype,
+      blockType,
       createJayveeValidationProps(validationAcceptorMock),
     );
   }

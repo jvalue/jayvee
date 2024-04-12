@@ -13,31 +13,31 @@ import {
 import { type JayveeValidationProps } from '../validation-registry';
 
 export function validateBlockTypeDefinition(
-  blocktype: ReferenceableBlockTypeDefinition,
+  blockType: ReferenceableBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
-  checkNoMultipleInputs(blocktype, props);
-  checkNoMultipleOutputs(blocktype, props);
-  checkOneInput(blocktype, props);
-  checkOneOutput(blocktype, props);
-  checkNoDuplicateProperties(blocktype, props);
-  checkPropertiesDefaultValuesHaveCorrectType(blocktype, props);
+  checkNoMultipleInputs(blockType, props);
+  checkNoMultipleOutputs(blockType, props);
+  checkOneInput(blockType, props);
+  checkOneOutput(blockType, props);
+  checkNoDuplicateProperties(blockType, props);
+  checkPropertiesDefaultValuesHaveCorrectType(blockType, props);
 }
 
 function checkNoMultipleInputs(
-  blocktype: ReferenceableBlockTypeDefinition,
+  blockType: ReferenceableBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (blocktype.inputs === undefined) {
+  if (blockType.inputs === undefined) {
     return;
   }
 
-  if (blocktype.inputs.length > 1) {
-    blocktype.inputs.forEach((inputDefinition) => {
+  if (blockType.inputs.length > 1) {
+    blockType.inputs.forEach((inputDefinition) => {
       props.validationContext.accept(
         'error',
-        `Found more than one input definition in block type '${blocktype.name}'`,
+        `Found more than one input definition in block type '${blockType.name}'`,
         {
           node: inputDefinition,
         },
@@ -47,19 +47,19 @@ function checkNoMultipleInputs(
 }
 
 function checkNoMultipleOutputs(
-  blocktype: ReferenceableBlockTypeDefinition,
+  blockType: ReferenceableBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (blocktype.outputs === undefined) {
+  if (blockType.outputs === undefined) {
     return;
   }
 
-  if (blocktype.outputs.length > 1) {
-    blocktype.outputs.forEach((outputDefinition) => {
+  if (blockType.outputs.length > 1) {
+    blockType.outputs.forEach((outputDefinition) => {
       props.validationContext.accept(
         'error',
-        `Found more than one output definition in block type '${blocktype.name}'`,
+        `Found more than one output definition in block type '${blockType.name}'`,
         {
           node: outputDefinition,
         },
@@ -69,52 +69,52 @@ function checkNoMultipleOutputs(
 }
 
 function checkOneInput(
-  blocktype: ReferenceableBlockTypeDefinition,
+  blockType: ReferenceableBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  const numberOfInputs = blocktype.inputs?.length ?? 0;
+  const numberOfInputs = blockType.inputs?.length ?? 0;
 
   if (numberOfInputs < 1) {
     props.validationContext.accept(
       'error',
-      `Found no input in block type '${blocktype.name}' - consider using iotype "none" if the block type consumes no input`,
+      `Found no input in block type '${blockType.name}' - consider using iotype "none" if the block type consumes no input`,
       {
-        node: blocktype,
+        node: blockType,
       },
     );
   }
 }
 
 function checkOneOutput(
-  blocktype: ReferenceableBlockTypeDefinition,
+  blockType: ReferenceableBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  const numberOfOutputs = blocktype.outputs?.length ?? 0;
+  const numberOfOutputs = blockType.outputs?.length ?? 0;
 
   if (numberOfOutputs < 1) {
     props.validationContext.accept(
       'error',
-      `Found no output in block type '${blocktype.name}' - consider using iotype "none" if the block type produces no output`,
+      `Found no output in block type '${blockType.name}' - consider using iotype "none" if the block type produces no output`,
       {
-        node: blocktype,
+        node: blockType,
       },
     );
   }
 }
 
 function checkNoDuplicateProperties(
-  blocktype: ReferenceableBlockTypeDefinition,
+  blockType: ReferenceableBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (blocktype.properties === undefined) {
+  if (blockType.properties === undefined) {
     return;
   }
 
   const propertyMap = new Map<string, BlockTypeProperty[]>();
-  for (const property of blocktype.properties) {
+  for (const property of blockType.properties) {
     const propertyName = property.name;
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (propertyName === undefined) {
@@ -130,7 +130,7 @@ function checkNoDuplicateProperties(
       properties.forEach((property) => {
         props.validationContext.accept(
           'error',
-          `Property '${property.name}' in block type '${blocktype.name}' is defined multiple times`,
+          `Property '${property.name}' in block type '${blockType.name}' is defined multiple times`,
           {
             node: property,
             property: 'name',
@@ -141,15 +141,15 @@ function checkNoDuplicateProperties(
 }
 
 function checkPropertiesDefaultValuesHaveCorrectType(
-  blocktype: ReferenceableBlockTypeDefinition,
+  blockType: ReferenceableBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (blocktype.properties === undefined) {
+  if (blockType.properties === undefined) {
     return;
   }
 
-  blocktype.properties
+  blockType.properties
     .filter((property) => property.defaultValue !== undefined)
     .forEach((property) =>
       checkPropertyDefaultValuesHasCorrectType(property, props),

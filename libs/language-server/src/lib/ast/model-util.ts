@@ -42,7 +42,7 @@ export function getNextAstNodeContainer<T extends AstNode>(
 }
 
 /**
- * Utility function that gets all builtin blocktypes.
+ * Utility function that gets all builtin block types.
  * Duplicates are only added once.
  * Make sure to call @see initializeWorkspace first so that the file system is initialized.
  */
@@ -60,22 +60,22 @@ export function getAllBuiltinBlockTypes(
       if (!isJayveeModel(parsedDocument)) {
         throw new Error('Expected parsed document to be a JayveeModel');
       }
-      parsedDocument.blocktypes.forEach((blocktypeDefinition) => {
-        if (!isBuiltinBlockTypeDefinition(blocktypeDefinition)) {
+      parsedDocument.blockTypes.forEach((blockTypeDefinition) => {
+        if (!isBuiltinBlockTypeDefinition(blockTypeDefinition)) {
           return;
         }
 
         const wasAlreadyVisited =
-          visitedBuiltinBlockTypeDefinitions.has(blocktypeDefinition);
+          visitedBuiltinBlockTypeDefinitions.has(blockTypeDefinition);
         if (wasAlreadyVisited) {
           return;
         }
 
-        if (wrapperFactories.BlockType.canWrap(blocktypeDefinition)) {
+        if (wrapperFactories.BlockType.canWrap(blockTypeDefinition)) {
           allBuiltinBlockTypes.push(
-            wrapperFactories.BlockType.wrap(blocktypeDefinition),
+            wrapperFactories.BlockType.wrap(blockTypeDefinition),
           );
-          visitedBuiltinBlockTypeDefinitions.add(blocktypeDefinition);
+          visitedBuiltinBlockTypeDefinitions.add(blockTypeDefinition);
         }
       });
     });

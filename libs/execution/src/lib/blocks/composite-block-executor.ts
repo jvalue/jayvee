@@ -120,16 +120,16 @@ export function createCompositeBlockExecutor(
       properties: BlockTypeProperty[],
       context: ExecutionContext,
     ) {
-      properties.forEach((blocktypeProperty) => {
-        const valueType = createValueType(blocktypeProperty.valueType);
+      properties.forEach((blockTypeProperty) => {
+        const valueType = createValueType(blockTypeProperty.valueType);
 
         assert(
           valueType,
-          `Can not create value type for block type property ${blocktypeProperty.name}`,
+          `Can not create value type for block type property ${blockTypeProperty.name}`,
         );
 
         const propertyValue = this.getPropertyValueFromBlockOrDefault(
-          blocktypeProperty.name,
+          blockTypeProperty.name,
           valueType,
           block,
           properties,
@@ -139,11 +139,11 @@ export function createCompositeBlockExecutor(
 
         assert(
           propertyValue !== undefined,
-          `Can not get value for block type property ${blocktypeProperty.name}`,
+          `Can not get value for block type property ${blockTypeProperty.name}`,
         );
 
         context.evaluationContext.setValueForReference(
-          blocktypeProperty.name,
+          blockTypeProperty.name,
           propertyValue,
         );
       });

@@ -48,15 +48,15 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlockTypeD
     operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
     wrapperFactories: WrapperFactoryProvider,
   ) {
-    const blocktypeDefinition = isReference(toBeWrapped)
+    const blockTypeDefinition = isReference(toBeWrapped)
       ? toBeWrapped.ref
       : toBeWrapped;
-    assert(blocktypeDefinition !== undefined);
+    assert(blockTypeDefinition !== undefined);
 
-    const blocktypeName = blocktypeDefinition.name;
+    const blockTypeName = blockTypeDefinition.name;
 
     const properties: Record<string, PropertySpecification> = {};
-    for (const property of blocktypeDefinition.properties) {
+    for (const property of blockTypeDefinition.properties) {
       const valueType = createValueType(property.valueType);
       assert(valueType !== undefined);
 
@@ -78,13 +78,13 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlockTypeD
       }
     }
 
-    super(blocktypeDefinition, blocktypeName, properties, undefined);
+    super(blockTypeDefinition, blockTypeName, properties, undefined);
 
-    const inputPort = blocktypeDefinition.inputs[0];
+    const inputPort = blockTypeDefinition.inputs[0];
     assert(inputPort !== undefined);
     this.inputType = getIOType(inputPort);
 
-    const outputPort = blocktypeDefinition.outputs[0];
+    const outputPort = blockTypeDefinition.outputs[0];
     assert(outputPort !== undefined);
     this.outputType = getIOType(outputPort);
   }
@@ -94,27 +94,27 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlockTypeD
       | ReferenceableBlockTypeDefinition
       | Reference<ReferenceableBlockTypeDefinition>,
   ): boolean {
-    const blocktypeDefinition = isReference(toBeWrapped)
+    const blockTypeDefinition = isReference(toBeWrapped)
       ? toBeWrapped.ref
       : toBeWrapped;
 
-    if (blocktypeDefinition === undefined) {
+    if (blockTypeDefinition === undefined) {
       return false;
     }
 
     if (
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      blocktypeDefinition.properties === undefined ||
+      blockTypeDefinition.properties === undefined ||
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      blocktypeDefinition.name === undefined ||
-      blocktypeDefinition.inputs[0] === undefined ||
-      blocktypeDefinition.outputs[0] === undefined
+      blockTypeDefinition.name === undefined ||
+      blockTypeDefinition.inputs[0] === undefined ||
+      blockTypeDefinition.outputs[0] === undefined
     ) {
       return false;
     }
 
     if (
-      blocktypeDefinition.properties.some((property) => {
+      blockTypeDefinition.properties.some((property) => {
         return property.valueType.reference.ref === undefined;
       })
     ) {
