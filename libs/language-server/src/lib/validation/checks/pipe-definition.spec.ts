@@ -72,7 +72,7 @@ describe('Validation of PipeDefinition', () => {
 
     it('should have no error even if pipe references block of non existing type', async () => {
       const text = readJvTestAsset(
-        'pipe-definition/valid-unknown-blocktype.jv',
+        'pipe-definition/valid-unknown-block-type.jv',
       );
 
       await parseAndValidatePipe(text);
@@ -82,7 +82,7 @@ describe('Validation of PipeDefinition', () => {
 
     it('should diagnose error on unsupported pipe between BlockTypes', async () => {
       const text = readJvTestAsset(
-        'pipe-definition/invalid-pipe-between-blocktypes.jv',
+        'pipe-definition/invalid-pipe-between-block-types.jv',
       );
 
       await parseAndValidatePipe(text);

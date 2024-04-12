@@ -20,7 +20,7 @@ import {
 import { type JayveeValidationProps } from '../validation-registry';
 import { checkExpressionSimplification } from '../validation-util';
 
-import { checkBlockTypeSpecificProperties } from './blocktype-specific/property-assignment';
+import { checkBlockTypeSpecificProperties } from './block-type-specific/property-assignment';
 
 export function validatePropertyAssignment(
   property: PropertyAssignment,

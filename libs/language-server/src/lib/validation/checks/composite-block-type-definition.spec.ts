@@ -15,7 +15,7 @@ import {
   validationAcceptorMockImpl,
 } from '../../../test';
 
-import { validateCompositeBlockTypeDefinition } from './composite-blocktype-definition';
+import { validateCompositeBlockTypeDefinition } from './composite-block-type-definition';
 
 describe('Validation of CompositeBlockTypeDefinition', () => {
   let parse: (
@@ -62,7 +62,7 @@ describe('Validation of CompositeBlockTypeDefinition', () => {
 
   it('should diagnose error on missing pipeline in composite block type', async () => {
     const text = readJvTestAsset(
-      'composite-blocktype-definition/invalid-composite-blocktype-no-pipeline.jv',
+      'composite-block-type-definition/invalid-composite-block-type-no-pipeline.jv',
     );
 
     await parseAndValidateBlockType(text);
@@ -77,7 +77,7 @@ describe('Validation of CompositeBlockTypeDefinition', () => {
 
   it('should diagnose error on multiple pipelines in composite block type', async () => {
     const text = readJvTestAsset(
-      'composite-blocktype-definition/invalid-composite-blocktype-multiple-pipelines.jv',
+      'composite-block-type-definition/invalid-composite-block-type-multiple-pipelines.jv',
     );
 
     await parseAndValidateBlockType(text);
@@ -92,7 +92,7 @@ describe('Validation of CompositeBlockTypeDefinition', () => {
 
   it('should have no error on valid extractor block type definition', async () => {
     const text = readJvTestAsset(
-      'composite-blocktype-definition/valid-composite-blocktype-extractor.jv',
+      'composite-block-type-definition/valid-composite-block-type-extractor.jv',
     );
 
     await parseAndValidateBlockType(text);
@@ -102,7 +102,7 @@ describe('Validation of CompositeBlockTypeDefinition', () => {
 
   it('should have no error on valid extractor block type definition using recursion', async () => {
     const text = readJvTestAsset(
-      'composite-blocktype-definition/valid-composite-blocktype-recursive.jv',
+      'composite-block-type-definition/valid-composite-block-type-recursive.jv',
     );
 
     await parseAndValidateBlockType(text);
@@ -112,7 +112,7 @@ describe('Validation of CompositeBlockTypeDefinition', () => {
 
   it('should diagnose error on block as input for multiple pipes', async () => {
     const text = readJvTestAsset(
-      'composite-blocktype-definition/invalid-block-as-multiple-pipe-inputs.jv',
+      'composite-block-type-definition/invalid-block-as-multiple-pipe-inputs.jv',
     );
 
     await parseAndValidateBlockType(text);
@@ -135,7 +135,7 @@ describe('Validation of CompositeBlockTypeDefinition', () => {
 
   it('should diagnose error on block without pipe', async () => {
     const text = readJvTestAsset(
-      'composite-blocktype-definition/invalid-unconnected-block.jv',
+      'composite-block-type-definition/invalid-unconnected-block.jv',
     );
 
     await parseAndValidateBlockType(text);

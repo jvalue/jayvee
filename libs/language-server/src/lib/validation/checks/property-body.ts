@@ -17,7 +17,7 @@ import {
 import { type JayveeValidationProps } from '../validation-registry';
 import { checkUniqueNames } from '../validation-util';
 
-import { checkBlockTypeSpecificPropertyBody } from './blocktype-specific/property-body';
+import { checkBlockTypeSpecificPropertyBody } from './block-type-specific/property-body';
 import { checkConstraintTypeSpecificPropertyBody } from './constrainttype-specific/property-body';
 import { validatePropertyAssignment } from './property-assignment';
 

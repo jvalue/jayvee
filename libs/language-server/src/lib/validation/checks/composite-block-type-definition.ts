@@ -9,7 +9,7 @@ import {
 } from '../../ast/generated/ast';
 import { type JayveeValidationProps } from '../validation-registry';
 
-import { validateBlockTypeDefinition } from './blocktype-definition';
+import { validateBlockTypeDefinition } from './block-type-definition';
 import { checkMultipleBlockInputs } from './pipeline-definition';
 
 export function validateCompositeBlockTypeDefinition(

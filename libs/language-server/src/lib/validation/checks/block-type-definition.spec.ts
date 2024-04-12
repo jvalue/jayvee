@@ -15,7 +15,7 @@ import {
   validationAcceptorMockImpl,
 } from '../../../test';
 
-import { validateBlockTypeDefinition } from './blocktype-definition';
+import { validateBlockTypeDefinition } from './block-type-definition';
 
 describe('Validation of BuiltinBlockTypeDefinition', () => {
   let parse: (
@@ -62,7 +62,7 @@ describe('Validation of BuiltinBlockTypeDefinition', () => {
 
   it('should diagnose error on duplicate property in block type', async () => {
     const text = readJvTestAsset(
-      'builtin-blocktype-definition/invalid-internal-blocktype-duplicate-property.jv',
+      'builtin-block-type-definition/invalid-internal-block-type-duplicate-property.jv',
     );
 
     await parseAndValidateBlockType(text);
@@ -77,7 +77,7 @@ describe('Validation of BuiltinBlockTypeDefinition', () => {
 
   it('should diagnose error on multiple inputs in block type', async () => {
     const text = readJvTestAsset(
-      'builtin-blocktype-definition/invalid-internal-blocktype-multiple-inputs.jv',
+      'builtin-block-type-definition/invalid-internal-block-type-multiple-inputs.jv',
     );
 
     await parseAndValidateBlockType(text);
@@ -92,7 +92,7 @@ describe('Validation of BuiltinBlockTypeDefinition', () => {
 
   it('should diagnose error on multiple outputs in block type', async () => {
     const text = readJvTestAsset(
-      'builtin-blocktype-definition/invalid-internal-blocktype-multiple-outputs.jv',
+      'builtin-block-type-definition/invalid-internal-block-type-multiple-outputs.jv',
     );
 
     await parseAndValidateBlockType(text);
@@ -107,7 +107,7 @@ describe('Validation of BuiltinBlockTypeDefinition', () => {
 
   it('should diagnose error on missing input', async () => {
     const text = readJvTestAsset(
-      'builtin-blocktype-definition/invalid-internal-blocktype-no-input.jv',
+      'builtin-block-type-definition/invalid-internal-block-type-no-input.jv',
     );
 
     await parseAndValidateBlockType(text);
@@ -122,7 +122,7 @@ describe('Validation of BuiltinBlockTypeDefinition', () => {
 
   it('should diagnose error on missing output', async () => {
     const text = readJvTestAsset(
-      'builtin-blocktype-definition/invalid-internal-blocktype-no-output.jv',
+      'builtin-block-type-definition/invalid-internal-block-type-no-output.jv',
     );
 
     await parseAndValidateBlockType(text);
@@ -137,7 +137,7 @@ describe('Validation of BuiltinBlockTypeDefinition', () => {
 
   it('should diagnose error on neither inputs nor outputs', async () => {
     const text = readJvTestAsset(
-      'builtin-blocktype-definition/invalid-internal-blocktype-wrong-property-default-value.jv',
+      'builtin-block-type-definition/invalid-internal-block-type-wrong-property-default-value.jv',
     );
 
     await parseAndValidateBlockType(text);
@@ -152,7 +152,7 @@ describe('Validation of BuiltinBlockTypeDefinition', () => {
 
   it('should have no error on valid extractor block type definition (no inputs)', async () => {
     const text = readJvTestAsset(
-      'builtin-blocktype-definition/valid-internal-blocktype-extractor.jv',
+      'builtin-block-type-definition/valid-internal-block-type-extractor.jv',
     );
 
     await parseAndValidateBlockType(text);
@@ -162,7 +162,7 @@ describe('Validation of BuiltinBlockTypeDefinition', () => {
 
   it('should have no error on valid loader block type definition (no outputs)', async () => {
     const text = readJvTestAsset(
-      'builtin-blocktype-definition/valid-internal-blocktype-loader.jv',
+      'builtin-block-type-definition/valid-internal-block-type-loader.jv',
     );
 
     await parseAndValidateBlockType(text);
@@ -172,7 +172,7 @@ describe('Validation of BuiltinBlockTypeDefinition', () => {
 
   it('should have no error on valid block type definition', async () => {
     const text = readJvTestAsset(
-      'builtin-blocktype-definition/valid-internal-blocktype-no-default-prop-values.jv',
+      'builtin-block-type-definition/valid-internal-block-type-no-default-prop-values.jv',
     );
 
     await parseAndValidateBlockType(text);
@@ -182,7 +182,7 @@ describe('Validation of BuiltinBlockTypeDefinition', () => {
 
   it('should have no error on valid block type definition with default property value', async () => {
     const text = readJvTestAsset(
-      'builtin-blocktype-definition/valid-internal-blocktype-with-default-prop-values.jv',
+      'builtin-block-type-definition/valid-internal-block-type-with-default-prop-values.jv',
     );
 
     await parseAndValidateBlockType(text);

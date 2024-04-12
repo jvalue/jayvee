@@ -271,7 +271,7 @@ describe('Validation of ValueTypeReference', () => {
 
   it('should not diagnose error on reference to non-referenceable value-type in a builtin block type', async () => {
     const text = readJvTestAsset(
-      'value-type-reference/valid-reference-to-non-referenceable-value-type-in-builtin-blocktype.jv',
+      'value-type-reference/valid-reference-to-non-referenceable-value-type-in-builtin-block-type.jv',
     );
 
     const document = await parse(text);

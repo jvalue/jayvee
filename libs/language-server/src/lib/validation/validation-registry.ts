@@ -21,9 +21,9 @@ import type { JayveeServices } from '../jayvee-module';
 import { RuntimeParameterProvider } from '../services';
 
 import { validateBlockDefinition } from './checks/block-definition';
-import { validateBlockTypeDefinition } from './checks/blocktype-definition';
+import { validateBlockTypeDefinition } from './checks/block-type-definition';
 import { validateColumnId } from './checks/column-id';
-import { validateCompositeBlockTypeDefinition } from './checks/composite-blocktype-definition';
+import { validateCompositeBlockTypeDefinition } from './checks/composite-block-type-definition';
 import { validateExpressionConstraintDefinition } from './checks/expression-constraint-definition';
 import { validateJayveeModel } from './checks/jayvee-model';
 import { validatePipeDefinition } from './checks/pipe-definition';
