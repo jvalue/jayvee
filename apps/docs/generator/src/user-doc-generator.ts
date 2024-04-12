@@ -30,14 +30,14 @@ export class UserDocGenerator
     valueTypes: Record<string, PrimitiveValueType>,
   ): string {
     const builder = new UserDocMarkdownBuilder()
-      .docTitle('Built-in ValueTypes')
+      .docTitle('Built-in Value Types')
       .generationComment()
       .description(
         `
-For an introduction to valuetypes, see the [Core Concepts](../core-concepts).
-Built-in valuetypes come with the basic version of Jayvee.
-They are the basis for more restricted [Primitive Valuetypes](./primitive-value-types)
-that fullfil [Constraints](./primitive-value-types#constraints).`.trim(),
+For an introduction to _value types_, see the [core concepts](../core-concepts).
+_Built-in value types_ come with the basic version of Jayvee.
+They are the basis for more restricted [_primitive value types_](./primitive-value-types)
+that fullfil [_constraints_](./primitive-value-types#constraints).`.trim(),
         1,
       )
       .heading('Available built-in value types', 1);
@@ -236,7 +236,7 @@ class UserDocMarkdownBuilder {
   }
 
   compatibleValueType(type: string): UserDocMarkdownBuilder {
-    this.markdownBuilder.line(`Compatible ValueType: ${type}`);
+    this.markdownBuilder.line(`Compatible value type: ${type}`);
     this.markdownBuilder.newLine();
     return this;
   }

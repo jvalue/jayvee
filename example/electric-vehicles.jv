@@ -4,7 +4,7 @@
 
 // Example 2: Electric Vehicles
 // Learning goals:
-// - Understand further core concepts transforms and valuetypes
+// - Understand further core concepts transforms and value types
 // - Understand how to construct a pipeline with multiple sinks
 // - Understand the use of runtime parameters
 
@@ -45,9 +45,9 @@ pipeline ElectricVehiclesPipeline {
 	block ElectricVehiclesTableInterpreter oftype TableInterpreter {
 		header: true;
 		columns: [
-			// 4. Here, a user-deifned valuetype is used to describe this column.
-			// The capital letter indicates that the valuetype is not builtin
-			// by convention. The valuetype itself is defined further below. 
+			// 4. Here, a user-deifned value type is used to describe this column.
+			// The capital letter indicates that the value type is not built-in
+			// by convention. The value type itself is defined further below. 
     		"VIN (1-10)" oftype VehicleIdentificationNumber10,
 			"County" oftype text,
 			"City" oftype text,
@@ -80,7 +80,7 @@ pipeline ElectricVehiclesPipeline {
 
 	// 6. Here, we define a transform function, taking parameters
 	// as input ("from" keyword), and producing an output ("to" keyword).
-	// Inputs and outputs have to be further described by a valuetype.
+	// Inputs and outputs have to be further described by a value type.
 	transform MilesToKilometers {
 		from miles oftype decimal;
 		to kilometers oftype integer;
@@ -107,18 +107,18 @@ pipeline ElectricVehiclesPipeline {
 	}
 }
 
-// 9. Below the pipeline, we model user-define valuetypes.
-// We give them a speaking name and provide a base valuetype
-// that this valuetype builts on. User-defined valuetypes always place additional constraints on existing valuetypes.
+// 9. Below the pipeline, we model user-define value types.
+// We give them a speaking name and provide a base value type
+// that this value type builts on. User-defined value types always place additional constraints on existing value types.
 valuetype VehicleIdentificationNumber10 oftype text {
-	// 10. Valuetypes can be further refined by providing constraints.
+	// 10. Value types can be further refined by providing constraints.
 	constraints: [
 		OnlyCapitalLettersAndDigits,
 		ExactlyTenCharacters,
 	];
 }
 
-// 11. This constraint works on text valuetypes and requires values 
+// 11. This constraint works on text value types and requires values 
 // to match a given regular expression in order to be valid.
 constraint OnlyCapitalLettersAndDigits on text:
 	value matches /^[A-Z0-9]*$/;

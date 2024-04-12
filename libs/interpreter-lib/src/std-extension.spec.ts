@@ -23,7 +23,7 @@ async function loadAllBuiltinBlocktypes(): Promise<BlockTypeWrapper[]> {
 }
 
 describe('std extension', () => {
-  it('should provide matching block executors for builtin block types', async () => {
+  it('should provide matching block executors for built-in block types', async () => {
     (await loadAllBuiltinBlocktypes()).forEach(
       (blockType: BlockTypeWrapper) => {
         const execExtension = new StdExecExtension();

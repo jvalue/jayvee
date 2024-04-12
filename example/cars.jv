@@ -36,8 +36,8 @@ pipeline CarsPipeline {
 	// 6. Below the pipes, we usually define the blocks 
 	// that are connected by the pipes.
 
-	// 7. Blocks instantiate a blocktype by using the oftype keyword.
-	// The blocktype defines the available properties that the block
+	// 7. Blocks instantiate a block type by using the oftype keyword.
+	// The block type defines the available properties that the block
 	// can use to specify the intended behavior of the block 
 	block CarsExtractor oftype HttpExtractor {
 
@@ -56,7 +56,7 @@ pipeline CarsPipeline {
 		enclosing: '"';
 	}
 
-	// 11. We can write into cells of a sheet using the CellWriter blocktype.
+	// 11. We can write into cells of a sheet using the CellWriter block type.
 	block NameHeaderWriter oftype CellWriter {
 		// 12. We utilize a syntax similar to spreadsheet programs.
 		// Cell ranges can be described using the keywords "cell", "row", "column", or "range" that indicate which 
@@ -69,8 +69,8 @@ pipeline CarsPipeline {
 	}
 
 	// 14. As a next step, we interpret the sheet as a table by adding structure.
-	// We define a valuetype per column that specifies the data type of the column.
-	// Rows that include values that are not valid according to the their valuetypes are dropped automatically. 
+	// We define a value type per column that specifies the data type of the column.
+	// Rows that include values that are not valid according to the their value types are dropped automatically. 
 	block CarsTableInterpreter oftype TableInterpreter {
 		header: true;
 		columns: [

@@ -105,7 +105,7 @@ function generateValueTypeDocs(
   const valueTypeDoc =
     userDocBuilder.generateValueTypesDoc(PrimitiveValuetypes);
 
-  const fileName = `builtin-value-types.md`;
+  const fileName = `built-in-value-types.md`;
   writeFileSync(join(docsPath, fileName), valueTypeDoc, {
     flag: 'w',
   });
