@@ -10,7 +10,7 @@ import {
 } from '../../../ast';
 import { type JayveeValidationProps } from '../../validation-registry';
 
-export function checkBlocktypeSpecificPropertyBody(
+export function checkBlockTypeSpecificPropertyBody(
   propertyBody: PropertyBody,
   props: JayveeValidationProps,
 ) {

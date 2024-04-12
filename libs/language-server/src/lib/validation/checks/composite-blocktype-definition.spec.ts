@@ -5,7 +5,7 @@
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { CompositeBlocktypeDefinition, createJayveeServices } from '../..';
+import { CompositeBlockTypeDefinition, createJayveeServices } from '../..';
 import {
   ParseHelperOptions,
   createJayveeValidationProps,
@@ -17,7 +17,7 @@ import {
 
 import { validateCompositeBlockTypeDefinition } from './composite-blocktype-definition';
 
-describe('Validation of CompositeBlocktypeDefinition', () => {
+describe('Validation of CompositeBlockTypeDefinition', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
@@ -32,14 +32,14 @@ describe('Validation of CompositeBlocktypeDefinition', () => {
     '../../../test/assets/',
   );
 
-  async function parseAndValidateBlocktype(input: string) {
+  async function parseAndValidateBlockType(input: string) {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const blocktype = locator.getAstNode<CompositeBlocktypeDefinition>(
+    const blocktype = locator.getAstNode<CompositeBlockTypeDefinition>(
       document.parseResult.value,
       'blocktypes@0',
-    ) as CompositeBlocktypeDefinition;
+    ) as CompositeBlockTypeDefinition;
 
     validateCompositeBlockTypeDefinition(
       blocktype,
@@ -65,7 +65,7 @@ describe('Validation of CompositeBlocktypeDefinition', () => {
       'composite-blocktype-definition/invalid-composite-blocktype-no-pipeline.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
@@ -80,7 +80,7 @@ describe('Validation of CompositeBlocktypeDefinition', () => {
       'composite-blocktype-definition/invalid-composite-blocktype-multiple-pipelines.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
@@ -95,7 +95,7 @@ describe('Validation of CompositeBlocktypeDefinition', () => {
       'composite-blocktype-definition/valid-composite-blocktype-extractor.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
@@ -105,7 +105,7 @@ describe('Validation of CompositeBlocktypeDefinition', () => {
       'composite-blocktype-definition/valid-composite-blocktype-recursive.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
@@ -115,7 +115,7 @@ describe('Validation of CompositeBlocktypeDefinition', () => {
       'composite-blocktype-definition/invalid-block-as-multiple-pipe-inputs.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     // first 2 errors for multiple pipelines in test file
     expect(validationAcceptorMock).toHaveBeenCalledTimes(4);
@@ -138,7 +138,7 @@ describe('Validation of CompositeBlocktypeDefinition', () => {
       'composite-blocktype-definition/invalid-unconnected-block.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
     expect(validationAcceptorMock).toHaveBeenCalledWith(

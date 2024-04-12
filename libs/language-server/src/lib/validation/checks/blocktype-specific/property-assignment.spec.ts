@@ -20,7 +20,7 @@ import {
   validationAcceptorMockImpl,
 } from '../../../../test';
 
-import { checkBlocktypeSpecificProperties } from './property-assignment';
+import { checkBlockTypeSpecificProperties } from './property-assignment';
 
 describe('Validation of blocktype specific properties', () => {
   let parse: (
@@ -58,7 +58,7 @@ describe('Validation of blocktype specific properties', () => {
       ).getPropertySpecification(propertyAssignment.name);
       expect(propertySpec).toBeDefined();
 
-      checkBlocktypeSpecificProperties(
+      checkBlockTypeSpecificProperties(
         propertyAssignment,
         propertySpec as PropertySpecification,
         props,

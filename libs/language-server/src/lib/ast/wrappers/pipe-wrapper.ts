@@ -8,16 +8,16 @@ import { DiagnosticInfo } from 'langium';
 
 import {
   BlockDefinition,
-  BlocktypePipeline,
+  BlockTypePipeline,
   PipeDefinition,
 } from '../generated/ast';
 
 import { AstNodeWrapper } from './ast-node-wrapper';
 
 export class PipeWrapper<
-  T extends PipeDefinition | BlocktypePipeline =
+  T extends PipeDefinition | BlockTypePipeline =
     | PipeDefinition
-    | BlocktypePipeline,
+    | BlockTypePipeline,
 > implements AstNodeWrapper<T>
 {
   public readonly astNode: T;
@@ -37,7 +37,7 @@ export class PipeWrapper<
     this.chainIndex = chainIndex;
   }
 
-  getFromDiagnostic(): DiagnosticInfo<PipeDefinition | BlocktypePipeline> {
+  getFromDiagnostic(): DiagnosticInfo<PipeDefinition | BlockTypePipeline> {
     return {
       node: this.astNode,
       property: 'blocks',
@@ -45,7 +45,7 @@ export class PipeWrapper<
     };
   }
 
-  getToDiagnostic(): DiagnosticInfo<PipeDefinition | BlocktypePipeline> {
+  getToDiagnostic(): DiagnosticInfo<PipeDefinition | BlockTypePipeline> {
     return {
       node: this.astNode,
       property: 'blocks',
@@ -58,7 +58,7 @@ export class PipeWrapper<
   }
 
   static canBeWrapped(
-    pipe: PipeDefinition | BlocktypePipeline,
+    pipe: PipeDefinition | BlockTypePipeline,
     chainIndex: number,
   ): boolean {
     return (

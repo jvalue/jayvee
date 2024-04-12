@@ -94,6 +94,6 @@ ReferenceLiteral:
 
 Referencable:
   ConstraintDefinition
-  | BlocktypeProperty
+  | BlockTypeProperty
   | TransformDefinition
   | TransformPortDefinition;

@@ -17,7 +17,7 @@ import {
 import { type JayveeValidationProps } from '../validation-registry';
 import { checkUniqueNames } from '../validation-util';
 
-import { checkBlocktypeSpecificPropertyBody } from './blocktype-specific/property-body';
+import { checkBlockTypeSpecificPropertyBody } from './blocktype-specific/property-body';
 import { checkConstraintTypeSpecificPropertyBody } from './constrainttype-specific/property-body';
 import { validatePropertyAssignment } from './property-assignment';
 
@@ -88,7 +88,7 @@ function checkCustomPropertyValidation(
   );
 
   if (isBlockDefinition(propertyBody.$container)) {
-    checkBlocktypeSpecificPropertyBody(propertyBody, props);
+    checkBlockTypeSpecificPropertyBody(propertyBody, props);
   } else if (isTypedConstraintDefinition(propertyBody.$container)) {
     checkConstraintTypeSpecificPropertyBody(propertyBody, props);
   }

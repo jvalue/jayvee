@@ -21,7 +21,7 @@ import type { JayveeServices } from '../jayvee-module';
 import { RuntimeParameterProvider } from '../services';
 
 import { validateBlockDefinition } from './checks/block-definition';
-import { validateBlocktypeDefinition } from './checks/blocktype-definition';
+import { validateBlockTypeDefinition } from './checks/blocktype-definition';
 import { validateColumnId } from './checks/column-id';
 import { validateCompositeBlockTypeDefinition } from './checks/composite-blocktype-definition';
 import { validateExpressionConstraintDefinition } from './checks/expression-constraint-definition';
@@ -55,9 +55,9 @@ export class JayveeValidationRegistry extends ValidationRegistry {
     this.wrapperFactories = services.WrapperFactories;
 
     this.registerJayveeValidationChecks({
-      BuiltinBlocktypeDefinition: validateBlocktypeDefinition,
+      BuiltinBlockTypeDefinition: validateBlockTypeDefinition,
       BlockDefinition: validateBlockDefinition,
-      CompositeBlocktypeDefinition: validateCompositeBlockTypeDefinition,
+      CompositeBlockTypeDefinition: validateCompositeBlockTypeDefinition,
       ColumnId: validateColumnId,
       TypedConstraintDefinition: validateTypedConstraintDefinition,
       ExpressionConstraintDefinition: validateExpressionConstraintDefinition,

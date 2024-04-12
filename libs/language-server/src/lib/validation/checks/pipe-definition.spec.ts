@@ -80,7 +80,7 @@ describe('Validation of PipeDefinition', () => {
       expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
     });
 
-    it('should diagnose error on unsupported pipe between Blocktypes', async () => {
+    it('should diagnose error on unsupported pipe between BlockTypes', async () => {
       const text = readJvTestAsset(
         'pipe-definition/invalid-pipe-between-blocktypes.jv',
       );

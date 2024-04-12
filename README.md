@@ -22,8 +22,8 @@ Explore a glimpse of our upcoming features in the following list. This overview 
 - &#9989; Simple value types and constraints
 - &#9989; Natively support table-based data
 - &#9989; Column-based transformations
-- &#9989; Describe blocks via builtin blocktypes in Jayvee
-- &#9989; Compose logic of multiple blocks via composite blocktypes
+- &#9989; Describe blocks via builtin block types in Jayvee
+- &#9989; Compose logic of multiple blocks via composite block types
 - &#8987; Multi-file Jayvee to distribute programs over multiple files (see [RFC 0015](./rfc/0015-multi-file-jayvee/0015-multi-file-jayvee.md))
 - &#8987; Improve the syntax of value types (see [RFC 0014](https://github.com/jvalue/jayvee/pull/409))
 - &#8987; Jayvee formatter
@@ -34,7 +34,7 @@ Explore a glimpse of our upcoming features in the following list. This overview 
 - &#129300; Valuetypes parsers (to read and write different formats)
 - &#129300; Customizable invalid value handling (default value, average, median, interpolation, ...)
 - &#129300; VSCode Debugger
-- &#129300; Blocktypes with multiple ports (e.g., for merging different data)
+- &#129300; Block types with multiple ports (e.g., for merging different data)
 
 
 Anything missing, or you have ideas how some of the items on the list could be approached?

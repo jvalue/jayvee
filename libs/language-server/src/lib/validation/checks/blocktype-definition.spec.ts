@@ -5,7 +5,7 @@
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { BuiltinBlocktypeDefinition, createJayveeServices } from '../..';
+import { BuiltinBlockTypeDefinition, createJayveeServices } from '../..';
 import {
   ParseHelperOptions,
   createJayveeValidationProps,
@@ -15,9 +15,9 @@ import {
   validationAcceptorMockImpl,
 } from '../../../test';
 
-import { validateBlocktypeDefinition } from './blocktype-definition';
+import { validateBlockTypeDefinition } from './blocktype-definition';
 
-describe('Validation of BuiltinBlocktypeDefinition', () => {
+describe('Validation of BuiltinBlockTypeDefinition', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
@@ -32,16 +32,16 @@ describe('Validation of BuiltinBlocktypeDefinition', () => {
     '../../../test/assets/',
   );
 
-  async function parseAndValidateBlocktype(input: string) {
+  async function parseAndValidateBlockType(input: string) {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const blocktype = locator.getAstNode<BuiltinBlocktypeDefinition>(
+    const blocktype = locator.getAstNode<BuiltinBlockTypeDefinition>(
       document.parseResult.value,
       'blocktypes@0',
-    ) as BuiltinBlocktypeDefinition;
+    ) as BuiltinBlockTypeDefinition;
 
-    validateBlocktypeDefinition(
+    validateBlockTypeDefinition(
       blocktype,
       createJayveeValidationProps(validationAcceptorMock),
     );
@@ -65,7 +65,7 @@ describe('Validation of BuiltinBlocktypeDefinition', () => {
       'builtin-blocktype-definition/invalid-internal-blocktype-duplicate-property.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
@@ -80,7 +80,7 @@ describe('Validation of BuiltinBlocktypeDefinition', () => {
       'builtin-blocktype-definition/invalid-internal-blocktype-multiple-inputs.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
@@ -95,7 +95,7 @@ describe('Validation of BuiltinBlocktypeDefinition', () => {
       'builtin-blocktype-definition/invalid-internal-blocktype-multiple-outputs.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
@@ -110,7 +110,7 @@ describe('Validation of BuiltinBlocktypeDefinition', () => {
       'builtin-blocktype-definition/invalid-internal-blocktype-no-input.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
@@ -125,7 +125,7 @@ describe('Validation of BuiltinBlocktypeDefinition', () => {
       'builtin-blocktype-definition/invalid-internal-blocktype-no-output.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
@@ -140,7 +140,7 @@ describe('Validation of BuiltinBlocktypeDefinition', () => {
       'builtin-blocktype-definition/invalid-internal-blocktype-wrong-property-default-value.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
@@ -155,7 +155,7 @@ describe('Validation of BuiltinBlocktypeDefinition', () => {
       'builtin-blocktype-definition/valid-internal-blocktype-extractor.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
@@ -165,7 +165,7 @@ describe('Validation of BuiltinBlocktypeDefinition', () => {
       'builtin-blocktype-definition/valid-internal-blocktype-loader.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
@@ -175,7 +175,7 @@ describe('Validation of BuiltinBlocktypeDefinition', () => {
       'builtin-blocktype-definition/valid-internal-blocktype-no-default-prop-values.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
@@ -185,7 +185,7 @@ describe('Validation of BuiltinBlocktypeDefinition', () => {
       'builtin-blocktype-definition/valid-internal-blocktype-with-default-prop-values.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });

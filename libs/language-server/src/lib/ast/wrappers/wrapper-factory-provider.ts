@@ -13,15 +13,15 @@ import {
 
 import { type OperatorEvaluatorRegistry } from '../expressions';
 import {
-  BlocktypePipeline,
+  BlockTypePipeline,
   BuiltinConstrainttypeDefinition,
   CellRangeLiteral,
-  CompositeBlocktypeDefinition,
+  CompositeBlockTypeDefinition,
   PipeDefinition,
   PipelineDefinition,
-  type ReferenceableBlocktypeDefinition,
+  type ReferenceableBlockTypeDefinition,
   isBuiltinConstrainttypeDefinition,
-  isReferenceableBlocktypeDefinition,
+  isReferenceableBlockTypeDefinition,
 } from '../generated/ast';
 
 import { AstNodeWrapper } from './ast-node-wrapper';
@@ -101,7 +101,7 @@ class CellRangeWrapperFactory extends AstNodeWrapperFactory<
 }
 
 class BlockTypeWrapperFactory extends AstNodeWrapperFactory<
-  ReferenceableBlocktypeDefinition,
+  ReferenceableBlockTypeDefinition,
   BlockTypeWrapper
 > {
   constructor(
@@ -113,15 +113,15 @@ class BlockTypeWrapperFactory extends AstNodeWrapperFactory<
 
   canWrap(
     toBeWrapped:
-      | ReferenceableBlocktypeDefinition
-      | Reference<ReferenceableBlocktypeDefinition>,
+      | ReferenceableBlockTypeDefinition
+      | Reference<ReferenceableBlockTypeDefinition>,
   ): boolean {
     return BlockTypeWrapper.canBeWrapped(toBeWrapped);
   }
   doWrap(
     toBeWrapped:
-      | ReferenceableBlocktypeDefinition
-      | Reference<ReferenceableBlocktypeDefinition>,
+      | ReferenceableBlockTypeDefinition
+      | Reference<ReferenceableBlockTypeDefinition>,
   ): BlockTypeWrapper {
     return new BlockTypeWrapper(
       toBeWrapped,
@@ -163,26 +163,26 @@ class ConstraintTypeWrapperFactory extends AstNodeWrapperFactory<
 }
 
 class PipelineWrapperFactory extends AstNodeWrapperFactory<
-  PipelineDefinition | CompositeBlocktypeDefinition,
-  PipelineWrapper<PipelineDefinition | CompositeBlocktypeDefinition>
+  PipelineDefinition | CompositeBlockTypeDefinition,
+  PipelineWrapper<PipelineDefinition | CompositeBlockTypeDefinition>
 > {
   constructor(private pipeWrapperFactory: IPipeWrapperFactory) {
     super();
   }
 
   canWrap(
-    toBeWrapped: PipelineDefinition | CompositeBlocktypeDefinition,
+    toBeWrapped: PipelineDefinition | CompositeBlockTypeDefinition,
   ): boolean {
     return PipelineWrapper.canBeWrapped(toBeWrapped, this.pipeWrapperFactory);
   }
 
-  override wrap<T extends PipelineDefinition | CompositeBlocktypeDefinition>( // override to adjust typing
+  override wrap<T extends PipelineDefinition | CompositeBlockTypeDefinition>( // override to adjust typing
     toBeWrapped: T | Reference<T>,
   ): PipelineWrapper<T> {
     return super.wrap(toBeWrapped) as PipelineWrapper<T>; // implementation forwards to doWrap, so typing will be correct
   }
 
-  doWrap<T extends PipelineDefinition | CompositeBlocktypeDefinition>(
+  doWrap<T extends PipelineDefinition | CompositeBlockTypeDefinition>(
     toBeWrapped: T,
   ): PipelineWrapper<T> {
     return new PipelineWrapper(toBeWrapped, this.pipeWrapperFactory);
@@ -191,21 +191,21 @@ class PipelineWrapperFactory extends AstNodeWrapperFactory<
 
 export interface IPipeWrapperFactory {
   canWrap(
-    toBeWrapped: PipeDefinition | BlocktypePipeline,
+    toBeWrapped: PipeDefinition | BlockTypePipeline,
     chainIndex: number,
   ): boolean;
 
-  wrap<T extends PipeDefinition | BlocktypePipeline>(
+  wrap<T extends PipeDefinition | BlockTypePipeline>(
     toBeWrapped: T,
     chainIndex: number,
   ): PipeWrapper<T>;
 
-  doWrap<T extends PipeDefinition | BlocktypePipeline>(
+  doWrap<T extends PipeDefinition | BlockTypePipeline>(
     toBeWrapped: T,
     chainIndex: number,
   ): PipeWrapper<T>;
 
-  wrapAll<T extends PipeDefinition | BlocktypePipeline>(
+  wrapAll<T extends PipeDefinition | BlockTypePipeline>(
     toBeWrapped: T,
   ): PipeWrapper<T>[];
 }
@@ -214,13 +214,13 @@ class PipeWrapperFactory implements IPipeWrapperFactory {
   // does not extend AstNodeWrapperFactory as requires argument chainIndex for wrapping
 
   canWrap(
-    toBeWrapped: PipeDefinition | BlocktypePipeline,
+    toBeWrapped: PipeDefinition | BlockTypePipeline,
     chainIndex: number,
   ): boolean {
     return PipeWrapper.canBeWrapped(toBeWrapped, chainIndex);
   }
 
-  wrap<T extends PipeDefinition | BlocktypePipeline>(
+  wrap<T extends PipeDefinition | BlockTypePipeline>(
     toBeWrapped: T,
     chainIndex: number,
   ): PipeWrapper<T> {
@@ -228,14 +228,14 @@ class PipeWrapperFactory implements IPipeWrapperFactory {
     return this.doWrap(toBeWrapped, chainIndex);
   }
 
-  doWrap<T extends PipeDefinition | BlocktypePipeline>(
+  doWrap<T extends PipeDefinition | BlockTypePipeline>(
     toBeWrapped: T,
     chainIndex: number,
   ): PipeWrapper<T> {
     return new PipeWrapper(toBeWrapped, chainIndex);
   }
 
-  wrapAll<T extends PipeDefinition | BlocktypePipeline>(
+  wrapAll<T extends PipeDefinition | BlockTypePipeline>(
     toBeWrapped: T,
   ): PipeWrapper<T>[] {
     const result: PipeWrapper<T>[] = [];
@@ -267,10 +267,10 @@ class TypedObjectWrapperFactory {
    */
   wrap(
     toBeWrapped:
-      | Reference<ReferenceableBlocktypeDefinition>
+      | Reference<ReferenceableBlockTypeDefinition>
       | Reference<BuiltinConstrainttypeDefinition>
       | BuiltinConstrainttypeDefinition
-      | ReferenceableBlocktypeDefinition
+      | ReferenceableBlockTypeDefinition
       | undefined,
   ): BlockTypeWrapper | ConstraintTypeWrapper | undefined {
     const type = isReference(toBeWrapped) ? toBeWrapped.ref : toBeWrapped;
@@ -278,7 +278,7 @@ class TypedObjectWrapperFactory {
       return undefined;
     }
 
-    if (isReferenceableBlocktypeDefinition(type)) {
+    if (isReferenceableBlockTypeDefinition(type)) {
       if (!this.blockTypeWrapperFactory.canWrap(type)) {
         return undefined;
       }

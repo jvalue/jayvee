@@ -15,7 +15,7 @@ import {
   validationAcceptorMockImpl,
 } from '../../../../test';
 
-import { checkBlocktypeSpecificPropertyBody } from './property-body';
+import { checkBlockTypeSpecificPropertyBody } from './property-body';
 
 describe('Validation of blocktype specific property bodies', () => {
   let parse: (
@@ -48,7 +48,7 @@ describe('Validation of blocktype specific property bodies', () => {
     );
     expect(wrapper).toBeDefined();
 
-    checkBlocktypeSpecificPropertyBody(propertyBody, props);
+    checkBlockTypeSpecificPropertyBody(propertyBody, props);
   }
 
   beforeAll(() => {

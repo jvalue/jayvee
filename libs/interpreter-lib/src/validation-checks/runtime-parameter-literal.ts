@@ -6,7 +6,7 @@ import {
   BuiltinConstrainttypeDefinition,
   type JayveeValidationProps,
   PropertyBody,
-  ReferenceableBlocktypeDefinition,
+  ReferenceableBlockTypeDefinition,
   RuntimeParameterLiteral,
 } from '@jvalue/jayvee-language-server';
 import { Reference } from 'langium';
@@ -51,7 +51,7 @@ function checkRuntimeParameterValueParsing(
 ) {
   const enclosingPropertyBody = getEnclosingPropertyBody(runtimeParameter);
   const type:
-    | Reference<ReferenceableBlocktypeDefinition>
+    | Reference<ReferenceableBlockTypeDefinition>
     | Reference<BuiltinConstrainttypeDefinition>
     | undefined =
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

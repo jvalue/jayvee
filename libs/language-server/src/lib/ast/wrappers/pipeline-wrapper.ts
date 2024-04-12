@@ -6,7 +6,7 @@ import { strict as assert } from 'assert';
 
 import {
   BlockDefinition,
-  CompositeBlocktypeDefinition,
+  CompositeBlockTypeDefinition,
   PipelineDefinition,
 } from '../generated/ast';
 
@@ -15,7 +15,7 @@ import { PipeWrapper } from './pipe-wrapper';
 import { type IPipeWrapperFactory } from './wrapper-factory-provider';
 
 export class PipelineWrapper<
-  T extends PipelineDefinition | CompositeBlocktypeDefinition,
+  T extends PipelineDefinition | CompositeBlockTypeDefinition,
 > implements AstNodeWrapper<T>
 {
   public readonly astNode: T;
@@ -37,7 +37,7 @@ export class PipelineWrapper<
   }
 
   static canBeWrapped(
-    pipesContainer: PipelineDefinition | CompositeBlocktypeDefinition,
+    pipesContainer: PipelineDefinition | CompositeBlockTypeDefinition,
     pipeWrapperFactory: IPipeWrapperFactory,
   ): boolean {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

@@ -8,15 +8,15 @@ import { StdExecExtension } from '@jvalue/jayvee-extensions/std/exec';
 import {
   BlockTypeWrapper,
   createJayveeServices,
-  getAllBuiltinBlocktypes,
+  getAllBuiltinBlockTypes,
   initializeWorkspace,
 } from '@jvalue/jayvee-language-server';
 import { NodeFileSystem } from 'langium/node';
 
-async function loadAllBuiltinBlocktypes(): Promise<BlockTypeWrapper[]> {
+async function loadAllBuiltinBlockTypes(): Promise<BlockTypeWrapper[]> {
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   await initializeWorkspace(services);
-  return getAllBuiltinBlocktypes(
+  return getAllBuiltinBlockTypes(
     services.shared.workspace.LangiumDocuments,
     services.WrapperFactories,
   );
@@ -24,7 +24,7 @@ async function loadAllBuiltinBlocktypes(): Promise<BlockTypeWrapper[]> {
 
 describe('std extension', () => {
   it('should provide matching block executors for built-in block types', async () => {
-    (await loadAllBuiltinBlocktypes()).forEach(
+    (await loadAllBuiltinBlockTypes()).forEach(
       (blockType: BlockTypeWrapper) => {
         const execExtension = new StdExecExtension();
         console.info(`Looking for executor for blocktype ${blockType.type}`);

@@ -13,7 +13,7 @@ import {
   type OperatorEvaluatorRegistry,
   evaluateExpression,
 } from '../../expressions';
-import { ReferenceableBlocktypeDefinition } from '../../generated/ast';
+import { ReferenceableBlockTypeDefinition } from '../../generated/ast';
 import { IOType, getIOType } from '../../io-type';
 import { createValueType } from '../value-type';
 import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
@@ -29,7 +29,7 @@ interface BlockDocs {
   examples?: ExampleDoc[];
 }
 
-export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlocktypeDefinition> {
+export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlockTypeDefinition> {
   docs: BlockDocs = {};
 
   readonly inputType: IOType;
@@ -43,8 +43,8 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlocktypeD
    */
   constructor(
     toBeWrapped:
-      | ReferenceableBlocktypeDefinition
-      | Reference<ReferenceableBlocktypeDefinition>,
+      | ReferenceableBlockTypeDefinition
+      | Reference<ReferenceableBlockTypeDefinition>,
     operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
     wrapperFactories: WrapperFactoryProvider,
   ) {
@@ -91,8 +91,8 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlocktypeD
 
   static canBeWrapped(
     toBeWrapped:
-      | ReferenceableBlocktypeDefinition
-      | Reference<ReferenceableBlocktypeDefinition>,
+      | ReferenceableBlockTypeDefinition
+      | Reference<ReferenceableBlockTypeDefinition>,
   ): boolean {
     const blocktypeDefinition = isReference(toBeWrapped)
       ? toBeWrapped.ref

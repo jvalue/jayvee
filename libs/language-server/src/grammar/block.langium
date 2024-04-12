@@ -7,4 +7,4 @@ import './block-type'
 import './terminal'
 
 BlockDefinition:
-  'block' name=ID 'oftype' type=[ReferenceableBlocktypeDefinition] body=PropertyBody;
+  'block' name=ID 'oftype' type=[ReferenceableBlockTypeDefinition] body=PropertyBody;

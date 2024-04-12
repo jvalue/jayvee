@@ -5,18 +5,18 @@
 import { PipelineWrapper } from '../../ast';
 import {
   BlockDefinition,
-  CompositeBlocktypeDefinition,
+  CompositeBlockTypeDefinition,
 } from '../../ast/generated/ast';
 import { type JayveeValidationProps } from '../validation-registry';
 
-import { validateBlocktypeDefinition } from './blocktype-definition';
+import { validateBlockTypeDefinition } from './blocktype-definition';
 import { checkMultipleBlockInputs } from './pipeline-definition';
 
 export function validateCompositeBlockTypeDefinition(
-  blockType: CompositeBlocktypeDefinition,
+  blockType: CompositeBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
-  validateBlocktypeDefinition(blockType, props);
+  validateBlockTypeDefinition(blockType, props);
   checkHasPipeline(blockType, props);
   checkExactlyOnePipeline(blockType, props);
 
@@ -25,7 +25,7 @@ export function validateCompositeBlockTypeDefinition(
 }
 
 function checkHasPipeline(
-  blockType: CompositeBlocktypeDefinition,
+  blockType: CompositeBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -46,7 +46,7 @@ function checkHasPipeline(
 }
 
 function checkExactlyOnePipeline(
-  blockType: CompositeBlocktypeDefinition,
+  blockType: CompositeBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -68,7 +68,7 @@ function checkExactlyOnePipeline(
 }
 
 export function checkDefinedBlocksAreUsed(
-  blocktypeDefinition: CompositeBlocktypeDefinition,
+  blocktypeDefinition: CompositeBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
   if (!props.wrapperFactories.Pipeline.canWrap(blocktypeDefinition)) {
@@ -89,7 +89,7 @@ export function checkDefinedBlocksAreUsed(
 }
 
 function doCheckDefinedBlockIsUsed(
-  pipelineWrapper: PipelineWrapper<CompositeBlocktypeDefinition>,
+  pipelineWrapper: PipelineWrapper<CompositeBlockTypeDefinition>,
   block: BlockDefinition,
   props: JayveeValidationProps,
 ): void {

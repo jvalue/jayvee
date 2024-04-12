@@ -4,7 +4,7 @@
 
 import {
   BlockDefinition,
-  CompositeBlocktypeDefinition,
+  CompositeBlockTypeDefinition,
   PipelineDefinition,
 } from '@jvalue/jayvee-language-server';
 
@@ -30,7 +30,7 @@ export interface ExecutionOrderItem {
  */
 export async function executeBlocks(
   executionContext: ExecutionContext,
-  pipesContainer: CompositeBlocktypeDefinition | PipelineDefinition,
+  pipesContainer: CompositeBlockTypeDefinition | PipelineDefinition,
   initialInputValue: IOTypeImplementation | undefined = undefined,
 ): Promise<R.Result<ExecutionOrderItem[]>> {
   const pipelineWrapper =

@@ -9,7 +9,7 @@ import {
   JayveeServices,
   PrimitiveValuetypes,
   createJayveeServices,
-  getAllBuiltinBlocktypes,
+  getAllBuiltinBlockTypes,
   getAllBuiltinConstraintTypes,
   initializeWorkspace,
 } from '@jvalue/jayvee-language-server';
@@ -33,7 +33,7 @@ function generateBlockTypeDocs(
   services: JayveeServices,
   rootPath: string,
 ): void {
-  const blockTypes = getAllBuiltinBlocktypes(
+  const blockTypes = getAllBuiltinBlockTypes(
     services.shared.workspace.LangiumDocuments,
     services.WrapperFactories,
   );

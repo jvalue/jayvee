@@ -3,21 +3,21 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { type OperatorEvaluatorRegistry } from '../../expressions/operator-registry';
-import { CompositeBlocktypeDefinition } from '../../generated/ast';
+import { CompositeBlockTypeDefinition } from '../../generated/ast';
 import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
 
 // eslint-disable-next-line import/no-cycle
 import { BlockTypeWrapper } from './blocktype-wrapper';
 
-export class CompositeBlocktypeWrapper extends BlockTypeWrapper {
+export class CompositeBlockTypeWrapper extends BlockTypeWrapper {
   /**
-   * Creates a CompositeBlocktypeWrapper if possible. Otherwise, throws error.
+   * Creates a CompositeBlockTypeWrapper if possible. Otherwise, throws error.
    * Use @see canBeWrapped to check whether wrapping will be successful.
    *
    * Use @see WrapperFactoryProvider for instantiation instead of calling this constructor directly.
    */
   constructor(
-    private blockTypeDefinition: CompositeBlocktypeDefinition,
+    private blockTypeDefinition: CompositeBlockTypeDefinition,
     operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
     wrapperFactories: WrapperFactoryProvider,
   ) {

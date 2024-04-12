@@ -5,15 +5,15 @@
 import { strict as assert } from 'assert';
 
 import {
-  BlocktypeProperty,
-  ReferenceableBlocktypeDefinition,
+  BlockTypeProperty,
+  ReferenceableBlockTypeDefinition,
   createValueType,
   evaluateExpression,
 } from '../../ast';
 import { type JayveeValidationProps } from '../validation-registry';
 
-export function validateBlocktypeDefinition(
-  blocktype: ReferenceableBlocktypeDefinition,
+export function validateBlockTypeDefinition(
+  blocktype: ReferenceableBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
   checkNoMultipleInputs(blocktype, props);
@@ -25,7 +25,7 @@ export function validateBlocktypeDefinition(
 }
 
 function checkNoMultipleInputs(
-  blocktype: ReferenceableBlocktypeDefinition,
+  blocktype: ReferenceableBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -47,7 +47,7 @@ function checkNoMultipleInputs(
 }
 
 function checkNoMultipleOutputs(
-  blocktype: ReferenceableBlocktypeDefinition,
+  blocktype: ReferenceableBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -69,7 +69,7 @@ function checkNoMultipleOutputs(
 }
 
 function checkOneInput(
-  blocktype: ReferenceableBlocktypeDefinition,
+  blocktype: ReferenceableBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -87,7 +87,7 @@ function checkOneInput(
 }
 
 function checkOneOutput(
-  blocktype: ReferenceableBlocktypeDefinition,
+  blocktype: ReferenceableBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -105,7 +105,7 @@ function checkOneOutput(
 }
 
 function checkNoDuplicateProperties(
-  blocktype: ReferenceableBlocktypeDefinition,
+  blocktype: ReferenceableBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -113,7 +113,7 @@ function checkNoDuplicateProperties(
     return;
   }
 
-  const propertyMap = new Map<string, BlocktypeProperty[]>();
+  const propertyMap = new Map<string, BlockTypeProperty[]>();
   for (const property of blocktype.properties) {
     const propertyName = property.name;
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -141,7 +141,7 @@ function checkNoDuplicateProperties(
 }
 
 function checkPropertiesDefaultValuesHaveCorrectType(
-  blocktype: ReferenceableBlocktypeDefinition,
+  blocktype: ReferenceableBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -157,7 +157,7 @@ function checkPropertiesDefaultValuesHaveCorrectType(
 }
 
 function checkPropertyDefaultValuesHasCorrectType(
-  property: BlocktypeProperty,
+  property: BlockTypeProperty,
   props: JayveeValidationProps,
 ): void {
   const defaultValueExpression = property.defaultValue;

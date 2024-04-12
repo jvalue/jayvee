@@ -12,7 +12,7 @@ import {
   FreeVariableLiteral,
   ReferenceLiteral,
   ValueKeywordLiteral,
-  isBlocktypeProperty,
+  isBlockTypeProperty,
   isConstraintDefinition,
   isReferenceLiteral,
   isTransformDefinition,
@@ -79,7 +79,7 @@ export class EvaluationContext {
     if (isTransformPortDefinition(dereferenced)) {
       return this.variableValues.get(dereferenced.name);
     }
-    if (isBlocktypeProperty(dereferenced)) {
+    if (isBlockTypeProperty(dereferenced)) {
       return this.variableValues.get(dereferenced.name);
     }
     assertUnreachable(dereferenced);

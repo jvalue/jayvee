@@ -4,7 +4,7 @@
 
 import { strict as assert } from 'assert';
 
-import { BlocktypeInput, BlocktypeOutput } from './generated/ast';
+import { BlockTypeInput, BlockTypeOutput } from './generated/ast';
 
 export enum IOType {
   NONE = 'None',
@@ -16,7 +16,7 @@ export enum IOType {
   WORKBOOK = 'Workbook',
 }
 
-export function getIOType(blockIO: BlocktypeInput | BlocktypeOutput): IOType {
+export function getIOType(blockIO: BlockTypeInput | BlockTypeOutput): IOType {
   const ioTypeName = blockIO.iotype.ref?.name;
   assert(
     ioTypeName !== undefined,
