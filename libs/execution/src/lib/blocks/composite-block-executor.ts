@@ -36,12 +36,12 @@ export function createCompositeBlockExecutor(
 ): BlockExecutorClass<BlockExecutor<IOType, IOType>> {
   assert(
     block.type.ref,
-    `BlockType reference missing for block ${block.name}.`,
+    `Reference to its type is missing for block ${block.name}.`,
   );
 
   assert(
     isCompositeBlockTypeDefinition(block.type.ref),
-    `BlockType is not a composite block for block ${block.name}.`,
+    `Type is not a composite block type for block ${block.name}.`,
   );
 
   const blockTypeReference = block.type.ref;
