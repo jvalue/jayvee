@@ -3,8 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
-// eslint-disable-next-line import/no-cycle
-import { ValueType, ValueTypeVisitor } from '../value-type';
+import type { ValueType, ValueTypeVisitor } from '../value-type';
 
 import { Decimal } from './decimal-value-type';
 import { PrimitiveValueType } from './primitive-value-type';

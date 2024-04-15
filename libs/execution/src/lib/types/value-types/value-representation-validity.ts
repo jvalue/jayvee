@@ -4,7 +4,7 @@
 
 import { strict as assert } from 'assert';
 
-import {
+import type {
   AtomicValuetype,
   BooleanValuetype,
   CellRangeValuetype,
@@ -18,9 +18,9 @@ import {
   TextValuetype,
   TransformValuetype,
   ValueType,
-  ValueTypeVisitor,
   ValuetypeAssignmentValuetype,
 } from '@jvalue/jayvee-language-server';
+import { ValueTypeVisitor } from '@jvalue/jayvee-language-server';
 
 import { type ExecutionContext } from '../../execution-context';
 

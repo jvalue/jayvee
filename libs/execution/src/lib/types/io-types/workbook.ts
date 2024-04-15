@@ -4,7 +4,10 @@
 
 import { IOType } from '@jvalue/jayvee-language-server';
 
-import { IOTypeImplementation, IoTypeVisitor } from './io-type-implementation';
+import type {
+  IOTypeImplementation,
+  IoTypeVisitor,
+} from './io-type-implementation';
 import { Sheet } from './sheet';
 
 export class Workbook implements IOTypeImplementation<IOType.WORKBOOK> {

@@ -5,8 +5,8 @@
 import { readFileSync, readdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
+import type { JayveeServices } from '@jvalue/jayvee-language-server';
 import {
-  JayveeServices,
   PrimitiveValuetypes,
   createJayveeServices,
   getAllBuiltinBlockTypes,

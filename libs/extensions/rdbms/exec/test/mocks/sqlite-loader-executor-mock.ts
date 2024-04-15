@@ -4,7 +4,7 @@
 
 import * as assert from 'assert';
 
-import { BlockExecutorMock } from '@jvalue/jayvee-execution/test';
+import type { BlockExecutorMock } from '@jvalue/jayvee-execution/test';
 import * as sqlite3 from 'sqlite3';
 
 type MockedSqlite3Database = jest.Mocked<sqlite3.Database>;

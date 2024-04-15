@@ -5,26 +5,29 @@
 import assert = require('assert');
 import * as path from 'path';
 
-import {
+import type {
   InternalValueRepresentation,
-  PrimitiveValuetypes,
   TransformDefinition,
-  createJayveeServices,
 } from '@jvalue/jayvee-language-server';
 import {
-  ParseHelperOptions,
+  PrimitiveValuetypes,
+  createJayveeServices,
+} from '@jvalue/jayvee-language-server';
+import type { ParseHelperOptions } from '@jvalue/jayvee-language-server/test';
+import {
   expectNoParserAndLexerErrors,
   loadTestExtensions,
   parseHelper,
   readJvTestAssetHelper,
 } from '@jvalue/jayvee-language-server/test';
-import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
+import type { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import { constructTable, getTestExecutionContext } from '../../../test/utils';
-import { Table, TableColumn } from '../types/io-types/table';
+import type { Table, TableColumn } from '../types/io-types/table';
 
-import { PortDetails, TransformExecutor } from './transform-executor';
+import type { PortDetails } from './transform-executor';
+import { TransformExecutor } from './transform-executor';
 
 describe('Validation of TransformExecutor', () => {
   let parse: (

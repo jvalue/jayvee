@@ -2,10 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { IOType } from '@jvalue/jayvee-language-server';
+import type { IOType } from '@jvalue/jayvee-language-server';
 
-import { FileSystemFile } from './filesystem-node-file';
-import { IOTypeImplementation } from './io-type-implementation';
+import type { FileSystemFile } from './filesystem-node-file';
+import type { IOTypeImplementation } from './io-type-implementation';
 
 /**
  * FileSystem interface defines the operations that a file system implementation should have.

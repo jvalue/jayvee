@@ -5,25 +5,25 @@
 import * as path from 'path';
 
 import { parseValueToInternalRepresentation } from '@jvalue/jayvee-execution';
+import type { RuntimeParameterLiteral } from '@jvalue/jayvee-language-server';
 import {
   DefaultOperatorEvaluatorRegistry,
   DefaultOperatorTypeComputerRegistry,
   EvaluationContext,
-  RuntimeParameterLiteral,
   RuntimeParameterProvider,
   ValidationContext,
   WrapperFactoryProvider,
   createJayveeServices,
 } from '@jvalue/jayvee-language-server';
+import type { ParseHelperOptions } from '@jvalue/jayvee-language-server/test';
 import {
-  ParseHelperOptions,
   expectNoParserAndLexerErrors,
   loadTestExtensions,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '@jvalue/jayvee-language-server/test';
-import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
+import type { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import { validateRuntimeParameterLiteral } from './runtime-parameter-literal';

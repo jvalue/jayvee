@@ -4,14 +4,16 @@
 
 import * as process from 'process';
 
+import type { LoggerFactory, RunOptions } from '@jvalue/jayvee-interpreter-lib';
 import {
-  LoggerFactory,
-  RunOptions,
   extractAstNodeFromFile,
   interpretModel,
   parseModel,
 } from '@jvalue/jayvee-interpreter-lib';
-import { JayveeModel, JayveeServices } from '@jvalue/jayvee-language-server';
+import type {
+  JayveeModel,
+  JayveeServices,
+} from '@jvalue/jayvee-language-server';
 
 export async function runAction(
   fileName: string,

@@ -6,8 +6,8 @@ import * as fs from 'node:fs';
 import * as path from 'path';
 import * as process from 'process';
 
+import type { RunOptions } from '@jvalue/jayvee-interpreter-lib';
 import {
-  RunOptions,
   interpretModel,
   interpretString,
 } from '@jvalue/jayvee-interpreter-lib';

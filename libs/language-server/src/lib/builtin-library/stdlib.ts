@@ -2,7 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { IOType, PrimitiveValueType } from '../ast';
+import type { PrimitiveValueType } from '../ast';
+import { IOType } from '../ast';
 import { PrimitiveValuetypes } from '../ast/wrappers/value-type/primitive/primitive-value-types';
 
 import { PartialStdLib } from './generated/partial-stdlib';

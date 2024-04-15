@@ -2,11 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  PrimitiveValuetypes,
-  PropertyBody,
-  evaluatePropertyValue,
-} from '../../../ast';
+import type { PropertyBody } from '../../../ast';
+import { PrimitiveValuetypes, evaluatePropertyValue } from '../../../ast';
 import { type JayveeValidationProps } from '../../validation-registry';
 
 export function checkConstraintTypeSpecificPropertyBody(

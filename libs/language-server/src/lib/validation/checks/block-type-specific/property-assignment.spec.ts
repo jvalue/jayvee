@@ -2,17 +2,17 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
+import type { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import {
+import type {
   PropertyBody,
   PropertySpecification,
   TypedObjectWrapper,
-  createJayveeServices,
 } from '../../..';
+import { createJayveeServices } from '../../..';
+import type { ParseHelperOptions } from '../../../../test';
 import {
-  ParseHelperOptions,
   createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,

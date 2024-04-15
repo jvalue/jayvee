@@ -8,7 +8,7 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
 import { inferExpressionType } from '../../ast/expressions/type-inference';
-import { ExpressionConstraintDefinition } from '../../ast/generated/ast';
+import type { ExpressionConstraintDefinition } from '../../ast/generated/ast';
 import { PrimitiveValuetypes } from '../../ast/wrappers/value-type/primitive/primitive-value-types';
 import { type JayveeValidationProps } from '../validation-registry';
 import { checkExpressionSimplification } from '../validation-util';

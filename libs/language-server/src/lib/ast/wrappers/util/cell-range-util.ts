@@ -10,14 +10,15 @@ import {
   isRangeLiteral,
   isRowLiteral,
 } from '../../generated/ast';
-import {
-  CellRangeWrapper,
+import type {
   CellWrapper,
   ColumnWrapper,
   RowWrapper,
 } from '../cell-range-wrapper';
+import { CellRangeWrapper } from '../cell-range-wrapper';
 
-import { CellIndex, LAST_INDEX } from './cell-index';
+import type { CellIndex } from './cell-index';
+import { LAST_INDEX } from './cell-index';
 
 export function isCellRangeWrapper(obj: unknown): obj is CellRangeWrapper {
   return obj instanceof CellRangeWrapper;

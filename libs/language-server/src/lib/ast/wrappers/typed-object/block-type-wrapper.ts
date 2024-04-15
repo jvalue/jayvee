@@ -4,7 +4,8 @@
 
 import { strict as assert } from 'assert';
 
-import { Reference, isReference } from 'langium';
+import type { Reference } from 'langium';
+import { isReference } from 'langium';
 
 import { RuntimeParameterProvider } from '../../../services';
 // eslint-disable-next-line import/no-cycle
@@ -13,16 +14,13 @@ import {
   type OperatorEvaluatorRegistry,
   evaluateExpression,
 } from '../../expressions';
-import { ReferenceableBlockTypeDefinition } from '../../generated/ast';
+import type { ReferenceableBlockTypeDefinition } from '../../generated/ast';
 import { IOType, getIOType } from '../../io-type';
 import { createValueType } from '../value-type';
-import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
+import type { WrapperFactoryProvider } from '../wrapper-factory-provider';
 
-import {
-  ExampleDoc,
-  PropertySpecification,
-  TypedObjectWrapper,
-} from './typed-object-wrapper';
+import type { ExampleDoc, PropertySpecification } from './typed-object-wrapper';
+import { TypedObjectWrapper } from './typed-object-wrapper';
 
 interface BlockDocs {
   description?: string;

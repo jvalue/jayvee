@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { ValidationContext } from '../../validation/validation-context';
-import {
+import type { ValidationContext } from '../../validation/validation-context';
+import type {
   BinaryExpression,
   TernaryExpression,
   UnaryExpression,

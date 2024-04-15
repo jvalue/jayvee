@@ -6,18 +6,15 @@ import * as path from 'path';
 
 import * as R from '@jvalue/jayvee-execution';
 import { getTestExecutionContext } from '@jvalue/jayvee-execution/test';
-import {
-  BlockDefinition,
-  IOType,
-  createJayveeServices,
-} from '@jvalue/jayvee-language-server';
+import type { BlockDefinition } from '@jvalue/jayvee-language-server';
+import { IOType, createJayveeServices } from '@jvalue/jayvee-language-server';
 import {
   expectNoParserAndLexerErrors,
   loadTestExtensions,
   parseHelper,
   readJvTestAssetHelper,
 } from '@jvalue/jayvee-language-server/test';
-import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
+import type { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import * as nock from 'nock';
 

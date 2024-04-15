@@ -4,16 +4,19 @@
 
 import { strict as assert } from 'assert';
 
-import {
-  IOType,
+import type {
   InternalValueRepresentation,
   ValueType,
 } from '@jvalue/jayvee-language-server';
+import { IOType } from '@jvalue/jayvee-language-server';
 
 import { SQLColumnTypeVisitor } from '../value-types/visitors/sql-column-type-visitor';
 import { SQLValueRepresentationVisitor } from '../value-types/visitors/sql-value-representation-visitor';
 
-import { IOTypeImplementation, IoTypeVisitor } from './io-type-implementation';
+import type {
+  IOTypeImplementation,
+  IoTypeVisitor,
+} from './io-type-implementation';
 
 export interface TableColumn<
   T extends InternalValueRepresentation = InternalValueRepresentation,

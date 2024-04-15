@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import * as chalk from 'chalk';
-import { LangiumDocument } from 'langium';
+import type { LangiumDocument } from 'langium';
 import { assertUnreachable } from 'langium/lib/utils/errors';
-import { Range } from 'vscode-languageserver';
+import type { Range } from 'vscode-languageserver';
 import { uinteger } from 'vscode-languageserver-types';
 
 import { DiagnosticSeverity, Logger } from './logger';

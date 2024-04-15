@@ -7,10 +7,9 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { TypedObjectWrapper } from '../../ast';
+import type { TypedObjectWrapper } from '../../ast';
+import type { PropertyAssignment, PropertyBody } from '../../ast/generated/ast';
 import {
-  PropertyAssignment,
-  PropertyBody,
   isBlockDefinition,
   isTypedConstraintDefinition,
 } from '../../ast/generated/ast';

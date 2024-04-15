@@ -11,19 +11,21 @@ import { strict as assert } from 'assert';
 
 import { assertUnreachable } from 'langium';
 
-import {
+import type {
   CollectionLiteral,
-  CollectionValuetype,
   ConstraintDefinition,
-  PrimitiveValuetypes,
   ValueType,
+} from '../../ast';
+import {
+  CollectionValuetype,
+  PrimitiveValuetypes,
   createValueType,
   evaluateExpression,
   inferExpressionType,
   isExpressionConstraintDefinition,
   isTypedConstraintDefinition,
 } from '../../ast';
-import {
+import type {
   ValuetypeDefinition,
   ValuetypeGenericDefinition,
 } from '../../ast/generated/ast';

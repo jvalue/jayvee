@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { BlockExecutorMock } from '@jvalue/jayvee-execution/test';
+import type { BlockExecutorMock } from '@jvalue/jayvee-execution/test';
 import * as nock from 'nock';
 
 export class HttpExtractorExecutorMock implements BlockExecutorMock {

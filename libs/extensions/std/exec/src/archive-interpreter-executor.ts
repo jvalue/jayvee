@@ -6,14 +6,16 @@ import { strict as assert } from 'assert';
 import * as zlib from 'node:zlib';
 import * as path from 'path';
 
+import type {
+  BlockExecutorClass,
+  ExecutionContext,
+  FileSystem,
+} from '@jvalue/jayvee-execution';
 import * as R from '@jvalue/jayvee-execution';
 import {
   AbstractBlockExecutor,
   BinaryFile,
-  BlockExecutorClass,
-  ExecutionContext,
   FileExtension,
-  FileSystem,
   InMemoryFileSystem,
   MimeType,
   err,

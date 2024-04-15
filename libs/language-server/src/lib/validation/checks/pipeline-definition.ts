@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { PipeWrapper, PipelineWrapper } from '../../ast';
-import {
+import type { PipeWrapper, PipelineWrapper } from '../../ast';
+import type {
   BlockDefinition,
   CompositeBlockTypeDefinition,
   PipelineDefinition,

@@ -4,28 +4,32 @@
 
 import { strict as assert } from 'assert';
 
-import * as R from '@jvalue/jayvee-execution';
-import {
+import type {
   DebugGranularity,
-  DefaultConstraintExtension,
-  ExecutionContext,
   JayveeConstraintExtension,
   JayveeExecExtension,
   Logger,
+} from '@jvalue/jayvee-execution';
+import * as R from '@jvalue/jayvee-execution';
+import {
+  DefaultConstraintExtension,
+  ExecutionContext,
   executeBlocks,
   isDebugGranularity,
   logExecutionDuration,
   parseValueToInternalRepresentation,
 } from '@jvalue/jayvee-execution';
 import { StdExecExtension } from '@jvalue/jayvee-extensions/std/exec';
-import {
+import type {
   BlockDefinition,
-  EvaluationContext,
   JayveeModel,
   JayveeServices,
   PipelineDefinition,
   RuntimeParameterProvider,
   WrapperFactoryProvider,
+} from '@jvalue/jayvee-language-server';
+import {
+  EvaluationContext,
   createJayveeServices,
   initializeWorkspace,
   internalValueToString,

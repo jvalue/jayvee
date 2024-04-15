@@ -2,18 +2,20 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as R from '@jvalue/jayvee-execution';
-import {
-  AbstractBlockExecutor,
+import type {
   BinaryFile,
   BlockExecutorClass,
   ExecutionContext,
+} from '@jvalue/jayvee-execution';
+import * as R from '@jvalue/jayvee-execution';
+import {
+  AbstractBlockExecutor,
   Sheet,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 import * as E from 'fp-ts/lib/Either';
-import { Either } from 'fp-ts/lib/Either';
+import type { Either } from 'fp-ts/lib/Either';
 import * as GtfsRealtimeBindings from 'gtfs-realtime-bindings';
 
 @implementsStatic<BlockExecutorClass>()

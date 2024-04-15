@@ -4,14 +4,14 @@
 
 import { strict as assert } from 'assert';
 
-import {
+import type {
   BlockDefinition,
   CompositeBlockTypeDefinition,
   PipelineDefinition,
 } from '../generated/ast';
 
-import { AstNodeWrapper } from './ast-node-wrapper';
-import { PipeWrapper } from './pipe-wrapper';
+import type { AstNodeWrapper } from './ast-node-wrapper';
+import type { PipeWrapper } from './pipe-wrapper';
 import { type IPipeWrapperFactory } from './wrapper-factory-provider';
 
 export class PipelineWrapper<

@@ -9,22 +9,22 @@ import {
   constructTable,
   getTestExecutionContext,
 } from '@jvalue/jayvee-execution/test';
+import type { BlockDefinition } from '@jvalue/jayvee-language-server';
 import {
-  BlockDefinition,
   IOType,
   PrimitiveValuetypes,
   createJayveeServices,
 } from '@jvalue/jayvee-language-server';
+import type { ParseHelperOptions } from '@jvalue/jayvee-language-server/test';
 import {
-  ParseHelperOptions,
   expectNoParserAndLexerErrors,
   loadTestExtensions,
   parseHelper,
   readJvTestAssetHelper,
 } from '@jvalue/jayvee-language-server/test';
-import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
+import type { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
-import * as sqlite3 from 'sqlite3';
+import type * as sqlite3 from 'sqlite3';
 
 import { SQLiteLoaderExecutor } from './sqlite-loader-executor';
 

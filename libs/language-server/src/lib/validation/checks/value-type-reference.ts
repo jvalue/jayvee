@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { createValueType } from '../../ast';
+import type { ValueTypeReference } from '../../ast/generated/ast';
 import {
-  ValueTypeReference,
   isBuiltinBlockTypeDefinition,
   isBuiltinConstrainttypeDefinition,
 } from '../../ast/generated/ast';

@@ -4,19 +4,21 @@
 
 import { strict as assert } from 'assert';
 
-import {
+import type {
   InternalValueRepresentation,
   TransformDefinition,
   TransformOutputAssignment,
   TransformPortDefinition,
   ValueType,
+} from '@jvalue/jayvee-language-server';
+import {
   createValueType,
   evaluateExpression,
 } from '@jvalue/jayvee-language-server';
 
-import { ExecutionContext } from '../execution-context';
+import type { ExecutionContext } from '../execution-context';
 import { isValidValueRepresentation } from '../types';
-import { TableColumn } from '../types/io-types/table';
+import type { TableColumn } from '../types/io-types/table';
 
 export interface PortDetails {
   port: TransformPortDefinition;

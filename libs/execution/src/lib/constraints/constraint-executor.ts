@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { InternalValueRepresentation } from '@jvalue/jayvee-language-server';
+import type { InternalValueRepresentation } from '@jvalue/jayvee-language-server';
 
 import { type ExecutionContext } from '../execution-context';
 

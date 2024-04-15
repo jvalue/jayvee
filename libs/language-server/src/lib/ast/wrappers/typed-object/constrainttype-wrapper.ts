@@ -4,22 +4,20 @@
 
 import { strict as assert } from 'assert';
 
-import { Reference, isReference } from 'langium';
+import type { Reference } from 'langium';
+import { isReference } from 'langium';
 
 import { RuntimeParameterProvider } from '../../../services';
-// eslint-disable-next-line import/no-cycle
 import { evaluateExpression } from '../../expressions/evaluate-expression';
 import { EvaluationContext } from '../../expressions/evaluation-context';
 import { type OperatorEvaluatorRegistry } from '../../expressions/operator-registry';
-import { BuiltinConstrainttypeDefinition } from '../../generated/ast';
-import { ValueType, createValueType } from '../value-type';
+import type { BuiltinConstrainttypeDefinition } from '../../generated/ast';
+import type { ValueType } from '../value-type';
+import { createValueType } from '../value-type';
 import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
 
-import {
-  ExampleDoc,
-  PropertySpecification,
-  TypedObjectWrapper,
-} from './typed-object-wrapper';
+import type { ExampleDoc, PropertySpecification } from './typed-object-wrapper';
+import { TypedObjectWrapper } from './typed-object-wrapper';
 
 interface ConstraintDocs {
   description?: string;

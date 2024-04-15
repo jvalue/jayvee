@@ -6,19 +6,18 @@ import * as assert from 'assert';
 import { readFileSync } from 'fs';
 import * as path from 'path';
 
-import { AstNode, LangiumDocument, ValidationAcceptor } from 'langium';
-import { WorkspaceFolder } from 'vscode-languageserver-protocol';
+import type { AstNode, LangiumDocument, ValidationAcceptor } from 'langium';
+import type { WorkspaceFolder } from 'vscode-languageserver-protocol';
 
 import {
   DefaultOperatorEvaluatorRegistry,
   DefaultOperatorTypeComputerRegistry,
   EvaluationContext,
-  JayveeServices,
-  type JayveeValidationProps,
   RuntimeParameterProvider,
   ValidationContext,
   WrapperFactoryProvider,
 } from '../lib';
+import type { JayveeServices, JayveeValidationProps } from '../lib';
 import { initializeWorkspace } from '../lib/builtin-library/jayvee-workspace-manager';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function

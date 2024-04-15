@@ -4,25 +4,29 @@
 
 import { strict as assert } from 'assert';
 
-import * as R from '@jvalue/jayvee-execution';
-import {
-  AbstractBlockExecutor,
+import type {
   BlockExecutorClass,
   ExecutionContext,
   Sheet,
+} from '@jvalue/jayvee-execution';
+import * as R from '@jvalue/jayvee-execution';
+import {
+  AbstractBlockExecutor,
   Table,
   implementsStatic,
   isValidValueRepresentation,
   parseValueToInternalRepresentation,
 } from '@jvalue/jayvee-execution';
+import type {
+  InternalValueRepresentation,
+  ValueType,
+  ValuetypeAssignment,
+} from '@jvalue/jayvee-language-server';
 import {
   CellIndex,
   CollectionValuetype,
   IOType,
-  InternalValueRepresentation,
   PrimitiveValuetypes,
-  ValueType,
-  ValuetypeAssignment,
   createValueType,
   rowIndexToString,
 } from '@jvalue/jayvee-language-server';

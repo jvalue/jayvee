@@ -4,13 +4,15 @@
 
 import { strict as assert } from 'assert';
 
+import type {
+  BlockExecutorClass,
+  ExecutionContext,
+  FileSystem,
+} from '@jvalue/jayvee-execution';
 import * as R from '@jvalue/jayvee-execution';
 import {
   AbstractBlockExecutor,
   BinaryFile,
-  BlockExecutorClass,
-  ExecutionContext,
-  FileSystem,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';

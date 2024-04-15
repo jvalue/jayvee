@@ -6,7 +6,7 @@ import { strict as assert } from 'assert';
 
 import { assertUnreachable } from 'langium';
 
-import {
+import type {
   CellLiteral,
   CellRangeLiteral,
   CellReference,
@@ -15,6 +15,8 @@ import {
   RangeLiteral,
   RowId,
   RowLiteral,
+} from '../generated/ast';
+import {
   isCellLiteral,
   isCellReference,
   isColumnLiteral,
@@ -22,8 +24,9 @@ import {
   isRowLiteral,
 } from '../generated/ast';
 
-import { AstNodeWrapper } from './ast-node-wrapper';
-import { CellIndex, CellIndexBounds, LAST_INDEX } from './util/cell-index';
+import type { AstNodeWrapper } from './ast-node-wrapper';
+import type { CellIndexBounds } from './util/cell-index';
+import { CellIndex, LAST_INDEX } from './util/cell-index';
 import { columnCharactersAsIndex } from './util/column-id-util';
 
 export class CellRangeWrapper<N extends CellRangeLiteral = CellRangeLiteral>

@@ -5,12 +5,11 @@
 import * as path from 'path';
 
 import * as vscode from 'vscode';
-import {
-  LanguageClient,
+import type {
   LanguageClientOptions,
   ServerOptions,
-  TransportKind,
 } from 'vscode-languageclient/node';
+import { LanguageClient, TransportKind } from 'vscode-languageclient/node';
 
 import { StandardLibraryFileSystemProvider } from './standard-library-file-system-provider';
 

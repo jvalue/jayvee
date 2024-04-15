@@ -6,26 +6,24 @@ import * as path from 'path';
 
 import * as R from '@jvalue/jayvee-execution';
 import { getTestExecutionContext } from '@jvalue/jayvee-execution/test';
+import type { BlockDefinition } from '@jvalue/jayvee-language-server';
 import {
-  BlockDefinition,
   IOType,
   PrimitiveValuetypes,
   createJayveeServices,
 } from '@jvalue/jayvee-language-server';
+import type { ParseHelperOptions } from '@jvalue/jayvee-language-server/test';
 import {
-  ParseHelperOptions,
   expectNoParserAndLexerErrors,
   loadTestExtensions,
   parseHelper,
   readJvTestAssetHelper,
 } from '@jvalue/jayvee-language-server/test';
-import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
+import type { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import {
-  ReducedColumnDefinitionEntry,
-  createTableFromLocalExcelFile,
-} from '../../test/util';
+import type { ReducedColumnDefinitionEntry } from '../../test/util';
+import { createTableFromLocalExcelFile } from '../../test/util';
 
 import { TableTransformerExecutor } from './table-transformer-executor';
 

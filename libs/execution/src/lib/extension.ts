@@ -4,13 +4,11 @@
 
 import { strict as assert } from 'assert';
 
-import {
-  BlockDefinition,
-  isCompositeBlockTypeDefinition,
-} from '@jvalue/jayvee-language-server';
+import type { BlockDefinition } from '@jvalue/jayvee-language-server';
+import { isCompositeBlockTypeDefinition } from '@jvalue/jayvee-language-server';
 
 import { type BlockExecutor } from './blocks';
-import { BlockExecutorClass } from './blocks/block-executor-class';
+import type { BlockExecutorClass } from './blocks/block-executor-class';
 import {
   createCompositeBlockExecutor,
   getInputType,

@@ -4,16 +4,18 @@
 
 import { strict as assert } from 'assert/strict';
 
-import {
+import type {
   BlockDefinition,
   BlockTypePipeline,
   BlockTypeProperty,
   CompositeBlockTypeDefinition,
   EvaluationContext,
-  IOType,
   InternalValueRepresentation,
   ValueType,
   WrapperFactoryProvider,
+} from '@jvalue/jayvee-language-server';
+import {
+  IOType,
   createValueType,
   evaluateExpression,
   evaluatePropertyValue,
@@ -25,8 +27,9 @@ import { type ExecutionContext } from '../execution-context';
 import { type IOTypeImplementation } from '../types';
 
 import { executeBlocks } from './block-execution-util';
-import { AbstractBlockExecutor, BlockExecutor } from './block-executor';
-import { BlockExecutorClass } from './block-executor-class';
+import type { BlockExecutor } from './block-executor';
+import { AbstractBlockExecutor } from './block-executor';
+import type { BlockExecutorClass } from './block-executor-class';
 import * as R from './execution-result';
 
 export function createCompositeBlockExecutor(

@@ -2,10 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import type { PropertyBody } from '../../../ast';
 import {
   CollectionValuetype,
   PrimitiveValuetypes,
-  PropertyBody,
   evaluatePropertyValue,
 } from '../../../ast';
 import { type JayveeValidationProps } from '../../validation-registry';

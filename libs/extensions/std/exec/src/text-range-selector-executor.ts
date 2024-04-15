@@ -2,11 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import type {
+  BlockExecutorClass,
+  ExecutionContext,
+} from '@jvalue/jayvee-execution';
 import * as R from '@jvalue/jayvee-execution';
 import {
   AbstractBlockExecutor,
-  BlockExecutorClass,
-  ExecutionContext,
   TextFile,
   implementsStatic,
 } from '@jvalue/jayvee-execution';

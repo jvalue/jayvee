@@ -7,11 +7,11 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import {
+import type {
   TransformBody,
   TransformPortDefinition,
-  isTransformPortDefinition,
 } from '../../ast/generated/ast';
+import { isTransformPortDefinition } from '../../ast/generated/ast';
 import { type JayveeValidationProps } from '../validation-registry';
 import { checkUniqueNames } from '../validation-util';
 

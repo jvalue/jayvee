@@ -4,7 +4,7 @@
 
 import { strict as assert } from 'assert';
 
-import {
+import type {
   BlockTypeWrapper,
   ConstraintTypeWrapper,
   ExampleDoc,
@@ -13,10 +13,10 @@ import {
   JayveeConstraintTypeDocGenerator,
   JayveeServices,
   JayveeValueTypesDocGenerator,
-  MarkdownBuilder,
   PrimitiveValueType,
   PropertySpecification,
 } from '@jvalue/jayvee-language-server';
+import { MarkdownBuilder } from '@jvalue/jayvee-language-server';
 
 export class UserDocGenerator
   implements

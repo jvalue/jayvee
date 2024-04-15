@@ -7,10 +7,12 @@ import { strict as assert } from 'assert';
 import { assertUnreachable } from 'langium';
 
 import { type ValidationContext } from '../../validation';
-import {
+import type {
   Expression,
   PropertyAssignment,
   ValueLiteral,
+} from '../generated/ast';
+import {
   isBinaryExpression,
   isBlockTypeProperty,
   isCellRangeLiteral,
@@ -24,8 +26,7 @@ import {
   isUnaryExpression,
   isValueLiteral,
 } from '../generated/ast';
-// eslint-disable-next-line import/no-cycle
-import { ValueType, type WrapperFactoryProvider } from '../wrappers';
+import type { ValueType, WrapperFactoryProvider } from '../wrappers';
 
 import { type EvaluationContext } from './evaluation-context';
 import { EvaluationStrategy } from './evaluation-strategy';

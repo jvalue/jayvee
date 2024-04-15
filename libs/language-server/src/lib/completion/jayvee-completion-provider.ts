@@ -4,27 +4,26 @@
 
 import { strict as assert } from 'assert';
 
-import {
+import type {
   CompletionAcceptor,
   CompletionContext,
   CompletionValueItem,
-  DefaultCompletionProvider,
   LangiumDocuments,
   MaybePromise,
   NextFeature,
 } from 'langium';
+import { DefaultCompletionProvider } from 'langium';
 import { CompletionItemKind } from 'vscode-languageserver';
 
-import {
-  TypedObjectWrapper,
-  type WrapperFactoryProvider,
-  createValueType,
-} from '../ast';
-import {
+import { createValueType } from '../ast';
+import type { TypedObjectWrapper, WrapperFactoryProvider } from '../ast';
+import type {
   BlockDefinition,
   ConstraintDefinition,
-  PropertyAssignment,
   PropertyBody,
+} from '../ast/generated/ast';
+import {
+  PropertyAssignment,
   ValueTypeReference,
   isBlockDefinition,
   isConstraintDefinition,

@@ -2,13 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
+import type {
   BlockTypeWrapper,
   ConstraintTypeWrapper,
   TypedObjectWrapper,
 } from '../ast';
 
-import {
+import type {
   JayveeBlockTypeDocGenerator,
   JayveeConstraintTypeDocGenerator,
   JayveePropertyDocGenerator,

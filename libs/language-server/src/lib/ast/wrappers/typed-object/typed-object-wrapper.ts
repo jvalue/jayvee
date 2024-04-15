@@ -2,15 +2,14 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { AstNode } from 'langium';
+import type { AstNode } from 'langium';
 
 import { type ValidationContext } from '../../../validation/validation-context';
 import { type EvaluationContext } from '../../expressions/evaluation-context';
-// eslint-disable-next-line import/no-cycle
-import { InternalValueRepresentation } from '../../expressions/internal-value-representation';
-import { PropertyAssignment, PropertyBody } from '../../generated/ast';
-import { AstNodeWrapper } from '../ast-node-wrapper';
-import { ValueType } from '../value-type';
+import type { InternalValueRepresentation } from '../../expressions/internal-value-representation';
+import type { PropertyAssignment, PropertyBody } from '../../generated/ast';
+import type { AstNodeWrapper } from '../ast-node-wrapper';
+import type { ValueType } from '../value-type';
 
 export interface PropertySpecification<
   I extends InternalValueRepresentation = InternalValueRepresentation,

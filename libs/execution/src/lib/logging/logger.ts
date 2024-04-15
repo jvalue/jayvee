@@ -4,13 +4,8 @@
 
 import { strict as assert } from 'assert';
 
-import {
-  AstNode,
-  DiagnosticInfo,
-  LangiumDocument,
-  getDiagnosticRange,
-  getDocument,
-} from 'langium';
+import type { AstNode, DiagnosticInfo, LangiumDocument } from 'langium';
+import { getDiagnosticRange, getDocument } from 'langium';
 import * as ls from 'vscode-languageserver';
 
 export enum DiagnosticSeverity {

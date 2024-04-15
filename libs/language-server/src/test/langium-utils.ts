@@ -6,13 +6,13 @@
  * The content of this file was copied from the official langium github repo
  * https://github.com/langium/langium/blob/main/packages/langium/src/test/langium-test.ts
  */
-import {
+import type {
   AstNode,
   BuildOptions,
   LangiumDocument,
   LangiumServices,
 } from 'langium';
-import { Diagnostic } from 'vscode-languageserver';
+import type { Diagnostic } from 'vscode-languageserver';
 import { URI } from 'vscode-uri';
 
 import { initializeWorkspace } from '../lib/builtin-library/jayvee-workspace-manager';

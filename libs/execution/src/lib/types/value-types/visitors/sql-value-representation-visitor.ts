@@ -4,15 +4,15 @@
 
 import { strict as assert } from 'assert';
 
-import {
+import type {
   AtomicValuetype,
   BooleanValuetype,
   DecimalValuetype,
   IntegerValuetype,
   InternalValueRepresentation,
   TextValuetype,
-  ValueTypeVisitor,
 } from '@jvalue/jayvee-language-server';
+import { ValueTypeVisitor } from '@jvalue/jayvee-language-server';
 
 export class SQLValueRepresentationVisitor extends ValueTypeVisitor<
   (value: InternalValueRepresentation) => string

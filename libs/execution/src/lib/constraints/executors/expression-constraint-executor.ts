@@ -4,16 +4,18 @@
 
 import { strict as assert } from 'assert';
 
-import {
+import type {
   AstNodeWrapper,
   ExpressionConstraintDefinition,
   InternalValueRepresentation,
+} from '@jvalue/jayvee-language-server';
+import {
   PrimitiveValuetypes,
   evaluateExpression,
 } from '@jvalue/jayvee-language-server';
 
 import { type ExecutionContext } from '../../execution-context';
-import { ConstraintExecutor } from '../constraint-executor';
+import type { ConstraintExecutor } from '../constraint-executor';
 
 export class ExpressionConstraintExecutor
   implements ConstraintExecutor, AstNodeWrapper<ExpressionConstraintDefinition>

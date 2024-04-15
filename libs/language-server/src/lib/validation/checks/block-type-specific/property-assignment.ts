@@ -2,12 +2,14 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  CollectionValuetype,
+import type {
   InternalValueRepresentation,
-  PrimitiveValuetypes,
   PropertyAssignment,
   PropertySpecification,
+} from '../../../ast';
+import {
+  CollectionValuetype,
+  PrimitiveValuetypes,
   evaluatePropertyValue,
   internalValueToString,
   isColumnWrapper,

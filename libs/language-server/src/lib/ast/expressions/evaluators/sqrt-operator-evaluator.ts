@@ -4,9 +4,8 @@
 
 import { strict as assert } from 'assert';
 
-import { ValidationContext } from '../../../validation/validation-context';
-import { UnaryExpression } from '../../generated/ast';
-// eslint-disable-next-line import/no-cycle
+import type { ValidationContext } from '../../../validation/validation-context';
+import type { UnaryExpression } from '../../generated/ast';
 import { DefaultUnaryOperatorEvaluator } from '../operator-evaluator';
 import { NUMBER_TYPEGUARD } from '../typeguards';
 

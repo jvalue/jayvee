@@ -2,12 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { ValidationContext } from '../../../validation/validation-context';
-import { BinaryExpression } from '../../generated/ast';
+import type { ValidationContext } from '../../../validation/validation-context';
+import type { BinaryExpression } from '../../generated/ast';
 import { type ValueType } from '../../wrappers/value-type';
-// eslint-disable-next-line import/no-cycle
 import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/primitive-value-types';
-import { BinaryOperatorTypeComputer } from '../operator-type-computer';
+import type { BinaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class EqualityOperatorTypeComputer
   implements BinaryOperatorTypeComputer
