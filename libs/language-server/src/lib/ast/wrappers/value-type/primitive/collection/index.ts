@@ -11,5 +11,6 @@ export {
 
 export {
   type EmptyCollectionValueType as EmptyCollectionValuetype,
+  EmptyCollection,
   isEmptyCollectionValueType as isEmptyCollectionValuetype,
 } from './empty-collection-value-type';

@@ -39,14 +39,14 @@ import { getNextAstNodeContainer } from '../model-util';
 // eslint-disable-next-line import/no-cycle
 import {
   type AtomicValuetype,
+  EmptyCollection,
   type PrimitiveValueType,
+  PrimitiveValuetypes,
+  type ValueType,
   type WrapperFactoryProvider,
   isAtomicValuetype,
   isPrimitiveValueType,
 } from '../wrappers';
-import { EmptyCollection } from '../wrappers/value-type/primitive/collection/empty-collection-value-type';
-import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-value-types';
-import { type ValueType } from '../wrappers/value-type/value-type';
 
 import { isEveryValueDefined } from './typeguards';
 
