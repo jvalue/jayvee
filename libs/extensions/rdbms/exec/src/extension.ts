@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  BlockExecutorClass,
+  type BlockExecutorClass,
   JayveeExecExtension,
 } from '@jvalue/jayvee-execution';
 

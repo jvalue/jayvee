@@ -7,9 +7,9 @@ import { TextDecoder } from 'util';
 import * as R from '@jvalue/jayvee-execution';
 import {
   AbstractBlockExecutor,
-  BinaryFile,
-  BlockExecutorClass,
-  ExecutionContext,
+  type BinaryFile,
+  type BlockExecutorClass,
+  type ExecutionContext,
   TextFile,
   implementsStatic,
   splitLines,

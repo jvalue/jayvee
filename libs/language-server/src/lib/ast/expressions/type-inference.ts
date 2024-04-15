@@ -6,14 +6,14 @@ import { strict as assert } from 'assert';
 
 import { assertUnreachable } from 'langium';
 
-import { ValidationContext } from '../../validation/validation-context';
+import { type ValidationContext } from '../../validation/validation-context';
 import {
-  CollectionLiteral,
-  Expression,
-  ExpressionLiteral,
-  NumericLiteral,
-  ReferenceLiteral,
-  ValueKeywordLiteral,
+  type CollectionLiteral,
+  type Expression,
+  type ExpressionLiteral,
+  type NumericLiteral,
+  type ReferenceLiteral,
+  type ValueKeywordLiteral,
   isBinaryExpression,
   isBlockTypeProperty,
   isBooleanLiteral,
@@ -35,12 +35,12 @@ import {
   isValueLiteral,
   isValuetypeAssignmentLiteral,
 } from '../generated/ast';
-// eslint-disable-next-line import/no-cycle
 import { getNextAstNodeContainer } from '../model-util';
+// eslint-disable-next-line import/no-cycle
 import {
-  AtomicValuetype,
+  type AtomicValuetype,
   CollectionValuetype,
-  PrimitiveValueType,
+  type PrimitiveValueType,
   isAtomicValuetype,
   isPrimitiveValueType,
 } from '../wrappers';

@@ -21,9 +21,9 @@ import 'monaco-editor/esm/vs/editor/standalone/browser/referenceSearch/standalon
 import 'monaco-editor/esm/vs/editor/standalone/browser/toggleHighContrast/toggleHighContrast.js';
 import {
   CloseAction,
-  Disposable,
+  type Disposable,
   ErrorAction,
-  MessageTransports,
+  type MessageTransports,
   MonacoLanguageClient,
   MonacoServices,
   State,

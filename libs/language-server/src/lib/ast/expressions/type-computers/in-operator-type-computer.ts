@@ -4,16 +4,15 @@
 
 import { strict as assert } from 'assert';
 
-import { ValidationContext } from '../../../validation/validation-context';
-import { BinaryExpression } from '../../generated/ast';
-// eslint-disable-next-line import/no-cycle
+import { type ValidationContext } from '../../../validation/validation-context';
+import { type BinaryExpression } from '../../generated/ast';
 import {
   CollectionValuetype,
   type ValueType,
   isCollectionValuetype,
 } from '../../wrappers/value-type';
 import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/primitive-value-types';
-import { BinaryOperatorTypeComputer } from '../operator-type-computer';
+import { type BinaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class InOperatorTypeComputer implements BinaryOperatorTypeComputer {
   private readonly ALLOWED_LEFT_OPERAND_TYPES: ValueType[] = [

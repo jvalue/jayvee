@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { type OperatorEvaluatorRegistry } from '../../expressions/operator-registry';
-import { CompositeBlockTypeDefinition } from '../../generated/ast';
+import { type CompositeBlockTypeDefinition } from '../../generated/ast';
 import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
 
 // eslint-disable-next-line import/no-cycle

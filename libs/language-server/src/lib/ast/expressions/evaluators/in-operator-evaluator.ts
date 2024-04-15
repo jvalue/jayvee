@@ -2,10 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line import/no-cycle
 import {
-  InternalValueRepresentation,
-  InternalValueRepresentationTypeguard,
+  type InternalValueRepresentation,
+  type InternalValueRepresentationTypeguard,
 } from '../internal-value-representation';
 import { DefaultBinaryOperatorEvaluator } from '../operator-evaluator';
 import { NUMBER_TYPEGUARD, STRING_TYPEGUARD } from '../typeguards';

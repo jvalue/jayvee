@@ -4,7 +4,7 @@
 
 import { createValueType } from '../../ast';
 import {
-  ValueTypeReference,
+  type ValueTypeReference,
   isBuiltinBlockTypeDefinition,
   isBuiltinConstrainttypeDefinition,
 } from '../../ast/generated/ast';

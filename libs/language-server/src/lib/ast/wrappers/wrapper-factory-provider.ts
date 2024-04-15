@@ -5,7 +5,7 @@
 import { strict as assert } from 'assert';
 
 import {
-  AstNode,
+  type AstNode,
   type Reference,
   assertUnreachable,
   isReference,
@@ -13,18 +13,18 @@ import {
 
 import { type OperatorEvaluatorRegistry } from '../expressions';
 import {
-  BlockTypePipeline,
-  BuiltinConstrainttypeDefinition,
-  CellRangeLiteral,
-  CompositeBlockTypeDefinition,
-  PipeDefinition,
-  PipelineDefinition,
+  type BlockTypePipeline,
+  type BuiltinConstrainttypeDefinition,
+  type CellRangeLiteral,
+  type CompositeBlockTypeDefinition,
+  type PipeDefinition,
+  type PipelineDefinition,
   type ReferenceableBlockTypeDefinition,
   isBuiltinConstrainttypeDefinition,
   isReferenceableBlockTypeDefinition,
 } from '../generated/ast';
 
-import { AstNodeWrapper } from './ast-node-wrapper';
+import { type AstNodeWrapper } from './ast-node-wrapper';
 import { CellRangeWrapper } from './cell-range-wrapper';
 import { PipeWrapper } from './pipe-wrapper';
 import { PipelineWrapper } from './pipeline-wrapper';

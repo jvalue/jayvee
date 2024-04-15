@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line import/no-cycle
 import { DefaultUnaryOperatorEvaluator } from '../operator-evaluator';
 import { STRING_TYPEGUARD } from '../typeguards';
 

@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { RegexLiteral } from '../../ast/generated/ast';
+import { type RegexLiteral } from '../../ast/generated/ast';
 import { type JayveeValidationProps } from '../validation-registry';
 
 /**

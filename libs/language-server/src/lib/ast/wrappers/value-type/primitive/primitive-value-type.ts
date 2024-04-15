@@ -3,8 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
-// eslint-disable-next-line import/no-cycle
-import { AbstractValueType, ValueType } from '../value-type';
+import { AbstractValueType, type ValueType } from '../value-type';
 
 export abstract class PrimitiveValueType<
   I extends InternalValueRepresentation = InternalValueRepresentation,

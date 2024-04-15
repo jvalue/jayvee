@@ -6,7 +6,7 @@ import { readFileSync, readdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 import {
-  JayveeServices,
+  type JayveeServices,
   PrimitiveValuetypes,
   createJayveeServices,
   getAllBuiltinBlockTypes,

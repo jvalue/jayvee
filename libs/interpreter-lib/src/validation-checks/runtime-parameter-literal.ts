@@ -3,13 +3,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  BuiltinConstrainttypeDefinition,
+  type BuiltinConstrainttypeDefinition,
   type JayveeValidationProps,
-  PropertyBody,
-  ReferenceableBlockTypeDefinition,
-  RuntimeParameterLiteral,
+  type PropertyBody,
+  type ReferenceableBlockTypeDefinition,
+  type RuntimeParameterLiteral,
 } from '@jvalue/jayvee-language-server';
-import { Reference } from 'langium';
+import { type Reference } from 'langium';
 
 export function validateRuntimeParameterLiteral(
   runtimeParameter: RuntimeParameterLiteral,

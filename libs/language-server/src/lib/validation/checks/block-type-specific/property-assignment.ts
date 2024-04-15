@@ -4,10 +4,10 @@
 
 import {
   CollectionValuetype,
-  InternalValueRepresentation,
+  type InternalValueRepresentation,
   PrimitiveValuetypes,
-  PropertyAssignment,
-  PropertySpecification,
+  type PropertyAssignment,
+  type PropertySpecification,
   evaluatePropertyValue,
   internalValueToString,
   isColumnWrapper,

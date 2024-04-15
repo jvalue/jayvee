@@ -5,26 +5,26 @@
 import { strict as assert } from 'assert';
 
 import {
-  CompletionAcceptor,
-  CompletionContext,
-  CompletionValueItem,
+  type CompletionAcceptor,
+  type CompletionContext,
+  type CompletionValueItem,
   DefaultCompletionProvider,
-  LangiumDocuments,
-  MaybePromise,
-  NextFeature,
+  type LangiumDocuments,
+  type MaybePromise,
+  type NextFeature,
 } from 'langium';
 import { CompletionItemKind } from 'vscode-languageserver';
 
 import {
-  TypedObjectWrapper,
+  type TypedObjectWrapper,
   type WrapperFactoryProvider,
   createValueType,
 } from '../ast';
 import {
-  BlockDefinition,
-  ConstraintDefinition,
+  type BlockDefinition,
+  type ConstraintDefinition,
   PropertyAssignment,
-  PropertyBody,
+  type PropertyBody,
   ValueTypeReference,
   isBlockDefinition,
   isConstraintDefinition,

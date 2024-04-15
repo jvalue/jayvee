@@ -12,12 +12,12 @@ import {
 } from '../../generated/ast';
 import {
   CellRangeWrapper,
-  CellWrapper,
-  ColumnWrapper,
-  RowWrapper,
+  type CellWrapper,
+  type ColumnWrapper,
+  type RowWrapper,
 } from '../cell-range-wrapper';
 
-import { CellIndex, LAST_INDEX } from './cell-index';
+import { type CellIndex, LAST_INDEX } from './cell-index';
 
 export function isCellRangeWrapper(obj: unknown): obj is CellRangeWrapper {
   return obj instanceof CellRangeWrapper;

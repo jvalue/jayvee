@@ -2,7 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { AstNode, DiagnosticInfo, ValidationAcceptor } from 'langium';
+import {
+  type AstNode,
+  type DiagnosticInfo,
+  type ValidationAcceptor,
+} from 'langium';
 
 import { type OperatorTypeComputerRegistry } from '../ast/expressions/operator-registry';
 

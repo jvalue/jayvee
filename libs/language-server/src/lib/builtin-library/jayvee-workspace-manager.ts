@@ -4,12 +4,12 @@
 
 import {
   DefaultWorkspaceManager,
-  LangiumDocument,
-  LangiumDocumentFactory,
-  LangiumServices,
-  LangiumSharedServices,
+  type LangiumDocument,
+  type LangiumDocumentFactory,
+  type LangiumServices,
+  type LangiumSharedServices,
 } from 'langium';
-import { WorkspaceFolder } from 'vscode-languageserver';
+import { type WorkspaceFolder } from 'vscode-languageserver';
 import { URI } from 'vscode-uri';
 
 import { getStdLib } from './stdlib';

@@ -5,21 +5,21 @@
 import { strict as assert } from 'assert';
 
 import {
-  AtomicValuetype,
-  BooleanValuetype,
-  CellRangeValuetype,
-  CollectionValuetype,
-  ConstraintValuetype,
-  DecimalValuetype,
-  IntegerValuetype,
-  InternalValueRepresentation,
-  PrimitiveValueType,
-  RegexValuetype,
-  TextValuetype,
-  TransformValuetype,
-  ValueType,
+  type AtomicValuetype,
+  type BooleanValuetype,
+  type CellRangeValuetype,
+  type CollectionValuetype,
+  type ConstraintValuetype,
+  type DecimalValuetype,
+  type IntegerValuetype,
+  type InternalValueRepresentation,
+  type PrimitiveValueType,
+  type RegexValuetype,
+  type TextValuetype,
+  type TransformValuetype,
+  type ValueType,
   ValueTypeVisitor,
-  ValuetypeAssignmentValuetype,
+  type ValuetypeAssignmentValuetype,
 } from '@jvalue/jayvee-language-server';
 
 import { type ExecutionContext } from '../../execution-context';

@@ -3,15 +3,15 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  BlockTypeWrapper,
-  ConstraintTypeWrapper,
-  TypedObjectWrapper,
+  type BlockTypeWrapper,
+  type ConstraintTypeWrapper,
+  type TypedObjectWrapper,
 } from '../ast';
 
 import {
-  JayveeBlockTypeDocGenerator,
-  JayveeConstraintTypeDocGenerator,
-  JayveePropertyDocGenerator,
+  type JayveeBlockTypeDocGenerator,
+  type JayveeConstraintTypeDocGenerator,
+  type JayveePropertyDocGenerator,
 } from './jayvee-doc-generator';
 import { MarkdownBuilder } from './markdown-builder';
 

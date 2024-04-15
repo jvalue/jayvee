@@ -3,12 +3,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import * as chalk from 'chalk';
-import { LangiumDocument } from 'langium';
-import { Range } from 'vscode-languageserver';
+import { type LangiumDocument } from 'langium';
+import { type Range } from 'vscode-languageserver';
 
 import { DefaultLogger } from './default-logger';
 import { LogCache } from './log-cache';
-import { DiagnosticSeverity, LogEntry } from './logger';
+import { DiagnosticSeverity, type LogEntry } from './logger';
 
 export class CachedLogger extends DefaultLogger {
   protected logCache: LogCache;

@@ -28,6 +28,12 @@
               }
             ]
           }
+        ],
+        "@typescript-eslint/consistent-type-imports": [
+          "warn",
+          {
+            "fixStyle": "inline-type-imports"
+          }
         ]
       }
     },

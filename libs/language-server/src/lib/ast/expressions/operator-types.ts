@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  BinaryExpression,
-  TernaryExpression,
-  UnaryExpression,
+  type BinaryExpression,
+  type TernaryExpression,
+  type UnaryExpression,
 } from '../generated/ast';
 
 export type UnaryExpressionOperator = UnaryExpression['operator'];

@@ -8,9 +8,9 @@ import * as R from '@jvalue/jayvee-execution';
 import {
   AbstractBlockExecutor,
   BinaryFile,
-  BlockExecutorClass,
-  ExecutionContext,
-  FileSystem,
+  type BlockExecutorClass,
+  type ExecutionContext,
+  type FileSystem,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';

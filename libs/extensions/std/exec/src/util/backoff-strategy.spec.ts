@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  BackoffStrategy,
+  type BackoffStrategy,
   ExponentialBackoffStrategy,
   LinearBackoffStrategy,
 } from './backoff-strategy';

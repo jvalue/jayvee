@@ -5,12 +5,12 @@
 import { strict as assert } from 'assert';
 
 import {
-  AtomicValuetype,
-  BooleanValuetype,
-  DecimalValuetype,
-  IntegerValuetype,
-  InternalValueRepresentation,
-  TextValuetype,
+  type AtomicValuetype,
+  type BooleanValuetype,
+  type DecimalValuetype,
+  type IntegerValuetype,
+  type InternalValueRepresentation,
+  type TextValuetype,
   ValueTypeVisitor,
 } from '@jvalue/jayvee-language-server';
 

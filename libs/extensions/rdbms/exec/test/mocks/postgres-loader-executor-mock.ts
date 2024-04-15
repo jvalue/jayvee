@@ -4,7 +4,7 @@
 
 import * as assert from 'assert';
 
-import { BlockExecutorMock } from '@jvalue/jayvee-execution/test';
+import { type BlockExecutorMock } from '@jvalue/jayvee-execution/test';
 import { Client } from 'pg';
 
 type MockedPgClient = jest.Mocked<Client>;

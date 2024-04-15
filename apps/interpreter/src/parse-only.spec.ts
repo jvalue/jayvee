@@ -7,7 +7,7 @@ import * as path from 'path';
 import * as process from 'process';
 
 import {
-  RunOptions,
+  type RunOptions,
   interpretModel,
   interpretString,
 } from '@jvalue/jayvee-interpreter-lib';

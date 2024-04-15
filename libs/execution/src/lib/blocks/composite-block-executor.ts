@@ -5,15 +5,15 @@
 import { strict as assert } from 'assert/strict';
 
 import {
-  BlockDefinition,
-  BlockTypePipeline,
-  BlockTypeProperty,
-  CompositeBlockTypeDefinition,
-  EvaluationContext,
+  type BlockDefinition,
+  type BlockTypePipeline,
+  type BlockTypeProperty,
+  type CompositeBlockTypeDefinition,
+  type EvaluationContext,
   IOType,
-  InternalValueRepresentation,
-  ValueType,
-  WrapperFactoryProvider,
+  type InternalValueRepresentation,
+  type ValueType,
+  type WrapperFactoryProvider,
   createValueType,
   evaluateExpression,
   evaluatePropertyValue,
@@ -25,8 +25,8 @@ import { type ExecutionContext } from '../execution-context';
 import { type IOTypeImplementation } from '../types';
 
 import { executeBlocks } from './block-execution-util';
-import { AbstractBlockExecutor, BlockExecutor } from './block-executor';
-import { BlockExecutorClass } from './block-executor-class';
+import { AbstractBlockExecutor, type BlockExecutor } from './block-executor';
+import { type BlockExecutorClass } from './block-executor-class';
 import * as R from './execution-result';
 
 export function createCompositeBlockExecutor(

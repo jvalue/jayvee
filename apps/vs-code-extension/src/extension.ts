@@ -7,8 +7,8 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import {
   LanguageClient,
-  LanguageClientOptions,
-  ServerOptions,
+  type LanguageClientOptions,
+  type ServerOptions,
   TransportKind,
 } from 'vscode-languageclient/node';
 

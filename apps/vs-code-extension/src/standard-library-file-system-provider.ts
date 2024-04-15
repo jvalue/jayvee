@@ -5,11 +5,11 @@
 import { getStdLib } from '@jvalue/jayvee-language-server';
 import {
   EventEmitter,
-  ExtensionContext,
-  FileChangeEvent,
-  FileStat,
+  type ExtensionContext,
+  type FileChangeEvent,
+  type FileStat,
   FileSystemError,
-  FileSystemProvider,
+  type FileSystemProvider,
   FileType,
   Uri,
   workspace,

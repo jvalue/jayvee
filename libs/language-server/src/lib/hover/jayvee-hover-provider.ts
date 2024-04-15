@@ -2,13 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { AstNode, AstNodeHoverProvider, MaybePromise } from 'langium';
-import { Hover } from 'vscode-languageserver-protocol';
+import { type AstNode, AstNodeHoverProvider, type MaybePromise } from 'langium';
+import { type Hover } from 'vscode-languageserver-protocol';
 
 import {
-  BuiltinBlockTypeDefinition,
-  BuiltinConstrainttypeDefinition,
-  PropertyAssignment,
+  type BuiltinBlockTypeDefinition,
+  type BuiltinConstrainttypeDefinition,
+  type PropertyAssignment,
   type WrapperFactoryProvider,
   isBuiltinBlockTypeDefinition,
   isBuiltinConstrainttypeDefinition,

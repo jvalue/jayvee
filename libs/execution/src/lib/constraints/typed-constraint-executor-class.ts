@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { ConstructorClass } from '@jvalue/jayvee-language-server';
+import { type ConstructorClass } from '@jvalue/jayvee-language-server';
 
-import { ConstraintExecutor } from './constraint-executor';
+import { type ConstraintExecutor } from './constraint-executor';
 
 export interface TypedConstraintExecutorClass<
   T extends ConstraintExecutor = ConstraintExecutor,

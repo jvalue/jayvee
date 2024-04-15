@@ -5,15 +5,15 @@
 import { strict as assert } from 'assert';
 
 import {
-  AstNodeWrapper,
-  ExpressionConstraintDefinition,
-  InternalValueRepresentation,
+  type AstNodeWrapper,
+  type ExpressionConstraintDefinition,
+  type InternalValueRepresentation,
   PrimitiveValuetypes,
   evaluateExpression,
 } from '@jvalue/jayvee-language-server';
 
 import { type ExecutionContext } from '../../execution-context';
-import { ConstraintExecutor } from '../constraint-executor';
+import { type ConstraintExecutor } from '../constraint-executor';
 
 export class ExpressionConstraintExecutor
   implements ConstraintExecutor, AstNodeWrapper<ExpressionConstraintDefinition>
