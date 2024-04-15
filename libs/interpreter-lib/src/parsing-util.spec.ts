@@ -5,16 +5,18 @@
 import * as path from 'path';
 
 import { CachedLogger, DiagnosticSeverity } from '@jvalue/jayvee-execution';
-import type { JayveeServices } from '@jvalue/jayvee-language-server';
-import { createJayveeServices } from '@jvalue/jayvee-language-server';
-import type { ParseHelperOptions } from '@jvalue/jayvee-language-server/test';
 import {
+  JayveeServices,
+  createJayveeServices,
+} from '@jvalue/jayvee-language-server';
+import {
+  ParseHelperOptions,
   expectNoParserAndLexerErrors,
   loadTestExtensions,
   parseHelper,
   readJvTestAssetHelper,
 } from '@jvalue/jayvee-language-server/test';
-import type { AstNode, LangiumDocument } from 'langium';
+import { AstNode, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import { extractDocumentFromFile, validateDocument } from './parsing-util';

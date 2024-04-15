@@ -4,14 +4,12 @@
 
 import { strict as assert } from 'assert';
 
-import type {
-  BlockExecutorClass,
-  ExecutionContext,
-  Sheet,
-} from '@jvalue/jayvee-execution';
 import * as R from '@jvalue/jayvee-execution';
 import {
   AbstractBlockExecutor,
+  BlockExecutorClass,
+  ExecutionContext,
+  Sheet,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import {

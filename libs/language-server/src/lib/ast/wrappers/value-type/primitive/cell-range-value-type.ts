@@ -5,7 +5,8 @@
 import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
 import { type CellRangeWrapper } from '../../cell-range-wrapper';
 import { isCellRangeWrapper } from '../../util/cell-range-util';
-import type { ValueTypeVisitor } from '../value-type';
+// eslint-disable-next-line import/no-cycle
+import { ValueTypeVisitor } from '../value-type';
 
 import { PrimitiveValueType } from './primitive-value-type';
 

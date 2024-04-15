@@ -2,20 +2,17 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { AstNode, MaybePromise } from 'langium';
-import { AstNodeHoverProvider } from 'langium';
-import type { Hover } from 'vscode-languageserver-protocol';
+import { AstNode, AstNodeHoverProvider, MaybePromise } from 'langium';
+import { Hover } from 'vscode-languageserver-protocol';
 
 import {
-  isBuiltinBlockTypeDefinition,
-  isBuiltinConstrainttypeDefinition,
-  isPropertyAssignment,
-} from '../ast';
-import type {
   BuiltinBlockTypeDefinition,
   BuiltinConstrainttypeDefinition,
   PropertyAssignment,
-  WrapperFactoryProvider,
+  type WrapperFactoryProvider,
+  isBuiltinBlockTypeDefinition,
+  isBuiltinConstrainttypeDefinition,
+  isPropertyAssignment,
 } from '../ast';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
 import { type JayveeServices } from '../jayvee-module';

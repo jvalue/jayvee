@@ -4,22 +4,20 @@
 
 import { strict as assert } from 'assert';
 
-import type {
+import * as R from '@jvalue/jayvee-execution';
+import {
+  AbstractBlockExecutor,
   BlockExecutorClass,
   ExecutionContext,
   PortDetails,
   Table,
-} from '@jvalue/jayvee-execution';
-import * as R from '@jvalue/jayvee-execution';
-import {
-  AbstractBlockExecutor,
   TransformExecutor,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
-import type { InternalValueRepresentation } from '@jvalue/jayvee-language-server';
 import {
   CollectionValuetype,
   IOType,
+  InternalValueRepresentation,
   PrimitiveValuetypes,
 } from '@jvalue/jayvee-language-server';
 

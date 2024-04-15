@@ -4,7 +4,7 @@
 
 import { strict as assert } from 'assert';
 
-import type { BlockTypeInput, BlockTypeOutput } from './generated/ast';
+import { BlockTypeInput, BlockTypeOutput } from './generated/ast';
 
 export enum IOType {
   NONE = 'None',

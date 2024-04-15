@@ -2,22 +2,20 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type {
+import {
   BlockDefinition,
   InternalValueRepresentation,
   TypedConstraintDefinition,
-} from '@jvalue/jayvee-language-server';
-import {
   createJayveeServices,
   initializeWorkspace,
 } from '@jvalue/jayvee-language-server';
-import type { ParseHelperOptions } from '@jvalue/jayvee-language-server/test';
 import {
+  ParseHelperOptions,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
 } from '@jvalue/jayvee-language-server/test';
-import type { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
+import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import { getTestExecutionContext } from '../../../../test/utils';

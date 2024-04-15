@@ -2,17 +2,19 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { AstNode, LangiumDocuments } from 'langium';
+import { AstNode, LangiumDocuments } from 'langium';
 
-import type {
+import {
   BuiltinBlockTypeDefinition,
   BuiltinConstrainttypeDefinition,
+  isBuiltinBlockTypeDefinition,
+  isJayveeModel,
 } from './generated/ast';
-import { isBuiltinBlockTypeDefinition, isJayveeModel } from './generated/ast';
-import type {
+// eslint-disable-next-line import/no-cycle
+import {
   BlockTypeWrapper,
   ConstraintTypeWrapper,
-  WrapperFactoryProvider,
+  type WrapperFactoryProvider,
 } from './wrappers';
 
 export type AstTypeGuard<T extends AstNode = AstNode> = (

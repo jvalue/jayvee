@@ -7,7 +7,7 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import type { PipeDefinition } from '../../ast/generated/ast';
+import { PipeDefinition } from '../../ast/generated/ast';
 import { type JayveeValidationProps } from '../validation-registry';
 
 export function validatePipeDefinition(

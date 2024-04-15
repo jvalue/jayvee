@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import * as E from 'fp-ts/lib/Either';
-import type { AstNode, DiagnosticInfo } from 'langium';
+import { AstNode, DiagnosticInfo } from 'langium';
 
 export interface ExecutionErrorDetails<N extends AstNode = AstNode> {
   message: string;

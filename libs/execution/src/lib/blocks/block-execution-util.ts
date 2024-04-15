@@ -2,16 +2,15 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type {
+import {
   BlockDefinition,
   CompositeBlockTypeDefinition,
   PipelineDefinition,
 } from '@jvalue/jayvee-language-server';
 
 import { type ExecutionContext } from '../execution-context';
-import type { Logger } from '../logging/logger';
-import type { IOTypeImplementation } from '../types';
-import { NONE } from '../types';
+import { Logger } from '../logging/logger';
+import { IOTypeImplementation, NONE } from '../types';
 
 import * as R from './execution-result';
 

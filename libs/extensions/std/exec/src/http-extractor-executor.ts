@@ -5,18 +5,16 @@
 import { strict as assert } from 'assert';
 import * as path from 'path';
 
-import type {
-  BlockExecutorClass,
-  ExecutionContext,
-  ExecutionErrorDetails,
-  None,
-} from '@jvalue/jayvee-execution';
 import * as R from '@jvalue/jayvee-execution';
 import {
   AbstractBlockExecutor,
   BinaryFile,
+  BlockExecutorClass,
+  ExecutionContext,
+  ExecutionErrorDetails,
   FileExtension,
   MimeType,
+  None,
   implementsStatic,
   inferFileExtensionFromContentTypeString,
   inferFileExtensionFromFileExtensionString,
@@ -24,7 +22,7 @@ import {
 } from '@jvalue/jayvee-execution';
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 import { http, https } from 'follow-redirects';
-import type { AstNode } from 'langium';
+import { AstNode } from 'langium';
 
 import {
   createBackoffStrategy,

@@ -2,27 +2,23 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type {
+import {
   DeepPartial,
   DefaultSharedModuleContext,
   LangiumServices,
   LangiumSharedServices,
   Module,
   PartialLangiumServices,
-} from 'langium';
-import {
   createDefaultModule,
   createDefaultSharedModule,
   inject,
 } from 'langium';
 
-import type {
-  OperatorEvaluatorRegistry,
-  OperatorTypeComputerRegistry,
-} from './ast/expressions/operator-registry';
 import {
   DefaultOperatorEvaluatorRegistry,
   DefaultOperatorTypeComputerRegistry,
+  OperatorEvaluatorRegistry,
+  OperatorTypeComputerRegistry,
 } from './ast/expressions/operator-registry';
 import {
   JayveeGeneratedModule,

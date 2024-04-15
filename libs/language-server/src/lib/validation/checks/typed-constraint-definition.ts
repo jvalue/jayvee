@@ -7,7 +7,7 @@
  * See https://jvalue.github.io/jayvee/docs/dev/guides/working-with-the-ast/ for why the following ESLint rule is disabled for this file.
  */
 
-import type { TypedConstraintDefinition } from '../../ast/generated/ast';
+import { TypedConstraintDefinition } from '../../ast/generated/ast';
 import { ConstraintTypeWrapper } from '../../ast/wrappers/typed-object/constrainttype-wrapper';
 import { type JayveeValidationProps } from '../validation-registry';
 

@@ -4,11 +4,9 @@
 
 import { assertUnreachable } from 'langium';
 
-import type {
+import {
   ValueTypeReference,
   ValuetypeDefinition,
-} from '../../generated/ast';
-import {
   isValueTypeReference,
   isValuetypeDefinition,
 } from '../../generated/ast';
@@ -18,7 +16,7 @@ import { AtomicValueType } from './atomic-value-type';
 // eslint-disable-next-line import/no-cycle
 import { createPrimitiveValuetype } from './primitive';
 import { createCollectionValueType } from './primitive/collection/collection-value-type';
-import type { ValueType } from './value-type';
+import { ValueType } from './value-type';
 
 /**
  * Returns the matching value type instance for a given value type keyword or definition.

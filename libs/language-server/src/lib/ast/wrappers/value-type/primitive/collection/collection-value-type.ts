@@ -8,13 +8,15 @@ import {
   type AtomicInternalValueRepresentation,
   type InternalValueRepresentation,
 } from '../../../../expressions/internal-value-representation';
-import type { ValueTypeReference } from '../../../../generated/ast';
-import type { ValueType, ValueTypeVisitor } from '../../value-type';
+import { ValueTypeReference } from '../../../../generated/ast';
 // eslint-disable-next-line import/no-cycle
+import { ValueType, ValueTypeVisitor } from '../../value-type';
 import { createValueType } from '../../value-type-util';
 
-import type { ToArray } from './abstract-collection-value-type';
-import { AbstractCollectionValueType } from './abstract-collection-value-type';
+import {
+  AbstractCollectionValueType,
+  ToArray,
+} from './abstract-collection-value-type';
 
 export class CollectionValueType<
   I extends InternalValueRepresentation = InternalValueRepresentation,

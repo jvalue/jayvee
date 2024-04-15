@@ -4,25 +4,27 @@
 
 import { strict as assert } from 'assert';
 
-import { assertUnreachable, isReference } from 'langium';
-import type { AstNode, Reference } from 'langium';
+import {
+  AstNode,
+  type Reference,
+  assertUnreachable,
+  isReference,
+} from 'langium';
 
 import { type OperatorEvaluatorRegistry } from '../expressions';
 import {
-  isBuiltinConstrainttypeDefinition,
-  isReferenceableBlockTypeDefinition,
-} from '../generated/ast';
-import type {
   BlockTypePipeline,
   BuiltinConstrainttypeDefinition,
   CellRangeLiteral,
   CompositeBlockTypeDefinition,
   PipeDefinition,
   PipelineDefinition,
-  ReferenceableBlockTypeDefinition,
+  type ReferenceableBlockTypeDefinition,
+  isBuiltinConstrainttypeDefinition,
+  isReferenceableBlockTypeDefinition,
 } from '../generated/ast';
 
-import type { AstNodeWrapper } from './ast-node-wrapper';
+import { AstNodeWrapper } from './ast-node-wrapper';
 import { CellRangeWrapper } from './cell-range-wrapper';
 import { PipeWrapper } from './pipe-wrapper';
 import { PipelineWrapper } from './pipeline-wrapper';

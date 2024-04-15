@@ -2,21 +2,18 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type {
+import {
   BlockTypeProperty,
   ConstraintDefinition,
   TransformDefinition,
   ValuetypeAssignment,
-} from '../generated/ast';
-import {
   isBlockTypeProperty,
   isConstraintDefinition,
   isTransformDefinition,
   isValuetypeAssignment,
 } from '../generated/ast';
-import type { CellRangeWrapper } from '../wrappers';
 // eslint-disable-next-line import/no-cycle
-import { isCellRangeWrapper } from '../wrappers';
+import { CellRangeWrapper, isCellRangeWrapper } from '../wrappers';
 
 export type InternalValueRepresentation =
   | AtomicInternalValueRepresentation

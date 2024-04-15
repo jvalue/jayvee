@@ -4,22 +4,22 @@
 
 import { strict as assert } from 'assert';
 
-import type { ConstraintDefinition } from '@jvalue/jayvee-language-server';
 import {
+  ConstraintDefinition,
   Registry,
   isExpressionConstraintDefinition,
   isTypedConstraintDefinition,
 } from '@jvalue/jayvee-language-server';
 import { assertUnreachable } from 'langium';
 
-import type { ConstraintExecutor } from './constraint-executor';
+import { ConstraintExecutor } from './constraint-executor';
 import { AllowlistConstraintExecutor } from './executors/allowlist-constraint-executor';
 import { DenylistConstraintExecutor } from './executors/denylist-constraint-executor';
 import { ExpressionConstraintExecutor } from './executors/expression-constraint-executor';
 import { LengthConstraintExecutor } from './executors/length-constraint-executor';
 import { RangeConstraintExecutor } from './executors/range-constraint-executor';
 import { RegexConstraintExecutor } from './executors/regex-constraint-executor';
-import type { TypedConstraintExecutorClass } from './typed-constraint-executor-class';
+import { TypedConstraintExecutorClass } from './typed-constraint-executor-class';
 
 export interface JayveeConstraintExtension {
   registerConstraintExecutor(executorClass: TypedConstraintExecutorClass): void;

@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { RangeLiteral } from '../../ast/generated/ast';
+import { RangeLiteral } from '../../ast/generated/ast';
 import { CellRangeWrapper } from '../../ast/wrappers/cell-range-wrapper';
 import { type JayveeValidationProps } from '../validation-registry';
 

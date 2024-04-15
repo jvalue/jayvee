@@ -5,17 +5,15 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
-import type {
-  BlockExecutorClass,
-  ExecutionContext,
-  None,
-} from '@jvalue/jayvee-execution';
 import * as R from '@jvalue/jayvee-execution';
 import {
   AbstractBlockExecutor,
   BinaryFile,
+  BlockExecutorClass,
+  ExecutionContext,
   FileExtension,
   MimeType,
+  None,
   implementsStatic,
   inferFileExtensionFromFileExtensionString,
   inferMimeTypeFromFileExtensionString,

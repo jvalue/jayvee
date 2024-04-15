@@ -4,8 +4,10 @@
 
 import { strict as assert } from 'assert';
 
-import type { AtomicValuetype } from '@jvalue/jayvee-language-server';
-import { ValueTypeVisitor } from '@jvalue/jayvee-language-server';
+import {
+  AtomicValuetype,
+  ValueTypeVisitor,
+} from '@jvalue/jayvee-language-server';
 
 export class SQLColumnTypeVisitor extends ValueTypeVisitor<string> {
   override visitBoolean(): string {

@@ -4,7 +4,7 @@
 
 import { strict as assert } from 'assert';
 
-import type { ValidationContext } from '../../validation/validation-context';
+import { ValidationContext } from '../../validation/validation-context';
 import {
   type BinaryExpression,
   type TernaryExpression,
@@ -12,6 +12,7 @@ import {
 } from '../generated/ast';
 import { type WrapperFactoryProvider } from '../wrappers';
 
+// eslint-disable-next-line import/no-cycle
 import { evaluateExpression } from './evaluate-expression';
 import { type EvaluationContext } from './evaluation-context';
 import { EvaluationStrategy } from './evaluation-strategy';

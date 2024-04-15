@@ -2,15 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type {
+import * as R from '@jvalue/jayvee-execution';
+import {
+  AbstractBlockExecutor,
   BlockExecutorClass,
   ExecutionContext,
   Sheet,
   Workbook,
-} from '@jvalue/jayvee-execution';
-import * as R from '@jvalue/jayvee-execution';
-import {
-  AbstractBlockExecutor,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';

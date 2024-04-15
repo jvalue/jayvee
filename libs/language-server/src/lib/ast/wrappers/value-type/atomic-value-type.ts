@@ -4,21 +4,19 @@
 
 import { strict as assert } from 'assert';
 
+// eslint-disable-next-line import/no-cycle
 import { evaluateExpression } from '../../expressions/evaluate-expression';
 import { type EvaluationContext } from '../../expressions/evaluation-context';
 import { type InternalValueRepresentation } from '../../expressions/internal-value-representation';
-import type {
-  ConstraintDefinition,
-  ValuetypeDefinition,
-} from '../../generated/ast';
-import type { AstNodeWrapper } from '../ast-node-wrapper';
+import { ConstraintDefinition, ValuetypeDefinition } from '../../generated/ast';
+import { AstNodeWrapper } from '../ast-node-wrapper';
 import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
 
 // eslint-disable-next-line import/no-cycle
 import { CollectionValuetype } from './primitive';
 import { PrimitiveValuetypes } from './primitive/primitive-value-types';
-import type { ValueType, ValueTypeVisitor } from './value-type';
-import { AbstractValueType } from './value-type';
+import { AbstractValueType, ValueType, ValueTypeVisitor } from './value-type';
+// eslint-disable-next-line import/no-cycle
 import { createValueType } from './value-type-util';
 
 export class AtomicValueType

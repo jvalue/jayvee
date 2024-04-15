@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { AstNode } from 'langium';
+import { AstNode } from 'langium';
 
 export interface AstNodeWrapper<N extends AstNode> {
   readonly astNode: N;

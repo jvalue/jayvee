@@ -2,13 +2,15 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { InternalValueRepresentation } from '@jvalue/jayvee-language-server';
-import { PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
+import {
+  InternalValueRepresentation,
+  PrimitiveValuetypes,
+} from '@jvalue/jayvee-language-server';
 
 import { type ExecutionContext } from '../../execution-context';
 import { implementsStatic } from '../../util/implements-static-decorator';
-import type { ConstraintExecutor } from '../constraint-executor';
-import type { TypedConstraintExecutorClass } from '../typed-constraint-executor-class';
+import { ConstraintExecutor } from '../constraint-executor';
+import { TypedConstraintExecutorClass } from '../typed-constraint-executor-class';
 
 @implementsStatic<TypedConstraintExecutorClass>()
 export class RangeConstraintExecutor implements ConstraintExecutor {

@@ -2,7 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type {
+// eslint-disable-next-line import/no-cycle
+import {
   InternalValueRepresentation,
   InternalValueRepresentationTypeguard,
 } from '../internal-value-representation';

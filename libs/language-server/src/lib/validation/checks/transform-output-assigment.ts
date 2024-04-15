@@ -10,12 +10,10 @@
 import { assertUnreachable } from 'langium';
 
 import { inferExpressionType } from '../../ast/expressions/type-inference';
-import type {
+import {
   Expression,
   ReferenceLiteral,
   TransformOutputAssignment,
-} from '../../ast/generated/ast';
-import {
   isBinaryExpression,
   isExpressionLiteral,
   isReferenceLiteral,

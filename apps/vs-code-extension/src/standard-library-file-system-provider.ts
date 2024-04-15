@@ -3,15 +3,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { getStdLib } from '@jvalue/jayvee-language-server';
-import type {
+import {
+  EventEmitter,
   ExtensionContext,
   FileChangeEvent,
   FileStat,
-  FileSystemProvider,
-} from 'vscode';
-import {
-  EventEmitter,
   FileSystemError,
+  FileSystemProvider,
   FileType,
   Uri,
   workspace,

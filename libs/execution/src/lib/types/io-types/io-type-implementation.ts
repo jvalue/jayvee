@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { IOType } from '@jvalue/jayvee-language-server';
+import { IOType } from '@jvalue/jayvee-language-server';
 
 import { type FileSystem } from './filesystem';
 import { type BinaryFile } from './filesystem-node-file-binary';

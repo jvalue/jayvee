@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+// eslint-disable-next-line import/no-cycle
 import { DefaultBinaryOperatorEvaluator } from '../operator-evaluator';
 import { BOOLEAN_TYPEGUARD } from '../typeguards';
 

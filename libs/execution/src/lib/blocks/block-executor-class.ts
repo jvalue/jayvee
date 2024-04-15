@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { ConstructorClass } from '@jvalue/jayvee-language-server';
+import { ConstructorClass } from '@jvalue/jayvee-language-server';
 
-import type { BlockExecutor } from './block-executor';
+import { BlockExecutor } from './block-executor';
 
 export interface BlockExecutorClass<T extends BlockExecutor = BlockExecutor>
   extends ConstructorClass<T> {

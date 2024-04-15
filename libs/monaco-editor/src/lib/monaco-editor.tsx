@@ -19,12 +19,11 @@ import 'monaco-editor/esm/vs/editor/standalone/browser/quickAccess/standaloneHel
 import 'monaco-editor/esm/vs/editor/standalone/browser/quickInput/standaloneQuickInputService.js';
 import 'monaco-editor/esm/vs/editor/standalone/browser/referenceSearch/standaloneReferenceSearch.js';
 import 'monaco-editor/esm/vs/editor/standalone/browser/toggleHighContrast/toggleHighContrast.js';
-import type {
-  Disposable,
-  MessageTransports} from 'monaco-languageclient';
 import {
   CloseAction,
+  Disposable,
   ErrorAction,
+  MessageTransports,
   MonacoLanguageClient,
   MonacoServices,
   State,

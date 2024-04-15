@@ -2,14 +2,14 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type {
+import {
+  DefaultWorkspaceManager,
   LangiumDocument,
   LangiumDocumentFactory,
   LangiumServices,
   LangiumSharedServices,
 } from 'langium';
-import { DefaultWorkspaceManager } from 'langium';
-import type { WorkspaceFolder } from 'vscode-languageserver';
+import { WorkspaceFolder } from 'vscode-languageserver';
 import { URI } from 'vscode-uri';
 
 import { getStdLib } from './stdlib';

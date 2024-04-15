@@ -7,7 +7,7 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import type { ColumnId } from '../../ast/generated/ast';
+import { ColumnId } from '../../ast/generated/ast';
 import { type JayveeValidationProps } from '../validation-registry';
 
 export function validateColumnId(

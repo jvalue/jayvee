@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+// eslint-disable-next-line import/no-cycle
 import { DefaultTernaryOperatorEvaluator } from '../operator-evaluator';
 import { REGEXP_TYPEGUARD, STRING_TYPEGUARD } from '../typeguards';
 

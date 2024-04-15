@@ -5,10 +5,7 @@
 import { IOType } from '@jvalue/jayvee-language-server';
 
 import { FileSystemFile } from './filesystem-node-file';
-import type {
-  IOTypeImplementation,
-  IoTypeVisitor,
-} from './io-type-implementation';
+import { IOTypeImplementation, IoTypeVisitor } from './io-type-implementation';
 
 export class TextFile
   extends FileSystemFile<string[]>

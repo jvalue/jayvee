@@ -4,19 +4,19 @@
 
 import * as path from 'path';
 
-import type { TableRow } from '@jvalue/jayvee-execution';
 import {
   Table,
+  TableRow,
   Workbook,
   parseValueToInternalRepresentation,
 } from '@jvalue/jayvee-execution';
-import type {
+import {
   InternalValueRepresentation,
   ValueType,
 } from '@jvalue/jayvee-language-server';
 import * as exceljs from 'exceljs';
 
-import type { ColumnDefinitionEntry } from '../src/lib/table-interpreter-executor';
+import { ColumnDefinitionEntry } from '../src/lib/table-interpreter-executor';
 
 export async function createWorkbookFromLocalExcelFile(
   fileName: string,

@@ -4,11 +4,12 @@
 
 import { strict as assert } from 'assert';
 
-import type {
+import {
   BlockTypeProperty,
   ReferenceableBlockTypeDefinition,
+  createValueType,
+  evaluateExpression,
 } from '../../ast';
-import { createValueType, evaluateExpression } from '../../ast';
 import { type JayveeValidationProps } from '../validation-registry';
 
 export function validateBlockTypeDefinition(

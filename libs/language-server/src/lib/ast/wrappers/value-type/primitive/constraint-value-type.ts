@@ -3,9 +3,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
-import type { ConstraintDefinition } from '../../../generated/ast';
-import { isConstraintDefinition } from '../../../generated/ast';
-import type { ValueTypeVisitor } from '../value-type';
+import {
+  ConstraintDefinition,
+  isConstraintDefinition,
+} from '../../../generated/ast';
+// eslint-disable-next-line import/no-cycle
+import { ValueTypeVisitor } from '../value-type';
 
 import { PrimitiveValueType } from './primitive-value-type';
 

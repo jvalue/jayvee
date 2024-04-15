@@ -3,22 +3,19 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { parseString as parseStringAsCsv } from '@fast-csv/parse';
-import type { ParserOptionsArgs } from '@fast-csv/parse/build/src/ParserOptions';
-import type {
-  BlockExecutorClass,
-  ExecutionContext,
-  TextFile,
-} from '@jvalue/jayvee-execution';
+import { ParserOptionsArgs } from '@fast-csv/parse/build/src/ParserOptions';
 import * as R from '@jvalue/jayvee-execution';
 import {
   AbstractBlockExecutor,
+  BlockExecutorClass,
+  ExecutionContext,
   Sheet,
+  TextFile,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
-import type { Either } from 'fp-ts/lib/Either';
 import * as E from 'fp-ts/lib/Either';
-import { isLeft } from 'fp-ts/lib/Either';
+import { Either, isLeft } from 'fp-ts/lib/Either';
 
 @implementsStatic<BlockExecutorClass>()
 export class CSVInterpreterExecutor extends AbstractBlockExecutor<

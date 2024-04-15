@@ -7,12 +7,12 @@ import { NodeFileSystem } from 'langium/node';
 import { parseHelper } from '../../../test/langium-utils';
 import { createJayveeServices } from '../../jayvee-module';
 import { RuntimeParameterProvider } from '../../services';
-import type { TransformDefinition } from '../generated/ast';
+import { TransformDefinition } from '../generated/ast';
 import { WrapperFactoryProvider } from '../wrappers';
 
 import { evaluateExpression } from './evaluate-expression';
 import { EvaluationContext } from './evaluation-context';
-import type { InternalValueRepresentation } from './internal-value-representation';
+import { InternalValueRepresentation } from './internal-value-representation';
 import { DefaultOperatorEvaluatorRegistry } from './operator-registry';
 
 export async function executeDefaultTextToTextExpression(

@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { DiagnosticSeverity, LogEntry } from './logger';
+import { DiagnosticSeverity, LogEntry } from './logger';
 
 export class LogCache {
   private logCacheMaxSize: number;

@@ -4,24 +4,19 @@
 
 import { strict as assert } from 'assert';
 
-import type {
+import {
+  CellIndex,
   CellIndexBounds,
   CellRangeLiteral,
   CellRangeWrapper,
   ColumnWrapper,
-  RowWrapper,
-} from '@jvalue/jayvee-language-server';
-import {
-  CellIndex,
   IOType,
+  RowWrapper,
   getColumnIndex,
   getRowIndex,
 } from '@jvalue/jayvee-language-server';
 
-import type {
-  IOTypeImplementation,
-  IoTypeVisitor,
-} from './io-type-implementation';
+import { IOTypeImplementation, IoTypeVisitor } from './io-type-implementation';
 
 export class Sheet implements IOTypeImplementation<IOType.SHEET> {
   public readonly ioType = IOType.SHEET;

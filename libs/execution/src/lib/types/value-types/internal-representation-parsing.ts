@@ -4,12 +4,12 @@
 
 import { strict as assert } from 'assert';
 
-import type {
+import {
   AtomicValuetype,
   InternalValueRepresentation,
   ValueType,
+  ValueTypeVisitor,
 } from '@jvalue/jayvee-language-server';
-import { ValueTypeVisitor } from '@jvalue/jayvee-language-server';
 
 const NUMBER_REGEX = /^[+-]?([0-9]*[,.])?[0-9]+([eE][+-]?\d+)?$/;
 

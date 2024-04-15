@@ -2,8 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { ValidationContext } from '../../../validation/validation-context';
-import type { BinaryExpression } from '../../generated/ast';
+import { ValidationContext } from '../../../validation/validation-context';
+import { BinaryExpression } from '../../generated/ast';
+// eslint-disable-next-line import/no-cycle
 import { DefaultBinaryOperatorEvaluator } from '../operator-evaluator';
 import { NUMBER_TYPEGUARD } from '../typeguards';
 

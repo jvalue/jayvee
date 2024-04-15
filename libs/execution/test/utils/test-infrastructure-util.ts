@@ -2,28 +2,26 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import type { PipelineDefinition } from '@jvalue/jayvee-language-server';
 import {
   DefaultOperatorEvaluatorRegistry,
   EvaluationContext,
+  PipelineDefinition,
   RuntimeParameterProvider,
   WrapperFactoryProvider,
 } from '@jvalue/jayvee-language-server';
-import type { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
+import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 
-import type {
+import {
   BlockExecutorClass,
+  CachedLogger,
   DebugGranularity,
   DebugTargets,
-  StackNode,
-  TableColumn,
-} from '../../src';
-import {
-  CachedLogger,
   DefaultConstraintExtension,
   ExecutionContext,
   JayveeExecExtension,
+  StackNode,
   Table,
+  TableColumn,
 } from '../../src';
 
 export class TestExecExtension extends JayveeExecExtension {

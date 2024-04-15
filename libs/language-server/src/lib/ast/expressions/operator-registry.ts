@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+/* eslint-disable import/no-cycle */
+
 import {
   type BinaryExpression,
   type TernaryExpression,

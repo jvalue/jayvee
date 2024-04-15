@@ -5,8 +5,8 @@
 import { strict as assert } from 'assert';
 
 import { StdExecExtension } from '@jvalue/jayvee-extensions/std/exec';
-import type { BlockTypeWrapper } from '@jvalue/jayvee-language-server';
 import {
+  BlockTypeWrapper,
   createJayveeServices,
   getAllBuiltinBlockTypes,
   initializeWorkspace,

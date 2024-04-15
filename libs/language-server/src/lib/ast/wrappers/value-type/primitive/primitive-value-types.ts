@@ -4,27 +4,22 @@
 
 import { strict as assert } from 'assert';
 
-import type { ValuetypeDefinition } from '../../../generated/ast';
+import { ValuetypeDefinition } from '../../../generated/ast';
 
-import type { BooleanValuetype } from './boolean-value-type';
-import { Boolean } from './boolean-value-type';
-import type { CellRangeValuetype } from './cell-range-value-type';
-import { CellRange } from './cell-range-value-type';
-import type { ConstraintValuetype } from './constraint-value-type';
-import { Constraint } from './constraint-value-type';
-import type { DecimalValuetype } from './decimal-value-type';
-import { Decimal } from './decimal-value-type';
-import type { IntegerValuetype } from './integer-value-type';
-import { Integer } from './integer-value-type';
-import type { PrimitiveValueType } from './primitive-value-type';
-import type { RegexValuetype } from './regex-value-type';
-import { Regex } from './regex-value-type';
-import type { TextValuetype } from './text-value-type';
-import { Text } from './text-value-type';
-import type { TransformValuetype } from './transform-value-type';
-import { Transform } from './transform-value-type';
-import type { ValuetypeAssignmentValuetype } from './value-type-assignment-value-type';
-import { ValuetypeAssignment } from './value-type-assignment-value-type';
+// eslint-disable-next-line import/no-cycle
+import { Boolean, BooleanValuetype } from './boolean-value-type';
+import { CellRange, CellRangeValuetype } from './cell-range-value-type';
+import { Constraint, ConstraintValuetype } from './constraint-value-type';
+import { Decimal, DecimalValuetype } from './decimal-value-type';
+import { Integer, IntegerValuetype } from './integer-value-type';
+import { PrimitiveValueType } from './primitive-value-type';
+import { Regex, RegexValuetype } from './regex-value-type';
+import { Text, TextValuetype } from './text-value-type';
+import { Transform, TransformValuetype } from './transform-value-type';
+import {
+  ValuetypeAssignment,
+  ValuetypeAssignmentValuetype,
+} from './value-type-assignment-value-type';
 
 export const PrimitiveValuetypes: {
   Boolean: BooleanValuetype;

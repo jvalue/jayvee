@@ -4,14 +4,12 @@
 
 import { TextDecoder } from 'util';
 
-import type {
-  BinaryFile,
-  BlockExecutorClass,
-  ExecutionContext,
-} from '@jvalue/jayvee-execution';
 import * as R from '@jvalue/jayvee-execution';
 import {
   AbstractBlockExecutor,
+  BinaryFile,
+  BlockExecutorClass,
+  ExecutionContext,
   TextFile,
   implementsStatic,
   splitLines,

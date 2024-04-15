@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+// eslint-disable-next-line import/no-cycle
 export * from './value-type';
 
 /* Note: Only export types if possible to enforce usage of WrapperFactory outside this directory */
