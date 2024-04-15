@@ -37,11 +37,7 @@ export class AtomicValueType
     return visitor.visitAtomicValuetype(this);
   }
 
-  // TODO: remove wrapperFactories since added to constructor
-  getConstraints(
-    context: EvaluationContext,
-    wrapperFactories: WrapperFactoryProvider,
-  ): ConstraintDefinition[] {
+  getConstraints(context: EvaluationContext): ConstraintDefinition[] {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const constraintCollection = this.astNode?.constraints;
     assert(constraintCollection !== undefined);
@@ -49,7 +45,11 @@ export class AtomicValueType
       PrimitiveValuetypes.Constraint,
     );
     const constraints =
-      evaluateExpression(constraintCollection, context, wrapperFactories) ?? [];
+      evaluateExpression(
+        constraintCollection,
+        context,
+        this.wrapperFactories,
+      ) ?? [];
     if (!constraintCollectionType.isInternalValueRepresentation(constraints)) {
       return [];
     }
