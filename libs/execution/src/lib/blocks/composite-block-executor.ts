@@ -6,9 +6,9 @@ import { strict as assert } from 'assert/strict';
 
 import {
   BlockDefinition,
-  BlocktypePipeline,
-  BlocktypeProperty,
-  CompositeBlocktypeDefinition,
+  BlockTypePipeline,
+  BlockTypeProperty,
+  CompositeBlockTypeDefinition,
   EvaluationContext,
   IOType,
   InternalValueRepresentation,
@@ -18,7 +18,7 @@ import {
   evaluateExpression,
   evaluatePropertyValue,
   getIOType,
-  isCompositeBlocktypeDefinition,
+  isCompositeBlockTypeDefinition,
 } from '@jvalue/jayvee-language-server';
 
 import { type ExecutionContext } from '../execution-context';
@@ -36,12 +36,12 @@ export function createCompositeBlockExecutor(
 ): BlockExecutorClass<BlockExecutor<IOType, IOType>> {
   assert(
     block.type.ref,
-    `Blocktype reference missing for block ${block.name}.`,
+    `Reference to its type is missing for block ${block.name}.`,
   );
 
   assert(
-    isCompositeBlocktypeDefinition(block.type.ref),
-    `Blocktype is not a composite block for block ${block.name}.`,
+    isCompositeBlockTypeDefinition(block.type.ref),
+    `Type is not a composite block type for block ${block.name}.`,
   );
 
   const blockTypeReference = block.type.ref;
@@ -107,7 +107,7 @@ export function createCompositeBlockExecutor(
     }
 
     private removeVariablesFromContext(
-      properties: BlocktypeProperty[],
+      properties: BlockTypeProperty[],
       context: ExecutionContext,
     ) {
       properties.forEach((prop) =>
@@ -117,19 +117,19 @@ export function createCompositeBlockExecutor(
 
     private addVariablesToContext(
       block: BlockDefinition,
-      properties: BlocktypeProperty[],
+      properties: BlockTypeProperty[],
       context: ExecutionContext,
     ) {
-      properties.forEach((blocktypeProperty) => {
-        const valueType = createValueType(blocktypeProperty.valueType);
+      properties.forEach((blockTypeProperty) => {
+        const valueType = createValueType(blockTypeProperty.valueType);
 
         assert(
           valueType,
-          `Can not create value type for blocktype property ${blocktypeProperty.name}`,
+          `Can not create value type for block type property ${blockTypeProperty.name}`,
         );
 
         const propertyValue = this.getPropertyValueFromBlockOrDefault(
-          blocktypeProperty.name,
+          blockTypeProperty.name,
           valueType,
           block,
           properties,
@@ -139,11 +139,11 @@ export function createCompositeBlockExecutor(
 
         assert(
           propertyValue !== undefined,
-          `Can not get value for blocktype property ${blocktypeProperty.name}`,
+          `Can not get value for block type property ${blockTypeProperty.name}`,
         );
 
         context.evaluationContext.setValueForReference(
-          blocktypeProperty.name,
+          blockTypeProperty.name,
           propertyValue,
         );
       });
@@ -153,7 +153,7 @@ export function createCompositeBlockExecutor(
       name: string,
       valueType: ValueType,
       block: BlockDefinition,
-      properties: BlocktypeProperty[],
+      properties: BlockTypeProperty[],
       evaluationContext: EvaluationContext,
       wrapperFactories: WrapperFactoryProvider,
     ): InternalValueRepresentation | undefined {
@@ -191,7 +191,7 @@ export function createCompositeBlockExecutor(
   };
 }
 
-function getPipeline(block: CompositeBlocktypeDefinition): BlocktypePipeline {
+function getPipeline(block: CompositeBlockTypeDefinition): BlockTypePipeline {
   assert(
     block.pipes[0],
     `Composite block ${block.name} must have exactly one pipeline.`,
@@ -199,7 +199,7 @@ function getPipeline(block: CompositeBlocktypeDefinition): BlocktypePipeline {
   return block.pipes[0];
 }
 
-export function getInputType(block: CompositeBlocktypeDefinition): IOType {
+export function getInputType(block: CompositeBlockTypeDefinition): IOType {
   assert(
     block.inputs.length === 1,
     `Composite block ${block.name} must have exactly one input.`,
@@ -207,7 +207,7 @@ export function getInputType(block: CompositeBlocktypeDefinition): IOType {
   return block.inputs[0] ? getIOType(block.inputs[0]) : IOType.NONE;
 }
 
-export function getOutputType(block: CompositeBlocktypeDefinition): IOType {
+export function getOutputType(block: CompositeBlockTypeDefinition): IOType {
   assert(
     block.outputs.length === 1,
     `Composite block ${block.name} must have exactly one output.`,

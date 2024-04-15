@@ -12,7 +12,7 @@ import {
   PropertyAssignment,
   ValueLiteral,
   isBinaryExpression,
-  isBlocktypeProperty,
+  isBlockTypeProperty,
   isCellRangeLiteral,
   isCollectionLiteral,
   isExpression,
@@ -43,8 +43,8 @@ export function evaluatePropertyValue<T extends InternalValueRepresentation>(
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   assert(propertyValue !== undefined);
 
-  if (isBlocktypeProperty(propertyValue)) {
-    // Properties of blocktypes are always undefined
+  if (isBlockTypeProperty(propertyValue)) {
+    // Properties of block types are always undefined
     // because they are set in the block that instantiates the block type
     return undefined;
   }

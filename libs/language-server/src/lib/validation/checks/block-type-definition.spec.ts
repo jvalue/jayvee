@@ -5,7 +5,7 @@
 import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { BuiltinBlocktypeDefinition, createJayveeServices } from '../..';
+import { BuiltinBlockTypeDefinition, createJayveeServices } from '../..';
 import {
   ParseHelperOptions,
   createJayveeValidationProps,
@@ -15,9 +15,9 @@ import {
   validationAcceptorMockImpl,
 } from '../../../test';
 
-import { validateBlocktypeDefinition } from './blocktype-definition';
+import { validateBlockTypeDefinition } from './block-type-definition';
 
-describe('Validation of BuiltinBlocktypeDefinition', () => {
+describe('Validation of BuiltinBlockTypeDefinition', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
@@ -32,17 +32,17 @@ describe('Validation of BuiltinBlocktypeDefinition', () => {
     '../../../test/assets/',
   );
 
-  async function parseAndValidateBlocktype(input: string) {
+  async function parseAndValidateBlockType(input: string) {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const blocktype = locator.getAstNode<BuiltinBlocktypeDefinition>(
+    const blockType = locator.getAstNode<BuiltinBlockTypeDefinition>(
       document.parseResult.value,
-      'blocktypes@0',
-    ) as BuiltinBlocktypeDefinition;
+      'blockTypes@0',
+    ) as BuiltinBlockTypeDefinition;
 
-    validateBlocktypeDefinition(
-      blocktype,
+    validateBlockTypeDefinition(
+      blockType,
       createJayveeValidationProps(validationAcceptorMock),
     );
   }
@@ -60,87 +60,87 @@ describe('Validation of BuiltinBlocktypeDefinition', () => {
     validationAcceptorMock.mockReset();
   });
 
-  it('should diagnose error on duplicate property in blocktype', async () => {
+  it('should diagnose error on duplicate property in block type', async () => {
     const text = readJvTestAsset(
-      'builtin-blocktype-definition/invalid-internal-blocktype-duplicate-property.jv',
+      'builtin-block-type-definition/invalid-internal-block-type-duplicate-property.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
-      `Property 'testProp' in blocktype 'TestBlock' is defined multiple times`,
+      `Property 'testProp' in block type 'TestBlock' is defined multiple times`,
       expect.any(Object),
     );
   });
 
-  it('should diagnose error on multiple inputs in blocktype', async () => {
+  it('should diagnose error on multiple inputs in block type', async () => {
     const text = readJvTestAsset(
-      'builtin-blocktype-definition/invalid-internal-blocktype-multiple-inputs.jv',
+      'builtin-block-type-definition/invalid-internal-block-type-multiple-inputs.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
-      `Found more than one input definition in blocktype 'TestBlock'`,
+      `Found more than one input definition in block type 'TestBlock'`,
       expect.any(Object),
     );
   });
 
-  it('should diagnose error on multiple outputs in blocktype', async () => {
+  it('should diagnose error on multiple outputs in block type', async () => {
     const text = readJvTestAsset(
-      'builtin-blocktype-definition/invalid-internal-blocktype-multiple-outputs.jv',
+      'builtin-block-type-definition/invalid-internal-block-type-multiple-outputs.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
-      `Found more than one output definition in blocktype 'TestBlock'`,
+      `Found more than one output definition in block type 'TestBlock'`,
       expect.any(Object),
     );
   });
 
   it('should diagnose error on missing input', async () => {
     const text = readJvTestAsset(
-      'builtin-blocktype-definition/invalid-internal-blocktype-no-input.jv',
+      'builtin-block-type-definition/invalid-internal-block-type-no-input.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
-      `Found no input in blocktype 'TestBlock' - consider using iotype "none" if the blocktype consumes no input`,
+      `Found no input in block type 'TestBlock' - consider using iotype "none" if the block type consumes no input`,
       expect.any(Object),
     );
   });
 
   it('should diagnose error on missing output', async () => {
     const text = readJvTestAsset(
-      'builtin-blocktype-definition/invalid-internal-blocktype-no-output.jv',
+      'builtin-block-type-definition/invalid-internal-block-type-no-output.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
-      `Found no output in blocktype 'TestBlock' - consider using iotype "none" if the blocktype produces no output`,
+      `Found no output in block type 'TestBlock' - consider using iotype "none" if the block type produces no output`,
       expect.any(Object),
     );
   });
 
   it('should diagnose error on neither inputs nor outputs', async () => {
     const text = readJvTestAsset(
-      'builtin-blocktype-definition/invalid-internal-blocktype-wrong-property-default-value.jv',
+      'builtin-block-type-definition/invalid-internal-block-type-wrong-property-default-value.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
@@ -150,42 +150,42 @@ describe('Validation of BuiltinBlocktypeDefinition', () => {
     );
   });
 
-  it('should have no error on valid extractor blocktype definition (no inputs)', async () => {
+  it('should have no error on valid extractor block type definition (no inputs)', async () => {
     const text = readJvTestAsset(
-      'builtin-blocktype-definition/valid-internal-blocktype-extractor.jv',
+      'builtin-block-type-definition/valid-internal-block-type-extractor.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
 
-  it('should have no error on valid loader blocktype definition (no outputs)', async () => {
+  it('should have no error on valid loader block type definition (no outputs)', async () => {
     const text = readJvTestAsset(
-      'builtin-blocktype-definition/valid-internal-blocktype-loader.jv',
+      'builtin-block-type-definition/valid-internal-block-type-loader.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
 
-  it('should have no error on valid blocktype definition', async () => {
+  it('should have no error on valid block type definition', async () => {
     const text = readJvTestAsset(
-      'builtin-blocktype-definition/valid-internal-blocktype-no-default-prop-values.jv',
+      'builtin-block-type-definition/valid-internal-block-type-no-default-prop-values.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
 
-  it('should have no error on valid blocktype definition with default property value', async () => {
+  it('should have no error on valid block type definition with default property value', async () => {
     const text = readJvTestAsset(
-      'builtin-blocktype-definition/valid-internal-blocktype-with-default-prop-values.jv',
+      'builtin-block-type-definition/valid-internal-block-type-with-default-prop-values.jv',
     );
 
-    await parseAndValidateBlocktype(text);
+    await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });

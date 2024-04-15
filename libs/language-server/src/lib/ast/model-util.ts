@@ -5,9 +5,9 @@
 import { AstNode, LangiumDocuments } from 'langium';
 
 import {
-  BuiltinBlocktypeDefinition,
+  BuiltinBlockTypeDefinition,
   BuiltinConstrainttypeDefinition,
-  isBuiltinBlocktypeDefinition,
+  isBuiltinBlockTypeDefinition,
   isJayveeModel,
 } from './generated/ast';
 // eslint-disable-next-line import/no-cycle
@@ -42,17 +42,17 @@ export function getNextAstNodeContainer<T extends AstNode>(
 }
 
 /**
- * Utility function that gets all builtin blocktypes.
+ * Utility function that gets all builtin block types.
  * Duplicates are only added once.
  * Make sure to call @see initializeWorkspace first so that the file system is initialized.
  */
-export function getAllBuiltinBlocktypes(
+export function getAllBuiltinBlockTypes(
   documentService: LangiumDocuments,
   wrapperFactories: WrapperFactoryProvider,
 ): BlockTypeWrapper[] {
-  const allBuiltinBlocktypes: BlockTypeWrapper[] = [];
-  const visitedBuiltinBlocktypeDefinitions =
-    new Set<BuiltinBlocktypeDefinition>();
+  const allBuiltinBlockTypes: BlockTypeWrapper[] = [];
+  const visitedBuiltinBlockTypeDefinitions =
+    new Set<BuiltinBlockTypeDefinition>();
 
   documentService.all
     .map((document) => document.parseResult.value)
@@ -60,26 +60,26 @@ export function getAllBuiltinBlocktypes(
       if (!isJayveeModel(parsedDocument)) {
         throw new Error('Expected parsed document to be a JayveeModel');
       }
-      parsedDocument.blocktypes.forEach((blocktypeDefinition) => {
-        if (!isBuiltinBlocktypeDefinition(blocktypeDefinition)) {
+      parsedDocument.blockTypes.forEach((blockTypeDefinition) => {
+        if (!isBuiltinBlockTypeDefinition(blockTypeDefinition)) {
           return;
         }
 
         const wasAlreadyVisited =
-          visitedBuiltinBlocktypeDefinitions.has(blocktypeDefinition);
+          visitedBuiltinBlockTypeDefinitions.has(blockTypeDefinition);
         if (wasAlreadyVisited) {
           return;
         }
 
-        if (wrapperFactories.BlockType.canWrap(blocktypeDefinition)) {
-          allBuiltinBlocktypes.push(
-            wrapperFactories.BlockType.wrap(blocktypeDefinition),
+        if (wrapperFactories.BlockType.canWrap(blockTypeDefinition)) {
+          allBuiltinBlockTypes.push(
+            wrapperFactories.BlockType.wrap(blockTypeDefinition),
           );
-          visitedBuiltinBlocktypeDefinitions.add(blocktypeDefinition);
+          visitedBuiltinBlockTypeDefinitions.add(blockTypeDefinition);
         }
       });
     });
-  return allBuiltinBlocktypes;
+  return allBuiltinBlockTypes;
 }
 
 /**

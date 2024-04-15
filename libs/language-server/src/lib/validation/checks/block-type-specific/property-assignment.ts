@@ -16,7 +16,7 @@ import {
 import { type JayveeValidationProps } from '../../validation-registry';
 import { checkUniqueNames } from '../../validation-util';
 
-export function checkBlocktypeSpecificProperties(
+export function checkBlockTypeSpecificProperties(
   property: PropertyAssignment,
   propertySpec: PropertySpecification,
   props: JayveeValidationProps,

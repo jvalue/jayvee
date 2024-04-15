@@ -15,9 +15,9 @@ import {
   validationAcceptorMockImpl,
 } from '../../../../test';
 
-import { checkBlocktypeSpecificPropertyBody } from './property-body';
+import { checkBlockTypeSpecificPropertyBody } from './property-body';
 
-describe('Validation of blocktype specific property bodies', () => {
+describe('Validation of block type specific property bodies', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
@@ -48,7 +48,7 @@ describe('Validation of blocktype specific property bodies', () => {
     );
     expect(wrapper).toBeDefined();
 
-    checkBlocktypeSpecificPropertyBody(propertyBody, props);
+    checkBlockTypeSpecificPropertyBody(propertyBody, props);
   }
 
   beforeAll(() => {
@@ -64,10 +64,10 @@ describe('Validation of blocktype specific property bodies', () => {
     validationAcceptorMock.mockReset();
   });
 
-  describe('TextRangeSelector blocktype', () => {
+  describe('TextRangeSelector block type', () => {
     it('should diagnose error on lineFrom > lineTo', async () => {
       const text = readJvTestAsset(
-        'property-body/blocktype-specific/text-range-selector/invalid-lineFrom-greater-lineTo.jv',
+        'property-body/block-type-specific/text-range-selector/invalid-lineFrom-greater-lineTo.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -82,7 +82,7 @@ describe('Validation of blocktype specific property bodies', () => {
 
     it('should diagnose no error', async () => {
       const text = readJvTestAsset(
-        'property-body/blocktype-specific/text-range-selector/valid-correct-range.jv',
+        'property-body/block-type-specific/text-range-selector/valid-correct-range.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -91,10 +91,10 @@ describe('Validation of blocktype specific property bodies', () => {
     });
   });
 
-  describe('CellWriter blocktype', () => {
+  describe('CellWriter block type', () => {
     it('should diagnose error on number of write values does not match cell range', async () => {
       const text = readJvTestAsset(
-        'property-body/blocktype-specific/cell-writer/invalid-write-length-does-not-match-cell-range.jv',
+        'property-body/block-type-specific/cell-writer/invalid-write-length-does-not-match-cell-range.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -116,7 +116,7 @@ describe('Validation of blocktype specific property bodies', () => {
 
     it('should diagnose no error', async () => {
       const text = readJvTestAsset(
-        'property-body/blocktype-specific/cell-writer/valid-range-matches-array-length.jv',
+        'property-body/block-type-specific/cell-writer/valid-range-matches-array-length.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -125,10 +125,10 @@ describe('Validation of blocktype specific property bodies', () => {
     });
   });
 
-  describe('TableTransformer blocktype', () => {
+  describe('TableTransformer block type', () => {
     it('should diagnose error on number of input columns do not match transform input ports', async () => {
       const text = readJvTestAsset(
-        'property-body/blocktype-specific/table-transformer/invalid-input-columns-transform-port-missmatch.jv',
+        'property-body/block-type-specific/table-transformer/invalid-input-columns-transform-port-missmatch.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -143,7 +143,7 @@ describe('Validation of blocktype specific property bodies', () => {
 
     it('should diagnose no error', async () => {
       const text = readJvTestAsset(
-        'property-body/blocktype-specific/table-transformer/valid-correct-ports.jv',
+        'property-body/block-type-specific/table-transformer/valid-correct-ports.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);

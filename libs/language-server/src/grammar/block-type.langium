@@ -10,34 +10,34 @@ import './value-type'
 import './block'
 import './main'
 
-ReferenceableBlocktypeDefinition:
-  BuiltinBlocktypeDefinition | CompositeBlocktypeDefinition;
+ReferenceableBlockTypeDefinition:
+  BuiltinBlockTypeDefinition | CompositeBlockTypeDefinition;
 
-BuiltinBlocktypeDefinition:
+BuiltinBlockTypeDefinition:
     'builtin' 'blocktype' name=ID '{'
-        (inputs+=BlocktypeInput | outputs+=BlocktypeOutput | properties+=BlocktypeProperty)*
+        (inputs+=BlockTypeInput | outputs+=BlockTypeOutput | properties+=BlockTypeProperty)*
 '}';
 
-CompositeBlocktypeDefinition:
+CompositeBlockTypeDefinition:
     'composite' 'blocktype' name=ID '{'
         (
-            inputs+=BlocktypeInput
-            | outputs+=BlocktypeOutput
-            | properties+=BlocktypeProperty
+            inputs+=BlockTypeInput
+            | outputs+=BlockTypeOutput
+            | properties+=BlockTypeProperty
             | blocks+=BlockDefinition
-            | pipes+=BlocktypePipeline
+            | pipes+=BlockTypePipeline
             | transforms+=TransformDefinition
         )*
 '}';
 
-BlocktypeInput:
+BlockTypeInput:
     'input' name=ID 'oftype' iotype=[IotypeDefinition] ';';
 
-BlocktypeOutput:
+BlockTypeOutput:
     'output' name=ID 'oftype' iotype=[IotypeDefinition] ';';
 
-BlocktypeProperty:
+BlockTypeProperty:
     'property' name=ID 'oftype' valueType=ValueTypeReference (':' defaultValue=Expression)? ';';
 
-BlocktypePipeline:
-    input=[BlocktypeInput] '->' (blocks+=[BlockDefinition] '->')+ output=[BlocktypeOutput] ';';
+BlockTypePipeline:
+    input=[BlockTypeInput] '->' (blocks+=[BlockDefinition] '->')+ output=[BlockTypeOutput] ';';

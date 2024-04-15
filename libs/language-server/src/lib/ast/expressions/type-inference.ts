@@ -15,7 +15,7 @@ import {
   ReferenceLiteral,
   ValueKeywordLiteral,
   isBinaryExpression,
-  isBlocktypeProperty,
+  isBlockTypeProperty,
   isBooleanLiteral,
   isCellRangeLiteral,
   isCollectionLiteral,
@@ -364,7 +364,7 @@ function inferTypeFromReferenceLiteral(
   }
   if (
     isTransformPortDefinition(referenced) ||
-    isBlocktypeProperty(referenced)
+    isBlockTypeProperty(referenced)
   ) {
     const valueType = referenced.valueType;
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

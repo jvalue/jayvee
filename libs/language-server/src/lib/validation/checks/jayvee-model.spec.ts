@@ -129,9 +129,9 @@ describe('Validation of JayveeModel', () => {
     );
   });
 
-  it('should diagnose error on non unique blocktypes', async () => {
+  it('should diagnose error on non unique block types', async () => {
     const text = readJvTestAsset(
-      'jayvee-model/invalid-non-unique-blocktypes.jv',
+      'jayvee-model/invalid-non-unique-block-types.jv',
     );
 
     await parseAndValidateJayveeModel(text);

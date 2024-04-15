@@ -5,7 +5,7 @@
 import { PipeWrapper, PipelineWrapper } from '../../ast';
 import {
   BlockDefinition,
-  CompositeBlocktypeDefinition,
+  CompositeBlockTypeDefinition,
   PipelineDefinition,
 } from '../../ast/generated/ast';
 import { type JayveeValidationProps } from '../validation-registry';
@@ -48,7 +48,7 @@ function checkStartingBlocks(
 }
 
 export function checkMultipleBlockInputs(
-  pipeline: PipelineDefinition | CompositeBlocktypeDefinition,
+  pipeline: PipelineDefinition | CompositeBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
   if (!props.wrapperFactories.Pipeline.canWrap(pipeline)) {
@@ -78,7 +78,7 @@ export function checkMultipleBlockInputs(
  */
 function doCheckMultipleBlockInputs(
   pipelineWrapper: PipelineWrapper<
-    PipelineDefinition | CompositeBlocktypeDefinition
+    PipelineDefinition | CompositeBlockTypeDefinition
   >,
   block: BlockDefinition,
   alreadyMarkedPipes: PipeWrapper[],
@@ -122,7 +122,7 @@ function doCheckMultipleBlockInputs(
 }
 
 export function checkDefinedBlocksAreUsed(
-  pipeline: PipelineDefinition | CompositeBlocktypeDefinition,
+  pipeline: PipelineDefinition | CompositeBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
   if (!props.wrapperFactories.Pipeline.canWrap(pipeline)) {
@@ -138,7 +138,7 @@ export function checkDefinedBlocksAreUsed(
 
 function doCheckDefinedBlockIsUsed(
   pipelineWrapper: PipelineWrapper<
-    PipelineDefinition | CompositeBlocktypeDefinition
+    PipelineDefinition | CompositeBlockTypeDefinition
   >,
   block: BlockDefinition,
   props: JayveeValidationProps,

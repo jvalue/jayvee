@@ -6,11 +6,11 @@ import { AstNode, AstNodeHoverProvider, MaybePromise } from 'langium';
 import { Hover } from 'vscode-languageserver-protocol';
 
 import {
-  BuiltinBlocktypeDefinition,
+  BuiltinBlockTypeDefinition,
   BuiltinConstrainttypeDefinition,
   PropertyAssignment,
   type WrapperFactoryProvider,
-  isBuiltinBlocktypeDefinition,
+  isBuiltinBlockTypeDefinition,
   isBuiltinConstrainttypeDefinition,
   isPropertyAssignment,
 } from '../ast';
@@ -29,7 +29,7 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
     astNode: AstNode,
   ): MaybePromise<Hover | undefined> {
     let doc = undefined;
-    if (isBuiltinBlocktypeDefinition(astNode)) {
+    if (isBuiltinBlockTypeDefinition(astNode)) {
       doc = this.getBlockTypeMarkdownDoc(astNode);
     }
     if (isBuiltinConstrainttypeDefinition(astNode)) {
@@ -52,7 +52,7 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   }
 
   private getBlockTypeMarkdownDoc(
-    blockTypeDefinition: BuiltinBlocktypeDefinition,
+    blockTypeDefinition: BuiltinBlockTypeDefinition,
   ): string | undefined {
     if (!this.wrapperFactories.BlockType.canWrap(blockTypeDefinition)) {
       return;

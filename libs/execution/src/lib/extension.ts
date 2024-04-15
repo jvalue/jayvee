@@ -6,7 +6,7 @@ import { strict as assert } from 'assert';
 
 import {
   BlockDefinition,
-  isCompositeBlocktypeDefinition,
+  isCompositeBlockTypeDefinition,
 } from '@jvalue/jayvee-language-server';
 
 import { type BlockExecutor } from './blocks';
@@ -36,7 +36,7 @@ export abstract class JayveeExecExtension {
 
     if (
       blockExecutor === undefined &&
-      isCompositeBlocktypeDefinition(block.type.ref)
+      isCompositeBlockTypeDefinition(block.type.ref)
     ) {
       blockExecutor = createCompositeBlockExecutor(
         getInputType(block.type.ref),

@@ -33,7 +33,7 @@ import {
   isPropertyBody,
 } from '../ast/generated/ast';
 import {
-  getAllBuiltinBlocktypes,
+  getAllBuiltinBlockTypes,
   getAllBuiltinConstraintTypes,
 } from '../ast/model-util';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
@@ -90,7 +90,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     context: CompletionContext,
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
-    const blockTypes = getAllBuiltinBlocktypes(
+    const blockTypes = getAllBuiltinBlockTypes(
       this.langiumDocumentService,
       this.wrapperFactories,
     );

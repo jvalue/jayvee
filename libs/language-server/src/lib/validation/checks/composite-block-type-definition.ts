@@ -5,18 +5,18 @@
 import { PipelineWrapper } from '../../ast';
 import {
   BlockDefinition,
-  CompositeBlocktypeDefinition,
+  CompositeBlockTypeDefinition,
 } from '../../ast/generated/ast';
 import { type JayveeValidationProps } from '../validation-registry';
 
-import { validateBlocktypeDefinition } from './blocktype-definition';
+import { validateBlockTypeDefinition } from './block-type-definition';
 import { checkMultipleBlockInputs } from './pipeline-definition';
 
 export function validateCompositeBlockTypeDefinition(
-  blockType: CompositeBlocktypeDefinition,
+  blockType: CompositeBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
-  validateBlocktypeDefinition(blockType, props);
+  validateBlockTypeDefinition(blockType, props);
   checkHasPipeline(blockType, props);
   checkExactlyOnePipeline(blockType, props);
 
@@ -25,7 +25,7 @@ export function validateCompositeBlockTypeDefinition(
 }
 
 function checkHasPipeline(
-  blockType: CompositeBlocktypeDefinition,
+  blockType: CompositeBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -36,7 +36,7 @@ function checkHasPipeline(
   if (blockType.pipes.length === 0) {
     props.validationContext.accept(
       'error',
-      `Composite blocktypes must define one pipeline '${blockType.name}'`,
+      `Composite block types must define one pipeline '${blockType.name}'`,
       {
         node: blockType,
         property: 'name',
@@ -46,7 +46,7 @@ function checkHasPipeline(
 }
 
 function checkExactlyOnePipeline(
-  blockType: CompositeBlocktypeDefinition,
+  blockType: CompositeBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -58,7 +58,7 @@ function checkExactlyOnePipeline(
     blockType.pipes.forEach((pipe) => {
       props.validationContext.accept(
         'error',
-        `Found more than one pipeline definition in composite blocktype '${blockType.name}'`,
+        `Found more than one pipeline definition in composite block type '${blockType.name}'`,
         {
           node: pipe,
         },
@@ -68,28 +68,28 @@ function checkExactlyOnePipeline(
 }
 
 export function checkDefinedBlocksAreUsed(
-  blocktypeDefinition: CompositeBlocktypeDefinition,
+  blockTypeDefinition: CompositeBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
-  if (!props.wrapperFactories.Pipeline.canWrap(blocktypeDefinition)) {
+  if (!props.wrapperFactories.Pipeline.canWrap(blockTypeDefinition)) {
     return;
   }
   const pipelineWrapper =
-    props.wrapperFactories.Pipeline.wrap(blocktypeDefinition);
+    props.wrapperFactories.Pipeline.wrap(blockTypeDefinition);
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (blocktypeDefinition.blocks === undefined) {
+  if (blockTypeDefinition.blocks === undefined) {
     return;
   }
 
-  const containedBlocks = blocktypeDefinition.blocks;
+  const containedBlocks = blockTypeDefinition.blocks;
   for (const block of containedBlocks) {
     doCheckDefinedBlockIsUsed(pipelineWrapper, block, props);
   }
 }
 
 function doCheckDefinedBlockIsUsed(
-  pipelineWrapper: PipelineWrapper<CompositeBlocktypeDefinition>,
+  pipelineWrapper: PipelineWrapper<CompositeBlockTypeDefinition>,
   block: BlockDefinition,
   props: JayveeValidationProps,
 ): void {

@@ -20,9 +20,9 @@ import {
   validationAcceptorMockImpl,
 } from '../../../../test';
 
-import { checkBlocktypeSpecificProperties } from './property-assignment';
+import { checkBlockTypeSpecificProperties } from './property-assignment';
 
-describe('Validation of blocktype specific properties', () => {
+describe('Validation of block type specific properties', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
@@ -58,7 +58,7 @@ describe('Validation of blocktype specific properties', () => {
       ).getPropertySpecification(propertyAssignment.name);
       expect(propertySpec).toBeDefined();
 
-      checkBlocktypeSpecificProperties(
+      checkBlockTypeSpecificProperties(
         propertyAssignment,
         propertySpec as PropertySpecification,
         props,
@@ -79,10 +79,10 @@ describe('Validation of blocktype specific properties', () => {
     validationAcceptorMock.mockReset();
   });
 
-  describe('ArchiveInterpreter blocktype', () => {
+  describe('ArchiveInterpreter block type', () => {
     it('should diagnose no error on valid archiveType parameter value', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/archive-interpreter/valid-valid-archivetype-param.jv',
+        'property-assignment/block-type-specific/archive-interpreter/valid-valid-archivetype-param.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -92,7 +92,7 @@ describe('Validation of blocktype specific properties', () => {
 
     it('should diagnose error on invalid archiveType parameter value', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/archive-interpreter/invalid-invalid-archivetype-param.jv',
+        'property-assignment/block-type-specific/archive-interpreter/invalid-invalid-archivetype-param.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -106,10 +106,10 @@ describe('Validation of blocktype specific properties', () => {
     });
   });
 
-  describe('CellWriter blocktype', () => {
+  describe('CellWriter block type', () => {
     it('should diagnose error on wrong dimension for at parameter', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/cell-writer/invalid-wrong-at-dimension.jv',
+        'property-assignment/block-type-specific/cell-writer/invalid-wrong-at-dimension.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -124,7 +124,7 @@ describe('Validation of blocktype specific properties', () => {
 
     it('should diagnose no error on correct dimension for at parameter', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/cell-writer/valid-one-dimensional-at-value.jv',
+        'property-assignment/block-type-specific/cell-writer/valid-one-dimensional-at-value.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -133,10 +133,10 @@ describe('Validation of blocktype specific properties', () => {
     });
   });
 
-  describe('ColumnDeleter blocktype', () => {
+  describe('ColumnDeleter block type', () => {
     it('should diagnose error on deleting partial column', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/column-deleter/invalid-partial-column-delete.jv',
+        'property-assignment/block-type-specific/column-deleter/invalid-partial-column-delete.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -151,7 +151,7 @@ describe('Validation of blocktype specific properties', () => {
 
     it('should diagnose no error', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/column-deleter/valid-column-delete.jv',
+        'property-assignment/block-type-specific/column-deleter/valid-column-delete.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -160,10 +160,10 @@ describe('Validation of blocktype specific properties', () => {
     });
   });
 
-  describe('GtfsRTInterpreter blocktype', () => {
+  describe('GtfsRTInterpreter block type', () => {
     it('should diagnose no error on valid entity parameter value', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/gtfs-rt-interpreter/valid-valid-entity-param.jv',
+        'property-assignment/block-type-specific/gtfs-rt-interpreter/valid-valid-entity-param.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -173,7 +173,7 @@ describe('Validation of blocktype specific properties', () => {
 
     it('should diagnose error on invalid entity parameter value', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/gtfs-rt-interpreter/invalid-invalid-entity-param.jv',
+        'property-assignment/block-type-specific/gtfs-rt-interpreter/invalid-invalid-entity-param.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -187,10 +187,10 @@ describe('Validation of blocktype specific properties', () => {
     });
   });
 
-  describe('HttpExtractor blocktype', () => {
+  describe('HttpExtractor block type', () => {
     it('should diagnose no error on valid retries parameter value', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/http-extractor/valid-valid-retries-param.jv',
+        'property-assignment/block-type-specific/http-extractor/valid-valid-retries-param.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -200,7 +200,7 @@ describe('Validation of blocktype specific properties', () => {
 
     it('should diagnose error on invalid retries parameter value', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/http-extractor/invalid-invalid-retries-param.jv',
+        'property-assignment/block-type-specific/http-extractor/invalid-invalid-retries-param.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -215,7 +215,7 @@ describe('Validation of blocktype specific properties', () => {
 
     it('should diagnose no error on valid retryBackoffMilliseconds parameter value', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/http-extractor/valid-valid-retryBackoffMilliseconds-param.jv',
+        'property-assignment/block-type-specific/http-extractor/valid-valid-retryBackoffMilliseconds-param.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -225,7 +225,7 @@ describe('Validation of blocktype specific properties', () => {
 
     it('should diagnose error on invalid retryBackoffMilliseconds parameter value', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/http-extractor/invalid-invalid-retryBackoffMilliseconds-param.jv',
+        'property-assignment/block-type-specific/http-extractor/invalid-invalid-retryBackoffMilliseconds-param.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -240,7 +240,7 @@ describe('Validation of blocktype specific properties', () => {
 
     it('should diagnose no error on valid retryBackoffStrategy parameter value', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/http-extractor/valid-valid-retryBackoffStrategy-param.jv',
+        'property-assignment/block-type-specific/http-extractor/valid-valid-retryBackoffStrategy-param.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -250,7 +250,7 @@ describe('Validation of blocktype specific properties', () => {
 
     it('should diagnose error on invalid retryBackoffStrategy parameter value', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/http-extractor/invalid-invalid-retryBackoffStrategy-param.jv',
+        'property-assignment/block-type-specific/http-extractor/invalid-invalid-retryBackoffStrategy-param.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -264,10 +264,10 @@ describe('Validation of blocktype specific properties', () => {
     });
   });
 
-  describe('LocalFileExtractor blocktype', () => {
+  describe('LocalFileExtractor block type', () => {
     it('should diagnose no error on valid filePath parameter value', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/local-file-extractor/valid-valid-filepath-param.jv',
+        'property-assignment/block-type-specific/local-file-extractor/valid-valid-filepath-param.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -277,7 +277,7 @@ describe('Validation of blocktype specific properties', () => {
 
     it('should diagnose error on invalid filePath parameter value', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/local-file-extractor/invalid-invalid-filepath-param.jv',
+        'property-assignment/block-type-specific/local-file-extractor/invalid-invalid-filepath-param.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -291,10 +291,10 @@ describe('Validation of blocktype specific properties', () => {
     });
   });
 
-  describe('RowDeleter blocktype', () => {
+  describe('RowDeleter block type', () => {
     it('should diagnose error on deleting partial row', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/row-deleter/invalid-partial-row-delete.jv',
+        'property-assignment/block-type-specific/row-deleter/invalid-partial-row-delete.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -309,7 +309,7 @@ describe('Validation of blocktype specific properties', () => {
 
     it('should diagnose no error', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/row-deleter/valid-row-delete.jv',
+        'property-assignment/block-type-specific/row-deleter/valid-row-delete.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -318,10 +318,10 @@ describe('Validation of blocktype specific properties', () => {
     });
   });
 
-  describe('TableInterpreter blocktype', () => {
+  describe('TableInterpreter block type', () => {
     it('should diagnose error on non unique column names', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/table-interpreter/invalid-non-unique-column-names.jv',
+        'property-assignment/block-type-specific/table-interpreter/invalid-non-unique-column-names.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -343,7 +343,7 @@ describe('Validation of blocktype specific properties', () => {
 
     it('should diagnose no error', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/table-interpreter/valid-correct-table.jv',
+        'property-assignment/block-type-specific/table-interpreter/valid-correct-table.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -352,10 +352,10 @@ describe('Validation of blocktype specific properties', () => {
     });
   });
 
-  describe('TextFileInterpreter blocktype', () => {
+  describe('TextFileInterpreter block type', () => {
     it('should diagnose no error on valid encoding parameter value', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/text-file-interpreter/valid-utf8-encoding-param.jv',
+        'property-assignment/block-type-specific/text-file-interpreter/valid-utf8-encoding-param.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -365,7 +365,7 @@ describe('Validation of blocktype specific properties', () => {
 
     it('should diagnose error on invalid encoding parameter value', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/text-file-interpreter/invalid-invalid-encoding-param.jv',
+        'property-assignment/block-type-specific/text-file-interpreter/invalid-invalid-encoding-param.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -379,10 +379,10 @@ describe('Validation of blocktype specific properties', () => {
     });
   });
 
-  describe('TextLineDeleter blocktype', () => {
+  describe('TextLineDeleter block type', () => {
     it('should diagnose no error on valid lines parameter value', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/text-line-deleter/valid-postive-line-number.jv',
+        'property-assignment/block-type-specific/text-line-deleter/valid-postive-line-number.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -392,7 +392,7 @@ describe('Validation of blocktype specific properties', () => {
 
     it('should diagnose error on invalid lines parameter value', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/text-line-deleter/invalid-line-less-or-equal-zero.jv',
+        'property-assignment/block-type-specific/text-line-deleter/invalid-line-less-or-equal-zero.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -406,10 +406,10 @@ describe('Validation of blocktype specific properties', () => {
     });
   });
 
-  describe('TextRangeSelector blocktype', () => {
+  describe('TextRangeSelector block type', () => {
     it('should diagnose no error on valid lineFrom parameter value', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/text-range-selector/valid-postive-lineFrom-number.jv',
+        'property-assignment/block-type-specific/text-range-selector/valid-postive-lineFrom-number.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -419,7 +419,7 @@ describe('Validation of blocktype specific properties', () => {
 
     it('should diagnose error on invalid lineFrom parameter value', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/text-range-selector/invalid-lineFrom-less-or-equal-zero.jv',
+        'property-assignment/block-type-specific/text-range-selector/invalid-lineFrom-less-or-equal-zero.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -434,7 +434,7 @@ describe('Validation of blocktype specific properties', () => {
 
     it('should diagnose no error on valid lineTo parameter value', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/text-range-selector/valid-postive-lineTo-number.jv',
+        'property-assignment/block-type-specific/text-range-selector/valid-postive-lineTo-number.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);
@@ -444,7 +444,7 @@ describe('Validation of blocktype specific properties', () => {
 
     it('should diagnose error on invalid lineTo parameter value', async () => {
       const text = readJvTestAsset(
-        'property-assignment/blocktype-specific/text-range-selector/invalid-lineTo-less-or-equal-zero.jv',
+        'property-assignment/block-type-specific/text-range-selector/invalid-lineTo-less-or-equal-zero.jv',
       );
 
       await parseAndValidatePropertyAssignment(text);

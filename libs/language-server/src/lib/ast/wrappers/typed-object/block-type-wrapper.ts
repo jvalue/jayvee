@@ -13,7 +13,7 @@ import {
   type OperatorEvaluatorRegistry,
   evaluateExpression,
 } from '../../expressions';
-import { ReferenceableBlocktypeDefinition } from '../../generated/ast';
+import { ReferenceableBlockTypeDefinition } from '../../generated/ast';
 import { IOType, getIOType } from '../../io-type';
 import { createValueType } from '../value-type';
 import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
@@ -29,7 +29,7 @@ interface BlockDocs {
   examples?: ExampleDoc[];
 }
 
-export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlocktypeDefinition> {
+export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlockTypeDefinition> {
   docs: BlockDocs = {};
 
   readonly inputType: IOType;
@@ -43,20 +43,20 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlocktypeD
    */
   constructor(
     toBeWrapped:
-      | ReferenceableBlocktypeDefinition
-      | Reference<ReferenceableBlocktypeDefinition>,
+      | ReferenceableBlockTypeDefinition
+      | Reference<ReferenceableBlockTypeDefinition>,
     operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
     wrapperFactories: WrapperFactoryProvider,
   ) {
-    const blocktypeDefinition = isReference(toBeWrapped)
+    const blockTypeDefinition = isReference(toBeWrapped)
       ? toBeWrapped.ref
       : toBeWrapped;
-    assert(blocktypeDefinition !== undefined);
+    assert(blockTypeDefinition !== undefined);
 
-    const blocktypeName = blocktypeDefinition.name;
+    const blockTypeName = blockTypeDefinition.name;
 
     const properties: Record<string, PropertySpecification> = {};
-    for (const property of blocktypeDefinition.properties) {
+    for (const property of blockTypeDefinition.properties) {
       const valueType = createValueType(property.valueType);
       assert(valueType !== undefined);
 
@@ -78,43 +78,43 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlocktypeD
       }
     }
 
-    super(blocktypeDefinition, blocktypeName, properties, undefined);
+    super(blockTypeDefinition, blockTypeName, properties, undefined);
 
-    const inputPort = blocktypeDefinition.inputs[0];
+    const inputPort = blockTypeDefinition.inputs[0];
     assert(inputPort !== undefined);
     this.inputType = getIOType(inputPort);
 
-    const outputPort = blocktypeDefinition.outputs[0];
+    const outputPort = blockTypeDefinition.outputs[0];
     assert(outputPort !== undefined);
     this.outputType = getIOType(outputPort);
   }
 
   static canBeWrapped(
     toBeWrapped:
-      | ReferenceableBlocktypeDefinition
-      | Reference<ReferenceableBlocktypeDefinition>,
+      | ReferenceableBlockTypeDefinition
+      | Reference<ReferenceableBlockTypeDefinition>,
   ): boolean {
-    const blocktypeDefinition = isReference(toBeWrapped)
+    const blockTypeDefinition = isReference(toBeWrapped)
       ? toBeWrapped.ref
       : toBeWrapped;
 
-    if (blocktypeDefinition === undefined) {
+    if (blockTypeDefinition === undefined) {
       return false;
     }
 
     if (
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      blocktypeDefinition.properties === undefined ||
+      blockTypeDefinition.properties === undefined ||
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      blocktypeDefinition.name === undefined ||
-      blocktypeDefinition.inputs[0] === undefined ||
-      blocktypeDefinition.outputs[0] === undefined
+      blockTypeDefinition.name === undefined ||
+      blockTypeDefinition.inputs[0] === undefined ||
+      blockTypeDefinition.outputs[0] === undefined
     ) {
       return false;
     }
 
     if (
-      blocktypeDefinition.properties.some((property) => {
+      blockTypeDefinition.properties.some((property) => {
         return property.valueType.reference.ref === undefined;
       })
     ) {

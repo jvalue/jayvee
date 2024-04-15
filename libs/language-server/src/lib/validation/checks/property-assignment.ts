@@ -14,13 +14,13 @@ import {
 } from '../../ast';
 import {
   PropertyAssignment,
-  isBlocktypeProperty,
+  isBlockTypeProperty,
   isRuntimeParameterLiteral,
 } from '../../ast/generated/ast';
 import { type JayveeValidationProps } from '../validation-registry';
 import { checkExpressionSimplification } from '../validation-util';
 
-import { checkBlocktypeSpecificProperties } from './blocktype-specific/property-assignment';
+import { checkBlockTypeSpecificProperties } from './block-type-specific/property-assignment';
 
 export function validatePropertyAssignment(
   property: PropertyAssignment,
@@ -40,7 +40,7 @@ export function validatePropertyAssignment(
     return;
   }
 
-  checkBlocktypeSpecificProperties(property, propertySpec, props);
+  checkBlockTypeSpecificProperties(property, propertySpec, props);
 }
 
 function checkPropertyNameValidity(
@@ -84,7 +84,7 @@ function checkPropertyValueTyping(
     return;
   }
 
-  if (isBlocktypeProperty(propertyValue)) {
+  if (isBlockTypeProperty(propertyValue)) {
     return;
   }
 

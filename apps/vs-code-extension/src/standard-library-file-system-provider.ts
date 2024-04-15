@@ -28,7 +28,7 @@ export class StandardLibraryFileSystemProvider implements FileSystemProvider {
 
   private registerStdLib() {
     // The VSCode Extension needs to register the StdLangExtension,
-    // otherwise the StdLib does not include the blocktype definitions.
+    // otherwise the StdLib does not include the block type definitions.
 
     Object.entries(getStdLib()).forEach(([libName, lib]) => {
       this.libraries.set(

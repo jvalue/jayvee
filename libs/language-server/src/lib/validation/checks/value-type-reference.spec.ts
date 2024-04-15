@@ -269,16 +269,16 @@ describe('Validation of ValueTypeReference', () => {
     );
   });
 
-  it('should not diagnose error on reference to non-referenceable value-type in a builtin blocktype', async () => {
+  it('should not diagnose error on reference to non-referenceable value-type in a builtin block type', async () => {
     const text = readJvTestAsset(
-      'value-type-reference/valid-reference-to-non-referenceable-value-type-in-builtin-blocktype.jv',
+      'value-type-reference/valid-reference-to-non-referenceable-value-type-in-builtin-block-type.jv',
     );
 
     const document = await parse(text);
     expectNoParserAndLexerErrors(document);
     const valueTypeRef = locator.getAstNode<ValueTypeReference>(
       document.parseResult.value,
-      `blocktypes@0/properties@0/valueType`,
+      `blockTypes@0/properties@0/valueType`,
     );
     assert(valueTypeRef !== undefined);
 
