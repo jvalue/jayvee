@@ -166,7 +166,7 @@ function evaluateValueLiteral(
     if (!wrapperFactories.CellRange.canWrap(expression)) {
       return undefined;
     }
-    return wrapperFactories.CellRange.wrap(expression);
+    return expression;
   }
   if (isRegexLiteral(expression)) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

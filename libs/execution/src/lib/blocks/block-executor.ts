@@ -70,6 +70,7 @@ export abstract class AbstractBlockExecutor<I extends IOType, O extends IOType>
         context.runOptions.debugGranularity,
         'Output',
         context.logger,
+        context.wrapperFactories,
       ),
     );
   }

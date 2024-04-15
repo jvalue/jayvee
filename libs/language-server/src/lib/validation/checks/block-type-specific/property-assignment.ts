@@ -118,12 +118,17 @@ function checkCellWriterProperty(
       return;
     }
 
-    if (!cellRange.isOneDimensional()) {
+    if (!props.wrapperFactories.CellRange.canWrap(cellRange)) {
+      return;
+    }
+    const cellRangeWrapper = props.wrapperFactories.CellRange.wrap(cellRange);
+
+    if (!cellRangeWrapper.isOneDimensional()) {
       props.validationContext.accept(
         'error',
         'The cell range needs to be one-dimensional',
         {
-          node: cellRange.astNode,
+          node: cellRangeWrapper.astNode,
         },
       );
     }
@@ -144,12 +149,17 @@ function checkColumnDeleterProperty(
     );
 
     cellRanges?.forEach((cellRange) => {
-      if (!isColumnWrapper(cellRange)) {
+      if (!props.wrapperFactories.CellRange.canWrap(cellRange)) {
+        return;
+      }
+      const cellRangeWrapper = props.wrapperFactories.CellRange.wrap(cellRange);
+
+      if (!isColumnWrapper(cellRangeWrapper)) {
         props.validationContext.accept(
           'error',
           'An entire column needs to be selected',
           {
-            node: cellRange.astNode,
+            node: cellRangeWrapper.astNode,
           },
         );
       }
@@ -234,7 +244,7 @@ function checkLocalFileExtractorProperty(
 ) {
   if (
     propName === 'filePath' &&
-    internalValueToString(propValue).includes('..')
+    internalValueToString(propValue, props.wrapperFactories).includes('..')
   ) {
     props.validationContext.accept(
       'error',
@@ -261,12 +271,17 @@ function checkRowDeleterProperty(
     );
 
     cellRanges?.forEach((cellRange) => {
-      if (!isRowWrapper(cellRange)) {
+      if (!props.wrapperFactories.CellRange.canWrap(cellRange)) {
+        return;
+      }
+      const cellRangeWrapper = props.wrapperFactories.CellRange.wrap(cellRange);
+
+      if (!isRowWrapper(cellRangeWrapper)) {
         props.validationContext.accept(
           'error',
           'An entire row needs to be selected',
           {
-            node: cellRange.astNode,
+            node: cellRangeWrapper.astNode,
           },
         );
       }
@@ -387,7 +402,7 @@ function checkPropertyValueOneOf(
     props.validationContext.accept(
       'error',
       `The value of property "${propName}" must be one of the following values: ${allowedValues
-        .map((v) => `${internalValueToString(v)}`)
+        .map((v) => `${internalValueToString(v, props.wrapperFactories)}`)
         .join(', ')}`,
       {
         node: property,

@@ -3,13 +3,15 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
-import { type CellRangeWrapper } from '../../cell-range-wrapper';
-import { isCellRangeWrapper } from '../../util/cell-range-util';
+import {
+  type CellRangeLiteral,
+  isCellRangeLiteral,
+} from '../../../generated/ast';
 import { type ValueTypeVisitor } from '../value-type';
 
 import { PrimitiveValueType } from './primitive-value-type';
 
-class CellRangeValuetypeImpl extends PrimitiveValueType<CellRangeWrapper> {
+class CellRangeValuetypeImpl extends PrimitiveValueType<CellRangeLiteral> {
   acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R {
     return visitor.visitCellRange(this);
   }
@@ -24,8 +26,8 @@ class CellRangeValuetypeImpl extends PrimitiveValueType<CellRangeWrapper> {
 
   override isInternalValueRepresentation(
     operandValue: InternalValueRepresentation | undefined,
-  ): operandValue is CellRangeWrapper {
-    return isCellRangeWrapper(operandValue);
+  ): operandValue is CellRangeLiteral {
+    return isCellRangeLiteral(operandValue);
   }
 }
 

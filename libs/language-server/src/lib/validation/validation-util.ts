@@ -86,6 +86,7 @@ export function checkExpressionSimplification(
       'info',
       `The expression can be simplified to ${internalValueToString(
         evaluatedExpression,
+        props.wrapperFactories,
       )}`,
       { node: expression },
     );

@@ -278,7 +278,9 @@ export function logPipelineOverview(
   if (runtimeParameters.size > 0) {
     linesBuffer.push(`\tRuntime Parameters (${runtimeParameters.size}):`);
     for (const [key, value] of runtimeParameters.entries()) {
-      linesBuffer.push(`\t\t${key}: ${internalValueToString(value)}`);
+      linesBuffer.push(
+        `\t\t${key}: ${internalValueToString(value, wrapperFactories)}`,
+      );
     }
   }
   linesBuffer.push(

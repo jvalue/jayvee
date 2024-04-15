@@ -38,10 +38,12 @@ export class RowDeleterExecutor extends AbstractBlockExecutor<
     inputSheet: Sheet,
     context: ExecutionContext,
   ): Promise<R.Result<Sheet>> {
-    const relativeRows = context.getPropertyValue(
-      'delete',
-      new CollectionValuetype(PrimitiveValuetypes.CellRange),
-    );
+    const relativeRows = context
+      .getPropertyValue(
+        'delete',
+        new CollectionValuetype(PrimitiveValuetypes.CellRange),
+      )
+      .map((astNode) => context.wrapperFactories.CellRange.wrap(astNode));
     assert(relativeRows.every(isRowWrapper));
 
     let absoluteRows = relativeRows.map((row) =>

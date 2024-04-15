@@ -4,16 +4,17 @@
 
 import {
   type BlockTypeProperty,
+  type CellRangeLiteral,
   type ConstraintDefinition,
   type TransformDefinition,
   type ValuetypeAssignment,
   isBlockTypeProperty,
+  isCellRangeLiteral,
   isConstraintDefinition,
   isTransformDefinition,
   isValuetypeAssignment,
 } from '../generated/ast';
-// eslint-disable-next-line import/no-cycle
-import { type CellRangeWrapper, isCellRangeWrapper } from '../wrappers';
+import type { WrapperFactoryProvider } from '../wrappers';
 
 export type InternalValueRepresentation =
   | AtomicInternalValueRepresentation
@@ -25,7 +26,7 @@ export type AtomicInternalValueRepresentation =
   | number
   | string
   | RegExp
-  | CellRangeWrapper
+  | CellRangeLiteral
   | ConstraintDefinition
   | ValuetypeAssignment
   | BlockTypeProperty
@@ -37,12 +38,13 @@ export type InternalValueRepresentationTypeguard<
 
 export function internalValueToString(
   valueRepresentation: InternalValueRepresentation,
+  wrapperFactories: WrapperFactoryProvider,
 ): string {
   if (Array.isArray(valueRepresentation)) {
     return (
       '[ ' +
       valueRepresentation
-        .map((item) => internalValueToString(item))
+        .map((item) => internalValueToString(item, wrapperFactories))
         .join(', ') +
       ' ]'
     );
@@ -70,8 +72,8 @@ export function internalValueToString(
   if (valueRepresentation instanceof RegExp) {
     return valueRepresentation.source;
   }
-  if (isCellRangeWrapper(valueRepresentation)) {
-    return valueRepresentation.toString();
+  if (isCellRangeLiteral(valueRepresentation)) {
+    return wrapperFactories.CellRange.wrap(valueRepresentation).toString();
   }
   if (isConstraintDefinition(valueRepresentation)) {
     return valueRepresentation.name;
