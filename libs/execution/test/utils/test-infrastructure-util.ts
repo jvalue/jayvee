@@ -5,23 +5,27 @@
 import {
   DefaultOperatorEvaluatorRegistry,
   EvaluationContext,
-  PipelineDefinition,
+  type PipelineDefinition,
   RuntimeParameterProvider,
   WrapperFactoryProvider,
 } from '@jvalue/jayvee-language-server';
-import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
+import {
+  type AstNode,
+  type AstNodeLocator,
+  type LangiumDocument,
+} from 'langium';
 
 import {
-  BlockExecutorClass,
+  type BlockExecutorClass,
   CachedLogger,
-  DebugGranularity,
-  DebugTargets,
+  type DebugGranularity,
+  type DebugTargets,
   DefaultConstraintExtension,
   ExecutionContext,
   JayveeExecExtension,
-  StackNode,
+  type StackNode,
   Table,
-  TableColumn,
+  type TableColumn,
 } from '../../src';
 
 export class TestExecExtension extends JayveeExecExtension {

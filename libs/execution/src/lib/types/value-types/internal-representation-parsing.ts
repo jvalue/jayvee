@@ -5,9 +5,9 @@
 import { strict as assert } from 'assert';
 
 import {
-  AtomicValuetype,
-  InternalValueRepresentation,
-  ValueType,
+  type AtomicValuetype,
+  type InternalValueRepresentation,
+  type ValueType,
   ValueTypeVisitor,
 } from '@jvalue/jayvee-language-server';
 

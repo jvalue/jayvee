@@ -4,11 +4,10 @@
 
 import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
 import {
-  ConstraintDefinition,
+  type ConstraintDefinition,
   isConstraintDefinition,
 } from '../../../generated/ast';
-// eslint-disable-next-line import/no-cycle
-import { ValueTypeVisitor } from '../value-type';
+import { type ValueTypeVisitor } from '../value-type';
 
 import { PrimitiveValueType } from './primitive-value-type';
 

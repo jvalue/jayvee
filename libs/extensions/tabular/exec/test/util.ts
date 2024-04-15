@@ -6,17 +6,17 @@ import * as path from 'path';
 
 import {
   Table,
-  TableRow,
+  type TableRow,
   Workbook,
   parseValueToInternalRepresentation,
 } from '@jvalue/jayvee-execution';
 import {
-  InternalValueRepresentation,
-  ValueType,
+  type InternalValueRepresentation,
+  type ValueType,
 } from '@jvalue/jayvee-language-server';
 import * as exceljs from 'exceljs';
 
-import { ColumnDefinitionEntry } from '../src/lib/table-interpreter-executor';
+import { type ColumnDefinitionEntry } from '../src/lib/table-interpreter-executor';
 
 export async function createWorkbookFromLocalExcelFile(
   fileName: string,

@@ -6,14 +6,18 @@ import * as assert from 'assert';
 import { readFileSync } from 'fs';
 import * as path from 'path';
 
-import { AstNode, LangiumDocument, ValidationAcceptor } from 'langium';
-import { WorkspaceFolder } from 'vscode-languageserver-protocol';
+import {
+  type AstNode,
+  type LangiumDocument,
+  type ValidationAcceptor,
+} from 'langium';
+import { type WorkspaceFolder } from 'vscode-languageserver-protocol';
 
 import {
   DefaultOperatorEvaluatorRegistry,
   DefaultOperatorTypeComputerRegistry,
   EvaluationContext,
-  JayveeServices,
+  type JayveeServices,
   type JayveeValidationProps,
   RuntimeParameterProvider,
   ValidationContext,

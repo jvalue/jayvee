@@ -7,17 +7,17 @@ import { strict as assert } from 'assert';
 import * as R from '@jvalue/jayvee-execution';
 import {
   AbstractBlockExecutor,
-  BlockExecutorClass,
-  ExecutionContext,
-  PortDetails,
-  Table,
+  type BlockExecutorClass,
+  type ExecutionContext,
+  type PortDetails,
+  type Table,
   TransformExecutor,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import {
   CollectionValuetype,
   IOType,
-  InternalValueRepresentation,
+  type InternalValueRepresentation,
   PrimitiveValuetypes,
 } from '@jvalue/jayvee-language-server';
 

@@ -7,14 +7,14 @@ import { strict as assert } from 'assert';
 import * as R from '@jvalue/jayvee-execution';
 import {
   AbstractBlockExecutor,
-  BlockExecutorClass,
-  ExecutionContext,
-  Sheet,
+  type BlockExecutorClass,
+  type ExecutionContext,
+  type Sheet,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import {
   CollectionValuetype,
-  ColumnWrapper,
+  type ColumnWrapper,
   IOType,
   PrimitiveValuetypes,
   columnIndexToString,

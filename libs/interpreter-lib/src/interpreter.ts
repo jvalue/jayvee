@@ -6,12 +6,12 @@ import { strict as assert } from 'assert';
 
 import * as R from '@jvalue/jayvee-execution';
 import {
-  DebugGranularity,
+  type DebugGranularity,
   DefaultConstraintExtension,
   ExecutionContext,
-  JayveeConstraintExtension,
-  JayveeExecExtension,
-  Logger,
+  type JayveeConstraintExtension,
+  type JayveeExecExtension,
+  type Logger,
   executeBlocks,
   isDebugGranularity,
   logExecutionDuration,
@@ -19,13 +19,13 @@ import {
 } from '@jvalue/jayvee-execution';
 import { StdExecExtension } from '@jvalue/jayvee-extensions/std/exec';
 import {
-  BlockDefinition,
+  type BlockDefinition,
   EvaluationContext,
-  JayveeModel,
-  JayveeServices,
-  PipelineDefinition,
-  RuntimeParameterProvider,
-  WrapperFactoryProvider,
+  type JayveeModel,
+  type JayveeServices,
+  type PipelineDefinition,
+  type RuntimeParameterProvider,
+  type WrapperFactoryProvider,
   createJayveeServices,
   initializeWorkspace,
   internalValueToString,

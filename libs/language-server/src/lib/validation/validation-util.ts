@@ -4,11 +4,11 @@
 
 import { strict as assert } from 'assert';
 
-import { AstNode, MultiMap, assertUnreachable } from 'langium';
+import { type AstNode, MultiMap, assertUnreachable } from 'langium';
 
 import {
   EvaluationStrategy,
-  Expression,
+  type Expression,
   evaluateExpression,
   internalValueToString,
   isBinaryExpression,
@@ -19,7 +19,7 @@ import {
   isValueLiteral,
 } from '../ast';
 
-import { ValidationContext } from './validation-context';
+import { type ValidationContext } from './validation-context';
 import { type JayveeValidationProps } from './validation-registry';
 
 export type NamedAstNode = AstNode & { name: string };

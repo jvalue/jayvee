@@ -7,14 +7,14 @@ import { strict as assert } from 'assert';
 import { assertUnreachable } from 'langium';
 
 import {
-  CellLiteral,
-  CellRangeLiteral,
-  CellReference,
-  ColumnId,
-  ColumnLiteral,
-  RangeLiteral,
-  RowId,
-  RowLiteral,
+  type CellLiteral,
+  type CellRangeLiteral,
+  type CellReference,
+  type ColumnId,
+  type ColumnLiteral,
+  type RangeLiteral,
+  type RowId,
+  type RowLiteral,
   isCellLiteral,
   isCellReference,
   isColumnLiteral,
@@ -22,8 +22,8 @@ import {
   isRowLiteral,
 } from '../generated/ast';
 
-import { AstNodeWrapper } from './ast-node-wrapper';
-import { CellIndex, CellIndexBounds, LAST_INDEX } from './util/cell-index';
+import { type AstNodeWrapper } from './ast-node-wrapper';
+import { CellIndex, type CellIndexBounds, LAST_INDEX } from './util/cell-index';
 import { columnCharactersAsIndex } from './util/column-id-util';
 
 export class CellRangeWrapper<N extends CellRangeLiteral = CellRangeLiteral>

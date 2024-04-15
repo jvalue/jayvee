@@ -8,8 +8,8 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
 import {
-  TransformBody,
-  TransformPortDefinition,
+  type TransformBody,
+  type TransformPortDefinition,
   isTransformPortDefinition,
 } from '../../ast/generated/ast';
 import { type JayveeValidationProps } from '../validation-registry';

@@ -5,14 +5,14 @@
 import { strict as assert } from 'assert';
 
 import {
-  BlockDefinition,
-  ConstraintDefinition,
-  EvaluationContext,
-  InternalValueRepresentation,
-  PipelineDefinition,
-  PropertyAssignment,
-  TransformDefinition,
-  ValueType,
+  type BlockDefinition,
+  type ConstraintDefinition,
+  type EvaluationContext,
+  type InternalValueRepresentation,
+  type PipelineDefinition,
+  type PropertyAssignment,
+  type TransformDefinition,
+  type ValueType,
   type WrapperFactoryProvider,
   evaluatePropertyValue,
   isBlockDefinition,
@@ -24,13 +24,13 @@ import {
 } from '@jvalue/jayvee-language-server';
 import { assertUnreachable, isReference } from 'langium';
 
-import { JayveeConstraintExtension } from './constraints';
+import { type JayveeConstraintExtension } from './constraints';
 import {
-  DebugGranularity,
-  DebugTargets,
+  type DebugGranularity,
+  type DebugTargets,
 } from './debugging/debug-configuration';
 import { type JayveeExecExtension } from './extension';
-import { Logger } from './logging/logger';
+import { type Logger } from './logging/logger';
 
 export type StackNode =
   | BlockDefinition

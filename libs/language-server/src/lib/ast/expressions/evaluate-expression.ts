@@ -8,9 +8,9 @@ import { assertUnreachable } from 'langium';
 
 import { type ValidationContext } from '../../validation';
 import {
-  Expression,
-  PropertyAssignment,
-  ValueLiteral,
+  type Expression,
+  type PropertyAssignment,
+  type ValueLiteral,
   isBinaryExpression,
   isBlockTypeProperty,
   isCellRangeLiteral,
@@ -24,8 +24,7 @@ import {
   isUnaryExpression,
   isValueLiteral,
 } from '../generated/ast';
-// eslint-disable-next-line import/no-cycle
-import { ValueType, type WrapperFactoryProvider } from '../wrappers';
+import { type ValueType, type WrapperFactoryProvider } from '../wrappers';
 
 import { type EvaluationContext } from './evaluation-context';
 import { EvaluationStrategy } from './evaluation-strategy';

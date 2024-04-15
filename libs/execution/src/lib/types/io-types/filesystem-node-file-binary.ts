@@ -5,7 +5,10 @@
 import { IOType } from '@jvalue/jayvee-language-server';
 
 import { FileSystemFile } from './filesystem-node-file';
-import { IOTypeImplementation, IoTypeVisitor } from './io-type-implementation';
+import {
+  type IOTypeImplementation,
+  type IoTypeVisitor,
+} from './io-type-implementation';
 
 export class BinaryFile
   extends FileSystemFile<ArrayBuffer>

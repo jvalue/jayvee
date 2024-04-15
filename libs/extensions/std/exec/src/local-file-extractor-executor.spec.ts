@@ -7,7 +7,7 @@ import * as path from 'path';
 import * as R from '@jvalue/jayvee-execution';
 import { getTestExecutionContext } from '@jvalue/jayvee-execution/test';
 import {
-  BlockDefinition,
+  type BlockDefinition,
   IOType,
   createJayveeServices,
 } from '@jvalue/jayvee-language-server';
@@ -17,7 +17,11 @@ import {
   parseHelper,
   readJvTestAssetHelper,
 } from '@jvalue/jayvee-language-server/test';
-import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
+import {
+  type AstNode,
+  type AstNodeLocator,
+  type LangiumDocument,
+} from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import * as nock from 'nock';
 

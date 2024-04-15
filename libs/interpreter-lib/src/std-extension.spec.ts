@@ -6,7 +6,7 @@ import { strict as assert } from 'assert';
 
 import { StdExecExtension } from '@jvalue/jayvee-extensions/std/exec';
 import {
-  BlockTypeWrapper,
+  type BlockTypeWrapper,
   createJayveeServices,
   getAllBuiltinBlockTypes,
   initializeWorkspace,

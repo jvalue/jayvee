@@ -11,9 +11,9 @@ import { assertUnreachable } from 'langium';
 
 import { inferExpressionType } from '../../ast/expressions/type-inference';
 import {
-  Expression,
-  ReferenceLiteral,
-  TransformOutputAssignment,
+  type Expression,
+  type ReferenceLiteral,
+  type TransformOutputAssignment,
   isBinaryExpression,
   isExpressionLiteral,
   isReferenceLiteral,

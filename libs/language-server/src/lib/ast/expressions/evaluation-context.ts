@@ -6,12 +6,12 @@ import { strict as assert } from 'assert';
 
 import { assertUnreachable } from 'langium';
 
-import { RuntimeParameterProvider } from '../../services';
+import { type RuntimeParameterProvider } from '../../services';
 import {} from '../../validation/validation-context';
 import {
-  FreeVariableLiteral,
-  ReferenceLiteral,
-  ValueKeywordLiteral,
+  type FreeVariableLiteral,
+  type ReferenceLiteral,
+  type ValueKeywordLiteral,
   isBlockTypeProperty,
   isConstraintDefinition,
   isReferenceLiteral,
@@ -19,7 +19,6 @@ import {
   isTransformPortDefinition,
   isValueKeywordLiteral,
 } from '../generated/ast';
-// eslint-disable-next-line import/no-cycle
 import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-value-types';
 import { type ValueType } from '../wrappers/value-type/value-type';
 

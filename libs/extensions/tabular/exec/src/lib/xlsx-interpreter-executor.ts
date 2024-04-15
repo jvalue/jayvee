@@ -5,9 +5,9 @@
 import * as R from '@jvalue/jayvee-execution';
 import {
   AbstractBlockExecutor,
-  BinaryFile,
-  BlockExecutorClass,
-  ExecutionContext,
+  type BinaryFile,
+  type BlockExecutorClass,
+  type ExecutionContext,
   Workbook,
   implementsStatic,
 } from '@jvalue/jayvee-execution';

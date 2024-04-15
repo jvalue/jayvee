@@ -4,7 +4,7 @@
 
 import {
   PrimitiveValuetypes,
-  PropertyBody,
+  type PropertyBody,
   evaluatePropertyValue,
 } from '../../../ast';
 import { type JayveeValidationProps } from '../../validation-registry';

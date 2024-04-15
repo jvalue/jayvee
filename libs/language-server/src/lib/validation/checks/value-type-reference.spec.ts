@@ -4,16 +4,20 @@
 
 import { strict as assert } from 'assert';
 
-import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
+import {
+  type AstNode,
+  type AstNodeLocator,
+  type LangiumDocument,
+} from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  ValueTypeReference,
-  ValuetypeDefinition,
+  type ValueTypeReference,
+  type ValuetypeDefinition,
   createJayveeServices,
 } from '../..';
 import {
-  ParseHelperOptions,
+  type ParseHelperOptions,
   createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,

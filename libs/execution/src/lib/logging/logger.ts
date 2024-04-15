@@ -5,9 +5,9 @@
 import { strict as assert } from 'assert';
 
 import {
-  AstNode,
-  DiagnosticInfo,
-  LangiumDocument,
+  type AstNode,
+  type DiagnosticInfo,
+  type LangiumDocument,
   getDiagnosticRange,
   getDocument,
 } from 'langium';

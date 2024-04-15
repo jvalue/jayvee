@@ -8,14 +8,14 @@ import {
   type AtomicInternalValueRepresentation,
   type InternalValueRepresentation,
 } from '../../../../expressions/internal-value-representation';
-import { ValueTypeReference } from '../../../../generated/ast';
+import { type ValueTypeReference } from '../../../../generated/ast';
+import { type ValueType, type ValueTypeVisitor } from '../../value-type';
 // eslint-disable-next-line import/no-cycle
-import { ValueType, ValueTypeVisitor } from '../../value-type';
 import { createValueType } from '../../value-type-util';
 
 import {
   AbstractCollectionValueType,
-  ToArray,
+  type ToArray,
 } from './abstract-collection-value-type';
 
 export class CollectionValueType<

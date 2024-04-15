@@ -5,13 +5,13 @@
 import { strict as assert } from 'assert';
 
 import {
-  BlockDefinition,
-  CompositeBlockTypeDefinition,
-  PipelineDefinition,
+  type BlockDefinition,
+  type CompositeBlockTypeDefinition,
+  type PipelineDefinition,
 } from '../generated/ast';
 
-import { AstNodeWrapper } from './ast-node-wrapper';
-import { PipeWrapper } from './pipe-wrapper';
+import { type AstNodeWrapper } from './ast-node-wrapper';
+import { type PipeWrapper } from './pipe-wrapper';
 import { type IPipeWrapperFactory } from './wrapper-factory-provider';
 
 export class PipelineWrapper<

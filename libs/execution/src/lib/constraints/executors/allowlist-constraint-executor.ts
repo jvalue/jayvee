@@ -4,14 +4,14 @@
 
 import {
   CollectionValuetype,
-  InternalValueRepresentation,
+  type InternalValueRepresentation,
   PrimitiveValuetypes,
 } from '@jvalue/jayvee-language-server';
 
 import { type ExecutionContext } from '../../execution-context';
 import { implementsStatic } from '../../util/implements-static-decorator';
-import { ConstraintExecutor } from '../constraint-executor';
-import { TypedConstraintExecutorClass } from '../typed-constraint-executor-class';
+import { type ConstraintExecutor } from '../constraint-executor';
+import { type TypedConstraintExecutorClass } from '../typed-constraint-executor-class';
 
 @implementsStatic<TypedConstraintExecutorClass>()
 export class AllowlistConstraintExecutor implements ConstraintExecutor {

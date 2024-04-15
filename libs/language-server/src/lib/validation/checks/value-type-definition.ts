@@ -12,11 +12,11 @@ import { strict as assert } from 'assert';
 import { assertUnreachable } from 'langium';
 
 import {
-  CollectionLiteral,
+  type CollectionLiteral,
   CollectionValuetype,
-  ConstraintDefinition,
+  type ConstraintDefinition,
   PrimitiveValuetypes,
-  ValueType,
+  type ValueType,
   createValueType,
   evaluateExpression,
   inferExpressionType,
@@ -24,8 +24,8 @@ import {
   isTypedConstraintDefinition,
 } from '../../ast';
 import {
-  ValuetypeDefinition,
-  ValuetypeGenericDefinition,
+  type ValuetypeDefinition,
+  type ValuetypeGenericDefinition,
 } from '../../ast/generated/ast';
 import { type JayveeValidationProps } from '../validation-registry';
 

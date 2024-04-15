@@ -4,7 +4,10 @@
 
 import { IOType } from '@jvalue/jayvee-language-server';
 
-import { IOTypeImplementation, IoTypeVisitor } from './io-type-implementation';
+import {
+  type IOTypeImplementation,
+  type IoTypeVisitor,
+} from './io-type-implementation';
 
 export class None implements IOTypeImplementation<IOType.NONE> {
   public readonly ioType = IOType.NONE;

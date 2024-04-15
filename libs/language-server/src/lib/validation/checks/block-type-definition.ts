@@ -5,8 +5,8 @@
 import { strict as assert } from 'assert';
 
 import {
-  BlockTypeProperty,
-  ReferenceableBlockTypeDefinition,
+  type BlockTypeProperty,
+  type ReferenceableBlockTypeDefinition,
   createValueType,
   evaluateExpression,
 } from '../../ast';

@@ -9,12 +9,12 @@ import * as R from '@jvalue/jayvee-execution';
 import {
   AbstractBlockExecutor,
   BinaryFile,
-  BlockExecutorClass,
-  ExecutionContext,
-  ExecutionErrorDetails,
+  type BlockExecutorClass,
+  type ExecutionContext,
+  type ExecutionErrorDetails,
   FileExtension,
   MimeType,
-  None,
+  type None,
   implementsStatic,
   inferFileExtensionFromContentTypeString,
   inferFileExtensionFromFileExtensionString,
@@ -22,7 +22,7 @@ import {
 } from '@jvalue/jayvee-execution';
 import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
 import { http, https } from 'follow-redirects';
-import { AstNode } from 'langium';
+import { type AstNode } from 'langium';
 
 import {
   createBackoffStrategy,

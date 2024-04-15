@@ -3,10 +3,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { type InternalValueRepresentation } from '../../expressions/internal-value-representation';
-import { ValuetypeDefinition } from '../../generated/ast';
+import { type ValuetypeDefinition } from '../../generated/ast';
 
-// eslint-disable-next-line import/no-cycle
-import { AtomicValueType } from './atomic-value-type';
+import { type AtomicValueType } from './atomic-value-type';
 import {
   type BooleanValuetype,
   type CellRangeValuetype,

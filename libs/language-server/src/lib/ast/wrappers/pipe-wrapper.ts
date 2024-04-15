@@ -4,15 +4,15 @@
 
 import { strict as assert } from 'assert';
 
-import { DiagnosticInfo } from 'langium';
+import { type DiagnosticInfo } from 'langium';
 
 import {
-  BlockDefinition,
-  BlockTypePipeline,
-  PipeDefinition,
+  type BlockDefinition,
+  type BlockTypePipeline,
+  type PipeDefinition,
 } from '../generated/ast';
 
-import { AstNodeWrapper } from './ast-node-wrapper';
+import { type AstNodeWrapper } from './ast-node-wrapper';
 
 export class PipeWrapper<
   T extends PipeDefinition | BlockTypePipeline =

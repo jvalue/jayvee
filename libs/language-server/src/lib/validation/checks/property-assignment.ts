@@ -8,12 +8,12 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
 import {
-  PropertySpecification,
-  TypedObjectWrapper,
+  type PropertySpecification,
+  type TypedObjectWrapper,
   inferExpressionType,
 } from '../../ast';
 import {
-  PropertyAssignment,
+  type PropertyAssignment,
   isBlockTypeProperty,
   isRuntimeParameterLiteral,
 } from '../../ast/generated/ast';

@@ -6,17 +6,17 @@ import * as path from 'path';
 
 import { CachedLogger, DiagnosticSeverity } from '@jvalue/jayvee-execution';
 import {
-  JayveeServices,
+  type JayveeServices,
   createJayveeServices,
 } from '@jvalue/jayvee-language-server';
 import {
-  ParseHelperOptions,
+  type ParseHelperOptions,
   expectNoParserAndLexerErrors,
   loadTestExtensions,
   parseHelper,
   readJvTestAssetHelper,
 } from '@jvalue/jayvee-language-server/test';
-import { AstNode, LangiumDocument } from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import { extractDocumentFromFile, validateDocument } from './parsing-util';

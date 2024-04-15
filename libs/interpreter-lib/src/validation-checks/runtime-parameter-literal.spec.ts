@@ -9,21 +9,25 @@ import {
   DefaultOperatorEvaluatorRegistry,
   DefaultOperatorTypeComputerRegistry,
   EvaluationContext,
-  RuntimeParameterLiteral,
+  type RuntimeParameterLiteral,
   RuntimeParameterProvider,
   ValidationContext,
   WrapperFactoryProvider,
   createJayveeServices,
 } from '@jvalue/jayvee-language-server';
 import {
-  ParseHelperOptions,
+  type ParseHelperOptions,
   expectNoParserAndLexerErrors,
   loadTestExtensions,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '@jvalue/jayvee-language-server/test';
-import { AstNode, AstNodeLocator, LangiumDocument } from 'langium';
+import {
+  type AstNode,
+  type AstNodeLocator,
+  type LangiumDocument,
+} from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import { validateRuntimeParameterLiteral } from './runtime-parameter-literal';

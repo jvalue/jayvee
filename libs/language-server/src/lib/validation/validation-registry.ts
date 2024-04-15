@@ -3,22 +3,22 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  AstNode,
-  MaybePromise,
-  ValidationAcceptor,
-  ValidationCheck,
+  type AstNode,
+  type MaybePromise,
+  type ValidationAcceptor,
+  type ValidationCheck,
   ValidationRegistry,
 } from 'langium';
 
 import {
   EvaluationContext,
-  OperatorEvaluatorRegistry,
-  OperatorTypeComputerRegistry,
-  WrapperFactoryProvider,
+  type OperatorEvaluatorRegistry,
+  type OperatorTypeComputerRegistry,
+  type WrapperFactoryProvider,
 } from '../ast';
-import { JayveeAstType } from '../ast/generated/ast';
+import { type JayveeAstType } from '../ast/generated/ast';
 import type { JayveeServices } from '../jayvee-module';
-import { RuntimeParameterProvider } from '../services';
+import { type RuntimeParameterProvider } from '../services';
 
 import { validateBlockDefinition } from './checks/block-definition';
 import { validateBlockTypeDefinition } from './checks/block-type-definition';

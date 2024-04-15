@@ -5,10 +5,10 @@
 import * as R from '@jvalue/jayvee-execution';
 import {
   AbstractBlockExecutor,
-  BlockExecutorClass,
-  ExecutionContext,
+  type BlockExecutorClass,
+  type ExecutionContext,
   NONE,
-  None,
+  type None,
   Table,
   implementsStatic,
 } from '@jvalue/jayvee-execution';

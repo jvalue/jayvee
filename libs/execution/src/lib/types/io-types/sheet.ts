@@ -6,17 +6,20 @@ import { strict as assert } from 'assert';
 
 import {
   CellIndex,
-  CellIndexBounds,
-  CellRangeLiteral,
-  CellRangeWrapper,
-  ColumnWrapper,
+  type CellIndexBounds,
+  type CellRangeLiteral,
+  type CellRangeWrapper,
+  type ColumnWrapper,
   IOType,
-  RowWrapper,
+  type RowWrapper,
   getColumnIndex,
   getRowIndex,
 } from '@jvalue/jayvee-language-server';
 
-import { IOTypeImplementation, IoTypeVisitor } from './io-type-implementation';
+import {
+  type IOTypeImplementation,
+  type IoTypeVisitor,
+} from './io-type-implementation';
 
 export class Sheet implements IOTypeImplementation<IOType.SHEET> {
   public readonly ioType = IOType.SHEET;

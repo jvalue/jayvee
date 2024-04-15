@@ -5,17 +5,17 @@
 import { strict as assert } from 'assert';
 
 import {
-  BlockTypeWrapper,
-  ConstraintTypeWrapper,
-  ExampleDoc,
-  IOType,
-  JayveeBlockTypeDocGenerator,
-  JayveeConstraintTypeDocGenerator,
-  JayveeServices,
-  JayveeValueTypesDocGenerator,
+  type BlockTypeWrapper,
+  type ConstraintTypeWrapper,
+  type ExampleDoc,
+  type IOType,
+  type JayveeBlockTypeDocGenerator,
+  type JayveeConstraintTypeDocGenerator,
+  type JayveeServices,
+  type JayveeValueTypesDocGenerator,
   MarkdownBuilder,
-  PrimitiveValueType,
-  PropertySpecification,
+  type PrimitiveValueType,
+  type PropertySpecification,
 } from '@jvalue/jayvee-language-server';
 
 export class UserDocGenerator

@@ -2,11 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { PipeWrapper, PipelineWrapper } from '../../ast';
+import { type PipeWrapper, type PipelineWrapper } from '../../ast';
 import {
-  BlockDefinition,
-  CompositeBlockTypeDefinition,
-  PipelineDefinition,
+  type BlockDefinition,
+  type CompositeBlockTypeDefinition,
+  type PipelineDefinition,
 } from '../../ast/generated/ast';
 import { type JayveeValidationProps } from '../validation-registry';
 import { checkUniqueNames } from '../validation-util';
