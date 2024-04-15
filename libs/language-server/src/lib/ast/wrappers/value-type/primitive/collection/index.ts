@@ -2,8 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+/* Note: Only export types if possible to enforce usage of WrapperFactory outside this directory */
+
 export {
-  CollectionValueType as CollectionValuetype,
+  CollectionValueType as CollectionValuetype, // TODO: handle creation of collections to preserve internal typing
   isCollectionValueType as isCollectionValuetype,
 } from './collection-value-type';
 

@@ -2,10 +2,14 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-export * from './collection';
-
-export * from './primitive-value-type';
 export * from './primitive-value-types';
+
+/* Note: Only export types if possible to enforce usage of WrapperFactory outside this directory */
+
+export {
+  isPrimitiveValueType,
+  type PrimitiveValueType,
+} from './primitive-value-type';
 
 export {
   type BooleanValuetype,
@@ -37,3 +41,5 @@ export {
   type TransformValuetype,
   isTransformValuetype,
 } from './transform-value-type';
+
+export * from './collection'; // type export handled one level deeper
