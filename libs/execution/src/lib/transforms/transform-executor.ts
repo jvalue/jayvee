@@ -23,31 +23,31 @@ export interface PortDetails {
 }
 
 export class TransformExecutor {
-  // TODO: inject ExecutionContext via constructor?
-  constructor(private readonly transform: TransformDefinition) {}
+  constructor(
+    private readonly transform: TransformDefinition,
+    private readonly context: ExecutionContext,
+  ) {}
 
-  getInputDetails(context: ExecutionContext): PortDetails[] {
-    return this.getPortDetails('from', context);
+  getInputDetails(): PortDetails[] {
+    return this.getPortDetails('from');
   }
 
-  getOutputDetails(context: ExecutionContext): PortDetails {
-    const portDetails = this.getPortDetails('to', context);
+  getOutputDetails(): PortDetails {
+    const portDetails = this.getPortDetails('to');
     assert(portDetails.length === 1);
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return portDetails[0]!;
   }
 
-  private getPortDetails(
-    kind: TransformPortDefinition['kind'],
-    context: ExecutionContext,
-  ): {
+  private getPortDetails(kind: TransformPortDefinition['kind']): {
     port: TransformPortDefinition;
     valueType: ValueType;
   }[] {
     const ports = this.transform.body.ports.filter((x) => x.kind === kind);
     const portDetails = ports.map((port) => {
       const valueTypeNode = port.valueType;
-      const valueType = context.wrapperFactories.ValueType.wrap(valueTypeNode);
+      const valueType =
+        this.context.wrapperFactories.ValueType.wrap(valueTypeNode);
       assert(valueType !== undefined);
       return {
         port: port,
@@ -89,8 +89,8 @@ export class TransformExecutor {
     resultingColumn: TableColumn;
     rowsToDelete: number[];
   } {
-    const inputDetailsList = this.getInputDetails(context);
-    const outputDetails = this.getOutputDetails(context);
+    const inputDetailsList = this.getInputDetails();
+    const outputDetails = this.getOutputDetails();
 
     const newColumn: InternalValueRepresentation[] = [];
     const rowsToDelete: number[] = [];
