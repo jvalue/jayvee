@@ -96,4 +96,24 @@ describe('Validation of RangeConstraintExecutor', () => {
 
     expect(valid).toBe(false);
   });
+
+  it('should work with only an upper bound specified', async () => {
+    const text = readJvTestAsset(
+      'range-constraint-executor/only-upper-bound.jv',
+    );
+
+    const valid = await parseAndValidateConstraint(text, 0);
+
+    expect(valid).toBe(true);
+  });
+
+  it('should work with only a lower bound specified', async () => {
+    const text = readJvTestAsset(
+      'range-constraint-executor/only-lower-bound.jv',
+    );
+
+    const valid = await parseAndValidateConstraint(text, 999999999);
+
+    expect(valid).toBe(true);
+  });
 });
