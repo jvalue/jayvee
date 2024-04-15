@@ -96,8 +96,13 @@ function checkCellWriterPropertyBody(
     return;
   }
 
+  if (!props.wrapperFactories.CellRange.canWrap(atValue)) {
+    return;
+  }
+  const atValueWrapper = props.wrapperFactories.CellRange.wrap(atValue);
+
   const numberOfValuesToWrite = writeValues.length;
-  const numberOfCells = atValue.numberOfCells();
+  const numberOfCells = atValueWrapper.numberOfCells();
 
   if (numberOfCells !== numberOfValuesToWrite) {
     [writeProperty, atProperty].forEach((propertyNode) => {

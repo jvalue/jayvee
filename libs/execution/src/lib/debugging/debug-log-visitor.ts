@@ -2,7 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { internalValueToString } from '@jvalue/jayvee-language-server';
+import {
+  type WrapperFactoryProvider,
+  internalValueToString,
+} from '@jvalue/jayvee-language-server';
 
 import { type Logger } from '../logging/logger';
 import { type Workbook } from '../types';
@@ -25,6 +28,7 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
     private debugGranularity: DebugGranularity,
     private logPrefix: string,
     private logger: Logger,
+    private wrapperFactories: WrapperFactoryProvider,
   ) {}
 
   visitTable(table: Table): void {
@@ -51,7 +55,7 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
 
       const row = table.getRow(i);
       const rowData = [...row.values()]
-        .map((cell) => internalValueToString(cell))
+        .map((cell) => internalValueToString(cell, this.wrapperFactories))
         .join(' | ');
       this.log(`[Row ${i}] ${rowData}`);
     }

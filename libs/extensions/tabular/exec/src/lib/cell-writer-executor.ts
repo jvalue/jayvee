@@ -43,10 +43,14 @@ export class CellWriterExecutor extends AbstractBlockExecutor<
       new CollectionValuetype(PrimitiveValuetypes.Text),
     );
 
-    assert(relativeCellRange.isOneDimensional());
+    const relativeCellRangeWrapper =
+      context.wrapperFactories.CellRange.wrap(relativeCellRange);
 
-    const absoluteCellRange =
-      inputSheet.resolveRelativeIndexes(relativeCellRange);
+    assert(relativeCellRangeWrapper.isOneDimensional());
+
+    const absoluteCellRange = inputSheet.resolveRelativeIndexes(
+      relativeCellRangeWrapper,
+    );
     if (!inputSheet.isInBounds(absoluteCellRange)) {
       return R.err({
         message: 'Some specified cells do not exist in the sheet',
@@ -54,13 +58,14 @@ export class CellWriterExecutor extends AbstractBlockExecutor<
       });
     }
 
-    const cellIndexesToWrite =
-      inputSheet.enumerateCellIndexes(relativeCellRange);
+    const cellIndexesToWrite = inputSheet.enumerateCellIndexes(
+      relativeCellRangeWrapper,
+    );
 
     if (writeValues.length !== cellIndexesToWrite.length) {
       context.logger.logWarnDiagnostic(
         `The number of values to write (${writeValues.length}) does not match the number of cells (${cellIndexesToWrite.length})`,
-        { node: relativeCellRange.astNode },
+        { node: relativeCellRangeWrapper.astNode },
       );
     }
 

@@ -32,8 +32,11 @@ export class CellRangeSelectorExecutor extends AbstractBlockExecutor<
       'select',
       PrimitiveValuetypes.CellRange,
     );
+    const relativeRangeWrapper =
+      context.wrapperFactories.CellRange.wrap(relativeRange);
 
-    const absoluteRange = inputSheet.resolveRelativeIndexes(relativeRange);
+    const absoluteRange =
+      inputSheet.resolveRelativeIndexes(relativeRangeWrapper);
 
     if (!inputSheet.isInBounds(absoluteRange)) {
       return R.err({

@@ -38,10 +38,12 @@ export class ColumnDeleterExecutor extends AbstractBlockExecutor<
     inputSheet: Sheet,
     context: ExecutionContext,
   ): Promise<R.Result<Sheet>> {
-    const relativeColumns = context.getPropertyValue(
-      'delete',
-      new CollectionValuetype(PrimitiveValuetypes.CellRange),
-    );
+    const relativeColumns = context
+      .getPropertyValue(
+        'delete',
+        new CollectionValuetype(PrimitiveValuetypes.CellRange),
+      )
+      .map((astNode) => context.wrapperFactories.CellRange.wrap(astNode));
     assert(relativeColumns.every(isColumnWrapper));
 
     let absoluteColumns = relativeColumns.map((column) =>
