@@ -81,10 +81,16 @@ describe('Validation of TransformExecutor', () => {
     ) as TransformDefinition;
     const executor = new TransformExecutor(transform);
 
+    const executionContext = getTestExecutionContext(locator, document);
+
     return executor.executeTransform(
-      getColumnsMap(columnNames, inputTable, executor.getInputDetails()),
+      getColumnsMap(
+        columnNames,
+        inputTable,
+        executor.getInputDetails(executionContext),
+      ),
       inputTable.getNumberOfRows(),
-      getTestExecutionContext(locator, document),
+      executionContext,
     );
   }
 

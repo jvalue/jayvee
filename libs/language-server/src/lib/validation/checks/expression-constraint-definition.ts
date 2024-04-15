@@ -25,7 +25,11 @@ function checkConstraintExpression(
   props: JayveeValidationProps,
 ): void {
   const expression = constraint?.expression;
-  const inferredType = inferExpressionType(expression, props.validationContext);
+  const inferredType = inferExpressionType(
+    expression,
+    props.validationContext,
+    props.wrapperFactories,
+  );
   if (inferredType === undefined) {
     return;
   }

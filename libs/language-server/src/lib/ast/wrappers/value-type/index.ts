@@ -8,4 +8,3 @@ export {
   isAtomicValuetype,
 } from './atomic-value-type';
 export * from './primitive';
-export * from './value-type-util';

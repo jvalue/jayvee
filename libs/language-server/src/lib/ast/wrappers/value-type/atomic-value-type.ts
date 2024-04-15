@@ -14,7 +14,6 @@ import {
 import { type AstNodeWrapper } from '../ast-node-wrapper';
 import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
 
-// eslint-disable-next-line import/no-cycle
 import { CollectionValuetype } from './primitive';
 import { PrimitiveValuetypes } from './primitive/primitive-value-types';
 import {
@@ -22,13 +21,15 @@ import {
   type ValueType,
   type ValueTypeVisitor,
 } from './value-type';
-import { createValueType } from './value-type-util';
 
 export class AtomicValueType
   extends AbstractValueType<InternalValueRepresentation>
   implements AstNodeWrapper<ValuetypeDefinition>
 {
-  constructor(public readonly astNode: ValuetypeDefinition) {
+  constructor(
+    public readonly astNode: ValuetypeDefinition,
+    private readonly wrapperFactories: WrapperFactoryProvider,
+  ) {
     super();
   }
 
@@ -36,6 +37,7 @@ export class AtomicValueType
     return visitor.visitAtomicValuetype(this);
   }
 
+  // TODO: remove wrapperFactories since added to constructor
   getConstraints(
     context: EvaluationContext,
     wrapperFactories: WrapperFactoryProvider,
@@ -91,7 +93,7 @@ export class AtomicValueType
   protected override doGetSupertype(): ValueType | undefined {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const supertype = this.astNode?.type;
-    return createValueType(supertype);
+    return this.wrapperFactories.ValueType.wrap(supertype);
   }
 
   override isInternalValueRepresentation(

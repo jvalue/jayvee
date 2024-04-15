@@ -23,7 +23,6 @@ import {
   PrimitiveValuetypes,
   type ValueType,
   type ValuetypeAssignment,
-  createValueType,
   rowIndexToString,
 } from '@jvalue/jayvee-language-server';
 
@@ -90,8 +89,10 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
         });
       }
 
-      columnEntries =
-        this.deriveColumnDefinitionEntriesWithoutHeader(columnDefinitions);
+      columnEntries = this.deriveColumnDefinitionEntriesWithoutHeader(
+        columnDefinitions,
+        context,
+      );
     }
 
     const numberOfTableRows = header
@@ -205,10 +206,13 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
 
   private deriveColumnDefinitionEntriesWithoutHeader(
     columnDefinitions: ValuetypeAssignment[],
+    context: ExecutionContext,
   ): ColumnDefinitionEntry[] {
     return columnDefinitions.map<ColumnDefinitionEntry>(
       (columnDefinition, columnDefinitionIndex) => {
-        const columnValuetype = createValueType(columnDefinition.type);
+        const columnValuetype = context.wrapperFactories.ValueType.wrap(
+          columnDefinition.type,
+        );
         assert(columnValuetype !== undefined);
         return {
           sheetColumnIndex: columnDefinitionIndex,
@@ -238,7 +242,9 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
         );
         continue;
       }
-      const columnValuetype = createValueType(columnDefinition.type);
+      const columnValuetype = context.wrapperFactories.ValueType.wrap(
+        columnDefinition.type,
+      );
       assert(columnValuetype !== undefined);
 
       columnEntries.push({

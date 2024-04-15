@@ -20,8 +20,12 @@ import {
   type PipeDefinition,
   type PipelineDefinition,
   type ReferenceableBlockTypeDefinition,
+  type ValueTypeReference,
+  type ValuetypeDefinition,
   isBuiltinConstrainttypeDefinition,
   isReferenceableBlockTypeDefinition,
+  isValueTypeReference,
+  isValuetypeDefinition,
 } from '../generated/ast';
 
 import { type AstNodeWrapper } from './ast-node-wrapper';
@@ -31,6 +35,13 @@ import { PipelineWrapper } from './pipeline-wrapper';
 // eslint-disable-next-line import/no-cycle
 import { BlockTypeWrapper } from './typed-object/block-type-wrapper';
 import { ConstraintTypeWrapper } from './typed-object/constrainttype-wrapper';
+import {
+  type PrimitiveValueType,
+  PrimitiveValuetypes,
+  type ValueType,
+} from './value-type';
+import { AtomicValueType } from './value-type/atomic-value-type';
+import { CollectionValueType } from './value-type/primitive/collection/collection-value-type';
 
 abstract class AstNodeWrapperFactory<
   N extends AstNode,
@@ -66,6 +77,7 @@ export class WrapperFactoryProvider {
   readonly Pipe: PipeWrapperFactory;
   readonly CellRange: CellRangeWrapperFactory;
   readonly TypedObject: TypedObjectWrapperFactory;
+  readonly ValueType: ValueTypeWrapperFactory;
 
   constructor(
     private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
@@ -85,6 +97,7 @@ export class WrapperFactoryProvider {
       this.BlockType,
       this.ConstraintType,
     );
+    this.ValueType = new ValueTypeWrapperFactory(this);
   }
 }
 
@@ -290,5 +303,88 @@ class TypedObjectWrapperFactory {
       return this.constraintTypeWrapperFactory.wrap(type);
     }
     assertUnreachable(type);
+  }
+}
+
+class ValueTypeWrapperFactory {
+  constructor(private readonly wrapperFactories: WrapperFactoryProvider) {}
+
+  wrap(
+    identifier: ValuetypeDefinition | ValueTypeReference | undefined,
+  ): ValueType | undefined {
+    if (identifier === undefined) {
+      return undefined;
+    } else if (isValueTypeReference(identifier)) {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      const valueTypeDefinition = identifier?.reference?.ref;
+      if (valueTypeDefinition?.name === 'Collection') {
+        return this.wrapCollection(identifier);
+      }
+      return this.wrap(valueTypeDefinition);
+    } else if (isValuetypeDefinition(identifier)) {
+      if (identifier.name === 'Collection') {
+        // We don't have an object representing a generic collection
+        return;
+      }
+      if (identifier.isBuiltin) {
+        return this.wrapPrimitive(identifier);
+      }
+      return new AtomicValueType(identifier, this.wrapperFactories);
+    }
+    assertUnreachable(identifier);
+  }
+
+  wrapCollection(
+    input: ValueTypeReference | AtomicValueType | PrimitiveValueType,
+  ): CollectionValueType {
+    if (!isValueTypeReference(input)) {
+      return new CollectionValueType(input);
+    }
+    const collectionRef = input;
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const collectionDefinition = collectionRef?.reference?.ref;
+    assert(collectionDefinition?.name === 'Collection');
+    const collectionGenerics = collectionRef.genericRefs;
+    if (collectionGenerics.length !== 1) {
+      throw new Error(
+        "Valuetype Collection needs exactly one generic parameter to define its elements' type",
+      );
+    }
+    const generic = collectionGenerics[0];
+    assert(generic !== undefined);
+    const elementValuetype = this.wrap(generic.ref);
+    if (elementValuetype === undefined) {
+      throw new Error(
+        "Could not create value type for the elements' type of value type Collection",
+      );
+    }
+    return new CollectionValueType(elementValuetype);
+  }
+
+  wrapPrimitive(
+    builtinValuetype: ValuetypeDefinition,
+  ): PrimitiveValueType | undefined {
+    assert(builtinValuetype.isBuiltin);
+    const name = builtinValuetype.name;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (name === undefined) {
+      return undefined;
+    }
+
+    const matchingPrimitives = Object.values(PrimitiveValuetypes).filter(
+      (valueType) => valueType.getName() === name,
+    );
+    if (matchingPrimitives.length === 0) {
+      throw new Error(
+        `Found no PrimitiveValuetype for builtin value type "${name}"`,
+      );
+    }
+    if (matchingPrimitives.length > 1) {
+      throw new Error(
+        `Found multiple ambiguous PrimitiveValuetype for builtin value type "${name}"`,
+      );
+    }
+    return matchingPrimitives[0];
   }
 }

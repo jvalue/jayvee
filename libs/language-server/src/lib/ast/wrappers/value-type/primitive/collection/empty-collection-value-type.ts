@@ -6,7 +6,6 @@ import { type InternalValueRepresentation } from '../../../../expressions/intern
 import { type ValueType, type ValueTypeVisitor } from '../../value-type';
 
 import { AbstractCollectionValueType } from './abstract-collection-value-type';
-// eslint-disable-next-line import/no-cycle
 import { CollectionValueType } from './collection-value-type';
 
 class EmptyCollectionValueTypeImpl extends AbstractCollectionValueType<undefined> {

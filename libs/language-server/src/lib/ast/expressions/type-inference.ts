@@ -39,32 +39,37 @@ import { getNextAstNodeContainer } from '../model-util';
 // eslint-disable-next-line import/no-cycle
 import {
   type AtomicValuetype,
-  CollectionValuetype,
   type PrimitiveValueType,
+  type WrapperFactoryProvider,
   isAtomicValuetype,
   isPrimitiveValueType,
 } from '../wrappers';
 import { EmptyCollection } from '../wrappers/value-type/primitive/collection/empty-collection-value-type';
 import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-value-types';
 import { type ValueType } from '../wrappers/value-type/value-type';
-import { createValueType } from '../wrappers/value-type/value-type-util';
 
 import { isEveryValueDefined } from './typeguards';
 
 export function inferExpressionType(
   expression: Expression | undefined,
   validationContext: ValidationContext,
+  wrapperFactories: WrapperFactoryProvider,
 ): ValueType | undefined {
   if (expression === undefined) {
     return undefined;
   }
   if (isExpressionLiteral(expression)) {
-    return inferTypeFromExpressionLiteral(expression, validationContext);
+    return inferTypeFromExpressionLiteral(
+      expression,
+      validationContext,
+      wrapperFactories,
+    );
   }
   if (isUnaryExpression(expression)) {
     const innerType = inferExpressionType(
       expression.expression,
       validationContext,
+      wrapperFactories,
     );
     if (innerType === undefined) {
       return undefined;
@@ -75,8 +80,16 @@ export function inferExpressionType(
     return typeComputer.computeType(innerType, expression, validationContext);
   }
   if (isBinaryExpression(expression)) {
-    const leftType = inferExpressionType(expression.left, validationContext);
-    const rightType = inferExpressionType(expression.right, validationContext);
+    const leftType = inferExpressionType(
+      expression.left,
+      validationContext,
+      wrapperFactories,
+    );
+    const rightType = inferExpressionType(
+      expression.right,
+      validationContext,
+      wrapperFactories,
+    );
     if (leftType === undefined || rightType === undefined) {
       return undefined;
     }
@@ -92,12 +105,21 @@ export function inferExpressionType(
     );
   }
   if (isTernaryExpression(expression)) {
-    const firstType = inferExpressionType(expression.first, validationContext);
+    const firstType = inferExpressionType(
+      expression.first,
+      validationContext,
+      wrapperFactories,
+    );
     const secondType = inferExpressionType(
       expression.second,
       validationContext,
+      wrapperFactories,
     );
-    const thirdType = inferExpressionType(expression.third, validationContext);
+    const thirdType = inferExpressionType(
+      expression.third,
+      validationContext,
+      wrapperFactories,
+    );
     if (
       firstType === undefined ||
       secondType === undefined ||
@@ -126,6 +148,7 @@ export function inferExpressionType(
 function inferTypeFromExpressionLiteral(
   expression: ExpressionLiteral,
   validationContext: ValidationContext,
+  wrapperFactories: WrapperFactoryProvider,
 ): ValueType | undefined {
   if (isValueLiteral(expression)) {
     if (isTextLiteral(expression)) {
@@ -141,14 +164,22 @@ function inferTypeFromExpressionLiteral(
     } else if (isValuetypeAssignmentLiteral(expression)) {
       return PrimitiveValuetypes.ValuetypeAssignment;
     } else if (isCollectionLiteral(expression)) {
-      return inferCollectionType(expression, validationContext);
+      return inferCollectionType(
+        expression,
+        validationContext,
+        wrapperFactories,
+      );
     }
     assertUnreachable(expression);
   } else if (isFreeVariableLiteral(expression)) {
     if (isValueKeywordLiteral(expression)) {
-      return inferTypeFromValueKeyword(expression, validationContext);
+      return inferTypeFromValueKeyword(
+        expression,
+        validationContext,
+        wrapperFactories,
+      );
     } else if (isReferenceLiteral(expression)) {
-      return inferTypeFromReferenceLiteral(expression);
+      return inferTypeFromReferenceLiteral(expression, wrapperFactories);
     }
     assertUnreachable(expression);
   }
@@ -170,10 +201,12 @@ function inferNumericType(expression: NumericLiteral): ValueType {
 function inferCollectionType(
   collection: CollectionLiteral,
   validationContext: ValidationContext,
+  wrapperFactories: WrapperFactoryProvider,
 ): ValueType | undefined {
   const elementValuetypes = inferCollectionElementTypes(
     collection,
     validationContext,
+    wrapperFactories,
   );
   if (elementValuetypes === undefined) {
     return undefined;
@@ -189,7 +222,7 @@ function inferCollectionType(
     const stack = stacks[0]!;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const resultingInnerType = stack[stack.length - 1]!;
-    return new CollectionValuetype(resultingInnerType);
+    return wrapperFactories.ValueType.wrapCollection(resultingInnerType);
   }
 
   const primitiveValuetypes = stacks.map((stack) => stack[0]);
@@ -210,17 +243,18 @@ function inferCollectionType(
 
   const commonAtomicValuetype = pickCommonAtomicValuetype(stacks);
   if (commonAtomicValuetype === undefined) {
-    return new CollectionValuetype(commonPrimitiveValuetype);
+    return wrapperFactories.ValueType.wrapCollection(commonPrimitiveValuetype);
   }
-  return new CollectionValuetype(commonAtomicValuetype);
+  return wrapperFactories.ValueType.wrapCollection(commonAtomicValuetype);
 }
 
 function inferCollectionElementTypes(
   collection: CollectionLiteral,
   validationContext: ValidationContext,
+  wrapperFactories: WrapperFactoryProvider,
 ): ValueType[] | undefined {
   const elementValuetypes = collection.values.map((value) =>
-    inferExpressionType(value, validationContext),
+    inferExpressionType(value, validationContext, wrapperFactories),
   );
   if (!isEveryValueDefined(elementValuetypes)) {
     return undefined;
@@ -273,15 +307,17 @@ function pickCommonPrimitiveValuetype(
 
 function pickCommonAtomicValuetype(
   stacks: ValuetypeHierarchyStack[],
-): ValueType | undefined {
+): PrimitiveValueType | AtomicValuetype | undefined {
   const minimumStackLength = Math.min(...stacks.map((stack) => stack.length));
 
-  let resultingType: ValueType | undefined = undefined;
+  let resultingType: PrimitiveValueType | AtomicValuetype | undefined =
+    undefined;
   for (let stackLevel = 1; stackLevel < minimumStackLength; ++stackLevel) {
-    const typesOfCurrentLevel: ValueType[] = stacks.map(
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      (stack) => stack[stackLevel]!,
-    );
+    const typesOfCurrentLevel: (PrimitiveValueType | AtomicValuetype)[] =
+      stacks.map(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        (stack) => stack[stackLevel]!,
+      );
 
     if (!areAllTypesEqual(typesOfCurrentLevel)) {
       // Return the common value type of the previous level
@@ -308,6 +344,7 @@ function areAllTypesEqual(types: ValueType[]): boolean {
 function inferTypeFromValueKeyword(
   expression: ValueKeywordLiteral,
   validationContext: ValidationContext,
+  wrapperFactories: WrapperFactoryProvider,
 ): ValueType | undefined {
   const expressionConstraintContainer = getNextAstNodeContainer(
     expression,
@@ -324,8 +361,10 @@ function inferTypeFromValueKeyword(
     return undefined;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  const valueType = createValueType(expressionConstraintContainer?.valueType);
+  const valueType = wrapperFactories.ValueType.wrap(
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    expressionConstraintContainer?.valueType,
+  );
   if (valueType === undefined) {
     return undefined;
   }
@@ -349,6 +388,7 @@ function inferTypeFromValueKeyword(
 
 function inferTypeFromReferenceLiteral(
   expression: ReferenceLiteral,
+  wrapperFactories: WrapperFactoryProvider,
 ): ValueType | undefined {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const referenced = expression?.value?.ref;
@@ -371,7 +411,7 @@ function inferTypeFromReferenceLiteral(
     if (valueType === undefined) {
       return undefined;
     }
-    return createValueType(valueType);
+    return wrapperFactories.ValueType.wrap(valueType);
   }
   assertUnreachable(referenced);
 }

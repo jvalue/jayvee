@@ -10,7 +10,6 @@ import {
   type TransformOutputAssignment,
   type TransformPortDefinition,
   type ValueType,
-  createValueType,
   evaluateExpression,
 } from '@jvalue/jayvee-language-server';
 
@@ -24,27 +23,31 @@ export interface PortDetails {
 }
 
 export class TransformExecutor {
+  // TODO: inject ExecutionContext via constructor?
   constructor(private readonly transform: TransformDefinition) {}
 
-  getInputDetails(): PortDetails[] {
-    return this.getPortDetails('from');
+  getInputDetails(context: ExecutionContext): PortDetails[] {
+    return this.getPortDetails('from', context);
   }
 
-  getOutputDetails(): PortDetails {
-    const portDetails = this.getPortDetails('to');
+  getOutputDetails(context: ExecutionContext): PortDetails {
+    const portDetails = this.getPortDetails('to', context);
     assert(portDetails.length === 1);
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return portDetails[0]!;
   }
 
-  private getPortDetails(kind: TransformPortDefinition['kind']): {
+  private getPortDetails(
+    kind: TransformPortDefinition['kind'],
+    context: ExecutionContext,
+  ): {
     port: TransformPortDefinition;
     valueType: ValueType;
   }[] {
     const ports = this.transform.body.ports.filter((x) => x.kind === kind);
     const portDetails = ports.map((port) => {
       const valueTypeNode = port.valueType;
-      const valueType = createValueType(valueTypeNode);
+      const valueType = context.wrapperFactories.ValueType.wrap(valueTypeNode);
       assert(valueType !== undefined);
       return {
         port: port,
@@ -86,8 +89,8 @@ export class TransformExecutor {
     resultingColumn: TableColumn;
     rowsToDelete: number[];
   } {
-    const inputDetailsList = this.getInputDetails();
-    const outputDetails = this.getOutputDetails();
+    const inputDetailsList = this.getInputDetails(context);
+    const outputDetails = this.getOutputDetails(context);
 
     const newColumn: InternalValueRepresentation[] = [];
     const rowsToDelete: number[] = [];

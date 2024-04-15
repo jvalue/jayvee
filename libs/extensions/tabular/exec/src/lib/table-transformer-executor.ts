@@ -60,8 +60,8 @@ export class TableTransformerExecutor extends AbstractBlockExecutor<
     }
 
     const executor = new TransformExecutor(usedTransform);
-    const transformInputDetailsList = executor.getInputDetails();
-    const transformOutputDetails = executor.getOutputDetails();
+    const transformInputDetailsList = executor.getInputDetails(context);
+    const transformOutputDetails = executor.getOutputDetails(context);
 
     const checkInputColumnsMatchTransformInputTypesResult =
       this.checkInputColumnsMatchTransformInputTypes(
