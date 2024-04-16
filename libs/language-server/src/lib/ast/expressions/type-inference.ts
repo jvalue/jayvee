@@ -39,9 +39,7 @@ import { getNextAstNodeContainer } from '../model-util';
 // eslint-disable-next-line import/no-cycle
 import {
   type AtomicValuetype,
-  EmptyCollection,
   type PrimitiveValueType,
-  PrimitiveValuetypes,
   type ValueType,
   type WrapperFactoryProvider,
   isAtomicValuetype,
@@ -152,17 +150,17 @@ function inferTypeFromExpressionLiteral(
 ): ValueType | undefined {
   if (isValueLiteral(expression)) {
     if (isTextLiteral(expression)) {
-      return PrimitiveValuetypes.Text;
+      return wrapperFactories.ValueType.Primitives.Text;
     } else if (isBooleanLiteral(expression)) {
-      return PrimitiveValuetypes.Boolean;
+      return wrapperFactories.ValueType.Primitives.Boolean;
     } else if (isNumericLiteral(expression)) {
-      return inferNumericType(expression);
+      return inferNumericType(expression, wrapperFactories);
     } else if (isCellRangeLiteral(expression)) {
-      return PrimitiveValuetypes.CellRange;
+      return wrapperFactories.ValueType.Primitives.CellRange;
     } else if (isRegexLiteral(expression)) {
-      return PrimitiveValuetypes.Regex;
+      return wrapperFactories.ValueType.Primitives.Regex;
     } else if (isValuetypeAssignmentLiteral(expression)) {
-      return PrimitiveValuetypes.ValuetypeAssignment;
+      return wrapperFactories.ValueType.Primitives.ValuetypeAssignment;
     } else if (isCollectionLiteral(expression)) {
       return inferCollectionType(
         expression,
@@ -191,11 +189,14 @@ function inferTypeFromExpressionLiteral(
  * Thus, the inferred type might differ from the literal type.
  * E.g., 3.0 is currently interpreted as integer but is a DecimalLiteral.
  */
-function inferNumericType(expression: NumericLiteral): ValueType {
+function inferNumericType(
+  expression: NumericLiteral,
+  wrapperFactories: WrapperFactoryProvider,
+): ValueType {
   if (Number.isInteger(expression.value)) {
-    return PrimitiveValuetypes.Integer;
+    return wrapperFactories.ValueType.Primitives.Integer;
   }
-  return PrimitiveValuetypes.Decimal;
+  return wrapperFactories.ValueType.Primitives.Decimal;
 }
 
 function inferCollectionType(
@@ -215,14 +216,14 @@ function inferCollectionType(
   const stacks = elementValuetypes.map(getValuetypeHierarchyStack);
 
   if (stacks.length === 0) {
-    return EmptyCollection;
+    return wrapperFactories.ValueType.EmptyCollection;
   }
   if (stacks.length === 1) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const stack = stacks[0]!;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const resultingInnerType = stack[stack.length - 1]!;
-    return wrapperFactories.ValueType.wrapCollection(resultingInnerType);
+    return wrapperFactories.ValueType.createCollection(resultingInnerType);
   }
 
   const primitiveValuetypes = stacks.map((stack) => stack[0]);
@@ -243,9 +244,11 @@ function inferCollectionType(
 
   const commonAtomicValuetype = pickCommonAtomicValuetype(stacks);
   if (commonAtomicValuetype === undefined) {
-    return wrapperFactories.ValueType.wrapCollection(commonPrimitiveValuetype);
+    return wrapperFactories.ValueType.createCollection(
+      commonPrimitiveValuetype,
+    );
   }
-  return wrapperFactories.ValueType.wrapCollection(commonAtomicValuetype);
+  return wrapperFactories.ValueType.createCollection(commonAtomicValuetype);
 }
 
 function inferCollectionElementTypes(
@@ -370,7 +373,9 @@ function inferTypeFromValueKeyword(
   }
 
   if (expression.lengthAccess) {
-    if (!valueType.isConvertibleTo(PrimitiveValuetypes.Text)) {
+    if (
+      !valueType.isConvertibleTo(wrapperFactories.ValueType.Primitives.Text)
+    ) {
       validationContext.accept(
         'error',
         'The length can only be accessed from text values ',
@@ -381,7 +386,7 @@ function inferTypeFromValueKeyword(
       );
       return undefined;
     }
-    return PrimitiveValuetypes.Integer;
+    return wrapperFactories.ValueType.Primitives.Integer;
   }
   return valueType;
 }
@@ -397,10 +402,10 @@ function inferTypeFromReferenceLiteral(
   }
 
   if (isConstraintDefinition(referenced)) {
-    return PrimitiveValuetypes.Constraint;
+    return wrapperFactories.ValueType.Primitives.Constraint;
   }
   if (isTransformDefinition(referenced)) {
-    return PrimitiveValuetypes.Transform;
+    return wrapperFactories.ValueType.Primitives.Transform;
   }
   if (
     isTransformPortDefinition(referenced) ||

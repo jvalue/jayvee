@@ -68,11 +68,11 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
     }
 
     const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
-    const operatorTypeComputerRegistry =
-      new DefaultOperatorTypeComputerRegistry();
     const wrapperFactories = new WrapperFactoryProvider(
       operatorEvaluatorRegistry,
     );
+    const operatorTypeComputerRegistry =
+      new DefaultOperatorTypeComputerRegistry(wrapperFactories);
 
     validateRuntimeParameterLiteral(runtimeParameter, {
       validationContext: new ValidationContext(

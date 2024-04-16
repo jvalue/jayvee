@@ -4,19 +4,23 @@
 
 import { type ValidationContext } from '../../../validation/validation-context';
 import { type BinaryExpression } from '../../generated/ast';
+import { type WrapperFactoryProvider } from '../../wrappers';
 import { type ValueType } from '../../wrappers/value-type';
-import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/primitive-value-types';
 import { type BinaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class EqualityOperatorTypeComputer
   implements BinaryOperatorTypeComputer
 {
-  private readonly ALLOWED_OPERAND_TYPES: ValueType[] = [
-    PrimitiveValuetypes.Boolean,
-    PrimitiveValuetypes.Text,
-    PrimitiveValuetypes.Integer,
-    PrimitiveValuetypes.Decimal,
-  ];
+  private readonly ALLOWED_OPERAND_TYPES: ValueType[];
+
+  constructor(protected readonly wrapperFactories: WrapperFactoryProvider) {
+    this.ALLOWED_OPERAND_TYPES = [
+      wrapperFactories.ValueType.Primitives.Boolean,
+      wrapperFactories.ValueType.Primitives.Text,
+      wrapperFactories.ValueType.Primitives.Integer,
+      wrapperFactories.ValueType.Primitives.Decimal,
+    ];
+  }
 
   computeType(
     leftOperandType: ValueType,
@@ -62,6 +66,6 @@ export class EqualityOperatorTypeComputer
       return undefined;
     }
 
-    return PrimitiveValuetypes.Boolean;
+    return this.wrapperFactories.ValueType.Primitives.Boolean;
   }
 }

@@ -9,7 +9,8 @@ import { getTestExecutionContext } from '@jvalue/jayvee-execution/test';
 import {
   type BlockDefinition,
   IOType,
-  PrimitiveValuetypes,
+  type OperatorEvaluatorRegistry,
+  type WrapperFactoryProvider,
   createJayveeServices,
 } from '@jvalue/jayvee-language-server';
 import {
@@ -40,6 +41,8 @@ describe('Validation of TableTransformerExecutor', () => {
   ) => Promise<LangiumDocument<AstNode>>;
 
   let locator: AstNodeLocator;
+  let wrapperFactories: WrapperFactoryProvider;
+  let operatorEvaluatorRegistry: OperatorEvaluatorRegistry;
 
   const readJvTestAsset = readJvTestAssetHelper(
     __dirname,
@@ -51,17 +54,17 @@ describe('Validation of TableTransformerExecutor', () => {
       {
         columnName: 'index',
         sheetColumnIndex: 0,
-        valueType: PrimitiveValuetypes.Integer,
+        valueType: wrapperFactories.ValueType.Primitives.Integer,
       },
       {
         columnName: 'name',
         sheetColumnIndex: 1,
-        valueType: PrimitiveValuetypes.Text,
+        valueType: wrapperFactories.ValueType.Primitives.Text,
       },
       {
         columnName: 'flag',
         sheetColumnIndex: 2,
-        valueType: PrimitiveValuetypes.Boolean,
+        valueType: wrapperFactories.ValueType.Primitives.Boolean,
       },
     ]);
   }
@@ -94,7 +97,21 @@ describe('Validation of TableTransformerExecutor', () => {
 
     return new TableTransformerExecutor().doExecute(
       IOInput,
-      getTestExecutionContext(locator, document, [block]),
+      getTestExecutionContext(
+        locator,
+        document,
+        [block],
+        {
+          isDebugMode: false,
+          debugGranularity: 'minimal',
+          debugTargets: 'all',
+        },
+        true,
+        {
+          operatorEvaluatorRegistry: operatorEvaluatorRegistry,
+          wrapperFactoryProvider: wrapperFactories,
+        },
+      ),
     );
   }
 
@@ -105,6 +122,8 @@ describe('Validation of TableTransformerExecutor', () => {
       path.resolve(__dirname, '../../test/test-extension/TestBlockTypes.jv'),
     ]);
     locator = services.workspace.AstNodeLocator;
+    operatorEvaluatorRegistry = services.operators.EvaluatorRegistry;
+    wrapperFactories = services.WrapperFactories;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });
@@ -166,7 +185,7 @@ describe('Validation of TableTransformerExecutor', () => {
       expect(result.right.getColumn('index')).toEqual(
         expect.objectContaining({
           values: [false, true, true, true, true, true],
-          valueType: PrimitiveValuetypes.Boolean,
+          valueType: wrapperFactories.ValueType.Primitives.Boolean,
         }),
       );
     }
@@ -179,7 +198,7 @@ describe('Validation of TableTransformerExecutor', () => {
       {
         columnName: 'index',
         sheetColumnIndex: 0,
-        valueType: PrimitiveValuetypes.Integer,
+        valueType: wrapperFactories.ValueType.Primitives.Integer,
       },
     ]);
     const result = await parseAndExecuteExecutor(text, testTable);

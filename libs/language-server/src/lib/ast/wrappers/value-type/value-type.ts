@@ -9,10 +9,10 @@ import { type AtomicValueType } from './atomic-value-type';
 import {
   type BooleanValuetype,
   type CellRangeValuetype,
-  type CollectionValuetype,
+  type CollectionValueType,
   type ConstraintValuetype,
   type DecimalValuetype,
-  type EmptyCollectionValuetype,
+  type EmptyCollectionValueType,
   type IntegerValuetype,
   type RegexValuetype,
   type TextValuetype,
@@ -147,7 +147,7 @@ export abstract class ValueTypeVisitor<R = unknown> {
   abstract visitConstraint(valueType: ConstraintValuetype): R;
   abstract visitValuetypeAssignment(valueType: ValuetypeAssignmentValuetype): R;
   abstract visitCollection(
-    valueType: CollectionValuetype | EmptyCollectionValuetype,
+    valueType: CollectionValueType | EmptyCollectionValueType,
   ): R;
   abstract visitTransform(valueType: TransformValuetype): R;
 

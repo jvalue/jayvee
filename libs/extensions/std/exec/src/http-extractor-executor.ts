@@ -20,7 +20,7 @@ import {
   inferFileExtensionFromFileExtensionString,
   inferMimeTypeFromFileExtensionString,
 } from '@jvalue/jayvee-execution';
-import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
+import { IOType } from '@jvalue/jayvee-language-server';
 import { http, https } from 'follow-redirects';
 import { type AstNode } from 'langium';
 
@@ -46,19 +46,22 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
     input: None,
     context: ExecutionContext,
   ): Promise<R.Result<BinaryFile>> {
-    const url = context.getPropertyValue('url', PrimitiveValuetypes.Text);
+    const url = context.getPropertyValue(
+      'url',
+      context.wrapperFactories.ValueType.Primitives.Text,
+    );
     const retries = context.getPropertyValue(
       'retries',
-      PrimitiveValuetypes.Integer,
+      context.wrapperFactories.ValueType.Primitives.Integer,
     );
     assert(retries >= 0); // loop executes at least once
     const retryBackoffMilliseconds = context.getPropertyValue(
       'retryBackoffMilliseconds',
-      PrimitiveValuetypes.Integer,
+      context.wrapperFactories.ValueType.Primitives.Integer,
     );
     const retryBackoffStrategy = context.getPropertyValue(
       'retryBackoffStrategy',
-      PrimitiveValuetypes.Text,
+      context.wrapperFactories.ValueType.Primitives.Text,
     );
     assert(isBackoffStrategyHandle(retryBackoffStrategy));
     const backoffStrategy = createBackoffStrategy(
@@ -109,7 +112,7 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
     }
     const followRedirects = context.getPropertyValue(
       'followRedirects',
-      PrimitiveValuetypes.Boolean,
+      context.wrapperFactories.ValueType.Primitives.Boolean,
     );
     return new Promise((resolve) => {
       httpGetFunction(url, { followRedirects: followRedirects }, (response) => {

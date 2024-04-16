@@ -5,6 +5,7 @@
 import {
   DefaultOperatorEvaluatorRegistry,
   EvaluationContext,
+  type OperatorEvaluatorRegistry,
   type PipelineDefinition,
   RuntimeParameterProvider,
   WrapperFactoryProvider,
@@ -55,20 +56,31 @@ export function getTestExecutionContext(
     debugTargets: 'all',
   },
   loggerPrintLogs = true,
+  overwrites:
+    | {
+        operatorEvaluatorRegistry?: OperatorEvaluatorRegistry;
+        wrapperFactoryProvider?: WrapperFactoryProvider;
+      }
+    | undefined = undefined,
 ): ExecutionContext {
   const pipeline = locator.getAstNode<PipelineDefinition>(
     document.parseResult.value,
     'pipelines@0',
   ) as PipelineDefinition;
 
-  const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
+  const operatorEvaluatorRegistry =
+    overwrites?.operatorEvaluatorRegistry ??
+    new DefaultOperatorEvaluatorRegistry();
+  const wrapperFactories =
+    overwrites?.wrapperFactoryProvider ??
+    new WrapperFactoryProvider(operatorEvaluatorRegistry);
 
   const executionContext = new ExecutionContext(
     pipeline,
     new TestExecExtension(),
     new DefaultConstraintExtension(),
     new CachedLogger(runOptions.isDebugMode, undefined, loggerPrintLogs),
-    new WrapperFactoryProvider(operatorEvaluatorRegistry),
+    wrapperFactories,
     runOptions,
     new EvaluationContext(
       new RuntimeParameterProvider(),

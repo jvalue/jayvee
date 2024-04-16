@@ -13,9 +13,7 @@ import { assertUnreachable } from 'langium';
 
 import {
   type CollectionLiteral,
-  CollectionValuetype,
   type ConstraintDefinition,
-  PrimitiveValuetypes,
   type ValueType,
   evaluateExpression,
   inferExpressionType,
@@ -72,7 +70,9 @@ function checkConstraintsCollectionValues(
     props.validationContext,
     props.wrapperFactories,
   );
-  const expectedType = new CollectionValuetype(PrimitiveValuetypes.Constraint);
+  const expectedType = props.wrapperFactories.ValueType.createCollection(
+    props.wrapperFactories.ValueType.Primitives.Constraint,
+  );
   if (inferredCollectionType === undefined) {
     return;
   }

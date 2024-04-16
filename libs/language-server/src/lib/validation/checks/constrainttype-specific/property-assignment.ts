@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  PrimitiveValuetypes,
   type PropertyAssignment,
   type PropertySpecification,
   evaluatePropertyValue,
@@ -54,7 +53,7 @@ function checkNonNegative(
     property,
     props.evaluationContext,
     props.wrapperFactories,
-    PrimitiveValuetypes.Integer,
+    props.wrapperFactories.ValueType.Primitives.Integer,
   );
   if (value === undefined) {
     return;

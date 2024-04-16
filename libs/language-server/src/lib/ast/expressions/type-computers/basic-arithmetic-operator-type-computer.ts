@@ -2,13 +2,16 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { type WrapperFactoryProvider } from '../../wrappers';
 import { type ValueType } from '../../wrappers/value-type';
-import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/primitive-value-types';
 import { DefaultBinaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class BasicArithmeticOperatorTypeComputer extends DefaultBinaryOperatorTypeComputer {
-  constructor() {
-    super(PrimitiveValuetypes.Decimal, PrimitiveValuetypes.Decimal);
+  constructor(protected readonly wrapperFactories: WrapperFactoryProvider) {
+    super(
+      wrapperFactories.ValueType.Primitives.Decimal,
+      wrapperFactories.ValueType.Primitives.Decimal,
+    );
   }
 
   override doComputeType(
@@ -16,11 +19,11 @@ export class BasicArithmeticOperatorTypeComputer extends DefaultBinaryOperatorTy
     rightOperandType: ValueType,
   ): ValueType {
     if (
-      leftOperandType === PrimitiveValuetypes.Integer &&
-      rightOperandType === PrimitiveValuetypes.Integer
+      leftOperandType === this.wrapperFactories.ValueType.Primitives.Integer &&
+      rightOperandType === this.wrapperFactories.ValueType.Primitives.Integer
     ) {
-      return PrimitiveValuetypes.Integer;
+      return this.wrapperFactories.ValueType.Primitives.Integer;
     }
-    return PrimitiveValuetypes.Decimal;
+    return this.wrapperFactories.ValueType.Primitives.Decimal;
   }
 }

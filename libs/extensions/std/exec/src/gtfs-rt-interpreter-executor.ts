@@ -11,7 +11,7 @@ import {
   Sheet,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
-import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
+import { IOType } from '@jvalue/jayvee-language-server';
 import * as E from 'fp-ts/lib/Either';
 import { type Either } from 'fp-ts/lib/Either';
 import * as GtfsRealtimeBindings from 'gtfs-realtime-bindings';
@@ -32,7 +32,10 @@ export class GtfsRTInterpreterExecutor extends AbstractBlockExecutor<
     context: ExecutionContext,
   ): Promise<R.Result<Sheet>> {
     // Accessing attribute values by their name:
-    const entity = context.getPropertyValue('entity', PrimitiveValuetypes.Text);
+    const entity = context.getPropertyValue(
+      'entity',
+      context.wrapperFactories.ValueType.Primitives.Text,
+    );
 
     // https://github.com/MobilityData/gtfs-realtime-bindings/tree/master/nodejs
     let feedMessage;

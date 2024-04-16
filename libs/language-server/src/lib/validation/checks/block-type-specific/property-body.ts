@@ -2,12 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  CollectionValuetype,
-  PrimitiveValuetypes,
-  type PropertyBody,
-  evaluatePropertyValue,
-} from '../../../ast';
+import { type PropertyBody, evaluatePropertyValue } from '../../../ast';
 import { type JayveeValidationProps } from '../../validation-registry';
 
 export function checkBlockTypeSpecificPropertyBody(
@@ -44,13 +39,13 @@ function checkTextRangeSelectorPropertyBody(
     lineFromProperty,
     props.evaluationContext,
     props.wrapperFactories,
-    PrimitiveValuetypes.Integer,
+    props.wrapperFactories.ValueType.Primitives.Integer,
   );
   const lineTo = evaluatePropertyValue(
     lineToProperty,
     props.evaluationContext,
     props.wrapperFactories,
-    PrimitiveValuetypes.Integer,
+    props.wrapperFactories.ValueType.Primitives.Integer,
   );
   if (lineFrom === undefined || lineTo === undefined) {
     return;
@@ -82,14 +77,16 @@ function checkCellWriterPropertyBody(
     writeProperty,
     props.evaluationContext,
     props.wrapperFactories,
-    new CollectionValuetype(PrimitiveValuetypes.Text),
+    props.wrapperFactories.ValueType.createCollection(
+      props.wrapperFactories.ValueType.Primitives.Text,
+    ),
   );
 
   const atValue = evaluatePropertyValue(
     atProperty,
     props.evaluationContext,
     props.wrapperFactories,
-    PrimitiveValuetypes.CellRange,
+    props.wrapperFactories.ValueType.Primitives.CellRange,
   );
 
   if (writeValues === undefined || atValue === undefined) {
@@ -139,13 +136,15 @@ function checkInputColumnsMatchTransformationPorts(
     useProperty,
     props.evaluationContext,
     props.wrapperFactories,
-    PrimitiveValuetypes.Transform,
+    props.wrapperFactories.ValueType.Primitives.Transform,
   );
   const inputColumns = evaluatePropertyValue(
     inputColumnsProperty,
     props.evaluationContext,
     props.wrapperFactories,
-    new CollectionValuetype(PrimitiveValuetypes.Text),
+    props.wrapperFactories.ValueType.createCollection(
+      props.wrapperFactories.ValueType.Primitives.Text,
+    ),
   );
 
   if (transform === undefined || inputColumns === undefined) {

@@ -10,9 +10,11 @@ import {
 import { NodeFileSystem } from 'langium/node';
 
 import {
+  DefaultOperatorEvaluatorRegistry,
   DefaultOperatorTypeComputerRegistry,
   type PropertyBody,
   ValidationContext,
+  WrapperFactoryProvider,
   checkUniqueNames,
   createJayveeServices,
 } from '..';
@@ -77,7 +79,9 @@ describe('Validation of validation-utils', () => {
         propertyBody.properties,
         new ValidationContext(
           validationAcceptorMock,
-          new DefaultOperatorTypeComputerRegistry(),
+          new DefaultOperatorTypeComputerRegistry(
+            new WrapperFactoryProvider(new DefaultOperatorEvaluatorRegistry()),
+          ),
         ),
       );
 
@@ -96,7 +100,9 @@ describe('Validation of validation-utils', () => {
         propertyBody.properties,
         new ValidationContext(
           validationAcceptorMock,
-          new DefaultOperatorTypeComputerRegistry(),
+          new DefaultOperatorTypeComputerRegistry(
+            new WrapperFactoryProvider(new DefaultOperatorEvaluatorRegistry()),
+          ),
         ),
       );
 

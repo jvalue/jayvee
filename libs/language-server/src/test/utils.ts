@@ -74,11 +74,12 @@ export async function loadTestExtensions(
 export function createJayveeValidationProps(
   validationAcceptor: ValidationAcceptor,
 ): JayveeValidationProps {
-  const operatorTypeComputerRegistry =
-    new DefaultOperatorTypeComputerRegistry();
   const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
   const wrapperFactories = new WrapperFactoryProvider(
     operatorEvaluatorRegistry,
+  );
+  const operatorTypeComputerRegistry = new DefaultOperatorTypeComputerRegistry(
+    wrapperFactories,
   );
 
   return {

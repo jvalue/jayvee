@@ -3,14 +3,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { IOType, type PrimitiveValueType } from '../ast';
-import { PrimitiveValuetypes } from '../ast/wrappers/value-type/primitive/primitive-value-types';
+import { PrimitiveValuetypeContainer } from '../ast/wrappers/value-type/primitive/primitive-value-container';
 
 import { PartialStdLib } from './generated/partial-stdlib';
 
 export function getBuiltinValuetypesLib() {
-  const primitiveValuetypes = Object.values(PrimitiveValuetypes).map(
-    parseBuiltinValuetypeToJayvee,
-  );
+  const primitiveValuetypes = new PrimitiveValuetypeContainer() // instantiation is okay here as it has no side effects: it is only parsed to string
+    .getAll()
+    .map(parseBuiltinValuetypeToJayvee);
 
   const collectionValuetype = `${parseAsComment('For internal use only.')}
 builtin valuetype Collection<ElementType>;`;

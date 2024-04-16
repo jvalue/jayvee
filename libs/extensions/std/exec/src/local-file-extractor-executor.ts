@@ -18,7 +18,7 @@ import {
   inferFileExtensionFromFileExtensionString,
   inferMimeTypeFromFileExtensionString,
 } from '@jvalue/jayvee-execution';
-import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
+import { IOType } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
 export class LocalFileExtractorExecutor extends AbstractBlockExecutor<
@@ -37,7 +37,7 @@ export class LocalFileExtractorExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<BinaryFile>> {
     const filePath = context.getPropertyValue(
       'filePath',
-      PrimitiveValuetypes.Text,
+      context.wrapperFactories.ValueType.Primitives.Text,
     );
 
     if (filePath.includes('..')) {

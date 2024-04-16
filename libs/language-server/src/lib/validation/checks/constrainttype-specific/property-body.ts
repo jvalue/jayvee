@@ -2,11 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  PrimitiveValuetypes,
-  type PropertyBody,
-  evaluatePropertyValue,
-} from '../../../ast';
+import { type PropertyBody, evaluatePropertyValue } from '../../../ast';
 import { type JayveeValidationProps } from '../../validation-registry';
 
 export function checkConstraintTypeSpecificPropertyBody(
@@ -41,13 +37,13 @@ function checkLengthConstraintPropertyBody(
     minLengthProperty,
     props.evaluationContext,
     props.wrapperFactories,
-    PrimitiveValuetypes.Integer,
+    props.wrapperFactories.ValueType.Primitives.Integer,
   );
   const maxLength = evaluatePropertyValue(
     maxLengthProperty,
     props.evaluationContext,
     props.wrapperFactories,
-    PrimitiveValuetypes.Integer,
+    props.wrapperFactories.ValueType.Primitives.Integer,
   );
   if (minLength === undefined || maxLength === undefined) {
     return;
@@ -83,13 +79,13 @@ function checkRangeConstraintPropertyBody(
     lowerBoundProperty,
     props.evaluationContext,
     props.wrapperFactories,
-    PrimitiveValuetypes.Decimal,
+    props.wrapperFactories.ValueType.Primitives.Decimal,
   );
   const upperBound = evaluatePropertyValue(
     upperBoundProperty,
     props.evaluationContext,
     props.wrapperFactories,
-    PrimitiveValuetypes.Decimal,
+    props.wrapperFactories.ValueType.Primitives.Decimal,
   );
   if (lowerBound === undefined || upperBound === undefined) {
     return;
@@ -120,7 +116,7 @@ function checkRangeConstraintPropertyBody(
         lowerBoundInclusiveProperty,
         props.evaluationContext,
         props.wrapperFactories,
-        PrimitiveValuetypes.Boolean,
+        props.wrapperFactories.ValueType.Primitives.Boolean,
       );
       if (expressionValue === undefined) {
         return;
@@ -134,7 +130,7 @@ function checkRangeConstraintPropertyBody(
         upperBoundInclusiveProperty,
         props.evaluationContext,
         props.wrapperFactories,
-        PrimitiveValuetypes.Boolean,
+        props.wrapperFactories.ValueType.Primitives.Boolean,
       );
       if (expressionValue === undefined) {
         return;

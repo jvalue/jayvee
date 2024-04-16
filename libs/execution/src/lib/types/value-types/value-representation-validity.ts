@@ -8,7 +8,7 @@ import {
   type AtomicValuetype,
   type BooleanValuetype,
   type CellRangeValuetype,
-  type CollectionValuetype,
+  type CollectionValueType,
   type ConstraintValuetype,
   type DecimalValuetype,
   type IntegerValuetype,
@@ -104,7 +104,7 @@ class ValueRepresentationValidityVisitor extends ValueTypeVisitor<boolean> {
     return this.isValidForPrimitiveValuetype(valueType);
   }
 
-  override visitCollection(valueType: CollectionValuetype): boolean {
+  override visitCollection(valueType: CollectionValueType): boolean {
     return this.isValidForPrimitiveValuetype(valueType);
   }
 

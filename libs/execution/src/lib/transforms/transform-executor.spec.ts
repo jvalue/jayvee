@@ -7,8 +7,8 @@ import * as path from 'path';
 
 import {
   type InternalValueRepresentation,
-  PrimitiveValuetypes,
   type TransformDefinition,
+  type WrapperFactoryProvider,
   createJayveeServices,
 } from '@jvalue/jayvee-language-server';
 import {
@@ -37,6 +37,7 @@ describe('Validation of TransformExecutor', () => {
   ) => Promise<LangiumDocument<AstNode>>;
 
   let locator: AstNodeLocator;
+  let wrapperFactories: WrapperFactoryProvider;
 
   const readJvTestAsset = readJvTestAssetHelper(
     __dirname,
@@ -102,6 +103,7 @@ describe('Validation of TransformExecutor', () => {
     ]);
 
     locator = services.workspace.AstNodeLocator;
+    wrapperFactories = services.WrapperFactories;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });
@@ -117,14 +119,14 @@ describe('Validation of TransformExecutor', () => {
           columnName: 'Column1',
           column: {
             values: ['value 1'],
-            valueType: PrimitiveValuetypes.Text,
+            valueType: wrapperFactories.ValueType.Primitives.Text,
           },
         },
         {
           columnName: 'Column2',
           column: {
             values: [20.2],
-            valueType: PrimitiveValuetypes.Decimal,
+            valueType: wrapperFactories.ValueType.Primitives.Decimal,
           },
         },
       ],
@@ -140,7 +142,7 @@ describe('Validation of TransformExecutor', () => {
 
     expect(result.rowsToDelete).toHaveLength(0);
     expect(result.resultingColumn.valueType).toEqual(
-      PrimitiveValuetypes.Integer,
+      wrapperFactories.ValueType.Primitives.Integer,
     );
     expect(result.resultingColumn.values).toHaveLength(1);
     expect(result.resultingColumn.values).toEqual(expect.arrayContaining([21]));
@@ -157,14 +159,14 @@ describe('Validation of TransformExecutor', () => {
           columnName: 'Column1',
           column: {
             values: ['value 1'],
-            valueType: PrimitiveValuetypes.Text,
+            valueType: wrapperFactories.ValueType.Primitives.Text,
           },
         },
         {
           columnName: 'Column2',
           column: {
             values: [20.0],
-            valueType: PrimitiveValuetypes.Decimal,
+            valueType: wrapperFactories.ValueType.Primitives.Decimal,
           },
         },
       ],
@@ -180,7 +182,9 @@ describe('Validation of TransformExecutor', () => {
 
     expect(result.rowsToDelete).toHaveLength(1);
     expect(result.rowsToDelete).toEqual(expect.arrayContaining([0]));
-    expect(result.resultingColumn.valueType).toEqual(PrimitiveValuetypes.Text);
+    expect(result.resultingColumn.valueType).toEqual(
+      wrapperFactories.ValueType.Primitives.Text,
+    );
     expect(result.resultingColumn.values).toHaveLength(0);
   });
 
@@ -195,21 +199,21 @@ describe('Validation of TransformExecutor', () => {
           columnName: 'Column1',
           column: {
             values: ['value 1'],
-            valueType: PrimitiveValuetypes.Text,
+            valueType: wrapperFactories.ValueType.Primitives.Text,
           },
         },
         {
           columnName: 'Column2',
           column: {
             values: [20.2],
-            valueType: PrimitiveValuetypes.Decimal,
+            valueType: wrapperFactories.ValueType.Primitives.Decimal,
           },
         },
         {
           columnName: 'Column3',
           column: {
             values: [85.978],
-            valueType: PrimitiveValuetypes.Decimal,
+            valueType: wrapperFactories.ValueType.Primitives.Decimal,
           },
         },
       ],
@@ -225,7 +229,7 @@ describe('Validation of TransformExecutor', () => {
 
     expect(result.rowsToDelete).toHaveLength(0);
     expect(result.resultingColumn.valueType).toEqual(
-      PrimitiveValuetypes.Integer,
+      wrapperFactories.ValueType.Primitives.Integer,
     );
     expect(result.resultingColumn.values).toHaveLength(1);
     expect(result.resultingColumn.values).toEqual(
@@ -244,14 +248,14 @@ describe('Validation of TransformExecutor', () => {
           columnName: 'Column1',
           column: {
             values: ['value 1'],
-            valueType: PrimitiveValuetypes.Text,
+            valueType: wrapperFactories.ValueType.Primitives.Text,
           },
         },
         {
           columnName: 'Column2',
           column: {
             values: [20.2],
-            valueType: PrimitiveValuetypes.Decimal,
+            valueType: wrapperFactories.ValueType.Primitives.Decimal,
           },
         },
       ],
@@ -287,14 +291,14 @@ describe('Validation of TransformExecutor', () => {
           columnName: 'Column1',
           column: {
             values: ['value 1'],
-            valueType: PrimitiveValuetypes.Text,
+            valueType: wrapperFactories.ValueType.Primitives.Text,
           },
         },
         {
           columnName: 'Column2',
           column: {
             values: [20.2],
-            valueType: PrimitiveValuetypes.Decimal,
+            valueType: wrapperFactories.ValueType.Primitives.Decimal,
           },
         },
       ],
@@ -310,7 +314,7 @@ describe('Validation of TransformExecutor', () => {
 
     expect(result.rowsToDelete).toHaveLength(1);
     expect(result.resultingColumn.valueType).toEqual(
-      PrimitiveValuetypes.Integer,
+      wrapperFactories.ValueType.Primitives.Integer,
     );
     expect(result.resultingColumn.values).toHaveLength(0);
   });
@@ -326,14 +330,14 @@ describe('Validation of TransformExecutor', () => {
           columnName: 'Column1',
           column: {
             values: ['value 1', 'value 2'],
-            valueType: PrimitiveValuetypes.Text,
+            valueType: wrapperFactories.ValueType.Primitives.Text,
           },
         },
         {
           columnName: 'Column2',
           column: {
             values: ['20.2', 20.1],
-            valueType: PrimitiveValuetypes.Decimal,
+            valueType: wrapperFactories.ValueType.Primitives.Decimal,
           },
         },
       ],
@@ -349,7 +353,7 @@ describe('Validation of TransformExecutor', () => {
 
     expect(result.rowsToDelete).toHaveLength(1);
     expect(result.resultingColumn.valueType).toEqual(
-      PrimitiveValuetypes.Integer,
+      wrapperFactories.ValueType.Primitives.Integer,
     );
     expect(result.resultingColumn.values).toHaveLength(1);
     expect(result.resultingColumn.values).toEqual(expect.arrayContaining([21]));
@@ -366,21 +370,21 @@ describe('Validation of TransformExecutor', () => {
           columnName: 'Column1',
           column: {
             values: ['value 1'],
-            valueType: PrimitiveValuetypes.Text,
+            valueType: wrapperFactories.ValueType.Primitives.Text,
           },
         },
         {
           columnName: 'Column2',
           column: {
             values: [20.2],
-            valueType: PrimitiveValuetypes.Decimal,
+            valueType: wrapperFactories.ValueType.Primitives.Decimal,
           },
         },
         {
           columnName: 'Column3',
           column: {
             values: [85.978],
-            valueType: PrimitiveValuetypes.Decimal,
+            valueType: wrapperFactories.ValueType.Primitives.Decimal,
           },
         },
       ],
@@ -396,7 +400,7 @@ describe('Validation of TransformExecutor', () => {
 
     expect(result.rowsToDelete).toHaveLength(1);
     expect(result.resultingColumn.valueType).toEqual(
-      PrimitiveValuetypes.Decimal,
+      wrapperFactories.ValueType.Primitives.Decimal,
     );
     expect(result.resultingColumn.values).toHaveLength(0);
   });

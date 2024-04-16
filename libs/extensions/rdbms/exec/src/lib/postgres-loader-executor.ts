@@ -12,7 +12,7 @@ import {
   Table,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
-import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
+import { IOType } from '@jvalue/jayvee-language-server';
 import { Client } from 'pg';
 
 @implementsStatic<BlockExecutorClass>()
@@ -30,18 +30,30 @@ export class PostgresLoaderExecutor extends AbstractBlockExecutor<
     input: Table,
     context: ExecutionContext,
   ): Promise<R.Result<None>> {
-    const host = context.getPropertyValue('host', PrimitiveValuetypes.Text);
-    const port = context.getPropertyValue('port', PrimitiveValuetypes.Integer);
-    const user = context.getPropertyValue('username', PrimitiveValuetypes.Text);
+    const host = context.getPropertyValue(
+      'host',
+      context.wrapperFactories.ValueType.Primitives.Text,
+    );
+    const port = context.getPropertyValue(
+      'port',
+      context.wrapperFactories.ValueType.Primitives.Integer,
+    );
+    const user = context.getPropertyValue(
+      'username',
+      context.wrapperFactories.ValueType.Primitives.Text,
+    );
     const password = context.getPropertyValue(
       'password',
-      PrimitiveValuetypes.Text,
+      context.wrapperFactories.ValueType.Primitives.Text,
     );
     const database = context.getPropertyValue(
       'database',
-      PrimitiveValuetypes.Text,
+      context.wrapperFactories.ValueType.Primitives.Text,
     );
-    const table = context.getPropertyValue('table', PrimitiveValuetypes.Text);
+    const table = context.getPropertyValue(
+      'table',
+      context.wrapperFactories.ValueType.Primitives.Text,
+    );
 
     const client = new Client({
       host,

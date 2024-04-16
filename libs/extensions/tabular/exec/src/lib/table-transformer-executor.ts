@@ -15,10 +15,8 @@ import {
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import {
-  CollectionValuetype,
   IOType,
   type InternalValueRepresentation,
-  PrimitiveValuetypes,
 } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
@@ -39,15 +37,17 @@ export class TableTransformerExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<Table>> {
     const inputColumnNames = context.getPropertyValue(
       'inputColumns',
-      new CollectionValuetype(PrimitiveValuetypes.Text),
+      context.wrapperFactories.ValueType.createCollection(
+        context.wrapperFactories.ValueType.Primitives.Text,
+      ),
     );
     const outputColumnName = context.getPropertyValue(
       'outputColumn',
-      PrimitiveValuetypes.Text,
+      context.wrapperFactories.ValueType.Primitives.Text,
     );
     const usedTransform = context.getPropertyValue(
       'use',
-      PrimitiveValuetypes.Transform,
+      context.wrapperFactories.ValueType.Primitives.Transform,
     );
 
     const checkInputColumnsExistResult = this.checkInputColumnsExist(

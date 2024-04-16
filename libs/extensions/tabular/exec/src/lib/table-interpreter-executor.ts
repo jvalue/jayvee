@@ -17,10 +17,8 @@ import {
 } from '@jvalue/jayvee-execution';
 import {
   CellIndex,
-  CollectionValuetype,
   IOType,
   type InternalValueRepresentation,
-  PrimitiveValuetypes,
   type ValueType,
   type ValuetypeAssignment,
   rowIndexToString,
@@ -51,11 +49,13 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<Table>> {
     const header = context.getPropertyValue(
       'header',
-      PrimitiveValuetypes.Boolean,
+      context.wrapperFactories.ValueType.Primitives.Boolean,
     );
     const columnDefinitions = context.getPropertyValue(
       'columns',
-      new CollectionValuetype(PrimitiveValuetypes.ValuetypeAssignment),
+      context.wrapperFactories.ValueType.createCollection(
+        context.wrapperFactories.ValueType.Primitives.ValuetypeAssignment,
+      ),
     );
 
     let columnEntries: ColumnDefinitionEntry[];

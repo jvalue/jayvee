@@ -79,7 +79,8 @@ export const JayveeModule: Module<
   },
   RuntimeParameterProvider: () => new RuntimeParameterProvider(),
   operators: {
-    TypeComputerRegistry: () => new DefaultOperatorTypeComputerRegistry(),
+    TypeComputerRegistry: (services) =>
+      new DefaultOperatorTypeComputerRegistry(services.WrapperFactories),
     EvaluatorRegistry: () => new DefaultOperatorEvaluatorRegistry(),
   },
   WrapperFactories: (services) =>

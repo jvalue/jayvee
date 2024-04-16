@@ -2,16 +2,19 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { type WrapperFactoryProvider } from '../../wrappers';
 import { type ValueType } from '../../wrappers/value-type';
-import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/primitive-value-types';
 import { DefaultBinaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class RelationalOperatorTypeComputer extends DefaultBinaryOperatorTypeComputer {
-  constructor() {
-    super(PrimitiveValuetypes.Decimal, PrimitiveValuetypes.Decimal);
+  constructor(protected readonly wrapperFactories: WrapperFactoryProvider) {
+    super(
+      wrapperFactories.ValueType.Primitives.Decimal,
+      wrapperFactories.ValueType.Primitives.Decimal,
+    );
   }
 
   override doComputeType(): ValueType {
-    return PrimitiveValuetypes.Boolean;
+    return this.wrapperFactories.ValueType.Primitives.Boolean;
   }
 }

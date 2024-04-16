@@ -11,7 +11,10 @@ import {
   isReference,
 } from 'langium';
 
-import { type OperatorEvaluatorRegistry } from '../expressions';
+import {
+  type InternalValueRepresentation,
+  type OperatorEvaluatorRegistry,
+} from '../expressions';
 import {
   type BlockTypePipeline,
   type BuiltinConstrainttypeDefinition,
@@ -35,13 +38,11 @@ import { PipelineWrapper } from './pipeline-wrapper';
 // eslint-disable-next-line import/no-cycle
 import { BlockTypeWrapper } from './typed-object/block-type-wrapper';
 import { ConstraintTypeWrapper } from './typed-object/constrainttype-wrapper';
-import {
-  type PrimitiveValueType,
-  PrimitiveValuetypes,
-  type ValueType,
-} from './value-type';
+import { type PrimitiveValueType, type ValueType } from './value-type';
 import { AtomicValueType } from './value-type/atomic-value-type';
 import { CollectionValueType } from './value-type/primitive/collection/collection-value-type';
+import { EmptyCollectionValueType } from './value-type/primitive/collection/empty-collection-value-type';
+import { PrimitiveValuetypeContainer } from './value-type/primitive/primitive-value-container';
 
 abstract class AstNodeWrapperFactory<
   N extends AstNode,
@@ -307,6 +308,9 @@ class TypedObjectWrapperFactory {
 }
 
 class ValueTypeWrapperFactory {
+  Primitives = new PrimitiveValuetypeContainer(); // TODO: pull out into own service (not a wrapper factory)
+  EmptyCollection = new EmptyCollectionValueType(); // TODO: pull out into own service (not a wrapper factory)
+
   constructor(private readonly wrapperFactories: WrapperFactoryProvider) {}
 
   wrap(
@@ -334,14 +338,7 @@ class ValueTypeWrapperFactory {
     assertUnreachable(identifier);
   }
 
-  wrapCollection(
-    input: ValueTypeReference | AtomicValueType | PrimitiveValueType,
-  ): CollectionValueType {
-    if (!isValueTypeReference(input)) {
-      return new CollectionValueType(input);
-    }
-    const collectionRef = input;
-
+  wrapCollection(collectionRef: ValueTypeReference): CollectionValueType {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const collectionDefinition = collectionRef?.reference?.ref;
     assert(collectionDefinition?.name === 'Collection');
@@ -362,6 +359,12 @@ class ValueTypeWrapperFactory {
     return new CollectionValueType(elementValuetype);
   }
 
+  createCollection<I extends InternalValueRepresentation>(
+    input: ValueType<I>,
+  ): CollectionValueType<I> {
+    return new CollectionValueType(input);
+  }
+
   wrapPrimitive(
     builtinValuetype: ValuetypeDefinition,
   ): PrimitiveValueType | undefined {
@@ -372,9 +375,9 @@ class ValueTypeWrapperFactory {
       return undefined;
     }
 
-    const matchingPrimitives = Object.values(PrimitiveValuetypes).filter(
-      (valueType) => valueType.getName() === name,
-    );
+    const matchingPrimitives = Object.values(
+      Object.values(this.Primitives.getAll()),
+    ).filter((valueType) => valueType.getName() === name);
     if (matchingPrimitives.length === 0) {
       throw new Error(
         `Found no PrimitiveValuetype for builtin value type "${name}"`,

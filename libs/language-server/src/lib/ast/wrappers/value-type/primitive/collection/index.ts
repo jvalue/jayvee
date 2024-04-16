@@ -5,12 +5,7 @@
 /* Note: Only export types if possible to enforce usage of WrapperFactory outside this directory */
 
 export {
-  CollectionValueType as CollectionValuetype, // TODO: handle creation of collections to preserve internal typing
-  isCollectionValueType as isCollectionValuetype,
+  type CollectionValueType,
+  isCollectionValueType,
 } from './collection-value-type';
-
-export {
-  type EmptyCollectionValueType as EmptyCollectionValuetype,
-  EmptyCollection,
-  isEmptyCollectionValueType as isEmptyCollectionValuetype,
-} from './empty-collection-value-type';
+export { type EmptyCollectionValueType } from './empty-collection-value-type';
