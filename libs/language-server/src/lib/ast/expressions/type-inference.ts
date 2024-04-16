@@ -234,7 +234,7 @@ function inferCollectionType(
   const stacks = elementValuetypes.map(getValuetypeHierarchyStack);
 
   if (stacks.length === 0) {
-    return wrapperFactories.ValueType.EmptyCollection;
+    return valueTypeProvider.EmptyCollection;
   }
   if (stacks.length === 1) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
