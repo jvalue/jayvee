@@ -90,10 +90,12 @@ export class WrapperFactoryProvider {
     this.CellRange = new CellRangeWrapperFactory();
     this.BlockType = new BlockTypeWrapperFactory(
       this.operatorEvaluatorRegistry,
+      primitiveValueTypeContainer,
       this,
     );
     this.ConstraintType = new ConstraintTypeWrapperFactory(
       this.operatorEvaluatorRegistry,
+      primitiveValueTypeContainer,
       this,
     );
     this.Pipe = new PipeWrapperFactory();
@@ -127,6 +129,7 @@ class BlockTypeWrapperFactory extends AstNodeWrapperFactory<
 > {
   constructor(
     private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
+    private readonly valueTypeProvider: PrimitiveValueTypeProvider,
     private readonly wrapperFactories: WrapperFactoryProvider,
   ) {
     super();
@@ -147,6 +150,7 @@ class BlockTypeWrapperFactory extends AstNodeWrapperFactory<
     return new BlockTypeWrapper(
       toBeWrapped,
       this.operatorEvaluatorRegistry,
+      this.valueTypeProvider,
       this.wrapperFactories,
     );
   }
@@ -158,6 +162,7 @@ class ConstraintTypeWrapperFactory extends AstNodeWrapperFactory<
 > {
   constructor(
     private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
+    private readonly valueTypeProvider: PrimitiveValueTypeProvider,
     private readonly wrapperFactories: WrapperFactoryProvider,
   ) {
     super();
@@ -178,6 +183,7 @@ class ConstraintTypeWrapperFactory extends AstNodeWrapperFactory<
     return new ConstraintTypeWrapper(
       toBeWrapped,
       this.operatorEvaluatorRegistry,
+      this.valueTypeProvider,
       this.wrapperFactories,
     );
   }

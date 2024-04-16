@@ -11,7 +11,7 @@ import { evaluateExpression } from '../../expressions/evaluate-expression';
 import { EvaluationContext } from '../../expressions/evaluation-context';
 import { type OperatorEvaluatorRegistry } from '../../expressions/operator-registry';
 import { type BuiltinConstrainttypeDefinition } from '../../generated/ast';
-import { type ValueType } from '../value-type';
+import { type PrimitiveValueTypeProvider, type ValueType } from '../value-type';
 import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
 
 import {
@@ -40,6 +40,7 @@ export class ConstraintTypeWrapper extends TypedObjectWrapper<BuiltinConstraintt
       | BuiltinConstrainttypeDefinition
       | Reference<BuiltinConstrainttypeDefinition>,
     operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
+    valueTypeProvider: PrimitiveValueTypeProvider,
     wrapperFactories: WrapperFactoryProvider,
   ) {
     const constraintTypeDefinition = isReference(toBeWrapped)
@@ -63,6 +64,7 @@ export class ConstraintTypeWrapper extends TypedObjectWrapper<BuiltinConstraintt
         new EvaluationContext(
           new RuntimeParameterProvider(),
           operatorEvaluatorRegistry,
+          valueTypeProvider,
         ),
         wrapperFactories,
       );

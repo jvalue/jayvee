@@ -53,6 +53,7 @@ export async function executeExpressionTestHelper(
   const evaluationContext = new EvaluationContext(
     services.RuntimeParameterProvider,
     services.operators.EvaluatorRegistry,
+    services.valueTypes,
   );
 
   evaluationContext.setValueForReference(inputValueName, inputValueValue);

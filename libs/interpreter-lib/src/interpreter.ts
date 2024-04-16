@@ -222,6 +222,7 @@ async function runPipeline(
     new EvaluationContext(
       jayveeServices.RuntimeParameterProvider,
       jayveeServices.operators.EvaluatorRegistry,
+      jayveeServices.valueTypes,
     ),
   );
 

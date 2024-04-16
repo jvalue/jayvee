@@ -92,7 +92,7 @@ export function evaluateExpression(
   }
   if (isExpressionLiteral(expression)) {
     if (isFreeVariableLiteral(expression)) {
-      return evaluationContext.getValueFor(expression, wrapperFactories);
+      return evaluationContext.getValueFor(expression);
     } else if (isValueLiteral(expression)) {
       return evaluateValueLiteral(
         expression,

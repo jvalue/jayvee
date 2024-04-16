@@ -107,6 +107,7 @@ export class JayveeValidationRegistry extends ValidationRegistry {
       const evaluationContext = new EvaluationContext(
         runtimeParameterProvider,
         operatorEvaluatorRegistry,
+        valueTypeProvider,
       );
       return check(node, {
         validationContext: validationContext,

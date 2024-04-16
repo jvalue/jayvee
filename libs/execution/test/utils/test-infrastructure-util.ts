@@ -71,6 +71,7 @@ export function getTestExecutionContext(
     new EvaluationContext(
       services.RuntimeParameterProvider,
       services.operators.EvaluatorRegistry,
+      services.valueTypes,
     ),
   );
 

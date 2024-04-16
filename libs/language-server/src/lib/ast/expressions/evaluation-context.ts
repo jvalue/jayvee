@@ -19,7 +19,7 @@ import {
   isTransformPortDefinition,
   isValueKeywordLiteral,
 } from '../generated/ast';
-import { type WrapperFactoryProvider } from '../wrappers';
+import { type PrimitiveValueTypeProvider } from '../wrappers';
 import { type ValueType } from '../wrappers/value-type/value-type';
 
 import { type InternalValueRepresentation } from './internal-value-representation';
@@ -36,16 +36,16 @@ export class EvaluationContext {
   constructor(
     public readonly runtimeParameterProvider: RuntimeParameterProvider,
     public readonly operatorRegistry: OperatorEvaluatorRegistry,
+    public readonly valueTypeProvider: PrimitiveValueTypeProvider,
   ) {}
 
   getValueFor(
     literal: FreeVariableLiteral,
-    wrapperFactories: WrapperFactoryProvider,
   ): InternalValueRepresentation | undefined {
     if (isReferenceLiteral(literal)) {
       return this.getValueForReference(literal);
     } else if (isValueKeywordLiteral(literal)) {
-      return this.getValueForValueKeyword(literal, wrapperFactories);
+      return this.getValueForValueKeyword(literal, this.valueTypeProvider);
     }
     assertUnreachable(literal);
   }
@@ -106,7 +106,7 @@ export class EvaluationContext {
 
   getValueForValueKeyword(
     literal: ValueKeywordLiteral,
-    wrapperFactories: WrapperFactoryProvider,
+    valueTypes: PrimitiveValueTypeProvider,
   ): InternalValueRepresentation | undefined {
     if (this.valueKeywordValue === undefined) {
       return undefined;
@@ -114,7 +114,7 @@ export class EvaluationContext {
 
     if (literal.lengthAccess) {
       assert(
-        wrapperFactories.ValueType.Primitives.Text.isInternalValueRepresentation(
+        valueTypes.Primitives.Text.isInternalValueRepresentation(
           this.valueKeywordValue,
         ),
       );
