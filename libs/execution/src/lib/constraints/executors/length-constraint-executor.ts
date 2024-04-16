@@ -23,11 +23,11 @@ export class LengthConstraintExecutor implements ConstraintExecutor {
 
     const minLength = context.getPropertyValue(
       'minLength',
-      context.wrapperFactories.ValueType.Primitives.Integer,
+      context.valueTypes.Primitives.Integer,
     );
     const maxLength = context.getPropertyValue(
       'maxLength',
-      context.wrapperFactories.ValueType.Primitives.Integer,
+      context.valueTypes.Primitives.Integer,
     );
 
     return minLength <= value.length && value.length <= maxLength;

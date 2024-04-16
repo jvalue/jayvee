@@ -38,16 +38,16 @@ export class TableTransformerExecutor extends AbstractBlockExecutor<
     const inputColumnNames = context.getPropertyValue(
       'inputColumns',
       context.wrapperFactories.ValueType.createCollection(
-        context.wrapperFactories.ValueType.Primitives.Text,
+        context.valueTypes.Primitives.Text,
       ),
     );
     const outputColumnName = context.getPropertyValue(
       'outputColumn',
-      context.wrapperFactories.ValueType.Primitives.Text,
+      context.valueTypes.Primitives.Text,
     );
     const usedTransform = context.getPropertyValue(
       'use',
-      context.wrapperFactories.ValueType.Primitives.Transform,
+      context.valueTypes.Primitives.Transform,
     );
 
     const checkInputColumnsExistResult = this.checkInputColumnsExist(

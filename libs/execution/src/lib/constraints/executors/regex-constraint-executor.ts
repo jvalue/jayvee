@@ -23,7 +23,7 @@ export class RegexConstraintExecutor implements ConstraintExecutor {
 
     const regex = context.getPropertyValue(
       'regex',
-      context.wrapperFactories.ValueType.Primitives.Regex,
+      context.valueTypes.Primitives.Regex,
     );
     return regex.test(value);
   }

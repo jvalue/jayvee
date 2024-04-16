@@ -40,7 +40,7 @@ export class ColumnDeleterExecutor extends AbstractBlockExecutor<
       .getPropertyValue(
         'delete',
         context.wrapperFactories.ValueType.createCollection(
-          context.wrapperFactories.ValueType.Primitives.CellRange,
+          context.valueTypes.Primitives.CellRange,
         ),
       )
       .map((astNode) => context.wrapperFactories.CellRange.wrap(astNode));

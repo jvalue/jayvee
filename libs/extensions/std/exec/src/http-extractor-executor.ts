@@ -48,20 +48,20 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<BinaryFile>> {
     const url = context.getPropertyValue(
       'url',
-      context.wrapperFactories.ValueType.Primitives.Text,
+      context.valueTypes.Primitives.Text,
     );
     const retries = context.getPropertyValue(
       'retries',
-      context.wrapperFactories.ValueType.Primitives.Integer,
+      context.valueTypes.Primitives.Integer,
     );
     assert(retries >= 0); // loop executes at least once
     const retryBackoffMilliseconds = context.getPropertyValue(
       'retryBackoffMilliseconds',
-      context.wrapperFactories.ValueType.Primitives.Integer,
+      context.valueTypes.Primitives.Integer,
     );
     const retryBackoffStrategy = context.getPropertyValue(
       'retryBackoffStrategy',
-      context.wrapperFactories.ValueType.Primitives.Text,
+      context.valueTypes.Primitives.Text,
     );
     assert(isBackoffStrategyHandle(retryBackoffStrategy));
     const backoffStrategy = createBackoffStrategy(
@@ -112,7 +112,7 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
     }
     const followRedirects = context.getPropertyValue(
       'followRedirects',
-      context.wrapperFactories.ValueType.Primitives.Boolean,
+      context.valueTypes.Primitives.Boolean,
     );
     return new Promise((resolve) => {
       httpGetFunction(url, { followRedirects: followRedirects }, (response) => {

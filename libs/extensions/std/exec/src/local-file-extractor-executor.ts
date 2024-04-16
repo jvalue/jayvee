@@ -37,7 +37,7 @@ export class LocalFileExtractorExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<BinaryFile>> {
     const filePath = context.getPropertyValue(
       'filePath',
-      context.wrapperFactories.ValueType.Primitives.Text,
+      context.valueTypes.Primitives.Text,
     );
 
     if (filePath.includes('..')) {
