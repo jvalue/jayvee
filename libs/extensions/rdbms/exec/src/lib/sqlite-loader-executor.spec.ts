@@ -13,7 +13,6 @@ import {
   type BlockDefinition,
   IOType,
   type JayveeServices,
-  type WrapperFactoryProvider,
   createJayveeServices,
 } from '@jvalue/jayvee-language-server';
 import {
@@ -69,7 +68,6 @@ describe('Validation of SQLiteLoaderExecutor', () => {
 
   let locator: AstNodeLocator;
   let services: JayveeServices;
-  let wrapperFactories: WrapperFactoryProvider;
 
   const readJvTestAsset = readJvTestAssetHelper(
     __dirname,
@@ -101,7 +99,6 @@ describe('Validation of SQLiteLoaderExecutor', () => {
       path.resolve(__dirname, '../../test/test-extension/TestBlockTypes.jv'),
     ]);
     locator = services.workspace.AstNodeLocator;
-    wrapperFactories = services.WrapperFactories;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });
@@ -131,14 +128,14 @@ describe('Validation of SQLiteLoaderExecutor', () => {
           columnName: 'Column1',
           column: {
             values: ['value 1'],
-            valueType: wrapperFactories.ValueType.Primitives.Text,
+            valueType: services.valueTypes.Primitives.Text,
           },
         },
         {
           columnName: 'Column2',
           column: {
             values: [20.2],
-            valueType: wrapperFactories.ValueType.Primitives.Decimal,
+            valueType: services.valueTypes.Primitives.Decimal,
           },
         },
       ],
@@ -181,14 +178,14 @@ describe('Validation of SQLiteLoaderExecutor', () => {
           columnName: 'Column1',
           column: {
             values: ['value 1'],
-            valueType: wrapperFactories.ValueType.Primitives.Text,
+            valueType: services.valueTypes.Primitives.Text,
           },
         },
         {
           columnName: 'Column2',
           column: {
             values: [20.2],
-            valueType: wrapperFactories.ValueType.Primitives.Decimal,
+            valueType: services.valueTypes.Primitives.Decimal,
           },
         },
       ],

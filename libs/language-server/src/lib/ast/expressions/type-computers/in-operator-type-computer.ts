@@ -9,6 +9,7 @@ import { type BinaryExpression } from '../../generated/ast';
 import { type WrapperFactoryProvider } from '../../wrappers';
 import {
   type CollectionValueType,
+  type PrimitiveValueTypeProvider,
   type ValueType,
   isCollectionValueType,
 } from '../../wrappers/value-type';
@@ -18,11 +19,14 @@ export class InOperatorTypeComputer implements BinaryOperatorTypeComputer {
   private readonly ALLOWED_LEFT_OPERAND_TYPES: ValueType[];
   private readonly ALLOWED_RIGHT_OPERAND_TYPES: CollectionValueType[];
 
-  constructor(protected readonly wrapperFactories: WrapperFactoryProvider) {
+  constructor(
+    protected readonly valueTypesProvider: PrimitiveValueTypeProvider,
+    protected readonly wrapperFactories: WrapperFactoryProvider,
+  ) {
     this.ALLOWED_LEFT_OPERAND_TYPES = [
-      wrapperFactories.ValueType.Primitives.Text,
-      wrapperFactories.ValueType.Primitives.Integer,
-      wrapperFactories.ValueType.Primitives.Decimal,
+      valueTypesProvider.Primitives.Text,
+      valueTypesProvider.Primitives.Integer,
+      valueTypesProvider.Primitives.Decimal,
     ];
     this.ALLOWED_RIGHT_OPERAND_TYPES = this.ALLOWED_LEFT_OPERAND_TYPES.map(
       (v) => wrapperFactories.ValueType.createCollection(v),
@@ -64,15 +68,15 @@ export class InOperatorTypeComputer implements BinaryOperatorTypeComputer {
     assert(
       isCollectionValueType(
         rightOperandType,
-        this.wrapperFactories.ValueType.Primitives.Decimal,
+        this.valueTypesProvider.Primitives.Decimal,
       ) ||
         isCollectionValueType(
           rightOperandType,
-          this.wrapperFactories.ValueType.Primitives.Integer,
+          this.valueTypesProvider.Primitives.Integer,
         ) ||
         isCollectionValueType(
           rightOperandType,
-          this.wrapperFactories.ValueType.Primitives.Text,
+          this.valueTypesProvider.Primitives.Text,
         ),
     );
 
@@ -94,6 +98,6 @@ export class InOperatorTypeComputer implements BinaryOperatorTypeComputer {
       return undefined;
     }
 
-    return this.wrapperFactories.ValueType.Primitives.Boolean;
+    return this.valueTypesProvider.Primitives.Boolean;
   }
 }

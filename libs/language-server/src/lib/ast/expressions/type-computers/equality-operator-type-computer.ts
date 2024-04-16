@@ -4,8 +4,10 @@
 
 import { type ValidationContext } from '../../../validation/validation-context';
 import { type BinaryExpression } from '../../generated/ast';
-import { type WrapperFactoryProvider } from '../../wrappers';
-import { type ValueType } from '../../wrappers/value-type';
+import {
+  type PrimitiveValueTypeProvider,
+  type ValueType,
+} from '../../wrappers/value-type';
 import { type BinaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class EqualityOperatorTypeComputer
@@ -13,12 +15,14 @@ export class EqualityOperatorTypeComputer
 {
   private readonly ALLOWED_OPERAND_TYPES: ValueType[];
 
-  constructor(protected readonly wrapperFactories: WrapperFactoryProvider) {
+  constructor(
+    protected readonly valueTypesProvider: PrimitiveValueTypeProvider,
+  ) {
     this.ALLOWED_OPERAND_TYPES = [
-      wrapperFactories.ValueType.Primitives.Boolean,
-      wrapperFactories.ValueType.Primitives.Text,
-      wrapperFactories.ValueType.Primitives.Integer,
-      wrapperFactories.ValueType.Primitives.Decimal,
+      valueTypesProvider.Primitives.Boolean,
+      valueTypesProvider.Primitives.Text,
+      valueTypesProvider.Primitives.Integer,
+      valueTypesProvider.Primitives.Decimal,
     ];
   }
 
@@ -66,6 +70,6 @@ export class EqualityOperatorTypeComputer
       return undefined;
     }
 
-    return this.wrapperFactories.ValueType.Primitives.Boolean;
+    return this.valueTypesProvider.Primitives.Boolean;
   }
 }
