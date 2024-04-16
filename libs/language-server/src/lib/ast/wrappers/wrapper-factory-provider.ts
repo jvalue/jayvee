@@ -41,11 +41,7 @@ import { ConstraintTypeWrapper } from './typed-object/constrainttype-wrapper';
 import { type PrimitiveValueType, type ValueType } from './value-type';
 import { AtomicValueType } from './value-type/atomic-value-type';
 import { CollectionValueType } from './value-type/primitive/collection/collection-value-type';
-import { EmptyCollectionValueType } from './value-type/primitive/collection/empty-collection-value-type';
-import {
-  type PrimitiveValueTypeContainer,
-  type PrimitiveValueTypeProvider,
-} from './value-type/primitive/primitive-value-type-provider';
+import { type PrimitiveValueTypeProvider } from './value-type/primitive/primitive-value-type-provider';
 
 abstract class AstNodeWrapperFactory<
   N extends AstNode,
@@ -321,16 +317,10 @@ class TypedObjectWrapperFactory {
 }
 
 class ValueTypeWrapperFactory {
-  Primitives: PrimitiveValueTypeContainer; // TODO: pull out into own service (not a wrapper factory)
-  EmptyCollection = new EmptyCollectionValueType(); // TODO: pull out into own service (not a wrapper factory)
-
   constructor(
     private readonly wrapperFactories: WrapperFactoryProvider,
     private readonly primitiveValueTypeProvider: PrimitiveValueTypeProvider,
-  ) {
-    this.Primitives = primitiveValueTypeProvider.Primitives;
-    this.EmptyCollection = primitiveValueTypeProvider.EmptyCollection;
-  }
+  ) {}
 
   wrap(
     identifier: ValuetypeDefinition | ValueTypeReference | undefined,
