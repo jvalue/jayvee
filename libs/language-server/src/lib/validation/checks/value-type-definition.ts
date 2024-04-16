@@ -68,6 +68,7 @@ function checkConstraintsCollectionValues(
   const inferredCollectionType = inferExpressionType(
     constraintCollection,
     props.validationContext,
+    props.valueTypes,
     props.wrapperFactories,
   );
   const expectedType = props.wrapperFactories.ValueType.createCollection(

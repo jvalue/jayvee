@@ -14,6 +14,7 @@ import {
 import { type AstNodeWrapper } from '../ast-node-wrapper';
 import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
 
+import { type PrimitiveValueTypeProvider } from './primitive';
 import { CollectionValueType } from './primitive/collection/collection-value-type';
 import {
   AbstractValueType,
@@ -27,6 +28,7 @@ export class AtomicValueType
 {
   constructor(
     public readonly astNode: ValuetypeDefinition,
+    private readonly valueTypeProvider: PrimitiveValueTypeProvider,
     private readonly wrapperFactories: WrapperFactoryProvider,
   ) {
     super();
@@ -41,7 +43,7 @@ export class AtomicValueType
     const constraintCollection = this.astNode?.constraints;
     assert(constraintCollection !== undefined);
     const constraintCollectionType = new CollectionValueType(
-      this.wrapperFactories.ValueType.Primitives.Constraint,
+      this.valueTypeProvider.Primitives.Constraint,
     );
     const constraints =
       evaluateExpression(

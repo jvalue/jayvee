@@ -27,6 +27,7 @@ function checkConstraintExpression(
   const inferredType = inferExpressionType(
     expression,
     props.validationContext,
+    props.valueTypes,
     props.wrapperFactories,
   );
   if (inferredType === undefined) {

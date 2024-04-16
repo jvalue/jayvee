@@ -91,6 +91,7 @@ function checkPropertyValueTyping(
   const inferredType = inferExpressionType(
     propertyValue,
     props.validationContext,
+    props.valueTypes,
     props.wrapperFactories,
   );
   if (inferredType === undefined) {

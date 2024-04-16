@@ -40,6 +40,7 @@ import { getNextAstNodeContainer } from '../model-util';
 import {
   type AtomicValuetype,
   type PrimitiveValueType,
+  type PrimitiveValueTypeProvider,
   type ValueType,
   type WrapperFactoryProvider,
   isAtomicValuetype,
@@ -51,6 +52,7 @@ import { isEveryValueDefined } from './typeguards';
 export function inferExpressionType(
   expression: Expression | undefined,
   validationContext: ValidationContext,
+  valueTypeProvider: PrimitiveValueTypeProvider,
   wrapperFactories: WrapperFactoryProvider,
 ): ValueType | undefined {
   if (expression === undefined) {
@@ -60,6 +62,7 @@ export function inferExpressionType(
     return inferTypeFromExpressionLiteral(
       expression,
       validationContext,
+      valueTypeProvider,
       wrapperFactories,
     );
   }
@@ -67,6 +70,7 @@ export function inferExpressionType(
     const innerType = inferExpressionType(
       expression.expression,
       validationContext,
+      valueTypeProvider,
       wrapperFactories,
     );
     if (innerType === undefined) {
@@ -81,11 +85,13 @@ export function inferExpressionType(
     const leftType = inferExpressionType(
       expression.left,
       validationContext,
+      valueTypeProvider,
       wrapperFactories,
     );
     const rightType = inferExpressionType(
       expression.right,
       validationContext,
+      valueTypeProvider,
       wrapperFactories,
     );
     if (leftType === undefined || rightType === undefined) {
@@ -106,16 +112,19 @@ export function inferExpressionType(
     const firstType = inferExpressionType(
       expression.first,
       validationContext,
+      valueTypeProvider,
       wrapperFactories,
     );
     const secondType = inferExpressionType(
       expression.second,
       validationContext,
+      valueTypeProvider,
       wrapperFactories,
     );
     const thirdType = inferExpressionType(
       expression.third,
       validationContext,
+      valueTypeProvider,
       wrapperFactories,
     );
     if (
@@ -146,25 +155,27 @@ export function inferExpressionType(
 function inferTypeFromExpressionLiteral(
   expression: ExpressionLiteral,
   validationContext: ValidationContext,
+  valueTypeProvider: PrimitiveValueTypeProvider,
   wrapperFactories: WrapperFactoryProvider,
 ): ValueType | undefined {
   if (isValueLiteral(expression)) {
     if (isTextLiteral(expression)) {
-      return wrapperFactories.ValueType.Primitives.Text;
+      return valueTypeProvider.Primitives.Text;
     } else if (isBooleanLiteral(expression)) {
-      return wrapperFactories.ValueType.Primitives.Boolean;
+      return valueTypeProvider.Primitives.Boolean;
     } else if (isNumericLiteral(expression)) {
-      return inferNumericType(expression, wrapperFactories);
+      return inferNumericType(expression, valueTypeProvider);
     } else if (isCellRangeLiteral(expression)) {
-      return wrapperFactories.ValueType.Primitives.CellRange;
+      return valueTypeProvider.Primitives.CellRange;
     } else if (isRegexLiteral(expression)) {
-      return wrapperFactories.ValueType.Primitives.Regex;
+      return valueTypeProvider.Primitives.Regex;
     } else if (isValuetypeAssignmentLiteral(expression)) {
-      return wrapperFactories.ValueType.Primitives.ValuetypeAssignment;
+      return valueTypeProvider.Primitives.ValuetypeAssignment;
     } else if (isCollectionLiteral(expression)) {
       return inferCollectionType(
         expression,
         validationContext,
+        valueTypeProvider,
         wrapperFactories,
       );
     }
@@ -174,10 +185,15 @@ function inferTypeFromExpressionLiteral(
       return inferTypeFromValueKeyword(
         expression,
         validationContext,
+        valueTypeProvider,
         wrapperFactories,
       );
     } else if (isReferenceLiteral(expression)) {
-      return inferTypeFromReferenceLiteral(expression, wrapperFactories);
+      return inferTypeFromReferenceLiteral(
+        expression,
+        valueTypeProvider,
+        wrapperFactories,
+      );
     }
     assertUnreachable(expression);
   }
@@ -191,22 +207,24 @@ function inferTypeFromExpressionLiteral(
  */
 function inferNumericType(
   expression: NumericLiteral,
-  wrapperFactories: WrapperFactoryProvider,
+  valueTypeProvider: PrimitiveValueTypeProvider,
 ): ValueType {
   if (Number.isInteger(expression.value)) {
-    return wrapperFactories.ValueType.Primitives.Integer;
+    return valueTypeProvider.Primitives.Integer;
   }
-  return wrapperFactories.ValueType.Primitives.Decimal;
+  return valueTypeProvider.Primitives.Decimal;
 }
 
 function inferCollectionType(
   collection: CollectionLiteral,
   validationContext: ValidationContext,
+  valueTypeProvider: PrimitiveValueTypeProvider,
   wrapperFactories: WrapperFactoryProvider,
 ): ValueType | undefined {
   const elementValuetypes = inferCollectionElementTypes(
     collection,
     validationContext,
+    valueTypeProvider,
     wrapperFactories,
   );
   if (elementValuetypes === undefined) {
@@ -254,10 +272,16 @@ function inferCollectionType(
 function inferCollectionElementTypes(
   collection: CollectionLiteral,
   validationContext: ValidationContext,
+  valueTypeProvider: PrimitiveValueTypeProvider,
   wrapperFactories: WrapperFactoryProvider,
 ): ValueType[] | undefined {
   const elementValuetypes = collection.values.map((value) =>
-    inferExpressionType(value, validationContext, wrapperFactories),
+    inferExpressionType(
+      value,
+      validationContext,
+      valueTypeProvider,
+      wrapperFactories,
+    ),
   );
   if (!isEveryValueDefined(elementValuetypes)) {
     return undefined;
@@ -347,6 +371,7 @@ function areAllTypesEqual(types: ValueType[]): boolean {
 function inferTypeFromValueKeyword(
   expression: ValueKeywordLiteral,
   validationContext: ValidationContext,
+  valueTypeProvider: PrimitiveValueTypeProvider,
   wrapperFactories: WrapperFactoryProvider,
 ): ValueType | undefined {
   const expressionConstraintContainer = getNextAstNodeContainer(
@@ -373,9 +398,7 @@ function inferTypeFromValueKeyword(
   }
 
   if (expression.lengthAccess) {
-    if (
-      !valueType.isConvertibleTo(wrapperFactories.ValueType.Primitives.Text)
-    ) {
+    if (!valueType.isConvertibleTo(valueTypeProvider.Primitives.Text)) {
       validationContext.accept(
         'error',
         'The length can only be accessed from text values ',
@@ -386,13 +409,14 @@ function inferTypeFromValueKeyword(
       );
       return undefined;
     }
-    return wrapperFactories.ValueType.Primitives.Integer;
+    return valueTypeProvider.Primitives.Integer;
   }
   return valueType;
 }
 
 function inferTypeFromReferenceLiteral(
   expression: ReferenceLiteral,
+  valueTypeProvider: PrimitiveValueTypeProvider,
   wrapperFactories: WrapperFactoryProvider,
 ): ValueType | undefined {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -402,10 +426,10 @@ function inferTypeFromReferenceLiteral(
   }
 
   if (isConstraintDefinition(referenced)) {
-    return wrapperFactories.ValueType.Primitives.Constraint;
+    return valueTypeProvider.Primitives.Constraint;
   }
   if (isTransformDefinition(referenced)) {
-    return wrapperFactories.ValueType.Primitives.Transform;
+    return valueTypeProvider.Primitives.Transform;
   }
   if (
     isTransformPortDefinition(referenced) ||

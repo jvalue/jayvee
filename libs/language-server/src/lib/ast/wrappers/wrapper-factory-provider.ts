@@ -320,10 +320,10 @@ class ValueTypeWrapperFactory {
 
   constructor(
     private readonly wrapperFactories: WrapperFactoryProvider,
-    private readonly primitiveValueTypeContainer: PrimitiveValueTypeProvider,
+    private readonly primitiveValueTypeProvider: PrimitiveValueTypeProvider,
   ) {
-    this.Primitives = primitiveValueTypeContainer.Primitives;
-    this.EmptyCollection = primitiveValueTypeContainer.EmptyCollection;
+    this.Primitives = primitiveValueTypeProvider.Primitives;
+    this.EmptyCollection = primitiveValueTypeProvider.EmptyCollection;
   }
 
   wrap(
@@ -346,7 +346,11 @@ class ValueTypeWrapperFactory {
       if (identifier.isBuiltin) {
         return this.wrapPrimitive(identifier);
       }
-      return new AtomicValueType(identifier, this.wrapperFactories);
+      return new AtomicValueType(
+        identifier,
+        this.primitiveValueTypeProvider,
+        this.wrapperFactories,
+      );
     }
     assertUnreachable(identifier);
   }
@@ -389,7 +393,7 @@ class ValueTypeWrapperFactory {
     }
 
     const matchingPrimitives =
-      this.primitiveValueTypeContainer.Primitives.getAll().filter(
+      this.primitiveValueTypeProvider.Primitives.getAll().filter(
         (valueType) => valueType.getName() === name,
       );
     if (matchingPrimitives.length === 0) {

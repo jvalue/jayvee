@@ -49,6 +49,7 @@ function checkOutputValueTyping(
   const inferredType = inferExpressionType(
     assignmentExpression,
     props.validationContext,
+    props.valueTypes,
     props.wrapperFactories,
   );
   if (inferredType === undefined) {
