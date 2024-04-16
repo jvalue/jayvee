@@ -1,6 +1,6 @@
-// SPDX-FileCopyrightText= 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
 //
-// SPDX-License-Identifier= AGPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-only
 
 import { BooleanValuetype } from './boolean-value-type';
 import { CellRangeValuetype } from './cell-range-value-type';
