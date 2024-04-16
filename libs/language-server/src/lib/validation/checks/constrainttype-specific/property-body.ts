@@ -32,9 +32,13 @@ function checkLengthConstraintPropertyBody(
   if (minLengthProperty === undefined && maxLengthProperty === undefined) {
     props.validationContext.accept(
       'hint',
-      'This constraint should either specify an upper bound or lower bound, otherwise it has no effect',
+      'This constraint should either specify an upper or lower bound, otherwise it has no effect.',
       { node: propertyBody },
     );
+  }
+
+  if (minLengthProperty === undefined || maxLengthProperty === undefined) {
+    return;
   }
 
   const minLength = evaluatePropertyValue(
@@ -78,9 +82,13 @@ function checkRangeConstraintPropertyBody(
   if (lowerBoundProperty === undefined && upperBoundProperty === undefined) {
     props.validationContext.accept(
       'hint',
-      'This constraint should either specify an upper bound or lower bound, otherwise it has no effect',
+      'This constraint should either specify an upper or lower bound, otherwise it has no effect.',
       { node: propertyBody },
     );
+  }
+
+  if (lowerBoundProperty === undefined || upperBoundProperty === undefined) {
+    return;
   }
 
   const lowerBound = evaluatePropertyValue(
