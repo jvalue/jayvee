@@ -10,7 +10,7 @@ import {
   DefaultOperatorTypeComputerRegistry,
   EvaluationContext,
   type JayveeServices,
-  PrimitiveValuetypeContainer,
+  PrimitiveValueTypeProvider,
   type RuntimeParameterLiteral,
   RuntimeParameterProvider,
   ValidationContext,
@@ -73,7 +73,7 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
     const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
     const wrapperFactories = new WrapperFactoryProvider(
       operatorEvaluatorRegistry,
-      new PrimitiveValuetypeContainer(),
+      new PrimitiveValueTypeProvider(),
     );
     const operatorTypeComputerRegistry =
       new DefaultOperatorTypeComputerRegistry(wrapperFactories);

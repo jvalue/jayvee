@@ -213,6 +213,7 @@ async function runPipeline(
     constraintExtension,
     loggerFactory.createLogger(),
     jayveeServices.WrapperFactories,
+    jayveeServices.valueTypes,
     {
       isDebugMode: runOptions.debug,
       debugGranularity: runOptions.debugGranularity,

@@ -42,7 +42,10 @@ import { type PrimitiveValueType, type ValueType } from './value-type';
 import { AtomicValueType } from './value-type/atomic-value-type';
 import { CollectionValueType } from './value-type/primitive/collection/collection-value-type';
 import { EmptyCollectionValueType } from './value-type/primitive/collection/empty-collection-value-type';
-import { type PrimitiveValueTypeContainer } from './value-type/primitive/primitive-value-type-container';
+import {
+  type PrimitiveValueTypeContainer,
+  type PrimitiveValueTypeProvider,
+} from './value-type/primitive/primitive-value-type-provider';
 
 abstract class AstNodeWrapperFactory<
   N extends AstNode,
@@ -82,7 +85,7 @@ export class WrapperFactoryProvider {
 
   constructor(
     private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
-    private readonly primitiveValueTypeContainer: PrimitiveValueTypeContainer,
+    private readonly primitiveValueTypeContainer: PrimitiveValueTypeProvider,
   ) {
     this.CellRange = new CellRangeWrapperFactory();
     this.BlockType = new BlockTypeWrapperFactory(
@@ -317,9 +320,10 @@ class ValueTypeWrapperFactory {
 
   constructor(
     private readonly wrapperFactories: WrapperFactoryProvider,
-    private readonly primitiveValueTypeContainer: PrimitiveValueTypeContainer,
+    private readonly primitiveValueTypeContainer: PrimitiveValueTypeProvider,
   ) {
-    this.Primitives = primitiveValueTypeContainer;
+    this.Primitives = primitiveValueTypeContainer.Primitives;
+    this.EmptyCollection = primitiveValueTypeContainer.EmptyCollection;
   }
 
   wrap(
@@ -384,9 +388,10 @@ class ValueTypeWrapperFactory {
       return undefined;
     }
 
-    const matchingPrimitives = this.primitiveValueTypeContainer
-      .getAll()
-      .filter((valueType) => valueType.getName() === name);
+    const matchingPrimitives =
+      this.primitiveValueTypeContainer.Primitives.getAll().filter(
+        (valueType) => valueType.getName() === name,
+      );
     if (matchingPrimitives.length === 0) {
       throw new Error(
         `Found no PrimitiveValuetype for builtin value type "${name}"`,

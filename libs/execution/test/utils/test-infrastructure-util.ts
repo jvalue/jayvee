@@ -66,6 +66,7 @@ export function getTestExecutionContext(
     new DefaultConstraintExtension(),
     new CachedLogger(runOptions.isDebugMode, undefined, loggerPrintLogs),
     services.WrapperFactories,
+    services.valueTypes,
     runOptions,
     new EvaluationContext(
       services.RuntimeParameterProvider,

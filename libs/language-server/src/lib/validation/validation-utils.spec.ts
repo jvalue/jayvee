@@ -13,7 +13,7 @@ import {
   DefaultOperatorEvaluatorRegistry,
   DefaultOperatorTypeComputerRegistry,
   type JayveeServices,
-  PrimitiveValuetypeContainer,
+  PrimitiveValueTypeProvider,
   type PropertyBody,
   ValidationContext,
   WrapperFactoryProvider,
@@ -85,7 +85,7 @@ describe('Validation of validation-utils', () => {
           new DefaultOperatorTypeComputerRegistry(
             new WrapperFactoryProvider(
               new DefaultOperatorEvaluatorRegistry(),
-              new PrimitiveValuetypeContainer(),
+              new PrimitiveValueTypeProvider(),
             ),
           ),
         ),
@@ -109,7 +109,7 @@ describe('Validation of validation-utils', () => {
           new DefaultOperatorTypeComputerRegistry(
             new WrapperFactoryProvider(
               new DefaultOperatorEvaluatorRegistry(),
-              new PrimitiveValuetypeContainer(),
+              new PrimitiveValueTypeProvider(),
             ),
           ),
         ),
