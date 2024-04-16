@@ -71,12 +71,16 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
     }
 
     const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
+    const valueTypeProvider = new PrimitiveValueTypeProvider();
     const wrapperFactories = new WrapperFactoryProvider(
       operatorEvaluatorRegistry,
-      new PrimitiveValueTypeProvider(),
+      valueTypeProvider,
     );
     const operatorTypeComputerRegistry =
-      new DefaultOperatorTypeComputerRegistry(wrapperFactories);
+      new DefaultOperatorTypeComputerRegistry(
+        valueTypeProvider,
+        wrapperFactories,
+      );
 
     validateRuntimeParameterLiteral(runtimeParameter, {
       validationContext: new ValidationContext(
@@ -86,7 +90,9 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
       evaluationContext: new EvaluationContext(
         runtimeProvider,
         operatorEvaluatorRegistry,
+        valueTypeProvider,
       ),
+      valueTypes: valueTypeProvider,
       wrapperFactories: wrapperFactories,
     });
   }

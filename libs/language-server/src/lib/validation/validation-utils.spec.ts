@@ -74,6 +74,7 @@ describe('Validation of validation-utils', () => {
       const text = readJvTestAsset(
         'validation-utils/valid-distinct-property-names.jv',
       );
+      const valueTypeProvider = new PrimitiveValueTypeProvider();
 
       const propertyBody: PropertyBody = await parseAndExtractPropertyBody(
         text,
@@ -83,9 +84,10 @@ describe('Validation of validation-utils', () => {
         new ValidationContext(
           validationAcceptorMock,
           new DefaultOperatorTypeComputerRegistry(
+            valueTypeProvider,
             new WrapperFactoryProvider(
               new DefaultOperatorEvaluatorRegistry(),
-              new PrimitiveValueTypeProvider(),
+              valueTypeProvider,
             ),
           ),
         ),
@@ -98,6 +100,7 @@ describe('Validation of validation-utils', () => {
       const text = readJvTestAsset(
         'validation-utils/invalid-duplicate-property-names.jv',
       );
+      const valueTypeProvider = new PrimitiveValueTypeProvider();
 
       const propertyBody: PropertyBody = await parseAndExtractPropertyBody(
         text,
@@ -107,9 +110,10 @@ describe('Validation of validation-utils', () => {
         new ValidationContext(
           validationAcceptorMock,
           new DefaultOperatorTypeComputerRegistry(
+            valueTypeProvider,
             new WrapperFactoryProvider(
               new DefaultOperatorEvaluatorRegistry(),
-              new PrimitiveValueTypeProvider(),
+              valueTypeProvider,
             ),
           ),
         ),
