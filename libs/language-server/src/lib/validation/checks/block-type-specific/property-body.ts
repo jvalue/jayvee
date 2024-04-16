@@ -39,13 +39,13 @@ function checkTextRangeSelectorPropertyBody(
     lineFromProperty,
     props.evaluationContext,
     props.wrapperFactories,
-    props.wrapperFactories.ValueType.Primitives.Integer,
+    props.valueTypes.Primitives.Integer,
   );
   const lineTo = evaluatePropertyValue(
     lineToProperty,
     props.evaluationContext,
     props.wrapperFactories,
-    props.wrapperFactories.ValueType.Primitives.Integer,
+    props.valueTypes.Primitives.Integer,
   );
   if (lineFrom === undefined || lineTo === undefined) {
     return;
@@ -78,7 +78,7 @@ function checkCellWriterPropertyBody(
     props.evaluationContext,
     props.wrapperFactories,
     props.wrapperFactories.ValueType.createCollection(
-      props.wrapperFactories.ValueType.Primitives.Text,
+      props.valueTypes.Primitives.Text,
     ),
   );
 
@@ -86,7 +86,7 @@ function checkCellWriterPropertyBody(
     atProperty,
     props.evaluationContext,
     props.wrapperFactories,
-    props.wrapperFactories.ValueType.Primitives.CellRange,
+    props.valueTypes.Primitives.CellRange,
   );
 
   if (writeValues === undefined || atValue === undefined) {
@@ -136,14 +136,14 @@ function checkInputColumnsMatchTransformationPorts(
     useProperty,
     props.evaluationContext,
     props.wrapperFactories,
-    props.wrapperFactories.ValueType.Primitives.Transform,
+    props.valueTypes.Primitives.Transform,
   );
   const inputColumns = evaluatePropertyValue(
     inputColumnsProperty,
     props.evaluationContext,
     props.wrapperFactories,
     props.wrapperFactories.ValueType.createCollection(
-      props.wrapperFactories.ValueType.Primitives.Text,
+      props.valueTypes.Primitives.Text,
     ),
   );
 

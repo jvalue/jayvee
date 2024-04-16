@@ -33,7 +33,7 @@ function checkConstraintExpression(
     return;
   }
 
-  const expectedType = props.wrapperFactories.ValueType.Primitives.Boolean;
+  const expectedType = props.valueTypes.Primitives.Boolean;
   if (!inferredType.isConvertibleTo(expectedType)) {
     props.validationContext.accept(
       'error',

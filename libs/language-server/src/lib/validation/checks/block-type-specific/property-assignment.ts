@@ -110,7 +110,7 @@ function checkCellWriterProperty(
       property,
       props.evaluationContext,
       props.wrapperFactories,
-      props.wrapperFactories.ValueType.Primitives.CellRange,
+      props.valueTypes.Primitives.CellRange,
     );
     if (cellRange === undefined) {
       return;
@@ -144,7 +144,7 @@ function checkColumnDeleterProperty(
       props.evaluationContext,
       props.wrapperFactories,
       props.wrapperFactories.ValueType.createCollection(
-        props.wrapperFactories.ValueType.Primitives.CellRange,
+        props.valueTypes.Primitives.CellRange,
       ),
     );
 
@@ -268,7 +268,7 @@ function checkRowDeleterProperty(
       props.evaluationContext,
       props.wrapperFactories,
       props.wrapperFactories.ValueType.createCollection(
-        props.wrapperFactories.ValueType.Primitives.CellRange,
+        props.valueTypes.Primitives.CellRange,
       ),
     );
 
@@ -302,7 +302,7 @@ function checkTableInterpreterProperty(
       props.evaluationContext,
       props.wrapperFactories,
       props.wrapperFactories.ValueType.createCollection(
-        props.wrapperFactories.ValueType.Primitives.ValuetypeAssignment,
+        props.valueTypes.Primitives.ValuetypeAssignment,
       ),
     );
     if (valueTypeAssignments === undefined) {
@@ -357,7 +357,7 @@ function checkTextLineDeleterProperty(
       props.evaluationContext,
       props.wrapperFactories,
       props.wrapperFactories.ValueType.createCollection(
-        props.wrapperFactories.ValueType.Primitives.Integer,
+        props.valueTypes.Primitives.Integer,
       ),
     );
     lines?.forEach((value, index) => {

@@ -37,13 +37,13 @@ function checkLengthConstraintPropertyBody(
     minLengthProperty,
     props.evaluationContext,
     props.wrapperFactories,
-    props.wrapperFactories.ValueType.Primitives.Integer,
+    props.valueTypes.Primitives.Integer,
   );
   const maxLength = evaluatePropertyValue(
     maxLengthProperty,
     props.evaluationContext,
     props.wrapperFactories,
-    props.wrapperFactories.ValueType.Primitives.Integer,
+    props.valueTypes.Primitives.Integer,
   );
   if (minLength === undefined || maxLength === undefined) {
     return;
@@ -79,13 +79,13 @@ function checkRangeConstraintPropertyBody(
     lowerBoundProperty,
     props.evaluationContext,
     props.wrapperFactories,
-    props.wrapperFactories.ValueType.Primitives.Decimal,
+    props.valueTypes.Primitives.Decimal,
   );
   const upperBound = evaluatePropertyValue(
     upperBoundProperty,
     props.evaluationContext,
     props.wrapperFactories,
-    props.wrapperFactories.ValueType.Primitives.Decimal,
+    props.valueTypes.Primitives.Decimal,
   );
   if (lowerBound === undefined || upperBound === undefined) {
     return;
@@ -116,7 +116,7 @@ function checkRangeConstraintPropertyBody(
         lowerBoundInclusiveProperty,
         props.evaluationContext,
         props.wrapperFactories,
-        props.wrapperFactories.ValueType.Primitives.Boolean,
+        props.valueTypes.Primitives.Boolean,
       );
       if (expressionValue === undefined) {
         return;
@@ -130,7 +130,7 @@ function checkRangeConstraintPropertyBody(
         upperBoundInclusiveProperty,
         props.evaluationContext,
         props.wrapperFactories,
-        props.wrapperFactories.ValueType.Primitives.Boolean,
+        props.valueTypes.Primitives.Boolean,
       );
       if (expressionValue === undefined) {
         return;
