@@ -25,7 +25,7 @@ import {
   JayveeGeneratedSharedModule,
 } from './ast/generated/module';
 import { EmptyCollectionValueType } from './ast/wrappers/value-type/primitive/collection/empty-collection-value-type';
-import { PrimitiveValuetypeContainer } from './ast/wrappers/value-type/primitive/primitive-value-container';
+import { PrimitiveValueTypeContainer } from './ast/wrappers/value-type/primitive/primitive-value-type-container';
 import { WrapperFactoryProvider } from './ast/wrappers/wrapper-factory-provider';
 import { JayveeWorkspaceManager } from './builtin-library/jayvee-workspace-manager';
 import { JayveeCompletionProvider } from './completion/jayvee-completion-provider';
@@ -45,7 +45,7 @@ export interface JayveeAddedServices {
     EvaluatorRegistry: OperatorEvaluatorRegistry;
   };
   valueTypes: {
-    Primitives: PrimitiveValuetypeContainer;
+    Primitives: PrimitiveValueTypeContainer;
     EmptyCollection: EmptyCollectionValueType;
   };
   WrapperFactories: WrapperFactoryProvider;
@@ -90,7 +90,7 @@ export const JayveeModule: Module<
     EvaluatorRegistry: () => new DefaultOperatorEvaluatorRegistry(),
   },
   valueTypes: {
-    Primitives: () => new PrimitiveValuetypeContainer(),
+    Primitives: () => new PrimitiveValueTypeContainer(),
     EmptyCollection: () => new EmptyCollectionValueType(),
   },
   WrapperFactories: (services) =>

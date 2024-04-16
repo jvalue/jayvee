@@ -17,7 +17,7 @@ import { ValuetypeAssignmentValuetype } from './value-type-assignment-value-type
  * Should be created as singleton due to the equality comparison of primitive value types.
  * Exported for testing purposes.
  */
-export class PrimitiveValuetypeContainer {
+export class PrimitiveValueTypeContainer {
   Decimal = new DecimalValuetype();
   Boolean = new BooleanValuetype();
   Integer = new IntegerValuetype();

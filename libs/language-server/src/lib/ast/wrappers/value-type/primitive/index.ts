@@ -19,6 +19,6 @@ export { type TextValuetype } from './text-value-type';
 export { type ValuetypeAssignmentValuetype } from './value-type-assignment-value-type';
 export { type TransformValuetype } from './transform-value-type';
 
-export { PrimitiveValuetypeContainer } from './primitive-value-container';
+export { PrimitiveValueTypeContainer as PrimitiveValuetypeContainer } from './primitive-value-type-container';
 
 export * from './collection'; // type export handled one level deeper

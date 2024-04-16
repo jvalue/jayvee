@@ -42,7 +42,7 @@ import { type PrimitiveValueType, type ValueType } from './value-type';
 import { AtomicValueType } from './value-type/atomic-value-type';
 import { CollectionValueType } from './value-type/primitive/collection/collection-value-type';
 import { EmptyCollectionValueType } from './value-type/primitive/collection/empty-collection-value-type';
-import { type PrimitiveValuetypeContainer } from './value-type/primitive/primitive-value-container';
+import { type PrimitiveValueTypeContainer } from './value-type/primitive/primitive-value-type-container';
 
 abstract class AstNodeWrapperFactory<
   N extends AstNode,
@@ -82,7 +82,7 @@ export class WrapperFactoryProvider {
 
   constructor(
     private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
-    private readonly primitiveValueTypeContainer: PrimitiveValuetypeContainer,
+    private readonly primitiveValueTypeContainer: PrimitiveValueTypeContainer,
   ) {
     this.CellRange = new CellRangeWrapperFactory();
     this.BlockType = new BlockTypeWrapperFactory(
@@ -312,12 +312,12 @@ class TypedObjectWrapperFactory {
 }
 
 class ValueTypeWrapperFactory {
-  Primitives: PrimitiveValuetypeContainer; // TODO: pull out into own service (not a wrapper factory)
+  Primitives: PrimitiveValueTypeContainer; // TODO: pull out into own service (not a wrapper factory)
   EmptyCollection = new EmptyCollectionValueType(); // TODO: pull out into own service (not a wrapper factory)
 
   constructor(
     private readonly wrapperFactories: WrapperFactoryProvider,
-    private readonly primitiveValueTypeContainer: PrimitiveValuetypeContainer,
+    private readonly primitiveValueTypeContainer: PrimitiveValueTypeContainer,
   ) {
     this.Primitives = primitiveValueTypeContainer;
   }
