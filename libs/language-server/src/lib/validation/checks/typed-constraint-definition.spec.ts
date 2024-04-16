@@ -10,6 +10,7 @@ import {
 import { NodeFileSystem } from 'langium/node';
 
 import {
+  type JayveeServices,
   type TypedConstraintDefinition,
   createJayveeServices,
   initializeWorkspace,
@@ -34,6 +35,7 @@ describe('Validation of ConstraintDefinition (typed syntax)', () => {
   const validationAcceptorMock = jest.fn(validationAcceptorMockImpl);
 
   let locator: AstNodeLocator;
+  let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
     __dirname,
@@ -51,13 +53,13 @@ describe('Validation of ConstraintDefinition (typed syntax)', () => {
 
     validateTypedConstraintDefinition(
       typedConstraint,
-      createJayveeValidationProps(validationAcceptorMock),
+      createJayveeValidationProps(validationAcceptorMock, services),
     );
   }
 
   beforeAll(async () => {
     // Create language services
-    const services = createJayveeServices(NodeFileSystem).Jayvee;
+    services = createJayveeServices(NodeFileSystem).Jayvee;
     await initializeWorkspace(services);
 
     locator = services.workspace.AstNodeLocator;

@@ -9,8 +9,7 @@ import { getTestExecutionContext } from '@jvalue/jayvee-execution/test';
 import {
   type BlockDefinition,
   IOType,
-  type OperatorEvaluatorRegistry,
-  type WrapperFactoryProvider,
+  type JayveeServices,
   createJayveeServices,
 } from '@jvalue/jayvee-language-server';
 import {
@@ -41,8 +40,7 @@ describe('Validation of TableTransformerExecutor', () => {
   ) => Promise<LangiumDocument<AstNode>>;
 
   let locator: AstNodeLocator;
-  let wrapperFactories: WrapperFactoryProvider;
-  let operatorEvaluatorRegistry: OperatorEvaluatorRegistry;
+  let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
     __dirname,
@@ -54,17 +52,17 @@ describe('Validation of TableTransformerExecutor', () => {
       {
         columnName: 'index',
         sheetColumnIndex: 0,
-        valueType: wrapperFactories.ValueType.Primitives.Integer,
+        valueType: services.WrapperFactories.ValueType.Primitives.Integer,
       },
       {
         columnName: 'name',
         sheetColumnIndex: 1,
-        valueType: wrapperFactories.ValueType.Primitives.Text,
+        valueType: services.WrapperFactories.ValueType.Primitives.Text,
       },
       {
         columnName: 'flag',
         sheetColumnIndex: 2,
-        valueType: wrapperFactories.ValueType.Primitives.Boolean,
+        valueType: services.WrapperFactories.ValueType.Primitives.Boolean,
       },
     ]);
   }
@@ -100,6 +98,7 @@ describe('Validation of TableTransformerExecutor', () => {
       getTestExecutionContext(
         locator,
         document,
+        services,
         [block],
         {
           isDebugMode: false,
@@ -107,23 +106,17 @@ describe('Validation of TableTransformerExecutor', () => {
           debugTargets: 'all',
         },
         true,
-        {
-          operatorEvaluatorRegistry: operatorEvaluatorRegistry,
-          wrapperFactoryProvider: wrapperFactories,
-        },
       ),
     );
   }
 
   beforeAll(async () => {
     // Create language services
-    const services = createJayveeServices(NodeFileSystem).Jayvee;
+    services = createJayveeServices(NodeFileSystem).Jayvee;
     await loadTestExtensions(services, [
       path.resolve(__dirname, '../../test/test-extension/TestBlockTypes.jv'),
     ]);
     locator = services.workspace.AstNodeLocator;
-    operatorEvaluatorRegistry = services.operators.EvaluatorRegistry;
-    wrapperFactories = services.WrapperFactories;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });
@@ -185,7 +178,7 @@ describe('Validation of TableTransformerExecutor', () => {
       expect(result.right.getColumn('index')).toEqual(
         expect.objectContaining({
           values: [false, true, true, true, true, true],
-          valueType: wrapperFactories.ValueType.Primitives.Boolean,
+          valueType: services.WrapperFactories.ValueType.Primitives.Boolean,
         }),
       );
     }
@@ -198,7 +191,7 @@ describe('Validation of TableTransformerExecutor', () => {
       {
         columnName: 'index',
         sheetColumnIndex: 0,
-        valueType: wrapperFactories.ValueType.Primitives.Integer,
+        valueType: services.WrapperFactories.ValueType.Primitives.Integer,
       },
     ]);
     const result = await parseAndExecuteExecutor(text, testTable);

@@ -6,6 +6,7 @@ import {
   type BlockDefinition,
   type ExpressionConstraintDefinition,
   type InternalValueRepresentation,
+  type JayveeServices,
   createJayveeServices,
 } from '@jvalue/jayvee-language-server';
 import {
@@ -32,6 +33,7 @@ describe('Validation of AllowlistConstraintExecutor', () => {
   ) => Promise<LangiumDocument<AstNode>>;
 
   let locator: AstNodeLocator;
+  let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
     __dirname,
@@ -57,13 +59,16 @@ describe('Validation of AllowlistConstraintExecutor', () => {
     return new ExpressionConstraintExecutor(constraint).isValid(
       value,
       // Execution context with initial stack containing usage block of constraint and constraint itself
-      getTestExecutionContext(locator, document, [usageBlock, constraint]),
+      getTestExecutionContext(locator, document, services, [
+        usageBlock,
+        constraint,
+      ]),
     );
   }
 
   beforeAll(() => {
     // Create language services
-    const services = createJayveeServices(NodeFileSystem).Jayvee;
+    services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);

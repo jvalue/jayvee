@@ -4,6 +4,7 @@
 
 import {
   DefaultOperatorEvaluatorRegistry,
+  PrimitiveValuetypeContainer,
   WrapperFactoryProvider,
 } from '@jvalue/jayvee-language-server';
 
@@ -17,6 +18,7 @@ describe('Table', () => {
     table = new Table();
     wrapperFactories = new WrapperFactoryProvider(
       new DefaultOperatorEvaluatorRegistry(),
+      new PrimitiveValuetypeContainer(),
     );
   });
 

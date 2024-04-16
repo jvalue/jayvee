@@ -12,6 +12,8 @@ import { NodeFileSystem } from 'langium/node';
 import {
   DefaultOperatorEvaluatorRegistry,
   DefaultOperatorTypeComputerRegistry,
+  type JayveeServices,
+  PrimitiveValuetypeContainer,
   type PropertyBody,
   ValidationContext,
   WrapperFactoryProvider,
@@ -33,6 +35,7 @@ describe('Validation of validation-utils', () => {
   ) => Promise<LangiumDocument<AstNode>>;
 
   let locator: AstNodeLocator;
+  let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
     __dirname,
@@ -53,7 +56,7 @@ describe('Validation of validation-utils', () => {
 
   beforeAll(() => {
     // Create language services
-    const services = createJayveeServices(NodeFileSystem).Jayvee;
+    services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
@@ -80,7 +83,10 @@ describe('Validation of validation-utils', () => {
         new ValidationContext(
           validationAcceptorMock,
           new DefaultOperatorTypeComputerRegistry(
-            new WrapperFactoryProvider(new DefaultOperatorEvaluatorRegistry()),
+            new WrapperFactoryProvider(
+              new DefaultOperatorEvaluatorRegistry(),
+              new PrimitiveValuetypeContainer(),
+            ),
           ),
         ),
       );
@@ -101,7 +107,10 @@ describe('Validation of validation-utils', () => {
         new ValidationContext(
           validationAcceptorMock,
           new DefaultOperatorTypeComputerRegistry(
-            new WrapperFactoryProvider(new DefaultOperatorEvaluatorRegistry()),
+            new WrapperFactoryProvider(
+              new DefaultOperatorEvaluatorRegistry(),
+              new PrimitiveValuetypeContainer(),
+            ),
           ),
         ),
       );

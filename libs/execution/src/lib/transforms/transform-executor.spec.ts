@@ -7,6 +7,7 @@ import * as path from 'path';
 
 import {
   type InternalValueRepresentation,
+  type JayveeServices,
   type TransformDefinition,
   type WrapperFactoryProvider,
   createJayveeServices,
@@ -37,6 +38,7 @@ describe('Validation of TransformExecutor', () => {
   ) => Promise<LangiumDocument<AstNode>>;
 
   let locator: AstNodeLocator;
+  let services: JayveeServices;
   let wrapperFactories: WrapperFactoryProvider;
 
   const readJvTestAsset = readJvTestAssetHelper(
@@ -81,7 +83,11 @@ describe('Validation of TransformExecutor', () => {
       'transforms@0',
     ) as TransformDefinition;
 
-    const executionContext = getTestExecutionContext(locator, document);
+    const executionContext = getTestExecutionContext(
+      locator,
+      document,
+      services,
+    );
     const executor = new TransformExecutor(transform, executionContext);
 
     return executor.executeTransform(
@@ -93,7 +99,7 @@ describe('Validation of TransformExecutor', () => {
 
   beforeAll(async () => {
     // Create language services
-    const services = createJayveeServices(NodeFileSystem).Jayvee;
+    services = createJayveeServices(NodeFileSystem).Jayvee;
 
     await loadTestExtensions(services, [
       path.resolve(

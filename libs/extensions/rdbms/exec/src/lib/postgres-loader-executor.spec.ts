@@ -12,6 +12,7 @@ import {
 import {
   type BlockDefinition,
   IOType,
+  type JayveeServices,
   type WrapperFactoryProvider,
   createJayveeServices,
 } from '@jvalue/jayvee-language-server';
@@ -56,6 +57,7 @@ describe('Validation of PostgresLoaderExecutor', () => {
   ) => Promise<LangiumDocument<AstNode>>;
 
   let locator: AstNodeLocator;
+  let services: JayveeServices;
   let wrapperFactories: WrapperFactoryProvider;
 
   const readJvTestAsset = readJvTestAssetHelper(
@@ -77,13 +79,13 @@ describe('Validation of PostgresLoaderExecutor', () => {
 
     return new PostgresLoaderExecutor().doExecute(
       IOInput,
-      getTestExecutionContext(locator, document, [block]),
+      getTestExecutionContext(locator, document, services, [block]),
     );
   }
 
   beforeAll(async () => {
     // Create language services
-    const services = createJayveeServices(NodeFileSystem).Jayvee;
+    services = createJayveeServices(NodeFileSystem).Jayvee;
     await loadTestExtensions(services, [
       path.resolve(__dirname, '../../test/test-extension/TestBlockTypes.jv'),
     ]);

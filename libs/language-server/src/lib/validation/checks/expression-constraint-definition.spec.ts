@@ -11,6 +11,7 @@ import { NodeFileSystem } from 'langium/node';
 
 import {
   type ExpressionConstraintDefinition,
+  type JayveeServices,
   createJayveeServices,
 } from '../../../lib';
 import {
@@ -33,6 +34,7 @@ describe('Validation of ConstraintDefinition (expression syntax)', () => {
   const validationAcceptorMock = jest.fn(validationAcceptorMockImpl);
 
   let locator: AstNodeLocator;
+  let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
     __dirname,
@@ -51,13 +53,13 @@ describe('Validation of ConstraintDefinition (expression syntax)', () => {
 
     validateExpressionConstraintDefinition(
       expressionConstraint,
-      createJayveeValidationProps(validationAcceptorMock),
+      createJayveeValidationProps(validationAcceptorMock, services),
     );
   }
 
   beforeAll(() => {
     // Create language services
-    const services = createJayveeServices(NodeFileSystem).Jayvee;
+    services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);

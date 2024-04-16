@@ -13,6 +13,10 @@ import { TextValuetype } from './text-value-type';
 import { TransformValuetype } from './transform-value-type';
 import { ValuetypeAssignmentValuetype } from './value-type-assignment-value-type';
 
+/**
+ * Should be created as singleton due to the equality comparison of primitive value types.
+ * Exported for testing purposes.
+ */
 export class PrimitiveValuetypeContainer {
   Decimal = new DecimalValuetype();
   Boolean = new BooleanValuetype();

@@ -42,7 +42,7 @@ import { type PrimitiveValueType, type ValueType } from './value-type';
 import { AtomicValueType } from './value-type/atomic-value-type';
 import { CollectionValueType } from './value-type/primitive/collection/collection-value-type';
 import { EmptyCollectionValueType } from './value-type/primitive/collection/empty-collection-value-type';
-import { PrimitiveValuetypeContainer } from './value-type/primitive/primitive-value-container';
+import { type PrimitiveValuetypeContainer } from './value-type/primitive/primitive-value-container';
 
 abstract class AstNodeWrapperFactory<
   N extends AstNode,
@@ -82,6 +82,7 @@ export class WrapperFactoryProvider {
 
   constructor(
     private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
+    private readonly primitiveValueTypeContainer: PrimitiveValuetypeContainer,
   ) {
     this.CellRange = new CellRangeWrapperFactory();
     this.BlockType = new BlockTypeWrapperFactory(
@@ -98,7 +99,10 @@ export class WrapperFactoryProvider {
       this.BlockType,
       this.ConstraintType,
     );
-    this.ValueType = new ValueTypeWrapperFactory(this);
+    this.ValueType = new ValueTypeWrapperFactory(
+      this,
+      primitiveValueTypeContainer,
+    );
   }
 }
 
@@ -308,10 +312,15 @@ class TypedObjectWrapperFactory {
 }
 
 class ValueTypeWrapperFactory {
-  Primitives = new PrimitiveValuetypeContainer(); // TODO: pull out into own service (not a wrapper factory)
+  Primitives: PrimitiveValuetypeContainer; // TODO: pull out into own service (not a wrapper factory)
   EmptyCollection = new EmptyCollectionValueType(); // TODO: pull out into own service (not a wrapper factory)
 
-  constructor(private readonly wrapperFactories: WrapperFactoryProvider) {}
+  constructor(
+    private readonly wrapperFactories: WrapperFactoryProvider,
+    private readonly primitiveValueTypeContainer: PrimitiveValuetypeContainer,
+  ) {
+    this.Primitives = primitiveValueTypeContainer;
+  }
 
   wrap(
     identifier: ValuetypeDefinition | ValueTypeReference | undefined,
@@ -375,9 +384,9 @@ class ValueTypeWrapperFactory {
       return undefined;
     }
 
-    const matchingPrimitives = Object.values(
-      Object.values(this.Primitives.getAll()),
-    ).filter((valueType) => valueType.getName() === name);
+    const matchingPrimitives = this.primitiveValueTypeContainer
+      .getAll()
+      .filter((valueType) => valueType.getName() === name);
     if (matchingPrimitives.length === 0) {
       throw new Error(
         `Found no PrimitiveValuetype for builtin value type "${name}"`,

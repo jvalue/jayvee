@@ -5,7 +5,11 @@
 import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { type JayveeModel, createJayveeServices } from '../../../lib';
+import {
+  type JayveeModel,
+  type JayveeServices,
+  createJayveeServices,
+} from '../../../lib';
 import {
   type ParseHelperOptions,
   createJayveeValidationProps,
@@ -23,6 +27,8 @@ describe('Validation of JayveeModel', () => {
     options?: ParseHelperOptions,
   ) => Promise<LangiumDocument<AstNode>>;
 
+  let services: JayveeServices;
+
   const validationAcceptorMock = jest.fn(validationAcceptorMockImpl);
 
   const readJvTestAsset = readJvTestAssetHelper(
@@ -38,13 +44,13 @@ describe('Validation of JayveeModel', () => {
 
     validateJayveeModel(
       jayveeModel,
-      createJayveeValidationProps(validationAcceptorMock),
+      createJayveeValidationProps(validationAcceptorMock, services),
     );
   }
 
   beforeAll(() => {
     // Create language services
-    const services = createJayveeServices(NodeFileSystem).Jayvee;
+    services = createJayveeServices(NodeFileSystem).Jayvee;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });

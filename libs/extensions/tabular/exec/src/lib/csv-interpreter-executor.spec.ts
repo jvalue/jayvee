@@ -12,6 +12,7 @@ import {
 import {
   type BlockDefinition,
   IOType,
+  type JayveeServices,
   createJayveeServices,
 } from '@jvalue/jayvee-language-server';
 import {
@@ -37,6 +38,7 @@ describe('Validation of CSVInterpreterExecutor', () => {
   ) => Promise<LangiumDocument<AstNode>>;
 
   let locator: AstNodeLocator;
+  let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
     __dirname,
@@ -66,13 +68,13 @@ describe('Validation of CSVInterpreterExecutor', () => {
 
     return new CSVInterpreterExecutor().doExecute(
       IOInput,
-      getTestExecutionContext(locator, document, [block]),
+      getTestExecutionContext(locator, document, services, [block]),
     );
   }
 
   beforeAll(async () => {
     // Create language services
-    const services = createJayveeServices(NodeFileSystem).Jayvee;
+    services = createJayveeServices(NodeFileSystem).Jayvee;
     await loadTestExtensions(services, [
       path.resolve(__dirname, '../../test/test-extension/TestBlockTypes.jv'),
     ]);

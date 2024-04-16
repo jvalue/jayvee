@@ -3,12 +3,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  DefaultOperatorEvaluatorRegistry,
   EvaluationContext,
-  type OperatorEvaluatorRegistry,
+  type JayveeServices,
   type PipelineDefinition,
-  RuntimeParameterProvider,
-  WrapperFactoryProvider,
 } from '@jvalue/jayvee-language-server';
 import {
   type AstNode,
@@ -45,6 +42,7 @@ export function processExitMockImplementation(code?: number) {
 export function getTestExecutionContext(
   locator: AstNodeLocator,
   document: LangiumDocument<AstNode>,
+  services: JayveeServices,
   initialStack: StackNode[] = [],
   runOptions: {
     isDebugMode: boolean;
@@ -56,35 +54,22 @@ export function getTestExecutionContext(
     debugTargets: 'all',
   },
   loggerPrintLogs = true,
-  overwrites:
-    | {
-        operatorEvaluatorRegistry?: OperatorEvaluatorRegistry;
-        wrapperFactoryProvider?: WrapperFactoryProvider;
-      }
-    | undefined = undefined,
 ): ExecutionContext {
   const pipeline = locator.getAstNode<PipelineDefinition>(
     document.parseResult.value,
     'pipelines@0',
   ) as PipelineDefinition;
 
-  const operatorEvaluatorRegistry =
-    overwrites?.operatorEvaluatorRegistry ??
-    new DefaultOperatorEvaluatorRegistry();
-  const wrapperFactories =
-    overwrites?.wrapperFactoryProvider ??
-    new WrapperFactoryProvider(operatorEvaluatorRegistry);
-
   const executionContext = new ExecutionContext(
     pipeline,
     new TestExecExtension(),
     new DefaultConstraintExtension(),
     new CachedLogger(runOptions.isDebugMode, undefined, loggerPrintLogs),
-    wrapperFactories,
+    services.WrapperFactories,
     runOptions,
     new EvaluationContext(
-      new RuntimeParameterProvider(),
-      operatorEvaluatorRegistry,
+      services.RuntimeParameterProvider,
+      services.operators.EvaluatorRegistry,
     ),
   );
 

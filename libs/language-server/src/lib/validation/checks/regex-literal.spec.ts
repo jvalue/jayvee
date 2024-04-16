@@ -9,7 +9,11 @@ import {
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { type RegexLiteral, createJayveeServices } from '../../../lib';
+import {
+  type JayveeServices,
+  type RegexLiteral,
+  createJayveeServices,
+} from '../../../lib';
 import {
   type ParseHelperOptions,
   createJayveeValidationProps,
@@ -30,6 +34,7 @@ describe('Validation of RegexLiteral', () => {
   const validationAcceptorMock = jest.fn(validationAcceptorMockImpl);
 
   let locator: AstNodeLocator;
+  let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
     __dirname,
@@ -47,13 +52,13 @@ describe('Validation of RegexLiteral', () => {
 
     validateRegexLiteral(
       regexLiteral,
-      createJayveeValidationProps(validationAcceptorMock),
+      createJayveeValidationProps(validationAcceptorMock, services),
     );
   }
 
   beforeAll(() => {
     // Create language services
-    const services = createJayveeServices(NodeFileSystem).Jayvee;
+    services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
