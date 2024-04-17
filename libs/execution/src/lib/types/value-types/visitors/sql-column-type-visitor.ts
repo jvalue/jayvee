@@ -5,7 +5,7 @@
 import { strict as assert } from 'assert';
 
 import {
-  type AtomicValuetype,
+  type AtomicValueType,
   ValueTypeVisitor,
 } from '@jvalue/jayvee-language-server';
 
@@ -26,7 +26,7 @@ export class SQLColumnTypeVisitor extends ValueTypeVisitor<string> {
     return 'text';
   }
 
-  override visitAtomicValuetype(valueType: AtomicValuetype): string {
+  override visitAtomicValueType(valueType: AtomicValueType): string {
     const supertype = valueType.getSupertype();
     assert(supertype !== undefined);
     return supertype.acceptVisitor(this);

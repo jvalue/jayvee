@@ -151,5 +151,5 @@ export abstract class ValueTypeVisitor<R = unknown> {
   ): R;
   abstract visitTransform(valueType: TransformValuetype): R;
 
-  abstract visitAtomicValuetype(valueType: AtomicValueType): R;
+  abstract visitAtomicValueType(valueType: AtomicValueType): R;
 }

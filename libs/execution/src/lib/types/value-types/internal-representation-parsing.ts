@@ -5,7 +5,7 @@
 import { strict as assert } from 'assert';
 
 import {
-  type AtomicValuetype,
+  type AtomicValueType,
   type InternalValueRepresentation,
   type ValueType,
   ValueTypeVisitor,
@@ -76,8 +76,8 @@ class InternalRepresentationParserVisitor extends ValueTypeVisitor<
     return this.value;
   }
 
-  visitAtomicValuetype(
-    valueType: AtomicValuetype,
+  visitAtomicValueType(
+    valueType: AtomicValueType,
   ): InternalValueRepresentation | undefined {
     const supertype = valueType.getSupertype();
     assert(supertype !== undefined);

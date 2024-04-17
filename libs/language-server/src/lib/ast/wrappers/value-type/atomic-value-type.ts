@@ -35,7 +35,7 @@ export class AtomicValueType
   }
 
   acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R {
-    return visitor.visitAtomicValuetype(this);
+    return visitor.visitAtomicValueType(this);
   }
 
   getConstraints(context: EvaluationContext): ConstraintDefinition[] {
@@ -115,6 +115,6 @@ export class AtomicValueType
   }
 }
 
-export function isAtomicValuetype(v: unknown): v is AtomicValueType {
+export function isAtomicValueType(v: unknown): v is AtomicValueType {
   return v instanceof AtomicValueType;
 }

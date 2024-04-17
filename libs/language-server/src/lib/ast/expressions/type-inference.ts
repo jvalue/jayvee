@@ -38,12 +38,12 @@ import {
 import { getNextAstNodeContainer } from '../model-util';
 // eslint-disable-next-line import/no-cycle
 import {
-  type AtomicValuetype,
+  type AtomicValueType,
   type PrimitiveValueType,
   type PrimitiveValueTypeProvider,
   type ValueType,
   type WrapperFactoryProvider,
-  isAtomicValuetype,
+  isAtomicValueType,
   isPrimitiveValueType,
 } from '../wrappers';
 
@@ -260,13 +260,13 @@ function inferCollectionType(
     return undefined;
   }
 
-  const commonAtomicValuetype = pickCommonAtomicValuetype(stacks);
-  if (commonAtomicValuetype === undefined) {
+  const commonAtomicValueType = pickCommonAtomicValueType(stacks);
+  if (commonAtomicValueType === undefined) {
     return wrapperFactories.ValueType.createCollection(
       commonPrimitiveValuetype,
     );
   }
-  return wrapperFactories.ValueType.createCollection(commonAtomicValuetype);
+  return wrapperFactories.ValueType.createCollection(commonAtomicValueType);
 }
 
 function inferCollectionElementTypes(
@@ -289,14 +289,14 @@ function inferCollectionElementTypes(
   return elementValuetypes;
 }
 
-type ValuetypeHierarchyStack = [PrimitiveValueType, ...AtomicValuetype[]];
+type ValuetypeHierarchyStack = [PrimitiveValueType, ...AtomicValueType[]];
 
 function getValuetypeHierarchyStack(
   valueType: ValueType,
 ): ValuetypeHierarchyStack {
   if (isPrimitiveValueType(valueType)) {
     return [valueType];
-  } else if (isAtomicValuetype(valueType)) {
+  } else if (isAtomicValueType(valueType)) {
     const supertype = valueType.getSupertype();
     assert(supertype !== undefined);
     return [...getValuetypeHierarchyStack(supertype), valueType];
@@ -332,15 +332,15 @@ function pickCommonPrimitiveValuetype(
   return resultingType;
 }
 
-function pickCommonAtomicValuetype(
+function pickCommonAtomicValueType(
   stacks: ValuetypeHierarchyStack[],
-): PrimitiveValueType | AtomicValuetype | undefined {
+): PrimitiveValueType | AtomicValueType | undefined {
   const minimumStackLength = Math.min(...stacks.map((stack) => stack.length));
 
-  let resultingType: PrimitiveValueType | AtomicValuetype | undefined =
+  let resultingType: PrimitiveValueType | AtomicValueType | undefined =
     undefined;
   for (let stackLevel = 1; stackLevel < minimumStackLength; ++stackLevel) {
-    const typesOfCurrentLevel: (PrimitiveValueType | AtomicValuetype)[] =
+    const typesOfCurrentLevel: (PrimitiveValueType | AtomicValueType)[] =
       stacks.map(
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         (stack) => stack[stackLevel]!,

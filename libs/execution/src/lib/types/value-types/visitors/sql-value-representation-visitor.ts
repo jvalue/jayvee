@@ -5,7 +5,7 @@
 import { strict as assert } from 'assert';
 
 import {
-  type AtomicValuetype,
+  type AtomicValueType,
   type BooleanValuetype,
   type DecimalValuetype,
   type IntegerValuetype,
@@ -54,8 +54,8 @@ export class SQLValueRepresentationVisitor extends ValueTypeVisitor<
     };
   }
 
-  override visitAtomicValuetype(
-    valueType: AtomicValuetype,
+  override visitAtomicValueType(
+    valueType: AtomicValueType,
   ): (value: InternalValueRepresentation) => string {
     const supertype = valueType.getSupertype();
     assert(supertype !== undefined);

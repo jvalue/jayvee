@@ -5,7 +5,7 @@
 import { strict as assert } from 'assert';
 
 import {
-  type AtomicValuetype,
+  type AtomicValueType,
   type BooleanValuetype,
   type CellRangeValuetype,
   type CollectionValueType,
@@ -41,7 +41,7 @@ class ValueRepresentationValidityVisitor extends ValueTypeVisitor<boolean> {
     super();
   }
 
-  override visitAtomicValuetype(valueType: AtomicValuetype): boolean {
+  override visitAtomicValueType(valueType: AtomicValueType): boolean {
     const supertype = valueType.getSupertype();
     assert(supertype !== undefined);
     if (!supertype.acceptVisitor(this)) {
