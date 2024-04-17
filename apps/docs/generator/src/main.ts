@@ -7,7 +7,6 @@ import { join } from 'path';
 
 import {
   type JayveeServices,
-  PrimitiveValuetypes,
   createJayveeServices,
   getAllBuiltinBlockTypes,
   getAllBuiltinConstraintTypes,
@@ -102,8 +101,9 @@ function generateValueTypeDocs(
     'value-types',
   );
   const userDocBuilder = new UserDocGenerator(services);
-  const valueTypeDoc =
-    userDocBuilder.generateValueTypesDoc(PrimitiveValuetypes);
+  const valueTypeDoc = userDocBuilder.generateValueTypesDoc(
+    services.valueTypes.Primitives.getAll(),
+  );
 
   const fileName = `built-in-value-types.md`;
   writeFileSync(join(docsPath, fileName), valueTypeDoc, {
