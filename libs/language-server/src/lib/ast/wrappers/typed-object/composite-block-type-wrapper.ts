@@ -7,7 +7,6 @@ import { type CompositeBlockTypeDefinition } from '../../generated/ast';
 import { type ValueTypeProvider } from '../value-type';
 import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
 
-// eslint-disable-next-line import/no-cycle
 import { BlockTypeWrapper } from './block-type-wrapper';
 
 export class CompositeBlockTypeWrapper extends BlockTypeWrapper {

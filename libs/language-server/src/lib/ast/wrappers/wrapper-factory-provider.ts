@@ -32,7 +32,6 @@ import { type AstNodeWrapper } from './ast-node-wrapper';
 import { CellRangeWrapper } from './cell-range-wrapper';
 import { PipeWrapper } from './pipe-wrapper';
 import { PipelineWrapper } from './pipeline-wrapper';
-// eslint-disable-next-line import/no-cycle
 import { BlockTypeWrapper } from './typed-object/block-type-wrapper';
 import { ConstraintTypeWrapper } from './typed-object/constrainttype-wrapper';
 import { type PrimitiveValueType, type ValueType } from './value-type';

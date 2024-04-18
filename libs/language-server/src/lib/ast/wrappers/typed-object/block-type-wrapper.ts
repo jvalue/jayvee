@@ -7,7 +7,6 @@ import { strict as assert } from 'assert';
 import { type Reference, isReference } from 'langium';
 
 import { RuntimeParameterProvider } from '../../../services';
-// eslint-disable-next-line import/no-cycle
 import {
   EvaluationContext,
   type OperatorEvaluatorRegistry,

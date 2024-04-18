@@ -17,7 +17,6 @@ export {
 export { type PipeWrapper } from './pipe-wrapper';
 export { type PipelineWrapper } from './pipeline-wrapper';
 
-// eslint-disable-next-line import/no-cycle
 export { type BlockTypeWrapper } from './typed-object/block-type-wrapper';
 export { type CompositeBlockTypeWrapper } from './typed-object/composite-block-type-wrapper';
 export { type ConstraintTypeWrapper } from './typed-object/constrainttype-wrapper';

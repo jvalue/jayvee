@@ -7,7 +7,6 @@ export * from './evaluation-strategy';
 export * from './evaluation-context';
 export * from './internal-value-representation';
 export * from './operator-registry';
-// eslint-disable-next-line import/no-cycle
 export * from './type-inference';
 export * from './typeguards';
 export * from './evaluate-expression';
