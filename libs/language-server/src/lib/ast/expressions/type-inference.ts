@@ -43,7 +43,7 @@ import {
   getValuetypeHierarchyStack,
   pickCommonAtomicValueType,
   pickCommonPrimitiveValuetype,
-} from '../wrappers/value-type/util';
+} from '../wrappers/util/value-type-util';
 
 import { isEveryValueDefined } from './typeguards';
 

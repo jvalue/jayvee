@@ -4,9 +4,15 @@
 
 import { strict as assert } from 'assert';
 
-import { type AtomicValueType, isAtomicValueType } from './atomic-value-type';
-import { type PrimitiveValueType, isPrimitiveValueType } from './primitive';
-import { type ValueType } from './value-type';
+import {
+  type AtomicValueType,
+  isAtomicValueType,
+} from '../value-type/atomic-value-type';
+import {
+  type PrimitiveValueType,
+  isPrimitiveValueType,
+} from '../value-type/primitive';
+import { type ValueType } from '../value-type/value-type';
 
 type ValuetypeHierarchyStack = [PrimitiveValueType, ...AtomicValueType[]];
 

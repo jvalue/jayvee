@@ -5,3 +5,4 @@
 export * from './column-id-util';
 export * from './cell-index';
 export * from './cell-range-util';
+export * from './value-type-util';
