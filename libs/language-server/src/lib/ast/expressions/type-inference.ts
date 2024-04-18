@@ -241,7 +241,7 @@ function inferCollectionType(
     const stack = stacks[0]!;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const resultingInnerType = stack[stack.length - 1]!;
-    return wrapperFactories.ValueType.createCollection(resultingInnerType);
+    return wrapperFactories.ValueType.createCollectionValueTypeOf(resultingInnerType);
   }
 
   const primitiveValuetypes = stacks.map((stack) => stack[0]);
@@ -262,11 +262,11 @@ function inferCollectionType(
 
   const commonAtomicValueType = pickCommonAtomicValueType(stacks);
   if (commonAtomicValueType === undefined) {
-    return wrapperFactories.ValueType.createCollection(
+    return wrapperFactories.ValueType.createCollectionValueTypeOf(
       commonPrimitiveValuetype,
     );
   }
-  return wrapperFactories.ValueType.createCollection(commonAtomicValueType);
+  return wrapperFactories.ValueType.createCollectionValueTypeOf(commonAtomicValueType);
 }
 
 function inferCollectionElementTypes(

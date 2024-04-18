@@ -372,7 +372,7 @@ class ValueTypeWrapperFactory {
     return new CollectionValueType(elementValuetype);
   }
 
-  createCollection<I extends InternalValueRepresentation>(
+  createCollectionValueTypeOf<I extends InternalValueRepresentation>(
     input: ValueType<I>,
   ): CollectionValueType<I> {
     return new CollectionValueType(input);

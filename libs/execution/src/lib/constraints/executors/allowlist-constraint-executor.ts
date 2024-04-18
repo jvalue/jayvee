@@ -23,7 +23,7 @@ export class AllowlistConstraintExecutor implements ConstraintExecutor {
 
     const allowlist = context.getPropertyValue(
       'allowlist',
-      context.wrapperFactories.ValueType.createCollection(
+      context.wrapperFactories.ValueType.createCollectionValueTypeOf(
         context.valueTypes.Primitives.Text,
       ),
     );

@@ -36,7 +36,7 @@ export class CellWriterExecutor extends AbstractBlockExecutor<
     );
     const writeValues = context.getPropertyValue(
       'write',
-      context.wrapperFactories.ValueType.createCollection(
+      context.wrapperFactories.ValueType.createCollectionValueTypeOf(
         context.valueTypes.Primitives.Text,
       ),
     );

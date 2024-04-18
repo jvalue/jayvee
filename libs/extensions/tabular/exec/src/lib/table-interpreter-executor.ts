@@ -53,7 +53,7 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
     );
     const columnDefinitions = context.getPropertyValue(
       'columns',
-      context.wrapperFactories.ValueType.createCollection(
+      context.wrapperFactories.ValueType.createCollectionValueTypeOf(
         context.valueTypes.Primitives.ValuetypeAssignment,
       ),
     );

@@ -29,7 +29,7 @@ export class InOperatorTypeComputer implements BinaryOperatorTypeComputer {
       valueTypesProvider.Primitives.Decimal,
     ];
     this.ALLOWED_RIGHT_OPERAND_TYPES = this.ALLOWED_LEFT_OPERAND_TYPES.map(
-      (v) => wrapperFactories.ValueType.createCollection(v),
+      (v) => wrapperFactories.ValueType.createCollectionValueTypeOf(v),
     );
   }
 
