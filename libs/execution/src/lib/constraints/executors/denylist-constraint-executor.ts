@@ -23,7 +23,7 @@ export class DenylistConstraintExecutor implements ConstraintExecutor {
 
     const denylist = context.getPropertyValue(
       'denylist',
-      context.wrapperFactories.ValueType.createCollectionValueTypeOf(
+      context.valueTypes.createCollectionValueTypeOf(
         context.valueTypes.Primitives.Text,
       ),
     );

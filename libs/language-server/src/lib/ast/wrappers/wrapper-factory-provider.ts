@@ -11,10 +11,7 @@ import {
   isReference,
 } from 'langium';
 
-import {
-  type InternalValueRepresentation,
-  type OperatorEvaluatorRegistry,
-} from '../expressions';
+import { type OperatorEvaluatorRegistry } from '../expressions';
 import {
   type BlockTypePipeline,
   type BuiltinConstrainttypeDefinition,
@@ -370,12 +367,6 @@ class ValueTypeWrapperFactory {
       );
     }
     return new CollectionValueType(elementValuetype);
-  }
-
-  createCollectionValueTypeOf<I extends InternalValueRepresentation>(
-    input: ValueType<I>,
-  ): CollectionValueType<I> {
-    return new CollectionValueType(input);
   }
 
   wrapPrimitive(

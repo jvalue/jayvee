@@ -37,7 +37,7 @@ export class TableTransformerExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<Table>> {
     const inputColumnNames = context.getPropertyValue(
       'inputColumns',
-      context.wrapperFactories.ValueType.createCollectionValueTypeOf(
+      context.valueTypes.createCollectionValueTypeOf(
         context.valueTypes.Primitives.Text,
       ),
     );

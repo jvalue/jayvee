@@ -39,7 +39,7 @@ export class ColumnDeleterExecutor extends AbstractBlockExecutor<
     const relativeColumns = context
       .getPropertyValue(
         'delete',
-        context.wrapperFactories.ValueType.createCollectionValueTypeOf(
+        context.valueTypes.createCollectionValueTypeOf(
           context.valueTypes.Primitives.CellRange,
         ),
       )

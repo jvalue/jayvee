@@ -2,8 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { type InternalValueRepresentation } from '../../../expressions';
+import { type ValueType } from '../value-type';
+
 import { BooleanValuetype } from './boolean-value-type';
 import { CellRangeValuetype } from './cell-range-value-type';
+import { CollectionValueType } from './collection/collection-value-type';
 import { EmptyCollectionValueType } from './collection/empty-collection-value-type';
 import { ConstraintValuetype } from './constraint-value-type';
 import { DecimalValuetype } from './decimal-value-type';
@@ -21,6 +25,12 @@ import { ValuetypeAssignmentValuetype } from './value-type-assignment-value-type
 export class PrimitiveValueTypeProvider {
   Primitives = new PrimitiveValueTypeContainer();
   EmptyCollection = new EmptyCollectionValueType();
+
+  createCollectionValueTypeOf<I extends InternalValueRepresentation>(
+    input: ValueType<I>,
+  ): CollectionValueType<I> {
+    return new CollectionValueType(input);
+  }
 }
 
 export class PrimitiveValueTypeContainer {

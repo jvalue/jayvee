@@ -71,7 +71,7 @@ function checkConstraintsCollectionValues(
     props.valueTypes,
     props.wrapperFactories,
   );
-  const expectedType = props.wrapperFactories.ValueType.createCollectionValueTypeOf(
+  const expectedType = props.valueTypes.createCollectionValueTypeOf(
     props.valueTypes.Primitives.Constraint,
   );
   if (inferredCollectionType === undefined) {

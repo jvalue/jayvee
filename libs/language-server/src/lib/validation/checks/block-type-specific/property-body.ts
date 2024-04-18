@@ -77,7 +77,7 @@ function checkCellWriterPropertyBody(
     writeProperty,
     props.evaluationContext,
     props.wrapperFactories,
-    props.wrapperFactories.ValueType.createCollectionValueTypeOf(
+    props.valueTypes.createCollectionValueTypeOf(
       props.valueTypes.Primitives.Text,
     ),
   );
@@ -142,7 +142,7 @@ function checkInputColumnsMatchTransformationPorts(
     inputColumnsProperty,
     props.evaluationContext,
     props.wrapperFactories,
-    props.wrapperFactories.ValueType.createCollectionValueTypeOf(
+    props.valueTypes.createCollectionValueTypeOf(
       props.valueTypes.Primitives.Text,
     ),
   );

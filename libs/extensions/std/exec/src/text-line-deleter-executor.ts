@@ -30,7 +30,7 @@ export class TextLineDeleterExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<TextFile>> {
     const lines = context.getPropertyValue(
       'lines',
-      context.wrapperFactories.ValueType.createCollectionValueTypeOf(
+      context.valueTypes.createCollectionValueTypeOf(
         context.valueTypes.Primitives.Integer,
       ),
     );
