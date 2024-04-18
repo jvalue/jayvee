@@ -92,7 +92,7 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
         operatorEvaluatorRegistry,
         valueTypeProvider,
       ),
-      valueTypes: valueTypeProvider,
+      valueTypeProvider: valueTypeProvider,
       wrapperFactories: wrapperFactories,
     });
   }

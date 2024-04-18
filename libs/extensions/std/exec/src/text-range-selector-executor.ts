@@ -30,11 +30,11 @@ export class TextRangeSelectorExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<TextFile>> {
     const lineFrom = context.getPropertyValue(
       'lineFrom',
-      context.valueTypes.Primitives.Integer,
+      context.valueTypeProvider.Primitives.Integer,
     );
     const lineTo = context.getPropertyValue(
       'lineTo',
-      context.valueTypes.Primitives.Integer,
+      context.valueTypeProvider.Primitives.Integer,
     );
 
     const numberOfLines = file.content.length;

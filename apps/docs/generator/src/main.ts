@@ -102,7 +102,7 @@ function generateValueTypeDocs(
   );
   const userDocBuilder = new UserDocGenerator(services);
   const valueTypeDoc = userDocBuilder.generateValueTypesDoc(
-    services.valueTypes.Primitives.getAll(),
+    services.ValueTypeProvider.Primitives.getAll(),
   );
 
   const fileName = `built-in-value-types.md`;

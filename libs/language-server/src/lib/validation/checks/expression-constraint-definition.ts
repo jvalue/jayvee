@@ -27,14 +27,14 @@ function checkConstraintExpression(
   const inferredType = inferExpressionType(
     expression,
     props.validationContext,
-    props.valueTypes,
+    props.valueTypeProvider,
     props.wrapperFactories,
   );
   if (inferredType === undefined) {
     return;
   }
 
-  const expectedType = props.valueTypes.Primitives.Boolean;
+  const expectedType = props.valueTypeProvider.Primitives.Boolean;
   if (!inferredType.isConvertibleTo(expectedType)) {
     props.validationContext.accept(
       'error',

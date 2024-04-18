@@ -43,7 +43,7 @@ export interface JayveeAddedServices {
     TypeComputerRegistry: OperatorTypeComputerRegistry;
     EvaluatorRegistry: OperatorEvaluatorRegistry;
   };
-  valueTypes: ValueTypeProvider;
+  ValueTypeProvider: ValueTypeProvider;
   WrapperFactories: WrapperFactoryProvider;
   validation: {
     ValidationRegistry: JayveeValidationRegistry;
@@ -83,16 +83,16 @@ export const JayveeModule: Module<
   operators: {
     TypeComputerRegistry: (services) =>
       new DefaultOperatorTypeComputerRegistry(
-        services.valueTypes,
+        services.ValueTypeProvider,
         services.WrapperFactories,
       ),
     EvaluatorRegistry: () => new DefaultOperatorEvaluatorRegistry(),
   },
-  valueTypes: () => new ValueTypeProvider(),
+  ValueTypeProvider: () => new ValueTypeProvider(),
   WrapperFactories: (services) =>
     new WrapperFactoryProvider(
       services.operators.EvaluatorRegistry,
-      services.valueTypes,
+      services.ValueTypeProvider,
     ),
 };
 

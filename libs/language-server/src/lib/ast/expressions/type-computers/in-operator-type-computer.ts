@@ -20,16 +20,16 @@ export class InOperatorTypeComputer implements BinaryOperatorTypeComputer {
   private readonly ALLOWED_RIGHT_OPERAND_TYPES: CollectionValueType[];
 
   constructor(
-    protected readonly valueTypesProvider: ValueTypeProvider,
+    protected readonly valueTypeProvider: ValueTypeProvider,
     protected readonly wrapperFactories: WrapperFactoryProvider,
   ) {
     this.ALLOWED_LEFT_OPERAND_TYPES = [
-      valueTypesProvider.Primitives.Text,
-      valueTypesProvider.Primitives.Integer,
-      valueTypesProvider.Primitives.Decimal,
+      valueTypeProvider.Primitives.Text,
+      valueTypeProvider.Primitives.Integer,
+      valueTypeProvider.Primitives.Decimal,
     ];
     this.ALLOWED_RIGHT_OPERAND_TYPES = this.ALLOWED_LEFT_OPERAND_TYPES.map(
-      (v) => valueTypesProvider.createCollectionValueTypeOf(v),
+      (v) => valueTypeProvider.createCollectionValueTypeOf(v),
     );
   }
 
@@ -68,15 +68,15 @@ export class InOperatorTypeComputer implements BinaryOperatorTypeComputer {
     assert(
       isCollectionValueType(
         rightOperandType,
-        this.valueTypesProvider.Primitives.Decimal,
+        this.valueTypeProvider.Primitives.Decimal,
       ) ||
         isCollectionValueType(
           rightOperandType,
-          this.valueTypesProvider.Primitives.Integer,
+          this.valueTypeProvider.Primitives.Integer,
         ) ||
         isCollectionValueType(
           rightOperandType,
-          this.valueTypesProvider.Primitives.Text,
+          this.valueTypeProvider.Primitives.Text,
         ),
     );
 
@@ -98,6 +98,6 @@ export class InOperatorTypeComputer implements BinaryOperatorTypeComputer {
       return undefined;
     }
 
-    return this.valueTypesProvider.Primitives.Boolean;
+    return this.valueTypeProvider.Primitives.Boolean;
   }
 }

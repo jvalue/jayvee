@@ -9,8 +9,11 @@ import {
 import { DefaultBinaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class BasicArithmeticOperatorTypeComputer extends DefaultBinaryOperatorTypeComputer {
-  constructor(protected readonly valueTypes: ValueTypeProvider) {
-    super(valueTypes.Primitives.Decimal, valueTypes.Primitives.Decimal);
+  constructor(protected readonly valueTypeProvider: ValueTypeProvider) {
+    super(
+      valueTypeProvider.Primitives.Decimal,
+      valueTypeProvider.Primitives.Decimal,
+    );
   }
 
   override doComputeType(
@@ -18,11 +21,11 @@ export class BasicArithmeticOperatorTypeComputer extends DefaultBinaryOperatorTy
     rightOperandType: ValueType,
   ): ValueType {
     if (
-      leftOperandType === this.valueTypes.Primitives.Integer &&
-      rightOperandType === this.valueTypes.Primitives.Integer
+      leftOperandType === this.valueTypeProvider.Primitives.Integer &&
+      rightOperandType === this.valueTypeProvider.Primitives.Integer
     ) {
-      return this.valueTypes.Primitives.Integer;
+      return this.valueTypeProvider.Primitives.Integer;
     }
-    return this.valueTypes.Primitives.Decimal;
+    return this.valueTypeProvider.Primitives.Decimal;
   }
 }

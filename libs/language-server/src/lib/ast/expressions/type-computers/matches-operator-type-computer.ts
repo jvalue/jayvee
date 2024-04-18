@@ -9,14 +9,14 @@ import {
 import { DefaultBinaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class MatchesOperatorTypeComputer extends DefaultBinaryOperatorTypeComputer {
-  constructor(protected readonly valueTypesProvider: ValueTypeProvider) {
+  constructor(protected readonly valueTypeProvider: ValueTypeProvider) {
     super(
-      valueTypesProvider.Primitives.Text,
-      valueTypesProvider.Primitives.Regex,
+      valueTypeProvider.Primitives.Text,
+      valueTypeProvider.Primitives.Regex,
     );
   }
 
   override doComputeType(): ValueType {
-    return this.valueTypesProvider.Primitives.Boolean;
+    return this.valueTypeProvider.Primitives.Boolean;
   }
 }

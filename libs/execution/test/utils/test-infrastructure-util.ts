@@ -66,12 +66,12 @@ export function getTestExecutionContext(
     new DefaultConstraintExtension(),
     new CachedLogger(runOptions.isDebugMode, undefined, loggerPrintLogs),
     services.WrapperFactories,
-    services.valueTypes,
+    services.ValueTypeProvider,
     runOptions,
     new EvaluationContext(
       services.RuntimeParameterProvider,
       services.operators.EvaluatorRegistry,
-      services.valueTypes,
+      services.ValueTypeProvider,
     ),
   );
 

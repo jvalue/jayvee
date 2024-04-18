@@ -47,7 +47,7 @@ export class ExecutionContext {
     public readonly constraintExtension: JayveeConstraintExtension,
     public readonly logger: Logger,
     public readonly wrapperFactories: WrapperFactoryProvider,
-    public readonly valueTypes: ValueTypeProvider,
+    public readonly valueTypeProvider: ValueTypeProvider,
     public readonly runOptions: {
       isDebugMode: boolean;
       debugGranularity: DebugGranularity;

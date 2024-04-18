@@ -9,11 +9,11 @@ import {
 import { DefaultUnaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class NotOperatorTypeComputer extends DefaultUnaryOperatorTypeComputer {
-  constructor(protected readonly valueTypesProvider: ValueTypeProvider) {
-    super(valueTypesProvider.Primitives.Boolean);
+  constructor(protected readonly valueTypeProvider: ValueTypeProvider) {
+    super(valueTypeProvider.Primitives.Boolean);
   }
 
   override doComputeType(): ValueType {
-    return this.valueTypesProvider.Primitives.Boolean;
+    return this.valueTypeProvider.Primitives.Boolean;
   }
 }

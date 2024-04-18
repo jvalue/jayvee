@@ -31,7 +31,7 @@ export class SheetPickerExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<Sheet>> {
     const sheetName = context.getPropertyValue(
       'sheetName',
-      context.valueTypes.Primitives.Text,
+      context.valueTypeProvider.Primitives.Text,
     );
     const sheet = workbook.getSheetByName(sheetName);
     if (sheet === undefined) {

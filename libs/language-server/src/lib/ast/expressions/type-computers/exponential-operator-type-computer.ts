@@ -9,14 +9,14 @@ import {
 import { DefaultBinaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class ExponentialOperatorTypeComputer extends DefaultBinaryOperatorTypeComputer {
-  constructor(protected readonly valueTypesProvider: ValueTypeProvider) {
+  constructor(protected readonly valueTypeProvider: ValueTypeProvider) {
     super(
-      valueTypesProvider.Primitives.Decimal,
-      valueTypesProvider.Primitives.Decimal,
+      valueTypeProvider.Primitives.Decimal,
+      valueTypeProvider.Primitives.Decimal,
     );
   }
 
   protected override doComputeType(): ValueType {
-    return this.valueTypesProvider.Primitives.Decimal;
+    return this.valueTypeProvider.Primitives.Decimal;
   }
 }

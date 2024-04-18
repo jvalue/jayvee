@@ -32,27 +32,27 @@ export class PostgresLoaderExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<None>> {
     const host = context.getPropertyValue(
       'host',
-      context.valueTypes.Primitives.Text,
+      context.valueTypeProvider.Primitives.Text,
     );
     const port = context.getPropertyValue(
       'port',
-      context.valueTypes.Primitives.Integer,
+      context.valueTypeProvider.Primitives.Integer,
     );
     const user = context.getPropertyValue(
       'username',
-      context.valueTypes.Primitives.Text,
+      context.valueTypeProvider.Primitives.Text,
     );
     const password = context.getPropertyValue(
       'password',
-      context.valueTypes.Primitives.Text,
+      context.valueTypeProvider.Primitives.Text,
     );
     const database = context.getPropertyValue(
       'database',
-      context.valueTypes.Primitives.Text,
+      context.valueTypeProvider.Primitives.Text,
     );
     const table = context.getPropertyValue(
       'table',
-      context.valueTypes.Primitives.Text,
+      context.valueTypeProvider.Primitives.Text,
     );
 
     const client = new Client({

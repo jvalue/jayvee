@@ -68,11 +68,11 @@ function checkConstraintsCollectionValues(
   const inferredCollectionType = inferExpressionType(
     constraintCollection,
     props.validationContext,
-    props.valueTypes,
+    props.valueTypeProvider,
     props.wrapperFactories,
   );
-  const expectedType = props.valueTypes.createCollectionValueTypeOf(
-    props.valueTypes.Primitives.Constraint,
+  const expectedType = props.valueTypeProvider.createCollectionValueTypeOf(
+    props.valueTypeProvider.Primitives.Constraint,
   );
   if (inferredCollectionType === undefined) {
     return;

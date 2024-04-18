@@ -34,7 +34,7 @@ export class GtfsRTInterpreterExecutor extends AbstractBlockExecutor<
     // Accessing attribute values by their name:
     const entity = context.getPropertyValue(
       'entity',
-      context.valueTypes.Primitives.Text,
+      context.valueTypeProvider.Primitives.Text,
     );
 
     // https://github.com/MobilityData/gtfs-realtime-bindings/tree/master/nodejs

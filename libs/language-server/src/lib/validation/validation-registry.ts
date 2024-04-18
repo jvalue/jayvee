@@ -55,7 +55,7 @@ export class JayveeValidationRegistry extends ValidationRegistry {
     this.typeComputerRegistry = services.operators.TypeComputerRegistry;
     this.operatorEvaluatorRegistry = services.operators.EvaluatorRegistry;
     this.wrapperFactories = services.WrapperFactories;
-    this.valueTypeProvider = services.valueTypes;
+    this.valueTypeProvider = services.ValueTypeProvider;
 
     this.registerJayveeValidationChecks({
       BuiltinBlockTypeDefinition: validateBlockTypeDefinition,
@@ -113,7 +113,7 @@ export class JayveeValidationRegistry extends ValidationRegistry {
         validationContext: validationContext,
         evaluationContext: evaluationContext,
         wrapperFactories: wrapperFactories,
-        valueTypes: valueTypeProvider,
+        valueTypeProvider: valueTypeProvider,
       });
     };
   }
@@ -129,7 +129,7 @@ export interface JayveeValidationProps {
   validationContext: ValidationContext;
   evaluationContext: EvaluationContext;
   wrapperFactories: WrapperFactoryProvider;
-  valueTypes: ValueTypeProvider;
+  valueTypeProvider: ValueTypeProvider;
 }
 export type JayveeValidationCheck<T extends AstNode = AstNode> = (
   node: T,

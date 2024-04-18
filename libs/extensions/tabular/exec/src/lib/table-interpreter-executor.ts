@@ -49,12 +49,12 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<Table>> {
     const header = context.getPropertyValue(
       'header',
-      context.valueTypes.Primitives.Boolean,
+      context.valueTypeProvider.Primitives.Boolean,
     );
     const columnDefinitions = context.getPropertyValue(
       'columns',
-      context.valueTypes.createCollectionValueTypeOf(
-        context.valueTypes.Primitives.ValuetypeAssignment,
+      context.valueTypeProvider.createCollectionValueTypeOf(
+        context.valueTypeProvider.Primitives.ValuetypeAssignment,
       ),
     );
 

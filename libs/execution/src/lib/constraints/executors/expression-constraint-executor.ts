@@ -33,7 +33,7 @@ export class ExpressionConstraintExecutor
       context.wrapperFactories,
     );
     assert(
-      context.valueTypes.Primitives.Boolean.isInternalValueRepresentation(
+      context.valueTypeProvider.Primitives.Boolean.isInternalValueRepresentation(
         result,
       ),
     );

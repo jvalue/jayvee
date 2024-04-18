@@ -9,14 +9,14 @@ import {
 import { DefaultBinaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class LogicalOperatorTypeComputer extends DefaultBinaryOperatorTypeComputer {
-  constructor(protected readonly valueTypesProvider: ValueTypeProvider) {
+  constructor(protected readonly valueTypeProvider: ValueTypeProvider) {
     super(
-      valueTypesProvider.Primitives.Boolean,
-      valueTypesProvider.Primitives.Boolean,
+      valueTypeProvider.Primitives.Boolean,
+      valueTypeProvider.Primitives.Boolean,
     );
   }
 
   protected override doComputeType(): ValueType {
-    return this.valueTypesProvider.Primitives.Boolean;
+    return this.valueTypeProvider.Primitives.Boolean;
   }
 }

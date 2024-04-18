@@ -34,11 +34,11 @@ export class TextFileInterpreterExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<TextFile>> {
     const encoding = context.getPropertyValue(
       'encoding',
-      context.valueTypes.Primitives.Text,
+      context.valueTypeProvider.Primitives.Text,
     );
     const lineBreak = context.getPropertyValue(
       'lineBreak',
-      context.valueTypes.Primitives.Regex,
+      context.valueTypeProvider.Primitives.Regex,
     );
 
     const decoder = new TextDecoder(encoding);

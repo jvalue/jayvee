@@ -32,15 +32,15 @@ export class SQLiteLoaderExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<None>> {
     const file = context.getPropertyValue(
       'file',
-      context.valueTypes.Primitives.Text,
+      context.valueTypeProvider.Primitives.Text,
     );
     const table = context.getPropertyValue(
       'table',
-      context.valueTypes.Primitives.Text,
+      context.valueTypeProvider.Primitives.Text,
     );
     const dropTable = context.getPropertyValue(
       'dropTable',
-      context.valueTypes.Primitives.Boolean,
+      context.valueTypeProvider.Primitives.Boolean,
     );
 
     let db: sqlite3.Database | undefined;

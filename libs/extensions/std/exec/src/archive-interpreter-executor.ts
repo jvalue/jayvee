@@ -41,7 +41,7 @@ export class ArchiveInterpreterExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<FileSystem>> {
     const archiveType = context.getPropertyValue(
       'archiveType',
-      context.valueTypes.Primitives.Text,
+      context.valueTypeProvider.Primitives.Text,
     );
     let fs: R.Result<R.FileSystem>;
 

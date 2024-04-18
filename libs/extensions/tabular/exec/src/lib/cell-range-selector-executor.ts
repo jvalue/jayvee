@@ -30,7 +30,7 @@ export class CellRangeSelectorExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<Sheet>> {
     const relativeRange = context.getPropertyValue(
       'select',
-      context.valueTypes.Primitives.CellRange,
+      context.valueTypeProvider.Primitives.CellRange,
     );
     const relativeRangeWrapper =
       context.wrapperFactories.CellRange.wrap(relativeRange);

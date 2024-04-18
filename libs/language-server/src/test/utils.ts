@@ -71,7 +71,7 @@ export function createJayveeValidationProps(
   validationAcceptor: ValidationAcceptor,
   services: JayveeServices,
 ): JayveeValidationProps {
-  const valueTypeProvider = services.valueTypes;
+  const valueTypeProvider = services.ValueTypeProvider;
   const operatorEvaluatorRegistry = services.operators.EvaluatorRegistry;
   const wrapperFactories = services.WrapperFactories;
   const operatorTypeComputerRegistry = services.operators.TypeComputerRegistry;
@@ -87,7 +87,7 @@ export function createJayveeValidationProps(
       operatorEvaluatorRegistry,
       valueTypeProvider,
     ),
-    valueTypes: valueTypeProvider,
+    valueTypeProvider: valueTypeProvider,
     wrapperFactories: wrapperFactories,
   };
 }

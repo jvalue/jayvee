@@ -34,15 +34,15 @@ export class CSVInterpreterExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<Sheet>> {
     const delimiter = context.getPropertyValue(
       'delimiter',
-      context.valueTypes.Primitives.Text,
+      context.valueTypeProvider.Primitives.Text,
     );
     const enclosing = context.getPropertyValue(
       'enclosing',
-      context.valueTypes.Primitives.Text,
+      context.valueTypeProvider.Primitives.Text,
     );
     const enclosingEscape = context.getPropertyValue(
       'enclosingEscape',
-      context.valueTypes.Primitives.Text,
+      context.valueTypeProvider.Primitives.Text,
     );
 
     context.logger.logDebug(

@@ -32,12 +32,12 @@ export class CellWriterExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<Sheet>> {
     const relativeCellRange = context.getPropertyValue(
       'at',
-      context.valueTypes.Primitives.CellRange,
+      context.valueTypeProvider.Primitives.CellRange,
     );
     const writeValues = context.getPropertyValue(
       'write',
-      context.valueTypes.createCollectionValueTypeOf(
-        context.valueTypes.Primitives.Text,
+      context.valueTypeProvider.createCollectionValueTypeOf(
+        context.valueTypeProvider.Primitives.Text,
       ),
     );
 

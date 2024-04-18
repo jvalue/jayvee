@@ -213,7 +213,7 @@ async function runPipeline(
     constraintExtension,
     loggerFactory.createLogger(),
     jayveeServices.WrapperFactories,
-    jayveeServices.valueTypes,
+    jayveeServices.ValueTypeProvider,
     {
       isDebugMode: runOptions.debug,
       debugGranularity: runOptions.debugGranularity,
@@ -222,7 +222,7 @@ async function runPipeline(
     new EvaluationContext(
       jayveeServices.RuntimeParameterProvider,
       jayveeServices.operators.EvaluatorRegistry,
-      jayveeServices.valueTypes,
+      jayveeServices.ValueTypeProvider,
     ),
   );
 

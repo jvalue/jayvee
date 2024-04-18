@@ -9,11 +9,11 @@ import {
 import { DefaultUnaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class IntegerConversionOperatorTypeComputer extends DefaultUnaryOperatorTypeComputer {
-  constructor(protected readonly valueTypesProvider: ValueTypeProvider) {
-    super(valueTypesProvider.Primitives.Decimal);
+  constructor(protected readonly valueTypeProvider: ValueTypeProvider) {
+    super(valueTypeProvider.Primitives.Decimal);
   }
 
   override doComputeType(): ValueType {
-    return this.valueTypesProvider.Primitives.Integer;
+    return this.valueTypeProvider.Primitives.Integer;
   }
 }

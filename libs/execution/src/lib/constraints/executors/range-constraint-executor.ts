@@ -28,19 +28,19 @@ export class RangeConstraintExecutor implements ConstraintExecutor {
 
     const lowerBound = context.getPropertyValue(
       'lowerBound',
-      context.valueTypes.Primitives.Decimal,
+      context.valueTypeProvider.Primitives.Decimal,
     );
     const lowerBoundInclusive = context.getPropertyValue(
       'lowerBoundInclusive',
-      context.valueTypes.Primitives.Boolean,
+      context.valueTypeProvider.Primitives.Boolean,
     );
     const upperBound = context.getPropertyValue(
       'upperBound',
-      context.valueTypes.Primitives.Decimal,
+      context.valueTypeProvider.Primitives.Decimal,
     );
     const upperBoundInclusive = context.getPropertyValue(
       'upperBoundInclusive',
-      context.valueTypes.Primitives.Boolean,
+      context.valueTypeProvider.Primitives.Boolean,
     );
 
     const lowerBoundFulfilled = lowerBoundInclusive

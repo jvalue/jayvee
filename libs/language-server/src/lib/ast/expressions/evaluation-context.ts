@@ -106,7 +106,7 @@ export class EvaluationContext {
 
   getValueForValueKeyword(
     literal: ValueKeywordLiteral,
-    valueTypes: ValueTypeProvider,
+    valueTypeProvider: ValueTypeProvider,
   ): InternalValueRepresentation | undefined {
     if (this.valueKeywordValue === undefined) {
       return undefined;
@@ -114,7 +114,7 @@ export class EvaluationContext {
 
     if (literal.lengthAccess) {
       assert(
-        valueTypes.Primitives.Text.isInternalValueRepresentation(
+        valueTypeProvider.Primitives.Text.isInternalValueRepresentation(
           this.valueKeywordValue,
         ),
       );

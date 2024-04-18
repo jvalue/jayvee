@@ -53,7 +53,7 @@ function checkNonNegative(
     property,
     props.evaluationContext,
     props.wrapperFactories,
-    props.valueTypes.Primitives.Integer,
+    props.valueTypeProvider.Primitives.Integer,
   );
   if (value === undefined) {
     return;

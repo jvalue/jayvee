@@ -9,11 +9,11 @@ import {
 import { DefaultUnaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class StringTransformTypeComputer extends DefaultUnaryOperatorTypeComputer {
-  constructor(protected readonly valueTypesProvider: ValueTypeProvider) {
-    super(valueTypesProvider.Primitives.Text);
+  constructor(protected readonly valueTypeProvider: ValueTypeProvider) {
+    super(valueTypeProvider.Primitives.Text);
   }
 
   override doComputeType(): ValueType {
-    return this.valueTypesProvider.Primitives.Text;
+    return this.valueTypeProvider.Primitives.Text;
   }
 }

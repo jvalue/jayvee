@@ -110,7 +110,7 @@ function checkCellWriterProperty(
       property,
       props.evaluationContext,
       props.wrapperFactories,
-      props.valueTypes.Primitives.CellRange,
+      props.valueTypeProvider.Primitives.CellRange,
     );
     if (cellRange === undefined) {
       return;
@@ -143,8 +143,8 @@ function checkColumnDeleterProperty(
       property,
       props.evaluationContext,
       props.wrapperFactories,
-      props.valueTypes.createCollectionValueTypeOf(
-        props.valueTypes.Primitives.CellRange,
+      props.valueTypeProvider.createCollectionValueTypeOf(
+        props.valueTypeProvider.Primitives.CellRange,
       ),
     );
 
@@ -267,8 +267,8 @@ function checkRowDeleterProperty(
       property,
       props.evaluationContext,
       props.wrapperFactories,
-      props.valueTypes.createCollectionValueTypeOf(
-        props.valueTypes.Primitives.CellRange,
+      props.valueTypeProvider.createCollectionValueTypeOf(
+        props.valueTypeProvider.Primitives.CellRange,
       ),
     );
 
@@ -301,8 +301,8 @@ function checkTableInterpreterProperty(
       property,
       props.evaluationContext,
       props.wrapperFactories,
-      props.valueTypes.createCollectionValueTypeOf(
-        props.valueTypes.Primitives.ValuetypeAssignment,
+      props.valueTypeProvider.createCollectionValueTypeOf(
+        props.valueTypeProvider.Primitives.ValuetypeAssignment,
       ),
     );
     if (valueTypeAssignments === undefined) {
@@ -356,8 +356,8 @@ function checkTextLineDeleterProperty(
       property,
       props.evaluationContext,
       props.wrapperFactories,
-      props.valueTypes.createCollectionValueTypeOf(
-        props.valueTypes.Primitives.Integer,
+      props.valueTypeProvider.createCollectionValueTypeOf(
+        props.valueTypeProvider.Primitives.Integer,
       ),
     );
     lines?.forEach((value, index) => {

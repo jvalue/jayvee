@@ -15,12 +15,12 @@ export class EqualityOperatorTypeComputer
 {
   private readonly ALLOWED_OPERAND_TYPES: ValueType[];
 
-  constructor(protected readonly valueTypesProvider: ValueTypeProvider) {
+  constructor(protected readonly valueTypeProvider: ValueTypeProvider) {
     this.ALLOWED_OPERAND_TYPES = [
-      valueTypesProvider.Primitives.Boolean,
-      valueTypesProvider.Primitives.Text,
-      valueTypesProvider.Primitives.Integer,
-      valueTypesProvider.Primitives.Decimal,
+      valueTypeProvider.Primitives.Boolean,
+      valueTypeProvider.Primitives.Text,
+      valueTypeProvider.Primitives.Integer,
+      valueTypeProvider.Primitives.Decimal,
     ];
   }
 
@@ -68,6 +68,6 @@ export class EqualityOperatorTypeComputer
       return undefined;
     }
 
-    return this.valueTypesProvider.Primitives.Boolean;
+    return this.valueTypeProvider.Primitives.Boolean;
   }
 }

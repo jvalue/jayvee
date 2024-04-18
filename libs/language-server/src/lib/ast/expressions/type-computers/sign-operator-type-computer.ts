@@ -9,8 +9,8 @@ import {
 import { DefaultUnaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class SignOperatorTypeComputer extends DefaultUnaryOperatorTypeComputer {
-  constructor(protected readonly valueTypesProvider: ValueTypeProvider) {
-    super(valueTypesProvider.Primitives.Decimal);
+  constructor(protected readonly valueTypeProvider: ValueTypeProvider) {
+    super(valueTypeProvider.Primitives.Decimal);
   }
 
   override doComputeType(operandType: ValueType): ValueType {

@@ -9,15 +9,15 @@ import {
 import { DefaultTernaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class ReplaceOperatorTypeComputer extends DefaultTernaryOperatorTypeComputer {
-  constructor(protected readonly valueTypesProvider: ValueTypeProvider) {
+  constructor(protected readonly valueTypeProvider: ValueTypeProvider) {
     super(
-      valueTypesProvider.Primitives.Text,
-      valueTypesProvider.Primitives.Regex,
-      valueTypesProvider.Primitives.Text,
+      valueTypeProvider.Primitives.Text,
+      valueTypeProvider.Primitives.Regex,
+      valueTypeProvider.Primitives.Text,
     );
   }
 
   override doComputeType(): ValueType {
-    return this.valueTypesProvider.Primitives.Text;
+    return this.valueTypeProvider.Primitives.Text;
   }
 }
