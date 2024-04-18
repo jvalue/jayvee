@@ -23,8 +23,8 @@ export { type ValuetypeAssignmentValuetype } from './value-type-assignment-value
 export { type TransformValuetype } from './transform-value-type';
 
 export {
+  ValueTypeProvider,
   PrimitiveValueTypeProvider,
-  type PrimitiveValueTypeContainer,
 } from './primitive-value-type-provider';
 
 export * from './collection'; // type export handled one level deeper

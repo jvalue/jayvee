@@ -14,7 +14,7 @@ import {
 import { type AstNodeWrapper } from '../ast-node-wrapper';
 import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
 
-import { type PrimitiveValueTypeProvider } from './primitive';
+import { type ValueTypeProvider } from './primitive';
 import { CollectionValueType } from './primitive/collection/collection-value-type';
 import {
   AbstractValueType,
@@ -28,7 +28,7 @@ export class AtomicValueType
 {
   constructor(
     public readonly astNode: ValuetypeDefinition,
-    private readonly valueTypeProvider: PrimitiveValueTypeProvider,
+    private readonly valueTypeProvider: ValueTypeProvider,
     private readonly wrapperFactories: WrapperFactoryProvider,
   ) {
     super();

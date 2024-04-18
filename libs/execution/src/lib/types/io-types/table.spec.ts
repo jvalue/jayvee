@@ -2,17 +2,17 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { PrimitiveValueTypeProvider } from '@jvalue/jayvee-language-server';
+import { ValueTypeProvider } from '@jvalue/jayvee-language-server';
 
 import { Table } from './table';
 
 describe('Table', () => {
   let table: Table;
-  let valueTypeProvider: PrimitiveValueTypeProvider;
+  let valueTypeProvider: ValueTypeProvider;
 
   beforeEach(() => {
     table = new Table();
-    valueTypeProvider = new PrimitiveValueTypeProvider();
+    valueTypeProvider = new ValueTypeProvider();
   });
 
   describe('addColumn', () => {

@@ -8,7 +8,7 @@ import {
   type UnaryExpression,
 } from '../generated/ast';
 import {
-  type PrimitiveValueTypeProvider,
+  type ValueTypeProvider,
   type WrapperFactoryProvider,
 } from '../wrappers';
 
@@ -162,7 +162,7 @@ export class DefaultOperatorTypeComputerRegistry
   };
 
   constructor(
-    private readonly valueTypeProvider: PrimitiveValueTypeProvider,
+    private readonly valueTypeProvider: ValueTypeProvider,
     private readonly wrapperFactories: WrapperFactoryProvider,
   ) {}
 }

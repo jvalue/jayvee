@@ -22,8 +22,8 @@ import { ValuetypeAssignmentValuetype } from './value-type-assignment-value-type
  * Should be created as singleton due to the equality comparison of primitive value types.
  * Exported for testing purposes.
  */
-export class PrimitiveValueTypeProvider {
-  Primitives = new PrimitiveValueTypeContainer();
+export class ValueTypeProvider {
+  Primitives = new PrimitiveValueTypeProvider();
   EmptyCollection = new EmptyCollectionValueType();
 
   createCollectionValueTypeOf<I extends InternalValueRepresentation>(
@@ -33,7 +33,7 @@ export class PrimitiveValueTypeProvider {
   }
 }
 
-export class PrimitiveValueTypeContainer {
+export class PrimitiveValueTypeProvider {
   Decimal = new DecimalValuetype();
   Boolean = new BooleanValuetype();
   Integer = new IntegerValuetype();

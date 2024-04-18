@@ -4,7 +4,7 @@
 
 import { type OperatorEvaluatorRegistry } from '../../expressions/operator-registry';
 import { type CompositeBlockTypeDefinition } from '../../generated/ast';
-import { type PrimitiveValueTypeProvider } from '../value-type';
+import { type ValueTypeProvider } from '../value-type';
 import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
 
 // eslint-disable-next-line import/no-cycle
@@ -20,7 +20,7 @@ export class CompositeBlockTypeWrapper extends BlockTypeWrapper {
   constructor(
     private blockTypeDefinition: CompositeBlockTypeDefinition,
     operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
-    valueTypeProvider: PrimitiveValueTypeProvider,
+    valueTypeProvider: ValueTypeProvider,
     wrapperFactories: WrapperFactoryProvider,
   ) {
     super(

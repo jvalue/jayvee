@@ -14,7 +14,7 @@ import {
   EvaluationContext,
   type OperatorEvaluatorRegistry,
   type OperatorTypeComputerRegistry,
-  type PrimitiveValueTypeProvider,
+  type ValueTypeProvider,
   type WrapperFactoryProvider,
 } from '../ast';
 import { type JayveeAstType } from '../ast/generated/ast';
@@ -46,7 +46,7 @@ export class JayveeValidationRegistry extends ValidationRegistry {
   private readonly typeComputerRegistry: OperatorTypeComputerRegistry;
   private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry;
   private readonly wrapperFactories: WrapperFactoryProvider;
-  private readonly valueTypeProvider: PrimitiveValueTypeProvider;
+  private readonly valueTypeProvider: ValueTypeProvider;
 
   constructor(services: JayveeServices) {
     super(services);
@@ -97,7 +97,7 @@ export class JayveeValidationRegistry extends ValidationRegistry {
     typeComputerRegistry: OperatorTypeComputerRegistry,
     operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
     wrapperFactories: WrapperFactoryProvider,
-    valueTypeProvider: PrimitiveValueTypeProvider,
+    valueTypeProvider: ValueTypeProvider,
   ): ValidationCheck<T> {
     return (node: T, accept: ValidationAcceptor): MaybePromise<void> => {
       const validationContext = new ValidationContext(
@@ -129,7 +129,7 @@ export interface JayveeValidationProps {
   validationContext: ValidationContext;
   evaluationContext: EvaluationContext;
   wrapperFactories: WrapperFactoryProvider;
-  valueTypes: PrimitiveValueTypeProvider;
+  valueTypes: ValueTypeProvider;
 }
 export type JayveeValidationCheck<T extends AstNode = AstNode> = (
   node: T,

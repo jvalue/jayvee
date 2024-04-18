@@ -19,7 +19,7 @@ import {
   isTransformPortDefinition,
   isValueKeywordLiteral,
 } from '../generated/ast';
-import { type PrimitiveValueTypeProvider } from '../wrappers';
+import { type ValueTypeProvider } from '../wrappers';
 import { type ValueType } from '../wrappers/value-type/value-type';
 
 import { type InternalValueRepresentation } from './internal-value-representation';
@@ -36,7 +36,7 @@ export class EvaluationContext {
   constructor(
     public readonly runtimeParameterProvider: RuntimeParameterProvider,
     public readonly operatorRegistry: OperatorEvaluatorRegistry,
-    public readonly valueTypeProvider: PrimitiveValueTypeProvider,
+    public readonly valueTypeProvider: ValueTypeProvider,
   ) {}
 
   getValueFor(
@@ -106,7 +106,7 @@ export class EvaluationContext {
 
   getValueForValueKeyword(
     literal: ValueKeywordLiteral,
-    valueTypes: PrimitiveValueTypeProvider,
+    valueTypes: ValueTypeProvider,
   ): InternalValueRepresentation | undefined {
     if (this.valueKeywordValue === undefined) {
       return undefined;

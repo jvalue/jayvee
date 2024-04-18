@@ -40,8 +40,8 @@ import { getNextAstNodeContainer } from '../model-util';
 import {
   type AtomicValueType,
   type PrimitiveValueType,
-  type PrimitiveValueTypeProvider,
   type ValueType,
+  type ValueTypeProvider,
   type WrapperFactoryProvider,
   isAtomicValueType,
   isPrimitiveValueType,
@@ -52,7 +52,7 @@ import { isEveryValueDefined } from './typeguards';
 export function inferExpressionType(
   expression: Expression | undefined,
   validationContext: ValidationContext,
-  valueTypeProvider: PrimitiveValueTypeProvider,
+  valueTypeProvider: ValueTypeProvider,
   wrapperFactories: WrapperFactoryProvider,
 ): ValueType | undefined {
   if (expression === undefined) {
@@ -155,7 +155,7 @@ export function inferExpressionType(
 function inferTypeFromExpressionLiteral(
   expression: ExpressionLiteral,
   validationContext: ValidationContext,
-  valueTypeProvider: PrimitiveValueTypeProvider,
+  valueTypeProvider: ValueTypeProvider,
   wrapperFactories: WrapperFactoryProvider,
 ): ValueType | undefined {
   if (isValueLiteral(expression)) {
@@ -207,7 +207,7 @@ function inferTypeFromExpressionLiteral(
  */
 function inferNumericType(
   expression: NumericLiteral,
-  valueTypeProvider: PrimitiveValueTypeProvider,
+  valueTypeProvider: ValueTypeProvider,
 ): ValueType {
   if (Number.isInteger(expression.value)) {
     return valueTypeProvider.Primitives.Integer;
@@ -218,7 +218,7 @@ function inferNumericType(
 function inferCollectionType(
   collection: CollectionLiteral,
   validationContext: ValidationContext,
-  valueTypeProvider: PrimitiveValueTypeProvider,
+  valueTypeProvider: ValueTypeProvider,
   wrapperFactories: WrapperFactoryProvider,
 ): ValueType | undefined {
   const elementValuetypes = inferCollectionElementTypes(
@@ -272,7 +272,7 @@ function inferCollectionType(
 function inferCollectionElementTypes(
   collection: CollectionLiteral,
   validationContext: ValidationContext,
-  valueTypeProvider: PrimitiveValueTypeProvider,
+  valueTypeProvider: ValueTypeProvider,
   wrapperFactories: WrapperFactoryProvider,
 ): ValueType[] | undefined {
   const elementValuetypes = collection.values.map((value) =>
@@ -371,7 +371,7 @@ function areAllTypesEqual(types: ValueType[]): boolean {
 function inferTypeFromValueKeyword(
   expression: ValueKeywordLiteral,
   validationContext: ValidationContext,
-  valueTypeProvider: PrimitiveValueTypeProvider,
+  valueTypeProvider: ValueTypeProvider,
   wrapperFactories: WrapperFactoryProvider,
 ): ValueType | undefined {
   const expressionConstraintContainer = getNextAstNodeContainer(
@@ -416,7 +416,7 @@ function inferTypeFromValueKeyword(
 
 function inferTypeFromReferenceLiteral(
   expression: ReferenceLiteral,
-  valueTypeProvider: PrimitiveValueTypeProvider,
+  valueTypeProvider: ValueTypeProvider,
   wrapperFactories: WrapperFactoryProvider,
 ): ValueType | undefined {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

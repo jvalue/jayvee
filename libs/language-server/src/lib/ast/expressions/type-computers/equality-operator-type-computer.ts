@@ -5,8 +5,8 @@
 import { type ValidationContext } from '../../../validation/validation-context';
 import { type BinaryExpression } from '../../generated/ast';
 import {
-  type PrimitiveValueTypeProvider,
   type ValueType,
+  type ValueTypeProvider,
 } from '../../wrappers/value-type';
 import { type BinaryOperatorTypeComputer } from '../operator-type-computer';
 
@@ -15,9 +15,7 @@ export class EqualityOperatorTypeComputer
 {
   private readonly ALLOWED_OPERAND_TYPES: ValueType[];
 
-  constructor(
-    protected readonly valueTypesProvider: PrimitiveValueTypeProvider,
-  ) {
+  constructor(protected readonly valueTypesProvider: ValueTypeProvider) {
     this.ALLOWED_OPERAND_TYPES = [
       valueTypesProvider.Primitives.Boolean,
       valueTypesProvider.Primitives.Text,

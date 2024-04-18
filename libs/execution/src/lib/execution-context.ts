@@ -10,10 +10,10 @@ import {
   type EvaluationContext,
   type InternalValueRepresentation,
   type PipelineDefinition,
-  type PrimitiveValueTypeProvider,
   type PropertyAssignment,
   type TransformDefinition,
   type ValueType,
+  type ValueTypeProvider,
   type WrapperFactoryProvider,
   evaluatePropertyValue,
   isBlockDefinition,
@@ -47,7 +47,7 @@ export class ExecutionContext {
     public readonly constraintExtension: JayveeConstraintExtension,
     public readonly logger: Logger,
     public readonly wrapperFactories: WrapperFactoryProvider,
-    public readonly valueTypes: PrimitiveValueTypeProvider,
+    public readonly valueTypes: ValueTypeProvider,
     public readonly runOptions: {
       isDebugMode: boolean;
       debugGranularity: DebugGranularity;

@@ -38,7 +38,7 @@ import { ConstraintTypeWrapper } from './typed-object/constrainttype-wrapper';
 import { type PrimitiveValueType, type ValueType } from './value-type';
 import { AtomicValueType } from './value-type/atomic-value-type';
 import { CollectionValueType } from './value-type/primitive/collection/collection-value-type';
-import { type PrimitiveValueTypeProvider } from './value-type/primitive/primitive-value-type-provider';
+import { type ValueTypeProvider } from './value-type/primitive/primitive-value-type-provider';
 
 abstract class AstNodeWrapperFactory<
   N extends AstNode,
@@ -78,7 +78,7 @@ export class WrapperFactoryProvider {
 
   constructor(
     private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
-    private readonly primitiveValueTypeContainer: PrimitiveValueTypeProvider,
+    private readonly primitiveValueTypeContainer: ValueTypeProvider,
   ) {
     this.CellRange = new CellRangeWrapperFactory();
     this.BlockType = new BlockTypeWrapperFactory(
@@ -122,7 +122,7 @@ class BlockTypeWrapperFactory extends AstNodeWrapperFactory<
 > {
   constructor(
     private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
-    private readonly valueTypeProvider: PrimitiveValueTypeProvider,
+    private readonly valueTypeProvider: ValueTypeProvider,
     private readonly wrapperFactories: WrapperFactoryProvider,
   ) {
     super();
@@ -155,7 +155,7 @@ class ConstraintTypeWrapperFactory extends AstNodeWrapperFactory<
 > {
   constructor(
     private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
-    private readonly valueTypeProvider: PrimitiveValueTypeProvider,
+    private readonly valueTypeProvider: ValueTypeProvider,
     private readonly wrapperFactories: WrapperFactoryProvider,
   ) {
     super();
@@ -316,7 +316,7 @@ class TypedObjectWrapperFactory {
 class ValueTypeWrapperFactory {
   constructor(
     private readonly wrapperFactories: WrapperFactoryProvider,
-    private readonly primitiveValueTypeProvider: PrimitiveValueTypeProvider,
+    private readonly primitiveValueTypeProvider: ValueTypeProvider,
   ) {}
 
   wrap(

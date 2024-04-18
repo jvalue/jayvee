@@ -13,9 +13,9 @@ import {
   DefaultOperatorEvaluatorRegistry,
   DefaultOperatorTypeComputerRegistry,
   type JayveeServices,
-  PrimitiveValueTypeProvider,
   type PropertyBody,
   ValidationContext,
+  ValueTypeProvider,
   WrapperFactoryProvider,
   checkUniqueNames,
   createJayveeServices,
@@ -74,7 +74,7 @@ describe('Validation of validation-utils', () => {
       const text = readJvTestAsset(
         'validation-utils/valid-distinct-property-names.jv',
       );
-      const valueTypeProvider = new PrimitiveValueTypeProvider();
+      const valueTypeProvider = new ValueTypeProvider();
 
       const propertyBody: PropertyBody = await parseAndExtractPropertyBody(
         text,
@@ -100,7 +100,7 @@ describe('Validation of validation-utils', () => {
       const text = readJvTestAsset(
         'validation-utils/invalid-duplicate-property-names.jv',
       );
-      const valueTypeProvider = new PrimitiveValueTypeProvider();
+      const valueTypeProvider = new ValueTypeProvider();
 
       const propertyBody: PropertyBody = await parseAndExtractPropertyBody(
         text,

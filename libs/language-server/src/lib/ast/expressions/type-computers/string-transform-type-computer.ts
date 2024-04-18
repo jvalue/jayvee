@@ -3,15 +3,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  type PrimitiveValueTypeProvider,
   type ValueType,
+  type ValueTypeProvider,
 } from '../../wrappers/value-type';
 import { DefaultUnaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class StringTransformTypeComputer extends DefaultUnaryOperatorTypeComputer {
-  constructor(
-    protected readonly valueTypesProvider: PrimitiveValueTypeProvider,
-  ) {
+  constructor(protected readonly valueTypesProvider: ValueTypeProvider) {
     super(valueTypesProvider.Primitives.Text);
   }
 

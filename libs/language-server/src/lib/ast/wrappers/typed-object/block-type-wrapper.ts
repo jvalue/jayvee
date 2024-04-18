@@ -15,7 +15,7 @@ import {
 } from '../../expressions';
 import { type ReferenceableBlockTypeDefinition } from '../../generated/ast';
 import { IOType, getIOType } from '../../io-type';
-import { type PrimitiveValueTypeProvider } from '../value-type';
+import { type ValueTypeProvider } from '../value-type';
 import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
 
 import {
@@ -46,7 +46,7 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlockTypeD
       | ReferenceableBlockTypeDefinition
       | Reference<ReferenceableBlockTypeDefinition>,
     operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
-    valueTypeProvider: PrimitiveValueTypeProvider,
+    valueTypeProvider: ValueTypeProvider,
     wrapperFactories: WrapperFactoryProvider,
   ) {
     const blockTypeDefinition = isReference(toBeWrapped)

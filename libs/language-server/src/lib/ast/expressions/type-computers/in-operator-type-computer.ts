@@ -9,8 +9,8 @@ import { type BinaryExpression } from '../../generated/ast';
 import { type WrapperFactoryProvider } from '../../wrappers';
 import {
   type CollectionValueType,
-  type PrimitiveValueTypeProvider,
   type ValueType,
+  type ValueTypeProvider,
   isCollectionValueType,
 } from '../../wrappers/value-type';
 import { type BinaryOperatorTypeComputer } from '../operator-type-computer';
@@ -20,7 +20,7 @@ export class InOperatorTypeComputer implements BinaryOperatorTypeComputer {
   private readonly ALLOWED_RIGHT_OPERAND_TYPES: CollectionValueType[];
 
   constructor(
-    protected readonly valueTypesProvider: PrimitiveValueTypeProvider,
+    protected readonly valueTypesProvider: ValueTypeProvider,
     protected readonly wrapperFactories: WrapperFactoryProvider,
   ) {
     this.ALLOWED_LEFT_OPERAND_TYPES = [
