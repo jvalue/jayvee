@@ -120,4 +120,23 @@ describe('Validation of FilePickerExecutor', () => {
       expect(result.left.message).toEqual(`File '/test.txt' not found`);
     }
   });
+
+  it('should work if the filename starts with a dot', async () => {
+    const text = readJvTestAsset('dot-valid-file-picker.jv');
+    uploadTestFile('test.txt');
+
+    const result = await parseAndExecuteArchiveInterpreter(text, fileSystem);
+
+    expect(R.isErr(result)).toEqual(false);
+    if (R.isOk(result)) {
+      expect(result.right).toEqual(
+        expect.objectContaining({
+          name: 'test.txt',
+          extension: 'txt',
+          ioType: IOType.FILE,
+          mimeType: R.MimeType.TEXT_PLAIN,
+        }),
+      );
+    }
+  });
 });

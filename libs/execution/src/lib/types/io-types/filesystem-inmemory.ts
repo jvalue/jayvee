@@ -57,12 +57,12 @@ export class InMemoryFileSystem implements FileSystem {
   }
 
   private processPath(path: string): string[] | null {
-    if (!path.startsWith(InMemoryFileSystem.getPathSeparator())) {
+    const [head, ...tail] = path.split(InMemoryFileSystem.getPathSeparator());
+    if (!(head === '' || head === InMemoryFileSystem.CURRENT_DIR)) {
       return null;
     }
-    const parts = path
-      .split(InMemoryFileSystem.getPathSeparator())
-      .filter((p) => p !== ''); // Process paths like "folder1//folder1" to "folder1/folder2"
+
+    const parts = tail.filter((p) => p !== ''); // Process paths like "folder1//folder1" to "folder1/folder2"
     const processedParts: string[] = [];
     for (const part of parts) {
       if (part === InMemoryFileSystem.CURRENT_DIR) {
