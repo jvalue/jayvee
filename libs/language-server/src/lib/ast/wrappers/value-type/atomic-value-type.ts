@@ -14,13 +14,10 @@ import {
 import { type AstNodeWrapper } from '../ast-node-wrapper';
 import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
 
+import { AbstractValueType } from './abstract-value-type';
 import { type ValueTypeProvider } from './primitive';
 import { CollectionValueType } from './primitive/collection/collection-value-type';
-import {
-  AbstractValueType,
-  type ValueType,
-  type ValueTypeVisitor,
-} from './value-type';
+import { type ValueType, type ValueTypeVisitor } from './value-type';
 
 export class AtomicValueType
   extends AbstractValueType<InternalValueRepresentation>
