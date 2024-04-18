@@ -4,7 +4,8 @@
   "ignorePatterns": ["**/*"],
   "plugins": ["@nx"],
   "parserOptions": {
-    "project": ["./tsconfig.base.json"]
+    "project": ["./tsconfig.base.json"],
+    "sourceType": "module"
   },
   "overrides": [
     {
