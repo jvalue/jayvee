@@ -9,7 +9,11 @@ import {
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { type BuiltinBlockTypeDefinition, createJayveeServices } from '../..';
+import {
+  type BuiltinBlockTypeDefinition,
+  type JayveeServices,
+  createJayveeServices,
+} from '../..';
 import {
   type ParseHelperOptions,
   createJayveeValidationProps,
@@ -30,6 +34,7 @@ describe('Validation of BuiltinBlockTypeDefinition', () => {
   const validationAcceptorMock = jest.fn(validationAcceptorMockImpl);
 
   let locator: AstNodeLocator;
+  let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
     __dirname,
@@ -47,13 +52,13 @@ describe('Validation of BuiltinBlockTypeDefinition', () => {
 
     validateBlockTypeDefinition(
       blockType,
-      createJayveeValidationProps(validationAcceptorMock),
+      createJayveeValidationProps(validationAcceptorMock, services),
     );
   }
 
   beforeAll(() => {
     // Create language services
-    const services = createJayveeServices(NodeFileSystem).Jayvee;
+    services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);

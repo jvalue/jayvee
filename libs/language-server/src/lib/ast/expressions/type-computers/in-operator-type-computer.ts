@@ -6,22 +6,32 @@ import { strict as assert } from 'assert';
 
 import { type ValidationContext } from '../../../validation/validation-context';
 import { type BinaryExpression } from '../../generated/ast';
+import { type WrapperFactoryProvider } from '../../wrappers';
 import {
-  CollectionValuetype,
+  type CollectionValueType,
   type ValueType,
-  isCollectionValuetype,
+  type ValueTypeProvider,
+  isCollectionValueType,
 } from '../../wrappers/value-type';
-import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/primitive-value-types';
 import { type BinaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class InOperatorTypeComputer implements BinaryOperatorTypeComputer {
-  private readonly ALLOWED_LEFT_OPERAND_TYPES: ValueType[] = [
-    PrimitiveValuetypes.Text,
-    PrimitiveValuetypes.Integer,
-    PrimitiveValuetypes.Decimal,
-  ];
-  private readonly ALLOWED_RIGHT_OPERAND_TYPES: CollectionValuetype[] =
-    this.ALLOWED_LEFT_OPERAND_TYPES.map((v) => new CollectionValuetype(v));
+  private readonly ALLOWED_LEFT_OPERAND_TYPES: ValueType[];
+  private readonly ALLOWED_RIGHT_OPERAND_TYPES: CollectionValueType[];
+
+  constructor(
+    protected readonly valueTypeProvider: ValueTypeProvider,
+    protected readonly wrapperFactories: WrapperFactoryProvider,
+  ) {
+    this.ALLOWED_LEFT_OPERAND_TYPES = [
+      valueTypeProvider.Primitives.Text,
+      valueTypeProvider.Primitives.Integer,
+      valueTypeProvider.Primitives.Decimal,
+    ];
+    this.ALLOWED_RIGHT_OPERAND_TYPES = this.ALLOWED_LEFT_OPERAND_TYPES.map(
+      (v) => valueTypeProvider.createCollectionValueTypeOf(v),
+    );
+  }
 
   computeType(
     leftOperandType: ValueType,
@@ -56,9 +66,18 @@ export class InOperatorTypeComputer implements BinaryOperatorTypeComputer {
       return undefined;
     }
     assert(
-      isCollectionValuetype(rightOperandType, PrimitiveValuetypes.Decimal) ||
-        isCollectionValuetype(rightOperandType, PrimitiveValuetypes.Integer) ||
-        isCollectionValuetype(rightOperandType, PrimitiveValuetypes.Text),
+      isCollectionValueType(
+        rightOperandType,
+        this.valueTypeProvider.Primitives.Decimal,
+      ) ||
+        isCollectionValueType(
+          rightOperandType,
+          this.valueTypeProvider.Primitives.Integer,
+        ) ||
+        isCollectionValueType(
+          rightOperandType,
+          this.valueTypeProvider.Primitives.Text,
+        ),
     );
 
     // allow 3 in [3.5, 5.3]
@@ -79,6 +98,6 @@ export class InOperatorTypeComputer implements BinaryOperatorTypeComputer {
       return undefined;
     }
 
-    return PrimitiveValuetypes.Boolean;
+    return this.valueTypeProvider.Primitives.Boolean;
   }
 }

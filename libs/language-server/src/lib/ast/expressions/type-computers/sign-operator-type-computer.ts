@@ -2,13 +2,15 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type ValueType } from '../../wrappers/value-type';
-import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/primitive-value-types';
+import {
+  type ValueType,
+  type ValueTypeProvider,
+} from '../../wrappers/value-type';
 import { DefaultUnaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class SignOperatorTypeComputer extends DefaultUnaryOperatorTypeComputer {
-  constructor() {
-    super(PrimitiveValuetypes.Decimal);
+  constructor(protected readonly valueTypeProvider: ValueTypeProvider) {
+    super(valueTypeProvider.Primitives.Decimal);
   }
 
   override doComputeType(operandType: ValueType): ValueType {

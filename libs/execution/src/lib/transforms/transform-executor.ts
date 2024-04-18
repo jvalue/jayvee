@@ -10,7 +10,6 @@ import {
   type TransformOutputAssignment,
   type TransformPortDefinition,
   type ValueType,
-  createValueType,
   evaluateExpression,
 } from '@jvalue/jayvee-language-server';
 
@@ -24,7 +23,10 @@ export interface PortDetails {
 }
 
 export class TransformExecutor {
-  constructor(private readonly transform: TransformDefinition) {}
+  constructor(
+    private readonly transform: TransformDefinition,
+    private readonly context: ExecutionContext,
+  ) {}
 
   getInputDetails(): PortDetails[] {
     return this.getPortDetails('from');
@@ -44,7 +46,8 @@ export class TransformExecutor {
     const ports = this.transform.body.ports.filter((x) => x.kind === kind);
     const portDetails = ports.map((port) => {
       const valueTypeNode = port.valueType;
-      const valueType = createValueType(valueTypeNode);
+      const valueType =
+        this.context.wrapperFactories.ValueType.wrap(valueTypeNode);
       assert(valueType !== undefined);
       return {
         port: port,

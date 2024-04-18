@@ -14,6 +14,7 @@ import {
   EvaluationContext,
   type OperatorEvaluatorRegistry,
   type OperatorTypeComputerRegistry,
+  type ValueTypeProvider,
   type WrapperFactoryProvider,
 } from '../ast';
 import { type JayveeAstType } from '../ast/generated/ast';
@@ -45,6 +46,7 @@ export class JayveeValidationRegistry extends ValidationRegistry {
   private readonly typeComputerRegistry: OperatorTypeComputerRegistry;
   private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry;
   private readonly wrapperFactories: WrapperFactoryProvider;
+  private readonly valueTypeProvider: ValueTypeProvider;
 
   constructor(services: JayveeServices) {
     super(services);
@@ -53,6 +55,7 @@ export class JayveeValidationRegistry extends ValidationRegistry {
     this.typeComputerRegistry = services.operators.TypeComputerRegistry;
     this.operatorEvaluatorRegistry = services.operators.EvaluatorRegistry;
     this.wrapperFactories = services.WrapperFactories;
+    this.valueTypeProvider = services.ValueTypeProvider;
 
     this.registerJayveeValidationChecks({
       BuiltinBlockTypeDefinition: validateBlockTypeDefinition,
@@ -81,6 +84,7 @@ export class JayveeValidationRegistry extends ValidationRegistry {
         this.typeComputerRegistry,
         this.operatorEvaluatorRegistry,
         this.wrapperFactories,
+        this.valueTypeProvider,
       );
 
       this.doRegister(type, this.wrapValidationException(wrappedCheck, this));
@@ -93,6 +97,7 @@ export class JayveeValidationRegistry extends ValidationRegistry {
     typeComputerRegistry: OperatorTypeComputerRegistry,
     operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
     wrapperFactories: WrapperFactoryProvider,
+    valueTypeProvider: ValueTypeProvider,
   ): ValidationCheck<T> {
     return (node: T, accept: ValidationAcceptor): MaybePromise<void> => {
       const validationContext = new ValidationContext(
@@ -102,11 +107,13 @@ export class JayveeValidationRegistry extends ValidationRegistry {
       const evaluationContext = new EvaluationContext(
         runtimeParameterProvider,
         operatorEvaluatorRegistry,
+        valueTypeProvider,
       );
       return check(node, {
         validationContext: validationContext,
         evaluationContext: evaluationContext,
         wrapperFactories: wrapperFactories,
+        valueTypeProvider: valueTypeProvider,
       });
     };
   }
@@ -122,6 +129,7 @@ export interface JayveeValidationProps {
   validationContext: ValidationContext;
   evaluationContext: EvaluationContext;
   wrapperFactories: WrapperFactoryProvider;
+  valueTypeProvider: ValueTypeProvider;
 }
 export type JayveeValidationCheck<T extends AstNode = AstNode> = (
   node: T,

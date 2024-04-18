@@ -10,9 +10,13 @@ import {
 import { NodeFileSystem } from 'langium/node';
 
 import {
+  DefaultOperatorEvaluatorRegistry,
   DefaultOperatorTypeComputerRegistry,
+  type JayveeServices,
   type PropertyBody,
   ValidationContext,
+  ValueTypeProvider,
+  WrapperFactoryProvider,
   checkUniqueNames,
   createJayveeServices,
 } from '..';
@@ -31,6 +35,7 @@ describe('Validation of validation-utils', () => {
   ) => Promise<LangiumDocument<AstNode>>;
 
   let locator: AstNodeLocator;
+  let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
     __dirname,
@@ -51,7 +56,7 @@ describe('Validation of validation-utils', () => {
 
   beforeAll(() => {
     // Create language services
-    const services = createJayveeServices(NodeFileSystem).Jayvee;
+    services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
@@ -69,6 +74,7 @@ describe('Validation of validation-utils', () => {
       const text = readJvTestAsset(
         'validation-utils/valid-distinct-property-names.jv',
       );
+      const valueTypeProvider = new ValueTypeProvider();
 
       const propertyBody: PropertyBody = await parseAndExtractPropertyBody(
         text,
@@ -77,7 +83,13 @@ describe('Validation of validation-utils', () => {
         propertyBody.properties,
         new ValidationContext(
           validationAcceptorMock,
-          new DefaultOperatorTypeComputerRegistry(),
+          new DefaultOperatorTypeComputerRegistry(
+            valueTypeProvider,
+            new WrapperFactoryProvider(
+              new DefaultOperatorEvaluatorRegistry(),
+              valueTypeProvider,
+            ),
+          ),
         ),
       );
 
@@ -88,6 +100,7 @@ describe('Validation of validation-utils', () => {
       const text = readJvTestAsset(
         'validation-utils/invalid-duplicate-property-names.jv',
       );
+      const valueTypeProvider = new ValueTypeProvider();
 
       const propertyBody: PropertyBody = await parseAndExtractPropertyBody(
         text,
@@ -96,7 +109,13 @@ describe('Validation of validation-utils', () => {
         propertyBody.properties,
         new ValidationContext(
           validationAcceptorMock,
-          new DefaultOperatorTypeComputerRegistry(),
+          new DefaultOperatorTypeComputerRegistry(
+            valueTypeProvider,
+            new WrapperFactoryProvider(
+              new DefaultOperatorEvaluatorRegistry(),
+              valueTypeProvider,
+            ),
+          ),
         ),
       );
 

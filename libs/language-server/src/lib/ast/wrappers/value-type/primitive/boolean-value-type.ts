@@ -7,7 +7,7 @@ import { type ValueTypeVisitor } from '../value-type';
 
 import { PrimitiveValueType } from './primitive-value-type';
 
-class BooleanValuetypeImpl extends PrimitiveValueType<boolean> {
+export class BooleanValuetype extends PrimitiveValueType<boolean> {
   acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R {
     return visitor.visitBoolean(this);
   }
@@ -36,14 +36,4 @@ A boolean value.
 Examples: true, false
 `.trim();
   }
-}
-
-// Only export instance to enforce singleton
-export const Boolean = new BooleanValuetypeImpl();
-
-// Only export type to allow narrowing down in visitors
-export type BooleanValuetype = InstanceType<typeof BooleanValuetypeImpl>;
-
-export function isBooleanValuetype(v: unknown): v is BooleanValuetype {
-  return v === Boolean;
 }

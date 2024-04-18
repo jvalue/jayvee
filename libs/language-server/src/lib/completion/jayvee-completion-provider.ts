@@ -15,11 +15,7 @@ import {
 } from 'langium';
 import { CompletionItemKind } from 'vscode-languageserver';
 
-import {
-  type TypedObjectWrapper,
-  type WrapperFactoryProvider,
-  createValueType,
-} from '../ast';
+import { type TypedObjectWrapper, type WrapperFactoryProvider } from '../ast';
 import {
   type BlockDefinition,
   type ConstraintDefinition,
@@ -150,7 +146,8 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
           throw new Error('Expected parsed document to be a JayveeModel');
         }
         parsedDocument.valueTypes.forEach((valueTypeDefinition) => {
-          const valueType = createValueType(valueTypeDefinition);
+          const valueType =
+            this.wrapperFactories.ValueType.wrap(valueTypeDefinition);
           if (valueType !== undefined && valueType.isReferenceableByUser()) {
             acceptor(context, {
               label: valueTypeDefinition.name,

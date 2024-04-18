@@ -12,6 +12,7 @@ import {
 import { NodeFileSystem } from 'langium/node';
 
 import {
+  type JayveeServices,
   type ValueTypeReference,
   type ValuetypeDefinition,
   createJayveeServices,
@@ -36,6 +37,7 @@ describe('Validation of ValueTypeReference', () => {
   const validationAcceptorMock = jest.fn(validationAcceptorMockImpl);
 
   let locator: AstNodeLocator;
+  let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
     __dirname,
@@ -68,7 +70,7 @@ describe('Validation of ValueTypeReference', () => {
 
   beforeAll(() => {
     // Create language services
-    const services = createJayveeServices(NodeFileSystem).Jayvee;
+    services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
@@ -88,7 +90,7 @@ describe('Validation of ValueTypeReference', () => {
       (valueTypeRef) => {
         validateValueTypeReference(
           valueTypeRef,
-          createJayveeValidationProps(validationAcceptorMock),
+          createJayveeValidationProps(validationAcceptorMock, services),
         );
       },
     );
@@ -105,7 +107,7 @@ describe('Validation of ValueTypeReference', () => {
       (valueTypeRef) => {
         validateValueTypeReference(
           valueTypeRef,
-          createJayveeValidationProps(validationAcceptorMock),
+          createJayveeValidationProps(validationAcceptorMock, services),
         );
       },
     );
@@ -122,7 +124,7 @@ describe('Validation of ValueTypeReference', () => {
       (valueTypeRef) => {
         validateValueTypeReference(
           valueTypeRef,
-          createJayveeValidationProps(validationAcceptorMock),
+          createJayveeValidationProps(validationAcceptorMock, services),
         );
       },
     );
@@ -139,7 +141,7 @@ describe('Validation of ValueTypeReference', () => {
       (valueTypeRef) => {
         validateValueTypeReference(
           valueTypeRef,
-          createJayveeValidationProps(validationAcceptorMock),
+          createJayveeValidationProps(validationAcceptorMock, services),
         );
       },
     );
@@ -161,7 +163,7 @@ describe('Validation of ValueTypeReference', () => {
       (valueTypeRef) => {
         validateValueTypeReference(
           valueTypeRef,
-          createJayveeValidationProps(validationAcceptorMock),
+          createJayveeValidationProps(validationAcceptorMock, services),
         );
       },
     );
@@ -183,7 +185,7 @@ describe('Validation of ValueTypeReference', () => {
       (valueTypeRef) => {
         validateValueTypeReference(
           valueTypeRef,
-          createJayveeValidationProps(validationAcceptorMock),
+          createJayveeValidationProps(validationAcceptorMock, services),
         );
       },
     );
@@ -205,7 +207,7 @@ describe('Validation of ValueTypeReference', () => {
       (valueTypeRef) => {
         validateValueTypeReference(
           valueTypeRef,
-          createJayveeValidationProps(validationAcceptorMock),
+          createJayveeValidationProps(validationAcceptorMock, services),
         );
       },
     );
@@ -227,7 +229,7 @@ describe('Validation of ValueTypeReference', () => {
       (valueTypeRef) => {
         validateValueTypeReference(
           valueTypeRef,
-          createJayveeValidationProps(validationAcceptorMock),
+          createJayveeValidationProps(validationAcceptorMock, services),
         );
       },
     );
@@ -262,7 +264,7 @@ describe('Validation of ValueTypeReference', () => {
 
     validateValueTypeReference(
       valueTypeRef,
-      createJayveeValidationProps(validationAcceptorMock),
+      createJayveeValidationProps(validationAcceptorMock, services),
     );
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
@@ -288,7 +290,7 @@ describe('Validation of ValueTypeReference', () => {
 
     validateValueTypeReference(
       valueTypeRef,
-      createJayveeValidationProps(validationAcceptorMock),
+      createJayveeValidationProps(validationAcceptorMock, services),
     );
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);

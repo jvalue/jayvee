@@ -11,7 +11,7 @@ import {
   type Workbook,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
-import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
+import { IOType } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
 export class SheetPickerExecutor extends AbstractBlockExecutor<
@@ -31,7 +31,7 @@ export class SheetPickerExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<Sheet>> {
     const sheetName = context.getPropertyValue(
       'sheetName',
-      PrimitiveValuetypes.Text,
+      context.valueTypeProvider.Primitives.Text,
     );
     const sheet = workbook.getSheetByName(sheetName);
     if (sheet === undefined) {

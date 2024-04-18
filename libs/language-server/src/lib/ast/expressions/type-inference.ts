@@ -38,33 +38,40 @@ import {
 import { getNextAstNodeContainer } from '../model-util';
 // eslint-disable-next-line import/no-cycle
 import {
-  type AtomicValuetype,
-  CollectionValuetype,
+  type AtomicValueType,
   type PrimitiveValueType,
-  isAtomicValuetype,
+  type ValueType,
+  type ValueTypeProvider,
+  type WrapperFactoryProvider,
+  isAtomicValueType,
   isPrimitiveValueType,
 } from '../wrappers';
-import { EmptyCollection } from '../wrappers/value-type/primitive/collection/empty-collection-value-type';
-import { PrimitiveValuetypes } from '../wrappers/value-type/primitive/primitive-value-types';
-import { type ValueType } from '../wrappers/value-type/value-type';
-import { createValueType } from '../wrappers/value-type/value-type-util';
 
 import { isEveryValueDefined } from './typeguards';
 
 export function inferExpressionType(
   expression: Expression | undefined,
   validationContext: ValidationContext,
+  valueTypeProvider: ValueTypeProvider,
+  wrapperFactories: WrapperFactoryProvider,
 ): ValueType | undefined {
   if (expression === undefined) {
     return undefined;
   }
   if (isExpressionLiteral(expression)) {
-    return inferTypeFromExpressionLiteral(expression, validationContext);
+    return inferTypeFromExpressionLiteral(
+      expression,
+      validationContext,
+      valueTypeProvider,
+      wrapperFactories,
+    );
   }
   if (isUnaryExpression(expression)) {
     const innerType = inferExpressionType(
       expression.expression,
       validationContext,
+      valueTypeProvider,
+      wrapperFactories,
     );
     if (innerType === undefined) {
       return undefined;
@@ -75,8 +82,18 @@ export function inferExpressionType(
     return typeComputer.computeType(innerType, expression, validationContext);
   }
   if (isBinaryExpression(expression)) {
-    const leftType = inferExpressionType(expression.left, validationContext);
-    const rightType = inferExpressionType(expression.right, validationContext);
+    const leftType = inferExpressionType(
+      expression.left,
+      validationContext,
+      valueTypeProvider,
+      wrapperFactories,
+    );
+    const rightType = inferExpressionType(
+      expression.right,
+      validationContext,
+      valueTypeProvider,
+      wrapperFactories,
+    );
     if (leftType === undefined || rightType === undefined) {
       return undefined;
     }
@@ -92,12 +109,24 @@ export function inferExpressionType(
     );
   }
   if (isTernaryExpression(expression)) {
-    const firstType = inferExpressionType(expression.first, validationContext);
+    const firstType = inferExpressionType(
+      expression.first,
+      validationContext,
+      valueTypeProvider,
+      wrapperFactories,
+    );
     const secondType = inferExpressionType(
       expression.second,
       validationContext,
+      valueTypeProvider,
+      wrapperFactories,
     );
-    const thirdType = inferExpressionType(expression.third, validationContext);
+    const thirdType = inferExpressionType(
+      expression.third,
+      validationContext,
+      valueTypeProvider,
+      wrapperFactories,
+    );
     if (
       firstType === undefined ||
       secondType === undefined ||
@@ -126,29 +155,45 @@ export function inferExpressionType(
 function inferTypeFromExpressionLiteral(
   expression: ExpressionLiteral,
   validationContext: ValidationContext,
+  valueTypeProvider: ValueTypeProvider,
+  wrapperFactories: WrapperFactoryProvider,
 ): ValueType | undefined {
   if (isValueLiteral(expression)) {
     if (isTextLiteral(expression)) {
-      return PrimitiveValuetypes.Text;
+      return valueTypeProvider.Primitives.Text;
     } else if (isBooleanLiteral(expression)) {
-      return PrimitiveValuetypes.Boolean;
+      return valueTypeProvider.Primitives.Boolean;
     } else if (isNumericLiteral(expression)) {
-      return inferNumericType(expression);
+      return inferNumericType(expression, valueTypeProvider);
     } else if (isCellRangeLiteral(expression)) {
-      return PrimitiveValuetypes.CellRange;
+      return valueTypeProvider.Primitives.CellRange;
     } else if (isRegexLiteral(expression)) {
-      return PrimitiveValuetypes.Regex;
+      return valueTypeProvider.Primitives.Regex;
     } else if (isValuetypeAssignmentLiteral(expression)) {
-      return PrimitiveValuetypes.ValuetypeAssignment;
+      return valueTypeProvider.Primitives.ValuetypeAssignment;
     } else if (isCollectionLiteral(expression)) {
-      return inferCollectionType(expression, validationContext);
+      return inferCollectionType(
+        expression,
+        validationContext,
+        valueTypeProvider,
+        wrapperFactories,
+      );
     }
     assertUnreachable(expression);
   } else if (isFreeVariableLiteral(expression)) {
     if (isValueKeywordLiteral(expression)) {
-      return inferTypeFromValueKeyword(expression, validationContext);
+      return inferTypeFromValueKeyword(
+        expression,
+        validationContext,
+        valueTypeProvider,
+        wrapperFactories,
+      );
     } else if (isReferenceLiteral(expression)) {
-      return inferTypeFromReferenceLiteral(expression);
+      return inferTypeFromReferenceLiteral(
+        expression,
+        valueTypeProvider,
+        wrapperFactories,
+      );
     }
     assertUnreachable(expression);
   }
@@ -160,20 +205,27 @@ function inferTypeFromExpressionLiteral(
  * Thus, the inferred type might differ from the literal type.
  * E.g., 3.0 is currently interpreted as integer but is a DecimalLiteral.
  */
-function inferNumericType(expression: NumericLiteral): ValueType {
+function inferNumericType(
+  expression: NumericLiteral,
+  valueTypeProvider: ValueTypeProvider,
+): ValueType {
   if (Number.isInteger(expression.value)) {
-    return PrimitiveValuetypes.Integer;
+    return valueTypeProvider.Primitives.Integer;
   }
-  return PrimitiveValuetypes.Decimal;
+  return valueTypeProvider.Primitives.Decimal;
 }
 
 function inferCollectionType(
   collection: CollectionLiteral,
   validationContext: ValidationContext,
+  valueTypeProvider: ValueTypeProvider,
+  wrapperFactories: WrapperFactoryProvider,
 ): ValueType | undefined {
   const elementValuetypes = inferCollectionElementTypes(
     collection,
     validationContext,
+    valueTypeProvider,
+    wrapperFactories,
   );
   if (elementValuetypes === undefined) {
     return undefined;
@@ -182,14 +234,14 @@ function inferCollectionType(
   const stacks = elementValuetypes.map(getValuetypeHierarchyStack);
 
   if (stacks.length === 0) {
-    return EmptyCollection;
+    return valueTypeProvider.EmptyCollection;
   }
   if (stacks.length === 1) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const stack = stacks[0]!;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const resultingInnerType = stack[stack.length - 1]!;
-    return new CollectionValuetype(resultingInnerType);
+    return valueTypeProvider.createCollectionValueTypeOf(resultingInnerType);
   }
 
   const primitiveValuetypes = stacks.map((stack) => stack[0]);
@@ -208,19 +260,28 @@ function inferCollectionType(
     return undefined;
   }
 
-  const commonAtomicValuetype = pickCommonAtomicValuetype(stacks);
-  if (commonAtomicValuetype === undefined) {
-    return new CollectionValuetype(commonPrimitiveValuetype);
+  const commonAtomicValueType = pickCommonAtomicValueType(stacks);
+  if (commonAtomicValueType === undefined) {
+    return valueTypeProvider.createCollectionValueTypeOf(
+      commonPrimitiveValuetype,
+    );
   }
-  return new CollectionValuetype(commonAtomicValuetype);
+  return valueTypeProvider.createCollectionValueTypeOf(commonAtomicValueType);
 }
 
 function inferCollectionElementTypes(
   collection: CollectionLiteral,
   validationContext: ValidationContext,
+  valueTypeProvider: ValueTypeProvider,
+  wrapperFactories: WrapperFactoryProvider,
 ): ValueType[] | undefined {
   const elementValuetypes = collection.values.map((value) =>
-    inferExpressionType(value, validationContext),
+    inferExpressionType(
+      value,
+      validationContext,
+      valueTypeProvider,
+      wrapperFactories,
+    ),
   );
   if (!isEveryValueDefined(elementValuetypes)) {
     return undefined;
@@ -228,14 +289,14 @@ function inferCollectionElementTypes(
   return elementValuetypes;
 }
 
-type ValuetypeHierarchyStack = [PrimitiveValueType, ...AtomicValuetype[]];
+type ValuetypeHierarchyStack = [PrimitiveValueType, ...AtomicValueType[]];
 
 function getValuetypeHierarchyStack(
   valueType: ValueType,
 ): ValuetypeHierarchyStack {
   if (isPrimitiveValueType(valueType)) {
     return [valueType];
-  } else if (isAtomicValuetype(valueType)) {
+  } else if (isAtomicValueType(valueType)) {
     const supertype = valueType.getSupertype();
     assert(supertype !== undefined);
     return [...getValuetypeHierarchyStack(supertype), valueType];
@@ -271,17 +332,19 @@ function pickCommonPrimitiveValuetype(
   return resultingType;
 }
 
-function pickCommonAtomicValuetype(
+function pickCommonAtomicValueType(
   stacks: ValuetypeHierarchyStack[],
-): ValueType | undefined {
+): PrimitiveValueType | AtomicValueType | undefined {
   const minimumStackLength = Math.min(...stacks.map((stack) => stack.length));
 
-  let resultingType: ValueType | undefined = undefined;
+  let resultingType: PrimitiveValueType | AtomicValueType | undefined =
+    undefined;
   for (let stackLevel = 1; stackLevel < minimumStackLength; ++stackLevel) {
-    const typesOfCurrentLevel: ValueType[] = stacks.map(
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      (stack) => stack[stackLevel]!,
-    );
+    const typesOfCurrentLevel: (PrimitiveValueType | AtomicValueType)[] =
+      stacks.map(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        (stack) => stack[stackLevel]!,
+      );
 
     if (!areAllTypesEqual(typesOfCurrentLevel)) {
       // Return the common value type of the previous level
@@ -308,6 +371,8 @@ function areAllTypesEqual(types: ValueType[]): boolean {
 function inferTypeFromValueKeyword(
   expression: ValueKeywordLiteral,
   validationContext: ValidationContext,
+  valueTypeProvider: ValueTypeProvider,
+  wrapperFactories: WrapperFactoryProvider,
 ): ValueType | undefined {
   const expressionConstraintContainer = getNextAstNodeContainer(
     expression,
@@ -324,14 +389,16 @@ function inferTypeFromValueKeyword(
     return undefined;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  const valueType = createValueType(expressionConstraintContainer?.valueType);
+  const valueType = wrapperFactories.ValueType.wrap(
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    expressionConstraintContainer?.valueType,
+  );
   if (valueType === undefined) {
     return undefined;
   }
 
   if (expression.lengthAccess) {
-    if (!valueType.isConvertibleTo(PrimitiveValuetypes.Text)) {
+    if (!valueType.isConvertibleTo(valueTypeProvider.Primitives.Text)) {
       validationContext.accept(
         'error',
         'The length can only be accessed from text values ',
@@ -342,13 +409,15 @@ function inferTypeFromValueKeyword(
       );
       return undefined;
     }
-    return PrimitiveValuetypes.Integer;
+    return valueTypeProvider.Primitives.Integer;
   }
   return valueType;
 }
 
 function inferTypeFromReferenceLiteral(
   expression: ReferenceLiteral,
+  valueTypeProvider: ValueTypeProvider,
+  wrapperFactories: WrapperFactoryProvider,
 ): ValueType | undefined {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const referenced = expression?.value?.ref;
@@ -357,10 +426,10 @@ function inferTypeFromReferenceLiteral(
   }
 
   if (isConstraintDefinition(referenced)) {
-    return PrimitiveValuetypes.Constraint;
+    return valueTypeProvider.Primitives.Constraint;
   }
   if (isTransformDefinition(referenced)) {
-    return PrimitiveValuetypes.Transform;
+    return valueTypeProvider.Primitives.Transform;
   }
   if (
     isTransformPortDefinition(referenced) ||
@@ -371,7 +440,7 @@ function inferTypeFromReferenceLiteral(
     if (valueType === undefined) {
       return undefined;
     }
-    return createValueType(valueType);
+    return wrapperFactories.ValueType.wrap(valueType);
   }
   assertUnreachable(referenced);
 }

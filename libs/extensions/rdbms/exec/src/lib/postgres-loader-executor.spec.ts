@@ -12,7 +12,7 @@ import {
 import {
   type BlockDefinition,
   IOType,
-  PrimitiveValuetypes,
+  type JayveeServices,
   createJayveeServices,
 } from '@jvalue/jayvee-language-server';
 import {
@@ -56,6 +56,7 @@ describe('Validation of PostgresLoaderExecutor', () => {
   ) => Promise<LangiumDocument<AstNode>>;
 
   let locator: AstNodeLocator;
+  let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
     __dirname,
@@ -76,13 +77,13 @@ describe('Validation of PostgresLoaderExecutor', () => {
 
     return new PostgresLoaderExecutor().doExecute(
       IOInput,
-      getTestExecutionContext(locator, document, [block]),
+      getTestExecutionContext(locator, document, services, [block]),
     );
   }
 
   beforeAll(async () => {
     // Create language services
-    const services = createJayveeServices(NodeFileSystem).Jayvee;
+    services = createJayveeServices(NodeFileSystem).Jayvee;
     await loadTestExtensions(services, [
       path.resolve(__dirname, '../../test/test-extension/TestBlockTypes.jv'),
     ]);
@@ -103,14 +104,14 @@ describe('Validation of PostgresLoaderExecutor', () => {
           columnName: 'Column1',
           column: {
             values: ['value 1'],
-            valueType: PrimitiveValuetypes.Text,
+            valueType: services.ValueTypeProvider.Primitives.Text,
           },
         },
         {
           columnName: 'Column2',
           column: {
             values: [20.2],
-            valueType: PrimitiveValuetypes.Decimal,
+            valueType: services.ValueTypeProvider.Primitives.Decimal,
           },
         },
       ],
@@ -147,14 +148,14 @@ describe('Validation of PostgresLoaderExecutor', () => {
           columnName: 'Column1',
           column: {
             values: ['value 1'],
-            valueType: PrimitiveValuetypes.Text,
+            valueType: services.ValueTypeProvider.Primitives.Text,
           },
         },
         {
           columnName: 'Column2',
           column: {
             values: [20.2],
-            valueType: PrimitiveValuetypes.Decimal,
+            valueType: services.ValueTypeProvider.Primitives.Decimal,
           },
         },
       ],

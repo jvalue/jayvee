@@ -9,6 +9,7 @@ import { getTestExecutionContext } from '@jvalue/jayvee-execution/test';
 import {
   type BlockDefinition,
   IOType,
+  type JayveeServices,
   createJayveeServices,
 } from '@jvalue/jayvee-language-server';
 import {
@@ -31,6 +32,7 @@ describe('Validation of LocalFileExtractorExecutor', () => {
   let parse: (input: string) => Promise<LangiumDocument<AstNode>>;
 
   let locator: AstNodeLocator;
+  let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
     __dirname,
@@ -50,13 +52,13 @@ describe('Validation of LocalFileExtractorExecutor', () => {
 
     return new LocalFileExtractorExecutor().doExecute(
       R.NONE,
-      getTestExecutionContext(locator, document, [block]),
+      getTestExecutionContext(locator, document, services, [block]),
     );
   }
 
   beforeAll(async () => {
     // Create language services
-    const services = createJayveeServices(NodeFileSystem).Jayvee;
+    services = createJayveeServices(NodeFileSystem).Jayvee;
     await loadTestExtensions(services, [
       path.resolve(__dirname, '../test/test-extension/TestBlockTypes.jv'),
     ]);

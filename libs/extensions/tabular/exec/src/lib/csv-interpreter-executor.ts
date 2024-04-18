@@ -13,7 +13,7 @@ import {
   type TextFile,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
-import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
+import { IOType } from '@jvalue/jayvee-language-server';
 import * as E from 'fp-ts/lib/Either';
 import { type Either, isLeft } from 'fp-ts/lib/Either';
 
@@ -34,15 +34,15 @@ export class CSVInterpreterExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<Sheet>> {
     const delimiter = context.getPropertyValue(
       'delimiter',
-      PrimitiveValuetypes.Text,
+      context.valueTypeProvider.Primitives.Text,
     );
     const enclosing = context.getPropertyValue(
       'enclosing',
-      PrimitiveValuetypes.Text,
+      context.valueTypeProvider.Primitives.Text,
     );
     const enclosingEscape = context.getPropertyValue(
       'enclosingEscape',
-      PrimitiveValuetypes.Text,
+      context.valueTypeProvider.Primitives.Text,
     );
 
     context.logger.logDebug(

@@ -11,7 +11,7 @@ import { type ValueTypeVisitor } from '../value-type';
 
 import { PrimitiveValueType } from './primitive-value-type';
 
-class CellRangeValuetypeImpl extends PrimitiveValueType<CellRangeLiteral> {
+export class CellRangeValuetype extends PrimitiveValueType<CellRangeLiteral> {
   acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R {
     return visitor.visitCellRange(this);
   }
@@ -29,14 +29,4 @@ class CellRangeValuetypeImpl extends PrimitiveValueType<CellRangeLiteral> {
   ): operandValue is CellRangeLiteral {
     return isCellRangeLiteral(operandValue);
   }
-}
-
-// Only export instance to enforce singleton
-export const CellRange = new CellRangeValuetypeImpl();
-
-// Only export type to allow narrowing down in visitors
-export type CellRangeValuetype = InstanceType<typeof CellRangeValuetypeImpl>;
-
-export function isCellRangeValuetype(v: unknown): v is CellRangeValuetype {
-  return v === CellRange;
 }

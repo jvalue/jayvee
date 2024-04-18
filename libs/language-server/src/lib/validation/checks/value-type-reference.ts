@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { createValueType } from '../../ast';
 import {
   type ValueTypeReference,
   isBuiltinBlockTypeDefinition,
@@ -49,7 +48,7 @@ function checkIsValueTypeReferenceable(
   valueTypeRef: ValueTypeReference,
   props: JayveeValidationProps,
 ): void {
-  const valueType = createValueType(valueTypeRef);
+  const valueType = props.wrapperFactories.ValueType.wrap(valueTypeRef);
   if (valueType === undefined) {
     return;
   }

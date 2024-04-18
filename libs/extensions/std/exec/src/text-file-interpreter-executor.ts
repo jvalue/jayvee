@@ -14,7 +14,7 @@ import {
   implementsStatic,
   splitLines,
 } from '@jvalue/jayvee-execution';
-import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
+import { IOType } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
 export class TextFileInterpreterExecutor extends AbstractBlockExecutor<
@@ -34,11 +34,11 @@ export class TextFileInterpreterExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<TextFile>> {
     const encoding = context.getPropertyValue(
       'encoding',
-      PrimitiveValuetypes.Text,
+      context.valueTypeProvider.Primitives.Text,
     );
     const lineBreak = context.getPropertyValue(
       'lineBreak',
-      PrimitiveValuetypes.Regex,
+      context.valueTypeProvider.Primitives.Regex,
     );
 
     const decoder = new TextDecoder(encoding);

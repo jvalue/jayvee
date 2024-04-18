@@ -14,7 +14,6 @@ import {
   type InternalValueRepresentation,
   type ValueType,
   type WrapperFactoryProvider,
-  createValueType,
   evaluateExpression,
   evaluatePropertyValue,
   getIOType,
@@ -121,7 +120,9 @@ export function createCompositeBlockExecutor(
       context: ExecutionContext,
     ) {
       properties.forEach((blockTypeProperty) => {
-        const valueType = createValueType(blockTypeProperty.valueType);
+        const valueType = context.wrapperFactories.ValueType.wrap(
+          blockTypeProperty.valueType,
+        );
 
         assert(
           valueType,

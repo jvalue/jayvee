@@ -10,6 +10,7 @@ import {
 import { NodeFileSystem } from 'langium/node';
 
 import {
+  type JayveeServices,
   type PropertyAssignment,
   type PropertyBody,
   type TypedObjectWrapper,
@@ -35,6 +36,7 @@ describe('Validation of PropertyAssignment', () => {
   const validationAcceptorMock = jest.fn(validationAcceptorMockImpl);
 
   let locator: AstNodeLocator;
+  let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
     __dirname,
@@ -52,7 +54,7 @@ describe('Validation of PropertyAssignment', () => {
 
     const type = propertyBody.$container.type;
 
-    const props = createJayveeValidationProps(validationAcceptorMock);
+    const props = createJayveeValidationProps(validationAcceptorMock, services);
     const wrapper = props.wrapperFactories.TypedObject.wrap(type);
     expect(wrapper).toBeDefined();
 
@@ -70,7 +72,7 @@ describe('Validation of PropertyAssignment', () => {
 
   beforeAll(() => {
     // Create language services
-    const services = createJayveeServices(NodeFileSystem).Jayvee;
+    services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);

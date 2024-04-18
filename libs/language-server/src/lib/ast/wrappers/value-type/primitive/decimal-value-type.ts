@@ -7,7 +7,7 @@ import { type ValueTypeVisitor } from '../value-type';
 
 import { PrimitiveValueType } from './primitive-value-type';
 
-class DecimalValuetypeImpl extends PrimitiveValueType<number> {
+export class DecimalValuetype extends PrimitiveValueType<number> {
   acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R {
     return visitor.visitDecimal(this);
   }
@@ -36,14 +36,4 @@ A decimal value.
 Example: 3.14
 `.trim();
   }
-}
-
-// Only export instance to enforce singleton
-export const Decimal = new DecimalValuetypeImpl();
-
-// Only export type to allow narrowing down in visitors
-export type DecimalValuetype = InstanceType<typeof DecimalValuetypeImpl>;
-
-export function isDecimalValuetype(v: unknown): v is DecimalValuetype {
-  return v === Decimal;
 }

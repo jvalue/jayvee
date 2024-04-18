@@ -2,13 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line import/no-cycle
-export {
-  CollectionValueType as CollectionValuetype,
-  isCollectionValueType as isCollectionValuetype,
-} from './collection-value-type';
+/*
+ * Note: Only export types if possible to enforce usage of WrapperFactory outside this directory.
+ * This allows us to avoid dependency cycles between the language server and interpreter.
+ */
 
 export {
-  type EmptyCollectionValueType as EmptyCollectionValuetype,
-  isEmptyCollectionValueType as isEmptyCollectionValuetype,
-} from './empty-collection-value-type';
+  type CollectionValueType,
+  isCollectionValueType,
+} from './collection-value-type';
+export { type EmptyCollectionValueType } from './empty-collection-value-type';

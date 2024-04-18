@@ -13,9 +13,7 @@ import {
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import {
-  CollectionValuetype,
   IOType,
-  PrimitiveValuetypes,
   type RowWrapper,
   getRowIndex,
   isRowWrapper,
@@ -41,7 +39,9 @@ export class RowDeleterExecutor extends AbstractBlockExecutor<
     const relativeRows = context
       .getPropertyValue(
         'delete',
-        new CollectionValuetype(PrimitiveValuetypes.CellRange),
+        context.valueTypeProvider.createCollectionValueTypeOf(
+          context.valueTypeProvider.Primitives.CellRange,
+        ),
       )
       .map((astNode) => context.wrapperFactories.CellRange.wrap(astNode));
     assert(relativeRows.every(isRowWrapper));

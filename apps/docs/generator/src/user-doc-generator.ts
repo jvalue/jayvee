@@ -26,9 +26,7 @@ export class UserDocGenerator
 {
   constructor(private services: JayveeServices) {}
 
-  generateValueTypesDoc(
-    valueTypes: Record<string, PrimitiveValueType>,
-  ): string {
+  generateValueTypesDoc(valueTypes: PrimitiveValueType[]): string {
     const builder = new UserDocMarkdownBuilder()
       .docTitle('Built-in Value Types')
       .generationComment()
@@ -42,16 +40,15 @@ that fullfil [_constraints_](./primitive-value-types#constraints).`.trim(),
       )
       .heading('Available built-in value types', 1);
 
-    Object.entries(valueTypes)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .filter(([_, valueType]) => valueType.isReferenceableByUser())
-      .forEach(([name, valueType]) => {
+    valueTypes
+      .filter((valueType) => valueType.isReferenceableByUser())
+      .forEach((valueType) => {
         assert(
           valueType.getUserDoc(),
           `Documentation is missing for user extendable value type: ${valueType.getName()}`,
         );
         builder
-          .heading(name, 2)
+          .heading(valueType.getName(), 2)
           .description(valueType.getUserDoc() ?? '', 3)
           .examples(
             [

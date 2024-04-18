@@ -7,7 +7,6 @@ import { strict as assert } from 'assert';
 import {
   type BlockTypeProperty,
   type ReferenceableBlockTypeDefinition,
-  createValueType,
   evaluateExpression,
 } from '../../ast';
 import { type JayveeValidationProps } from '../validation-registry';
@@ -183,7 +182,9 @@ function checkPropertyDefaultValuesHasCorrectType(
     return;
   }
 
-  const expectedValuetype = createValueType(property.valueType);
+  const expectedValuetype = props.wrapperFactories.ValueType.wrap(
+    property.valueType,
+  );
   assert(expectedValuetype !== undefined);
 
   if (!expectedValuetype.isInternalValueRepresentation(evaluatedExpression)) {

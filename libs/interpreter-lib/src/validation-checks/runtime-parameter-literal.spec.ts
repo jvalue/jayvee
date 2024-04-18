@@ -9,9 +9,11 @@ import {
   DefaultOperatorEvaluatorRegistry,
   DefaultOperatorTypeComputerRegistry,
   EvaluationContext,
+  type JayveeServices,
   type RuntimeParameterLiteral,
   RuntimeParameterProvider,
   ValidationContext,
+  ValueTypeProvider,
   WrapperFactoryProvider,
   createJayveeServices,
 } from '@jvalue/jayvee-language-server';
@@ -39,6 +41,7 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
   ) => Promise<LangiumDocument<AstNode>>;
 
   let locator: AstNodeLocator;
+  let services: JayveeServices;
 
   const validationAcceptorMock = jest.fn(validationAcceptorMockImpl);
 
@@ -68,11 +71,16 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
     }
 
     const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
-    const operatorTypeComputerRegistry =
-      new DefaultOperatorTypeComputerRegistry();
+    const valueTypeProvider = new ValueTypeProvider();
     const wrapperFactories = new WrapperFactoryProvider(
       operatorEvaluatorRegistry,
+      valueTypeProvider,
     );
+    const operatorTypeComputerRegistry =
+      new DefaultOperatorTypeComputerRegistry(
+        valueTypeProvider,
+        wrapperFactories,
+      );
 
     validateRuntimeParameterLiteral(runtimeParameter, {
       validationContext: new ValidationContext(
@@ -82,14 +90,16 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
       evaluationContext: new EvaluationContext(
         runtimeProvider,
         operatorEvaluatorRegistry,
+        valueTypeProvider,
       ),
+      valueTypeProvider: valueTypeProvider,
       wrapperFactories: wrapperFactories,
     });
   }
 
   beforeAll(async () => {
     // Create language services
-    const services = createJayveeServices(NodeFileSystem).Jayvee;
+    services = createJayveeServices(NodeFileSystem).Jayvee;
 
     await loadTestExtensions(services, [
       path.resolve(

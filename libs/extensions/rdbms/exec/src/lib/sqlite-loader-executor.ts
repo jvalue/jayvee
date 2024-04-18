@@ -12,7 +12,7 @@ import {
   Table,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
-import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
+import { IOType } from '@jvalue/jayvee-language-server';
 import * as sqlite3 from 'sqlite3';
 
 @implementsStatic<BlockExecutorClass>()
@@ -30,11 +30,17 @@ export class SQLiteLoaderExecutor extends AbstractBlockExecutor<
     input: Table,
     context: ExecutionContext,
   ): Promise<R.Result<None>> {
-    const file = context.getPropertyValue('file', PrimitiveValuetypes.Text);
-    const table = context.getPropertyValue('table', PrimitiveValuetypes.Text);
+    const file = context.getPropertyValue(
+      'file',
+      context.valueTypeProvider.Primitives.Text,
+    );
+    const table = context.getPropertyValue(
+      'table',
+      context.valueTypeProvider.Primitives.Text,
+    );
     const dropTable = context.getPropertyValue(
       'dropTable',
-      PrimitiveValuetypes.Boolean,
+      context.valueTypeProvider.Primitives.Boolean,
     );
 
     let db: sqlite3.Database | undefined;

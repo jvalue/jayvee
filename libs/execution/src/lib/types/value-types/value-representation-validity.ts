@@ -5,10 +5,10 @@
 import { strict as assert } from 'assert';
 
 import {
-  type AtomicValuetype,
+  type AtomicValueType,
   type BooleanValuetype,
   type CellRangeValuetype,
-  type CollectionValuetype,
+  type CollectionValueType,
   type ConstraintValuetype,
   type DecimalValuetype,
   type IntegerValuetype,
@@ -41,7 +41,7 @@ class ValueRepresentationValidityVisitor extends ValueTypeVisitor<boolean> {
     super();
   }
 
-  override visitAtomicValuetype(valueType: AtomicValuetype): boolean {
+  override visitAtomicValueType(valueType: AtomicValueType): boolean {
     const supertype = valueType.getSupertype();
     assert(supertype !== undefined);
     if (!supertype.acceptVisitor(this)) {
@@ -50,7 +50,6 @@ class ValueRepresentationValidityVisitor extends ValueTypeVisitor<boolean> {
 
     const constraints = valueType.getConstraints(
       this.context.evaluationContext,
-      this.context.wrapperFactories,
     );
     for (const constraint of constraints) {
       const constraintExecutor =
@@ -105,7 +104,7 @@ class ValueRepresentationValidityVisitor extends ValueTypeVisitor<boolean> {
     return this.isValidForPrimitiveValuetype(valueType);
   }
 
-  override visitCollection(valueType: CollectionValuetype): boolean {
+  override visitCollection(valueType: CollectionValueType): boolean {
     return this.isValidForPrimitiveValuetype(valueType);
   }
 

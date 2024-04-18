@@ -14,7 +14,7 @@ export interface JayveeConstraintTypeDocGenerator {
 }
 
 export interface JayveeValueTypesDocGenerator {
-  generateValueTypesDoc(valueTypes: Record<string, ValueType>): string;
+  generateValueTypesDoc(valueTypes: ValueType[]): string;
 }
 
 export interface JayveePropertyDocGenerator {

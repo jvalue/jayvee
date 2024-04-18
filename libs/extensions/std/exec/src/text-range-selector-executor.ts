@@ -10,7 +10,7 @@ import {
   TextFile,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
-import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
+import { IOType } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
 export class TextRangeSelectorExecutor extends AbstractBlockExecutor<
@@ -30,11 +30,11 @@ export class TextRangeSelectorExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<TextFile>> {
     const lineFrom = context.getPropertyValue(
       'lineFrom',
-      PrimitiveValuetypes.Integer,
+      context.valueTypeProvider.Primitives.Integer,
     );
     const lineTo = context.getPropertyValue(
       'lineTo',
-      PrimitiveValuetypes.Integer,
+      context.valueTypeProvider.Primitives.Integer,
     );
 
     const numberOfLines = file.content.length;

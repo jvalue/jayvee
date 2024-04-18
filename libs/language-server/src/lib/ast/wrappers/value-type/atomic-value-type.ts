@@ -14,40 +14,43 @@ import {
 import { type AstNodeWrapper } from '../ast-node-wrapper';
 import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
 
-// eslint-disable-next-line import/no-cycle
-import { CollectionValuetype } from './primitive';
-import { PrimitiveValuetypes } from './primitive/primitive-value-types';
+import { type ValueTypeProvider } from './primitive';
+import { CollectionValueType } from './primitive/collection/collection-value-type';
 import {
   AbstractValueType,
   type ValueType,
   type ValueTypeVisitor,
 } from './value-type';
-import { createValueType } from './value-type-util';
 
 export class AtomicValueType
   extends AbstractValueType<InternalValueRepresentation>
   implements AstNodeWrapper<ValuetypeDefinition>
 {
-  constructor(public readonly astNode: ValuetypeDefinition) {
+  constructor(
+    public readonly astNode: ValuetypeDefinition,
+    private readonly valueTypeProvider: ValueTypeProvider,
+    private readonly wrapperFactories: WrapperFactoryProvider,
+  ) {
     super();
   }
 
   acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R {
-    return visitor.visitAtomicValuetype(this);
+    return visitor.visitAtomicValueType(this);
   }
 
-  getConstraints(
-    context: EvaluationContext,
-    wrapperFactories: WrapperFactoryProvider,
-  ): ConstraintDefinition[] {
+  getConstraints(context: EvaluationContext): ConstraintDefinition[] {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const constraintCollection = this.astNode?.constraints;
     assert(constraintCollection !== undefined);
-    const constraintCollectionType = new CollectionValuetype(
-      PrimitiveValuetypes.Constraint,
+    const constraintCollectionType = new CollectionValueType(
+      this.valueTypeProvider.Primitives.Constraint,
     );
     const constraints =
-      evaluateExpression(constraintCollection, context, wrapperFactories) ?? [];
+      evaluateExpression(
+        constraintCollection,
+        context,
+        this.wrapperFactories,
+      ) ?? [];
     if (!constraintCollectionType.isInternalValueRepresentation(constraints)) {
       return [];
     }
@@ -91,7 +94,7 @@ export class AtomicValueType
   protected override doGetSupertype(): ValueType | undefined {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const supertype = this.astNode?.type;
-    return createValueType(supertype);
+    return this.wrapperFactories.ValueType.wrap(supertype);
   }
 
   override isInternalValueRepresentation(
@@ -112,6 +115,6 @@ export class AtomicValueType
   }
 }
 
-export function isAtomicValuetype(v: unknown): v is AtomicValueType {
+export function isAtomicValueType(v: unknown): v is AtomicValueType {
   return v instanceof AtomicValueType;
 }

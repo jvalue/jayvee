@@ -10,6 +10,7 @@ import {
 import { NodeFileSystem } from 'langium/node';
 
 import {
+  type JayveeServices,
   type PropertyBody,
   type PropertySpecification,
   type TypedObjectWrapper,
@@ -35,6 +36,7 @@ describe('Validation of constraint type specific properties', () => {
   const validationAcceptorMock = jest.fn(validationAcceptorMockImpl);
 
   let locator: AstNodeLocator;
+  let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
     __dirname,
@@ -50,7 +52,7 @@ describe('Validation of constraint type specific properties', () => {
       'constraints@0/body',
     ) as PropertyBody;
 
-    const props = createJayveeValidationProps(validationAcceptorMock);
+    const props = createJayveeValidationProps(validationAcceptorMock, services);
 
     const wrapper = props.wrapperFactories.TypedObject.wrap(
       propertyBody.$container.type,
@@ -73,7 +75,7 @@ describe('Validation of constraint type specific properties', () => {
 
   beforeAll(() => {
     // Create language services
-    const services = createJayveeServices(NodeFileSystem).Jayvee;
+    services = createJayveeServices(NodeFileSystem).Jayvee;
 
     locator = services.workspace.AstNodeLocator;
 

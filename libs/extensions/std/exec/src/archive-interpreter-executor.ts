@@ -21,7 +21,7 @@ import {
   inferFileExtensionFromFileExtensionString,
   inferMimeTypeFromFileExtensionString,
 } from '@jvalue/jayvee-execution';
-import { IOType, PrimitiveValuetypes } from '@jvalue/jayvee-language-server';
+import { IOType } from '@jvalue/jayvee-language-server';
 import * as JSZip from 'jszip';
 
 @implementsStatic<BlockExecutorClass>()
@@ -41,7 +41,7 @@ export class ArchiveInterpreterExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<FileSystem>> {
     const archiveType = context.getPropertyValue(
       'archiveType',
-      PrimitiveValuetypes.Text,
+      context.valueTypeProvider.Primitives.Text,
     );
     let fs: R.Result<R.FileSystem>;
 

@@ -13,6 +13,7 @@ import {
   type PropertyAssignment,
   type TransformDefinition,
   type ValueType,
+  type ValueTypeProvider,
   type WrapperFactoryProvider,
   evaluatePropertyValue,
   isBlockDefinition,
@@ -46,6 +47,7 @@ export class ExecutionContext {
     public readonly constraintExtension: JayveeConstraintExtension,
     public readonly logger: Logger,
     public readonly wrapperFactories: WrapperFactoryProvider,
+    public readonly valueTypeProvider: ValueTypeProvider,
     public readonly runOptions: {
       isDebugMode: boolean;
       debugGranularity: DebugGranularity;

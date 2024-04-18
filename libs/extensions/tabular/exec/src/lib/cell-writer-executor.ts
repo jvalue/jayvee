@@ -12,11 +12,7 @@ import {
   type Sheet,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
-import {
-  CollectionValuetype,
-  IOType,
-  PrimitiveValuetypes,
-} from '@jvalue/jayvee-language-server';
+import { IOType } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
 export class CellWriterExecutor extends AbstractBlockExecutor<
@@ -36,11 +32,13 @@ export class CellWriterExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<Sheet>> {
     const relativeCellRange = context.getPropertyValue(
       'at',
-      PrimitiveValuetypes.CellRange,
+      context.valueTypeProvider.Primitives.CellRange,
     );
     const writeValues = context.getPropertyValue(
       'write',
-      new CollectionValuetype(PrimitiveValuetypes.Text),
+      context.valueTypeProvider.createCollectionValueTypeOf(
+        context.valueTypeProvider.Primitives.Text,
+      ),
     );
 
     const relativeCellRangeWrapper =

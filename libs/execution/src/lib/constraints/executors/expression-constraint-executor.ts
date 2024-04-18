@@ -8,7 +8,6 @@ import {
   type AstNodeWrapper,
   type ExpressionConstraintDefinition,
   type InternalValueRepresentation,
-  PrimitiveValuetypes,
   evaluateExpression,
 } from '@jvalue/jayvee-language-server';
 
@@ -33,7 +32,11 @@ export class ExpressionConstraintExecutor
       context.evaluationContext,
       context.wrapperFactories,
     );
-    assert(PrimitiveValuetypes.Boolean.isInternalValueRepresentation(result));
+    assert(
+      context.valueTypeProvider.Primitives.Boolean.isInternalValueRepresentation(
+        result,
+      ),
+    );
 
     context.evaluationContext.deleteValueForValueKeyword();
 

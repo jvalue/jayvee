@@ -15,7 +15,7 @@ import {
 } from '../../expressions';
 import { type ReferenceableBlockTypeDefinition } from '../../generated/ast';
 import { IOType, getIOType } from '../../io-type';
-import { createValueType } from '../value-type';
+import { type ValueTypeProvider } from '../value-type';
 import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
 
 import {
@@ -46,6 +46,7 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlockTypeD
       | ReferenceableBlockTypeDefinition
       | Reference<ReferenceableBlockTypeDefinition>,
     operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
+    valueTypeProvider: ValueTypeProvider,
     wrapperFactories: WrapperFactoryProvider,
   ) {
     const blockTypeDefinition = isReference(toBeWrapped)
@@ -57,7 +58,7 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlockTypeD
 
     const properties: Record<string, PropertySpecification> = {};
     for (const property of blockTypeDefinition.properties) {
-      const valueType = createValueType(property.valueType);
+      const valueType = wrapperFactories.ValueType.wrap(property.valueType);
       assert(valueType !== undefined);
 
       properties[property.name] = {
@@ -69,6 +70,7 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlockTypeD
         new EvaluationContext(
           new RuntimeParameterProvider(),
           operatorEvaluatorRegistry,
+          valueTypeProvider,
         ),
         wrapperFactories,
       );

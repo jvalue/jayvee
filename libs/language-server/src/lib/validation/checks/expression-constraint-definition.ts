@@ -9,7 +9,6 @@
 
 import { inferExpressionType } from '../../ast/expressions/type-inference';
 import { type ExpressionConstraintDefinition } from '../../ast/generated/ast';
-import { PrimitiveValuetypes } from '../../ast/wrappers/value-type/primitive/primitive-value-types';
 import { type JayveeValidationProps } from '../validation-registry';
 import { checkExpressionSimplification } from '../validation-util';
 
@@ -25,12 +24,17 @@ function checkConstraintExpression(
   props: JayveeValidationProps,
 ): void {
   const expression = constraint?.expression;
-  const inferredType = inferExpressionType(expression, props.validationContext);
+  const inferredType = inferExpressionType(
+    expression,
+    props.validationContext,
+    props.valueTypeProvider,
+    props.wrapperFactories,
+  );
   if (inferredType === undefined) {
     return;
   }
 
-  const expectedType = PrimitiveValuetypes.Boolean;
+  const expectedType = props.valueTypeProvider.Primitives.Boolean;
   if (!inferredType.isConvertibleTo(expectedType)) {
     props.validationContext.accept(
       'error',

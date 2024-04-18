@@ -13,11 +13,8 @@ import { assertUnreachable } from 'langium';
 
 import {
   type CollectionLiteral,
-  CollectionValuetype,
   type ConstraintDefinition,
-  PrimitiveValuetypes,
   type ValueType,
-  createValueType,
   evaluateExpression,
   inferExpressionType,
   isExpressionConstraintDefinition,
@@ -43,7 +40,9 @@ function checkSupertypeCycle(
   props: JayveeValidationProps,
 ): void {
   const hasCycle =
-    createValueType(valueTypeDefinition)?.hasSupertypeCycle() ?? false;
+    props.wrapperFactories.ValueType.wrap(
+      valueTypeDefinition,
+    )?.hasSupertypeCycle() ?? false;
   if (hasCycle) {
     assert(!valueTypeDefinition.isBuiltin);
     props.validationContext.accept(
@@ -69,8 +68,12 @@ function checkConstraintsCollectionValues(
   const inferredCollectionType = inferExpressionType(
     constraintCollection,
     props.validationContext,
+    props.valueTypeProvider,
+    props.wrapperFactories,
   );
-  const expectedType = new CollectionValuetype(PrimitiveValuetypes.Constraint);
+  const expectedType = props.valueTypeProvider.createCollectionValueTypeOf(
+    props.valueTypeProvider.Primitives.Constraint,
+  );
   if (inferredCollectionType === undefined) {
     return;
   }
@@ -111,7 +114,8 @@ function checkConstraintMatchesValuetype(
   diagnosticIndex: number,
   props: JayveeValidationProps,
 ): void {
-  const actualValuetype = createValueType(valueTypeDefinition);
+  const actualValuetype =
+    props.wrapperFactories.ValueType.wrap(valueTypeDefinition);
   const compatibleValuetype = getCompatibleValuetype(constraint, props);
 
   if (actualValuetype === undefined || compatibleValuetype === undefined) {
@@ -143,7 +147,7 @@ function getCompatibleValuetype(
     }
     return props.wrapperFactories.ConstraintType.wrap(constraint.type).on;
   } else if (isExpressionConstraintDefinition(constraint)) {
-    return createValueType(constraint?.valueType);
+    return props.wrapperFactories.ValueType.wrap(constraint?.valueType);
   }
   assertUnreachable(constraint);
 }

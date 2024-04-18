@@ -13,7 +13,7 @@ export abstract class PrimitiveValueType<
   }
 
   override isConvertibleTo(target: ValueType): boolean {
-    return target.equals(this);
+    return target.equals(this); // Primitive value types are always singletons
   }
 
   override equals(target: ValueType): boolean {

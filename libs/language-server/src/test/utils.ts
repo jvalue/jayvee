@@ -14,14 +14,10 @@ import {
 import { type WorkspaceFolder } from 'vscode-languageserver-protocol';
 
 import {
-  DefaultOperatorEvaluatorRegistry,
-  DefaultOperatorTypeComputerRegistry,
   EvaluationContext,
   type JayveeServices,
   type JayveeValidationProps,
-  RuntimeParameterProvider,
   ValidationContext,
-  WrapperFactoryProvider,
 } from '../lib';
 import { initializeWorkspace } from '../lib/builtin-library/jayvee-workspace-manager';
 
@@ -73,13 +69,13 @@ export async function loadTestExtensions(
 
 export function createJayveeValidationProps(
   validationAcceptor: ValidationAcceptor,
+  services: JayveeServices,
 ): JayveeValidationProps {
-  const operatorTypeComputerRegistry =
-    new DefaultOperatorTypeComputerRegistry();
-  const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
-  const wrapperFactories = new WrapperFactoryProvider(
-    operatorEvaluatorRegistry,
-  );
+  const valueTypeProvider = services.ValueTypeProvider;
+  const operatorEvaluatorRegistry = services.operators.EvaluatorRegistry;
+  const wrapperFactories = services.WrapperFactories;
+  const operatorTypeComputerRegistry = services.operators.TypeComputerRegistry;
+  const runtimeParameterProvider = services.RuntimeParameterProvider;
 
   return {
     validationContext: new ValidationContext(
@@ -87,9 +83,11 @@ export function createJayveeValidationProps(
       operatorTypeComputerRegistry,
     ),
     evaluationContext: new EvaluationContext(
-      new RuntimeParameterProvider(),
+      runtimeParameterProvider,
       operatorEvaluatorRegistry,
+      valueTypeProvider,
     ),
+    valueTypeProvider: valueTypeProvider,
     wrapperFactories: wrapperFactories,
   };
 }

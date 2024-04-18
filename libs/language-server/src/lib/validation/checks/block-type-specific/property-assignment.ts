@@ -3,9 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  CollectionValuetype,
   type InternalValueRepresentation,
-  PrimitiveValuetypes,
   type PropertyAssignment,
   type PropertySpecification,
   evaluatePropertyValue,
@@ -112,7 +110,7 @@ function checkCellWriterProperty(
       property,
       props.evaluationContext,
       props.wrapperFactories,
-      PrimitiveValuetypes.CellRange,
+      props.valueTypeProvider.Primitives.CellRange,
     );
     if (cellRange === undefined) {
       return;
@@ -145,7 +143,9 @@ function checkColumnDeleterProperty(
       property,
       props.evaluationContext,
       props.wrapperFactories,
-      new CollectionValuetype(PrimitiveValuetypes.CellRange),
+      props.valueTypeProvider.createCollectionValueTypeOf(
+        props.valueTypeProvider.Primitives.CellRange,
+      ),
     );
 
     cellRanges?.forEach((cellRange) => {
@@ -267,7 +267,9 @@ function checkRowDeleterProperty(
       property,
       props.evaluationContext,
       props.wrapperFactories,
-      new CollectionValuetype(PrimitiveValuetypes.CellRange),
+      props.valueTypeProvider.createCollectionValueTypeOf(
+        props.valueTypeProvider.Primitives.CellRange,
+      ),
     );
 
     cellRanges?.forEach((cellRange) => {
@@ -299,7 +301,9 @@ function checkTableInterpreterProperty(
       property,
       props.evaluationContext,
       props.wrapperFactories,
-      new CollectionValuetype(PrimitiveValuetypes.ValuetypeAssignment),
+      props.valueTypeProvider.createCollectionValueTypeOf(
+        props.valueTypeProvider.Primitives.ValuetypeAssignment,
+      ),
     );
     if (valueTypeAssignments === undefined) {
       return;
@@ -352,7 +356,9 @@ function checkTextLineDeleterProperty(
       property,
       props.evaluationContext,
       props.wrapperFactories,
-      new CollectionValuetype(PrimitiveValuetypes.Integer),
+      props.valueTypeProvider.createCollectionValueTypeOf(
+        props.valueTypeProvider.Primitives.Integer,
+      ),
     );
     lines?.forEach((value, index) => {
       if (value < minTextLineIndex) {

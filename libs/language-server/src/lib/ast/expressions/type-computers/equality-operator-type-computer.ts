@@ -4,19 +4,25 @@
 
 import { type ValidationContext } from '../../../validation/validation-context';
 import { type BinaryExpression } from '../../generated/ast';
-import { type ValueType } from '../../wrappers/value-type';
-import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/primitive-value-types';
+import {
+  type ValueType,
+  type ValueTypeProvider,
+} from '../../wrappers/value-type';
 import { type BinaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class EqualityOperatorTypeComputer
   implements BinaryOperatorTypeComputer
 {
-  private readonly ALLOWED_OPERAND_TYPES: ValueType[] = [
-    PrimitiveValuetypes.Boolean,
-    PrimitiveValuetypes.Text,
-    PrimitiveValuetypes.Integer,
-    PrimitiveValuetypes.Decimal,
-  ];
+  private readonly ALLOWED_OPERAND_TYPES: ValueType[];
+
+  constructor(protected readonly valueTypeProvider: ValueTypeProvider) {
+    this.ALLOWED_OPERAND_TYPES = [
+      valueTypeProvider.Primitives.Boolean,
+      valueTypeProvider.Primitives.Text,
+      valueTypeProvider.Primitives.Integer,
+      valueTypeProvider.Primitives.Decimal,
+    ];
+  }
 
   computeType(
     leftOperandType: ValueType,
@@ -62,6 +68,6 @@ export class EqualityOperatorTypeComputer
       return undefined;
     }
 
-    return PrimitiveValuetypes.Boolean;
+    return this.valueTypeProvider.Primitives.Boolean;
   }
 }

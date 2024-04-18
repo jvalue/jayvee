@@ -6,10 +6,9 @@ import { type InternalValueRepresentation } from '../../../../expressions/intern
 import { type ValueType, type ValueTypeVisitor } from '../../value-type';
 
 import { AbstractCollectionValueType } from './abstract-collection-value-type';
-// eslint-disable-next-line import/no-cycle
 import { CollectionValueType } from './collection-value-type';
 
-class EmptyCollectionValueTypeImpl extends AbstractCollectionValueType<undefined> {
+export class EmptyCollectionValueType extends AbstractCollectionValueType<undefined> {
   override isConvertibleTo(target: ValueType): boolean {
     return (
       super.isConvertibleTo(target) || target instanceof CollectionValueType
@@ -29,18 +28,4 @@ class EmptyCollectionValueTypeImpl extends AbstractCollectionValueType<undefined
   ): operandValue is [] {
     return Array.isArray(operandValue) && operandValue.length === 0;
   }
-}
-
-// Only export instance to enforce singleton
-export const EmptyCollection = new EmptyCollectionValueTypeImpl();
-
-// Only export type to allow narrowing down in visitors
-export type EmptyCollectionValueType = InstanceType<
-  typeof EmptyCollectionValueTypeImpl
->;
-
-export function isEmptyCollectionValueType(
-  v: unknown,
-): v is EmptyCollectionValueType {
-  return v === EmptyCollection;
 }

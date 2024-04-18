@@ -5,6 +5,7 @@
 import {
   type BlockDefinition,
   type InternalValueRepresentation,
+  type JayveeServices,
   type TypedConstraintDefinition,
   createJayveeServices,
 } from '@jvalue/jayvee-language-server';
@@ -32,6 +33,7 @@ describe('Validation of RegexConstraintExecutor', () => {
   ) => Promise<LangiumDocument<AstNode>>;
 
   let locator: AstNodeLocator;
+  let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
     __dirname,
@@ -57,13 +59,16 @@ describe('Validation of RegexConstraintExecutor', () => {
     return new RegexConstraintExecutor().isValid(
       value,
       // Execution context with initial stack containing usage block of constraint and constraint itself
-      getTestExecutionContext(locator, document, [usageBlock, constraint]),
+      getTestExecutionContext(locator, document, services, [
+        usageBlock,
+        constraint,
+      ]),
     );
   }
 
   beforeAll(() => {
     // Create language services
-    const services = createJayveeServices(NodeFileSystem).Jayvee;
+    services = createJayveeServices(NodeFileSystem).Jayvee;
     locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);

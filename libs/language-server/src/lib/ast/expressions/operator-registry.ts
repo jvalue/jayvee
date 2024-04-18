@@ -7,6 +7,10 @@ import {
   type TernaryExpression,
   type UnaryExpression,
 } from '../generated/ast';
+import {
+  type ValueTypeProvider,
+  type WrapperFactoryProvider,
+} from '../wrappers';
 
 import { AdditionOperatorEvaluator } from './evaluators/addition-operator-evaluator';
 import { AndOperatorEvaluator } from './evaluators/and-operator-evaluator';
@@ -120,37 +124,45 @@ export class DefaultOperatorTypeComputerRegistry
   implements OperatorTypeComputerRegistry
 {
   unary = {
-    not: new NotOperatorTypeComputer(),
-    '+': new SignOperatorTypeComputer(),
-    '-': new SignOperatorTypeComputer(),
-    sqrt: new SqrtOperatorTypeComputer(),
-    floor: new IntegerConversionOperatorTypeComputer(),
-    ceil: new IntegerConversionOperatorTypeComputer(),
-    round: new IntegerConversionOperatorTypeComputer(),
-    lowercase: new StringTransformTypeComputer(),
-    uppercase: new StringTransformTypeComputer(),
+    not: new NotOperatorTypeComputer(this.valueTypeProvider),
+    '+': new SignOperatorTypeComputer(this.valueTypeProvider),
+    '-': new SignOperatorTypeComputer(this.valueTypeProvider),
+    sqrt: new SqrtOperatorTypeComputer(this.valueTypeProvider),
+    floor: new IntegerConversionOperatorTypeComputer(this.valueTypeProvider),
+    ceil: new IntegerConversionOperatorTypeComputer(this.valueTypeProvider),
+    round: new IntegerConversionOperatorTypeComputer(this.valueTypeProvider),
+    lowercase: new StringTransformTypeComputer(this.valueTypeProvider),
+    uppercase: new StringTransformTypeComputer(this.valueTypeProvider),
   };
   binary = {
-    pow: new ExponentialOperatorTypeComputer(),
-    root: new ExponentialOperatorTypeComputer(),
-    '*': new BasicArithmeticOperatorTypeComputer(),
-    '/': new DivisionOperatorTypeComputer(),
-    '%': new DivisionOperatorTypeComputer(),
-    '+': new BasicArithmeticOperatorTypeComputer(),
-    '-': new BasicArithmeticOperatorTypeComputer(),
-    matches: new MatchesOperatorTypeComputer(),
-    in: new InOperatorTypeComputer(),
-    '<': new RelationalOperatorTypeComputer(),
-    '<=': new RelationalOperatorTypeComputer(),
-    '>': new RelationalOperatorTypeComputer(),
-    '>=': new RelationalOperatorTypeComputer(),
-    '==': new EqualityOperatorTypeComputer(),
-    '!=': new EqualityOperatorTypeComputer(),
-    xor: new LogicalOperatorTypeComputer(),
-    and: new LogicalOperatorTypeComputer(),
-    or: new LogicalOperatorTypeComputer(),
+    pow: new ExponentialOperatorTypeComputer(this.valueTypeProvider),
+    root: new ExponentialOperatorTypeComputer(this.valueTypeProvider),
+    '*': new BasicArithmeticOperatorTypeComputer(this.valueTypeProvider),
+    '/': new DivisionOperatorTypeComputer(this.valueTypeProvider),
+    '%': new DivisionOperatorTypeComputer(this.valueTypeProvider),
+    '+': new BasicArithmeticOperatorTypeComputer(this.valueTypeProvider),
+    '-': new BasicArithmeticOperatorTypeComputer(this.valueTypeProvider),
+    matches: new MatchesOperatorTypeComputer(this.valueTypeProvider),
+    in: new InOperatorTypeComputer(
+      this.valueTypeProvider,
+      this.wrapperFactories,
+    ),
+    '<': new RelationalOperatorTypeComputer(this.valueTypeProvider),
+    '<=': new RelationalOperatorTypeComputer(this.valueTypeProvider),
+    '>': new RelationalOperatorTypeComputer(this.valueTypeProvider),
+    '>=': new RelationalOperatorTypeComputer(this.valueTypeProvider),
+    '==': new EqualityOperatorTypeComputer(this.valueTypeProvider),
+    '!=': new EqualityOperatorTypeComputer(this.valueTypeProvider),
+    xor: new LogicalOperatorTypeComputer(this.valueTypeProvider),
+    and: new LogicalOperatorTypeComputer(this.valueTypeProvider),
+    or: new LogicalOperatorTypeComputer(this.valueTypeProvider),
   };
   ternary = {
-    replace: new ReplaceOperatorTypeComputer(),
+    replace: new ReplaceOperatorTypeComputer(this.valueTypeProvider),
   };
+
+  constructor(
+    private readonly valueTypeProvider: ValueTypeProvider,
+    private readonly wrapperFactories: WrapperFactoryProvider,
+  ) {}
 }

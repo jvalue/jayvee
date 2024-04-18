@@ -7,7 +7,7 @@ import { type ValueTypeVisitor } from '../value-type';
 
 import { PrimitiveValueType } from './primitive-value-type';
 
-class TextValuetypeImpl extends PrimitiveValueType<string> {
+export class TextValuetype extends PrimitiveValueType<string> {
   acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R {
     return visitor.visitText(this);
   }
@@ -36,14 +36,4 @@ A text value.
 Example: "Hello World"
 `.trim();
   }
-}
-
-// Only export instance to enforce singleton
-export const Text = new TextValuetypeImpl();
-
-// Only export type to allow narrowing down in visitors
-export type TextValuetype = InstanceType<typeof TextValuetypeImpl>;
-
-export function isTextValuetype(v: unknown): v is TextValuetype {
-  return v === Text;
 }

@@ -11,7 +11,7 @@ import { type ValueTypeVisitor } from '../value-type';
 
 import { PrimitiveValueType } from './primitive-value-type';
 
-class TransformValuetypeImpl extends PrimitiveValueType<TransformDefinition> {
+export class TransformValuetype extends PrimitiveValueType<TransformDefinition> {
   acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R {
     return visitor.visitTransform(this);
   }
@@ -29,14 +29,4 @@ class TransformValuetypeImpl extends PrimitiveValueType<TransformDefinition> {
   ): operandValue is TransformDefinition {
     return isTransformDefinition(operandValue);
   }
-}
-
-// Only export instance to enforce singleton
-export const Transform = new TransformValuetypeImpl();
-
-// Only export type to allow narrowing down in visitors
-export type TransformValuetype = InstanceType<typeof TransformValuetypeImpl>;
-
-export function isTransformValuetype(v: unknown): v is TransformValuetype {
-  return v === Transform;
 }

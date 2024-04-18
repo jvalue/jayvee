@@ -5,12 +5,12 @@
 import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
 import { type ValueType, type ValueTypeVisitor } from '../value-type';
 
-import { Decimal } from './decimal-value-type';
+import { DecimalValuetype } from './decimal-value-type';
 import { PrimitiveValueType } from './primitive-value-type';
 
-class IntegerValuetypeImpl extends PrimitiveValueType<number> {
+export class IntegerValuetype extends PrimitiveValueType<number> {
   override isConvertibleTo(target: ValueType): boolean {
-    return super.isConvertibleTo(target) || target === Decimal;
+    return super.isConvertibleTo(target) || target instanceof DecimalValuetype;
   }
 
   acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R {
@@ -41,14 +41,4 @@ An integer value.
 Example: 3
 `.trim();
   }
-}
-
-// Only export instance to enforce singleton
-export const Integer = new IntegerValuetypeImpl();
-
-// Only export type to allow narrowing down in visitors
-export type IntegerValuetype = InstanceType<typeof IntegerValuetypeImpl>;
-
-export function isIntegerValuetype(v: unknown): v is IntegerValuetype {
-  return v === Integer;
 }

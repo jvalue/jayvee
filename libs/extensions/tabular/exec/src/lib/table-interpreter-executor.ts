@@ -17,13 +17,10 @@ import {
 } from '@jvalue/jayvee-execution';
 import {
   CellIndex,
-  CollectionValuetype,
   IOType,
   type InternalValueRepresentation,
-  PrimitiveValuetypes,
   type ValueType,
   type ValuetypeAssignment,
-  createValueType,
   rowIndexToString,
 } from '@jvalue/jayvee-language-server';
 
@@ -52,11 +49,13 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
   ): Promise<R.Result<Table>> {
     const header = context.getPropertyValue(
       'header',
-      PrimitiveValuetypes.Boolean,
+      context.valueTypeProvider.Primitives.Boolean,
     );
     const columnDefinitions = context.getPropertyValue(
       'columns',
-      new CollectionValuetype(PrimitiveValuetypes.ValuetypeAssignment),
+      context.valueTypeProvider.createCollectionValueTypeOf(
+        context.valueTypeProvider.Primitives.ValuetypeAssignment,
+      ),
     );
 
     let columnEntries: ColumnDefinitionEntry[];
@@ -90,8 +89,10 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
         });
       }
 
-      columnEntries =
-        this.deriveColumnDefinitionEntriesWithoutHeader(columnDefinitions);
+      columnEntries = this.deriveColumnDefinitionEntriesWithoutHeader(
+        columnDefinitions,
+        context,
+      );
     }
 
     const numberOfTableRows = header
@@ -205,10 +206,13 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
 
   private deriveColumnDefinitionEntriesWithoutHeader(
     columnDefinitions: ValuetypeAssignment[],
+    context: ExecutionContext,
   ): ColumnDefinitionEntry[] {
     return columnDefinitions.map<ColumnDefinitionEntry>(
       (columnDefinition, columnDefinitionIndex) => {
-        const columnValuetype = createValueType(columnDefinition.type);
+        const columnValuetype = context.wrapperFactories.ValueType.wrap(
+          columnDefinition.type,
+        );
         assert(columnValuetype !== undefined);
         return {
           sheetColumnIndex: columnDefinitionIndex,
@@ -238,7 +242,9 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
         );
         continue;
       }
-      const columnValuetype = createValueType(columnDefinition.type);
+      const columnValuetype = context.wrapperFactories.ValueType.wrap(
+        columnDefinition.type,
+      );
       assert(columnValuetype !== undefined);
 
       columnEntries.push({

@@ -11,7 +11,7 @@ import { type ValueTypeVisitor } from '../value-type';
 
 import { PrimitiveValueType } from './primitive-value-type';
 
-class ValuetypeAssignmentValuetypeImpl extends PrimitiveValueType<AstValuetypeAssignment> {
+export class ValuetypeAssignmentValuetype extends PrimitiveValueType<AstValuetypeAssignment> {
   acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R {
     return visitor.visitValuetypeAssignment(this);
   }
@@ -29,18 +29,4 @@ class ValuetypeAssignmentValuetypeImpl extends PrimitiveValueType<AstValuetypeAs
   ): operandValue is AstValuetypeAssignment {
     return isAstValuetypeAssignment(operandValue);
   }
-}
-
-// Only export instance to enforce singleton
-export const ValuetypeAssignment = new ValuetypeAssignmentValuetypeImpl();
-
-// Only export type to allow narrowing down in visitors
-export type ValuetypeAssignmentValuetype = InstanceType<
-  typeof ValuetypeAssignmentValuetypeImpl
->;
-
-export function isValuetypeAssignmentValuetype(
-  v: unknown,
-): v is ValuetypeAssignmentValuetype {
-  return v === ValuetypeAssignment;
 }

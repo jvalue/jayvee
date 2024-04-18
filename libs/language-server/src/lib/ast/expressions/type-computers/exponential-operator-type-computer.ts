@@ -2,16 +2,21 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type ValueType } from '../../wrappers/value-type';
-import { PrimitiveValuetypes } from '../../wrappers/value-type/primitive/primitive-value-types';
+import {
+  type ValueType,
+  type ValueTypeProvider,
+} from '../../wrappers/value-type';
 import { DefaultBinaryOperatorTypeComputer } from '../operator-type-computer';
 
 export class ExponentialOperatorTypeComputer extends DefaultBinaryOperatorTypeComputer {
-  constructor() {
-    super(PrimitiveValuetypes.Decimal, PrimitiveValuetypes.Decimal);
+  constructor(protected readonly valueTypeProvider: ValueTypeProvider) {
+    super(
+      valueTypeProvider.Primitives.Decimal,
+      valueTypeProvider.Primitives.Decimal,
+    );
   }
 
   protected override doComputeType(): ValueType {
-    return PrimitiveValuetypes.Decimal;
+    return this.valueTypeProvider.Primitives.Decimal;
   }
 }

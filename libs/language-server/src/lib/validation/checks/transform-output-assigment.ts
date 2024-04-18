@@ -21,7 +21,6 @@ import {
   isTransformPortDefinition,
   isUnaryExpression,
 } from '../../ast/generated/ast';
-import { createValueType } from '../../ast/wrappers/value-type/value-type-util';
 import { type JayveeValidationProps } from '../validation-registry';
 import { checkExpressionSimplification } from '../validation-util';
 
@@ -50,12 +49,14 @@ function checkOutputValueTyping(
   const inferredType = inferExpressionType(
     assignmentExpression,
     props.validationContext,
+    props.valueTypeProvider,
+    props.wrapperFactories,
   );
   if (inferredType === undefined) {
     return;
   }
 
-  const expectedType = createValueType(outputType);
+  const expectedType = props.wrapperFactories.ValueType.wrap(outputType);
   if (expectedType === undefined) {
     return;
   }

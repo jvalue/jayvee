@@ -2,9 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-export * from './value-type';
-
-/* Note: Only export types if possible to enforce usage of WrapperFactory outside this directory */
+/*
+ * Note: Only export types if possible to enforce usage of WrapperFactory outside this directory.
+ * This allows us to avoid dependency cycles between the language server and interpreter.
+ */
 
 export { type AstNodeWrapper } from './ast-node-wrapper';
 export {
@@ -21,6 +22,8 @@ export { type BlockTypeWrapper } from './typed-object/block-type-wrapper';
 export { type CompositeBlockTypeWrapper } from './typed-object/composite-block-type-wrapper';
 export { type ConstraintTypeWrapper } from './typed-object/constrainttype-wrapper';
 export * from './typed-object/typed-object-wrapper';
+
+export * from './value-type'; // type export handled one level deeper
 
 export * from './util';
 export * from './wrapper-factory-provider';

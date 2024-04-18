@@ -9,7 +9,7 @@ import { getTestExecutionContext } from '@jvalue/jayvee-execution/test';
 import {
   type BlockDefinition,
   IOType,
-  PrimitiveValuetypes,
+  type JayveeServices,
   createJayveeServices,
 } from '@jvalue/jayvee-language-server';
 import {
@@ -40,6 +40,7 @@ describe('Validation of TableTransformerExecutor', () => {
   ) => Promise<LangiumDocument<AstNode>>;
 
   let locator: AstNodeLocator;
+  let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
     __dirname,
@@ -51,17 +52,17 @@ describe('Validation of TableTransformerExecutor', () => {
       {
         columnName: 'index',
         sheetColumnIndex: 0,
-        valueType: PrimitiveValuetypes.Integer,
+        valueType: services.ValueTypeProvider.Primitives.Integer,
       },
       {
         columnName: 'name',
         sheetColumnIndex: 1,
-        valueType: PrimitiveValuetypes.Text,
+        valueType: services.ValueTypeProvider.Primitives.Text,
       },
       {
         columnName: 'flag',
         sheetColumnIndex: 2,
-        valueType: PrimitiveValuetypes.Boolean,
+        valueType: services.ValueTypeProvider.Primitives.Boolean,
       },
     ]);
   }
@@ -94,13 +95,24 @@ describe('Validation of TableTransformerExecutor', () => {
 
     return new TableTransformerExecutor().doExecute(
       IOInput,
-      getTestExecutionContext(locator, document, [block]),
+      getTestExecutionContext(
+        locator,
+        document,
+        services,
+        [block],
+        {
+          isDebugMode: false,
+          debugGranularity: 'minimal',
+          debugTargets: 'all',
+        },
+        true,
+      ),
     );
   }
 
   beforeAll(async () => {
     // Create language services
-    const services = createJayveeServices(NodeFileSystem).Jayvee;
+    services = createJayveeServices(NodeFileSystem).Jayvee;
     await loadTestExtensions(services, [
       path.resolve(__dirname, '../../test/test-extension/TestBlockTypes.jv'),
     ]);
@@ -166,7 +178,7 @@ describe('Validation of TableTransformerExecutor', () => {
       expect(result.right.getColumn('index')).toEqual(
         expect.objectContaining({
           values: [false, true, true, true, true, true],
-          valueType: PrimitiveValuetypes.Boolean,
+          valueType: services.ValueTypeProvider.Primitives.Boolean,
         }),
       );
     }
@@ -179,7 +191,7 @@ describe('Validation of TableTransformerExecutor', () => {
       {
         columnName: 'index',
         sheetColumnIndex: 0,
-        valueType: PrimitiveValuetypes.Integer,
+        valueType: services.ValueTypeProvider.Primitives.Integer,
       },
     ]);
     const result = await parseAndExecuteExecutor(text, testTable);
