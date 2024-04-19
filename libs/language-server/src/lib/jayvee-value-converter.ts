@@ -2,12 +2,16 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type CstNode, DefaultValueConverter, type ValueType } from 'langium';
-import { type AbstractRule } from 'node_modules/langium/lib/grammar/generated/ast.js';
+import {
+  type CstNode,
+  DefaultValueConverter,
+  type GrammarAST,
+  type ValueType,
+} from 'langium';
 
 export class JayveeValueConverter extends DefaultValueConverter {
   protected override runConverter(
-    rule: AbstractRule,
+    rule: GrammarAST.AbstractRule,
     input: string,
     cstNode: CstNode,
   ): ValueType {
