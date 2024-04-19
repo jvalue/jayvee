@@ -39,7 +39,7 @@
       "executor": "@nx/vite:test",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "configFile": "libs/language-server/vite.config.ts",
+        "configFile": "libs/language-server/vitest.config.ts",
         "passWithNoTests": false
       }
     },
