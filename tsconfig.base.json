@@ -9,6 +9,7 @@
     "target": "ES6",
     "module": "Node16",
     "moduleResolution": "Node16",
+    "esModuleInterop": true,
     "lib": ["ES2017"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,

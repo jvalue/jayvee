@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 // Modules throwing error "Jest encountered an unexpected token"
-const esModules: string[] = [];
+const esModules: string[] = ['langium'];
 
 export default {
   displayName: 'language-server',
