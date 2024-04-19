@@ -13,13 +13,13 @@ import {
 } from 'langium';
 import { type WorkspaceFolder } from 'vscode-languageserver-protocol';
 
+import { initializeWorkspace } from '../lib/builtin-library/jayvee-workspace-manager.js';
 import {
   EvaluationContext,
   type JayveeServices,
   type JayveeValidationProps,
   ValidationContext,
-} from '../lib';
-import { initializeWorkspace } from '../lib/builtin-library/jayvee-workspace-manager';
+} from '../lib/index.js';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export const validationAcceptorMockImpl: ValidationAcceptor = () => {};

@@ -13,7 +13,7 @@ import {
   type ColumnId,
   type JayveeServices,
   createJayveeServices,
-} from '../../../lib';
+} from '../../../lib/index.js';
 import {
   type ParseHelperOptions,
   createJayveeValidationProps,
@@ -21,9 +21,9 @@ import {
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../test';
+} from '../../../test/index.js';
 
-import { validateColumnId } from './column-id';
+import { validateColumnId } from './column-id.js';
 
 describe('Validation of ColumnId', () => {
   let parse: (

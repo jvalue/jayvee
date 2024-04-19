@@ -2,14 +2,14 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type PipeWrapper, type PipelineWrapper } from '../../ast';
 import {
   type BlockDefinition,
   type CompositeBlockTypeDefinition,
   type PipelineDefinition,
-} from '../../ast/generated/ast';
-import { type JayveeValidationProps } from '../validation-registry';
-import { checkUniqueNames } from '../validation-util';
+} from '../../ast/generated/ast.js';
+import { type PipeWrapper, type PipelineWrapper } from '../../ast/index.js';
+import { type JayveeValidationProps } from '../validation-registry.js';
+import { checkUniqueNames } from '../validation-util.js';
 
 export function validatePipelineDefinition(
   pipeline: PipelineDefinition,

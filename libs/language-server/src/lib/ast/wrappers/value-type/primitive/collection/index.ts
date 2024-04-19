@@ -10,5 +10,5 @@
 export {
   type CollectionValueType,
   isCollectionValueType,
-} from './collection-value-type';
-export { type EmptyCollectionValueType } from './empty-collection-value-type';
+} from './collection-value-type.js';
+export { type EmptyCollectionValueType } from './empty-collection-value-type.js';

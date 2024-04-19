@@ -5,9 +5,12 @@
 import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { type ParseHelperOptions, parseHelper } from '../../test/langium-utils';
-import { readJvTestAssetHelper } from '../../test/utils';
-import { createJayveeServices } from '../jayvee-module';
+import {
+  type ParseHelperOptions,
+  parseHelper,
+} from '../../test/langium-utils.js';
+import { readJvTestAssetHelper } from '../../test/utils.js';
+import { createJayveeServices } from '../jayvee-module.js';
 
 describe('Parsing of ValuetypeDefinition', () => {
   let parse: (

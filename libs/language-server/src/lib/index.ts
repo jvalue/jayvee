@@ -2,11 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-export * from './ast';
-export * from './builtin-library';
-export * from './docs';
-export * from './services';
-export * from './util';
-export * from './validation';
+export * from './ast/index.js';
+export * from './builtin-library/index.js';
+export * from './docs/index.js';
+export * from './services/index.js';
+export * from './util/index.js';
+export * from './validation/index.js';
 
-export * from './jayvee-module';
+export * from './jayvee-module.js';

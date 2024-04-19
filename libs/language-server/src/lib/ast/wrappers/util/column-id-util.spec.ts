@@ -5,7 +5,7 @@
 import {
   columnCharactersAsIndex,
   columnIndexAsCharacters,
-} from './column-id-util';
+} from './column-id-util.js';
 
 describe('Column ID utils', () => {
   const testValues = new Map<string, number>([

@@ -6,65 +6,65 @@ import {
   type BinaryExpression,
   type TernaryExpression,
   type UnaryExpression,
-} from '../generated/ast';
+} from '../generated/ast.js';
 import {
   type ValueTypeProvider,
   type WrapperFactoryProvider,
-} from '../wrappers';
+} from '../wrappers/index.js';
 
-import { AdditionOperatorEvaluator } from './evaluators/addition-operator-evaluator';
-import { AndOperatorEvaluator } from './evaluators/and-operator-evaluator';
-import { CeilOperatorEvaluator } from './evaluators/ceil-operator-evaluator';
-import { DivisionOperatorEvaluator } from './evaluators/division-operator-evaluator';
-import { EqualityOperatorEvaluator } from './evaluators/equality-operator-evaluator';
-import { FloorOperatorEvaluator } from './evaluators/floor-operator-evaluator';
-import { GreaterEqualOperatorEvaluator } from './evaluators/greater-equal-operator-evaluator';
-import { GreaterThanOperatorEvaluator } from './evaluators/greater-than-operator-evaluator';
-import { InOperatorEvaluator } from './evaluators/in-operator-evaluator';
-import { InequalityOperatorEvaluator } from './evaluators/inequality-operator-evaluator';
-import { LessEqualOperatorEvaluator } from './evaluators/less-equal-operator-evaluator';
-import { LessThanOperatorEvaluator } from './evaluators/less-than-operator-evaluator';
-import { LowercaseOperatorEvaluator } from './evaluators/lowercase-operator-evaluator';
-import { MatchesOperatorEvaluator } from './evaluators/matches-operator-evaluator';
-import { MinusOperatorEvaluator } from './evaluators/minus-operator-evaluator';
-import { ModuloOperatorEvaluator } from './evaluators/modulo-operator-evaluator';
-import { MultiplicationOperatorEvaluator } from './evaluators/multiplication-operator-evaluator';
-import { NotOperatorEvaluator } from './evaluators/not-operator-evaluator';
-import { OrOperatorEvaluator } from './evaluators/or-operator-evaluator';
-import { PlusOperatorEvaluator } from './evaluators/plus-operator-evaluator';
-import { PowOperatorEvaluator } from './evaluators/pow-operator-evaluator';
-import { ReplaceOperatorEvaluator } from './evaluators/replace-operator-evaluator';
-import { RootOperatorEvaluator } from './evaluators/root-operator-evaluator';
-import { RoundOperatorEvaluator } from './evaluators/round-operator-evaluator';
-import { SqrtOperatorEvaluator } from './evaluators/sqrt-operator-evaluator';
-import { SubtractionOperatorEvaluator } from './evaluators/subtraction-operator-evaluator';
-import { UppercaseOperatorEvaluator } from './evaluators/uppercase-operator-evaluator';
-import { XorOperatorEvaluator } from './evaluators/xor-operator-evaluator';
-import { type OperatorEvaluator } from './operator-evaluator';
+import { AdditionOperatorEvaluator } from './evaluators/addition-operator-evaluator.js';
+import { AndOperatorEvaluator } from './evaluators/and-operator-evaluator.js';
+import { CeilOperatorEvaluator } from './evaluators/ceil-operator-evaluator.js';
+import { DivisionOperatorEvaluator } from './evaluators/division-operator-evaluator.js';
+import { EqualityOperatorEvaluator } from './evaluators/equality-operator-evaluator.js';
+import { FloorOperatorEvaluator } from './evaluators/floor-operator-evaluator.js';
+import { GreaterEqualOperatorEvaluator } from './evaluators/greater-equal-operator-evaluator.js';
+import { GreaterThanOperatorEvaluator } from './evaluators/greater-than-operator-evaluator.js';
+import { InOperatorEvaluator } from './evaluators/in-operator-evaluator.js';
+import { InequalityOperatorEvaluator } from './evaluators/inequality-operator-evaluator.js';
+import { LessEqualOperatorEvaluator } from './evaluators/less-equal-operator-evaluator.js';
+import { LessThanOperatorEvaluator } from './evaluators/less-than-operator-evaluator.js';
+import { LowercaseOperatorEvaluator } from './evaluators/lowercase-operator-evaluator.js';
+import { MatchesOperatorEvaluator } from './evaluators/matches-operator-evaluator.js';
+import { MinusOperatorEvaluator } from './evaluators/minus-operator-evaluator.js';
+import { ModuloOperatorEvaluator } from './evaluators/modulo-operator-evaluator.js';
+import { MultiplicationOperatorEvaluator } from './evaluators/multiplication-operator-evaluator.js';
+import { NotOperatorEvaluator } from './evaluators/not-operator-evaluator.js';
+import { OrOperatorEvaluator } from './evaluators/or-operator-evaluator.js';
+import { PlusOperatorEvaluator } from './evaluators/plus-operator-evaluator.js';
+import { PowOperatorEvaluator } from './evaluators/pow-operator-evaluator.js';
+import { ReplaceOperatorEvaluator } from './evaluators/replace-operator-evaluator.js';
+import { RootOperatorEvaluator } from './evaluators/root-operator-evaluator.js';
+import { RoundOperatorEvaluator } from './evaluators/round-operator-evaluator.js';
+import { SqrtOperatorEvaluator } from './evaluators/sqrt-operator-evaluator.js';
+import { SubtractionOperatorEvaluator } from './evaluators/subtraction-operator-evaluator.js';
+import { UppercaseOperatorEvaluator } from './evaluators/uppercase-operator-evaluator.js';
+import { XorOperatorEvaluator } from './evaluators/xor-operator-evaluator.js';
+import { type OperatorEvaluator } from './operator-evaluator.js';
 import {
   type BinaryOperatorTypeComputer,
   type TernaryOperatorTypeComputer,
   type UnaryOperatorTypeComputer,
-} from './operator-type-computer';
+} from './operator-type-computer.js';
 import {
   type BinaryExpressionOperator,
   type TernaryExpressionOperator,
   type UnaryExpressionOperator,
-} from './operator-types';
-import { BasicArithmeticOperatorTypeComputer } from './type-computers/basic-arithmetic-operator-type-computer';
-import { DivisionOperatorTypeComputer } from './type-computers/division-operator-type-computer';
-import { EqualityOperatorTypeComputer } from './type-computers/equality-operator-type-computer';
-import { ExponentialOperatorTypeComputer } from './type-computers/exponential-operator-type-computer';
-import { InOperatorTypeComputer } from './type-computers/in-operator-type-computer';
-import { IntegerConversionOperatorTypeComputer } from './type-computers/integer-conversion-operator-type-computer';
-import { LogicalOperatorTypeComputer } from './type-computers/logical-operator-type-computer';
-import { MatchesOperatorTypeComputer } from './type-computers/matches-operator-type-computer';
-import { NotOperatorTypeComputer } from './type-computers/not-operator-type-computer';
-import { RelationalOperatorTypeComputer } from './type-computers/relational-operator-type-computer';
-import { ReplaceOperatorTypeComputer } from './type-computers/replace-operator-type-computer';
-import { SignOperatorTypeComputer } from './type-computers/sign-operator-type-computer';
-import { SqrtOperatorTypeComputer } from './type-computers/sqrt-operator-type-computer';
-import { StringTransformTypeComputer } from './type-computers/string-transform-type-computer';
+} from './operator-types.js';
+import { BasicArithmeticOperatorTypeComputer } from './type-computers/basic-arithmetic-operator-type-computer.js';
+import { DivisionOperatorTypeComputer } from './type-computers/division-operator-type-computer.js';
+import { EqualityOperatorTypeComputer } from './type-computers/equality-operator-type-computer.js';
+import { ExponentialOperatorTypeComputer } from './type-computers/exponential-operator-type-computer.js';
+import { InOperatorTypeComputer } from './type-computers/in-operator-type-computer.js';
+import { IntegerConversionOperatorTypeComputer } from './type-computers/integer-conversion-operator-type-computer.js';
+import { LogicalOperatorTypeComputer } from './type-computers/logical-operator-type-computer.js';
+import { MatchesOperatorTypeComputer } from './type-computers/matches-operator-type-computer.js';
+import { NotOperatorTypeComputer } from './type-computers/not-operator-type-computer.js';
+import { RelationalOperatorTypeComputer } from './type-computers/relational-operator-type-computer.js';
+import { ReplaceOperatorTypeComputer } from './type-computers/replace-operator-type-computer.js';
+import { SignOperatorTypeComputer } from './type-computers/sign-operator-type-computer.js';
+import { SqrtOperatorTypeComputer } from './type-computers/sqrt-operator-type-computer.js';
+import { StringTransformTypeComputer } from './type-computers/string-transform-type-computer.js';
 
 export interface OperatorEvaluatorRegistry {
   unary: Record<UnaryExpressionOperator, OperatorEvaluator<UnaryExpression>>;

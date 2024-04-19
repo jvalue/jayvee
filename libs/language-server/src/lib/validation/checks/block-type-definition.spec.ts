@@ -10,20 +10,20 @@ import {
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  type BuiltinBlockTypeDefinition,
-  type JayveeServices,
-  createJayveeServices,
-} from '../..';
-import {
   type ParseHelperOptions,
   createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../test';
+} from '../../../test/index.js';
+import {
+  type BuiltinBlockTypeDefinition,
+  type JayveeServices,
+  createJayveeServices,
+} from '../../index.js';
 
-import { validateBlockTypeDefinition } from './block-type-definition';
+import { validateBlockTypeDefinition } from './block-type-definition.js';
 
 describe('Validation of BuiltinBlockTypeDefinition', () => {
   let parse: (

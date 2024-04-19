@@ -8,8 +8,8 @@ import {
   type BlockTypeProperty,
   type ReferenceableBlockTypeDefinition,
   evaluateExpression,
-} from '../../ast';
-import { type JayveeValidationProps } from '../validation-registry';
+} from '../../ast/index.js';
+import { type JayveeValidationProps } from '../validation-registry.js';
 
 export function validateBlockTypeDefinition(
   blockType: ReferenceableBlockTypeDefinition,

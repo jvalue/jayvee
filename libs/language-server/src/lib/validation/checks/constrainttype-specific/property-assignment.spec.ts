@@ -10,22 +10,22 @@ import {
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  type JayveeServices,
-  type PropertyBody,
-  type PropertySpecification,
-  type TypedObjectWrapper,
-  createJayveeServices,
-} from '../../..';
-import {
   type ParseHelperOptions,
   createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../../test';
+} from '../../../../test/index.js';
+import {
+  type JayveeServices,
+  type PropertyBody,
+  type PropertySpecification,
+  type TypedObjectWrapper,
+  createJayveeServices,
+} from '../../../index.js';
 
-import { checkConstraintTypeSpecificProperties } from './property-assignment';
+import { checkConstraintTypeSpecificProperties } from './property-assignment.js';
 
 describe('Validation of constraint type specific properties', () => {
   let parse: (

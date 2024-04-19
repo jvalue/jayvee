@@ -9,7 +9,7 @@
 
 import { assertUnreachable } from 'langium';
 
-import { inferExpressionType } from '../../ast/expressions/type-inference';
+import { inferExpressionType } from '../../ast/expressions/type-inference.js';
 import {
   type Expression,
   type ReferenceLiteral,
@@ -20,9 +20,9 @@ import {
   isTernaryExpression,
   isTransformPortDefinition,
   isUnaryExpression,
-} from '../../ast/generated/ast';
-import { type JayveeValidationProps } from '../validation-registry';
-import { checkExpressionSimplification } from '../validation-util';
+} from '../../ast/generated/ast.js';
+import { type JayveeValidationProps } from '../validation-registry.js';
+import { checkExpressionSimplification } from '../validation-util.js';
 
 export function validateTransformOutputAssignment(
   outputAssignment: TransformOutputAssignment,

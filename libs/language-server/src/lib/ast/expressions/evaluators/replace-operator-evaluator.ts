@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { DefaultTernaryOperatorEvaluator } from '../operator-evaluator';
-import { REGEXP_TYPEGUARD, STRING_TYPEGUARD } from '../typeguards';
+import { DefaultTernaryOperatorEvaluator } from '../operator-evaluator.js';
+import { REGEXP_TYPEGUARD, STRING_TYPEGUARD } from '../typeguards.js';
 
 export class ReplaceOperatorEvaluator extends DefaultTernaryOperatorEvaluator<
   string,

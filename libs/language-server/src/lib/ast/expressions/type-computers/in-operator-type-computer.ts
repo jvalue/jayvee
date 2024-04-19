@@ -4,16 +4,16 @@
 
 import { strict as assert } from 'assert';
 
-import { type ValidationContext } from '../../../validation/validation-context';
-import { type BinaryExpression } from '../../generated/ast';
-import { type WrapperFactoryProvider } from '../../wrappers';
+import { type ValidationContext } from '../../../validation/validation-context.js';
+import { type BinaryExpression } from '../../generated/ast.js';
+import { type WrapperFactoryProvider } from '../../wrappers/index.js';
 import {
   type CollectionValueType,
   type ValueType,
   type ValueTypeProvider,
   isCollectionValueType,
-} from '../../wrappers/value-type';
-import { type BinaryOperatorTypeComputer } from '../operator-type-computer';
+} from '../../wrappers/value-type/index.js';
+import { type BinaryOperatorTypeComputer } from '../operator-type-computer.js';
 
 export class InOperatorTypeComputer implements BinaryOperatorTypeComputer {
   private readonly ALLOWED_LEFT_OPERAND_TYPES: ValueType[];

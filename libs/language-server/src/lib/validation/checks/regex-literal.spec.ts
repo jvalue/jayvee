@@ -13,7 +13,7 @@ import {
   type JayveeServices,
   type RegexLiteral,
   createJayveeServices,
-} from '../../../lib';
+} from '../../../lib/index.js';
 import {
   type ParseHelperOptions,
   createJayveeValidationProps,
@@ -21,9 +21,9 @@ import {
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../test';
+} from '../../../test/index.js';
 
-import { validateRegexLiteral } from './regex-literal';
+import { validateRegexLiteral } from './regex-literal.js';
 
 describe('Validation of RegexLiteral', () => {
   let parse: (

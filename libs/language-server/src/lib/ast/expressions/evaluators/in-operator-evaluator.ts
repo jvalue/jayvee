@@ -5,9 +5,9 @@
 import {
   type InternalValueRepresentation,
   type InternalValueRepresentationTypeguard,
-} from '../internal-value-representation';
-import { DefaultBinaryOperatorEvaluator } from '../operator-evaluator';
-import { NUMBER_TYPEGUARD, STRING_TYPEGUARD } from '../typeguards';
+} from '../internal-value-representation.js';
+import { DefaultBinaryOperatorEvaluator } from '../operator-evaluator.js';
+import { NUMBER_TYPEGUARD, STRING_TYPEGUARD } from '../typeguards.js';
 
 export class InOperatorEvaluator extends DefaultBinaryOperatorEvaluator<
   InternalValueRepresentation,

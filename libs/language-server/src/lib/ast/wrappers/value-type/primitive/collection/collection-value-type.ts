@@ -5,13 +5,13 @@
 import {
   type AtomicInternalValueRepresentation,
   type InternalValueRepresentation,
-} from '../../../../expressions/internal-value-representation';
-import { type ValueType, type ValueTypeVisitor } from '../../value-type';
+} from '../../../../expressions/internal-value-representation.js';
+import { type ValueType, type ValueTypeVisitor } from '../../value-type.js';
 
 import {
   AbstractCollectionValueType,
   type ToArray,
-} from './abstract-collection-value-type';
+} from './abstract-collection-value-type.js';
 
 export class CollectionValueType<
   I extends InternalValueRepresentation = InternalValueRepresentation,

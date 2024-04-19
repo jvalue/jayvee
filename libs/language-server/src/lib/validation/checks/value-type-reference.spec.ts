@@ -12,21 +12,21 @@ import {
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  type JayveeServices,
-  type ValueTypeReference,
-  type ValuetypeDefinition,
-  createJayveeServices,
-} from '../..';
-import {
   type ParseHelperOptions,
   createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../test';
+} from '../../../test/index.js';
+import {
+  type JayveeServices,
+  type ValueTypeReference,
+  type ValuetypeDefinition,
+  createJayveeServices,
+} from '../../index.js';
 
-import { validateValueTypeReference } from './value-type-reference';
+import { validateValueTypeReference } from './value-type-reference.js';
 
 describe('Validation of ValueTypeReference', () => {
   let parse: (

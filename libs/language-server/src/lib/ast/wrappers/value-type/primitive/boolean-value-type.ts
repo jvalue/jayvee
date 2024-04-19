@@ -2,10 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
-import { type ValueTypeVisitor } from '../value-type';
+import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation.js';
+import { type ValueTypeVisitor } from '../value-type.js';
 
-import { PrimitiveValueType } from './primitive-value-type';
+import { PrimitiveValueType } from './primitive-value-type.js';
 
 export class BooleanValuetype extends PrimitiveValueType<boolean> {
   acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R {

@@ -17,10 +17,10 @@ import {
   isTernaryExpression,
   isUnaryExpression,
   isValueLiteral,
-} from '../ast';
+} from '../ast/index.js';
 
-import { type ValidationContext } from './validation-context';
-import { type JayveeValidationProps } from './validation-registry';
+import { type ValidationContext } from './validation-context.js';
+import { type JayveeValidationProps } from './validation-registry.js';
 
 export type NamedAstNode = AstNode & { name: string };
 

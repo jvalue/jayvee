@@ -4,26 +4,26 @@
 
 import { strict as assert } from 'assert';
 
-import { type ValidationContext } from '../../validation/validation-context';
+import { type ValidationContext } from '../../validation/validation-context.js';
 import {
   type BinaryExpression,
   type TernaryExpression,
   type UnaryExpression,
-} from '../generated/ast';
-import { type WrapperFactoryProvider } from '../wrappers';
+} from '../generated/ast.js';
+import { type WrapperFactoryProvider } from '../wrappers/index.js';
 
-import { evaluateExpression } from './evaluate-expression';
-import { type EvaluationContext } from './evaluation-context';
-import { EvaluationStrategy } from './evaluation-strategy';
+import { evaluateExpression } from './evaluate-expression.js';
+import { type EvaluationContext } from './evaluation-context.js';
+import { EvaluationStrategy } from './evaluation-strategy.js';
 import {
   type InternalValueRepresentation,
   type InternalValueRepresentationTypeguard,
-} from './internal-value-representation';
+} from './internal-value-representation.js';
 import {
   type BinaryExpressionOperator,
   type TernaryExpressionOperator,
   type UnaryExpressionOperator,
-} from './operator-types';
+} from './operator-types.js';
 
 export interface OperatorEvaluator<
   E extends UnaryExpression | BinaryExpression | TernaryExpression,

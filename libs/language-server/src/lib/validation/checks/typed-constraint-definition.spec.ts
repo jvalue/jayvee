@@ -14,7 +14,7 @@ import {
   type TypedConstraintDefinition,
   createJayveeServices,
   initializeWorkspace,
-} from '../../../lib';
+} from '../../../lib/index.js';
 import {
   type ParseHelperOptions,
   createJayveeValidationProps,
@@ -22,9 +22,9 @@ import {
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../test';
+} from '../../../test/index.js';
 
-import { validateTypedConstraintDefinition } from './typed-constraint-definition';
+import { validateTypedConstraintDefinition } from './typed-constraint-definition.js';
 
 describe('Validation of ConstraintDefinition (typed syntax)', () => {
   let parse: (

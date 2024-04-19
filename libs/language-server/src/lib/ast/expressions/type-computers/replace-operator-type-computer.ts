@@ -5,8 +5,8 @@
 import {
   type ValueType,
   type ValueTypeProvider,
-} from '../../wrappers/value-type';
-import { DefaultTernaryOperatorTypeComputer } from '../operator-type-computer';
+} from '../../wrappers/value-type/index.js';
+import { DefaultTernaryOperatorTypeComputer } from '../operator-type-computer.js';
 
 export class ReplaceOperatorTypeComputer extends DefaultTernaryOperatorTypeComputer {
   constructor(protected readonly valueTypeProvider: ValueTypeProvider) {

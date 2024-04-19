@@ -13,8 +13,8 @@ import {
   isConstraintDefinition,
   isTransformDefinition,
   isValuetypeAssignment,
-} from '../generated/ast';
-import type { WrapperFactoryProvider } from '../wrappers';
+} from '../generated/ast.js';
+import type { WrapperFactoryProvider } from '../wrappers/index.js';
 
 export type InternalValueRepresentation =
   | AtomicInternalValueRepresentation

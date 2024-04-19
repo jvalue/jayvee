@@ -2,14 +2,14 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
+import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation.js';
 import {
   type ValuetypeAssignment as AstValuetypeAssignment,
   isValuetypeAssignment as isAstValuetypeAssignment,
-} from '../../../generated/ast';
-import { type ValueTypeVisitor } from '../value-type';
+} from '../../../generated/ast.js';
+import { type ValueTypeVisitor } from '../value-type.js';
 
-import { PrimitiveValueType } from './primitive-value-type';
+import { PrimitiveValueType } from './primitive-value-type.js';
 
 export class ValuetypeAssignmentValuetype extends PrimitiveValueType<AstValuetypeAssignment> {
   acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R {

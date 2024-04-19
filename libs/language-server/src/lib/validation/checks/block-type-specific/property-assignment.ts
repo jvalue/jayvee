@@ -10,9 +10,9 @@ import {
   internalValueToString,
   isColumnWrapper,
   isRowWrapper,
-} from '../../../ast';
-import { type JayveeValidationProps } from '../../validation-registry';
-import { checkUniqueNames } from '../../validation-util';
+} from '../../../ast/index.js';
+import { type JayveeValidationProps } from '../../validation-registry.js';
+import { checkUniqueNames } from '../../validation-util.js';
 
 export function checkBlockTypeSpecificProperties(
   property: PropertyAssignment,

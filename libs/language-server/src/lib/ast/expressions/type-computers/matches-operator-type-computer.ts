@@ -5,8 +5,8 @@
 import {
   type ValueType,
   type ValueTypeProvider,
-} from '../../wrappers/value-type';
-import { DefaultBinaryOperatorTypeComputer } from '../operator-type-computer';
+} from '../../wrappers/value-type/index.js';
+import { DefaultBinaryOperatorTypeComputer } from '../operator-type-computer.js';
 
 export class MatchesOperatorTypeComputer extends DefaultBinaryOperatorTypeComputer {
   constructor(protected readonly valueTypeProvider: ValueTypeProvider) {

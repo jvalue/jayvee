@@ -13,7 +13,7 @@ import {
   type JayveeServices,
   type PropertyBody,
   createJayveeServices,
-} from '../../../lib';
+} from '../../../lib/index.js';
 import {
   type ParseHelperOptions,
   createJayveeValidationProps,
@@ -21,9 +21,9 @@ import {
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../test';
+} from '../../../test/index.js';
 
-import { validatePropertyBody } from './property-body';
+import { validatePropertyBody } from './property-body.js';
 
 describe('Validation PropertyBody', () => {
   let parse: (

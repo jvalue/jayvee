@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { BooleanShortCircuitOperatorEvaluator } from '../operator-evaluator';
+import { BooleanShortCircuitOperatorEvaluator } from '../operator-evaluator.js';
 
 export class AndOperatorEvaluator extends BooleanShortCircuitOperatorEvaluator {
   constructor() {

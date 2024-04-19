@@ -9,12 +9,12 @@ import {
   type BuiltinConstrainttypeDefinition,
   isBuiltinBlockTypeDefinition,
   isJayveeModel,
-} from './generated/ast';
+} from './generated/ast.js';
 import {
   type BlockTypeWrapper,
   type ConstraintTypeWrapper,
   type WrapperFactoryProvider,
-} from './wrappers';
+} from './wrappers/index.js';
 
 export type AstTypeGuard<T extends AstNode = AstNode> = (
   obj: unknown,

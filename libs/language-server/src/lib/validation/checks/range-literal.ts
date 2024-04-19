@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type RangeLiteral } from '../../ast/generated/ast';
-import { CellRangeWrapper } from '../../ast/wrappers/cell-range-wrapper';
-import { type JayveeValidationProps } from '../validation-registry';
+import { type RangeLiteral } from '../../ast/generated/ast.js';
+import { CellRangeWrapper } from '../../ast/wrappers/cell-range-wrapper.js';
+import { type JayveeValidationProps } from '../validation-registry.js';
 
 export function validateRangeLiteral(
   range: RangeLiteral,

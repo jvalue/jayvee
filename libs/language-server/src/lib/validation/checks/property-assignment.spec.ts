@@ -15,7 +15,7 @@ import {
   type PropertyBody,
   type TypedObjectWrapper,
   createJayveeServices,
-} from '../../../lib';
+} from '../../../lib/index.js';
 import {
   type ParseHelperOptions,
   createJayveeValidationProps,
@@ -23,9 +23,9 @@ import {
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../test';
+} from '../../../test/index.js';
 
-import { validatePropertyAssignment } from './property-assignment';
+import { validatePropertyAssignment } from './property-assignment.js';
 
 describe('Validation of PropertyAssignment', () => {
   let parse: (

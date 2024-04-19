@@ -20,11 +20,15 @@ import {
   isColumnLiteral,
   isRangeLiteral,
   isRowLiteral,
-} from '../generated/ast';
+} from '../generated/ast.js';
 
-import { type AstNodeWrapper } from './ast-node-wrapper';
-import { CellIndex, type CellIndexBounds, LAST_INDEX } from './util/cell-index';
-import { columnCharactersAsIndex } from './util/column-id-util';
+import { type AstNodeWrapper } from './ast-node-wrapper.js';
+import {
+  CellIndex,
+  type CellIndexBounds,
+  LAST_INDEX,
+} from './util/cell-index.js';
+import { columnCharactersAsIndex } from './util/column-id-util.js';
 
 export class CellRangeWrapper<N extends CellRangeLiteral = CellRangeLiteral>
   implements AstNodeWrapper<N>

@@ -13,7 +13,7 @@ import {
   type JayveeServices,
   type PipeDefinition,
   createJayveeServices,
-} from '../../../lib';
+} from '../../../lib/index.js';
 import {
   type ParseHelperOptions,
   createJayveeValidationProps,
@@ -21,9 +21,9 @@ import {
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../test';
+} from '../../../test/index.js';
 
-import { validatePipeDefinition } from './pipe-definition';
+import { validatePipeDefinition } from './pipe-definition.js';
 
 describe('Validation of PipeDefinition', () => {
   let parse: (

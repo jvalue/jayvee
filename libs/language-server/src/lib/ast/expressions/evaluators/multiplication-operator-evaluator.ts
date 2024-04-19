@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { DefaultBinaryOperatorEvaluator } from '../operator-evaluator';
-import { NUMBER_TYPEGUARD } from '../typeguards';
+import { DefaultBinaryOperatorEvaluator } from '../operator-evaluator.js';
+import { NUMBER_TYPEGUARD } from '../typeguards.js';
 
 export class MultiplicationOperatorEvaluator extends DefaultBinaryOperatorEvaluator<
   number,

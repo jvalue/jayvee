@@ -11,7 +11,7 @@ import {
   isReference,
 } from 'langium';
 
-import { type OperatorEvaluatorRegistry } from '../expressions';
+import { type OperatorEvaluatorRegistry } from '../expressions/index.js';
 import {
   type BlockTypePipeline,
   type BuiltinConstrainttypeDefinition,
@@ -26,18 +26,18 @@ import {
   isReferenceableBlockTypeDefinition,
   isValueTypeReference,
   isValuetypeDefinition,
-} from '../generated/ast';
+} from '../generated/ast.js';
 
-import { type AstNodeWrapper } from './ast-node-wrapper';
-import { CellRangeWrapper } from './cell-range-wrapper';
-import { PipeWrapper } from './pipe-wrapper';
-import { PipelineWrapper } from './pipeline-wrapper';
-import { BlockTypeWrapper } from './typed-object/block-type-wrapper';
-import { ConstraintTypeWrapper } from './typed-object/constrainttype-wrapper';
-import { type PrimitiveValueType, type ValueType } from './value-type';
-import { AtomicValueType } from './value-type/atomic-value-type';
-import { CollectionValueType } from './value-type/primitive/collection/collection-value-type';
-import { type ValueTypeProvider } from './value-type/primitive/primitive-value-type-provider';
+import { type AstNodeWrapper } from './ast-node-wrapper.js';
+import { CellRangeWrapper } from './cell-range-wrapper.js';
+import { PipeWrapper } from './pipe-wrapper.js';
+import { PipelineWrapper } from './pipeline-wrapper.js';
+import { BlockTypeWrapper } from './typed-object/block-type-wrapper.js';
+import { ConstraintTypeWrapper } from './typed-object/constrainttype-wrapper.js';
+import { AtomicValueType } from './value-type/atomic-value-type.js';
+import { type PrimitiveValueType, type ValueType } from './value-type/index.js';
+import { CollectionValueType } from './value-type/primitive/collection/collection-value-type.js';
+import { type ValueTypeProvider } from './value-type/primitive/primitive-value-type-provider.js';
 
 abstract class AstNodeWrapperFactory<
   N extends AstNode,

@@ -7,19 +7,19 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { type TypedObjectWrapper } from '../../ast';
 import {
   type PropertyAssignment,
   type PropertyBody,
   isBlockDefinition,
   isTypedConstraintDefinition,
-} from '../../ast/generated/ast';
-import { type JayveeValidationProps } from '../validation-registry';
-import { checkUniqueNames } from '../validation-util';
+} from '../../ast/generated/ast.js';
+import { type TypedObjectWrapper } from '../../ast/index.js';
+import { type JayveeValidationProps } from '../validation-registry.js';
+import { checkUniqueNames } from '../validation-util.js';
 
-import { checkBlockTypeSpecificPropertyBody } from './block-type-specific/property-body';
-import { checkConstraintTypeSpecificPropertyBody } from './constrainttype-specific/property-body';
-import { validatePropertyAssignment } from './property-assignment';
+import { checkBlockTypeSpecificPropertyBody } from './block-type-specific/property-body.js';
+import { checkConstraintTypeSpecificPropertyBody } from './constrainttype-specific/property-body.js';
+import { validatePropertyAssignment } from './property-assignment.js';
 
 export function validatePropertyBody(
   propertyBody: PropertyBody,

@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../expressions';
+import { type InternalValueRepresentation } from '../../expressions/index.js';
 
-import { type ValueType, type ValueTypeVisitor } from './value-type';
+import { type ValueType, type ValueTypeVisitor } from './value-type.js';
 
 export abstract class AbstractValueType<I extends InternalValueRepresentation>
   implements ValueType<I>

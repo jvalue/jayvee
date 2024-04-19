@@ -6,8 +6,8 @@ import {
   type PropertyAssignment,
   type PropertySpecification,
   evaluatePropertyValue,
-} from '../../../ast';
-import { type JayveeValidationProps } from '../../validation-registry';
+} from '../../../ast/index.js';
+import { type JayveeValidationProps } from '../../validation-registry.js';
 
 export function checkConstraintTypeSpecificProperties(
   property: PropertyAssignment,

@@ -10,33 +10,33 @@ import {
   ValidationRegistry,
 } from 'langium';
 
+import { type JayveeAstType } from '../ast/generated/ast.js';
 import {
   EvaluationContext,
   type OperatorEvaluatorRegistry,
   type OperatorTypeComputerRegistry,
   type ValueTypeProvider,
   type WrapperFactoryProvider,
-} from '../ast';
-import { type JayveeAstType } from '../ast/generated/ast';
-import type { JayveeServices } from '../jayvee-module';
-import { type RuntimeParameterProvider } from '../services';
+} from '../ast/index.js';
+import type { JayveeServices } from '../jayvee-module.js';
+import { type RuntimeParameterProvider } from '../services/index.js';
 
-import { validateBlockDefinition } from './checks/block-definition';
-import { validateBlockTypeDefinition } from './checks/block-type-definition';
-import { validateColumnId } from './checks/column-id';
-import { validateCompositeBlockTypeDefinition } from './checks/composite-block-type-definition';
-import { validateExpressionConstraintDefinition } from './checks/expression-constraint-definition';
-import { validateJayveeModel } from './checks/jayvee-model';
-import { validatePipeDefinition } from './checks/pipe-definition';
-import { validatePipelineDefinition } from './checks/pipeline-definition';
-import { validatePropertyBody } from './checks/property-body';
-import { validateRangeLiteral } from './checks/range-literal';
-import { validateRegexLiteral } from './checks/regex-literal';
-import { validateTransformBody } from './checks/transform-body';
-import { validateTypedConstraintDefinition } from './checks/typed-constraint-definition';
-import { validateValueTypeDefinition } from './checks/value-type-definition';
-import { validateValueTypeReference } from './checks/value-type-reference';
-import { ValidationContext } from './validation-context';
+import { validateBlockDefinition } from './checks/block-definition.js';
+import { validateBlockTypeDefinition } from './checks/block-type-definition.js';
+import { validateColumnId } from './checks/column-id.js';
+import { validateCompositeBlockTypeDefinition } from './checks/composite-block-type-definition.js';
+import { validateExpressionConstraintDefinition } from './checks/expression-constraint-definition.js';
+import { validateJayveeModel } from './checks/jayvee-model.js';
+import { validatePipeDefinition } from './checks/pipe-definition.js';
+import { validatePipelineDefinition } from './checks/pipeline-definition.js';
+import { validatePropertyBody } from './checks/property-body.js';
+import { validateRangeLiteral } from './checks/range-literal.js';
+import { validateRegexLiteral } from './checks/regex-literal.js';
+import { validateTransformBody } from './checks/transform-body.js';
+import { validateTypedConstraintDefinition } from './checks/typed-constraint-definition.js';
+import { validateValueTypeDefinition } from './checks/value-type-definition.js';
+import { validateValueTypeReference } from './checks/value-type-reference.js';
+import { ValidationContext } from './validation-context.js';
 
 /**
  * Registry for validation checks.
@@ -87,7 +87,14 @@ export class JayveeValidationRegistry extends ValidationRegistry {
         this.valueTypeProvider,
       );
 
-      this.doRegister(type, this.wrapValidationException(wrappedCheck, this));
+      // TODO: wtf, why is it any??
+
+      this.addEntry(type, {
+        // TODO: check whether equivalent to prior doRegister
+        // TODO: check if equivalent to prior doRegister
+        category: 'built-in', // TODO: check what that entry does
+        check: this.wrapValidationException(wrappedCheck, this),
+      });
     }
   }
 

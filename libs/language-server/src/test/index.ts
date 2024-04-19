@@ -2,5 +2,5 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-export * from './langium-utils';
-export * from './utils';
+export * from './langium-utils.js';
+export * from './utils.js';

@@ -9,7 +9,7 @@ import {
   type JayveeModel,
   type JayveeServices,
   createJayveeServices,
-} from '../../../lib';
+} from '../../../lib/index.js';
 import {
   type ParseHelperOptions,
   createJayveeValidationProps,
@@ -17,9 +17,9 @@ import {
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../test';
+} from '../../../test/index.js';
 
-import { validateJayveeModel } from './jayvee-model';
+import { validateJayveeModel } from './jayvee-model.js';
 
 describe('Validation of JayveeModel', () => {
   let parse: (

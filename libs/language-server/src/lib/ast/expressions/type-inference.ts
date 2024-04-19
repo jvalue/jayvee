@@ -4,7 +4,7 @@
 
 import { assertUnreachable } from 'langium';
 
-import { type ValidationContext } from '../../validation/validation-context';
+import { type ValidationContext } from '../../validation/validation-context.js';
 import {
   type CollectionLiteral,
   type Expression,
@@ -32,20 +32,20 @@ import {
   isValueKeywordLiteral,
   isValueLiteral,
   isValuetypeAssignmentLiteral,
-} from '../generated/ast';
-import { getNextAstNodeContainer } from '../model-util';
+} from '../generated/ast.js';
+import { getNextAstNodeContainer } from '../model-util.js';
 import {
   type ValueType,
   type ValueTypeProvider,
   type WrapperFactoryProvider,
-} from '../wrappers';
+} from '../wrappers/index.js';
 import {
   getValuetypeHierarchyStack,
   pickCommonAtomicValueType,
   pickCommonPrimitiveValuetype,
-} from '../wrappers/util/value-type-util';
+} from '../wrappers/util/value-type-util.js';
 
-import { isEveryValueDefined } from './typeguards';
+import { isEveryValueDefined } from './typeguards.js';
 
 export function inferExpressionType(
   expression: Expression | undefined,

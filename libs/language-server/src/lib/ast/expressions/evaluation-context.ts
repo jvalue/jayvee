@@ -6,8 +6,8 @@ import { strict as assert } from 'assert';
 
 import { assertUnreachable } from 'langium';
 
-import { type RuntimeParameterProvider } from '../../services';
-import {} from '../../validation/validation-context';
+import { type RuntimeParameterProvider } from '../../services/index.js';
+import {} from '../../validation/validation-context.js';
 import {
   type FreeVariableLiteral,
   type ReferenceLiteral,
@@ -18,12 +18,12 @@ import {
   isTransformDefinition,
   isTransformPortDefinition,
   isValueKeywordLiteral,
-} from '../generated/ast';
-import { type ValueTypeProvider } from '../wrappers';
-import { type ValueType } from '../wrappers/value-type/value-type';
+} from '../generated/ast.js';
+import { type ValueTypeProvider } from '../wrappers/index.js';
+import { type ValueType } from '../wrappers/value-type/value-type.js';
 
-import { type InternalValueRepresentation } from './internal-value-representation';
-import { type OperatorEvaluatorRegistry } from './operator-registry';
+import { type InternalValueRepresentation } from './internal-value-representation.js';
+import { type OperatorEvaluatorRegistry } from './operator-registry.js';
 
 export class EvaluationContext {
   private readonly variableValues = new Map<

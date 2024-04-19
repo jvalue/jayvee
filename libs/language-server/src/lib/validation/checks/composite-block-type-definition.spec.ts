@@ -10,20 +10,20 @@ import {
 import { NodeFileSystem } from 'langium/node';
 
 import {
-  type CompositeBlockTypeDefinition,
-  type JayveeServices,
-  createJayveeServices,
-} from '../..';
-import {
   type ParseHelperOptions,
   createJayveeValidationProps,
   expectNoParserAndLexerErrors,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../test';
+} from '../../../test/index.js';
+import {
+  type CompositeBlockTypeDefinition,
+  type JayveeServices,
+  createJayveeServices,
+} from '../../index.js';
 
-import { validateCompositeBlockTypeDefinition } from './composite-block-type-definition';
+import { validateCompositeBlockTypeDefinition } from './composite-block-type-definition.js';
 
 describe('Validation of CompositeBlockTypeDefinition', () => {
   let parse: (

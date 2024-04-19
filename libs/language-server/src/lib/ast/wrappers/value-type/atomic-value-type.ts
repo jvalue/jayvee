@@ -4,20 +4,20 @@
 
 import { strict as assert } from 'assert';
 
-import { evaluateExpression } from '../../expressions/evaluate-expression';
-import { type EvaluationContext } from '../../expressions/evaluation-context';
-import { type InternalValueRepresentation } from '../../expressions/internal-value-representation';
+import { evaluateExpression } from '../../expressions/evaluate-expression.js';
+import { type EvaluationContext } from '../../expressions/evaluation-context.js';
+import { type InternalValueRepresentation } from '../../expressions/internal-value-representation.js';
 import {
   type ConstraintDefinition,
   type ValuetypeDefinition,
-} from '../../generated/ast';
-import { type AstNodeWrapper } from '../ast-node-wrapper';
-import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
+} from '../../generated/ast.js';
+import { type AstNodeWrapper } from '../ast-node-wrapper.js';
+import { type WrapperFactoryProvider } from '../wrapper-factory-provider.js';
 
-import { AbstractValueType } from './abstract-value-type';
-import { type ValueTypeProvider } from './primitive';
-import { CollectionValueType } from './primitive/collection/collection-value-type';
-import { type ValueType, type ValueTypeVisitor } from './value-type';
+import { AbstractValueType } from './abstract-value-type.js';
+import { CollectionValueType } from './primitive/collection/collection-value-type.js';
+import { type ValueTypeProvider } from './primitive/index.js';
+import { type ValueType, type ValueTypeVisitor } from './value-type.js';
 
 export class AtomicValueType
   extends AbstractValueType<InternalValueRepresentation>

@@ -6,7 +6,7 @@ import {
   type BinaryExpression,
   type TernaryExpression,
   type UnaryExpression,
-} from '../generated/ast';
+} from '../generated/ast.js';
 
 export type UnaryExpressionOperator = UnaryExpression['operator'];
 export type BinaryExpressionOperator = BinaryExpression['operator'];

@@ -7,10 +7,10 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { inferExpressionType } from '../../ast/expressions/type-inference';
-import { type ExpressionConstraintDefinition } from '../../ast/generated/ast';
-import { type JayveeValidationProps } from '../validation-registry';
-import { checkExpressionSimplification } from '../validation-util';
+import { inferExpressionType } from '../../ast/expressions/type-inference.js';
+import { type ExpressionConstraintDefinition } from '../../ast/generated/ast.js';
+import { type JayveeValidationProps } from '../validation-registry.js';
+import { checkExpressionSimplification } from '../validation-util.js';
 
 export function validateExpressionConstraintDefinition(
   constraint: ExpressionConstraintDefinition,

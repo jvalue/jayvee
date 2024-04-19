@@ -4,15 +4,15 @@
 
 import { type AstNode } from 'langium';
 
-import { type ValidationContext } from '../../../validation/validation-context';
-import { type EvaluationContext } from '../../expressions/evaluation-context';
-import { type InternalValueRepresentation } from '../../expressions/internal-value-representation';
+import { type ValidationContext } from '../../../validation/validation-context.js';
+import { type EvaluationContext } from '../../expressions/evaluation-context.js';
+import { type InternalValueRepresentation } from '../../expressions/internal-value-representation.js';
 import {
   type PropertyAssignment,
   type PropertyBody,
-} from '../../generated/ast';
-import { type AstNodeWrapper } from '../ast-node-wrapper';
-import { type ValueType } from '../value-type';
+} from '../../generated/ast.js';
+import { type AstNodeWrapper } from '../ast-node-wrapper.js';
+import { type ValueType } from '../value-type/index.js';
 
 export interface PropertySpecification<
   I extends InternalValueRepresentation = InternalValueRepresentation,

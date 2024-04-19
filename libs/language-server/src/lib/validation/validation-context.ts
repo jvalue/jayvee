@@ -8,7 +8,7 @@ import {
   type ValidationAcceptor,
 } from 'langium';
 
-import { type OperatorTypeComputerRegistry } from '../ast/expressions/operator-registry';
+import { type OperatorTypeComputerRegistry } from '../ast/expressions/operator-registry.js';
 
 export class ValidationContext {
   private errorOccurred = false;

@@ -2,10 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type ValidationContext } from '../../../validation/validation-context';
-import { type BinaryExpression } from '../../generated/ast';
-import { DefaultBinaryOperatorEvaluator } from '../operator-evaluator';
-import { NUMBER_TYPEGUARD } from '../typeguards';
+import { type ValidationContext } from '../../../validation/validation-context.js';
+import { type BinaryExpression } from '../../generated/ast.js';
+import { DefaultBinaryOperatorEvaluator } from '../operator-evaluator.js';
+import { NUMBER_TYPEGUARD } from '../typeguards.js';
 
 export class RootOperatorEvaluator extends DefaultBinaryOperatorEvaluator<
   number,

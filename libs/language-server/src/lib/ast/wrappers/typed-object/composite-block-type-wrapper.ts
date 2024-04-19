@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type OperatorEvaluatorRegistry } from '../../expressions/operator-registry';
-import { type CompositeBlockTypeDefinition } from '../../generated/ast';
-import { type ValueTypeProvider } from '../value-type';
-import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
+import { type OperatorEvaluatorRegistry } from '../../expressions/operator-registry.js';
+import { type CompositeBlockTypeDefinition } from '../../generated/ast.js';
+import { type ValueTypeProvider } from '../value-type/index.js';
+import { type WrapperFactoryProvider } from '../wrapper-factory-provider.js';
 
-import { BlockTypeWrapper } from './block-type-wrapper';
+import { BlockTypeWrapper } from './block-type-wrapper.js';
 
 export class CompositeBlockTypeWrapper extends BlockTypeWrapper {
   /**

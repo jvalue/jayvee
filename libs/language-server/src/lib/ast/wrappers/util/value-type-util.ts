@@ -7,12 +7,12 @@ import { strict as assert } from 'assert';
 import {
   type AtomicValueType,
   isAtomicValueType,
-} from '../value-type/atomic-value-type';
+} from '../value-type/atomic-value-type.js';
 import {
   type PrimitiveValueType,
   isPrimitiveValueType,
-} from '../value-type/primitive';
-import { type ValueType } from '../value-type/value-type';
+} from '../value-type/primitive/index.js';
+import { type ValueType } from '../value-type/value-type.js';
 
 type ValuetypeHierarchyStack = [PrimitiveValueType, ...AtomicValueType[]];
 

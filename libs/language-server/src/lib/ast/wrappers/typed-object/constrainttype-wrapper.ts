@@ -6,19 +6,19 @@ import { strict as assert } from 'assert';
 
 import { type Reference, isReference } from 'langium';
 
-import { RuntimeParameterProvider } from '../../../services';
-import { evaluateExpression } from '../../expressions/evaluate-expression';
-import { EvaluationContext } from '../../expressions/evaluation-context';
-import { type OperatorEvaluatorRegistry } from '../../expressions/operator-registry';
-import { type BuiltinConstrainttypeDefinition } from '../../generated/ast';
-import { type ValueType, type ValueTypeProvider } from '../value-type';
-import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
+import { RuntimeParameterProvider } from '../../../services/index.js';
+import { evaluateExpression } from '../../expressions/evaluate-expression.js';
+import { EvaluationContext } from '../../expressions/evaluation-context.js';
+import { type OperatorEvaluatorRegistry } from '../../expressions/operator-registry.js';
+import { type BuiltinConstrainttypeDefinition } from '../../generated/ast.js';
+import { type ValueType, type ValueTypeProvider } from '../value-type/index.js';
+import { type WrapperFactoryProvider } from '../wrapper-factory-provider.js';
 
 import {
   type ExampleDoc,
   type PropertySpecification,
   TypedObjectWrapper,
-} from './typed-object-wrapper';
+} from './typed-object-wrapper.js';
 
 interface ConstraintDocs {
   description?: string;

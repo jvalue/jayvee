@@ -2,15 +2,15 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type PipelineWrapper } from '../../ast';
 import {
   type BlockDefinition,
   type CompositeBlockTypeDefinition,
-} from '../../ast/generated/ast';
-import { type JayveeValidationProps } from '../validation-registry';
+} from '../../ast/generated/ast.js';
+import { type PipelineWrapper } from '../../ast/index.js';
+import { type JayveeValidationProps } from '../validation-registry.js';
 
-import { validateBlockTypeDefinition } from './block-type-definition';
-import { checkMultipleBlockInputs } from './pipeline-definition';
+import { validateBlockTypeDefinition } from './block-type-definition.js';
+import { checkMultipleBlockInputs } from './pipeline-definition.js';
 
 export function validateCompositeBlockTypeDefinition(
   blockType: CompositeBlockTypeDefinition,

@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { DefaultUnaryOperatorEvaluator } from '../operator-evaluator';
-import { BOOLEAN_TYPEGUARD } from '../typeguards';
+import { DefaultUnaryOperatorEvaluator } from '../operator-evaluator.js';
+import { BOOLEAN_TYPEGUARD } from '../typeguards.js';
 
 export class NotOperatorEvaluator extends DefaultUnaryOperatorEvaluator<
   boolean,

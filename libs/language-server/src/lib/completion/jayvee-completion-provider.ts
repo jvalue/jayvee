@@ -15,7 +15,6 @@ import {
 } from 'langium';
 import { CompletionItemKind } from 'vscode-languageserver';
 
-import { type TypedObjectWrapper, type WrapperFactoryProvider } from '../ast';
 import {
   type BlockDefinition,
   type ConstraintDefinition,
@@ -27,13 +26,17 @@ import {
   isJayveeModel,
   isPropertyAssignment,
   isPropertyBody,
-} from '../ast/generated/ast';
+} from '../ast/generated/ast.js';
+import {
+  type TypedObjectWrapper,
+  type WrapperFactoryProvider,
+} from '../ast/index.js';
 import {
   getAllBuiltinBlockTypes,
   getAllBuiltinConstraintTypes,
-} from '../ast/model-util';
-import { LspDocGenerator } from '../docs/lsp-doc-generator';
-import { type JayveeServices } from '../jayvee-module';
+} from '../ast/model-util.js';
+import { LspDocGenerator } from '../docs/lsp-doc-generator.js';
+import { type JayveeServices } from '../jayvee-module.js';
 
 const RIGHT_ARROW_SYMBOL = '\u{2192}';
 

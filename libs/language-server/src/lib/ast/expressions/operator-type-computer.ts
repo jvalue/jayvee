@@ -2,13 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type ValidationContext } from '../../validation/validation-context';
+import { type ValidationContext } from '../../validation/validation-context.js';
 import {
   type BinaryExpression,
   type TernaryExpression,
   type UnaryExpression,
-} from '../generated/ast';
-import { type ValueType } from '../wrappers/value-type/value-type';
+} from '../generated/ast.js';
+import { type ValueType } from '../wrappers/value-type/value-type.js';
 
 export interface UnaryOperatorTypeComputer {
   /**

@@ -6,7 +6,7 @@ import { strict as assert } from 'assert';
 
 import { assertUnreachable } from 'langium';
 
-import { type ValidationContext } from '../../validation';
+import { type ValidationContext } from '../../validation/index.js';
 import {
   type Expression,
   type PropertyAssignment,
@@ -23,13 +23,16 @@ import {
   isTernaryExpression,
   isUnaryExpression,
   isValueLiteral,
-} from '../generated/ast';
-import { type ValueType, type WrapperFactoryProvider } from '../wrappers';
+} from '../generated/ast.js';
+import {
+  type ValueType,
+  type WrapperFactoryProvider,
+} from '../wrappers/index.js';
 
-import { type EvaluationContext } from './evaluation-context';
-import { EvaluationStrategy } from './evaluation-strategy';
-import { type InternalValueRepresentation } from './internal-value-representation';
-import { isEveryValueDefined } from './typeguards';
+import { type EvaluationContext } from './evaluation-context.js';
+import { EvaluationStrategy } from './evaluation-strategy.js';
+import { type InternalValueRepresentation } from './internal-value-representation.js';
+import { isEveryValueDefined } from './typeguards.js';
 
 export function evaluatePropertyValue<T extends InternalValueRepresentation>(
   property: PropertyAssignment,

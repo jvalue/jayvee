@@ -19,19 +19,19 @@ import {
   DefaultOperatorTypeComputerRegistry,
   type OperatorEvaluatorRegistry,
   type OperatorTypeComputerRegistry,
-} from './ast/expressions/operator-registry';
+} from './ast/expressions/operator-registry.js';
 import {
   JayveeGeneratedModule,
   JayveeGeneratedSharedModule,
-} from './ast/generated/module';
-import { ValueTypeProvider } from './ast/wrappers/value-type/primitive/primitive-value-type-provider';
-import { WrapperFactoryProvider } from './ast/wrappers/wrapper-factory-provider';
-import { JayveeWorkspaceManager } from './builtin-library/jayvee-workspace-manager';
-import { JayveeCompletionProvider } from './completion/jayvee-completion-provider';
-import { JayveeHoverProvider } from './hover/jayvee-hover-provider';
-import { JayveeValueConverter } from './jayvee-value-converter';
-import { RuntimeParameterProvider } from './services/runtime-parameter-provider';
-import { JayveeValidationRegistry } from './validation/validation-registry';
+} from './ast/generated/module.js';
+import { ValueTypeProvider } from './ast/wrappers/value-type/primitive/primitive-value-type-provider.js';
+import { WrapperFactoryProvider } from './ast/wrappers/wrapper-factory-provider.js';
+import { JayveeWorkspaceManager } from './builtin-library/jayvee-workspace-manager.js';
+import { JayveeCompletionProvider } from './completion/jayvee-completion-provider.js';
+import { JayveeHoverProvider } from './hover/jayvee-hover-provider.js';
+import { JayveeValueConverter } from './jayvee-value-converter.js';
+import { RuntimeParameterProvider } from './services/runtime-parameter-provider.js';
+import { JayveeValidationRegistry } from './validation/validation-registry.js';
 
 /**
  * Declaration of custom services for the Jayvee language.

@@ -2,10 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { IOType, type PrimitiveValueType } from '../ast';
-import { ValueTypeProvider } from '../ast/wrappers/value-type/primitive/primitive-value-type-provider';
+import { IOType, type PrimitiveValueType } from '../ast/index.js';
+import { ValueTypeProvider } from '../ast/wrappers/value-type/primitive/primitive-value-type-provider.js';
 
-import { PartialStdLib } from './generated/partial-stdlib';
+import { PartialStdLib } from './generated/partial-stdlib.js';
 
 export function getBuiltinValuetypesLib() {
   const primitiveValuetypes = new ValueTypeProvider().Primitives.getAll() // instantiation is okay here as it has no side effects: it is only parsed to string

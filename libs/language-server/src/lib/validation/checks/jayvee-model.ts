@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type JayveeModel } from '../../ast/generated/ast';
-import { type JayveeValidationProps } from '../validation-registry';
-import { checkUniqueNames } from '../validation-util';
+import { type JayveeModel } from '../../ast/generated/ast.js';
+import { type JayveeValidationProps } from '../validation-registry.js';
+import { checkUniqueNames } from '../validation-util.js';
 
 export function validateJayveeModel(
   model: JayveeModel,

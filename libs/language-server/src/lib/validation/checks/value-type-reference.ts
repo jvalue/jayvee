@@ -6,8 +6,8 @@ import {
   type ValueTypeReference,
   isBuiltinBlockTypeDefinition,
   isBuiltinConstrainttypeDefinition,
-} from '../../ast/generated/ast';
-import { type JayveeValidationProps } from '../validation-registry';
+} from '../../ast/generated/ast.js';
+import { type JayveeValidationProps } from '../validation-registry.js';
 
 export function validateValueTypeReference(
   valueTypeRef: ValueTypeReference,

@@ -11,14 +11,14 @@ import {
   type TransformBody,
   type TransformPortDefinition,
   isTransformPortDefinition,
-} from '../../ast/generated/ast';
-import { type JayveeValidationProps } from '../validation-registry';
-import { checkUniqueNames } from '../validation-util';
+} from '../../ast/generated/ast.js';
+import { type JayveeValidationProps } from '../validation-registry.js';
+import { checkUniqueNames } from '../validation-util.js';
 
 import {
   extractReferenceLiterals,
   validateTransformOutputAssignment,
-} from './transform-output-assigment';
+} from './transform-output-assigment.js';
 
 export function validateTransformBody(
   transformBody: TransformBody,

@@ -2,8 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type PropertyBody, evaluatePropertyValue } from '../../../ast';
-import { type JayveeValidationProps } from '../../validation-registry';
+import {
+  type PropertyBody,
+  evaluatePropertyValue,
+} from '../../../ast/index.js';
+import { type JayveeValidationProps } from '../../validation-registry.js';
 
 export function checkBlockTypeSpecificPropertyBody(
   propertyBody: PropertyBody,

@@ -2,21 +2,21 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../../expressions';
-import { type ValueType } from '../value-type';
+import { type InternalValueRepresentation } from '../../../expressions/index.js';
+import { type ValueType } from '../value-type.js';
 
-import { BooleanValuetype } from './boolean-value-type';
-import { CellRangeValuetype } from './cell-range-value-type';
-import { CollectionValueType } from './collection/collection-value-type';
-import { EmptyCollectionValueType } from './collection/empty-collection-value-type';
-import { ConstraintValuetype } from './constraint-value-type';
-import { DecimalValuetype } from './decimal-value-type';
-import { IntegerValuetype } from './integer-value-type';
-import { type PrimitiveValueType } from './primitive-value-type';
-import { RegexValuetype } from './regex-value-type';
-import { TextValuetype } from './text-value-type';
-import { TransformValuetype } from './transform-value-type';
-import { ValuetypeAssignmentValuetype } from './value-type-assignment-value-type';
+import { BooleanValuetype } from './boolean-value-type.js';
+import { CellRangeValuetype } from './cell-range-value-type.js';
+import { CollectionValueType } from './collection/collection-value-type.js';
+import { EmptyCollectionValueType } from './collection/empty-collection-value-type.js';
+import { ConstraintValuetype } from './constraint-value-type.js';
+import { DecimalValuetype } from './decimal-value-type.js';
+import { IntegerValuetype } from './integer-value-type.js';
+import { type PrimitiveValueType } from './primitive-value-type.js';
+import { RegexValuetype } from './regex-value-type.js';
+import { TextValuetype } from './text-value-type.js';
+import { TransformValuetype } from './transform-value-type.js';
+import { ValuetypeAssignmentValuetype } from './value-type-assignment-value-type.js';
 
 /**
  * Should be created as singleton due to the equality comparison of primitive value types.

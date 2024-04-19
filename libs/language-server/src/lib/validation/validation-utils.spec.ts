@@ -10,6 +10,13 @@ import {
 import { NodeFileSystem } from 'langium/node';
 
 import {
+  type ParseHelperOptions,
+  expectNoParserAndLexerErrors,
+  parseHelper,
+  readJvTestAssetHelper,
+  validationAcceptorMockImpl,
+} from '../../test/index.js';
+import {
   DefaultOperatorEvaluatorRegistry,
   DefaultOperatorTypeComputerRegistry,
   type JayveeServices,
@@ -19,14 +26,7 @@ import {
   WrapperFactoryProvider,
   checkUniqueNames,
   createJayveeServices,
-} from '..';
-import {
-  type ParseHelperOptions,
-  expectNoParserAndLexerErrors,
-  parseHelper,
-  readJvTestAssetHelper,
-  validationAcceptorMockImpl,
-} from '../../test';
+} from '../index.js';
 
 describe('Validation of validation-utils', () => {
   let parse: (

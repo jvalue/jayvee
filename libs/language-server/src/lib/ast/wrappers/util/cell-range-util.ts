@@ -9,15 +9,15 @@ import {
   isColumnLiteral,
   isRangeLiteral,
   isRowLiteral,
-} from '../../generated/ast';
+} from '../../generated/ast.js';
 import {
   CellRangeWrapper,
   type CellWrapper,
   type ColumnWrapper,
   type RowWrapper,
-} from '../cell-range-wrapper';
+} from '../cell-range-wrapper.js';
 
-import { type CellIndex, LAST_INDEX } from './cell-index';
+import { type CellIndex, LAST_INDEX } from './cell-index.js';
 
 export function isCellRangeWrapper(obj: unknown): obj is CellRangeWrapper {
   return obj instanceof CellRangeWrapper;

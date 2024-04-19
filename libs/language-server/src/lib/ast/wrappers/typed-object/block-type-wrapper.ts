@@ -6,22 +6,22 @@ import { strict as assert } from 'assert';
 
 import { type Reference, isReference } from 'langium';
 
-import { RuntimeParameterProvider } from '../../../services';
+import { RuntimeParameterProvider } from '../../../services/index.js';
 import {
   EvaluationContext,
   type OperatorEvaluatorRegistry,
   evaluateExpression,
-} from '../../expressions';
-import { type ReferenceableBlockTypeDefinition } from '../../generated/ast';
-import { IOType, getIOType } from '../../io-type';
-import { type ValueTypeProvider } from '../value-type';
-import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
+} from '../../expressions/index.js';
+import { type ReferenceableBlockTypeDefinition } from '../../generated/ast.js';
+import { IOType, getIOType } from '../../io-type.js';
+import { type ValueTypeProvider } from '../value-type/index.js';
+import { type WrapperFactoryProvider } from '../wrapper-factory-provider.js';
 
 import {
   type ExampleDoc,
   type PropertySpecification,
   TypedObjectWrapper,
-} from './typed-object-wrapper';
+} from './typed-object-wrapper.js';
 
 interface BlockDocs {
   description?: string;

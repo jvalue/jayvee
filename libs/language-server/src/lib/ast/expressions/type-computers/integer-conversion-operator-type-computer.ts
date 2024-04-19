@@ -5,8 +5,8 @@
 import {
   type ValueType,
   type ValueTypeProvider,
-} from '../../wrappers/value-type';
-import { DefaultUnaryOperatorTypeComputer } from '../operator-type-computer';
+} from '../../wrappers/value-type/index.js';
+import { DefaultUnaryOperatorTypeComputer } from '../operator-type-computer.js';
 
 export class IntegerConversionOperatorTypeComputer extends DefaultUnaryOperatorTypeComputer {
   constructor(protected readonly valueTypeProvider: ValueTypeProvider) {

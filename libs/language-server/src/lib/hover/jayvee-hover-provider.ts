@@ -13,9 +13,9 @@ import {
   isBuiltinBlockTypeDefinition,
   isBuiltinConstrainttypeDefinition,
   isPropertyAssignment,
-} from '../ast';
-import { LspDocGenerator } from '../docs/lsp-doc-generator';
-import { type JayveeServices } from '../jayvee-module';
+} from '../ast/index.js';
+import { LspDocGenerator } from '../docs/lsp-doc-generator.js';
+import { type JayveeServices } from '../jayvee-module.js';
 
 export class JayveeHoverProvider extends AstNodeHoverProvider {
   protected readonly wrapperFactories: WrapperFactoryProvider;

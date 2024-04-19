@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../internal-value-representation';
-import { DefaultBinaryOperatorEvaluator } from '../operator-evaluator';
-import { INTERNAL_VALUE_REPRESENTATION_TYPEGUARD } from '../typeguards';
+import { type InternalValueRepresentation } from '../internal-value-representation.js';
+import { DefaultBinaryOperatorEvaluator } from '../operator-evaluator.js';
+import { INTERNAL_VALUE_REPRESENTATION_TYPEGUARD } from '../typeguards.js';
 
 export class InequalityOperatorEvaluator extends DefaultBinaryOperatorEvaluator<
   InternalValueRepresentation,

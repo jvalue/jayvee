@@ -13,7 +13,7 @@ import {
   type JayveeServices,
   type ValuetypeDefinition,
   createJayveeServices,
-} from '../../../lib';
+} from '../../../lib/index.js';
 import {
   type ParseHelperOptions,
   createJayveeValidationProps,
@@ -21,9 +21,9 @@ import {
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../test';
+} from '../../../test/index.js';
 
-import { validateValueTypeDefinition } from './value-type-definition';
+import { validateValueTypeDefinition } from './value-type-definition.js';
 
 describe('Validation of ValuetypeDefinition', () => {
   let parse: (

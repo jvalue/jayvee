@@ -13,7 +13,7 @@ import {
   type JayveeServices,
   type TransformBody,
   createJayveeServices,
-} from '../../../lib';
+} from '../../../lib/index.js';
 import {
   type ParseHelperOptions,
   createJayveeValidationProps,
@@ -21,9 +21,9 @@ import {
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
-} from '../../../test';
+} from '../../../test/index.js';
 
-import { validateTransformBody } from './transform-body';
+import { validateTransformBody } from './transform-body.js';
 
 describe('Validation of TransformBody', () => {
   let parse: (

@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../expressions/internal-value-representation';
+import { type InternalValueRepresentation } from '../../expressions/internal-value-representation.js';
 
-import { type AtomicValueType } from './atomic-value-type';
+import { type AtomicValueType } from './atomic-value-type.js';
 import {
   type BooleanValuetype,
   type CellRangeValuetype,
@@ -17,7 +17,7 @@ import {
   type TextValuetype,
   type TransformValuetype,
   type ValuetypeAssignmentValuetype,
-} from './primitive';
+} from './primitive/index.js';
 
 export interface VisitableValueType {
   acceptVisitor(visitor: ValueTypeVisitor): void;

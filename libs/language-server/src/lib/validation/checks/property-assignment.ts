@@ -8,19 +8,19 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
 import {
-  type PropertySpecification,
-  type TypedObjectWrapper,
-  inferExpressionType,
-} from '../../ast';
-import {
   type PropertyAssignment,
   isBlockTypeProperty,
   isRuntimeParameterLiteral,
-} from '../../ast/generated/ast';
-import { type JayveeValidationProps } from '../validation-registry';
-import { checkExpressionSimplification } from '../validation-util';
+} from '../../ast/generated/ast.js';
+import {
+  type PropertySpecification,
+  type TypedObjectWrapper,
+  inferExpressionType,
+} from '../../ast/index.js';
+import { type JayveeValidationProps } from '../validation-registry.js';
+import { checkExpressionSimplification } from '../validation-util.js';
 
-import { checkBlockTypeSpecificProperties } from './block-type-specific/property-assignment';
+import { checkBlockTypeSpecificProperties } from './block-type-specific/property-assignment.js';
 
 export function validatePropertyAssignment(
   property: PropertyAssignment,

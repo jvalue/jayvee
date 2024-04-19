@@ -2,8 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type BlockTypeWrapper, type ConstraintTypeWrapper } from '../ast';
-import { type ValueType } from '../ast/wrappers/value-type/value-type';
+import {
+  type BlockTypeWrapper,
+  type ConstraintTypeWrapper,
+} from '../ast/index.js';
+import { type ValueType } from '../ast/wrappers/value-type/value-type.js';
 
 export interface JayveeBlockTypeDocGenerator {
   generateBlockTypeDoc(blockType: BlockTypeWrapper): string;

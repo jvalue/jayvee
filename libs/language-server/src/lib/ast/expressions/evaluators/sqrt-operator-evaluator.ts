@@ -4,10 +4,10 @@
 
 import { strict as assert } from 'assert';
 
-import { type ValidationContext } from '../../../validation/validation-context';
-import { type UnaryExpression } from '../../generated/ast';
-import { DefaultUnaryOperatorEvaluator } from '../operator-evaluator';
-import { NUMBER_TYPEGUARD } from '../typeguards';
+import { type ValidationContext } from '../../../validation/validation-context.js';
+import { type UnaryExpression } from '../../generated/ast.js';
+import { DefaultUnaryOperatorEvaluator } from '../operator-evaluator.js';
+import { NUMBER_TYPEGUARD } from '../typeguards.js';
 
 export class SqrtOperatorEvaluator extends DefaultUnaryOperatorEvaluator<
   number,
