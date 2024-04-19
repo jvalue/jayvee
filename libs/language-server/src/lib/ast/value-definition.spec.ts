@@ -4,6 +4,7 @@
 
 import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 import {
   type ParseHelperOptions,

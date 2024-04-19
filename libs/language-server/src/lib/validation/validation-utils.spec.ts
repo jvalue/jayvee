@@ -8,6 +8,7 @@ import {
   type LangiumDocument,
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import {
   type ParseHelperOptions,
@@ -63,7 +64,7 @@ describe('Validation of validation-utils', () => {
   });
 
   describe('Validation of checkUniqueNames', () => {
-    const validationAcceptorMock = jest.fn(validationAcceptorMockImpl);
+    const validationAcceptorMock = vi.fn(validationAcceptorMockImpl);
 
     afterEach(() => {
       // Reset mock

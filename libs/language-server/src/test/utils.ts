@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as assert from 'assert';
+import { strict as assert } from 'assert';
 import { readFileSync } from 'fs';
 import * as path from 'path';
 
@@ -11,6 +11,7 @@ import {
   type LangiumDocument,
   type ValidationAcceptor,
 } from 'langium';
+import { expect } from 'vitest';
 import { type WorkspaceFolder } from 'vscode-languageserver-protocol';
 
 import { initializeWorkspace } from '../lib/builtin-library/jayvee-workspace-manager.js';

@@ -10,6 +10,7 @@ import {
   type LangiumDocument,
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import {
   type ParseHelperOptions,
@@ -34,7 +35,7 @@ describe('Validation of ValueTypeReference', () => {
     options?: ParseHelperOptions,
   ) => Promise<LangiumDocument<AstNode>>;
 
-  const validationAcceptorMock = jest.fn(validationAcceptorMockImpl);
+  const validationAcceptorMock = vi.fn(validationAcceptorMockImpl);
 
   let locator: AstNodeLocator;
   let services: JayveeServices;
