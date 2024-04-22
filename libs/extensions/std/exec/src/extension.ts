@@ -9,14 +9,14 @@ import {
 import { RdbmsExecExtension } from '@jvalue/jayvee-extensions/rdbms/exec';
 import { TabularExecExtension } from '@jvalue/jayvee-extensions/tabular/exec';
 
-import { ArchiveInterpreterExecutor } from './archive-interpreter-executor';
-import { FilePickerExecutor } from './file-picker-executor';
-import { GtfsRTInterpreterExecutor } from './gtfs-rt-interpreter-executor';
-import { HttpExtractorExecutor } from './http-extractor-executor';
-import { LocalFileExtractorExecutor } from './local-file-extractor-executor';
-import { TextFileInterpreterExecutor } from './text-file-interpreter-executor';
-import { TextLineDeleterExecutor } from './text-line-deleter-executor';
-import { TextRangeSelectorExecutor } from './text-range-selector-executor';
+import { ArchiveInterpreterExecutor } from './archive-interpreter-executor.js';
+import { FilePickerExecutor } from './file-picker-executor.js';
+import { GtfsRTInterpreterExecutor } from './gtfs-rt-interpreter-executor.js';
+import { HttpExtractorExecutor } from './http-extractor-executor.js';
+import { LocalFileExtractorExecutor } from './local-file-extractor-executor.js';
+import { TextFileInterpreterExecutor } from './text-file-interpreter-executor.js';
+import { TextLineDeleterExecutor } from './text-line-deleter-executor.js';
+import { TextRangeSelectorExecutor } from './text-range-selector-executor.js';
 
 export class StdExecExtension extends JayveeExecExtension {
   private readonly wrappedExtensions: JayveeExecExtension[] = [

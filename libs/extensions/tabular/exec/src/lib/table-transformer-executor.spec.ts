@@ -29,9 +29,9 @@ import { NodeFileSystem } from 'langium/node';
 import {
   type ReducedColumnDefinitionEntry,
   createTableFromLocalExcelFile,
-} from '../../test/util';
+} from '../../test/util.js';
 
-import { TableTransformerExecutor } from './table-transformer-executor';
+import { TableTransformerExecutor } from './table-transformer-executor.js';
 
 describe('Validation of TableTransformerExecutor', () => {
   let parse: (

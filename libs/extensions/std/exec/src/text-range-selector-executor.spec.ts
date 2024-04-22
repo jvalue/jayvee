@@ -29,7 +29,7 @@ import {
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { TextRangeSelectorExecutor } from './text-range-selector-executor';
+import { TextRangeSelectorExecutor } from './text-range-selector-executor.js';
 
 describe('Validation of TextRangeSelectorExecutor', () => {
   let parse: (

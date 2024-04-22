@@ -29,7 +29,7 @@ import {
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { XLSXInterpreterExecutor } from './xlsx-interpreter-executor';
+import { XLSXInterpreterExecutor } from './xlsx-interpreter-executor.js';
 
 describe('Validation of XLSXInterpreterExecutor', () => {
   let parse: (

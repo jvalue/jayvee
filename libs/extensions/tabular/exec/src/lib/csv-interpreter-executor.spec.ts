@@ -29,7 +29,7 @@ import {
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { CSVInterpreterExecutor } from './csv-interpreter-executor';
+import { CSVInterpreterExecutor } from './csv-interpreter-executor.js';
 
 describe('Validation of CSVInterpreterExecutor', () => {
   let parse: (

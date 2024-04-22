@@ -1,4 +1,5 @@
 {
   "name": "@jvalue/jayvee-extensions/tabular/exec",
-  "type": "commonjs"
+  "type": "module",
+  "exports": "./src/index.js"
 }

@@ -29,7 +29,7 @@ import {
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { TextLineDeleterExecutor } from './text-line-deleter-executor';
+import { TextLineDeleterExecutor } from './text-line-deleter-executor.js';
 
 describe('Validation of TextLineDeleterExecutor', () => {
   let parse: (

@@ -16,7 +16,7 @@ import {
 } from '@jvalue/jayvee-language-server';
 import * as exceljs from 'exceljs';
 
-import { type ColumnDefinitionEntry } from '../src/lib/table-interpreter-executor';
+import { type ColumnDefinitionEntry } from '../src/lib/table-interpreter-executor.js';
 
 export async function createWorkbookFromLocalExcelFile(
   fileName: string,

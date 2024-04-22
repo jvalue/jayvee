@@ -7,7 +7,7 @@ import * as assert from 'assert';
 import { type BlockExecutorMock } from '@jvalue/jayvee-execution/test';
 import { Client } from 'pg';
 
-type MockedPgClient = jest.Mocked<Client>;
+type MockedPgClient = vi.Mocked<Client>;
 
 export class PostgresLoaderExecutorMock implements BlockExecutorMock {
   private _pgClient: MockedPgClient | undefined;
@@ -31,10 +31,10 @@ export class PostgresLoaderExecutorMock implements BlockExecutorMock {
   }
   restore() {
     // cleanup pg mock
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   }
 }
 
 export function defaultPostgresMockRegistration(pgClient: MockedPgClient) {
-  (pgClient.query as jest.Mock).mockResolvedValue('Success');
+  (pgClient.query as vi.Mock).mockResolvedValue('Success');
 }

@@ -29,7 +29,7 @@ import {
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { GtfsRTInterpreterExecutor } from './gtfs-rt-interpreter-executor';
+import { GtfsRTInterpreterExecutor } from './gtfs-rt-interpreter-executor.js';
 
 describe('Validation of GtfsRTInterpreterExecutor', () => {
   let parse: (

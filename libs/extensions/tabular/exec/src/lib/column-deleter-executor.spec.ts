@@ -26,9 +26,9 @@ import {
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { createWorkbookFromLocalExcelFile } from '../../test/util';
+import { createWorkbookFromLocalExcelFile } from '../../test/util.js';
 
-import { ColumnDeleterExecutor } from './column-deleter-executor';
+import { ColumnDeleterExecutor } from './column-deleter-executor.js';
 
 describe('Validation of ColumnDeleterExecutor', () => {
   let parse: (

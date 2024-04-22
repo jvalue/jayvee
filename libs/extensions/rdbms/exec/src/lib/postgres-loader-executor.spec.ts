@@ -28,25 +28,26 @@ import {
   type LangiumDocument,
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
+import { vi } from 'vitest';
 
-import { PostgresLoaderExecutor } from './postgres-loader-executor';
+import { PostgresLoaderExecutor } from './postgres-loader-executor.js';
 
 // eslint-disable-next-line no-var
-var databaseConnectMock: jest.Mock;
+var databaseConnectMock: vi.Mock;
 // eslint-disable-next-line no-var
-var databaseQueryMock: jest.Mock;
+var databaseQueryMock: vi.Mock;
 // eslint-disable-next-line no-var
-var databaseEndMock: jest.Mock;
-jest.mock('pg', () => {
-  databaseConnectMock = jest.fn();
-  databaseQueryMock = jest.fn();
-  databaseEndMock = jest.fn();
+var databaseEndMock: vi.Mock;
+vi.mock('pg', () => {
+  databaseConnectMock = vi.fn();
+  databaseQueryMock = vi.fn();
+  databaseEndMock = vi.fn();
   const mClient = {
     connect: databaseConnectMock,
     query: databaseQueryMock,
     end: databaseEndMock,
   };
-  return { Client: jest.fn(() => mClient) };
+  return { Client: vi.fn(() => mClient) };
 });
 
 describe('Validation of PostgresLoaderExecutor', () => {
@@ -92,7 +93,7 @@ describe('Validation of PostgresLoaderExecutor', () => {
     parse = parseHelper(services);
   });
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should diagnose no error on valid loader config', async () => {

@@ -29,7 +29,7 @@ import {
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { FilePickerExecutor } from './file-picker-executor';
+import { FilePickerExecutor } from './file-picker-executor.js';
 
 describe('Validation of FilePickerExecutor', () => {
   let parse: (

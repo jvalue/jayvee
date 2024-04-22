@@ -26,9 +26,9 @@ import {
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { createWorkbookFromLocalExcelFile } from '../../test/util';
+import { createWorkbookFromLocalExcelFile } from '../../test/util.js';
 
-import { CellRangeSelectorExecutor } from './cell-range-selector-executor';
+import { CellRangeSelectorExecutor } from './cell-range-selector-executor.js';
 
 describe('Validation of CellRangeSelectorExecutor', () => {
   let parse: (

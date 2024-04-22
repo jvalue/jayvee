@@ -26,9 +26,9 @@ import {
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { createWorkbookFromLocalExcelFile } from '../../test/util';
+import { createWorkbookFromLocalExcelFile } from '../../test/util.js';
 
-import { SheetPickerExecutor } from './sheet-picker-executor';
+import { SheetPickerExecutor } from './sheet-picker-executor.js';
 
 describe('Validation of SheetPickerExecutor', () => {
   let parse: (

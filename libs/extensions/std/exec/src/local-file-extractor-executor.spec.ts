@@ -26,7 +26,7 @@ import {
 import { NodeFileSystem } from 'langium/node';
 import * as nock from 'nock';
 
-import { LocalFileExtractorExecutor } from './local-file-extractor-executor';
+import { LocalFileExtractorExecutor } from './local-file-extractor-executor.js';
 
 describe('Validation of LocalFileExtractorExecutor', () => {
   let parse: (input: string) => Promise<LangiumDocument<AstNode>>;

@@ -26,9 +26,9 @@ import {
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { createWorkbookFromLocalExcelFile } from '../../test/util';
+import { createWorkbookFromLocalExcelFile } from '../../test/util.js';
 
-import { TableInterpreterExecutor } from './table-interpreter-executor';
+import { TableInterpreterExecutor } from './table-interpreter-executor.js';
 
 describe('Validation of TableInterpreterExecutor', () => {
   let parse: (

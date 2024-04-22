@@ -29,7 +29,7 @@ import {
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { ArchiveInterpreterExecutor } from './archive-interpreter-executor';
+import { ArchiveInterpreterExecutor } from './archive-interpreter-executor.js';
 
 describe('Validation of ArchiveInterpreterExecutor', () => {
   let parse: (

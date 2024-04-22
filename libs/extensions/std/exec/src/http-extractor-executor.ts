@@ -27,7 +27,7 @@ import { type AstNode } from 'langium';
 import {
   createBackoffStrategy,
   isBackoffStrategyHandle,
-} from './util/backoff-strategy';
+} from './util/backoff-strategy.js';
 
 type HttpGetFunction = typeof http.get;
 

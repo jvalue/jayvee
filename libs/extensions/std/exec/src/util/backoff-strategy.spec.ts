@@ -6,7 +6,7 @@ import {
   type BackoffStrategy,
   ExponentialBackoffStrategy,
   LinearBackoffStrategy,
-} from './backoff-strategy';
+} from './backoff-strategy.js';
 
 describe('BackoffStrategy', () => {
   describe('ExponentialBackoffStrategy', () => {

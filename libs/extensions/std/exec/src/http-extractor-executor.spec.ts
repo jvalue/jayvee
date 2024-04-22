@@ -27,7 +27,7 @@ import {
 import { NodeFileSystem } from 'langium/node';
 import * as nock from 'nock';
 
-import { HttpExtractorExecutor } from './http-extractor-executor';
+import { HttpExtractorExecutor } from './http-extractor-executor.js';
 
 describe('Validation of HttpExtractorExecutor', () => {
   let parse: (

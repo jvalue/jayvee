@@ -26,9 +26,9 @@ import {
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { createWorkbookFromLocalExcelFile } from '../../test/util';
+import { createWorkbookFromLocalExcelFile } from '../../test/util.js';
 
-import { CellWriterExecutor } from './cell-writer-executor';
+import { CellWriterExecutor } from './cell-writer-executor.js';
 
 describe('Validation of CellWriterExecutor', () => {
   let parse: (

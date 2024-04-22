@@ -29,7 +29,7 @@ import {
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { TextFileInterpreterExecutor } from './text-file-interpreter-executor';
+import { TextFileInterpreterExecutor } from './text-file-interpreter-executor.js';
 
 describe('Validation of TextFileInterpreterExecutor', () => {
   let parse: (

@@ -29,23 +29,24 @@ import {
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import type * as sqlite3 from 'sqlite3';
+import { vi } from 'vitest';
 
-import { SQLiteLoaderExecutor } from './sqlite-loader-executor';
+import { SQLiteLoaderExecutor } from './sqlite-loader-executor.js';
 
 type SqliteRunCallbackType = (
   result: sqlite3.RunResult,
   err: Error | null,
 ) => void;
 // eslint-disable-next-line no-var
-var databaseMock: jest.Mock;
+var databaseMock: vi.Mock;
 // eslint-disable-next-line no-var
-var databaseRunMock: jest.Mock;
+var databaseRunMock: vi.Mock;
 // eslint-disable-next-line no-var
-var databaseCloseMock: jest.Mock;
-jest.mock('sqlite3', () => {
-  databaseMock = jest.fn();
-  databaseRunMock = jest.fn();
-  databaseCloseMock = jest.fn();
+var databaseCloseMock: vi.Mock;
+vi.mock('sqlite3', () => {
+  databaseMock = vi.fn();
+  databaseRunMock = vi.fn();
+  databaseCloseMock = vi.fn();
   return {
     Database: databaseMock,
   };
@@ -103,7 +104,7 @@ describe('Validation of SQLiteLoaderExecutor', () => {
     parse = parseHelper(services);
   });
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should diagnose no error on valid loader config', async () => {
