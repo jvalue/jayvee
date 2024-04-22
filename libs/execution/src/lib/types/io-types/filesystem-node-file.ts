@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { FileSystemNode } from './filesystem-node';
+import { FileSystemNode } from './filesystem-node.js';
 
 export abstract class FileSystemFile<T> extends FileSystemNode {
   constructor(

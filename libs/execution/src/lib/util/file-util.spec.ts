@@ -2,13 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { FileExtension, MimeType } from '../types';
+import { FileExtension, MimeType } from '../types/index.js';
 
 import {
   inferFileExtensionFromContentTypeString,
   inferFileExtensionFromFileExtensionString,
   inferMimeTypeFromFileExtensionString,
-} from './file-util';
+} from './file-util.js';
 
 describe('Validation of file-util', () => {
   describe('Function inferMimeTypeFromContentTypeString', () => {

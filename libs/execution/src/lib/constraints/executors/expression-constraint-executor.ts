@@ -11,8 +11,8 @@ import {
   evaluateExpression,
 } from '@jvalue/jayvee-language-server';
 
-import { type ExecutionContext } from '../../execution-context';
-import { type ConstraintExecutor } from '../constraint-executor';
+import { type ExecutionContext } from '../../execution-context.js';
+import { type ConstraintExecutor } from '../constraint-executor.js';
 
 export class ExpressionConstraintExecutor
   implements ConstraintExecutor, AstNodeWrapper<ExpressionConstraintDefinition>

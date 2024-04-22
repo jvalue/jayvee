@@ -13,9 +13,9 @@ import {
   evaluateExpression,
 } from '@jvalue/jayvee-language-server';
 
-import { type ExecutionContext } from '../execution-context';
-import { isValidValueRepresentation } from '../types';
-import { type TableColumn } from '../types/io-types/table';
+import { type ExecutionContext } from '../execution-context.js';
+import { isValidValueRepresentation } from '../types/index.js';
+import { type TableColumn } from '../types/io-types/table.js';
 
 export interface PortDetails {
   port: TransformPortDefinition;

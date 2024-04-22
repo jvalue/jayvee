@@ -4,7 +4,7 @@
 
 import { ValueTypeProvider } from '@jvalue/jayvee-language-server';
 
-import { Table } from './table';
+import { Table } from './table.js';
 
 describe('Table', () => {
   let table: Table;

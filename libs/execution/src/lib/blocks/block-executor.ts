@@ -6,12 +6,12 @@ import { strict as assert } from 'assert';
 
 import { type IOType, isBlockDefinition } from '@jvalue/jayvee-language-server';
 
-import { isBlockTargetedForDebugLogging } from '../debugging/debug-configuration';
-import { DebugLogVisitor } from '../debugging/debug-log-visitor';
-import { type ExecutionContext } from '../execution-context';
-import { type IOTypeImplementation } from '../types/io-types/io-type-implementation';
+import { isBlockTargetedForDebugLogging } from '../debugging/debug-configuration.js';
+import { DebugLogVisitor } from '../debugging/debug-log-visitor.js';
+import { type ExecutionContext } from '../execution-context.js';
+import { type IOTypeImplementation } from '../types/io-types/io-type-implementation.js';
 
-import * as R from './execution-result';
+import * as R from './execution-result.js';
 
 export interface BlockExecutor<
   I extends IOType = IOType,

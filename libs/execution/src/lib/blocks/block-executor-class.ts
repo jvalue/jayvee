@@ -4,7 +4,7 @@
 
 import { type ConstructorClass } from '@jvalue/jayvee-language-server';
 
-import { type BlockExecutor } from './block-executor';
+import { type BlockExecutor } from './block-executor.js';
 
 export interface BlockExecutorClass<T extends BlockExecutor = BlockExecutor>
   extends ConstructorClass<T> {

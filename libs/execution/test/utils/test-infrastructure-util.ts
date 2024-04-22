@@ -24,7 +24,7 @@ import {
   type StackNode,
   Table,
   type TableColumn,
-} from '../../src';
+} from '../../src/index.js';
 
 export class TestExecExtension extends JayveeExecExtension {
   getBlockExecutors(): BlockExecutorClass[] {

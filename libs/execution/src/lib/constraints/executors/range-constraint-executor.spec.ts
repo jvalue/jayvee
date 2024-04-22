@@ -23,9 +23,9 @@ import {
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { getTestExecutionContext } from '../../../../test/utils';
+import { getTestExecutionContext } from '../../../../test/utils/index.js';
 
-import { RangeConstraintExecutor } from './range-constraint-executor';
+import { RangeConstraintExecutor } from './range-constraint-executor.js';
 
 describe('Validation of RangeConstraintExecutor', () => {
   let parse: (

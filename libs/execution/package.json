@@ -1,4 +1,5 @@
 {
   "name": "@jvalue/jayvee-execution",
-  "type": "commonjs"
+  "type": "module",
+  "exports": "./src/index.js"
 }

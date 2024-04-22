@@ -7,16 +7,16 @@ import {
   internalValueToString,
 } from '@jvalue/jayvee-language-server';
 
-import { type Logger } from '../logging/logger';
-import { type Workbook } from '../types';
-import { type FileSystem } from '../types/io-types/filesystem';
-import { type BinaryFile } from '../types/io-types/filesystem-node-file-binary';
-import { type TextFile } from '../types/io-types/filesystem-node-file-text';
-import { type IoTypeVisitor } from '../types/io-types/io-type-implementation';
-import { type Sheet } from '../types/io-types/sheet';
-import { type Table } from '../types/io-types/table';
+import { type Logger } from '../logging/logger.js';
+import { type Workbook } from '../types/index.js';
+import { type BinaryFile } from '../types/io-types/filesystem-node-file-binary.js';
+import { type TextFile } from '../types/io-types/filesystem-node-file-text.js';
+import { type FileSystem } from '../types/io-types/filesystem.js';
+import { type IoTypeVisitor } from '../types/io-types/io-type-implementation.js';
+import { type Sheet } from '../types/io-types/sheet.js';
+import { type Table } from '../types/io-types/table.js';
 
-import { type DebugGranularity } from './debug-configuration';
+import { type DebugGranularity } from './debug-configuration.js';
 
 export class DebugLogVisitor implements IoTypeVisitor<void> {
   private readonly PEEK_NUMBER_OF_WORKBOOKS = 5;

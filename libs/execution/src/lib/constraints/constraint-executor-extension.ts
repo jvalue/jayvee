@@ -12,14 +12,14 @@ import {
 } from '@jvalue/jayvee-language-server';
 import { assertUnreachable } from 'langium';
 
-import { type ConstraintExecutor } from './constraint-executor';
-import { AllowlistConstraintExecutor } from './executors/allowlist-constraint-executor';
-import { DenylistConstraintExecutor } from './executors/denylist-constraint-executor';
-import { ExpressionConstraintExecutor } from './executors/expression-constraint-executor';
-import { LengthConstraintExecutor } from './executors/length-constraint-executor';
-import { RangeConstraintExecutor } from './executors/range-constraint-executor';
-import { RegexConstraintExecutor } from './executors/regex-constraint-executor';
-import { type TypedConstraintExecutorClass } from './typed-constraint-executor-class';
+import { type ConstraintExecutor } from './constraint-executor.js';
+import { AllowlistConstraintExecutor } from './executors/allowlist-constraint-executor.js';
+import { DenylistConstraintExecutor } from './executors/denylist-constraint-executor.js';
+import { ExpressionConstraintExecutor } from './executors/expression-constraint-executor.js';
+import { LengthConstraintExecutor } from './executors/length-constraint-executor.js';
+import { RangeConstraintExecutor } from './executors/range-constraint-executor.js';
+import { RegexConstraintExecutor } from './executors/regex-constraint-executor.js';
+import { type TypedConstraintExecutorClass } from './typed-constraint-executor-class.js';
 
 export interface JayveeConstraintExtension {
   registerConstraintExecutor(executorClass: TypedConstraintExecutorClass): void;

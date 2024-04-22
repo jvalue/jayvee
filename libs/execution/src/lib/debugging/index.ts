@@ -2,5 +2,5 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-export * from './debug-configuration';
-export * from './debug-log-visitor';
+export * from './debug-configuration.js';
+export * from './debug-log-visitor.js';

@@ -22,9 +22,9 @@ import {
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { getTestExecutionContext } from '../../../../test/utils';
+import { getTestExecutionContext } from '../../../../test/utils/index.js';
 
-import { ExpressionConstraintExecutor } from './expression-constraint-executor';
+import { ExpressionConstraintExecutor } from './expression-constraint-executor.js';
 
 describe('Validation of AllowlistConstraintExecutor', () => {
   let parse: (

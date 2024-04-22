@@ -2,4 +2,4 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-export * from './transform-executor';
+export * from './transform-executor.js';

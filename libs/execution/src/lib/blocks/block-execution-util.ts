@@ -8,11 +8,11 @@ import {
   type PipelineDefinition,
 } from '@jvalue/jayvee-language-server';
 
-import { type ExecutionContext } from '../execution-context';
-import { type Logger } from '../logging/logger';
-import { type IOTypeImplementation, NONE } from '../types';
+import { type ExecutionContext } from '../execution-context.js';
+import { type Logger } from '../logging/logger.js';
+import { type IOTypeImplementation, NONE } from '../types/index.js';
 
-import * as R from './execution-result';
+import * as R from './execution-result.js';
 
 export interface ExecutionOrderItem {
   block: BlockDefinition;

@@ -10,13 +10,13 @@ import {
   type ValueType,
 } from '@jvalue/jayvee-language-server';
 
-import { SQLColumnTypeVisitor } from '../value-types/visitors/sql-column-type-visitor';
-import { SQLValueRepresentationVisitor } from '../value-types/visitors/sql-value-representation-visitor';
+import { SQLColumnTypeVisitor } from '../value-types/visitors/sql-column-type-visitor.js';
+import { SQLValueRepresentationVisitor } from '../value-types/visitors/sql-value-representation-visitor.js';
 
 import {
   type IOTypeImplementation,
   type IoTypeVisitor,
-} from './io-type-implementation';
+} from './io-type-implementation.js';
 
 export interface TableColumn<
   T extends InternalValueRepresentation = InternalValueRepresentation,

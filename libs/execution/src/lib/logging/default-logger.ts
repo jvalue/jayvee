@@ -3,12 +3,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import * as chalk from 'chalk';
-import { type LangiumDocument } from 'langium';
-import { assertUnreachable } from 'langium/lib/utils/errors';
+import { type LangiumDocument, assertUnreachable } from 'langium';
 import { type Range } from 'vscode-languageserver';
 import { uinteger } from 'vscode-languageserver-types';
 
-import { DiagnosticSeverity, Logger } from './logger';
+import { DiagnosticSeverity, Logger } from './logger.js';
 
 export class DefaultLogger extends Logger {
   private readonly TAB_TO_SPACES = 4;

@@ -4,7 +4,7 @@
 
 import * as mime from 'mime-types';
 
-import { FileExtension, MimeType } from '../types';
+import { FileExtension, MimeType } from '../types/index.js';
 
 export function inferMimeTypeFromFileExtensionString(
   fileExtension: string | undefined,

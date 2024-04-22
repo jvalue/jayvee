@@ -7,8 +7,8 @@ import { IOType } from '@jvalue/jayvee-language-server';
 import {
   type IOTypeImplementation,
   type IoTypeVisitor,
-} from './io-type-implementation';
-import { Sheet } from './sheet';
+} from './io-type-implementation.js';
+import { Sheet } from './sheet.js';
 
 export class Workbook implements IOTypeImplementation<IOType.WORKBOOK> {
   public readonly ioType = IOType.WORKBOOK;

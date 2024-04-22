@@ -13,7 +13,7 @@ import {
   inferFileExtensionFromFileExtensionString,
   inferMimeTypeFromFileExtensionString,
   splitLines,
-} from '../../src';
+} from '../../src/index.js';
 
 export function createBinaryFileFromLocalFile(fileName: string): BinaryFile {
   const extName = path.extname(fileName);

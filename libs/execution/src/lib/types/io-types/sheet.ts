@@ -19,7 +19,7 @@ import {
 import {
   type IOTypeImplementation,
   type IoTypeVisitor,
-} from './io-type-implementation';
+} from './io-type-implementation.js';
 
 export class Sheet implements IOTypeImplementation<IOType.SHEET> {
   public readonly ioType = IOType.SHEET;

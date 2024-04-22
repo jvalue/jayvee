@@ -25,13 +25,13 @@ import {
 } from '@jvalue/jayvee-language-server';
 import { assertUnreachable, isReference } from 'langium';
 
-import { type JayveeConstraintExtension } from './constraints';
+import { type JayveeConstraintExtension } from './constraints/index.js';
 import {
   type DebugGranularity,
   type DebugTargets,
-} from './debugging/debug-configuration';
-import { type JayveeExecExtension } from './extension';
-import { type Logger } from './logging/logger';
+} from './debugging/debug-configuration.js';
+import { type JayveeExecExtension } from './extension.js';
+import { type Logger } from './logging/logger.js';
 
 export type StackNode =
   | BlockDefinition

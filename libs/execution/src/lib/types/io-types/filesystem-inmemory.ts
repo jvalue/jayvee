@@ -4,10 +4,10 @@
 
 import { IOType } from '@jvalue/jayvee-language-server';
 
-import { type FileSystem } from './filesystem';
-import { FileSystemDirectory } from './filesystem-node-directory';
-import { FileSystemFile } from './filesystem-node-file';
-import { type IoTypeVisitor } from './io-type-implementation';
+import { FileSystemDirectory } from './filesystem-node-directory.js';
+import { FileSystemFile } from './filesystem-node-file.js';
+import { type FileSystem } from './filesystem.js';
+import { type IoTypeVisitor } from './io-type-implementation.js';
 
 export class InMemoryFileSystem implements FileSystem {
   public readonly ioType = IOType.FILE_SYSTEM;

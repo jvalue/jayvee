@@ -9,7 +9,7 @@ import {
 } from '@jvalue/jayvee-language-server';
 import { NodeFileSystem } from 'langium/node';
 
-import { DefaultConstraintExtension } from './constraint-executor-extension';
+import { DefaultConstraintExtension } from './constraint-executor-extension.js';
 
 describe('default constraint extension', () => {
   it('should include executors for all constraint types', async () => {

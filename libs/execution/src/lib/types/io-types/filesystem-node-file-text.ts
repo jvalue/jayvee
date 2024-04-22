@@ -4,11 +4,11 @@
 
 import { IOType } from '@jvalue/jayvee-language-server';
 
-import { FileSystemFile } from './filesystem-node-file';
+import { FileSystemFile } from './filesystem-node-file.js';
 import {
   type IOTypeImplementation,
   type IoTypeVisitor,
-} from './io-type-implementation';
+} from './io-type-implementation.js';
 
 export class TextFile
   extends FileSystemFile<string[]>

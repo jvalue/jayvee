@@ -2,15 +2,15 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-export * from './filesystem';
-export * from './filesystem-inmemory';
-export * from './io-type-implementation';
-export * from './none';
-export * from './workbook';
-export * from './sheet';
-export * from './table';
-export * from './filesystem-node-file-binary';
-export * from './filesystem-node-file';
-export * from './filesystem-node-file-text';
-export * from './filesystem-node';
-export * from './filesystem-node-directory';
+export * from './filesystem.js';
+export * from './filesystem-inmemory.js';
+export * from './io-type-implementation.js';
+export * from './none.js';
+export * from './workbook.js';
+export * from './sheet.js';
+export * from './table.js';
+export * from './filesystem-node-file-binary.js';
+export * from './filesystem-node-file.js';
+export * from './filesystem-node-file-text.js';
+export * from './filesystem-node.js';
+export * from './filesystem-node-directory.js';

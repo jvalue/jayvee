@@ -22,9 +22,9 @@ import {
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { getTestExecutionContext } from '../../../../test/utils';
+import { getTestExecutionContext } from '../../../../test/utils/index.js';
 
-import { RegexConstraintExecutor } from './regex-constraint-executor';
+import { RegexConstraintExecutor } from './regex-constraint-executor.js';
 
 describe('Validation of RegexConstraintExecutor', () => {
   let parse: (

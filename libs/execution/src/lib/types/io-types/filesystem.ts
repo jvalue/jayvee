@@ -4,8 +4,8 @@
 
 import { type IOType } from '@jvalue/jayvee-language-server';
 
-import { type FileSystemFile } from './filesystem-node-file';
-import { type IOTypeImplementation } from './io-type-implementation';
+import { type FileSystemFile } from './filesystem-node-file.js';
+import { type IOTypeImplementation } from './io-type-implementation.js';
 
 /**
  * FileSystem interface defines the operations that a file system implementation should have.

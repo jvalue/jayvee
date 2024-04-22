@@ -4,7 +4,7 @@
 
 import { type ConstructorClass } from '@jvalue/jayvee-language-server';
 
-import { type ConstraintExecutor } from './constraint-executor';
+import { type ConstraintExecutor } from './constraint-executor.js';
 
 export interface TypedConstraintExecutorClass<
   T extends ConstraintExecutor = ConstraintExecutor,

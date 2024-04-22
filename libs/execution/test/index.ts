@@ -2,5 +2,5 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-export * from './block-executor-mock';
-export * from './utils';
+export * from './block-executor-mock.js';
+export * from './utils/index.js';

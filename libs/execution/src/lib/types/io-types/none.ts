@@ -7,7 +7,7 @@ import { IOType } from '@jvalue/jayvee-language-server';
 import {
   type IOTypeImplementation,
   type IoTypeVisitor,
-} from './io-type-implementation';
+} from './io-type-implementation.js';
 
 export class None implements IOTypeImplementation<IOType.NONE> {
   public readonly ioType = IOType.NONE;

@@ -22,7 +22,7 @@ import {
   type ValuetypeAssignmentValuetype,
 } from '@jvalue/jayvee-language-server';
 
-import { type ExecutionContext } from '../../execution-context';
+import { type ExecutionContext } from '../../execution-context.js';
 
 export function isValidValueRepresentation(
   value: InternalValueRepresentation,

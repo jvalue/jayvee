@@ -9,13 +9,13 @@ import {
   isCompositeBlockTypeDefinition,
 } from '@jvalue/jayvee-language-server';
 
-import { type BlockExecutor } from './blocks';
-import { type BlockExecutorClass } from './blocks/block-executor-class';
+import { type BlockExecutorClass } from './blocks/block-executor-class.js';
 import {
   createCompositeBlockExecutor,
   getInputType,
   getOutputType,
-} from './blocks/composite-block-executor';
+} from './blocks/composite-block-executor.js';
+import { type BlockExecutor } from './blocks/index.js';
 
 export abstract class JayveeExecExtension {
   abstract getBlockExecutors(): BlockExecutorClass[];

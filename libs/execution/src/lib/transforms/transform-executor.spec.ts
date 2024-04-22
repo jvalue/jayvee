@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import assert = require('assert');
+import { type AssertionError, strict as assert } from 'assert';
 import * as path from 'path';
 
 import {
@@ -25,10 +25,13 @@ import {
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { constructTable, getTestExecutionContext } from '../../../test/utils';
-import { type Table, type TableColumn } from '../types/io-types/table';
+import {
+  constructTable,
+  getTestExecutionContext,
+} from '../../../test/utils/index.js';
+import { type Table, type TableColumn } from '../types/io-types/table.js';
 
-import { type PortDetails, TransformExecutor } from './transform-executor';
+import { type PortDetails, TransformExecutor } from './transform-executor.js';
 
 describe('Validation of TransformExecutor', () => {
   let parse: (
@@ -275,11 +278,11 @@ describe('Validation of TransformExecutor', () => {
       expect(result).toEqual(undefined);
     } catch (e) {
       expect(e).toBeInstanceOf(assert.AssertionError);
-      expect((e as assert.AssertionError).stack).toEqual(
+      expect((e as AssertionError).stack).toEqual(
         expect.stringContaining('at TransformExecutor.addVariablesToContext'),
       );
-      expect((e as assert.AssertionError).expected).toEqual(true);
-      expect((e as assert.AssertionError).actual).toEqual(false);
+      expect((e as AssertionError).expected).toEqual(true);
+      expect((e as AssertionError).actual).toEqual(false);
     }
   });
 

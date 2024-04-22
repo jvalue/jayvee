@@ -2,10 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { InMemoryFileSystem } from './filesystem-inmemory';
-import { FileSystemDirectory } from './filesystem-node-directory';
-import { FileExtension, MimeType } from './filesystem-node-file';
-import { TextFile } from './filesystem-node-file-text';
+import { InMemoryFileSystem } from './filesystem-inmemory.js';
+import { FileSystemDirectory } from './filesystem-node-directory.js';
+import { TextFile } from './filesystem-node-file-text.js';
+import { FileExtension, MimeType } from './filesystem-node-file.js';
 
 describe('InMemoryFileSystem', () => {
   let fileSystem: InMemoryFileSystem;

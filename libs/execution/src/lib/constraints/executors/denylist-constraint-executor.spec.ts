@@ -22,9 +22,9 @@ import {
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { getTestExecutionContext } from '../../../../test/utils';
+import { getTestExecutionContext } from '../../../../test/utils/index.js';
 
-import { DenylistConstraintExecutor } from './denylist-constraint-executor';
+import { DenylistConstraintExecutor } from './denylist-constraint-executor.js';
 
 describe('Validation of DenylistConstraintExecutor', () => {
   let parse: (

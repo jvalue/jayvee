@@ -4,13 +4,13 @@
 
 import { type IOType } from '@jvalue/jayvee-language-server';
 
-import { type FileSystem } from './filesystem';
-import { type BinaryFile } from './filesystem-node-file-binary';
-import { type TextFile } from './filesystem-node-file-text';
-import { type None } from './none';
-import { type Sheet } from './sheet';
-import { type Table } from './table';
-import { type Workbook } from './workbook';
+import { type BinaryFile } from './filesystem-node-file-binary.js';
+import { type TextFile } from './filesystem-node-file-text.js';
+import { type FileSystem } from './filesystem.js';
+import { type None } from './none.js';
+import { type Sheet } from './sheet.js';
+import { type Table } from './table.js';
+import { type Workbook } from './workbook.js';
 
 export interface IOTypeImplementation<T extends IOType = IOType> {
   ioType: T;

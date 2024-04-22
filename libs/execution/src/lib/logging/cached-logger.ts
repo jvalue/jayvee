@@ -6,9 +6,9 @@ import * as chalk from 'chalk';
 import { type LangiumDocument } from 'langium';
 import { type Range } from 'vscode-languageserver';
 
-import { DefaultLogger } from './default-logger';
-import { LogCache } from './log-cache';
-import { DiagnosticSeverity, type LogEntry } from './logger';
+import { DefaultLogger } from './default-logger.js';
+import { LogCache } from './log-cache.js';
+import { DiagnosticSeverity, type LogEntry } from './logger.js';
 
 export class CachedLogger extends DefaultLogger {
   protected logCache: LogCache;

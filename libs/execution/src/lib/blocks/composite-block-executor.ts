@@ -20,13 +20,13 @@ import {
   isCompositeBlockTypeDefinition,
 } from '@jvalue/jayvee-language-server';
 
-import { type ExecutionContext } from '../execution-context';
-import { type IOTypeImplementation } from '../types';
+import { type ExecutionContext } from '../execution-context.js';
+import { type IOTypeImplementation } from '../types/index.js';
 
-import { executeBlocks } from './block-execution-util';
-import { AbstractBlockExecutor, type BlockExecutor } from './block-executor';
-import { type BlockExecutorClass } from './block-executor-class';
-import * as R from './execution-result';
+import { executeBlocks } from './block-execution-util.js';
+import { type BlockExecutorClass } from './block-executor-class.js';
+import { AbstractBlockExecutor, type BlockExecutor } from './block-executor.js';
+import * as R from './execution-result.js';
 
 export function createCompositeBlockExecutor(
   inputType: IOType,

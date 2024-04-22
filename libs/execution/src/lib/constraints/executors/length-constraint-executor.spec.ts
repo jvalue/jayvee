@@ -22,9 +22,9 @@ import {
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
-import { getTestExecutionContext } from '../../../../test/utils';
+import { getTestExecutionContext } from '../../../../test/utils/index.js';
 
-import { LengthConstraintExecutor } from './length-constraint-executor';
+import { LengthConstraintExecutor } from './length-constraint-executor.js';
 
 describe('Validation of LengthConstraintExecutor', () => {
   let parse: (

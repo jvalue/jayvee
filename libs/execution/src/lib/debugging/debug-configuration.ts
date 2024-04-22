@@ -4,7 +4,7 @@
 
 import { type BlockDefinition } from '@jvalue/jayvee-language-server';
 
-import { type ExecutionContext } from '../execution-context';
+import { type ExecutionContext } from '../execution-context.js';
 
 export const DefaultGranularityValue = 'minimal';
 export const DebugGranularityValues = [

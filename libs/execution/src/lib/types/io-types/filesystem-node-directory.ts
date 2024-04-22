@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
 //
 // SPDX-License-Identifier: AGPL-3.0-only
-import { FileSystemNode } from './filesystem-node';
-import { FileSystemFile } from './filesystem-node-file';
+import { FileSystemFile } from './filesystem-node-file.js';
+import { FileSystemNode } from './filesystem-node.js';
 
 export class FileSystemDirectory extends FileSystemNode {
   private children: FileSystemNode[] = [];
