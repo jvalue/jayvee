@@ -18,12 +18,13 @@
     },
     "build": {
       "dependsOn": ["generate"],
-      "executor": "@nx/js:tsc",
+      "executor": "@nx/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/language-server",
         "main": "libs/language-server/src/index.ts",
-        "tsConfig": "libs/language-server/tsconfig.lib.json"
+        "tsConfig": "libs/language-server/tsconfig.lib.json",
+        "format": ["esm"]
       },
       "configurations": {
         "dev": {},
