@@ -22,7 +22,7 @@ import {
   inferMimeTypeFromFileExtensionString,
 } from '@jvalue/jayvee-execution';
 import { IOType } from '@jvalue/jayvee-language-server';
-import * as JSZip from 'jszip';
+import JSZip from 'jszip';
 
 @implementsStatic<BlockExecutorClass>()
 export class ArchiveInterpreterExecutor extends AbstractBlockExecutor<
