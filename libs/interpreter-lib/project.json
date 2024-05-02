@@ -4,17 +4,7 @@
   "sourceRoot": "libs/interpreter-lib/src",
   "projectType": "library",
   "targets": {
-    "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "external": "none",
-        "outputPath": "dist/libs/interpreter-lib",
-        "main": "libs/interpreter-lib/src/index.ts",
-        "tsConfig": "libs/interpreter-lib/tsconfig.lib.json",
-        "assets": ["libs/interpreter-lib/*.md"]
-      }
-    },
+    "build": {},
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]

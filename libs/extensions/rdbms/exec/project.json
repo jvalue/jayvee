@@ -4,16 +4,7 @@
   "sourceRoot": "libs/extensions/rdbms/exec/src",
   "projectType": "library",
   "targets": {
-    "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "dist/libs/extensions/rdbms/exec",
-        "main": "libs/extensions/rdbms/exec/src/index.ts",
-        "tsConfig": "libs/extensions/rdbms/exec/tsconfig.lib.json",
-        "assets": ["libs/extensions/rdbms/exec/*.md"]
-      }
-    },
+    "build": {},
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]

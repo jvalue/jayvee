@@ -1,6 +1,5 @@
 {
   "name": "@jvalue/jayvee-interpreter-lib",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/jvalue/jayvee/issues"
   },

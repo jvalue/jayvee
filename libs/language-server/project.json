@@ -16,21 +16,7 @@
         "parallel": false
       }
     },
-    "build": {
-      "dependsOn": ["generate"],
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "dist/libs/language-server",
-        "main": "libs/language-server/src/index.ts",
-        "tsConfig": "libs/language-server/tsconfig.lib.json"
-      },
-      "configurations": {
-        "dev": {},
-        "prod": {}
-      },
-      "defaultConfiguration": "dev"
-    },
+    "build": {},
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]

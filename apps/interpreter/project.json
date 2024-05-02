@@ -5,22 +5,9 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nx/webpack:webpack",
-      "outputs": ["{options.outputPath}"],
       "options": {
-        "target": "node",
-        "compiler": "tsc",
-        "outputPath": "dist/apps/interpreter",
-        "main": "apps/interpreter/src/index.ts",
-        "tsConfig": "apps/interpreter/tsconfig.app.json",
-        "webpackConfig": "apps/interpreter/webpack.config.js",
-        "generatePackageJson": true
-      },
-      "configurations": {
-        "dev": {},
-        "prod": {}
-      },
-      "defaultConfiguration": "dev"
+        "tsConfig": "{projectRoot}/tsconfig.app.json"
+      }
     },
     "lint": {
       "executor": "@nx/eslint:lint",

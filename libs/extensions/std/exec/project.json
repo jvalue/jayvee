@@ -4,16 +4,7 @@
   "sourceRoot": "libs/extensions/std/exec/src",
   "projectType": "library",
   "targets": {
-    "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "dist/libs/extensions/std/exec",
-        "main": "libs/extensions/std/exec/src/index.ts",
-        "tsConfig": "libs/extensions/std/exec/tsconfig.lib.json",
-        "assets": ["libs/extensions/std/exec/*.md"]
-      }
-    },
+    "build": {},
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]

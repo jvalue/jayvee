@@ -3,7 +3,6 @@
   "compilerOptions": {
     "jsx": "react",
     "outDir": "../../dist/out-tsc",
-    "module": "commonjs",
     "types": ["node"],
     "lib": ["DOM", "ESNext"],
     "esModuleInterop": true,

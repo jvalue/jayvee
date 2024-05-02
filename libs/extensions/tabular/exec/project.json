@@ -4,16 +4,7 @@
   "sourceRoot": "libs/extensions/tabular/exec/src",
   "projectType": "library",
   "targets": {
-    "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "dist/libs/extensions/tabular/exec",
-        "main": "libs/extensions/tabular/exec/src/index.ts",
-        "tsConfig": "libs/extensions/tabular/exec/tsconfig.lib.json",
-        "assets": ["libs/extensions/tabular/exec/*.md"]
-      }
-    },
+    "build": {},
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
