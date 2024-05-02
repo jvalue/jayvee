@@ -13,7 +13,7 @@ import {
   type LangiumServices,
 } from 'langium';
 import { DiagnosticSeverity } from 'vscode-languageserver-protocol';
-import { URI } from 'vscode-uri/lib/umd/uri.js'; // direct import as work around for issues bundling as commonjs (vs-code-plugin) and esm (interpreter)
+import { URI } from 'vscode-uri'; // direct import as work around for issues bundling as commonjs (vs-code-plugin) and esm (interpreter)
 
 export enum ExitCode {
   SUCCESS = 0,
