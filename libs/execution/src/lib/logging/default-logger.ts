@@ -4,7 +4,7 @@
 
 import * as chalk from 'chalk';
 import { type LangiumDocument } from 'langium';
-import { assertUnreachable } from 'langium/lib/utils/errors';
+import { assertUnreachable } from 'langium';
 import { type Range } from 'vscode-languageserver';
 import { uinteger } from 'vscode-languageserver-types';
 
