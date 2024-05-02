@@ -21,7 +21,7 @@ import {
   type AstNodeLocator,
   type LangiumDocument,
 } from 'langium';
-import { NodeFileSystem } from 'langium/node.js';
+import { NodeFileSystem } from 'langium/node';
 
 import { getTestExecutionContext } from '../../../../test/utils';
 

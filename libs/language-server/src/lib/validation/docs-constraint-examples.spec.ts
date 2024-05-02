@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { NodeFileSystem } from 'langium/node.js';
+import { NodeFileSystem } from 'langium/node';
 
 import { validationHelper } from '../../test/langium-utils';
 import { getAllBuiltinConstraintTypes } from '../ast';

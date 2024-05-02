@@ -6,12 +6,8 @@
  * The content of this file was copied from the official langium github repo
  * https://github.com/langium/langium/blob/main/packages/langium/src/test/langium-test.ts
  */
-import {
-  type AstNode,
-  type BuildOptions,
-  type LangiumDocument,
-  type LangiumServices,
-} from 'langium';
+import { type AstNode, type BuildOptions, type LangiumDocument } from 'langium';
+import { type LangiumServices } from 'langium/lsp';
 import { type Diagnostic } from 'vscode-languageserver';
 import { URI } from 'vscode-uri'; // direct import as work around for issues bundling as commonjs (vs-code-plugin) and esm (interpreter)
 
@@ -57,7 +53,7 @@ export function validationHelper<T extends AstNode = AstNode>(
 ): (input: string) => Promise<ValidationResult<T>> {
   const parse = parseHelper<T>(services);
   return async (input) => {
-    const document = await parse(input, { validationChecks: 'all' });
+    const document = await parse(input, { validation: true });
     return { document, diagnostics: document.diagnostics ?? [] };
   };
 }

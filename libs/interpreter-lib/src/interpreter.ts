@@ -31,7 +31,7 @@ import {
   internalValueToString,
 } from '@jvalue/jayvee-language-server';
 import chalk from 'chalk';
-import { NodeFileSystem } from 'langium/node.js';
+import { NodeFileSystem } from 'langium/node';
 
 import { LoggerFactory } from './logging';
 import { ExitCode, extractAstNodeFromString } from './parsing-util';

@@ -9,8 +9,8 @@ import {
   type DiagnosticInfo,
   type LangiumDocument,
   getDiagnosticRange,
-  getDocument,
 } from 'langium';
+import { AstUtils } from 'langium';
 import * as ls from 'vscode-languageserver';
 
 export enum DiagnosticSeverity {
@@ -49,7 +49,7 @@ export abstract class Logger {
       severity,
       message,
       getDiagnosticRange(diagnostic),
-      getDocument(diagnostic.node),
+      AstUtils.getDocument(diagnostic.node),
     );
   }
 

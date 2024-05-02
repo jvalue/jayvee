@@ -11,7 +11,7 @@ import {
   getAllBuiltinBlockTypes,
   initializeWorkspace,
 } from '@jvalue/jayvee-language-server';
-import { NodeFileSystem } from 'langium/node.js';
+import { NodeFileSystem } from 'langium/node';
 
 async function loadAllBuiltinBlockTypes(): Promise<BlockTypeWrapper[]> {
   const services = createJayveeServices(NodeFileSystem).Jayvee;

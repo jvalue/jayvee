@@ -4,15 +4,14 @@
 
 import { strict as assert } from 'assert';
 
+import { type LangiumDocuments, type MaybePromise } from 'langium';
 import {
   type CompletionAcceptor,
   type CompletionContext,
   type CompletionValueItem,
   DefaultCompletionProvider,
-  type LangiumDocuments,
-  type MaybePromise,
   type NextFeature,
-} from 'langium';
+} from 'langium/lsp';
 import { CompletionItemKind } from 'vscode-languageserver';
 
 import { type TypedObjectWrapper, type WrapperFactoryProvider } from '../ast';

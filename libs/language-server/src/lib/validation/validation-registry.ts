@@ -87,7 +87,10 @@ export class JayveeValidationRegistry extends ValidationRegistry {
         this.valueTypeProvider,
       );
 
-      this.doRegister(type, this.wrapValidationException(wrappedCheck, this));
+      this.addEntry(type, {
+        category: 'fast', // TODO: figure out what category fits here
+        check: this.wrapValidationException(wrappedCheck, this),
+      });
     }
   }
 

@@ -12,7 +12,7 @@ import {
   getAllBuiltinConstraintTypes,
   initializeWorkspace,
 } from '@jvalue/jayvee-language-server';
-import { NodeFileSystem } from 'langium/node.js';
+import { NodeFileSystem } from 'langium/node';
 
 import { UserDocGenerator } from './user-doc-generator';
 

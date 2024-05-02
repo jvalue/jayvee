@@ -27,7 +27,7 @@ import {
   type AstNodeLocator,
   type LangiumDocument,
 } from 'langium';
-import { NodeFileSystem } from 'langium/node.js';
+import { NodeFileSystem } from 'langium/node';
 
 import { TextFileInterpreterExecutor } from './text-file-interpreter-executor';
 

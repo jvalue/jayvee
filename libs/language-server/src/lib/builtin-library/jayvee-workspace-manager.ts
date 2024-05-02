@@ -4,10 +4,10 @@
 
 import {
   DefaultWorkspaceManager,
+  type LangiumCoreServices,
   type LangiumDocument,
   type LangiumDocumentFactory,
-  type LangiumServices,
-  type LangiumSharedServices,
+  type LangiumSharedCoreServices,
 } from 'langium';
 import { type WorkspaceFolder } from 'vscode-languageserver';
 import { URI } from 'vscode-uri'; // direct import as work around for issues bundling as commonjs (vs-code-plugin) and esm (interpreter)
@@ -17,7 +17,7 @@ import { getStdLib } from './stdlib';
 export class JayveeWorkspaceManager extends DefaultWorkspaceManager {
   private documentFactory: LangiumDocumentFactory;
 
-  constructor(services: LangiumSharedServices) {
+  constructor(services: LangiumSharedCoreServices) {
     super(services);
     this.documentFactory = services.workspace.LangiumDocumentFactory;
   }
@@ -39,7 +39,7 @@ export class JayveeWorkspaceManager extends DefaultWorkspaceManager {
  * Also loads additional required files, e.g., the standard library
  */
 export async function initializeWorkspace(
-  services: LangiumServices,
+  services: LangiumCoreServices,
   workspaceFolders: WorkspaceFolder[] = [],
 ): Promise<void> {
   await services.shared.workspace.WorkspaceManager.initializeWorkspace(

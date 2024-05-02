@@ -27,7 +27,7 @@ import {
   type AstNodeLocator,
   type LangiumDocument,
 } from 'langium';
-import { NodeFileSystem } from 'langium/node.js';
+import { NodeFileSystem } from 'langium/node';
 import type * as sqlite3 from 'sqlite3';
 
 import { SQLiteLoaderExecutor } from './sqlite-loader-executor';
