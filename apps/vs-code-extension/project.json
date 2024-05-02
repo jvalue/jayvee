@@ -5,25 +5,23 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nx/esbuild:esbuild",
       "options": {
-        "tsConfig": "apps/vs-code-extension/tsconfig.app.json",
-        "outputPath": "dist/apps/vs-code-extension",
-        "main": "apps/vs-code-extension/src/extension.ts",
+        "tsConfig": "{projectRoot}/tsconfig.app.json",
+        "main": "{projectRoot}/src/extension.ts",
+        "outputFileName": "",
         "additionalEntryPoints": [
-          "apps/vs-code-extension/src/language-server.ts"
+          "{projectRoot}/src/language-server.ts"
         ],
         "external": ["vscode"],
         "platform": "node",
         "format": ["cjs"],
         "assets": [
           {
-            "input": "apps/vs-code-extension/assets",
+            "input": "{projectRoot}/assets",
             "glob": "*",
             "output": "/"
           }
         ],
-        "generatePackageJson": true,
         "thirdParty": true
       },
       "configurations": {

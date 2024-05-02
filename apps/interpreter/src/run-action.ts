@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as process from 'process';
+import process from 'node:process';
 
 import {
   type LoggerFactory,
