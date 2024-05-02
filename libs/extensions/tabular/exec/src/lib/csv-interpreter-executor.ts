@@ -14,8 +14,7 @@ import {
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import { IOType } from '@jvalue/jayvee-language-server';
-import E from 'fp-ts/lib/Either.js';
-import { type Either } from 'fp-ts/lib/Either.js';
+import { either as E } from 'fp-ts';
 
 @implementsStatic<BlockExecutorClass>()
 export class CSVInterpreterExecutor extends AbstractBlockExecutor<
@@ -74,7 +73,7 @@ export class CSVInterpreterExecutor extends AbstractBlockExecutor<
 async function parseAsCsv(
   lines: string[],
   parseOptions: ParserOptionsArgs,
-): Promise<Either<{ error: Error; lineNumber: number }, string[][]>> {
+): Promise<E.Either<{ error: Error; lineNumber: number }, string[][]>> {
   let lineNumber = 1;
   const rows: string[][] = [];
   for await (const line of lines) {
@@ -92,7 +91,7 @@ async function parseAsCsv(
 async function parseLineAsRow(
   line: string,
   parseOptions: ParserOptionsArgs,
-): Promise<Either<Error, string[]>> {
+): Promise<E.Either<Error, string[]>> {
   return new Promise((resolve) => {
     let row: string[];
     parseStringAsCsv(line, parseOptions)
