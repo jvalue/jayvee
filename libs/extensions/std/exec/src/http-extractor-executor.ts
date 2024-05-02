@@ -22,7 +22,7 @@ import {
 } from '@jvalue/jayvee-execution';
 import { IOType } from '@jvalue/jayvee-language-server';
 import followRedirects from 'follow-redirects';
-import { type AstNode } from 'langium'; // work around import issue with ESM
+import { type AstNode } from 'langium';
 
 import {
   createBackoffStrategy,

@@ -9,7 +9,7 @@
 import { type AstNode, type BuildOptions, type LangiumDocument } from 'langium';
 import { type LangiumServices } from 'langium/lsp';
 import { type Diagnostic } from 'vscode-languageserver';
-import { URI } from 'vscode-uri'; // direct import as work around for issues bundling as commonjs (vs-code-plugin) and esm (interpreter)
+import { URI } from 'vscode-uri';
 
 import { initializeWorkspace } from '../lib/builtin-library/jayvee-workspace-manager';
 

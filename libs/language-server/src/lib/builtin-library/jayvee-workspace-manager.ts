@@ -10,7 +10,7 @@ import {
   type LangiumSharedCoreServices,
 } from 'langium';
 import { type WorkspaceFolder } from 'vscode-languageserver';
-import { URI } from 'vscode-uri'; // direct import as work around for issues bundling as commonjs (vs-code-plugin) and esm (interpreter)
+import { URI } from 'vscode-uri';
 
 import { getStdLib } from './stdlib';
 

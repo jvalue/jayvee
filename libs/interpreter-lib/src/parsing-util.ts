@@ -10,7 +10,7 @@ import { initializeWorkspace } from '@jvalue/jayvee-language-server';
 import { type AstNode, type LangiumDocument } from 'langium';
 import { type LangiumServices } from 'langium/lsp';
 import { DiagnosticSeverity } from 'vscode-languageserver-protocol';
-import { URI } from 'vscode-uri'; // direct import as work around for issues bundling as commonjs (vs-code-plugin) and esm (interpreter)
+import { URI } from 'vscode-uri';
 
 export enum ExitCode {
   SUCCESS = 0,
