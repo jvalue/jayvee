@@ -13,7 +13,9 @@ import {
   type LangiumServices,
 } from 'langium';
 import { DiagnosticSeverity } from 'vscode-languageserver-protocol';
-import { URI } from 'vscode-uri';
+import vscodeUri from 'vscode-uri';
+
+const { URI } = vscodeUri; // work around import issue with ESM
 
 export enum ExitCode {
   SUCCESS = 0,

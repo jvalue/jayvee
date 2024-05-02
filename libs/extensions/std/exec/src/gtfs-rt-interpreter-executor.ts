@@ -12,8 +12,8 @@ import {
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import { IOType } from '@jvalue/jayvee-language-server';
-import * as E from 'fp-ts/lib/Either';
-import { type Either } from 'fp-ts/lib/Either';
+import E from 'fp-ts/lib/Either.js';
+import { type Either } from 'fp-ts/lib/Either.js';
 import * as GtfsRealtimeBindings from 'gtfs-realtime-bindings';
 
 @implementsStatic<BlockExecutorClass>()

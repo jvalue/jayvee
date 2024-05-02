@@ -23,7 +23,7 @@ import {
   type AstNodeLocator,
   type LangiumDocument,
 } from 'langium';
-import { NodeFileSystem } from 'langium/node';
+import { NodeFileSystem } from 'langium/node.js';
 
 import { constructTable, getTestExecutionContext } from '../../../test/utils';
 import { type Table, type TableColumn } from '../types/io-types/table';

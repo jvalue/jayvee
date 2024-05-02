@@ -10,7 +10,9 @@ import {
   type LangiumSharedServices,
 } from 'langium';
 import { type WorkspaceFolder } from 'vscode-languageserver';
-import { URI } from 'vscode-uri';
+import vscodeUri from 'vscode-uri';
+
+const { URI } = vscodeUri; // work around import issue with ESM
 
 import { getStdLib } from './stdlib';
 

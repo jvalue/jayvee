@@ -30,8 +30,8 @@ import {
   initializeWorkspace,
   internalValueToString,
 } from '@jvalue/jayvee-language-server';
-import * as chalk from 'chalk';
-import { NodeFileSystem } from 'langium/node';
+import chalk from 'chalk';
+import { NodeFileSystem } from 'langium/node.js';
 
 import { LoggerFactory } from './logging';
 import { ExitCode, extractAstNodeFromString } from './parsing-util';

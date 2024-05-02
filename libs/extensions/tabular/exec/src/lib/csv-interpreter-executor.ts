@@ -14,8 +14,8 @@ import {
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import { IOType } from '@jvalue/jayvee-language-server';
-import * as E from 'fp-ts/lib/Either';
-import { type Either, isLeft } from 'fp-ts/lib/Either';
+import E from 'fp-ts/lib/Either.js';
+import { type Either } from 'fp-ts/lib/Either.js';
 
 @implementsStatic<BlockExecutorClass>()
 export class CSVInterpreterExecutor extends AbstractBlockExecutor<
@@ -56,7 +56,7 @@ export class CSVInterpreterExecutor extends AbstractBlockExecutor<
     };
     const csvData = await parseAsCsv(file.content, parseOptions);
 
-    if (isLeft(csvData)) {
+    if (E.isLeft(csvData)) {
       return Promise.resolve(
         R.err({
           message: `CSV parse failed in line ${csvData.left.lineNumber}: ${csvData.left.error.message}`,
@@ -79,7 +79,7 @@ async function parseAsCsv(
   const rows: string[][] = [];
   for await (const line of lines) {
     const rowParseResult = await parseLineAsRow(line, parseOptions);
-    if (isLeft(rowParseResult)) {
+    if (E.isLeft(rowParseResult)) {
       return E.left({ error: rowParseResult.left, lineNumber });
     }
     rows.push(rowParseResult.right);

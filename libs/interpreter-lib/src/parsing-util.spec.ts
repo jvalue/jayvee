@@ -17,7 +17,7 @@ import {
   readJvTestAssetHelper,
 } from '@jvalue/jayvee-language-server/test';
 import { type AstNode, type LangiumDocument } from 'langium';
-import { NodeFileSystem } from 'langium/node';
+import { NodeFileSystem } from 'langium/node.js';
 
 import { extractDocumentFromFile, validateDocument } from './parsing-util';
 

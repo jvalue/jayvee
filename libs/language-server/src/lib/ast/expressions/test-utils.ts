@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { NodeFileSystem } from 'langium/node';
+import { NodeFileSystem } from 'langium/node.js';
 
 import { parseHelper } from '../../../test/langium-utils';
 import { createJayveeServices } from '../../jayvee-module';

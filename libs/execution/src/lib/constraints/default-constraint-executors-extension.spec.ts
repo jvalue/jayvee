@@ -7,7 +7,7 @@ import {
   getAllBuiltinConstraintTypes,
   initializeWorkspace,
 } from '@jvalue/jayvee-language-server';
-import { NodeFileSystem } from 'langium/node';
+import { NodeFileSystem } from 'langium/node.js';
 
 import { DefaultConstraintExtension } from './constraint-executor-extension';
 

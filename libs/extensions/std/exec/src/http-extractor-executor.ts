@@ -21,13 +21,15 @@ import {
   inferMimeTypeFromFileExtensionString,
 } from '@jvalue/jayvee-execution';
 import { IOType } from '@jvalue/jayvee-language-server';
-import { http, https } from 'follow-redirects';
-import { type AstNode } from 'langium';
+import followRedirects from 'follow-redirects';
+import { type AstNode } from 'langium'; // work around import issue with ESM
 
 import {
   createBackoffStrategy,
   isBackoffStrategyHandle,
 } from './util/backoff-strategy';
+
+const { http, https } = followRedirects;
 
 type HttpGetFunction = typeof http.get;
 

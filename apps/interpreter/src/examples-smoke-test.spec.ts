@@ -14,7 +14,7 @@ import {
   createJayveeServices,
   initializeWorkspace,
 } from '@jvalue/jayvee-language-server';
-import { NodeFileSystem } from 'langium/node';
+import { NodeFileSystem } from 'langium/node.js';
 import * as nock from 'nock';
 
 import { runAction } from './run-action';

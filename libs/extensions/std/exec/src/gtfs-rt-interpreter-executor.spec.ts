@@ -27,7 +27,7 @@ import {
   type AstNodeLocator,
   type LangiumDocument,
 } from 'langium';
-import { NodeFileSystem } from 'langium/node';
+import { NodeFileSystem } from 'langium/node.js';
 
 import { GtfsRTInterpreterExecutor } from './gtfs-rt-interpreter-executor';
 

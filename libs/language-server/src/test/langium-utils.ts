@@ -13,7 +13,9 @@ import {
   type LangiumServices,
 } from 'langium';
 import { type Diagnostic } from 'vscode-languageserver';
-import { URI } from 'vscode-uri';
+import vscodeUri from 'vscode-uri';
+
+const { URI } = vscodeUri; // work around import issue with ESM
 
 import { initializeWorkspace } from '../lib/builtin-library/jayvee-workspace-manager';
 
