@@ -8,6 +8,7 @@ import {
   type LangiumDocument,
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
+import { vi } from 'vitest';
 
 import {
   DefaultOperatorEvaluatorRegistry,
@@ -63,7 +64,7 @@ describe('Validation of validation-utils', () => {
   });
 
   describe('Validation of checkUniqueNames', () => {
-    const validationAcceptorMock = jest.fn(validationAcceptorMockImpl);
+    const validationAcceptorMock = vi.fn(validationAcceptorMockImpl);
 
     afterEach(() => {
       // Reset mock
