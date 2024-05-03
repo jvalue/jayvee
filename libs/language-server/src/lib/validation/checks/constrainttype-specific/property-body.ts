@@ -29,6 +29,14 @@ function checkLengthConstraintPropertyBody(
     (p) => p.name === 'maxLength',
   );
 
+  if (minLengthProperty === undefined && maxLengthProperty === undefined) {
+    props.validationContext.accept(
+      'hint',
+      'This constraint should either specify an upper or lower bound, otherwise it has no effect.',
+      { node: propertyBody },
+    );
+  }
+
   if (minLengthProperty === undefined || maxLengthProperty === undefined) {
     return;
   }
@@ -70,6 +78,14 @@ function checkRangeConstraintPropertyBody(
   const upperBoundProperty = propertyBody.properties.find(
     (p) => p.name === 'upperBound',
   );
+
+  if (lowerBoundProperty === undefined && upperBoundProperty === undefined) {
+    props.validationContext.accept(
+      'hint',
+      'This constraint should either specify an upper or lower bound, otherwise it has no effect.',
+      { node: propertyBody },
+    );
+  }
 
   if (lowerBoundProperty === undefined || upperBoundProperty === undefined) {
     return;
