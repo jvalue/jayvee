@@ -4,6 +4,6 @@
     "resolveJsonModule": true,
     "types": ["node"]
   },
-  "exclude": ["**/*.spec.ts", "**/*.test.ts"],
+  "exclude": ["vite.config.ts", "**/*.spec.ts", "**/*.test.ts"],
   "include": ["**/*.ts"]
 }
