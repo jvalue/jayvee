@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import assert = require('assert');
+import assert from 'assert';
 import * as path from 'path';
 
 import {
@@ -73,7 +73,7 @@ describe('Validation of TransformExecutor', () => {
     resultingColumn: TableColumn<InternalValueRepresentation>;
     rowsToDelete: number[];
   }> {
-    const document = await parse(input, { validationChecks: 'all' });
+    const document = await parse(input, { validation: true });
     expectNoParserAndLexerErrors(document);
 
     const transform = locator.getAstNode<TransformDefinition>(
