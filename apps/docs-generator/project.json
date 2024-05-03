@@ -1,0 +1,30 @@
+{
+  "name": "docs-generator",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/docs-generator/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "dependsOn": ["generate-language-server"],
+      "options": {
+        "main": "{projectRoot}/src/main.ts",
+        "tsConfig": "{projectRoot}/tsconfig.app.json"
+      }
+    },
+    "start": {
+      "executor": "@nx/js:node",
+      "options": {
+        "watch": false,
+        "buildTarget": "docs-generator:build"
+      }
+    },
+    "generate-language-server": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["nx run language-server:generate"],
+        "parallel": false
+      }
+    }
+  },
+  "tags": []
+}

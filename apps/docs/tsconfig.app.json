@@ -2,14 +2,13 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "jsx": "react",
-    "outDir": "../../dist/out-tsc",
     "types": ["node"],
     "lib": ["DOM", "ESNext"],
     "esModuleInterop": true,
     "skipLibCheck": false,
   },
-  "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts", "generator/src/**/*.spec.ts", "generator/src/**/*.test.ts"],
-  "include": ["src/**/*.ts", "generator/src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
   "types": [
     "node",
     "@docusaurus/module-type-aliases",
