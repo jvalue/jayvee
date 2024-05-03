@@ -38,4 +38,4 @@ Run `nx build interpreter-lib` to build the library.
 
 ## Running unit tests
 
-Run `nx test interpreter-lib` to execute the unit tests via [Jest](https://jestjs.io).
+Run `nx test interpreter-lib` to execute the unit tests via [vitest](https://vitest.dev).
