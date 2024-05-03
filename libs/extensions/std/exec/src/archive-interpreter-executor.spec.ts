@@ -131,7 +131,7 @@ describe('Validation of ArchiveInterpreterExecutor', () => {
     expect(R.isOk(result)).toEqual(false);
     if (R.isErr(result)) {
       expect(result.left.message).toEqual(
-        'Unexpected Error undefined occured during processing',
+        'Unexpected Error incorrect header check occured during processing',
       );
     }
   });

@@ -29,6 +29,7 @@ import {
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import type * as sqlite3 from 'sqlite3';
+import { type Mock, vi } from 'vitest';
 
 import { SQLiteLoaderExecutor } from './sqlite-loader-executor';
 
@@ -37,17 +38,20 @@ type SqliteRunCallbackType = (
   err: Error | null,
 ) => void;
 // eslint-disable-next-line no-var
-var databaseMock: jest.Mock;
+var databaseMock: Mock;
 // eslint-disable-next-line no-var
-var databaseRunMock: jest.Mock;
+var databaseRunMock: Mock;
 // eslint-disable-next-line no-var
-var databaseCloseMock: jest.Mock;
-jest.mock('sqlite3', () => {
-  databaseMock = jest.fn();
-  databaseRunMock = jest.fn();
-  databaseCloseMock = jest.fn();
+var databaseCloseMock: Mock;
+vi.mock('sqlite3', () => {
+  databaseMock = vi.fn();
+  databaseRunMock = vi.fn();
+  databaseCloseMock = vi.fn();
   return {
-    Database: databaseMock,
+    __esModule: true,
+    default: {
+      Database: databaseMock,
+    },
   };
 });
 function mockDatabaseDefault() {
@@ -78,7 +82,7 @@ describe('Validation of SQLiteLoaderExecutor', () => {
     input: string,
     IOInput: R.Table,
   ): Promise<R.Result<R.None>> {
-    const document = await parse(input, { validationChecks: 'all' });
+    const document = await parse(input, { validation: true });
     expectNoParserAndLexerErrors(document);
 
     const block = locator.getAstNode<BlockDefinition>(
@@ -103,7 +107,7 @@ describe('Validation of SQLiteLoaderExecutor', () => {
     parse = parseHelper(services);
   });
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should diagnose no error on valid loader config', async () => {

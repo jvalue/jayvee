@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { TextDecoder } from 'util';
+import { TextDecoder } from 'node:util';
 
 import * as R from '@jvalue/jayvee-execution';
 import {
