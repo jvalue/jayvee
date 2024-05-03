@@ -22,10 +22,11 @@
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
+      "executor": "@nx/vite:test",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/interpreter/jest.config.ts"
+        "configFile": "{projectRoot}/vite.config.ts",
+        "passWithNoTests": false
       }
     },
     "pre-publish": {
@@ -36,7 +37,7 @@
           "node tools/scripts/interpreter/prepend-shebang.mjs interpreter main.js",
           "node tools/scripts/add-package-json-version.mjs interpreter",
           "node tools/scripts/interpreter/rewrite-version-mainjs.mjs interpreter",
-          "node tools/scripts/publish.mjs interpreter false" // dry-run
+          "node tools/scripts/publish.mjs interpreter false"
         ],
         "parallel": false
       }
