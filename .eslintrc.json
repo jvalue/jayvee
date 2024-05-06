@@ -39,7 +39,18 @@
       "plugins": ["unicorn"],
       "rules": {
         "unicorn/prefer-node-protocol": "warn",
-        "unicorn/import-style": "warn"
+        "unicorn/import-style": "warn",
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "node:assert",
+                "message": "Please use the library `assert` instead to keep browser compatibility. You might need to disable rule `unicorn/prefer-node-protocol` to do so."
+              }
+            ]
+          }
+        ]
       }
     },
     {
