@@ -9,7 +9,7 @@ import {
   BrowserMessageReader,
   BrowserMessageWriter,
   createConnection,
-} from 'vscode-languageserver/lib/browser/main.js';
+} from 'vscode-languageserver/browser';
 
 declare const self: DedicatedWorkerGlobalScope;
 
