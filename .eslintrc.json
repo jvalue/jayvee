@@ -3,9 +3,6 @@
   "extends": "@jvalue/eslint-config-jvalue",
   "ignorePatterns": ["**/*"],
   "plugins": ["@nx"],
-  "parserOptions": {
-    "project": ["./tsconfig.base.json"]
-  },
   "overrides": [
     {
       "files": ["*.ts", ".tsx"],

@@ -1,6 +1,16 @@
 {
   "extends": ["../../.eslintrc.json"],
-  "ignorePatterns": ["!**/*", "**/.docusaurus/**", "**/theme/prism-jayvee.js"],
+  "ignorePatterns": [
+    "!**/*",
+    "**/.docusaurus/**",
+    "**/theme/prism-jayvee.js",
+    "*.config.js",
+    "**/prism-include-languages.js",
+    "**/sidebars.js"
+  ],
+  "parserOptions": {
+    "project": ["apps/docs/tsconfig.app.json"]
+  },
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],

@@ -5,7 +5,7 @@
     "types": ["node"],
     "lib": ["DOM", "ESNext"],
     "esModuleInterop": true,
-    "skipLibCheck": false,
+    "skipLibCheck": false
   },
   "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"],
   "include": ["src/**/*.ts", "src/**/*.tsx"],
