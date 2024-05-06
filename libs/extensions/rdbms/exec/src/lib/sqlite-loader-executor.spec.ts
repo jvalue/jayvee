@@ -48,7 +48,6 @@ vi.mock('sqlite3', () => {
   databaseRunMock = vi.fn();
   databaseCloseMock = vi.fn();
   return {
-    __esModule: true,
     default: {
       Database: databaseMock,
     },

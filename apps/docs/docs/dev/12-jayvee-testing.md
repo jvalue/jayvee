@@ -149,7 +149,6 @@ vi.mock('pg', () => {
     end: vi.fn(),
   };
   return {
-    __esModule: true,
     default: {
       Client: vi.fn(() => mClient),
     },
@@ -161,7 +160,6 @@ vi.mock('sqlite3', () => {
     run: vi.fn(),
   };
   return {
-    __esModule: true,
     default: {
       Database: vi.fn(() => mockDB),
     },

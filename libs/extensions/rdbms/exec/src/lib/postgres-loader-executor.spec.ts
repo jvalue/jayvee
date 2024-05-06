@@ -48,7 +48,6 @@ vi.mock('pg', () => {
     end: databaseEndMock,
   };
   return {
-    __esModule: true,
     default: {
       Client: vi.fn(() => mClient),
     },
