@@ -21,7 +21,8 @@
     "generate": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx nx start docs-generator"
+        "command": "npx nx start docs-generator",
+        "parallel": false
       }
     },
     "lint": {
