@@ -124,7 +124,9 @@ After calling `assert`, the type system of TypeScript assumes the condition to b
 Here is an example of how to use it in practice:
 
 ```typescript
-// Import the `assert` function like this:
+// We use the `assert` function from the `assert` library, not `node:assert` (to preserve browser compatibility)
+
+// eslint-disable-next-line unicorn/prefer-node-protocol
 import { strict as assert } from 'assert';
 
 import { A, B, isB } from './ast';

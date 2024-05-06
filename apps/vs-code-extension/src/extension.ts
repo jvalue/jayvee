@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as path from 'path';
+import path from 'node:path';
 
-import * as vscode from 'vscode';
+import { type ExtensionContext, workspace } from 'vscode';
 import {
   LanguageClient,
   type LanguageClientOptions,
@@ -17,7 +17,7 @@ import { StandardLibraryFileSystemProvider } from './standard-library-file-syste
 let client: LanguageClient;
 
 // This function is called when the extension is activated.
-export function activate(context: vscode.ExtensionContext): void {
+export function activate(context: ExtensionContext): void {
   StandardLibraryFileSystemProvider.register(context);
   client = startLanguageClient(context);
 }
@@ -27,7 +27,7 @@ export function deactivate(): Thenable<void> | undefined {
   return client.stop();
 }
 
-function startLanguageClient(context: vscode.ExtensionContext): LanguageClient {
+function startLanguageClient(context: ExtensionContext): LanguageClient {
   const serverModule = context.asAbsolutePath(path.join('language-server.cjs'));
   // The debug options for the server
   // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging.
@@ -52,7 +52,7 @@ function startLanguageClient(context: vscode.ExtensionContext): LanguageClient {
     },
   };
 
-  const fileSystemWatcher = vscode.workspace.createFileSystemWatcher('**/*.jv');
+  const fileSystemWatcher = workspace.createFileSystemWatcher('**/*.jv');
   context.subscriptions.push(fileSystemWatcher);
 
   // Options to control the language client

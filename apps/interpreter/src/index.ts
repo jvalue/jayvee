@@ -33,7 +33,7 @@ function collectRuntimeParameters(
 assertNodeVersion();
 const program = new Command();
 
-const version: string = packageJsonVersion as string;
+const version: string = packageJsonVersion;
 program.version(version);
 
 program

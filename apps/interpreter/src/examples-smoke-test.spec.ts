@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as path from 'path';
+import path from 'node:path';
 
 import { processExitMockImplementation } from '@jvalue/jayvee-execution/test';
 import {
@@ -15,25 +15,32 @@ import {
   initializeWorkspace,
 } from '@jvalue/jayvee-language-server';
 import { NodeFileSystem } from 'langium/node';
-import * as nock from 'nock';
+import nock from 'nock';
+import { type MockInstance, vi } from 'vitest';
 
 import { runAction } from './run-action';
 
 // Mock global imports
-jest.mock('pg', () => {
+vi.mock('pg', () => {
   const mClient = {
-    connect: jest.fn(),
-    query: jest.fn(),
-    end: jest.fn(),
+    connect: vi.fn(),
+    query: vi.fn(),
+    end: vi.fn(),
   };
-  return { Client: jest.fn(() => mClient) };
+  return {
+    default: {
+      Client: vi.fn(() => mClient),
+    },
+  };
 });
-jest.mock('sqlite3', () => {
+vi.mock('sqlite3', () => {
   const mockDB = {
-    close: jest.fn(),
-    run: jest.fn(),
+    close: vi.fn(),
+    run: vi.fn(),
   };
-  return { Database: jest.fn(() => mockDB) };
+  return {
+    default: { Database: vi.fn(() => mockDB) },
+  };
 });
 
 describe('jv example smoke tests', () => {
@@ -46,7 +53,7 @@ describe('jv example smoke tests', () => {
     debugTarget: undefined,
   };
 
-  let exitSpy: jest.SpyInstance;
+  let exitSpy: MockInstance;
   let httpExtractorMock: HttpExtractorExecutorMock;
   let postgresLoaderMock: PostgresLoaderExecutorMock;
   let sqliteLoaderMock: SQLiteLoaderExecutorMock;
@@ -55,7 +62,7 @@ describe('jv example smoke tests', () => {
     const services = createJayveeServices(NodeFileSystem).Jayvee;
     await initializeWorkspace(services);
 
-    exitSpy = jest
+    exitSpy = vi
       .spyOn(process, 'exit')
       .mockImplementation(processExitMockImplementation);
     httpExtractorMock = new HttpExtractorExecutorMock();

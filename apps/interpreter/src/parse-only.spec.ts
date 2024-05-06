@@ -2,24 +2,27 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as fs from 'node:fs';
-import * as path from 'path';
-import * as process from 'process';
+import fs from 'node:fs';
+import path from 'node:path';
+import process from 'node:process';
 
 import {
   type RunOptions,
   interpretModel,
   interpretString,
 } from '@jvalue/jayvee-interpreter-lib';
+import { vi } from 'vitest';
 
 import { runAction } from './run-action';
 
-jest.mock('@jvalue/jayvee-interpreter-lib', () => {
-  const original: object = jest.requireActual('@jvalue/jayvee-interpreter-lib');
+vi.mock('@jvalue/jayvee-interpreter-lib', async () => {
+  const original: object = await vi.importActual(
+    '@jvalue/jayvee-interpreter-lib',
+  );
   return {
     ...original,
-    interpretModel: jest.fn(),
-    interpretString: jest.fn(),
+    interpretModel: vi.fn(),
+    interpretString: vi.fn(),
   };
 });
 
@@ -44,8 +47,8 @@ describe('Parse Only', () => {
   });
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    jest.spyOn(process, 'exit').mockImplementation(() => {
+    vi.clearAllMocks();
+    vi.spyOn(process, 'exit').mockImplementation(() => {
       throw new Error();
     });
   });

@@ -2,8 +2,4 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { getJestProjects } from '@nx/jest';
-
-export default {
-  projects: getJestProjects(),
-};
+export default ['**/*/vite.config.ts', '**/*/vitest.config.ts'];

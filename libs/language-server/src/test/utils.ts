@@ -2,9 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as assert from 'assert';
-import { readFileSync } from 'fs';
-import * as path from 'path';
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import { strict as assert } from 'assert';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 
 import {
   type AstNode,

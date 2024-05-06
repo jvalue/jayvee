@@ -13,7 +13,9 @@ import {
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import { IOType } from '@jvalue/jayvee-language-server';
-import { Client } from 'pg';
+import pg from 'pg';
+
+const { Client } = pg; // work around import issue with ESM
 
 @implementsStatic<BlockExecutorClass>()
 export class PostgresLoaderExecutor extends AbstractBlockExecutor<

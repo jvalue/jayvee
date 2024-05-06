@@ -8,6 +8,7 @@ import {
   type LangiumDocument,
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
+import { vi } from 'vitest';
 
 import {
   type ColumnId,
@@ -31,7 +32,7 @@ describe('Validation of ColumnId', () => {
     options?: ParseHelperOptions,
   ) => Promise<LangiumDocument<AstNode>>;
 
-  const validationAcceptorMock = jest.fn(validationAcceptorMockImpl);
+  const validationAcceptorMock = vi.fn(validationAcceptorMockImpl);
 
   let locator: AstNodeLocator;
   let services: JayveeServices;

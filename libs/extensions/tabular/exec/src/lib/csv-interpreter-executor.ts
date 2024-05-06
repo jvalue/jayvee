@@ -14,8 +14,7 @@ import {
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import { IOType } from '@jvalue/jayvee-language-server';
-import * as E from 'fp-ts/lib/Either';
-import { type Either, isLeft } from 'fp-ts/lib/Either';
+import { either as E } from 'fp-ts';
 
 @implementsStatic<BlockExecutorClass>()
 export class CSVInterpreterExecutor extends AbstractBlockExecutor<
@@ -56,7 +55,7 @@ export class CSVInterpreterExecutor extends AbstractBlockExecutor<
     };
     const csvData = await parseAsCsv(file.content, parseOptions);
 
-    if (isLeft(csvData)) {
+    if (E.isLeft(csvData)) {
       return Promise.resolve(
         R.err({
           message: `CSV parse failed in line ${csvData.left.lineNumber}: ${csvData.left.error.message}`,
@@ -74,12 +73,12 @@ export class CSVInterpreterExecutor extends AbstractBlockExecutor<
 async function parseAsCsv(
   lines: string[],
   parseOptions: ParserOptionsArgs,
-): Promise<Either<{ error: Error; lineNumber: number }, string[][]>> {
+): Promise<E.Either<{ error: Error; lineNumber: number }, string[][]>> {
   let lineNumber = 1;
   const rows: string[][] = [];
   for await (const line of lines) {
     const rowParseResult = await parseLineAsRow(line, parseOptions);
-    if (isLeft(rowParseResult)) {
+    if (E.isLeft(rowParseResult)) {
       return E.left({ error: rowParseResult.left, lineNumber });
     }
     rows.push(rowParseResult.right);
@@ -92,7 +91,7 @@ async function parseAsCsv(
 async function parseLineAsRow(
   line: string,
   parseOptions: ParserOptionsArgs,
-): Promise<Either<Error, string[]>> {
+): Promise<E.Either<Error, string[]>> {
   return new Promise((resolve) => {
     let row: string[];
     parseStringAsCsv(line, parseOptions)

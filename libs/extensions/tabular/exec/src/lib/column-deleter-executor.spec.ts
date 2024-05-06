@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as path from 'path';
+import path from 'node:path';
 
 import * as R from '@jvalue/jayvee-execution';
 import { getTestExecutionContext } from '@jvalue/jayvee-execution/test';
@@ -57,7 +57,7 @@ describe('Validation of ColumnDeleterExecutor', () => {
     input: string,
     IOInput: R.Sheet,
   ): Promise<R.Result<R.Sheet>> {
-    const document = await parse(input, { validationChecks: 'all' });
+    const document = await parse(input, { validation: true });
     expectNoParserAndLexerErrors(document);
 
     const block = locator.getAstNode<BlockDefinition>(

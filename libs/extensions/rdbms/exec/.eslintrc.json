@@ -1,6 +1,9 @@
 {
   "extends": ["../../../../.eslintrc.json"],
   "ignorePatterns": ["!**/*"],
+  "parserOptions": {
+    "project": ["libs/extensions/rdbms/exec/tsconfig.lib.json", "libs/extensions/rdbms/exec/tsconfig.spec.json"]
+  },
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],

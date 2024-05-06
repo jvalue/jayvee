@@ -2,8 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import assert = require('assert');
-import * as path from 'path';
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import assert from 'assert';
+import path from 'node:path';
 
 import {
   type InternalValueRepresentation,
@@ -73,7 +74,7 @@ describe('Validation of TransformExecutor', () => {
     resultingColumn: TableColumn<InternalValueRepresentation>;
     rowsToDelete: number[];
   }> {
-    const document = await parse(input, { validationChecks: 'all' });
+    const document = await parse(input, { validation: true });
     expectNoParserAndLexerErrors(document);
 
     const transform = locator.getAstNode<TransformDefinition>(

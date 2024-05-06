@@ -4,25 +4,17 @@
   "sourceRoot": "libs/execution/src",
   "projectType": "library",
   "targets": {
-    "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "dist/libs/execution",
-        "main": "libs/execution/src/index.ts",
-        "tsConfig": "libs/execution/tsconfig.lib.json",
-        "assets": ["libs/execution/*.md"]
-      }
-    },
+    "build": {},
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nx/jest:jest",
+      "executor": "@nx/vite:test",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/execution/jest.config.ts"
+        "configFile": "{projectRoot}/vite.config.ts",
+        "passWithNoTests": false
       }
     }
   },

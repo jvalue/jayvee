@@ -7,6 +7,7 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
+// eslint-disable-next-line unicorn/prefer-node-protocol
 import { strict as assert } from 'assert';
 
 import { assertUnreachable } from 'langium';

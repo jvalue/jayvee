@@ -2,12 +2,16 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as assert from 'assert';
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import assert from 'assert';
 
 import { type BlockExecutorMock } from '@jvalue/jayvee-execution/test';
-import { Client } from 'pg';
+import pg from 'pg';
+import { type Mock, type Mocked, vi } from 'vitest';
 
-type MockedPgClient = jest.Mocked<Client>;
+const { Client } = pg; // work around import issue with ESM
+
+type MockedPgClient = Mocked<typeof Client>;
 
 export class PostgresLoaderExecutorMock implements BlockExecutorMock {
   private _pgClient: MockedPgClient | undefined;
@@ -26,15 +30,15 @@ export class PostgresLoaderExecutorMock implements BlockExecutorMock {
     ) => void = defaultPostgresMockRegistration,
   ) {
     // setup pg mock
-    this._pgClient = new Client() as MockedPgClient;
+    this._pgClient = new Client() as unknown as MockedPgClient;
     registerMocks(this._pgClient);
   }
   restore() {
     // cleanup pg mock
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   }
 }
 
 export function defaultPostgresMockRegistration(pgClient: MockedPgClient) {
-  (pgClient.query as jest.Mock).mockResolvedValue('Success');
+  (pgClient.query as Mock).mockResolvedValue('Success');
 }

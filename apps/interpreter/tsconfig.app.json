@@ -2,9 +2,8 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "resolveJsonModule": true,
-    "module": "commonjs",
     "types": ["node"]
   },
-  "exclude": ["jest.config.ts", "**/*.spec.ts", "**/*.test.ts"],
+  "exclude": ["vite.config.ts", "**/*.spec.ts", "**/*.test.ts"],
   "include": ["**/*.ts"]
 }

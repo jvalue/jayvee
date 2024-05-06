@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+// eslint-disable-next-line unicorn/prefer-node-protocol
 import { strict as assert } from 'assert';
 
 import {
@@ -10,6 +11,7 @@ import {
   type LangiumDocument,
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
+import { vi } from 'vitest';
 
 import {
   type JayveeServices,
@@ -34,7 +36,7 @@ describe('Validation of ValueTypeReference', () => {
     options?: ParseHelperOptions,
   ) => Promise<LangiumDocument<AstNode>>;
 
-  const validationAcceptorMock = jest.fn(validationAcceptorMockImpl);
+  const validationAcceptorMock = vi.fn(validationAcceptorMockImpl);
 
   let locator: AstNodeLocator;
   let services: JayveeServices;

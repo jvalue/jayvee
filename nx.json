@@ -2,26 +2,34 @@
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "targetDefaults": {
     "build": {
+      "cache": true,
+      "executor": "@nx/esbuild:esbuild",
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"],
-      "cache": true
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "main": "{projectRoot}/src/index.ts",
+        "outputPath": "dist/{projectRoot}",
+        "outputFileName": "main.js",
+        "tsConfig": "{projectRoot}/tsconfig.lib.json",
+        "assets": [
+          {
+            "glob": "{projectRoot}/README.md",
+            "input": ".",
+            "output": "."
+          }
+        ],
+        "generatePackageJson": true
+      },
+      "configurations": {
+        "development": {},
+        "production": {}
+      }
     },
     "@nx/eslint:lint": {
       "inputs": ["default", "{workspaceRoot}/.eslintrc.json"],
       "cache": true
-    },
-    "@nx/jest:jest": {
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
-      "cache": true,
-      "options": {
-        "passWithNoTests": true
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "codeCoverage": true
-        }
-      }
     }
   },
   "namedInputs": {
@@ -30,7 +38,6 @@
       "default",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
       "!{projectRoot}/tsconfig.spec.json",
-      "!{projectRoot}/jest.config.[jt]s",
       "!{projectRoot}/.eslintrc.json",
       "!{projectRoot}/src/test-setup.[jt]s"
     ],

@@ -12,8 +12,7 @@ import {
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import { IOType } from '@jvalue/jayvee-language-server';
-import * as E from 'fp-ts/lib/Either';
-import { type Either } from 'fp-ts/lib/Either';
+import { either as E } from 'fp-ts';
 import * as GtfsRealtimeBindings from 'gtfs-realtime-bindings';
 
 @implementsStatic<BlockExecutorClass>()
@@ -76,7 +75,7 @@ export class GtfsRTInterpreterExecutor extends AbstractBlockExecutor<
     entityType: string,
     feedMessage: GtfsRealtimeBindings.transit_realtime.FeedMessage,
     context: ExecutionContext,
-  ): Promise<Either<Error, Sheet>> {
+  ): Promise<E.Either<Error, Sheet>> {
     switch (entityType) {
       case 'trip_update':
         // Extract the trip updates from thee feed message
@@ -100,7 +99,7 @@ export class GtfsRTInterpreterExecutor extends AbstractBlockExecutor<
   private parseTripUpdates(
     feedMessage: GtfsRealtimeBindings.transit_realtime.FeedMessage,
     context: ExecutionContext,
-  ): Promise<Either<Error, Sheet>> {
+  ): Promise<E.Either<Error, Sheet>> {
     return new Promise((resolve) => {
       context.logger.logDebug(`Parsing raw gtfs-rt feed data as TripUpdate"`);
       const rows: string[][] = [];
@@ -160,7 +159,7 @@ export class GtfsRTInterpreterExecutor extends AbstractBlockExecutor<
   private parseVehiclePositions(
     feedMessage: GtfsRealtimeBindings.transit_realtime.FeedMessage,
     context: ExecutionContext,
-  ): Promise<Either<Error, Sheet>> {
+  ): Promise<E.Either<Error, Sheet>> {
     return new Promise((resolve) => {
       context.logger.logDebug(
         `Parsing raw gtfs-rt feed data as VehiclePosition"`,
@@ -210,7 +209,7 @@ export class GtfsRTInterpreterExecutor extends AbstractBlockExecutor<
   private parseAlerts(
     feedMessage: GtfsRealtimeBindings.transit_realtime.FeedMessage,
     context: ExecutionContext,
-  ): Promise<Either<Error, Sheet>> {
+  ): Promise<E.Either<Error, Sheet>> {
     return new Promise((resolve) => {
       context.logger.logDebug(`Parsing raw gtfs-rt feed data as Alerts"`);
       const rows: string[][] = [];

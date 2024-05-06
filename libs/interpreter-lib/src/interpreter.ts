@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+// eslint-disable-next-line unicorn/prefer-node-protocol
 import { strict as assert } from 'assert';
 
 import * as R from '@jvalue/jayvee-execution';
@@ -30,7 +31,7 @@ import {
   initializeWorkspace,
   internalValueToString,
 } from '@jvalue/jayvee-language-server';
-import * as chalk from 'chalk';
+import chalk from 'chalk';
 import { NodeFileSystem } from 'langium/node';
 
 import { LoggerFactory } from './logging';

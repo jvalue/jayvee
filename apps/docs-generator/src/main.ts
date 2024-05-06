@@ -2,8 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { readFileSync, readdirSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import path, { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import {
   type JayveeServices,
@@ -16,35 +17,33 @@ import { NodeFileSystem } from 'langium/node';
 
 import { UserDocGenerator } from './user-doc-generator';
 
+/** ESM does not know __filename and __dirname, so defined here */
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 async function main(): Promise<void> {
-  const rootPath = join(__dirname, '..', '..', '..', '..');
+  const docsAppPath = join(__dirname, '..', '..', '..', 'apps', 'docs');
+  const jayveeExamplesPath = join(__dirname, '..', '..', '..', 'example');
 
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   await initializeWorkspace(services);
 
-  generateBlockTypeDocs(services, rootPath);
-  generateConstraintTypeDocs(services, rootPath);
-  generateValueTypeDocs(services, rootPath);
-  generateExampleDocs(rootPath);
+  generateBlockTypeDocs(services, docsAppPath);
+  generateConstraintTypeDocs(services, docsAppPath);
+  generateValueTypeDocs(services, docsAppPath);
+  generateExampleDocs(jayveeExamplesPath, docsAppPath);
 }
 
 function generateBlockTypeDocs(
   services: JayveeServices,
-  rootPath: string,
+  docsAppPath: string,
 ): void {
   const blockTypes = getAllBuiltinBlockTypes(
     services.shared.workspace.LangiumDocuments,
     services.WrapperFactories,
   );
 
-  const docsPath = join(
-    rootPath,
-    'apps',
-    'docs',
-    'docs',
-    'user',
-    'block-types',
-  );
+  const docsPath = join(docsAppPath, 'docs', 'user', 'block-types');
 
   for (const blockType of blockTypes) {
     const userDocBuilder = new UserDocGenerator(services);
@@ -60,16 +59,9 @@ function generateBlockTypeDocs(
 
 function generateConstraintTypeDocs(
   services: JayveeServices,
-  rootPath: string,
+  docsAppPath: string,
 ): void {
-  const docsPath = join(
-    rootPath,
-    'apps',
-    'docs',
-    'docs',
-    'user',
-    'constraint-types',
-  );
+  const docsPath = join(docsAppPath, 'docs', 'user', 'constraint-types');
   const constraintTypes = getAllBuiltinConstraintTypes(
     services.shared.workspace.LangiumDocuments,
     services.WrapperFactories,
@@ -90,16 +82,9 @@ function generateConstraintTypeDocs(
 
 function generateValueTypeDocs(
   services: JayveeServices,
-  rootPath: string,
+  docsAppPath: string,
 ): void {
-  const docsPath = join(
-    rootPath,
-    'apps',
-    'docs',
-    'docs',
-    'user',
-    'value-types',
-  );
+  const docsPath = join(docsAppPath, 'docs', 'user', 'value-types');
   const userDocBuilder = new UserDocGenerator(services);
   const valueTypeDoc = userDocBuilder.generateValueTypesDoc(
     services.ValueTypeProvider.Primitives.getAll(),
@@ -112,9 +97,8 @@ function generateValueTypeDocs(
   console.info(`Generated file ${fileName}`);
 }
 
-function generateExampleDocs(rootPath: string): void {
-  const docsPath = join(rootPath, 'apps', 'docs', 'docs', 'user', 'examples');
-  const examplesPath = join(rootPath, 'example');
+function generateExampleDocs(examplesPath: string, docsAppPath: string): void {
+  const docsPath = join(docsAppPath, 'docs', 'user', 'examples');
 
   for (const file of readdirSync(examplesPath)) {
     if (file.endsWith('.jv')) {

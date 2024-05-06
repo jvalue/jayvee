@@ -1,6 +1,9 @@
 {
   "extends": ["../../../../.eslintrc.json"],
   "ignorePatterns": ["!**/*"],
+  "parserOptions": {
+    "project": ["libs/extensions/tabular/exec/tsconfig.lib.json", "libs/extensions/tabular/exec/tsconfig.spec.json"]
+  },
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],

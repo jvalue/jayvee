@@ -2,16 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import path from 'node:path';
 
 import { type Logger } from '@jvalue/jayvee-execution';
 import { initializeWorkspace } from '@jvalue/jayvee-language-server';
-import {
-  type AstNode,
-  type LangiumDocument,
-  type LangiumServices,
-} from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
+import { type LangiumServices } from 'langium/lsp';
 import { DiagnosticSeverity } from 'vscode-languageserver-protocol';
 import { URI } from 'vscode-uri';
 
@@ -41,7 +38,7 @@ export async function extractDocumentFromFile(
   }
 
   const document =
-    services.shared.workspace.LangiumDocuments.getOrCreateDocument(
+    await services.shared.workspace.LangiumDocuments.getOrCreateDocument(
       URI.file(path.resolve(fileName)),
     );
 
@@ -71,7 +68,7 @@ export async function validateDocument(
   logger: Logger,
 ): Promise<LangiumDocument> {
   await services.shared.workspace.DocumentBuilder.build([document], {
-    validationChecks: 'all',
+    validation: true,
   });
 
   const diagnostics = document.diagnostics ?? [];

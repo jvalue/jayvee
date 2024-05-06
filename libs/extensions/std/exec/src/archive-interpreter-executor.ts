@@ -2,9 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+// eslint-disable-next-line unicorn/prefer-node-protocol
 import { strict as assert } from 'assert';
+import path from 'node:path';
 import * as zlib from 'node:zlib';
-import * as path from 'path';
 
 import * as R from '@jvalue/jayvee-execution';
 import {
@@ -22,7 +23,7 @@ import {
   inferMimeTypeFromFileExtensionString,
 } from '@jvalue/jayvee-execution';
 import { IOType } from '@jvalue/jayvee-language-server';
-import * as JSZip from 'jszip';
+import JSZip from 'jszip';
 
 @implementsStatic<BlockExecutorClass>()
 export class ArchiveInterpreterExecutor extends AbstractBlockExecutor<

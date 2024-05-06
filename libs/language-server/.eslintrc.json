@@ -1,6 +1,9 @@
 {
   "extends": ["../../.eslintrc.json"],
   "ignorePatterns": ["!**/*", "src/lib/**/generated"],
+  "parserOptions": {
+    "project": ["libs/language-server/tsconfig.lib.json", "libs/language-server/tsconfig.spec.json"]
+  },
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],

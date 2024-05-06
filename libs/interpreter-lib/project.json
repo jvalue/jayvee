@@ -4,26 +4,17 @@
   "sourceRoot": "libs/interpreter-lib/src",
   "projectType": "library",
   "targets": {
-    "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "external": "none",
-        "outputPath": "dist/libs/interpreter-lib",
-        "main": "libs/interpreter-lib/src/index.ts",
-        "tsConfig": "libs/interpreter-lib/tsconfig.lib.json",
-        "assets": ["libs/interpreter-lib/*.md"]
-      }
-    },
+    "build": {},
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nx/jest:jest",
+      "executor": "@nx/vite:test",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/interpreter-lib/jest.config.ts"
+        "configFile": "{projectRoot}/vite.config.ts",
+        "passWithNoTests": false
       }
     },
     "pre-publish": {
@@ -33,7 +24,7 @@
         "commands": [
           "node tools/scripts/relax-peer-dependency-versions.mjs interpreter-lib",
           "node tools/scripts/add-package-json-version.mjs interpreter-lib",
-          "node tools/scripts/publish.mjs interpreter-lib false" // dry-run
+          "node tools/scripts/publish.mjs interpreter-lib false"
         ],
         "parallel": false
       }

@@ -2,7 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type AstNode, AstNodeHoverProvider, type MaybePromise } from 'langium';
+import { type AstNode, type MaybePromise } from 'langium';
+import { AstNodeHoverProvider } from 'langium/lsp';
 import { type Hover } from 'vscode-languageserver-protocol';
 
 import {

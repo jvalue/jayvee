@@ -3,12 +3,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { createJayveeServices } from '@jvalue/jayvee-language-server';
-import { EmptyFileSystem, startLanguageServer } from 'langium';
+import { EmptyFileSystem } from 'langium';
+import { startLanguageServer } from 'langium/lsp';
 import {
   BrowserMessageReader,
   BrowserMessageWriter,
   createConnection,
-} from 'vscode-languageserver/browser.js';
+} from 'vscode-languageserver/browser';
 
 declare const self: DedicatedWorkerGlobalScope;
 

@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as path from 'path';
+import path from 'node:path';
 
 import { parseValueToInternalRepresentation } from '@jvalue/jayvee-execution';
 import {
@@ -31,6 +31,7 @@ import {
   type LangiumDocument,
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
+import { vi } from 'vitest';
 
 import { validateRuntimeParameterLiteral } from './runtime-parameter-literal';
 
@@ -43,7 +44,7 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
   let locator: AstNodeLocator;
   let services: JayveeServices;
 
-  const validationAcceptorMock = jest.fn(validationAcceptorMockImpl);
+  const validationAcceptorMock = vi.fn(validationAcceptorMockImpl);
 
   const readJvTestAsset = readJvTestAssetHelper(
     __dirname,

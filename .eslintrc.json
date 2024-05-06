@@ -3,9 +3,6 @@
   "extends": "@jvalue/eslint-config-jvalue",
   "ignorePatterns": ["**/*"],
   "plugins": ["@nx"],
-  "parserOptions": {
-    "project": ["./tsconfig.base.json"]
-  },
   "overrides": [
     {
       "files": ["*.ts", ".tsx"],
@@ -38,6 +35,25 @@
       }
     },
     {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "plugins": ["unicorn"],
+      "rules": {
+        "unicorn/prefer-node-protocol": "warn",
+        "unicorn/import-style": "warn",
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "node:assert",
+                "message": "Please use the library `assert` instead to keep browser compatibility. You might need to disable rule `unicorn/prefer-node-protocol` to do so."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
       "files": ["*.ts", "*.tsx"],
       "extends": ["plugin:@nx/typescript"],
       "rules": {}
@@ -49,14 +65,10 @@
     },
     {
       "files": ["*.spec.ts", "*.spec.tsx", "*.spec.js", "*.spec.jsx"],
-      "plugins": ["jest"],
-      "env": {
-        "jest": true
-      },
+      "plugins": ["vitest"],
       "rules": {
         // you should turn the original rule off *only* for test files
-        "@typescript-eslint/unbound-method": "off",
-        "jest/unbound-method": "error"
+        "@typescript-eslint/unbound-method": "off"
       }
     }
   ]

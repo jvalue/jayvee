@@ -13,7 +13,7 @@ import {
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import { IOType } from '@jvalue/jayvee-language-server';
-import * as sqlite3 from 'sqlite3';
+import sqlite3 from 'sqlite3';
 
 @implementsStatic<BlockExecutorClass>()
 export class SQLiteLoaderExecutor extends AbstractBlockExecutor<

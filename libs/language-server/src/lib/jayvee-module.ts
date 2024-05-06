@@ -2,17 +2,15 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { type DeepPartial, type Module, inject } from 'langium';
 import {
-  type DeepPartial,
   type DefaultSharedModuleContext,
   type LangiumServices,
   type LangiumSharedServices,
-  type Module,
   type PartialLangiumServices,
   createDefaultModule,
   createDefaultSharedModule,
-  inject,
-} from 'langium';
+} from 'langium/lsp';
 
 import {
   DefaultOperatorEvaluatorRegistry,

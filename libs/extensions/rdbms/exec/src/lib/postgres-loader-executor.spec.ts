@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as path from 'path';
+import path from 'node:path';
 
 import * as R from '@jvalue/jayvee-execution';
 import {
@@ -28,25 +28,30 @@ import {
   type LangiumDocument,
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
+import { type Mock, vi } from 'vitest';
 
 import { PostgresLoaderExecutor } from './postgres-loader-executor';
 
 // eslint-disable-next-line no-var
-var databaseConnectMock: jest.Mock;
+var databaseConnectMock: Mock;
 // eslint-disable-next-line no-var
-var databaseQueryMock: jest.Mock;
+var databaseQueryMock: Mock;
 // eslint-disable-next-line no-var
-var databaseEndMock: jest.Mock;
-jest.mock('pg', () => {
-  databaseConnectMock = jest.fn();
-  databaseQueryMock = jest.fn();
-  databaseEndMock = jest.fn();
+var databaseEndMock: Mock;
+vi.mock('pg', () => {
+  databaseConnectMock = vi.fn();
+  databaseQueryMock = vi.fn();
+  databaseEndMock = vi.fn();
   const mClient = {
     connect: databaseConnectMock,
     query: databaseQueryMock,
     end: databaseEndMock,
   };
-  return { Client: jest.fn(() => mClient) };
+  return {
+    default: {
+      Client: vi.fn(() => mClient),
+    },
+  };
 });
 
 describe('Validation of PostgresLoaderExecutor', () => {
@@ -67,7 +72,7 @@ describe('Validation of PostgresLoaderExecutor', () => {
     input: string,
     IOInput: R.Table,
   ): Promise<R.Result<R.None>> {
-    const document = await parse(input, { validationChecks: 'all' });
+    const document = await parse(input, { validation: true });
     expectNoParserAndLexerErrors(document);
 
     const block = locator.getAstNode<BlockDefinition>(
@@ -92,7 +97,7 @@ describe('Validation of PostgresLoaderExecutor', () => {
     parse = parseHelper(services);
   });
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should diagnose no error on valid loader config', async () => {
