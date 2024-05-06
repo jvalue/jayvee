@@ -2,35 +2,42 @@
 title: Writing tests for Jayvee
 ---
 
-In order to ensure that Jayvee works as intended and to catch breaking changes, we have implemented the following components for regression testing:  
-- Testing utils: utils to create Langium Typescript objects from *.jv test assets (see [here](#testing-utils)) as well as mocks for execution testing (see [here](#testing-utils-1))
+In order to ensure that Jayvee works as intended and to catch breaking changes, we have implemented the following components for regression testing:
+
+- Testing utils: utils to create Langium Typescript objects from \*.jv test assets (see [here](#testing-utils)) as well as mocks for execution testing (see [here](#testing-utils-1))
 - [Grammar tests](#grammar-tests): test the grammar parsing and validation
 - [Execution tests](#execution-tests): test the execution of blocks
 
 ## Conventions
+
 All of the existing tests follow these conventions:
+
 1. The `<file-name>.spec.ts` file is located next to the `<file-name>.ts` file itself.
 2. The `*.jv` assets are located inside a `test/assets/<file-name>` folder.
-Take a look at one of the exisiting tests for more details.
+   Take a look at one of the exisiting tests for more details.
 
 ## Grammar tests
+
 These kind of tests are mainly located inside the [language-server](https://github.com/jvalue/jayvee/tree/main/libs/language-server) as well as the language parts of each extension (for example [std/lang](https://github.com/jvalue/jayvee/tree/main/libs/extensions/std/lang)).
 
 ### Testing utils
+
 The testing utils are located inside the `language-server` in a dedicated [test folder](https://github.com/jvalue/jayvee/tree/main/libs/language-server/src/test).  
 These utils can be imported using `@jvalue/jayvee-language-server/test` and contain the following parts:
 
 [**langium-utils.ts**](https://github.com/jvalue/jayvee/blob/main/libs/language-server/src/test/langium-utils.ts):
-This utils file contains two functions: 
-- `parseHelper` to simplify parsing the input (content of a *.jv file) and returning the corresponding `LangiumDocument`, and 
-- `validationHelper` parse and validate the created document. 
-They are kept in a separate file due to being copied from the Langium repository and thus subject to a different code license and copyright.
+This utils file contains two functions:
+
+- `parseHelper` to simplify parsing the input (content of a \*.jv file) and returning the corresponding `LangiumDocument`, and
+- `validationHelper` parse and validate the created document.
+  They are kept in a separate file due to being copied from the Langium repository and thus subject to a different code license and copyright.
 
 [**utils.ts**](https://github.com/jvalue/jayvee/blob/main/libs/language-server/src/test/utils.ts):  
-This file contains custom testing utility utils functions, like `readJvTestAssetHelper` for reading jv test assets. 
+This file contains custom testing utility utils functions, like `readJvTestAssetHelper` for reading jv test assets.
 Example:
-``` ts
-import * as path from 'path';
+
+```ts
+import path from 'node:path';
 
 import { createJayveeServices } from '@jvalue/jayvee-language-server';
 import {
@@ -70,6 +77,7 @@ describe('My example test', () => {
   });
 });
 ```
+
 If you want to simply validate the test assets, simply replace `parseHelper` with `validationHelper` (and adjust the types).  
 You can find detailed documentation of all the utility functions directly in the code.
 
@@ -82,7 +90,8 @@ The extension provides loader and extractor blocks for all IOTypes without any p
 These blocks are automatically generated at runtime with the following naming scheme:  
 `Test${ioType}${io === 'input' ? 'Loader' : 'Extractor'}` (Example: `TestFileExtractor`).  
 This allows for easy (grammar) testing of non loader/extractor blocks:
-``` jv
+
+```jv
 pipeline Pipeline {
 
   TestExtractor -> BlockUnderTest -> TestLoader;
@@ -98,7 +107,9 @@ pipeline Pipeline {
 ```
 
 ### Existing tests
+
 Currently there are already tests for the following parts:
+
 - Language-server validation checks (located [here](https://github.com/jvalue/jayvee/tree/main/libs/language-server/src/lib/validation))
 - Language-server constraint validation (located [here](https://github.com/jvalue/jayvee/tree/main/libs/language-server/src/lib/constraint))
 - Custom block (property) validation of the three existing extensions (std extension located [here](https://github.com/jvalue/jayvee/blob/main/libs/extensions/std/lang/src))
@@ -106,9 +117,11 @@ Currently there are already tests for the following parts:
 - Grammar validation tests for all block examples of the std extension (located [here](https://github.com/jvalue/jayvee/blob/main/libs/extensions/std/lang/src/meta-inf-example-validation.spec.ts))
 
 ## Execution tests
+
 These kind of tests are mainly located inside the [interpreter](https://github.com/jvalue/jayvee/tree/main/libs/language-server), the [interpreter-lib](https://github.com/jvalue/jayvee/tree/main/libs/interpreter-lib), the [execution lib](https://github.com/jvalue/jayvee/tree/main/libs/execution) as well as the execution parts of each extension (for example [std/exec](https://github.com/jvalue/jayvee/tree/main/libs/extensions/std/exec)).
 
 ### Testing utils
+
 The testing utils for execution tests are spread between the extensions, with the interfaces and base utils located inside the [execution lib](https://github.com/jvalue/jayvee/tree/main/libs/execution).  
 They can be imported using `@jvalue/jayvee-extensions/rdbms/test`, `@jvalue/jayvee-extensions/std/test` and `@jvalue/jayvee-execution/test`.
 
@@ -118,34 +131,45 @@ Due to how vastly different each `BlockExecutor` can be, this interface is very 
 
 [**rdbms/exec/test**](https://github.com/jvalue/jayvee/tree/main/libs/extensions/rdbms/exec/test):  
 Contains the implementation of `BlockExecutorMock` for `PostgresLoaderExecutor` and `SQLiteLoaderExecutor`.  
-Both of these executors are mocked using `jest.mock` to mock the corresponding libraries (`pg` and `sqlite3`)  
+Both of these executors are mocked using `vi.mock` to mock the corresponding libraries (`pg` and `sqlite3`)  
 **Usage:**
-``` ts
+
+```ts
 import {
   PostgresLoaderExecutorMock,
   SQLiteLoaderExecutorMock,
 } from '@jvalue/jayvee-extensions/rdbms/test';
 
-// Global mocking of external library at the top of test file required, 
+// Global mocking of external library at the top of test file required,
 // even though the mocking is encapsulated in helper classes
-jest.mock('pg', () => {
+vi.mock('pg', () => {
   const mClient = {
-    connect: jest.fn(),
-    query: jest.fn(),
-    end: jest.fn(),
+    connect: vi.fn(),
+    query: vi.fn(),
+    end: vi.fn(),
   };
-  return { Client: jest.fn(() => mClient) };
+  return {
+    __esModule: true,
+    default: {
+      Client: vi.fn(() => mClient),
+    },
+  };
 });
-jest.mock('sqlite3', () => {
+vi.mock('sqlite3', () => {
   const mockDB = {
-    close: jest.fn(),
-    run: jest.fn(),
+    close: vi.fn(),
+    run: vi.fn(),
   };
-  return { Database: jest.fn(() => mockDB) };
+  return {
+    __esModule: true,
+    default: {
+      Database: vi.fn(() => mockDB),
+    },
+  };
 });
 
 describe('Dummy describe', () => {
-  // [...] 
+  // [...]
 
   let postgresLoaderMock: PostgresLoaderExecutorMock;
   let sqliteLoaderMock: SQLiteLoaderExecutorMock;
@@ -181,8 +205,9 @@ Contains the implementation of `BlockExecutorMock` for `HttpExtractorExecutorMoc
 This implementation uses [nock](https://www.npmjs.com/package/nock) for mocking HTTP(S) responses.  
 The `setup` method is further specified requiring one parameter `registerMocks: () => Array<nock.Scope>`, which returns all used `nock.Scope` (i.e. the return value of `nock('<URL>')`), see usage below:  
 **Usage:**
-``` ts
-import * as path from 'path';
+
+```ts
+import path from 'node:path';
 
 import { HttpExtractorExecutorMock } from '@jvalue/jayvee-extensions/std/test';
 
@@ -203,9 +228,7 @@ describe('Dummy describe', () => {
     // Prepare mocks
     httpExtractorMock.setup(() => {
       return [
-        nock(
-          '<URL_1>',
-        )
+        nock('<URL_1>')
           .get('<PATH>')
           .replyWithFile(
             200,
@@ -216,20 +239,13 @@ describe('Dummy describe', () => {
           ),
         nock('<URL_2>')
           .get('<PATH_1>')
-          .replyWithFile(
-            200,
-            path.resolve(
-              __dirname,
-              '../test/assets/file2',
-            ),
-            {
-              'Content-Type': 'application/octet-stream',
-            },
-          )
+          .replyWithFile(200, path.resolve(__dirname, '../test/assets/file2'), {
+            'Content-Type': 'application/octet-stream',
+          })
           .get('<PATH_2>')
-          .reply(200, { content: "My dummy json reply." }),
+          .reply(200, { content: 'My dummy json reply.' }),
       ];
-    })
+    });
 
     // [...] execute test
 
@@ -239,5 +255,7 @@ describe('Dummy describe', () => {
 ```
 
 ### Existing tests
+
 Currently there are already tests for the following parts:
+
 - Smoke test for official examples (located [here](https://github.com/jvalue/jayvee/blob/main/apps/interpreter/src/examples-smoke-test.spec.ts))
