@@ -4,7 +4,7 @@
 
 import { strict as assert } from 'node:assert';
 import { readFileSync } from 'node:fs';
-import * as path from 'node:path';
+import path from 'node:path';
 
 import {
   type AstNode,

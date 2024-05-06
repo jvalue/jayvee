@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as path from 'node:path';
+import path from 'node:path';
 
 import * as R from '@jvalue/jayvee-execution';
 import {
@@ -57,7 +57,7 @@ describe('Validation of ArchiveInterpreterExecutor', () => {
     input: string,
     IOInput: R.BinaryFile,
   ): Promise<R.Result<R.FileSystem>> {
-    const document = await parse(input, { validationChecks: 'all' });
+    const document = await parse(input, { validation: true });
     expectNoParserAndLexerErrors(document);
 
     const block = locator.getAstNode<BlockDefinition>(

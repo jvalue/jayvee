@@ -44,7 +44,7 @@ describe('Validation of AllowlistConstraintExecutor', () => {
     input: string,
     value: InternalValueRepresentation,
   ): Promise<boolean> {
-    const document = await parse(input, { validationChecks: 'all' });
+    const document = await parse(input, { validation: true });
     expectNoParserAndLexerErrors(document);
 
     const usageBlock = locator.getAstNode<BlockDefinition>(

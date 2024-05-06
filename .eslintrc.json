@@ -38,7 +38,8 @@
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "plugins": ["unicorn"],
       "rules": {
-        "unicorn/prefer-node-protocol": "warn"
+        "unicorn/prefer-node-protocol": "warn",
+        "unicorn/import-style": "warn"
       }
     },
     {

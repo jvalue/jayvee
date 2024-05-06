@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { readFileSync } from 'node:fs';
-import * as path from 'node:path';
+import path from 'node:path';
 
 import {
   BinaryFile,
