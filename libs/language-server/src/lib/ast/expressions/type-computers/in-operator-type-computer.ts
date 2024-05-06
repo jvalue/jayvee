@@ -2,7 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'node:assert';
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import { strict as assert } from 'assert';
 
 import { type ValidationContext } from '../../../validation/validation-context';
 import { type BinaryExpression } from '../../generated/ast';

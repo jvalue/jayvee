@@ -2,7 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import assert from 'node:assert';
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import assert from 'assert';
 
 import { type BlockExecutorMock } from '@jvalue/jayvee-execution/test';
 import pg from 'pg';
