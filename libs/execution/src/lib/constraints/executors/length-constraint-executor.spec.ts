@@ -93,4 +93,24 @@ describe('Validation of LengthConstraintExecutor', () => {
 
     expect(valid).toBe(false);
   });
+
+  it('should work with only a lower bound specified', async () => {
+    const text = readJvTestAsset(
+      'length-constraint-executor/only-lower-bound.jv',
+    );
+
+    const valid = await parseAndValidateConstraint(text, 'morethan2chars');
+
+    expect(valid).toBe(true);
+  });
+
+  it('should work with only an uppper bound specified', async () => {
+    const text = readJvTestAsset(
+      'length-constraint-executor/only-upper-bound.jv',
+    );
+
+    const valid = await parseAndValidateConstraint(text, '');
+
+    expect(valid).toBe(true);
+  });
 });

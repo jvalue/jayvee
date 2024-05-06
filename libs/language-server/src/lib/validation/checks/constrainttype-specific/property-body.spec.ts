@@ -91,6 +91,21 @@ describe('Validation of constraint type specific property bodies', () => {
         expect.any(Object),
       );
     });
+
+    it('should hint if no bounds were specified', async () => {
+      const text = readJvTestAsset(
+        'property-body/constrainttype-specific/length-constraint/no-bound.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+      expect(validationAcceptorMock).toHaveBeenCalledWith(
+        'hint',
+        'This constraint should either specify an upper or lower bound, otherwise it has no effect.',
+        expect.any(Object),
+      );
+    });
   });
 
   describe('RangeConstraint constraint type', () => {
@@ -120,6 +135,21 @@ describe('Validation of constraint type specific property bodies', () => {
       expect(validationAcceptorMock).toHaveBeenCalledWith(
         'error',
         `Lower and upper bounds need to be inclusive if they are identical`,
+        expect.any(Object),
+      );
+    });
+
+    it('should hint if no bounds were specified', async () => {
+      const text = readJvTestAsset(
+        'property-body/constrainttype-specific/range-constraint/no-bound.jv',
+      );
+
+      await parseAndValidatePropertyAssignment(text);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+      expect(validationAcceptorMock).toHaveBeenCalledWith(
+        'hint',
+        'This constraint should either specify an upper or lower bound, otherwise it has no effect.',
         expect.any(Object),
       );
     });
