@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'assert';
+import { strict as assert } from 'node:assert';
 
 import {
   type AtomicValueType,

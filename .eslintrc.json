@@ -35,6 +35,13 @@
       }
     },
     {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "plugins": ["unicorn"],
+      "rules": {
+        "unicorn/prefer-node-protocol": "warn"
+      }
+    },
+    {
       "files": ["*.ts", "*.tsx"],
       "extends": ["plugin:@nx/typescript"],
       "rules": {}

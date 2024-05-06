@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { strict as assert } from 'assert';
-import { readFileSync } from 'fs';
-import * as path from 'path';
+import { strict as assert } from 'node:assert';
+import { readFileSync } from 'node:fs';
+import * as path from 'node:path';
 
 import {
   type AstNode,

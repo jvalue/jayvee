@@ -7,7 +7,7 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { strict as assert } from 'assert';
+import { strict as assert } from 'node:assert';
 
 import { assertUnreachable } from 'langium';
 

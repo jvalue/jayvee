@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import assert from 'assert';
-import * as path from 'path';
+import assert from 'node:assert';
+import * as path from 'node:path';
 
 import {
   type InternalValueRepresentation,
