@@ -2,9 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line unicorn/prefer-node-protocol
-import { strict as assert } from 'assert';
-
 import { StdExecExtension } from '@jvalue/jayvee-extensions/std/exec';
 import {
   type BlockTypeWrapper,
@@ -12,6 +9,7 @@ import {
   getAllBuiltinBlockTypes,
   initializeWorkspace,
 } from '@jvalue/jayvee-language-server';
+import { strict as assert } from 'assert/';
 import { NodeFileSystem } from 'langium/node';
 
 async function loadAllBuiltinBlockTypes(): Promise<BlockTypeWrapper[]> {

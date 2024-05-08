@@ -2,9 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line unicorn/prefer-node-protocol
-import { strict as assert } from 'assert';
-
 import {
   type AtomicValueType,
   type BooleanValuetype,
@@ -22,6 +19,7 @@ import {
   ValueTypeVisitor,
   type ValuetypeAssignmentValuetype,
 } from '@jvalue/jayvee-language-server';
+import { strict as assert } from 'assert/';
 
 import { type ExecutionContext } from '../../execution-context';
 

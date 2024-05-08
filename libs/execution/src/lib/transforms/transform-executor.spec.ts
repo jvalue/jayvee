@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line unicorn/prefer-node-protocol
-import assert from 'assert';
 import path from 'node:path';
 
 import {
@@ -19,6 +17,7 @@ import {
   parseHelper,
   readJvTestAssetHelper,
 } from '@jvalue/jayvee-language-server/test';
+import assert from 'assert/';
 import {
   type AstNode,
   type AstNodeLocator,

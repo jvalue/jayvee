@@ -2,13 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line unicorn/prefer-node-protocol
-import { strict as assert } from 'assert';
-
 import {
   type BlockDefinition,
   isCompositeBlockTypeDefinition,
 } from '@jvalue/jayvee-language-server';
+import { strict as assert } from 'assert/';
 
 import { type BlockExecutor } from './blocks';
 import { type BlockExecutorClass } from './blocks/block-executor-class';

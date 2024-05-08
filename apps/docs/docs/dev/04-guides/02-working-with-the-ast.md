@@ -127,7 +127,7 @@ Here is an example of how to use it in practice:
 // We use the `assert` function from the `assert` library, not `node:assert` (to preserve browser compatibility)
 
 // eslint-disable-next-line unicorn/prefer-node-protocol
-import { strict as assert } from 'assert';
+import { strict as assert } from 'assert/';
 
 import { A, B, isB } from './ast';
 

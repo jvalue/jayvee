@@ -2,15 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line unicorn/prefer-node-protocol
-import { strict as assert } from 'assert';
-
 import {
   type AtomicValueType,
   type InternalValueRepresentation,
   type ValueType,
   ValueTypeVisitor,
 } from '@jvalue/jayvee-language-server';
+import { strict as assert } from 'assert/';
 
 const NUMBER_REGEX = /^[+-]?([0-9]*[,.])?[0-9]+([eE][+-]?\d+)?$/;
 

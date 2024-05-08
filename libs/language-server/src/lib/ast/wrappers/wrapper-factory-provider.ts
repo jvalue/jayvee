@@ -2,9 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line unicorn/prefer-node-protocol
-import { strict as assert } from 'assert';
-
+import { strict as assert } from 'assert/';
 import {
   type AstNode,
   type Reference,

@@ -2,9 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line unicorn/prefer-node-protocol
-import { strict as assert } from 'assert';
-
 import * as R from '@jvalue/jayvee-execution';
 import {
   AbstractBlockExecutor,
@@ -15,6 +12,7 @@ import {
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import { IOType } from '@jvalue/jayvee-language-server';
+import { strict as assert } from 'assert/';
 
 @implementsStatic<BlockExecutorClass>()
 export class FilePickerExecutor extends AbstractBlockExecutor<

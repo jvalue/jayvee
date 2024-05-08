@@ -2,14 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line unicorn/prefer-node-protocol
-import { strict as assert } from 'assert';
-
 import {
   IOType,
   type InternalValueRepresentation,
   type ValueType,
 } from '@jvalue/jayvee-language-server';
+import { strict as assert } from 'assert/';
 
 import { SQLColumnTypeVisitor } from '../value-types/visitors/sql-column-type-visitor';
 import { SQLValueRepresentationVisitor } from '../value-types/visitors/sql-value-representation-visitor';

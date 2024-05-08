@@ -2,9 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line unicorn/prefer-node-protocol
-import { strict as assert } from 'assert';
-
 import {
   type BlockDefinition,
   type ConstraintDefinition,
@@ -24,6 +21,7 @@ import {
   isTransformDefinition,
   isTypedConstraintDefinition,
 } from '@jvalue/jayvee-language-server';
+import { strict as assert } from 'assert/';
 import { assertUnreachable, isReference } from 'langium';
 
 import { type JayveeConstraintExtension } from './constraints';

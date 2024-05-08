@@ -2,10 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line unicorn/prefer-node-protocol
-import { strict as assert } from 'assert';
-
 import { type IOType, isBlockDefinition } from '@jvalue/jayvee-language-server';
+import { strict as assert } from 'assert/';
 
 import { isBlockTargetedForDebugLogging } from '../debugging/debug-configuration';
 import { DebugLogVisitor } from '../debugging/debug-log-visitor';

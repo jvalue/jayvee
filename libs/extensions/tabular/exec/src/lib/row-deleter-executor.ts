@@ -2,9 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line unicorn/prefer-node-protocol
-import { strict as assert } from 'assert';
-
 import * as R from '@jvalue/jayvee-execution';
 import {
   AbstractBlockExecutor,
@@ -20,6 +17,7 @@ import {
   isRowWrapper,
   rowIndexToString,
 } from '@jvalue/jayvee-language-server';
+import { strict as assert } from 'assert/';
 
 @implementsStatic<BlockExecutorClass>()
 export class RowDeleterExecutor extends AbstractBlockExecutor<

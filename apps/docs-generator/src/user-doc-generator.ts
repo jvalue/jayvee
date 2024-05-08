@@ -2,9 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line unicorn/prefer-node-protocol
-import { strict as assert } from 'assert';
-
 import {
   type BlockTypeWrapper,
   type ConstraintTypeWrapper,
@@ -18,6 +15,7 @@ import {
   type PrimitiveValueType,
   type PropertySpecification,
 } from '@jvalue/jayvee-language-server';
+import { strict as assert } from 'assert/';
 
 export class UserDocGenerator
   implements
