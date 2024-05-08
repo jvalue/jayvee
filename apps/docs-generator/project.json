@@ -13,6 +13,7 @@
     },
     "start": {
       "executor": "@nx/js:node",
+      "dependsOn": ["generate-language-server"],
       "options": {
         "watch": false,
         "buildTarget": "docs-generator:build"
