@@ -46,7 +46,7 @@
             "paths": [
               {
                 "name": "node:assert",
-                "message": "Please use the library `assert` instead to keep browser compatibility. You might need to disable rule `unicorn/prefer-node-protocol` to do so."
+                "message": "Please use the library `assert` instead to keep browser compatibility. Import `from \"assert/\"` to do so (note the trailing \"/\")."
               }
             ]
           }
