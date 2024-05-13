@@ -1,14 +1,11 @@
+import { type AstNode, type CstNode, isCompositeCstNode } from 'langium';
 import {
-  type AstNode,
-  type LangiumDocument,
-  type MaybePromise,
-  isCompositeCstNode,
-} from 'langium';
-import { AbstractFormatter, Formatting } from 'langium/lsp';
-import {
-  type DocumentFormattingParams,
-  type TextEdit,
-} from 'vscode-languageserver-protocol';
+  AbstractFormatter,
+  Formatting,
+  type FormattingAction,
+  type FormattingContext,
+} from 'langium/lsp';
+import { type Range, type TextEdit } from 'vscode-languageserver-protocol';
 
 import { isBlockTypePipeline, isPipeDefinition } from '../ast/generated/ast';
 
@@ -80,10 +77,111 @@ export class JayveeFormatter extends AbstractFormatter {
     closingBraces.prepend(Formatting.noIndent()).prepend(Formatting.newLine());
   }
 
-  override formatDocument(
-    document: LangiumDocument,
-    params: DocumentFormattingParams,
-  ): MaybePromise<TextEdit[]> {
-    return super.formatDocument(document, params);
+  /**
+   * https://github.com/eclipse-langium/langium/issues/1351
+   */
+  protected override createHiddenTextEdits(
+    previous: CstNode | undefined,
+    hidden: CstNode,
+    formatting: FormattingAction | undefined,
+    context: FormattingContext,
+  ): TextEdit[] {
+    const edits: TextEdit[] = [];
+
+    // Don't format the hidden node if it is on the same line as its previous node
+    const startLine = hidden.range.start.line;
+    if (previous && previous.range.end.line === startLine) {
+      return [];
+    }
+
+    const startRange: Range = {
+      start: {
+        character: 0,
+        line: startLine,
+      },
+      end: hidden.range.start,
+    };
+    const hiddenStartText = context.document.getText(startRange);
+    const move = this.findFittingMove(
+      startRange,
+      formatting?.moves ?? [],
+      context,
+    );
+
+    const hiddenStartChar = this.getExistingIndentationCharacterCount(
+      hiddenStartText,
+      context,
+    );
+    const expectedStartChar = this.getIndentationCharacterCount(context, move);
+
+    const newStartText = (context.options.insertSpaces ? ' ' : '\t').repeat(
+      expectedStartChar,
+    );
+
+    if (newStartText === hiddenStartText) {
+      return [];
+    }
+
+    const lines = hidden.text.split('\n');
+    lines[0] = hiddenStartText + lines[0];
+    for (let i = 0; i < lines.length; i++) {
+      const currentLine = startLine + i;
+
+      edits.push({
+        newText: newStartText,
+        range: {
+          start: {
+            line: currentLine,
+            character: 0,
+          },
+          end: {
+            line: currentLine,
+            character: hiddenStartChar,
+          },
+        },
+      });
+    }
+
+    return edits;
+  }
+
+  /**
+   * Creates edits to replace leading tabs and spaces according to config.
+   */
+  protected createIndentHiddenTextEdits(
+    hidden: CstNode,
+    context: FormattingContext,
+  ): TextEdit[] {
+    const startLine = hidden.range.start.line;
+    const startRange: Range = {
+      start: {
+        character: 0,
+        line: startLine,
+      },
+      end: hidden.range.start,
+    };
+    const hiddenStartText = context.document.getText(startRange);
+
+    if (context.options.insertSpaces) {
+      if (!hiddenStartText.includes('\t')) {
+        return [];
+      }
+      return [
+        {
+          newText: hiddenStartText.replace('\t', ' '),
+          range: startRange,
+        },
+      ];
+    }
+
+    if (!hiddenStartText.includes(' ')) {
+      return [];
+    }
+    return [
+      {
+        newText: hiddenStartText.replace(' ', '\t'),
+        range: startRange,
+      },
+    ];
   }
 }
