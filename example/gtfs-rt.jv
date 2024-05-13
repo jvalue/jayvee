@@ -60,7 +60,7 @@ pipeline GtfsRTSimplePipeline {
     // 5. Next, we interpret the sheets as tables
     block TripUpdateTableInterpreter oftype TableInterpreter {
         header: true;
-        columns:  [
+        columns: [
             "header.gtfs_realtime_version" oftype text,
             "header.timestamp" oftype text,
             "header.incrementality" oftype text,
@@ -76,7 +76,7 @@ pipeline GtfsRTSimplePipeline {
 
     block VehiclePositionTableInterpreter oftype TableInterpreter {
         header: true;
-        columns:  [
+        columns: [
             "header.gtfs_realtime_version" oftype text,
             "header.timestamp" oftype text,
             "header.incrementality" oftype text,
@@ -92,7 +92,7 @@ pipeline GtfsRTSimplePipeline {
 
     block AlertTableInterpreter oftype TableInterpreter {
         header: true;
-        columns:  [
+        columns: [
             'header.gtfs_realtime_version' oftype text,
             'header.timestamp' oftype text,
             'header.incrementality' oftype text,

@@ -10,7 +10,7 @@ import {
   type TextEdit,
 } from 'vscode-languageserver-protocol';
 
-import { isPipeDefinition } from '../ast/generated/ast';
+import { isBlockTypePipeline, isPipeDefinition } from '../ast/generated/ast';
 
 export class JayveeFormatter extends AbstractFormatter {
   protected override format(node: AstNode) {
@@ -20,10 +20,38 @@ export class JayveeFormatter extends AbstractFormatter {
 
     formatter.keywords(',', ':', ';').prepend(Formatting.noSpace());
     formatter.keywords(':').append(Formatting.oneSpace());
-    formatter.keywords('block').append(Formatting.oneSpace());
-    formatter.keywords('oftype', 'cell').surround(Formatting.oneSpace());
+    formatter
+      .keywords('builtin', 'property', 'requires')
+      .append(Formatting.oneSpace());
 
-    if (isPipeDefinition(node)) {
+    formatter
+      .keywords('blocktype', 'composite', 'input', 'output')
+      .append(Formatting.oneSpace());
+
+    formatter.keywords('block').append(Formatting.oneSpace());
+    formatter
+      .keywords('constraint', 'constrainttype')
+      .append(Formatting.oneSpace());
+    formatter.keywords('oftype').surround(Formatting.oneSpace());
+    formatter.keywords('on').surround(Formatting.oneSpace());
+
+    formatter.keywords('iotype').append(Formatting.oneSpace());
+    formatter
+      .keywords('valuetype', 'constraints')
+      .append(Formatting.oneSpace());
+    formatter
+      .keywords('<', '>')
+      .append(Formatting.noSpace())
+      .prepend(Formatting.noSpace());
+
+    formatter.keywords('transform', 'from', 'to').append(Formatting.oneSpace());
+
+    formatter
+      .keywords('cell', 'column', 'row', 'range')
+      .surround(Formatting.oneSpace());
+
+    formatter.keywords('pipeline').append(Formatting.oneSpace());
+    if (isPipeDefinition(node) || isBlockTypePipeline(node)) {
       formatter.keywords('->').prepend(Formatting.indent());
     }
   }
