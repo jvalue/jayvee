@@ -21,15 +21,15 @@ pipeline ElectricVehiclesPipeline {
 	// of blocks. From there we can see a split into two
 	// parallel sequences that load the data in to two
 	// different sinks.
-    ElectricVehiclesHttpExtractor
+	ElectricVehiclesHttpExtractor
 		-> ElectricVehiclesTextFileInterpreter
 		-> ElectricVehiclesCSVInterpreter
 		-> ElectricVehiclesTableInterpreter
 		-> ElectricRangeTransformer;
-	
+
 	ElectricRangeTransformer
 		-> ElectricVehiclesSQLiteLoader;
-	
+
 	ElectricRangeTransformer
 		-> ElectricVehiclesPostgresLoader;
 
@@ -48,7 +48,7 @@ pipeline ElectricVehiclesPipeline {
 			// 4. Here, a user-deifned value type is used to describe this column.
 			// The capital letter indicates that the value type is not built-in
 			// by convention. The value type itself is defined further below. 
-    		"VIN (1-10)" oftype VehicleIdentificationNumber10,
+			"VIN (1-10)" oftype VehicleIdentificationNumber10,
 			"County" oftype text,
 			"City" oftype text,
 			"State" oftype UsStateCode,
@@ -65,7 +65,7 @@ pipeline ElectricVehiclesPipeline {
 			"Vehicle Location" oftype text,
 			"Electric Utility" oftype text,
 			"2020 Census Tract" oftype text,
-    	];
+		];
 	}
 
 	// 5. This block describes the application of a transform function
@@ -73,7 +73,9 @@ pipeline ElectricVehiclesPipeline {
 	// The applied transform function is defined below and referenced 
 	// by the "use" property.
 	block ElectricRangeTransformer oftype TableTransformer {
-		inputColumns: ["Electric Range"];
+		inputColumns: [
+			"Electric Range"
+		];
 		outputColumn: "Electric Range (km)";
 		use: MilesToKilometers;
 	}
@@ -112,7 +114,8 @@ pipeline ElectricVehiclesPipeline {
 // that this value type builts on. User-defined value types always place additional constraints on existing value types.
 valuetype VehicleIdentificationNumber10 oftype text {
 	// 10. Value types can be further refined by providing constraints.
-	constraints: [
+	constraints:
+	[
 		OnlyCapitalLettersAndDigits,
 		ExactlyTenCharacters,
 	];
@@ -120,24 +123,73 @@ valuetype VehicleIdentificationNumber10 oftype text {
 
 // 11. This constraint works on text value types and requires values 
 // to match a given regular expression in order to be valid.
-constraint OnlyCapitalLettersAndDigits on text:
-	value matches /^[A-Z0-9]*$/;
+constraint OnlyCapitalLettersAndDigits on text: value matches /^[A-Z0-9]*$/;
 
-constraint ExactlyTenCharacters on text:
-	value.length == 10;
+constraint ExactlyTenCharacters on text: value.length == 10;
 
 valuetype UsStateCode oftype text {
-	constraints: [
+	constraints:
+	[
 		UsStateCodeAllowlist,
 	];
 }
 
-constraint UsStateCodeAllowlist on text:
-	value in [
-		"AL", "AK", "AZ", "AR", "AS", "CA", "CO", "CT", "DE", "DC",
-		"FL", "GA", "GU", "HI", "ID", "IL", "IN", "IA", "KS", "KY",
-		"LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE",
-		"NV", "NH", "NJ", "NM", "NY", "NC", "ND", "MP", "OH", "OK",
-		"OR", "PA", "PR", "RI", "SC", "SD", "TN", "TX", "TT", "UT",
-		"VT", "VA", "VI", "WA", "WV", "WI", "WY",
-	];
+constraint UsStateCodeAllowlist on text: value in [
+	"AL",
+	"AK",
+	"AZ",
+	"AR",
+	"AS",
+	"CA",
+	"CO",
+	"CT",
+	"DE",
+	"DC",
+	"FL",
+	"GA",
+	"GU",
+	"HI",
+	"ID",
+	"IL",
+	"IN",
+	"IA",
+	"KS",
+	"KY",
+	"LA",
+	"ME",
+	"MD",
+	"MA",
+	"MI",
+	"MN",
+	"MS",
+	"MO",
+	"MT",
+	"NE",
+	"NV",
+	"NH",
+	"NJ",
+	"NM",
+	"NY",
+	"NC",
+	"ND",
+	"MP",
+	"OH",
+	"OK",
+	"OR",
+	"PA",
+	"PR",
+	"RI",
+	"SC",
+	"SD",
+	"TN",
+	"TX",
+	"TT",
+	"UT",
+	"VT",
+	"VA",
+	"VI",
+	"WA",
+	"WV",
+	"WI",
+	"WY",
+];

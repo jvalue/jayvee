@@ -19,7 +19,8 @@ pipeline CarsPipeline {
 	// 3. Syntax of a pipe
 	// connecting the block CarsExtractor
 	// with the block CarsTextFileInterpreter.
-	CarsExtractor -> CarsTextFileInterpreter;
+	CarsExtractor
+		-> CarsTextFileInterpreter;
 
 	// 4. The output of the preceding block is hereby used 
 	// as input for the succeeding block.
@@ -27,9 +28,9 @@ pipeline CarsPipeline {
 	// 5. Pipes can be further chained, 
 	// leading to an overview of the pipeline.
 	CarsTextFileInterpreter
-		-> CarsCSVInterpreter 
+		-> CarsCSVInterpreter
 		-> NameHeaderWriter
-	   	-> CarsTableInterpreter
+		-> CarsTableInterpreter
 		-> CarsLoader;
 
 
@@ -65,7 +66,9 @@ pipeline CarsPipeline {
 
 		// 13. For each cell we selected with the "at" property above,
 		// we can specify what value shall be written into the cell.
-		write: ["name"];
+		write: [
+			"name"
+		];
 	}
 
 	// 14. As a next step, we interpret the sheet as a table by adding structure.

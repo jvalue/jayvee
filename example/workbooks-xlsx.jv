@@ -21,9 +21,7 @@ pipeline LightTrappingSiliconSolarCellsPipeline {
 
 	// 3. The incoming file is interpreted as a XLSX file and transformed into a Workbook
 	// Workbooks contain at least 1 Sheet. Every sheet has a unique name. 
-	block LightTrappingSiliconSolarCellsTextXLSXInterpreter oftype XLSXInterpreter {
-
-	}
+	block LightTrappingSiliconSolarCellsTextXLSXInterpreter oftype XLSXInterpreter { }
 
 	// 4.1 Here, we pick one sheet with the name 'RefractiveIndexSi GaAs' from the Workbook to use within our pipeline. 
 	// The output type from SheetPicker is Sheet, which was already introduced in the cars example
@@ -32,8 +30,16 @@ pipeline LightTrappingSiliconSolarCellsPipeline {
 	}
 
 	block NameHeaderWriter oftype CellWriter {
-		at: range F1:L1;
-		write: ["F","G","nm","wl","n2", "k2", "alpha (cm-1)2"];
+		at: range F1: L1;
+		write: [
+			"F",
+			"G",
+			"nm",
+			"wl",
+			"n2",
+			"k2",
+			"alpha (cm-1)2"
+		];
 	}
 
 	block LightTrappingSiliconSolarCellsTableInterpreter oftype TableInterpreter {

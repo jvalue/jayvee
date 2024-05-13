@@ -18,44 +18,44 @@ pipeline GtfsPipeline {
 		-> AgencyInterpreter
 		-> AgencyLoader;
 
-	GTFSSampleFeedExtractor	
+	GTFSSampleFeedExtractor
 		-> CalendarDatesInterpreter
 		-> CalendarDatesLoader;
 
-	GTFSSampleFeedExtractor	
+	GTFSSampleFeedExtractor
 		-> CalendarInterpreter
 		-> CalendarLoader;
 
-	GTFSSampleFeedExtractor	
+	GTFSSampleFeedExtractor
 		-> FareAttributesInterpreter
 		-> FareAttributesLoader;
 
-	GTFSSampleFeedExtractor	
+	GTFSSampleFeedExtractor
 		-> FareRulesInterpreter
 		-> FareRulesLoader;
 
-	GTFSSampleFeedExtractor	
+	GTFSSampleFeedExtractor
 		-> FrequenciesInterpreter
 		-> FrequenciesLoader;
 
-	GTFSSampleFeedExtractor			
+	GTFSSampleFeedExtractor
 		-> RoutesInterpreter
 		-> RoutesLoader;
 
-	GTFSSampleFeedExtractor			
+	GTFSSampleFeedExtractor
 		-> ShapesInterpreter
 		-> ShapesLoader;
 
-	GTFSSampleFeedExtractor	
+	GTFSSampleFeedExtractor
 		-> StopTimesInterpreter
 		-> StopTimesLoader;
 
 	GTFSSampleFeedExtractor
-		-> StopsInterpreter 
+		-> StopsInterpreter
 		-> StopsLoader;
 
-	GTFSSampleFeedExtractor	
-		-> TripsInterpreter 
+	GTFSSampleFeedExtractor
+		-> TripsInterpreter
 		-> TripsLoader;
 
 	// 3. As a first step, we download the zip file and interpret it.
@@ -78,15 +78,48 @@ pipeline GtfsPipeline {
 	block TripsInterpreter oftype GTFSTripsInterpreter { }
 
 	// 5. Finally, write the interpreted tables into a SQLite database
-	block AgencyLoader oftype SQLiteLoader { table: "agency"; file: "./gtfs.sqlite"; }
-	block CalendarDatesLoader oftype SQLiteLoader { table: "calendar_dates"; file: "./gtfs.sqlite"; }
-	block CalendarLoader oftype SQLiteLoader { table: "calendar"; file: "./gtfs.sqlite"; }
-	block FareAttributesLoader oftype SQLiteLoader { table: "fare_attributes"; file: "./gtfs.sqlite"; }
-	block FareRulesLoader oftype SQLiteLoader { table: "fare_rules"; file: "./gtfs.sqlite"; }
-	block FrequenciesLoader oftype SQLiteLoader { table: "frequencies"; file: "./gtfs.sqlite"; }
-	block RoutesLoader oftype SQLiteLoader { table: "routes"; file: "./gtfs.sqlite"; }
-	block ShapesLoader oftype SQLiteLoader { table: "shapes"; file: "./gtfs.sqlite"; }
-	block StopTimesLoader oftype SQLiteLoader { table: "stop_times"; file: "./gtfs.sqlite"; }
-	block StopsLoader oftype SQLiteLoader { table: "stops"; file: "./gtfs.sqlite"; }
-	block TripsLoader oftype SQLiteLoader { table: "trips"; file: "./gtfs.sqlite"; }
+	block AgencyLoader oftype SQLiteLoader {
+		table: "agency";
+		file: "./gtfs.sqlite";
+	}
+	block CalendarDatesLoader oftype SQLiteLoader {
+		table: "calendar_dates";
+		file: "./gtfs.sqlite";
+	}
+	block CalendarLoader oftype SQLiteLoader {
+		table: "calendar";
+		file: "./gtfs.sqlite";
+	}
+	block FareAttributesLoader oftype SQLiteLoader {
+		table: "fare_attributes";
+		file: "./gtfs.sqlite";
+	}
+	block FareRulesLoader oftype SQLiteLoader {
+		table: "fare_rules";
+		file: "./gtfs.sqlite";
+	}
+	block FrequenciesLoader oftype SQLiteLoader {
+		table: "frequencies";
+		file: "./gtfs.sqlite";
+	}
+	block RoutesLoader oftype SQLiteLoader {
+		table: "routes";
+		file: "./gtfs.sqlite";
+	}
+	block ShapesLoader oftype SQLiteLoader {
+		table: "shapes";
+		file: "./gtfs.sqlite";
+	}
+	block StopTimesLoader oftype SQLiteLoader {
+		table: "stop_times";
+		file: "./gtfs.sqlite";
+	}
+	block StopsLoader oftype SQLiteLoader {
+		table: "stops";
+		file: "./gtfs.sqlite";
+	}
+	block TripsLoader oftype SQLiteLoader {
+		table: "trips";
+		file: "./gtfs.sqlite";
+	}
 }
