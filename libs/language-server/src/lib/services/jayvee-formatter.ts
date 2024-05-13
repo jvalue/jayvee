@@ -65,22 +65,19 @@ export class JayveeFormatter extends AbstractFormatter {
     const openingBraces = formatter.keywords(start);
     const closingBraces = formatter.keyword(end);
     const interior = formatter.interior(openingBraces, closingBraces);
-    if (interior.nodes.length > 0) {
-      interior.prepend(Formatting.indent({ allowMore: true }));
-      openingBraces
-        .prepend(Formatting.noIndent())
-        .prepend(Formatting.oneSpace());
-      closingBraces
-        .prepend(Formatting.noIndent())
-        .prepend(Formatting.newLine());
-    } else {
+    if (interior.nodes.length === 0) {
       openingBraces
         .prepend(Formatting.noIndent())
         .prepend(Formatting.oneSpace());
       closingBraces
         .prepend(Formatting.noIndent())
         .prepend(Formatting.oneSpace());
+      return;
     }
+
+    interior.prepend(Formatting.indent({ allowMore: true }));
+    openingBraces.prepend(Formatting.noIndent()).prepend(Formatting.oneSpace());
+    closingBraces.prepend(Formatting.noIndent()).prepend(Formatting.newLine());
   }
 
   override formatDocument(
