@@ -82,6 +82,7 @@ export class JayveeFormatter extends AbstractFormatter {
   }
 
   /**
+   * Overwrite to work around this issue:
    * https://github.com/eclipse-langium/langium/issues/1351
    */
   protected override createHiddenTextEdits(
@@ -92,10 +93,10 @@ export class JayveeFormatter extends AbstractFormatter {
   ): TextEdit[] {
     const edits: TextEdit[] = [];
 
-    // Don't format the hidden node if it is on the same line as its previous node
+    // We only format hidden nodes that are on their own line.
     const startLine = hidden.range.start.line;
     if (previous && previous.range.end.line === startLine) {
-      return [];
+      return edits;
     }
 
     const startRange: Range = {
@@ -122,8 +123,11 @@ export class JayveeFormatter extends AbstractFormatter {
       expectedStartChar,
     );
 
+    // Compare exact texts instead of char numbers
+    // to make sure the indent config (tabs vs. spaces) is respected.
     if (newStartText === hiddenStartText) {
-      return [];
+      // Don't add unnecessary edits if there is nothing to do.
+      return edits;
     }
 
     const lines = hidden.text.split('\n');
@@ -131,6 +135,7 @@ export class JayveeFormatter extends AbstractFormatter {
     for (let i = 0; i < lines.length; i++) {
       const currentLine = startLine + i;
 
+      // Replace the full start text, so tabs and spaces work in any case.
       edits.push({
         newText: newStartText,
         range: {
@@ -147,45 +152,5 @@ export class JayveeFormatter extends AbstractFormatter {
     }
 
     return edits;
-  }
-
-  /**
-   * Creates edits to replace leading tabs and spaces according to config.
-   */
-  protected createIndentHiddenTextEdits(
-    hidden: CstNode,
-    context: FormattingContext,
-  ): TextEdit[] {
-    const startLine = hidden.range.start.line;
-    const startRange: Range = {
-      start: {
-        character: 0,
-        line: startLine,
-      },
-      end: hidden.range.start,
-    };
-    const hiddenStartText = context.document.getText(startRange);
-
-    if (context.options.insertSpaces) {
-      if (!hiddenStartText.includes('\t')) {
-        return [];
-      }
-      return [
-        {
-          newText: hiddenStartText.replace('\t', ' '),
-          range: startRange,
-        },
-      ];
-    }
-
-    if (!hiddenStartText.includes(' ')) {
-      return [];
-    }
-    return [
-      {
-        newText: hiddenStartText.replace(' ', '\t'),
-        range: startRange,
-      },
-    ];
   }
 }
