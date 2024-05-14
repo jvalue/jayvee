@@ -17,6 +17,10 @@ export enum ExitCode {
   FAILURE = 1,
 }
 
+/**
+ * Extracts a document from a file that contains a model.
+ * Does load the directory of this document as the working directory.
+ */
 export async function extractDocumentFromFile(
   fileName: string,
   services: LangiumServices,
@@ -37,16 +41,30 @@ export async function extractDocumentFromFile(
     return Promise.reject(ExitCode.FAILURE);
   }
 
-  const document =
-    await services.shared.workspace.LangiumDocuments.getOrCreateDocument(
-      URI.file(path.resolve(fileName)),
-    );
+  const workingDirPath = path.dirname(fileName);
 
-  await initializeWorkspace(services);
+  await initializeWorkspace(services, [
+    {
+      name: 'projectRoot',
+      uri: path.resolve(workingDirPath),
+    },
+  ]);
+
+  const document = services.shared.workspace.LangiumDocuments.getDocument(
+    URI.file(path.resolve(fileName)),
+  );
+  if (document === undefined) {
+    logger.logErr(`Did not load file ${fileName} correctly.`);
+    return Promise.reject(ExitCode.FAILURE);
+  }
 
   return await validateDocument(document, services, logger);
 }
 
+/**
+ * Extracts a document from a string that contains a model.
+ * Does not load an additional working directory.
+ */
 export async function extractDocumentFromString(
   modelString: string,
   services: LangiumServices,
