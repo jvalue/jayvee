@@ -25,10 +25,12 @@ import {
 import { ValueTypeProvider } from './ast/wrappers/value-type/primitive/primitive-value-type-provider';
 import { WrapperFactoryProvider } from './ast/wrappers/wrapper-factory-provider';
 import { JayveeWorkspaceManager } from './builtin-library/jayvee-workspace-manager';
-import { JayveeCompletionProvider } from './completion/jayvee-completion-provider';
-import { JayveeHoverProvider } from './hover/jayvee-hover-provider';
 import { JayveeValueConverter } from './jayvee-value-converter';
-import { JayveeFormatter } from './services';
+import {
+  JayveeCompletionProvider,
+  JayveeFormatter,
+  JayveeHoverProvider,
+} from './lsp';
 import { RuntimeParameterProvider } from './services/runtime-parameter-provider';
 import { JayveeValidationRegistry } from './validation/validation-registry';
 
