@@ -1,0 +1,12 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+publish iotype PublishedIoType;
+publish builtin constrainttype PublishedBuiltinConstraintType {};
+publish constraint PublishedConstraint on decimal: value >= 0; 
+publish valuetype PublishedValueType oftype decimal {}; 
+publish builtin blocktype PublishedBuiltinBlockType {};
+publish composite blocktype PublishedCompositeBlockType {}; 
+publish block PublishedBlock oftype PublishedCompositeBlockType {}; 
+publish transform PublishedTransform {}; 

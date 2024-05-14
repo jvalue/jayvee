@@ -1,0 +1,6 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+publish constraint PublishedConstraint1 on decimal: value >= 0; 
+publish constraint PublishedConstraint2 on decimal: value >= 2; 
