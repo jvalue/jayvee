@@ -9,6 +9,7 @@ import {
   DefaultOperatorEvaluatorRegistry,
   DefaultOperatorTypeComputerRegistry,
   EvaluationContext,
+  JayveeImportResolver,
   type JayveeServices,
   type RuntimeParameterLiteral,
   RuntimeParameterProvider,
@@ -83,6 +84,10 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
         wrapperFactories,
       );
 
+    const importResolver = new JayveeImportResolver(
+      services.shared.workspace.LangiumDocuments,
+    );
+
     validateRuntimeParameterLiteral(runtimeParameter, {
       validationContext: new ValidationContext(
         validationAcceptorMock,
@@ -95,6 +100,7 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
       ),
       valueTypeProvider: valueTypeProvider,
       wrapperFactories: wrapperFactories,
+      importResolver: importResolver,
     });
   }
 
@@ -105,7 +111,7 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
     await loadTestExtensions(services, [
       path.resolve(
         __dirname,
-        '../../test/assets/runtime-parameter-literal/test-extension/TestBlockTypes.jv',
+        '../../test/assets/runtime-parameter-literal/test-extension',
       ),
     ]);
     locator = services.workspace.AstNodeLocator;
@@ -139,7 +145,7 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
 
     await parseAndValidateRuntimeParameterLiteral(
       text,
-      new Map([['INTEGER_ENV', 'Value 1']]),
+      new Map([['INTEGER_ENV', 'Value 1']]), // wrong parameter type
     );
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
@@ -155,7 +161,7 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
       'runtime-parameter-literal/valid-text-runtime-property.jv',
     );
 
-    await parseAndValidateRuntimeParameterLiteral(text);
+    await parseAndValidateRuntimeParameterLiteral(text); // don't pass parameter
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(

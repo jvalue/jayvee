@@ -1,6 +1,10 @@
 import { AstUtils, type LangiumDocuments, type URI, UriUtils } from 'langium';
 
-import { type ImportDefinition, type JayveeModel, isJayveeModel } from '../ast';
+import {
+  type ImportDefinition,
+  type JayveeModel,
+  isJayveeModel,
+} from '../ast/generated/ast';
 
 export class JayveeImportResolver {
   constructor(protected documents: LangiumDocuments) {}

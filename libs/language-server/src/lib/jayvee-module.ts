@@ -28,6 +28,8 @@ import { JayveeWorkspaceManager } from './builtin-library/jayvee-workspace-manag
 import { JayveeCompletionProvider } from './completion/jayvee-completion-provider';
 import { JayveeHoverProvider } from './hover/jayvee-hover-provider';
 import { JayveeValueConverter } from './jayvee-value-converter';
+import { JayveeScopeComputation } from './lsp/jayvee-scope-computation';
+import { JayveeScopeProvider } from './lsp/jayvee-scope-provider';
 import { JayveeImportResolver } from './services/import-resolver';
 import { RuntimeParameterProvider } from './services/runtime-parameter-provider';
 import { JayveeValidationRegistry } from './validation/validation-registry';
@@ -78,6 +80,10 @@ export const JayveeModule: Module<
       new JayveeCompletionProvider(services),
     HoverProvider: (services: JayveeServices) =>
       new JayveeHoverProvider(services),
+  },
+  references: {
+    ScopeProvider: (services) => new JayveeScopeProvider(services),
+    ScopeComputation: (service) => new JayveeScopeComputation(service),
   },
   RuntimeParameterProvider: () => new RuntimeParameterProvider(),
   operators: {
