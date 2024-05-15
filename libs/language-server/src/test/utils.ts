@@ -77,6 +77,7 @@ export function createJayveeValidationProps(
   const wrapperFactories = services.WrapperFactories;
   const operatorTypeComputerRegistry = services.operators.TypeComputerRegistry;
   const runtimeParameterProvider = services.RuntimeParameterProvider;
+  const importResolver = services.ImportResolver;
 
   return {
     validationContext: new ValidationContext(
@@ -90,5 +91,6 @@ export function createJayveeValidationProps(
     ),
     valueTypeProvider: valueTypeProvider,
     wrapperFactories: wrapperFactories,
+    importResolver: importResolver,
   };
 }

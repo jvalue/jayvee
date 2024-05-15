@@ -15,7 +15,8 @@ import './io-type'
 
 entry JayveeModel:
   (
-    pipelines+=PipelineDefinition
+    imports+=ImportDefinition
+    | pipelines+=PipelineDefinition
     | valueTypes+=(CustomValuetypeDefinition | BuiltinValuetypeDefinition)
     | constraints+=ConstraintDefinition
     | transforms+=TransformDefinition
@@ -25,3 +26,5 @@ entry JayveeModel:
   )*;
 
 
+ImportDefinition:
+  'use' '*' 'from' path=STRING ';';

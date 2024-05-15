@@ -20,12 +20,14 @@ import {
 import { type JayveeAstType } from '../ast/generated/ast';
 import type { JayveeServices } from '../jayvee-module';
 import { type RuntimeParameterProvider } from '../services';
+import { type JayveeImportResolver } from '../services/import-resolver';
 
 import { validateBlockDefinition } from './checks/block-definition';
 import { validateBlockTypeDefinition } from './checks/block-type-definition';
 import { validateColumnId } from './checks/column-id';
 import { validateCompositeBlockTypeDefinition } from './checks/composite-block-type-definition';
 import { validateExpressionConstraintDefinition } from './checks/expression-constraint-definition';
+import { validateImportDefinition } from './checks/import-definition';
 import { validateJayveeModel } from './checks/jayvee-model';
 import { validatePipeDefinition } from './checks/pipe-definition';
 import { validatePipelineDefinition } from './checks/pipeline-definition';
@@ -47,6 +49,7 @@ export class JayveeValidationRegistry extends ValidationRegistry {
   private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry;
   private readonly wrapperFactories: WrapperFactoryProvider;
   private readonly valueTypeProvider: ValueTypeProvider;
+  private readonly importResolver: JayveeImportResolver;
 
   constructor(services: JayveeServices) {
     super(services);
@@ -56,8 +59,10 @@ export class JayveeValidationRegistry extends ValidationRegistry {
     this.operatorEvaluatorRegistry = services.operators.EvaluatorRegistry;
     this.wrapperFactories = services.WrapperFactories;
     this.valueTypeProvider = services.ValueTypeProvider;
+    this.importResolver = services.ImportResolver;
 
     this.registerJayveeValidationChecks({
+      ImportDefinition: validateImportDefinition,
       BuiltinBlockTypeDefinition: validateBlockTypeDefinition,
       BlockDefinition: validateBlockDefinition,
       CompositeBlockTypeDefinition: validateCompositeBlockTypeDefinition,
@@ -85,6 +90,7 @@ export class JayveeValidationRegistry extends ValidationRegistry {
         this.operatorEvaluatorRegistry,
         this.wrapperFactories,
         this.valueTypeProvider,
+        this.importResolver,
       );
 
       this.addEntry(type, {
@@ -101,6 +107,7 @@ export class JayveeValidationRegistry extends ValidationRegistry {
     operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
     wrapperFactories: WrapperFactoryProvider,
     valueTypeProvider: ValueTypeProvider,
+    importResolver: JayveeImportResolver,
   ): ValidationCheck<T> {
     return (node: T, accept: ValidationAcceptor): MaybePromise<void> => {
       const validationContext = new ValidationContext(
@@ -117,6 +124,7 @@ export class JayveeValidationRegistry extends ValidationRegistry {
         evaluationContext: evaluationContext,
         wrapperFactories: wrapperFactories,
         valueTypeProvider: valueTypeProvider,
+        importResolver: importResolver,
       });
     };
   }
@@ -133,6 +141,7 @@ export interface JayveeValidationProps {
   evaluationContext: EvaluationContext;
   wrapperFactories: WrapperFactoryProvider;
   valueTypeProvider: ValueTypeProvider;
+  importResolver: JayveeImportResolver;
 }
 export type JayveeValidationCheck<T extends AstNode = AstNode> = (
   node: T,

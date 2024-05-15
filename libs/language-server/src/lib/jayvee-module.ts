@@ -28,6 +28,7 @@ import { JayveeWorkspaceManager } from './builtin-library/jayvee-workspace-manag
 import { JayveeCompletionProvider } from './completion/jayvee-completion-provider';
 import { JayveeHoverProvider } from './hover/jayvee-hover-provider';
 import { JayveeValueConverter } from './jayvee-value-converter';
+import { JayveeImportResolver } from './services/import-resolver';
 import { RuntimeParameterProvider } from './services/runtime-parameter-provider';
 import { JayveeValidationRegistry } from './validation/validation-registry';
 
@@ -46,6 +47,7 @@ export interface JayveeAddedServices {
   validation: {
     ValidationRegistry: JayveeValidationRegistry;
   };
+  ImportResolver: JayveeImportResolver;
 }
 
 /**
@@ -92,6 +94,8 @@ export const JayveeModule: Module<
       services.operators.EvaluatorRegistry,
       services.ValueTypeProvider,
     ),
+  ImportResolver: (services) =>
+    new JayveeImportResolver(services.shared.workspace.LangiumDocuments),
 };
 
 export const JayveeSharedModule: Module<
