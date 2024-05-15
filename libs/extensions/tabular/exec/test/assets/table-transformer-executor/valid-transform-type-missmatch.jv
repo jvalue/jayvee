@@ -16,7 +16,7 @@ pipeline TestPipeline {
   block TestBlock oftype TableTransformer {
     inputColumns: ['name'];
     outputColumn: 'index2';
-    use: Double;
+    uses: Double;
   }
 
   block TestLoader oftype TestTableLoader {

@@ -17,7 +17,7 @@
 * block CelsiusToFahrenheitTransformer oftype TableTransformer {
 *   inputColumns: ['temperature'];
 *   outputColumn: 'temperature';
-*   use: CelsiusToFahrenheit;
+*   uses: CelsiusToFahrenheit;
 * }
 * 
 * @example Given a column "temperatureCelsius" with temperature values in Celsius, it adds a new column "temperatureFahrenheit" with computed values in Fahrenheit by using the `CelsiusToFahrenheit` transform. The transform itself is defined elsewhere in the model.
@@ -32,7 +32,7 @@
 * block CelsiusToFahrenheitTransformer oftype TableTransformer {
 *   inputColumns: ['temperatureCelsius'];
 *   outputColumn: 'temperatureFahrenheit';
-*   use: CelsiusToFahrenheit;
+*   uses: CelsiusToFahrenheit;
 * }
 */
 builtin blocktype TableTransformer {
@@ -52,5 +52,5 @@ builtin blocktype TableTransformer {
   /**
   * Reference to the transform that is applied to the column.
 	*/
-  property use oftype Transform; 
+  property uses oftype Transform; 
 }

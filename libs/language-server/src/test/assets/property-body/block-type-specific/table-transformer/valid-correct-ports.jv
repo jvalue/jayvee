@@ -13,7 +13,7 @@ pipeline Pipeline {
   block Test oftype TableTransformer {
     inputColumns: ['input1'];
     outputColumn: 'output';
-    use: TestTransform;
+    uses: TestTransform;
   }
 
   block TestExtractor oftype TestTableExtractor {

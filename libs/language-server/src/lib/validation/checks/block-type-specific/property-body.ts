@@ -123,7 +123,7 @@ function checkInputColumnsMatchTransformationPorts(
   propertyBody: PropertyBody,
   props: JayveeValidationProps,
 ): void {
-  const useProperty = propertyBody.properties.find((x) => x.name === 'use');
+  const useProperty = propertyBody.properties.find((x) => x.name === 'uses');
   const inputColumnsProperty = propertyBody.properties.find(
     (x) => x.name === 'inputColumns',
   );

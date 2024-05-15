@@ -71,11 +71,11 @@ pipeline ElectricVehiclesPipeline {
 	// 5. This block describes the application of a transform function
 	// taking a column as input and adding another computed column.
 	// The applied transform function is defined below and referenced 
-	// by the "use" property.
+	// by the "uses" property.
 	block ElectricRangeTransformer oftype TableTransformer {
 		inputColumns: ["Electric Range"];
 		outputColumn: "Electric Range (km)";
-		use: MilesToKilometers;
+		uses: MilesToKilometers;
 	}
 
 	// 6. Here, we define a transform function, taking parameters
