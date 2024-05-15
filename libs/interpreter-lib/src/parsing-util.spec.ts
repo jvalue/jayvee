@@ -8,47 +8,25 @@ import { CachedLogger, DiagnosticSeverity } from '@jvalue/jayvee-execution';
 import {
   type JayveeServices,
   createJayveeServices,
+  initializeWorkspace,
 } from '@jvalue/jayvee-language-server';
 import {
-  type ParseHelperOptions,
   expectNoParserAndLexerErrors,
-  loadTestExtensions,
-  parseHelper,
-  readJvTestAssetHelper,
+  parseTestFileInWorkingDir,
 } from '@jvalue/jayvee-language-server/test';
-import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import { extractDocumentFromFile, validateDocument } from './parsing-util';
 
 describe('Validation of parsing-util', () => {
-  let parse: (
-    input: string,
-    options?: ParseHelperOptions,
-  ) => Promise<LangiumDocument<AstNode>>;
-
+  const WORKING_DIR = path.resolve(__dirname, '../test/assets/parsing-util/');
   let services: JayveeServices;
 
   const logger = new CachedLogger(true, undefined, false);
 
-  const readJvTestAsset = readJvTestAssetHelper(
-    __dirname,
-    '../test/assets/parsing-util/',
-  );
-
-  beforeAll(async () => {
+  beforeAll(() => {
     // Create language services
     services = createJayveeServices(NodeFileSystem).Jayvee;
-
-    await loadTestExtensions(services, [
-      path.resolve(
-        __dirname,
-        '../test/assets/parsing-util/test-extension/TestBlockTypes.jv',
-      ),
-    ]);
-
-    // Parse function for Jayvee (without validation)
-    parse = parseHelper(services);
   });
 
   afterEach(() => {
@@ -56,17 +34,21 @@ describe('Validation of parsing-util', () => {
   });
 
   describe('Function of validateDocument', () => {
-    async function parseAndValidateDocument(input: string) {
-      const document = await parse(input);
+    async function parseAndValidateDocument(relativeTestFilePath: string) {
+      const document = await parseTestFileInWorkingDir(
+        WORKING_DIR,
+        relativeTestFilePath,
+        services,
+      );
       expectNoParserAndLexerErrors(document);
 
       return validateDocument(document, services, logger);
     }
 
     it('should diagnose no error on valid document', async () => {
-      const text = readJvTestAsset('validateDocument/valid-document.jv');
+      const relativeTestFilePath = 'validateDocument/valid-document.jv';
 
-      await parseAndValidateDocument(text);
+      await parseAndValidateDocument(relativeTestFilePath);
 
       expect(logger.getLogs(DiagnosticSeverity.ERROR)).toHaveLength(0);
       expect(logger.getLogs(DiagnosticSeverity.INFO)).toHaveLength(0);
@@ -76,12 +58,11 @@ describe('Validation of parsing-util', () => {
     });
 
     it('should diagnose error on wrong loader type', async () => {
-      const text = readJvTestAsset(
-        'validateDocument/invalid-wrong-loader-type.jv',
-      );
+      const relativeTestFilePath =
+        'validateDocument/invalid-wrong-loader-type.jv';
 
       try {
-        await parseAndValidateDocument(text);
+        await parseAndValidateDocument(relativeTestFilePath);
       } catch (e) {
         expect(logger.getLogs(DiagnosticSeverity.INFO)).toHaveLength(0);
         expect(logger.getLogs(DiagnosticSeverity.ERROR)).toHaveLength(2 * 5); // 2 calls that get formated to 5 lines each
@@ -92,12 +73,10 @@ describe('Validation of parsing-util', () => {
     });
 
     it('should diagnose no error on nonErr diagnostics', async () => {
-      const text = readJvTestAsset(
-        'validateDocument/valid-simplify-warning.jv',
-      );
+      const relativeTestFilePath = 'validateDocument/valid-simplify-warning.jv';
 
       try {
-        await parseAndValidateDocument(text);
+        await parseAndValidateDocument(relativeTestFilePath);
       } catch (e) {
         expect(logger.getLogs(DiagnosticSeverity.INFO)).toHaveLength(0);
         expect(logger.getLogs(DiagnosticSeverity.ERROR)).toHaveLength(1);
@@ -109,6 +88,16 @@ describe('Validation of parsing-util', () => {
   });
 
   describe('Function of extractDocumentFromFile', () => {
+    beforeAll(async () => {
+      // register test extension dir as not below test files
+      await initializeWorkspace(services, [
+        {
+          name: 'testExtension',
+          uri: WORKING_DIR,
+        },
+      ]);
+    });
+
     it('should diagnose no error on valid model file', async () => {
       await extractDocumentFromFile(
         path.resolve(

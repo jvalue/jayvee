@@ -2,14 +2,14 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line unicorn/prefer-node-protocol
-import { strict as assert } from 'assert';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
 import {
   type AstNode,
+  type BuildOptions,
   type LangiumDocument,
+  URI,
   type ValidationAcceptor,
 } from 'langium';
 import { type WorkspaceFolder } from 'vscode-languageserver-protocol';
@@ -93,4 +93,36 @@ export function createJayveeValidationProps(
     wrapperFactories: wrapperFactories,
     importResolver: importResolver,
   };
+}
+
+/**
+ * Parses the test file and returns it.
+ * Uses the workingDir to initialize the workspace
+ * This ensures all files in the workingDir can be imported by the test file.
+ */
+export async function parseTestFileInWorkingDir(
+  workingDir: string,
+  relativeTestFilePath: string,
+  services: JayveeServices,
+  options?: BuildOptions,
+): Promise<LangiumDocument<AstNode>> {
+  const testFilePath = path.resolve(workingDir, relativeTestFilePath);
+  const testFileUri = URI.parse(testFilePath);
+  const documentBuilder = services.shared.workspace.DocumentBuilder;
+  await initializeWorkspace(services, [
+    {
+      name: 'projectDir',
+      uri: workingDir,
+    },
+  ]);
+  const testDocument =
+    services.shared.workspace.LangiumDocuments.getDocument(testFileUri);
+
+  assert(
+    testDocument !== undefined,
+    'Could not load test document. Error in test setup!',
+  );
+
+  await documentBuilder.build([testDocument], options);
+  return testDocument;
 }

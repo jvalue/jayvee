@@ -4,64 +4,36 @@
 
 import path from 'node:path';
 
-import { type AstNode, type LangiumDocument, URI } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
   type JayveeServices,
   createJayveeServices,
-  initializeWorkspace,
   isJayveeModel,
 } from '../../../lib';
 import {
-  type ParseHelperOptions,
   createJayveeValidationProps,
   expectNoParserAndLexerErrors,
+  parseTestFileInWorkingDir,
   validationAcceptorMockImpl,
 } from '../../../test';
 
 import { validateImportDefinition } from './import-definition';
 
 describe('Validation of ImportDefinition', () => {
+  const WORKING_DIR = path.resolve(__dirname, '../../../test/assets/');
   let services: JayveeServices;
   const validationAcceptorMock = vi.fn(validationAcceptorMockImpl);
-
-  async function parse(
-    relativeTestFilePath: string,
-    options?: ParseHelperOptions,
-  ): Promise<LangiumDocument<AstNode>> {
-    const testFilePath = path.resolve(
-      __dirname,
-      '../../../test/assets/',
-      relativeTestFilePath,
-    );
-    const testFileUri = URI.parse(testFilePath);
-    const documentBuilder = services.shared.workspace.DocumentBuilder;
-    await initializeWorkspace(services, [
-      {
-        name: 'projectDir',
-        uri: workingDir,
-      },
-    ]);
-    const testDocument =
-      services.shared.workspace.LangiumDocuments.getDocument(testFileUri);
-
-    assert(
-      testDocument !== undefined,
-      'Could not load test document. Error in test setup!',
-    );
-
-    await documentBuilder.build([testDocument], options);
-    return testDocument;
-  }
-
-  const workingDir = path.resolve(__dirname, '../../../test/assets/');
 
   async function parseAndValidateImportDefinition(
     relativeTestFilePath: string,
   ) {
-    const document = await parse(relativeTestFilePath);
+    const document = await parseTestFileInWorkingDir(
+      WORKING_DIR,
+      relativeTestFilePath,
+      services,
+    );
     expectNoParserAndLexerErrors(document);
 
     const parsedModel = document.parseResult.value;
