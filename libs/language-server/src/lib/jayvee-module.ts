@@ -25,11 +25,14 @@ import {
 import { ValueTypeProvider } from './ast/wrappers/value-type/primitive/primitive-value-type-provider';
 import { WrapperFactoryProvider } from './ast/wrappers/wrapper-factory-provider';
 import { JayveeWorkspaceManager } from './builtin-library/jayvee-workspace-manager';
-import { JayveeCompletionProvider } from './completion/jayvee-completion-provider';
-import { JayveeHoverProvider } from './hover/jayvee-hover-provider';
 import { JayveeValueConverter } from './jayvee-value-converter';
-import { JayveeScopeComputation } from './lsp/jayvee-scope-computation';
-import { JayveeScopeProvider } from './lsp/jayvee-scope-provider';
+import {
+  JayveeCompletionProvider,
+  JayveeFormatter,
+  JayveeHoverProvider,
+  JayveeScopeComputation,
+  JayveeScopeProvider,
+} from './lsp';
 import { JayveeImportResolver } from './services/import-resolver';
 import { RuntimeParameterProvider } from './services/runtime-parameter-provider';
 import { JayveeValidationRegistry } from './validation/validation-registry';
@@ -80,6 +83,7 @@ export const JayveeModule: Module<
       new JayveeCompletionProvider(services),
     HoverProvider: (services: JayveeServices) =>
       new JayveeHoverProvider(services),
+    Formatter: () => new JayveeFormatter(),
   },
   references: {
     ScopeProvider: (services) => new JayveeScopeProvider(services),
