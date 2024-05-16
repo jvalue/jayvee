@@ -76,22 +76,22 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
     for (const importDefinition of jayveeModel.imports) {
       const uri = this.importResover.resolveImportUri(importDefinition);
       if (uri === undefined) {
-        break;
+        continue;
       }
 
       if (importedUris.has(uri.toString())) {
-        break; // end recursion
+        continue;
       }
 
       importedUris.add(uri.toString());
       const importedDocument = this.langiumDocuments.getDocument(uri);
       if (importedDocument === undefined) {
-        break;
+        continue;
       }
 
       const rootNode = importedDocument.parseResult.value;
       if (!isJayveeModel(rootNode)) {
-        break;
+        continue;
       }
       this.gatherImports(rootNode, importedUris);
     }
