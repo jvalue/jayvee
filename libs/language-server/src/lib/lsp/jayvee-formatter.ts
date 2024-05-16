@@ -41,9 +41,8 @@ export class JayveeFormatter extends AbstractFormatter {
     formatter.keywords('on').surround(Formatting.oneSpace());
 
     formatter.keywords('iotype').append(Formatting.oneSpace());
-    formatter
-      .keywords('valuetype', 'constraints')
-      .append(Formatting.oneSpace());
+    formatter.keywords('valuetype').append(Formatting.oneSpace());
+    formatter.keywords('constraints').append(Formatting.noSpace());
     formatter
       .keywords('<', '>')
       .append(Formatting.noSpace())

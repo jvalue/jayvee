@@ -114,7 +114,7 @@ pipeline ElectricVehiclesPipeline {
 // that this value type builts on. User-defined value types always place additional constraints on existing value types.
 valuetype VehicleIdentificationNumber10 oftype text {
 	// 10. Value types can be further refined by providing constraints.
-	constraints : [
+	constraints: [
 		OnlyCapitalLettersAndDigits,
 		ExactlyTenCharacters,
 	];
@@ -127,7 +127,7 @@ constraint OnlyCapitalLettersAndDigits on text: value matches /^[A-Z0-9]*$/;
 constraint ExactlyTenCharacters on text: value.length == 10;
 
 valuetype UsStateCode oftype text {
-	constraints : [
+	constraints: [
 		UsStateCodeAllowlist,
 	];
 }
