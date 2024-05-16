@@ -9,7 +9,7 @@ import {
   type ExecutionContext,
   NONE,
   type None,
-  Table,
+  type Table,
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import { IOType } from '@jvalue/jayvee-language-server';
@@ -53,15 +53,37 @@ export class SQLiteLoaderExecutor extends AbstractBlockExecutor<
         context.logger.logDebug(
           `Dropping previous table "${table}" if it exists`,
         );
-        await this.runQuery(db, Table.generateDropTableStatement(table));
+        await this.runQuery(db, 'DROP TABLE IF EXISTS ?', [table]);
       }
 
       context.logger.logDebug(`Creating table "${table}"`);
-      await this.runQuery(db, input.generateCreateTableStatement(table));
+      const sqlCreateTableParams = input.generateSqlColumnMap().reduce(
+        ({ parameters, values }, { name, type }) => ({
+          parameters: parameters.concat('? ?'),
+          values: values.concat(`${name} ${type}`),
+        }),
+        { parameters: [] as string[], values: [] as string[] },
+      );
+      await this.runQuery(
+        db,
+        `CREATE TABLE IF NOT EXISTS ? (${sqlCreateTableParams.parameters.join(
+          ',',
+        )})`,
+        [table, ...sqlCreateTableParams.values],
+      );
       context.logger.logDebug(
         `Inserting ${input.getNumberOfRows()} row(s) into table "${table}"`,
       );
-      await this.runQuery(db, input.generateInsertValuesStatement(table));
+      const sqlInsertQueryParams = input.generateSqlInsertValues();
+      const nValues = sqlInsertQueryParams.columnNames.length;
+      const queryParamColumns = `(${new Array(nValues).fill('? ').join(', ')})`;
+      const queryParamValue = new Array(nValues)
+        .fill(queryParamColumns)
+        .join(', ');
+      await this.runQuery(
+        db,
+        `INSERT INTO ? ${queryParamColumns} VALUES ${queryParamValue}`,
+      );
 
       context.logger.logDebug(
         `The data was successfully loaded into the database`,
@@ -82,9 +104,10 @@ export class SQLiteLoaderExecutor extends AbstractBlockExecutor<
   private async runQuery(
     db: sqlite3.Database,
     query: string,
+    params?: unknown[] | Record<string, unknown>,
   ): Promise<sqlite3.RunResult> {
     return new Promise((resolve, reject) => {
-      db.run(query, (result: sqlite3.RunResult, error: Error | null) =>
+      db.run(query, params, (result: sqlite3.RunResult, error: Error | null) =>
         error ? reject(error) : resolve(result),
       );
     });

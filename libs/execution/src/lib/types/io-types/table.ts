@@ -133,10 +133,16 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     return row;
   }
 
+  /**
+   * @deprecated
+   */
   static generateDropTableStatement(tableName: string): string {
     return `DROP TABLE IF EXISTS "${tableName}";`;
   }
 
+  /**
+   * @deprecated
+   */
   generateInsertValuesStatement(tableName: string): string {
     const valueRepresentationVisitor = new SQLValueRepresentationVisitor();
 
@@ -164,6 +170,32 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     )}`;
   }
 
+  generateSqlInsertValues(): { columnNames: string[]; values: string[][] } {
+    const valueRepresentationVisitor = new SQLValueRepresentationVisitor();
+
+    const columnNames = [...this.columns.keys()];
+    const values: string[][] = [];
+    for (let rowIndex = 0; rowIndex < this.numberOfRows; ++rowIndex) {
+      const rowValues: string[] = [];
+      for (const columnName of columnNames) {
+        const column = this.columns.get(columnName);
+        const entry = column?.values[rowIndex];
+        assert(entry !== undefined);
+        const formattedValue = column?.valueType.acceptVisitor(
+          valueRepresentationVisitor,
+        )(entry);
+        assert(formattedValue !== undefined);
+        rowValues.push(formattedValue);
+      }
+      values.push(rowValues);
+    }
+
+    return { columnNames, values };
+  }
+
+  /**
+   * @deprecated
+   */
   generateCreateTableStatement(tableName: string): string {
     const columnTypeVisitor = new SQLColumnTypeVisitor();
 
@@ -177,6 +209,14 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     return `CREATE TABLE IF NOT EXISTS "${tableName}" (${columnStatements.join(
       ',',
     )});`;
+  }
+
+  generateSqlColumnMap(): { name: string; type: string }[] {
+    const columnTypeVisitor = new SQLColumnTypeVisitor();
+    return Array.from(this.columns.entries()).map(([name, column]) => ({
+      name,
+      type: column.valueType.acceptVisitor(columnTypeVisitor),
+    }));
   }
 
   clone(): Table {
