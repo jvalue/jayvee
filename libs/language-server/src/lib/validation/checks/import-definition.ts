@@ -5,10 +5,6 @@
 import { type ImportDefinition } from '../../ast/generated/ast';
 import { type JayveeValidationProps } from '../validation-registry';
 
-/**
- * See https://jvalue.github.io/jayvee/docs/dev/guides/working-with-the-ast/ for why the following ESLint rule is disabled for this file.
- */
-
 export function validateImportDefinition(
   importDefinition: ImportDefinition,
   props: JayveeValidationProps,
