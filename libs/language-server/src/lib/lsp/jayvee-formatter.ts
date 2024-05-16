@@ -11,7 +11,11 @@ import {
 } from 'langium/lsp';
 import { type Range, type TextEdit } from 'vscode-languageserver-protocol';
 
-import { isBlockTypePipeline, isPipeDefinition } from '../ast/generated/ast';
+import {
+  isBlockTypePipeline,
+  isCellRangeLiteral,
+  isPipeDefinition,
+} from '../ast/generated/ast';
 
 export class JayveeFormatter extends AbstractFormatter {
   protected override format(node: AstNode) {
@@ -54,6 +58,10 @@ export class JayveeFormatter extends AbstractFormatter {
     formatter.keywords('pipeline').append(Formatting.oneSpace());
     if (isPipeDefinition(node) || isBlockTypePipeline(node)) {
       formatter.keywords('->').prepend(Formatting.indent());
+    }
+
+    if (isCellRangeLiteral(node)) {
+      formatter.keywords(':').append(Formatting.noSpace({ priority: 1 }));
     }
   }
 

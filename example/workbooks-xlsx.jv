@@ -30,7 +30,7 @@ pipeline LightTrappingSiliconSolarCellsPipeline {
 	}
 
 	block NameHeaderWriter oftype CellWriter {
-		at: range F1: L1;
+		at: range F1:L1;
 		write: [
 			"F",
 			"G",
