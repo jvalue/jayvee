@@ -8,5 +8,6 @@ export * from './docs';
 export * from './services';
 export * from './util';
 export * from './validation';
+export * from './lsp';
 
 export * from './jayvee-module';
