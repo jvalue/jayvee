@@ -5,9 +5,9 @@
 pipeline TestPipeline {
   transform ToBool {
     from integer oftype integer;
-    to bool oftype boolean;
+    to boolean oftype boolean;
 
-    bool: integer != 0;
+    boolean: integer != 0;
   }
 
   block TestExtractor oftype TestTableExtractor {

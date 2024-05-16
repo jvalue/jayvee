@@ -25,8 +25,13 @@ export class AsDecimalOperatorEvaluator extends DefaultUnaryOperatorEvaluator<
   constructor(private readonly valueTypeProvider: ValueTypeProvider) {
     super('asDecimal', STRING_TYPEGUARD);
   }
-  override doEvaluate(operandValue: string): number | undefined {
-    return this.valueTypeProvider.Primitives.Decimal.fromString(operandValue);
+  override doEvaluate(operandValue: string): number {
+    const dec =
+      this.valueTypeProvider.Primitives.Decimal.fromString(operandValue);
+    if (dec === undefined) {
+      throw new Error(`Could not parse "${operandValue}" into a Decimal`);
+    }
+    return dec;
   }
 }
 
@@ -37,8 +42,13 @@ export class AsIntegerOperatorEvaluator extends DefaultUnaryOperatorEvaluator<
   constructor(private readonly valueTypeProvider: ValueTypeProvider) {
     super('asInteger', STRING_TYPEGUARD);
   }
-  override doEvaluate(operandValue: string): number | undefined {
-    return this.valueTypeProvider.Primitives.Integer.fromString(operandValue);
+  override doEvaluate(operandValue: string): number {
+    const int =
+      this.valueTypeProvider.Primitives.Integer.fromString(operandValue);
+    if (int === undefined) {
+      throw new Error(`Could not parse "${operandValue}" into an Integer`);
+    }
+    return int;
   }
 }
 
@@ -49,7 +59,12 @@ export class AsBooleanOperatorEvaluator extends DefaultUnaryOperatorEvaluator<
   constructor(private readonly valueTypeProvider: ValueTypeProvider) {
     super('asBoolean', STRING_TYPEGUARD);
   }
-  override doEvaluate(operandValue: string): boolean | undefined {
-    return this.valueTypeProvider.Primitives.Boolean.fromString(operandValue);
+  override doEvaluate(operandValue: string): boolean {
+    const bool =
+      this.valueTypeProvider.Primitives.Boolean.fromString(operandValue);
+    if (bool === undefined) {
+      throw new Error(`Could not parse "${operandValue}" into a Boolean`);
+    }
+    return bool;
   }
 }
