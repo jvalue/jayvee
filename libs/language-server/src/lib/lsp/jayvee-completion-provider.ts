@@ -213,10 +213,19 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     context: CompletionContext,
     acceptor: CompletionAcceptor,
   ) {
-    const existingImportPath = context.textDocument
-      .getText()
-      .substring(context.tokenOffset, context.offset);
+    const documentText = context.textDocument.getText();
+    const existingImportPath = documentText.substring(
+      context.tokenOffset,
+      context.offset,
+    );
+
+    const hasSemicolonAfterPath =
+      documentText.substring(
+        context.tokenEndOffset,
+        context.tokenEndOffset + 1,
+      ) === ';';
     const pathDelimiter = existingImportPath.startsWith("'") ? "'" : '"';
+
     const existingImportPathWithoutDelimiter = existingImportPath.replace(
       pathDelimiter,
       '',
@@ -233,7 +242,9 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     );
 
     for (const path of suitablePaths) {
-      const completionValue = `${pathDelimiter}${path}${pathDelimiter}`;
+      const completionValue = `${pathDelimiter}${path}${pathDelimiter}${
+        hasSemicolonAfterPath ? '' : ';'
+      }`;
       acceptor(context, {
         label: completionValue, // using path here somehow doesn't work
         textEdit: {
