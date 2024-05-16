@@ -7,6 +7,9 @@ import { type ValueTypeVisitor } from '../value-type';
 
 import { PrimitiveValueType } from './primitive-value-type';
 
+const TRUE_REGEX = /^true$/i;
+const FALSE_REGEX = /^false$/i;
+
 export class BooleanValuetype extends PrimitiveValueType<boolean> {
   acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R {
     return visitor.visitBoolean(this);
@@ -35,5 +38,14 @@ export class BooleanValuetype extends PrimitiveValueType<boolean> {
 A boolean value.
 Examples: true, false
 `.trim();
+  }
+
+  override fromString(s: string): boolean | undefined {
+    if (TRUE_REGEX.test(s)) {
+      return true;
+    } else if (FALSE_REGEX.test(s)) {
+      return false;
+    }
+    return undefined;
   }
 }

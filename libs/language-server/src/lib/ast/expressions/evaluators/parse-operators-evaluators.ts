@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { type ValueTypeProvider } from '../../wrappers';
 import { DefaultUnaryOperatorEvaluator } from '../operator-evaluator';
 import { STRING_TYPEGUARD } from '../typeguards';
 
@@ -9,11 +10,11 @@ export class AsTextOperatorEvaluator extends DefaultUnaryOperatorEvaluator<
   string,
   string
 > {
-  constructor() {
+  constructor(private readonly valueTypeProvider: ValueTypeProvider) {
     super('asText', STRING_TYPEGUARD);
   }
-  override doEvaluate(operandValue: string): string | undefined {
-    return operandValue;
+  override doEvaluate(operandValue: string): string {
+    return this.valueTypeProvider.Primitives.Text.fromString(operandValue);
   }
 }
 
@@ -21,11 +22,11 @@ export class AsDecimalOperatorEvaluator extends DefaultUnaryOperatorEvaluator<
   string,
   number
 > {
-  constructor() {
+  constructor(private readonly valueTypeProvider: ValueTypeProvider) {
     super('asDecimal', STRING_TYPEGUARD);
   }
-  override doEvaluate(operandValue: string): number {
-    return Number.parseFloat(operandValue);
+  override doEvaluate(operandValue: string): number | undefined {
+    return this.valueTypeProvider.Primitives.Decimal.fromString(operandValue);
   }
 }
 
@@ -33,11 +34,11 @@ export class AsIntegerOperatorEvaluator extends DefaultUnaryOperatorEvaluator<
   string,
   number
 > {
-  constructor() {
+  constructor(private readonly valueTypeProvider: ValueTypeProvider) {
     super('asInteger', STRING_TYPEGUARD);
   }
-  override doEvaluate(operandValue: string): number {
-    return Number.parseInt(operandValue, 10);
+  override doEvaluate(operandValue: string): number | undefined {
+    return this.valueTypeProvider.Primitives.Integer.fromString(operandValue);
   }
 }
 
@@ -45,10 +46,10 @@ export class AsBooleanOperatorEvaluator extends DefaultUnaryOperatorEvaluator<
   string,
   boolean
 > {
-  constructor() {
+  constructor(private readonly valueTypeProvider: ValueTypeProvider) {
     super('asBoolean', STRING_TYPEGUARD);
   }
-  override doEvaluate(operandValue: string): boolean {
-    return operandValue === 'true';
+  override doEvaluate(operandValue: string): boolean | undefined {
+    return this.valueTypeProvider.Primitives.Boolean.fromString(operandValue);
   }
 }

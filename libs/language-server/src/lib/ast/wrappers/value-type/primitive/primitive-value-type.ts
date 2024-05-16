@@ -33,6 +33,11 @@ export abstract class PrimitiveValueType<
   getUserDoc(): string | undefined {
     return undefined;
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  fromString(_s: string): I | undefined {
+    return undefined;
+  }
 }
 
 export function isPrimitiveValueType(v: unknown): v is PrimitiveValueType {

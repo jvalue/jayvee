@@ -13,7 +13,6 @@ Expression:
   ReplaceExpression;
 
 // The nesting of the following rules implies the precedence of the operators:
-
 ReplaceExpression infers Expression:
   OrExpression ({infer TernaryExpression.first=current} operator='replace' second=OrExpression 'with' third=OrExpression)*;
 

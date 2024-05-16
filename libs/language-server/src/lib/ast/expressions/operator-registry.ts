@@ -106,10 +106,10 @@ export class DefaultOperatorEvaluatorRegistry
     round: new RoundOperatorEvaluator(),
     lowercase: new LowercaseOperatorEvaluator(),
     uppercase: new UppercaseOperatorEvaluator(),
-    asDecimal: new AsDecimalOperatorEvaluator(),
-    asInteger: new AsIntegerOperatorEvaluator(),
-    asBoolean: new AsBooleanOperatorEvaluator(),
-    asText: new AsTextOperatorEvaluator(),
+    asDecimal: new AsDecimalOperatorEvaluator(this.valueTypeProvider),
+    asInteger: new AsIntegerOperatorEvaluator(this.valueTypeProvider),
+    asBoolean: new AsBooleanOperatorEvaluator(this.valueTypeProvider),
+    asText: new AsTextOperatorEvaluator(this.valueTypeProvider),
   };
   binary = {
     pow: new PowOperatorEvaluator(),
@@ -134,6 +134,8 @@ export class DefaultOperatorEvaluatorRegistry
   ternary = {
     replace: new ReplaceOperatorEvaluator(),
   };
+
+  constructor(private readonly valueTypeProvider: ValueTypeProvider) {}
 }
 
 export class DefaultOperatorTypeComputerRegistry

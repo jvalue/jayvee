@@ -7,6 +7,16 @@ import { type ValueTypeVisitor } from '../value-type';
 
 import { PrimitiveValueType } from './primitive-value-type';
 
+const NUMBER_REGEX = /^[+-]?([0-9]*[,.])?[0-9]+([eE][+-]?\d+)?$/;
+
+export function parseDecimal(s: string): number | undefined {
+  if (!NUMBER_REGEX.test(s)) {
+    return undefined;
+  }
+
+  return Number.parseFloat(s.replace(',', '.'));
+}
+
 export class DecimalValuetype extends PrimitiveValueType<number> {
   acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R {
     return visitor.visitDecimal(this);
@@ -35,5 +45,9 @@ export class DecimalValuetype extends PrimitiveValueType<number> {
 A decimal value.
 Example: 3.14
 `.trim();
+  }
+
+  override fromString(s: string): number | undefined {
+    return parseDecimal(s);
   }
 }
