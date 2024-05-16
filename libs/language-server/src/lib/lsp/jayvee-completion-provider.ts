@@ -5,7 +5,13 @@
 // eslint-disable-next-line unicorn/prefer-node-protocol
 import { strict as assert } from 'assert';
 
-import { type LangiumDocuments, type MaybePromise } from 'langium';
+import {
+  type AstNode,
+  type LangiumDocument,
+  type LangiumDocuments,
+  type MaybePromise,
+  UriUtils,
+} from 'langium';
 import {
   type CompletionAcceptor,
   type CompletionContext,
@@ -13,17 +19,19 @@ import {
   DefaultCompletionProvider,
   type NextFeature,
 } from 'langium/lsp';
-import { CompletionItemKind } from 'vscode-languageserver';
+import { CompletionItemKind, type Range } from 'vscode-languageserver';
 
 import { type TypedObjectWrapper, type WrapperFactoryProvider } from '../ast';
 import {
   type BlockDefinition,
   type ConstraintDefinition,
+  type ImportDefinition,
   PropertyAssignment,
   type PropertyBody,
   ValueTypeReference,
   isBlockDefinition,
   isConstraintDefinition,
+  isImportDefinition,
   isJayveeModel,
   isPropertyAssignment,
   isPropertyBody,
@@ -38,12 +46,12 @@ import { type JayveeServices } from '../jayvee-module';
 const RIGHT_ARROW_SYMBOL = '\u{2192}';
 
 export class JayveeCompletionProvider extends DefaultCompletionProvider {
-  protected langiumDocumentService: LangiumDocuments;
+  protected langiumDocuments: LangiumDocuments;
   protected readonly wrapperFactories: WrapperFactoryProvider;
 
   constructor(services: JayveeServices) {
     super(services);
-    this.langiumDocumentService = services.shared.workspace.LangiumDocuments;
+    this.langiumDocuments = services.shared.workspace.LangiumDocuments;
     this.wrapperFactories = services.WrapperFactories;
   }
 
@@ -78,6 +86,12 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       if (isFirstPropertyCompletion || isOtherPropertyCompletion) {
         return this.completionForPropertyName(astNode, context, acceptor);
       }
+
+      const isImportPathCompletion =
+        isImportDefinition(astNode) && next.property === 'path';
+      if (isImportPathCompletion) {
+        return this.completionForImportPath(astNode, context, acceptor);
+      }
     }
     return super.completionFor(context, next, acceptor);
   }
@@ -87,7 +101,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
     const blockTypes = getAllBuiltinBlockTypes(
-      this.langiumDocumentService,
+      this.langiumDocuments,
       this.wrapperFactories,
     );
     blockTypes.forEach((blockType) => {
@@ -113,7 +127,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
     const constraintTypes = getAllBuiltinConstraintTypes(
-      this.langiumDocumentService,
+      this.langiumDocuments,
       this.wrapperFactories,
     );
     constraintTypes.forEach((constraintType) => {
@@ -139,7 +153,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     context: CompletionContext,
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
-    this.langiumDocumentService.all
+    this.langiumDocuments.all
       .map((document) => document.parseResult.value)
       .forEach((parsedDocument) => {
         if (!isJayveeModel(parsedDocument)) {
@@ -192,6 +206,68 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
         propertyKind,
       ).forEach((item) => acceptor(context, item));
     }
+  }
+
+  private completionForImportPath(
+    astNode: ImportDefinition,
+    context: CompletionContext,
+    acceptor: CompletionAcceptor,
+  ) {
+    const existingImportPath = context.textDocument
+      .getText()
+      .substring(context.tokenOffset, context.offset);
+
+    const allPaths = this.getImportPathsFormatted(context.document);
+    const insertRange: Range = {
+      start: context.textDocument.positionAt(context.tokenOffset),
+      end: context.textDocument.positionAt(context.tokenEndOffset),
+    };
+
+    const suitablePaths = allPaths.filter((path) =>
+      path.startsWith(existingImportPath),
+    );
+
+    for (const path of suitablePaths) {
+      const completionValue = path; // path already contains string delimiter
+      acceptor(context, {
+        label: path,
+        textEdit: {
+          newText: completionValue,
+          range: insertRange,
+        },
+        kind: CompletionItemKind.File,
+        sortText: '0',
+      });
+    }
+  }
+
+  private getImportPathsFormatted(
+    currentDocument: LangiumDocument<AstNode>,
+  ): string[] {
+    const allDocuments = this.langiumDocuments.all;
+    const currentDocumentUri = currentDocument.uri.toString();
+
+    const currentDocumentDir = UriUtils.dirname(currentDocument.uri).toString();
+
+    const paths: string[] = [];
+    for (const doc of allDocuments) {
+      if (UriUtils.equals(doc.uri, currentDocumentUri)) {
+        continue;
+      }
+
+      const docUri = doc.uri.toString();
+      if (docUri.includes('builtin:/stdlib')) {
+        continue; // builtins don't need to be imported
+      }
+
+      const relativePath = UriUtils.relative(currentDocumentDir, docUri);
+
+      const relativePathFormatted = relativePath.startsWith('.')
+        ? `"${relativePath}"`
+        : `"./${relativePath}"`;
+      paths.push(relativePathFormatted);
+    }
+    return paths;
   }
 
   private constructPropertyCompletionValueItems(
