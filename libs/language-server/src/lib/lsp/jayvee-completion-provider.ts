@@ -216,6 +216,11 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     const existingImportPath = context.textDocument
       .getText()
       .substring(context.tokenOffset, context.offset);
+    const pathDelimiter = existingImportPath.startsWith("'") ? "'" : '"';
+    const existingImportPathWithoutDelimiter = existingImportPath.replace(
+      pathDelimiter,
+      '',
+    );
 
     const allPaths = this.getImportPathsFormatted(context.document);
     const insertRange: Range = {
@@ -224,23 +229,27 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     };
 
     const suitablePaths = allPaths.filter((path) =>
-      path.startsWith(existingImportPath),
+      path.startsWith(existingImportPathWithoutDelimiter),
     );
 
     for (const path of suitablePaths) {
-      const completionValue = path; // path already contains string delimiter
+      const completionValue = `${pathDelimiter}${path}${pathDelimiter}`;
       acceptor(context, {
-        label: path,
+        label: completionValue, // using path here somehow doesn't work
         textEdit: {
           newText: completionValue,
           range: insertRange,
         },
         kind: CompletionItemKind.File,
-        sortText: '0',
       });
     }
   }
 
+  /**
+   * Gets all paths to available documents, formatted as relative paths.
+   * Does not include path to stdlib files as they don't need to be imported.
+   * The paths don't include string delimiters.
+   */
   private getImportPathsFormatted(
     currentDocument: LangiumDocument<AstNode>,
   ): string[] {
@@ -263,8 +272,8 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       const relativePath = UriUtils.relative(currentDocumentDir, docUri);
 
       const relativePathFormatted = relativePath.startsWith('.')
-        ? `"${relativePath}"`
-        : `"./${relativePath}"`;
+        ? relativePath
+        : `./${relativePath}`;
       paths.push(relativePathFormatted);
     }
     return paths;
