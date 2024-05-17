@@ -13,7 +13,6 @@ Expression:
   ReplaceExpression;
 
 // The nesting of the following rules implies the precedence of the operators:
-
 ReplaceExpression infers Expression:
   OrExpression ({infer TernaryExpression.first=current} operator='replace' second=OrExpression 'with' third=OrExpression)*;
 
@@ -53,7 +52,7 @@ PrimaryExpression infers Expression:
   | ExpressionLiteral;
 
 UnaryExpression:
-  operator=('not' | '+' | '-' | 'sqrt' | 'floor' | 'ceil' | 'round' | 'lowercase' | 'uppercase') expression=PrimaryExpression;
+  operator=('not' | '+' | '-' | 'sqrt' | 'floor' | 'ceil' | 'round' | 'lowercase' | 'uppercase' | 'asDecimal' | 'asInteger' | 'asBoolean' | 'asText') expression=PrimaryExpression;
 
 ExpressionLiteral:
   ValueLiteral | FreeVariableLiteral;

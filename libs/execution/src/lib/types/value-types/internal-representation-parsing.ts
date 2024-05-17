@@ -7,15 +7,14 @@ import { strict as assert } from 'assert';
 
 import {
   type AtomicValueType,
+  type BooleanValuetype,
+  type DecimalValuetype,
+  type IntegerValuetype,
   type InternalValueRepresentation,
+  type TextValuetype,
   type ValueType,
   ValueTypeVisitor,
 } from '@jvalue/jayvee-language-server';
-
-const NUMBER_REGEX = /^[+-]?([0-9]*[,.])?[0-9]+([eE][+-]?\d+)?$/;
-
-const TRUE_REGEX = /^true$/i;
-const FALSE_REGEX = /^false$/i;
 
 export function parseValueToInternalRepresentation<
   I extends InternalValueRepresentation,
@@ -35,46 +34,20 @@ class InternalRepresentationParserVisitor extends ValueTypeVisitor<
     super();
   }
 
-  visitBoolean(): boolean | undefined {
-    if (TRUE_REGEX.test(this.value)) {
-      return true;
-    } else if (FALSE_REGEX.test(this.value)) {
-      return false;
-    }
-    return undefined;
+  visitBoolean(vt: BooleanValuetype): boolean | undefined {
+    return vt.fromString(this.value);
   }
 
-  visitDecimal(): number | undefined {
-    if (!NUMBER_REGEX.test(this.value)) {
-      return undefined;
-    }
-
-    return Number.parseFloat(this.value.replace(',', '.'));
+  visitDecimal(vt: DecimalValuetype): number | undefined {
+    return vt.fromString(this.value);
   }
 
-  visitInteger(): number | undefined {
-    /**
-     * Reuse decimal number parsing to capture valid scientific notation
-     * of integers like 5.3e3 = 5300. In contrast to decimal, if the final number
-     * is not a valid integer, returns undefined.
-     */
-    const decimalNumber = this.visitDecimal();
-
-    if (decimalNumber === undefined) {
-      return undefined;
-    }
-
-    const integerNumber = Math.trunc(decimalNumber);
-
-    if (decimalNumber !== integerNumber) {
-      return undefined;
-    }
-
-    return integerNumber;
+  visitInteger(vt: IntegerValuetype): number | undefined {
+    return vt.fromString(this.value);
   }
 
-  visitText(): string {
-    return this.value;
+  visitText(vt: TextValuetype): string {
+    return vt.fromString(this.value);
   }
 
   visitAtomicValueType(

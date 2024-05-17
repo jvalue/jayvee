@@ -4,10 +4,10 @@
 
 pipeline TestPipeline {
   transform ToBool {
-    from asInteger oftype integer;
-    to asBool oftype boolean;
+    from integer oftype integer;
+    to boolean oftype boolean;
 
-    asBool: asInteger != 0;
+    boolean: integer != 0;
   }
 
   block TestExtractor oftype TestTableExtractor {

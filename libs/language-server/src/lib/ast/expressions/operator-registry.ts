@@ -31,6 +31,12 @@ import { ModuloOperatorEvaluator } from './evaluators/modulo-operator-evaluator'
 import { MultiplicationOperatorEvaluator } from './evaluators/multiplication-operator-evaluator';
 import { NotOperatorEvaluator } from './evaluators/not-operator-evaluator';
 import { OrOperatorEvaluator } from './evaluators/or-operator-evaluator';
+import {
+  AsBooleanOperatorEvaluator,
+  AsDecimalOperatorEvaluator,
+  AsIntegerOperatorEvaluator,
+  AsTextOperatorEvaluator,
+} from './evaluators/parse-operators-evaluators';
 import { PlusOperatorEvaluator } from './evaluators/plus-operator-evaluator';
 import { PowOperatorEvaluator } from './evaluators/pow-operator-evaluator';
 import { ReplaceOperatorEvaluator } from './evaluators/replace-operator-evaluator';
@@ -60,6 +66,12 @@ import { IntegerConversionOperatorTypeComputer } from './type-computers/integer-
 import { LogicalOperatorTypeComputer } from './type-computers/logical-operator-type-computer';
 import { MatchesOperatorTypeComputer } from './type-computers/matches-operator-type-computer';
 import { NotOperatorTypeComputer } from './type-computers/not-operator-type-computer';
+import {
+  AsBooleanOperatorTypeComputer,
+  AsDecimalOperatorTypeComputer,
+  AsIntegerOperatorTypeComputer,
+  AsTextOperatorTypeComputer,
+} from './type-computers/parse-opterators-type-computer';
 import { RelationalOperatorTypeComputer } from './type-computers/relational-operator-type-computer';
 import { ReplaceOperatorTypeComputer } from './type-computers/replace-operator-type-computer';
 import { SignOperatorTypeComputer } from './type-computers/sign-operator-type-computer';
@@ -94,6 +106,10 @@ export class DefaultOperatorEvaluatorRegistry
     round: new RoundOperatorEvaluator(),
     lowercase: new LowercaseOperatorEvaluator(),
     uppercase: new UppercaseOperatorEvaluator(),
+    asDecimal: new AsDecimalOperatorEvaluator(this.valueTypeProvider),
+    asInteger: new AsIntegerOperatorEvaluator(this.valueTypeProvider),
+    asBoolean: new AsBooleanOperatorEvaluator(this.valueTypeProvider),
+    asText: new AsTextOperatorEvaluator(this.valueTypeProvider),
   };
   binary = {
     pow: new PowOperatorEvaluator(),
@@ -118,6 +134,8 @@ export class DefaultOperatorEvaluatorRegistry
   ternary = {
     replace: new ReplaceOperatorEvaluator(),
   };
+
+  constructor(private readonly valueTypeProvider: ValueTypeProvider) {}
 }
 
 export class DefaultOperatorTypeComputerRegistry
@@ -133,6 +151,10 @@ export class DefaultOperatorTypeComputerRegistry
     round: new IntegerConversionOperatorTypeComputer(this.valueTypeProvider),
     lowercase: new StringTransformTypeComputer(this.valueTypeProvider),
     uppercase: new StringTransformTypeComputer(this.valueTypeProvider),
+    asDecimal: new AsDecimalOperatorTypeComputer(this.valueTypeProvider),
+    asInteger: new AsIntegerOperatorTypeComputer(this.valueTypeProvider),
+    asBoolean: new AsBooleanOperatorTypeComputer(this.valueTypeProvider),
+    asText: new AsTextOperatorTypeComputer(this.valueTypeProvider),
   };
   binary = {
     pow: new ExponentialOperatorTypeComputer(this.valueTypeProvider),

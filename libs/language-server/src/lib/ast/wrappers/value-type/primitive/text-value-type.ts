@@ -36,4 +36,8 @@ A text value.
 Example: "Hello World"
 `.trim();
   }
+
+  override fromString(s: string): string {
+    return s;
+  }
 }

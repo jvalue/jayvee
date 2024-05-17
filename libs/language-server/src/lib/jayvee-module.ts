@@ -88,7 +88,8 @@ export const JayveeModule: Module<
         services.ValueTypeProvider,
         services.WrapperFactories,
       ),
-    EvaluatorRegistry: () => new DefaultOperatorEvaluatorRegistry(),
+    EvaluatorRegistry: (services) =>
+      new DefaultOperatorEvaluatorRegistry(services.ValueTypeProvider),
   },
   ValueTypeProvider: () => new ValueTypeProvider(),
   WrapperFactories: (services) =>

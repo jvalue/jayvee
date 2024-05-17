@@ -3,6 +3,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
+  type ValuetypeAssignment,
+  isValuetypeAssignment,
+} from '../generated/ast';
+
+import {
   type InternalValueRepresentation,
   type InternalValueRepresentationTypeguard,
 } from './internal-value-representation';
@@ -34,6 +39,12 @@ export const REGEXP_TYPEGUARD: InternalValueRepresentationTypeguard<RegExp> = (
   value: InternalValueRepresentation,
 ): value is RegExp => {
   return value instanceof RegExp;
+};
+
+export const VALUETYPEASSIGNMENT_TYPEGUARD: InternalValueRepresentationTypeguard<
+  ValuetypeAssignment
+> = (value: InternalValueRepresentation): value is ValuetypeAssignment => {
+  return isValuetypeAssignment(value);
 };
 
 export function isEveryValueDefined<T>(array: (T | undefined)[]): array is T[] {
