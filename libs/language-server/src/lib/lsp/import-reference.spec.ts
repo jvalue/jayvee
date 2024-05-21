@@ -41,10 +41,18 @@ describe('References to imported elements', () => {
     services = createJayveeServices(NodeFileSystem).Jayvee;
   });
 
-  it('should resolve reference to imported element', async () => {
-    const relativeTestFilePath =
-      'import-published-references/valid-reference-to-imported-element.jv';
-
+  const validCases: [string, string][] = [
+    // [test name, test file path]
+    [
+      'should resolve reference to imported element',
+      'import-published-references/valid-reference-to-imported-element.jv',
+    ],
+    [
+      'should resolve reference to transitively imported element',
+      'import-published-references/valid-reference-to-element-transitive.jv',
+    ],
+  ];
+  test.each(validCases)('%s', async (_, relativeTestFilePath) => {
     const model = await parseModel(relativeTestFilePath);
 
     expect(model.pipelines.length).toEqual(1); // file contains one pipeline
@@ -57,42 +65,18 @@ describe('References to imported elements', () => {
     expect(reference.ref).toBeDefined();
   });
 
-  it('should resolve reference to transitively imported element', async () => {
-    const relativeTestFilePath =
-      'import-published-references/valid-reference-to-element-transitive.jv';
-
-    const model = await parseModel(relativeTestFilePath);
-
-    expect(model.pipelines.length).toEqual(1); // file contains one pipeline
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const blocks = model.pipelines[0]!.blocks;
-    expect(blocks.length).toEqual(1); // pipeline contains one block
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const reference = blocks[0]!.type; // of an imported block type
-
-    expect(reference.ref).toBeDefined();
-  });
-
-  it('should not resolve reference to non-existing element', async () => {
-    const relativeTestFilePath =
-      'import-published-references/invalid-reference-to-not-existing-element.jv';
-
-    const model = await parseModel(relativeTestFilePath);
-
-    expect(model.pipelines.length).toEqual(1); // file contains one pipeline
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const blocks = model.pipelines[0]!.blocks;
-    expect(blocks.length).toEqual(1); // pipeline contains one block
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const reference = blocks[0]!.type; // of an imported block type
-
-    expect(reference.ref).toBeUndefined();
-  });
-
-  it('should not resolve reference to non-imported element', async () => {
-    const relativeTestFilePath =
-      'import-published-references/invalid-reference-to-not-imported-element.jv';
-
+  const invalidCases: [string, string][] = [
+    // [test name, test file path]
+    [
+      'should not resolve reference to non-existing element',
+      'import-published-references/invalid-reference-to-not-existing-element.jv',
+    ],
+    [
+      'should not resolve reference to non-imported element',
+      'import-published-references/invalid-reference-to-not-imported-element.jv',
+    ],
+  ];
+  test.each(invalidCases)('%s', async (_, relativeTestFilePath) => {
     const model = await parseModel(relativeTestFilePath);
 
     expect(model.pipelines.length).toEqual(1); // file contains one pipeline
