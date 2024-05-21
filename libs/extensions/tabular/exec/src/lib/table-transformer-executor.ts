@@ -47,7 +47,7 @@ export class TableTransformerExecutor extends AbstractBlockExecutor<
       context.valueTypeProvider.Primitives.Text,
     );
     const usedTransform = context.getPropertyValue(
-      'use',
+      'uses',
       context.valueTypeProvider.Primitives.Transform,
     );
 
@@ -122,7 +122,7 @@ export class TableTransformerExecutor extends AbstractBlockExecutor<
         return R.err({
           message: `Type ${inputColumn.valueType.getName()} of column "${inputColumnName}" is not convertible to type ${matchingInputDetails.valueType.getName()}`,
           diagnostic: {
-            node: context.getOrFailProperty('use'),
+            node: context.getOrFailProperty('uses'),
           },
         });
       }

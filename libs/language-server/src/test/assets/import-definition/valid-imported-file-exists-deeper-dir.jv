@@ -2,5 +2,5 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-export * from './runtime-parameter-provider';
-export * from './import-resolver';
+use * from 'deeper/existing-imported-file-deeper.jv';
+use * from './deeper/existing-imported-file-deeper.jv';

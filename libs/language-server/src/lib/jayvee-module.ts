@@ -30,7 +30,10 @@ import {
   JayveeCompletionProvider,
   JayveeFormatter,
   JayveeHoverProvider,
+  JayveeScopeComputation,
+  JayveeScopeProvider,
 } from './lsp';
+import { JayveeImportResolver } from './services/import-resolver';
 import { RuntimeParameterProvider } from './services/runtime-parameter-provider';
 import { JayveeValidationRegistry } from './validation/validation-registry';
 
@@ -49,6 +52,7 @@ export interface JayveeAddedServices {
   validation: {
     ValidationRegistry: JayveeValidationRegistry;
   };
+  ImportResolver: JayveeImportResolver;
 }
 
 /**
@@ -81,6 +85,10 @@ export const JayveeModule: Module<
       new JayveeHoverProvider(services),
     Formatter: () => new JayveeFormatter(),
   },
+  references: {
+    ScopeProvider: (services) => new JayveeScopeProvider(services),
+    ScopeComputation: (service) => new JayveeScopeComputation(service),
+  },
   RuntimeParameterProvider: () => new RuntimeParameterProvider(),
   operators: {
     TypeComputerRegistry: (services) =>
@@ -97,6 +105,8 @@ export const JayveeModule: Module<
       services.operators.EvaluatorRegistry,
       services.ValueTypeProvider,
     ),
+  ImportResolver: (services) =>
+    new JayveeImportResolver(services.shared.workspace.LangiumDocuments),
 };
 
 export const JayveeSharedModule: Module<

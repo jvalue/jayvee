@@ -77,7 +77,7 @@ pipeline ElectricVehiclesPipeline {
       "Electric Range"
     ];
     outputColumn: "Electric Range (km)";
-    use: MilesToKilometers;
+    uses: MilesToKilometers;
   }
 
   // 6. Here, we define a transform function, taking parameters

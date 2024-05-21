@@ -28,7 +28,6 @@ import {
   type RuntimeParameterProvider,
   type WrapperFactoryProvider,
   createJayveeServices,
-  initializeWorkspace,
   internalValueToString,
 } from '@jvalue/jayvee-language-server';
 import chalk from 'chalk';
@@ -72,6 +71,7 @@ export async function interpretString(
  * Parses a model without executing it.
  * Also sets up the environment so that the model can be properly executed.
  *
+ * @param extractAstNodeFn method that extracts the AST node; should also initialize the workspace correctly.
  * @returns non-null model, services and loggerFactory on success.
  */
 export async function parseModel(
@@ -101,7 +101,6 @@ export async function parseModel(
   }
 
   services = createJayveeServices(NodeFileSystem).Jayvee;
-  await initializeWorkspace(services);
   setupJayveeServices(services, options.env);
 
   try {

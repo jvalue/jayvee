@@ -9,6 +9,7 @@ import {
   DefaultOperatorEvaluatorRegistry,
   DefaultOperatorTypeComputerRegistry,
   EvaluationContext,
+  JayveeImportResolver,
   type JayveeServices,
   type RuntimeParameterLiteral,
   RuntimeParameterProvider,
@@ -18,44 +19,33 @@ import {
   createJayveeServices,
 } from '@jvalue/jayvee-language-server';
 import {
-  type ParseHelperOptions,
   expectNoParserAndLexerErrors,
-  loadTestExtensions,
-  parseHelper,
-  readJvTestAssetHelper,
+  parseTestFileInWorkingDir,
   validationAcceptorMockImpl,
 } from '@jvalue/jayvee-language-server/test';
-import {
-  type AstNode,
-  type AstNodeLocator,
-  type LangiumDocument,
-} from 'langium';
+import { type AstNodeLocator } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import { validateRuntimeParameterLiteral } from './runtime-parameter-literal';
 
 describe('Validation of validateRuntimeParameterLiteral', () => {
-  let parse: (
-    input: string,
-    options?: ParseHelperOptions,
-  ) => Promise<LangiumDocument<AstNode>>;
+  const WORKING_DIR = path.resolve(__dirname, '../../test/assets/');
 
-  let locator: AstNodeLocator;
   let services: JayveeServices;
+  let locator: AstNodeLocator;
 
   const validationAcceptorMock = vi.fn(validationAcceptorMockImpl);
 
-  const readJvTestAsset = readJvTestAssetHelper(
-    __dirname,
-    '../../test/assets/',
-  );
-
   async function parseAndValidateRuntimeParameterLiteral(
-    input: string,
+    relativeTestFilePath: string,
     runtimeParameters?: Map<string, string>,
   ) {
-    const document = await parse(input);
+    const document = await parseTestFileInWorkingDir(
+      WORKING_DIR,
+      relativeTestFilePath,
+      services,
+    );
     expectNoParserAndLexerErrors(document);
 
     const runtimeParameter = locator.getAstNode<RuntimeParameterLiteral>(
@@ -83,6 +73,10 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
         wrapperFactories,
       );
 
+    const importResolver = new JayveeImportResolver(
+      services.shared.workspace.LangiumDocuments,
+    );
+
     validateRuntimeParameterLiteral(runtimeParameter, {
       validationContext: new ValidationContext(
         validationAcceptorMock,
@@ -95,23 +89,14 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
       ),
       valueTypeProvider: valueTypeProvider,
       wrapperFactories: wrapperFactories,
+      importResolver: importResolver,
     });
   }
 
-  beforeAll(async () => {
+  beforeAll(() => {
     // Create language services
     services = createJayveeServices(NodeFileSystem).Jayvee;
-
-    await loadTestExtensions(services, [
-      path.resolve(
-        __dirname,
-        '../../test/assets/runtime-parameter-literal/test-extension/TestBlockTypes.jv',
-      ),
-    ]);
     locator = services.workspace.AstNodeLocator;
-
-    // Parse function for Jayvee (without validation)
-    parse = parseHelper(services);
   });
 
   afterEach(() => {
@@ -120,12 +105,11 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
   });
 
   it('should diagnose no error on valid runtime parameter value', async () => {
-    const text = readJvTestAsset(
-      'runtime-parameter-literal/valid-text-runtime-property.jv',
-    );
+    const relativeTestFilePath =
+      'runtime-parameter-literal/valid-text-runtime-property.jv';
 
     await parseAndValidateRuntimeParameterLiteral(
-      text,
+      relativeTestFilePath,
       new Map([['TEXT_ENV', 'Value 1']]),
     );
 
@@ -133,13 +117,12 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
   });
 
   it('should diagnose error on failed runtime parameter value parsing', async () => {
-    const text = readJvTestAsset(
-      'runtime-parameter-literal/valid-integer-runtime-property.jv',
-    );
+    const relativeTestFilePath =
+      'runtime-parameter-literal/valid-integer-runtime-property.jv';
 
     await parseAndValidateRuntimeParameterLiteral(
-      text,
-      new Map([['INTEGER_ENV', 'Value 1']]),
+      relativeTestFilePath,
+      new Map([['INTEGER_ENV', 'Value 1']]), // wrong parameter type
     );
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
@@ -151,11 +134,10 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
   });
 
   it('should diagnose error on missing runtime parameter value', async () => {
-    const text = readJvTestAsset(
-      'runtime-parameter-literal/valid-text-runtime-property.jv',
-    );
+    const relativeTestFilePath =
+      'runtime-parameter-literal/valid-text-runtime-property.jv';
 
-    await parseAndValidateRuntimeParameterLiteral(text);
+    await parseAndValidateRuntimeParameterLiteral(relativeTestFilePath); // don't pass parameter
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(

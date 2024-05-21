@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+use * from './test-extension/TestBlockTypes.jv';
+
 pipeline Pipeline {
   block Test oftype TestProperty {
     textProperty: requires TEXT_ENV;
