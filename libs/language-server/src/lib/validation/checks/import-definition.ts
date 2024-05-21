@@ -18,9 +18,13 @@ function checkPathExists(
 ): void {
   const resolvedImport = props.importResolver.resolveImport(importDefinition);
   if (resolvedImport === undefined) {
-    props.validationContext.accept('error', 'Import cannot be resolved.', {
-      node: importDefinition,
-      property: 'path',
-    });
+    props.validationContext.accept(
+      'error',
+      `Import from "${importDefinition.path}" could be resolved. Check if the file exists in the given location.`,
+      {
+        node: importDefinition,
+        property: 'path',
+      },
+    );
   }
 }
