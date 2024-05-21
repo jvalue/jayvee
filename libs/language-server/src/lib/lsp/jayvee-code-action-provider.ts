@@ -6,6 +6,7 @@
 import { strict as assert } from 'assert';
 
 import {
+  type AstNodeDescription,
   type AstReflection,
   DocumentValidator,
   type IndexManager,
@@ -103,50 +104,57 @@ export class JayveeCodeActionProvider implements CodeActionProvider {
       .allElements(refType)
       .filter((e) => e.name === linkingData.refText);
 
-    const actions: CodeAction[] = [];
-    for (const importCandidate of importCandidates) {
-      const isInCurrentFile = UriUtils.equals(
-        importCandidate.documentUri,
-        document.uri,
-      );
-      if (isInCurrentFile) {
-        continue;
-      }
+    return [
+      ...(importCandidates
+        .map((c) => this.getActionForImportCandidate(c, diagnostic, document))
+        .filter((a) => a !== undefined) as unknown as CodeAction[]),
+    ];
+  }
 
-      const importPath = this.getRelativeImportPath(
-        document.uri,
-        importCandidate.documentUri,
-      );
-
-      const importPosition = this.getImportLinePosition(
-        document.parseResult.value as JayveeModel,
-      );
-      if (importPosition === undefined) {
-        continue;
-      }
-
-      actions.push({
-        title: `Use from '${importPath}'`,
-        kind: CodeActionKind.QuickFix,
-        diagnostics: [diagnostic],
-        isPreferred: false,
-        edit: {
-          changes: {
-            [document.textDocument.uri]: [
-              {
-                range: {
-                  start: importPosition,
-                  end: importPosition,
-                },
-                newText: `use * from "${importPath}";\n`,
-              },
-            ],
-          },
-        },
-      });
+  protected getActionForImportCandidate(
+    importCandidate: AstNodeDescription,
+    diagnostic: Diagnostic,
+    document: LangiumDocument,
+  ): CodeAction | undefined {
+    const isInCurrentFile = UriUtils.equals(
+      importCandidate.documentUri,
+      document.uri,
+    );
+    if (isInCurrentFile) {
+      return;
     }
 
-    return actions;
+    const importPath = this.getRelativeImportPath(
+      document.uri,
+      importCandidate.documentUri,
+    );
+
+    const importPosition = this.getImportLinePosition(
+      document.parseResult.value as JayveeModel,
+    );
+    if (importPosition === undefined) {
+      return;
+    }
+
+    return {
+      title: `Use from '${importPath}'`,
+      kind: CodeActionKind.QuickFix,
+      diagnostics: [diagnostic],
+      isPreferred: false,
+      edit: {
+        changes: {
+          [document.textDocument.uri]: [
+            {
+              range: {
+                start: importPosition,
+                end: importPosition,
+              },
+              newText: `use * from "${importPath}";\n`,
+            },
+          ],
+        },
+      },
+    };
   }
 
   protected getImportLinePosition(
