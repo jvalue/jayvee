@@ -10,7 +10,7 @@
 *   sheetName: "AgencyNames";
 * }
 */
-builtin blocktype SheetPicker {
+publish builtin blocktype SheetPicker {
 	input default oftype Workbook;
 	output default oftype Sheet;
 	

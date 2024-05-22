@@ -12,7 +12,7 @@ export function getBuiltinValuetypesLib() {
     .map(parseBuiltinValuetypeToJayvee);
 
   const collectionValuetype = `${parseAsComment('For internal use only.')}
-builtin valuetype Collection<ElementType>;`;
+publish builtin valuetype Collection<ElementType>;`;
 
   return {
     'builtin:///stdlib/builtin-value-types.jv': [
@@ -24,7 +24,7 @@ builtin valuetype Collection<ElementType>;`;
 
 export const IOtypesLib = {
   'builtin:///stdlib/io-types.jv': Object.values(IOType)
-    .map((iotype) => `builtin iotype ${iotype};`)
+    .map((iotype) => `publish builtin iotype ${iotype};`)
     .join('\n\n'),
 };
 
@@ -46,7 +46,7 @@ function parseBuiltinValuetypeToJayvee(valueType: PrimitiveValueType): string {
   if (!valueType.isReferenceableByUser()) {
     lines.push(parseAsComment('For internal use only.'));
   }
-  lines.push(`builtin valuetype ${valueType.getName()};`);
+  lines.push(`publish builtin valuetype ${valueType.getName()};`);
 
   return lines.join('\n');
 }

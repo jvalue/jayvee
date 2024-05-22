@@ -35,7 +35,7 @@
 *   uses: CelsiusToFahrenheit;
 * }
 */
-builtin blocktype TableTransformer {
+publish builtin blocktype TableTransformer {
 	input default oftype Table;
 	output default oftype Table;
 	

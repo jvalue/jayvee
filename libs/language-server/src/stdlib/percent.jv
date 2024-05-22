@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-valuetype Percent oftype decimal {
+publish valuetype Percent oftype decimal {
     constraints: [ZeroToHundredDecimal];
 }
-constraint ZeroToHundredDecimal on decimal: value >= 0 and value <= 100;
+publish constraint ZeroToHundredDecimal on decimal: value >= 0 and value <= 100;

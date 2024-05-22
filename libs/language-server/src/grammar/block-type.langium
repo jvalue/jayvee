@@ -14,12 +14,12 @@ ReferenceableBlockTypeDefinition:
   BuiltinBlockTypeDefinition | CompositeBlockTypeDefinition;
 
 BuiltinBlockTypeDefinition:
-    'builtin' 'blocktype' name=ID '{'
+    (isPublished?='publish')? 'builtin' 'blocktype' name=ID '{'
         (inputs+=BlockTypeInput | outputs+=BlockTypeOutput | properties+=BlockTypeProperty)*
 '}';
 
 CompositeBlockTypeDefinition:
-    'composite' 'blocktype' name=ID '{'
+    (isPublished?='publish')? 'composite' 'blocktype' name=ID '{'
         (
             inputs+=BlockTypeInput
             | outputs+=BlockTypeOutput

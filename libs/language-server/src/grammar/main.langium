@@ -16,6 +16,7 @@ import './io-type'
 entry JayveeModel:
   (
     imports+=ImportDefinition
+    | exports+=ExportDefinition
     | pipelines+=PipelineDefinition
     | valueTypes+=(CustomValuetypeDefinition | BuiltinValuetypeDefinition)
     | constraints+=ConstraintDefinition
@@ -25,6 +26,21 @@ entry JayveeModel:
     | iotypes+=IotypeDefinition
   )*;
 
+// When adding an element here, make sure the element has the following prependix in its rule
+// (isPublished?='publish')?
+// TypeScript lets us then infer that there is a field `isPublished` after using the type guard `isExportableElement`.
+ExportableElement:
+  // Must ref rules where isPublished is defined 
+  // So don't use aggregates like ReferenceableBlockTypeDefinition
+  // Otherwise it doesn't work to resolve the refenerces
+  (CustomValuetypeDefinition | BuiltinValuetypeDefinition)
+  | (TypedConstraintDefinition | ExpressionConstraintDefinition | BuiltinConstrainttypeDefinition)
+  | TransformDefinition
+  | (BuiltinBlockTypeDefinition | CompositeBlockTypeDefinition) 
+  | IotypeDefinition;
+
+ExportDefinition:
+  'publish' element=[ExportableElement] ';';
 
 ImportDefinition:
   'use' '*' 'from' path=STRING ';';

@@ -15,7 +15,7 @@
 *   table: "Cars";
 * }
 */
-builtin blocktype PostgresLoader {
+publish builtin blocktype PostgresLoader {
 	input default oftype Table;
 	output default oftype None;
 	

@@ -7,10 +7,10 @@
 * Only values that comply with the regex are considered valid.
 *
 * @example Text that complies with the IPv4 address format.
-* constraint IPv4Format oftype RegexConstraint {
+* publish constraint IPv4Format oftype RegexConstraint {
 *   regex: /^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}$/;
 * }
 */
-builtin constrainttype RegexConstraint on text {
+publish builtin constrainttype RegexConstraint on text {
 	property regex oftype Regex ;
 }

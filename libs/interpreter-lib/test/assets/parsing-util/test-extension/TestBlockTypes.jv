@@ -2,17 +2,17 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-builtin blocktype TestFileExtractor {
+publish builtin blocktype TestFileExtractor {
     input inPort oftype None;
     output outPort oftype File;
 }
 
-builtin blocktype TestFileLoader {
+publish builtin blocktype TestFileLoader {
     input inPort oftype File;
     output outPort oftype None;
 }
 
-builtin blocktype TestTableLoader {
+publish builtin blocktype TestTableLoader {
     input inPort oftype Table;
     output outPort oftype None;
 }

@@ -10,7 +10,7 @@
 *   url: "tinyurl.com/4ub9spwz";
 * }
 */
-builtin blocktype HttpExtractor {
+publish builtin blocktype HttpExtractor {
 	input default oftype None;
 	output default oftype File;
 	

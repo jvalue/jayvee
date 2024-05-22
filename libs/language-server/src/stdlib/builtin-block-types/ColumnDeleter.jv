@@ -10,7 +10,7 @@
 *   delete: [column B];
 * }
 */
-builtin blocktype ColumnDeleter {
+publish builtin blocktype ColumnDeleter {
 	input default oftype Sheet;
 	output default oftype Sheet;
 	

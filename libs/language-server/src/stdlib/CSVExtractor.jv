@@ -5,7 +5,7 @@
 /**
 * A CSVExtractor extracts a file from a given URL and interprets it as CSV
 */
-composite blocktype CSVExtractor {
+publish composite blocktype CSVExtractor {
     property url oftype text;
     property delimiter oftype text: ',';
     property enclosing oftype text: '';

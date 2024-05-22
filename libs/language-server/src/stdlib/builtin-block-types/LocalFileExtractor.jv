@@ -10,7 +10,7 @@
 *   filePath: "cars.csv";
 * }
 */
-builtin blocktype LocalFileExtractor {
+publish builtin blocktype LocalFileExtractor {
 	input default oftype None;
 	output default oftype File;
 	

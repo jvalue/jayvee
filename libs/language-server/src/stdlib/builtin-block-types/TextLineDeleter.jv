@@ -5,7 +5,7 @@
 /**
 * Deletes individual lines from a `TextFile`.
 */
-builtin blocktype TextLineDeleter {
+publish builtin blocktype TextLineDeleter {
 	input default oftype TextFile;
 	output default oftype TextFile;
 	

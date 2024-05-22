@@ -6,10 +6,10 @@
 * Defines a set of forbidden values. All values in the list are considered invalid.
 *
 * @example Denies all primary colors.
-* constraint NoPrimaryColors oftype DenylistConstraint {
+* publish constraint NoPrimaryColors oftype DenylistConstraint {
 *   denylist: ["red", "blue", "yellow"];
 * }
 */
-builtin constrainttype DenylistConstraint on text {
+publish builtin constrainttype DenylistConstraint on text {
 	property denylist oftype Collection<text> ;
 }

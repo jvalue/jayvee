@@ -10,7 +10,7 @@
 * 	delimiter: ";";
 * }
 */
-builtin blocktype CSVInterpreter {
+publish builtin blocktype CSVInterpreter {
 	input default oftype TextFile;
 	output default oftype Sheet;
 	

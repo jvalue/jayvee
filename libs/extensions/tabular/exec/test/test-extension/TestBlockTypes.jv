@@ -2,42 +2,42 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-builtin blocktype TestSheetExtractor {
+publish builtin blocktype TestSheetExtractor {
     input inPort oftype None;
     output outPort oftype Sheet;
 }
 
-builtin blocktype TestSheetLoader {
+publish builtin blocktype TestSheetLoader {
     input inPort oftype Sheet;
     output outPort oftype None;
 }
 
-builtin blocktype TestTextFileExtractor {
+publish builtin blocktype TestTextFileExtractor {
     input inPort oftype None;
     output outPort oftype TextFile;
 }
 
-builtin blocktype TestFileExtractor {
+publish builtin blocktype TestFileExtractor {
     input inPort oftype None;
     output outPort oftype File;
 }
 
-builtin blocktype TestWorkbookExtractor {
+publish builtin blocktype TestWorkbookExtractor {
     input inPort oftype None;
     output outPort oftype Workbook;
 }
 
-builtin blocktype TestWorkbookLoader {
+publish builtin blocktype TestWorkbookLoader {
     input inPort oftype Workbook;
     output outPort oftype None;
 }
 
-builtin blocktype TestTableExtractor {
+publish builtin blocktype TestTableExtractor {
     input inPort oftype None;
     output outPort oftype Table;
 }
 
-builtin blocktype TestTableLoader {
+publish builtin blocktype TestTableLoader {
     input inPort oftype Table;
     output outPort oftype None;
 }

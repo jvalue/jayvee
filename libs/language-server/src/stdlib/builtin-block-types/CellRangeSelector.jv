@@ -10,7 +10,7 @@
 *   select: range A1:E*;
 * }
 */
-builtin blocktype CellRangeSelector {
+publish builtin blocktype CellRangeSelector {
 	input default oftype Sheet;
 	output default oftype Sheet;
 	

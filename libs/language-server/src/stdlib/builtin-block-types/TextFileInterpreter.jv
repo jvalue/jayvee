@@ -5,7 +5,7 @@
 /**
 * Interprets a `File` as a `TextFile`.
 */
-builtin blocktype TextFileInterpreter {
+publish builtin blocktype TextFileInterpreter {
 	input default oftype File;
 	output default oftype TextFile;
 	

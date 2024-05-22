@@ -10,14 +10,7 @@ import {
   type LangiumDocument,
 } from 'langium';
 
-import {
-  isBuiltinConstrainttypeDefinition,
-  isConstraintDefinition,
-  isIotypeDefinition,
-  isReferenceableBlockTypeDefinition,
-  isTransformDefinition,
-  isValuetypeDefinition,
-} from '../ast';
+import { isExportDefinition, isExportableElement } from '../ast';
 
 export class JayveeScopeComputation extends DefaultScopeComputation {
   constructor(services: LangiumCoreServices) {
@@ -29,24 +22,23 @@ export class JayveeScopeComputation extends DefaultScopeComputation {
     exports: AstNodeDescription[],
     document: LangiumDocument,
   ): void {
-    // export the exportable top-level elements
-    if (!this.isExportable(node)) {
-      return;
+    const isExportingElementDefinition =
+      isExportableElement(node) && node.isPublished;
+
+    if (isExportingElementDefinition) {
+      return super.exportNode(node, exports, document);
     }
 
-    super.exportNode(node, exports, document);
-  }
+    const isDelayedExportDefinition = isExportDefinition(node);
+    if (isDelayedExportDefinition) {
+      const exportedNode = node.element.ref;
+      if (exportedNode === undefined) {
+        return;
+      }
 
-  isExportable(node: AstNode) {
-    // pipelines are not exported
+      return super.exportNode(exportedNode, exports, document);
+    }
 
-    return (
-      isValuetypeDefinition(node) ||
-      isConstraintDefinition(node) ||
-      isTransformDefinition(node) ||
-      isReferenceableBlockTypeDefinition(node) ||
-      isBuiltinConstrainttypeDefinition(node) ||
-      isIotypeDefinition(node)
-    );
+    // We only export elements that are explicitly published!
   }
 }

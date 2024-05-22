@@ -5,7 +5,7 @@
 /**
 * Selects a range of lines from a `TextFile`.
 */
-builtin blocktype TextRangeSelector {
+publish builtin blocktype TextRangeSelector {
 	input default oftype TextFile;
 	output default oftype TextFile;
 	

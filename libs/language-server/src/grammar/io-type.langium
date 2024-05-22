@@ -6,4 +6,4 @@ import './expression'
 import './terminal'
 
 IotypeDefinition:
-    'builtin' 'iotype' name=ID ';';
+    (isPublished?='publish')? 'builtin' 'iotype' name=ID ';';

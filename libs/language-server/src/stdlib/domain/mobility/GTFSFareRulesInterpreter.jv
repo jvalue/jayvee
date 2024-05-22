@@ -6,7 +6,7 @@
 * A GTFSFareRulesInterpreter interprets a fare_rules.txt file from an extracted ZIP file according to the GTFS standard
 * See https://gtfs.org/schedule/reference/#fare_rulestxt
 */
-composite blocktype GTFSFareRulesInterpreter {
+publish composite blocktype GTFSFareRulesInterpreter {
 
     input inputPort oftype FileSystem;
     output outputPort oftype Table;

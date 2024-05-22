@@ -10,8 +10,8 @@
  * Color - A color encoded as a six-digit hexadecimal number. Refer to https://htmlcolorcodes.com to generate a valid value (the leading "#" must not be included).
  *      Example: FFFFFF for white, 000000 for black or 0039A6 for the A,C,E lines in NYMTA.
  */
-constraint GTFSColorConstraint on text: value matches /^[A-F]{6}$/;
-valuetype GTFSColor oftype text {
+publish constraint GTFSColorConstraint on text: value matches /^[A-F]{6}$/;
+publish valuetype GTFSColor oftype text {
     constraints: [GTFSColorConstraint];
 }
 
@@ -19,8 +19,8 @@ valuetype GTFSColor oftype text {
  * Date - Service day in the YYYYMMDD format. Since time within a service day may be above 24:00:00, a service day may contain information for the subsequent day(s).
  *      Example: 20180913 for September 13th, 2018.
  */
-constraint DateYYYYMMDD on text: value matches /^[0-9]{4}[0-9]{2}[0-9]{2}$/;
-valuetype GTFSDate oftype text {
+publish constraint DateYYYYMMDD on text: value matches /^[0-9]{4}[0-9]{2}[0-9]{2}$/;
+publish valuetype GTFSDate oftype text {
     constraints: [DateYYYYMMDD];
 }
 
@@ -28,8 +28,8 @@ valuetype GTFSDate oftype text {
  * Currency code - An ISO 4217 alphabetical currency code. For the list of current currency, refer to https://en.wikipedia.org/wiki/ISO_4217#Active_codes.
  *      Example: CAD for Canadian dollars, EUR for euros or JPY for Japanese yen.
  */
-constraint CurrencyConstraint on text: value matches /^[A-Z]{3}$/;
-valuetype GTFSCurrency oftype text {
+publish constraint CurrencyConstraint on text: value matches /^[A-Z]{3}$/;
+publish valuetype GTFSCurrency oftype text {
     constraints: [CurrencyConstraint];
 }
 
@@ -37,25 +37,25 @@ valuetype GTFSCurrency oftype text {
  * Time - Time in the HH:MM:SS format (H:MM:SS is also accepted). The time is measured from "noon minus 12h" of the service day (effectively midnight except for days on which daylight savings time changes occur). For times occurring after midnight on the service day, enter the time as a value greater than 24:00:00 in HH:MM:SS.
  *      Example: 14:30:00 for 2:30PM or 25:35:00 for 1:35AM on the next day.
  */
-constraint TimeHHMMSS on text: value matches /^[0-9]{1,2}:{1}[0-9]{2}:{1}[0-9]{2}$/;
-valuetype GTFSTime oftype text {
+publish constraint TimeHHMMSS on text: value matches /^[0-9]{1,2}:{1}[0-9]{2}:{1}[0-9]{2}$/;
+publish valuetype GTFSTime oftype text {
     constraints: [TimeHHMMSS];
 }
 
 // Placeholders
-constraint EnumTwo on integer: value in [0, 1];
-constraint EnumOneOrTwo on integer: value in [1, 2];
-constraint EnumThree on integer: value in [0, 1, 2];
+publish constraint EnumTwo on integer: value in [0, 1];
+publish constraint EnumOneOrTwo on integer: value in [1, 2];
+publish constraint EnumThree on integer: value in [0, 1, 2];
 
-valuetype GTFSEnumTwo oftype integer {
+publish valuetype GTFSEnumTwo oftype integer {
     constraints: [EnumTwo];
 }
 
-valuetype GTFSEnumOneOrTwo oftype integer {
+publish valuetype GTFSEnumOneOrTwo oftype integer {
     constraints: [EnumOneOrTwo];
 }
 
-valuetype GTFSEnumThree oftype integer {
+publish valuetype GTFSEnumThree oftype integer {
     constraints: [EnumThree];
 }
 
@@ -65,8 +65,8 @@ valuetype GTFSEnumThree oftype integer {
  * Latitude - WGS84 latitude in decimal degrees. The value must be greater than or equal to -90.0 and less than or equal to 90.0.
  *      Example: 41.890169 for the Colosseum in Rome.
  */
-constraint Latitude on decimal: value >= -90 and value <= 90;
-valuetype GTFSLatitude oftype decimal {
+publish constraint Latitude on decimal: value >= -90 and value <= 90;
+publish valuetype GTFSLatitude oftype decimal {
     constraints: [Latitude];
 }
 
@@ -74,24 +74,24 @@ valuetype GTFSLatitude oftype decimal {
  * Longitude - WGS84 longitude in decimal degrees. The value must be greater than or equal to -180.0 and less than or equal to 180.0.
  *      Example: 12.492269 for the Colosseum in Rome.
  */
-constraint Longitude on decimal: value >= -180 and value <= 180;
-valuetype GTFSLongitude oftype decimal {
+publish constraint Longitude on decimal: value >= -180 and value <= 180;
+publish valuetype GTFSLongitude oftype decimal {
     constraints: [Longitude];
 }
 
-constraint NonNegativeNumber on decimal: value >= 0;
-valuetype GTFSNonNegativeDecimal oftype decimal {
+publish constraint NonNegativeNumber on decimal: value >= 0;
+publish valuetype GTFSNonNegativeDecimal oftype decimal {
     constraints: [NonNegativeNumber];
 }
 
-valuetype GTFSNonNegativeInteger oftype integer {
+publish valuetype GTFSNonNegativeInteger oftype integer {
     constraints: [NonNegativeNumber];
 }
 
 /*
  * URL - A fully qualified URL that includes http:// or https://, and any special characters in the URL must be correctly escaped. See the following http://www.w3.org/Addressing/URL/4_URI_Recommentations.html for a description of how to create fully qualified URL values.
  */
-constraint URLIncludingSchema on text: value matches /^(http)s?(:\/\/)/;
-valuetype GTFSUrl oftype text {
+publish constraint URLIncludingSchema on text: value matches /^(http)s?(:\/\/)/;
+publish valuetype GTFSUrl oftype text {
     constraints: [URLIncludingSchema];
 }

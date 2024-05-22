@@ -6,7 +6,7 @@
 * A GTFSFareAttributesInterpreter interprets a fare_attributes.txt file from an extracted ZIP file according to the GTFS standard
 * See https://gtfs.org/schedule/reference/#fare_attributestxt
 */
-composite blocktype GTFSFareAttributesInterpreter {
+publish composite blocktype GTFSFareAttributesInterpreter {
 
     input inputPort oftype FileSystem;
     output outputPort oftype Table;
