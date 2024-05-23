@@ -54,7 +54,7 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
 
     // TODO: add caching to avoid performance issues
 
-    const importedUris = new Set<string>(); // TODO: refactor to Set<URI>
+    const importedUris = new Set<string>();
     this.gatherImports(jayveeModel, importedUris);
     this.gatherBuiltins(importedUris);
 
