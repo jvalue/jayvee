@@ -116,7 +116,7 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
       return undefined; // Cannot follow reference to original definition
     }
 
-    if (isExportableElement(referenced) && referenced.isPublished) {
+    if (isExportableElement(referenced) && this.isElementExported(referenced)) {
       return referenced; // Reached original definition
     }
 
@@ -128,9 +128,31 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
   }
 
   /**
+   * Checks whether an exportable @param element is exported (either in definition or via an delayed export definition).
+   */
+  protected isElementExported(element: ExportableElement): boolean {
+    if (element.isPublished) {
+      return true;
+    }
+
+    const model = AstUtils.getContainerOfType(element, isJayveeModel);
+    assert(
+      model !== undefined,
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      `Could not get container of exportable element ${element.name ?? ''}`,
+    );
+
+    const isExported = model.exports.some(
+      (exportDefinition: ExportDefinition) =>
+        exportDefinition.element.ref === element,
+    );
+    return isExported;
+  }
+
+  /**
    * Add all builtins' URIs to @param importedUris
    */
-  private gatherBuiltins(importedUris: Set<string>) {
+  protected gatherBuiltins(importedUris: Set<string>) {
     const builtins = getStdLib();
     const uris = Object.keys(builtins);
 
@@ -144,7 +166,7 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
   /**
    * Add all imported URIs of the given @jayveeModel to @param importedUris
    */
-  private gatherImports(
+  protected gatherImports(
     jayveeModel: JayveeModel,
     importedUris: Set<string>,
   ): void {

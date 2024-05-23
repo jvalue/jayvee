@@ -32,7 +32,6 @@ import {
   JayveeDefinitionProvider,
   JayveeFormatter,
   JayveeHoverProvider,
-  JayveeScopeComputation,
   JayveeScopeProvider,
 } from './lsp';
 import { JayveeImportResolver } from './services/import-resolver';
