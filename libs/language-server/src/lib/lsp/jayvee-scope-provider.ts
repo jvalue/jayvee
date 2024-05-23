@@ -2,10 +2,15 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import { strict as assert } from 'assert';
+
 import {
+  type AstNodeDescription,
   AstUtils,
   DefaultScopeProvider,
   EMPTY_SCOPE,
+  type LangiumDocument,
   type LangiumDocuments,
   MapScope,
   type ReferenceInfo,
@@ -13,7 +18,14 @@ import {
   URI,
 } from 'langium';
 
-import { type JayveeModel, isJayveeModel } from '../ast';
+import {
+  type ExportDefinition,
+  type ExportableElement,
+  type JayveeModel,
+  isExportDefinition,
+  isExportableElement,
+  isJayveeModel,
+} from '../ast';
 import { getStdLib } from '../builtin-library';
 import { type JayveeServices } from '../jayvee-module';
 import { type JayveeImportResolver } from '../services/import-resolver';
@@ -40,20 +52,83 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
       return EMPTY_SCOPE;
     }
 
-    const importedUris = new Set<string>();
+    // TODO: add caching to avoid performance issues
+
+    const importedUris = new Set<string>(); // TODO: refactor to Set<URI>
     this.gatherImports(jayveeModel, importedUris);
     this.gatherBuiltins(importedUris);
 
-    const importedElements = this.indexManager.allElements(
-      referenceType,
-      importedUris,
+    const importedDocuments = [...importedUris].map((importedUri) =>
+      this.langiumDocuments.getDocument(URI.parse(importedUri)),
     );
+
+    const importedElements: AstNodeDescription[] = [];
+    for (const importedDocument of importedDocuments) {
+      if (importedDocument === undefined) {
+        continue;
+      }
+
+      const publishedElements = this.getExportedElements(importedDocument);
+      importedElements.push(
+        ...publishedElements.map((e) =>
+          this.descriptions.createDescription(e, e.name),
+        ),
+      );
+    }
 
     return new MapScope(importedElements);
   }
 
   /**
-   * Add all builtins URIs to @param importedUris
+   * Gets all exported elements from a document.
+   * This logic cannot reside in a {@link ScopeComputationProvider} but should be handled here:
+   * https://github.com/eclipse-langium/langium/discussions/1508#discussioncomment-9524544
+   */
+  protected getExportedElements(
+    document: LangiumDocument,
+  ): ExportableElement[] {
+    const model = document.parseResult.value as JayveeModel;
+    const exportedElements: ExportableElement[] = [];
+
+    for (const node of AstUtils.streamAllContents(model)) {
+      if (isExportableElement(node) && node.isPublished) {
+        exportedElements.push(node);
+      }
+
+      if (isExportDefinition(node)) {
+        const originalDefinition = this.followExportDefinitionChain(node);
+        if (originalDefinition !== undefined) {
+          exportedElements.push(originalDefinition);
+        }
+      }
+    }
+    return exportedElements;
+  }
+
+  /**
+   * Follow an export statement to its original definition recursively.
+   */
+  protected followExportDefinitionChain(
+    exportDefinition: ExportDefinition,
+  ): ExportableElement | undefined {
+    const referenced = exportDefinition.element.ref;
+    if (referenced === undefined) {
+      return undefined; // Cannot follow reference to original definition
+    }
+
+    if (isExportableElement(referenced) && referenced.isPublished) {
+      return referenced; // Reached original definition
+    }
+
+    assert(
+      isExportDefinition(referenced), // TODO: check if that actually can happen
+      'Export referenced some non-exportable element',
+    );
+    return this.followExportDefinitionChain(referenced); // TODO: avoid dependency cycles
+  }
+
+  /**
+   * Add all builtins' URIs to @param importedUris
    */
   private gatherBuiltins(importedUris: Set<string>) {
     const builtins = getStdLib();
@@ -67,7 +142,7 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
   }
 
   /**
-   * Recursively add all imported URIs to @param importedUris
+   * Add all imported URIs of the given @jayveeModel to @param importedUris
    */
   private gatherImports(
     jayveeModel: JayveeModel,
@@ -88,12 +163,6 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
       if (importedDocument === undefined) {
         continue;
       }
-
-      const rootNode = importedDocument.parseResult.value;
-      if (!isJayveeModel(rootNode)) {
-        continue;
-      }
-      this.gatherImports(rootNode, importedUris);
     }
   }
 }

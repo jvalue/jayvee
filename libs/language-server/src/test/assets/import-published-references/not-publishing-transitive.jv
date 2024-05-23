@@ -4,4 +4,4 @@
 
 use * from './publishing.jv';
 
-publish PublishedBlockType; // re-publish
+// automatically, no elements are re-published

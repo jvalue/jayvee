@@ -75,6 +75,10 @@ describe('References to imported elements', () => {
       'should not resolve reference to non-imported element',
       'import-published-references/invalid-reference-to-not-imported-element.jv',
     ],
+    [
+      'should not resolve reference to not re-published transitive element',
+      'import-published-references/invalid-reference-to-element-transitive-no-republish.jv',
+    ],
   ];
   test.each(invalidCases)('%s', async (_, relativeTestFilePath) => {
     const model = await parseModel(relativeTestFilePath);

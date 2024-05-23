@@ -5,7 +5,6 @@
 export * from './jayvee-completion-provider';
 export * from './jayvee-formatter';
 export * from './jayvee-hover-provider';
-export * from './jayvee-scope-computation';
 export * from './jayvee-scope-provider';
 export * from './jayvee-definition-provider';
 export * from './jayvee-code-action-provider';
