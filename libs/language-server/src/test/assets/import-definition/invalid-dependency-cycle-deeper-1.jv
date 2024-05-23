@@ -1,0 +1,1 @@
+use * from './invalid-dependency-cycle-deeper-2.jv'; // imported file has import cycle

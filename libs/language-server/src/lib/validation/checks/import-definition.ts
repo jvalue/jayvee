@@ -41,11 +41,22 @@ function checkCyclicImportChain(
   importDefinition: ImportDefinition,
   props: JayveeValidationProps,
 ): void {
-  const isImportCycle = isCyclicImportChain(importDefinition, new Set(), props);
-  if (isImportCycle) {
+  const cycleAnalysisTraces = analyzeImportChain(
+    importDefinition,
+    new Set(),
+    props,
+  );
+
+  const cycles = cycleAnalysisTraces.filter((x) => x.isCyclic);
+
+  if (cycles.length > 0) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const shownImportChain = cycles[0]!.path
+      .map((x) => `"${x.path}"`)
+      .join(' -> ');
     props.validationContext.accept(
       'error',
-      `Import from "${importDefinition.path}" leads to import cycle.`,
+      `Import from "${importDefinition.path}" leads to import cycle: ${shownImportChain}`,
       {
         node: importDefinition,
       },
@@ -53,14 +64,24 @@ function checkCyclicImportChain(
   }
 }
 
-function isCyclicImportChain(
+interface ImportChainTrace {
+  isCyclic: boolean;
+  path: ImportDefinition[];
+}
+
+function analyzeImportChain(
   importDefinition: ImportDefinition,
   visitedDocumentUris: Set<string>,
   props: JayveeValidationProps,
-): boolean {
+): ImportChainTrace[] {
   const importedModel = props.importResolver.resolveImport(importDefinition);
   if (importedModel === undefined) {
-    return false;
+    return [
+      {
+        isCyclic: false,
+        path: [importDefinition],
+      },
+    ];
   }
 
   const currentVisitedUri = importedModel.$document?.uri.toString();
@@ -71,11 +92,29 @@ function isCyclicImportChain(
 
   if (visitedDocumentUris.has(currentVisitedUri)) {
     // cycle detected
-    return true;
+    return [
+      {
+        isCyclic: true,
+        path: [importDefinition],
+      },
+    ];
   }
   visitedDocumentUris.add(currentVisitedUri);
 
-  return importedModel.imports.some((furtherImport) =>
-    isCyclicImportChain(furtherImport, visitedDocumentUris, props),
-  );
+  const cycledAnalysisResult: ImportChainTrace[] = [];
+  for (const furtherImport of importedModel.imports) {
+    const downwardAnalysisResult = analyzeImportChain(
+      furtherImport,
+      visitedDocumentUris,
+      props,
+    );
+    const addedThisNodeToPath = downwardAnalysisResult.map((r) => {
+      return {
+        isCyclic: r.isCyclic,
+        path: [importDefinition, ...r.path],
+      };
+    });
+    cycledAnalysisResult.push(...addedThisNodeToPath);
+  }
+  return cycledAnalysisResult;
 }

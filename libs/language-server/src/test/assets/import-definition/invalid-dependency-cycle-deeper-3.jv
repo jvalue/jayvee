@@ -1,4 +1,4 @@
-use * from './invalid-dependency-cycle-transitive-1.jv';
+use * from './invalid-dependency-cycle-deeper-2.jv';
 
 publish composite blocktype DependencyCycleBlockType2 {
   input inPort oftype None;
