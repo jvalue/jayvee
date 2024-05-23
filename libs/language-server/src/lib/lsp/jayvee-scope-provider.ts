@@ -106,7 +106,7 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
   }
 
   /**
-   * Follow an export statement to its original definition recursively.
+   * Follow an export statement to its original definition.
    */
   protected followExportDefinitionChain(
     exportDefinition: ExportDefinition,
