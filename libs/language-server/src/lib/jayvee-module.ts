@@ -27,7 +27,9 @@ import { WrapperFactoryProvider } from './ast/wrappers/wrapper-factory-provider'
 import { JayveeWorkspaceManager } from './builtin-library/jayvee-workspace-manager';
 import { JayveeValueConverter } from './jayvee-value-converter';
 import {
+  JayveeCodeActionProvider,
   JayveeCompletionProvider,
+  JayveeDefinitionProvider,
   JayveeFormatter,
   JayveeHoverProvider,
   JayveeScopeComputation,
@@ -84,6 +86,8 @@ export const JayveeModule: Module<
     HoverProvider: (services: JayveeServices) =>
       new JayveeHoverProvider(services),
     Formatter: () => new JayveeFormatter(),
+    DefinitionProvider: (services) => new JayveeDefinitionProvider(services),
+    CodeActionProvider: (services) => new JayveeCodeActionProvider(services),
   },
   references: {
     ScopeProvider: (services) => new JayveeScopeProvider(services),
