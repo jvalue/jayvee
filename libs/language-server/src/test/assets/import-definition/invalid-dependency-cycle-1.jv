@@ -1,0 +1,10 @@
+use * from './invalid-dependency-cycle-2.jv';
+
+publish composite blocktype DependencyCycleBlockType1 {
+  input inPort oftype None;
+  output outPort oftype Sheet;
+
+  block TestBlock oftype DependencyCycleBlockType2 {}
+
+  inPort -> TestBlock -> outPort;
+}

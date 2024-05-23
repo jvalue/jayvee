@@ -119,8 +119,6 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
     if (this.isElementExported(referenced)) {
       return referenced; // Reached original definition
     }
-
-    // TODO: avoid dependency cycles
   }
 
   /**
