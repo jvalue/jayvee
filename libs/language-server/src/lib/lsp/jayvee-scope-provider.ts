@@ -116,15 +116,11 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
       return undefined; // Cannot follow reference to original definition
     }
 
-    if (isExportableElement(referenced) && this.isElementExported(referenced)) {
+    if (this.isElementExported(referenced)) {
       return referenced; // Reached original definition
     }
 
-    assert(
-      isExportDefinition(referenced), // TODO: check if that actually can happen
-      'Export referenced some non-exportable element',
-    );
-    return this.followExportDefinitionChain(referenced); // TODO: avoid dependency cycles
+    // TODO: avoid dependency cycles
   }
 
   /**
