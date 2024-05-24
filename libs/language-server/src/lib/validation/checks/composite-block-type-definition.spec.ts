@@ -2,18 +2,14 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  type AstNode,
-  type AstNodeLocator,
-  type LangiumDocument,
-} from 'langium';
+import { type AstNode, AstUtils, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
-  type CompositeBlockTypeDefinition,
   type JayveeServices,
   createJayveeServices,
+  isCompositeBlockTypeDefinition,
 } from '../..';
 import {
   type ParseHelperOptions,
@@ -34,7 +30,6 @@ describe('Validation of CompositeBlockTypeDefinition', () => {
 
   const validationAcceptorMock = vi.fn(validationAcceptorMockImpl);
 
-  let locator: AstNodeLocator;
   let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
@@ -46,21 +41,26 @@ describe('Validation of CompositeBlockTypeDefinition', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const blockType = locator.getAstNode<CompositeBlockTypeDefinition>(
-      document.parseResult.value,
-      'blockTypes@0',
-    ) as CompositeBlockTypeDefinition;
-
-    validateCompositeBlockTypeDefinition(
-      blockType,
-      createJayveeValidationProps(validationAcceptorMock, services),
+    const allElements = AstUtils.streamAllContents(document.parseResult.value);
+    const allCompositeBlockTypes = [
+      ...allElements.filter(isCompositeBlockTypeDefinition),
+    ];
+    expect(
+      allCompositeBlockTypes.length > 0,
+      'No composite block type definition found in test file',
     );
+
+    for (const blockType of allCompositeBlockTypes) {
+      validateCompositeBlockTypeDefinition(
+        blockType,
+        createJayveeValidationProps(validationAcceptorMock, services),
+      );
+    }
   }
 
   beforeAll(() => {
     // Create language services
     services = createJayveeServices(NodeFileSystem).Jayvee;
-    locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });

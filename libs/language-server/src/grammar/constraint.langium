@@ -11,13 +11,13 @@ ConstraintDefinition:
   TypedConstraintDefinition | ExpressionConstraintDefinition;
 
 TypedConstraintDefinition:
-  (isPublished?='publish')? 'constraint' name=ID 'oftype' type=[BuiltinConstrainttypeDefinition] body=PropertyBody;
+  'constraint' name=ID 'oftype' type=[BuiltinConstrainttypeDefinition] body=PropertyBody;
 
 ExpressionConstraintDefinition:
-  (isPublished?='publish')? 'constraint' name=ID 'on' valueType=ValueTypeReference ':' expression=Expression ';';
+  'constraint' name=ID 'on' valueType=ValueTypeReference ':' expression=Expression ';';
 
 BuiltinConstrainttypeDefinition:
-  (isPublished?='publish')? 'builtin' 'constrainttype' name=ID 'on' valueType=ValueTypeReference '{'
+  'builtin' 'constrainttype' name=ID 'on' valueType=ValueTypeReference '{'
     (properties+=ConstrainttypeProperty)*
 '}';
 

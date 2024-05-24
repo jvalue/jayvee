@@ -2,18 +2,14 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  type AstNode,
-  type AstNodeLocator,
-  type LangiumDocument,
-} from 'langium';
+import { type AstNode, AstUtils, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
   type JayveeServices,
-  type RangeLiteral,
   createJayveeServices,
+  isRangeLiteral,
 } from '../../../lib';
 import {
   type ParseHelperOptions,
@@ -34,7 +30,6 @@ describe('Validation of RangeLiteral', () => {
 
   const validationAcceptorMock = vi.fn(validationAcceptorMockImpl);
 
-  let locator: AstNodeLocator;
   let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
@@ -46,21 +41,22 @@ describe('Validation of RangeLiteral', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const rangeLiteral = locator.getAstNode<RangeLiteral>(
-      document.parseResult.value,
-      'pipelines@0/blocks@0/body/properties@0/value',
-    ) as RangeLiteral;
+    const allElements = AstUtils.streamAllContents(document.parseResult.value);
+    const allRangeLiterals = [...allElements.filter(isRangeLiteral)];
+    expect(allRangeLiterals.length > 0, 'No range literal found in test file');
 
-    validateRangeLiteral(
-      rangeLiteral,
-      createJayveeValidationProps(validationAcceptorMock, services),
-    );
+    for (const rangeLiteral of allRangeLiterals) {
+      validateRangeLiteral(
+        rangeLiteral,
+        createJayveeValidationProps(validationAcceptorMock, services),
+      );
+    }
   }
 
   beforeAll(() => {
     // Create language services
     services = createJayveeServices(NodeFileSystem).Jayvee;
-    locator = services.workspace.AstNodeLocator;
+
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });

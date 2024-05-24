@@ -2,18 +2,14 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  type AstNode,
-  type AstNodeLocator,
-  type LangiumDocument,
-} from 'langium';
+import { type AstNode, AstUtils, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
   type JayveeServices,
-  type ValuetypeDefinition,
   createJayveeServices,
+  isValuetypeDefinition,
 } from '../../../lib';
 import {
   type ParseHelperOptions,
@@ -34,7 +30,6 @@ describe('Validation of ValuetypeDefinition', () => {
 
   const validationAcceptorMock = vi.fn(validationAcceptorMockImpl);
 
-  let locator: AstNodeLocator;
   let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
@@ -46,21 +41,24 @@ describe('Validation of ValuetypeDefinition', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const valueTypeDefinition = locator.getAstNode<ValuetypeDefinition>(
-      document.parseResult.value,
-      'valueTypes@0',
-    ) as ValuetypeDefinition;
-
-    validateValueTypeDefinition(
-      valueTypeDefinition,
-      createJayveeValidationProps(validationAcceptorMock, services),
+    const allElements = AstUtils.streamAllContents(document.parseResult.value);
+    const allValueTypes = [...allElements.filter(isValuetypeDefinition)];
+    expect(
+      allValueTypes.length > 0,
+      'No value type definition found in test file',
     );
+
+    for (const valueTypeDefinition of allValueTypes) {
+      validateValueTypeDefinition(
+        valueTypeDefinition,
+        createJayveeValidationProps(validationAcceptorMock, services),
+      );
+    }
   }
 
   beforeAll(() => {
     // Create language services
     services = createJayveeServices(NodeFileSystem).Jayvee;
-    locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });

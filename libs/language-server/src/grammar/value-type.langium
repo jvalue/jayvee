@@ -6,12 +6,12 @@ import './expression'
 import './terminal'
 
 BuiltinValuetypeDefinition infers ValuetypeDefinition:
-  (isPublished?='publish')? isBuiltin?='builtin' 'valuetype' name=ID 
+  isBuiltin?='builtin' 'valuetype' name=ID 
     (genericDefinition=ValuetypeGenericsDefinition)?
   ';';
 
 CustomValuetypeDefinition infers ValuetypeDefinition:
-  (isPublished?='publish')? 'valuetype' name=ID 
+  'valuetype' name=ID 
     (genericDefinition=ValuetypeGenericsDefinition)?
   'oftype' type=ValueTypeReference '{'
     'constraints' ':' constraints=CollectionLiteral ';'

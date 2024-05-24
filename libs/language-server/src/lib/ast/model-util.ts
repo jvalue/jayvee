@@ -2,12 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type AstNode, type LangiumDocuments } from 'langium';
+import { type AstNode, AstUtils, type LangiumDocuments } from 'langium';
 
 import {
   type BuiltinBlockTypeDefinition,
   type BuiltinConstrainttypeDefinition,
   isBuiltinBlockTypeDefinition,
+  isBuiltinConstrainttypeDefinition,
   isJayveeModel,
 } from './generated/ast';
 import {
@@ -59,11 +60,10 @@ export function getAllBuiltinBlockTypes(
       if (!isJayveeModel(parsedDocument)) {
         throw new Error('Expected parsed document to be a JayveeModel');
       }
-      parsedDocument.blockTypes.forEach((blockTypeDefinition) => {
-        if (!isBuiltinBlockTypeDefinition(blockTypeDefinition)) {
-          return;
-        }
-
+      const allBlockTypes = AstUtils.streamAllContents(parsedDocument).filter(
+        isBuiltinBlockTypeDefinition,
+      );
+      allBlockTypes.forEach((blockTypeDefinition) => {
         const wasAlreadyVisited =
           visitedBuiltinBlockTypeDefinitions.has(blockTypeDefinition);
         if (wasAlreadyVisited) {
@@ -100,7 +100,10 @@ export function getAllBuiltinConstraintTypes(
       if (!isJayveeModel(parsedDocument)) {
         throw new Error('Expected parsed document to be a JayveeModel');
       }
-      parsedDocument.constrainttypes.forEach((constraintTypeDefinition) => {
+      const allConstraintTypes = AstUtils.streamAllContents(
+        parsedDocument,
+      ).filter(isBuiltinConstrainttypeDefinition);
+      allConstraintTypes.forEach((constraintTypeDefinition) => {
         const wasAlreadyVisited = visitedBuiltinConstraintTypeDefinitions.has(
           constraintTypeDefinition,
         );

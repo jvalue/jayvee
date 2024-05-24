@@ -9,8 +9,8 @@ import path from 'node:path';
 import {
   type InternalValueRepresentation,
   type JayveeServices,
-  type TransformDefinition,
   createJayveeServices,
+  isTransformDefinition,
 } from '@jvalue/jayvee-language-server';
 import {
   type ParseHelperOptions,
@@ -22,6 +22,7 @@ import {
 import {
   type AstNode,
   type AstNodeLocator,
+  AstUtils,
   type LangiumDocument,
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
@@ -77,10 +78,11 @@ describe('Validation of TransformExecutor', () => {
     const document = await parse(input, { validation: true });
     expectNoParserAndLexerErrors(document);
 
-    const transform = locator.getAstNode<TransformDefinition>(
-      document.parseResult.value,
-      'transforms@0',
-    ) as TransformDefinition;
+    const allElements = AstUtils.streamAllContents(document.parseResult.value);
+    const allTransforms = [...allElements.filter(isTransformDefinition)];
+    expect(allTransforms.length > 0);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const transform = allTransforms[0]!;
 
     const executionContext = getTestExecutionContext(
       locator,

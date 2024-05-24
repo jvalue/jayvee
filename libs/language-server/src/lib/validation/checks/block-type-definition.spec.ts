@@ -2,18 +2,14 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  type AstNode,
-  type AstNodeLocator,
-  type LangiumDocument,
-} from 'langium';
+import { type AstNode, AstUtils, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
-  type BuiltinBlockTypeDefinition,
   type JayveeServices,
   createJayveeServices,
+  isBuiltinBlockTypeDefinition,
 } from '../..';
 import {
   type ParseHelperOptions,
@@ -34,7 +30,6 @@ describe('Validation of BuiltinBlockTypeDefinition', () => {
 
   const validationAcceptorMock = vi.fn(validationAcceptorMockImpl);
 
-  let locator: AstNodeLocator;
   let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
@@ -46,21 +41,25 @@ describe('Validation of BuiltinBlockTypeDefinition', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const blockType = locator.getAstNode<BuiltinBlockTypeDefinition>(
-      document.parseResult.value,
-      'blockTypes@0',
-    ) as BuiltinBlockTypeDefinition;
-
-    validateBlockTypeDefinition(
-      blockType,
-      createJayveeValidationProps(validationAcceptorMock, services),
+    const allElements = AstUtils.streamAllContents(document.parseResult.value);
+    const allBlockTypes = [...allElements.filter(isBuiltinBlockTypeDefinition)];
+    expect(
+      allBlockTypes.length > 0,
+      'No builtin block type definition found in test file',
     );
+
+    for (const blockType of allBlockTypes) {
+      validateBlockTypeDefinition(
+        blockType,
+        createJayveeValidationProps(validationAcceptorMock, services),
+      );
+    }
   }
 
   beforeAll(() => {
     // Create language services
     services = createJayveeServices(NodeFileSystem).Jayvee;
-    locator = services.workspace.AstNodeLocator;
+
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });

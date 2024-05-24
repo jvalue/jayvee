@@ -2,18 +2,14 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  type AstNode,
-  type AstNodeLocator,
-  type LangiumDocument,
-} from 'langium';
+import { type AstNode, AstUtils, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
   type JayveeServices,
-  type TransformBody,
   createJayveeServices,
+  isTransformBody,
 } from '../../../lib';
 import {
   type ParseHelperOptions,
@@ -34,7 +30,6 @@ describe('Validation of TransformBody', () => {
 
   const validationAcceptorMock = vi.fn(validationAcceptorMockImpl);
 
-  let locator: AstNodeLocator;
   let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
@@ -46,21 +41,25 @@ describe('Validation of TransformBody', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const transformBody = locator.getAstNode<TransformBody>(
-      document.parseResult.value,
-      'transforms@0/body',
-    ) as TransformBody;
-
-    validateTransformBody(
-      transformBody,
-      createJayveeValidationProps(validationAcceptorMock, services),
+    const allElements = AstUtils.streamAllContents(document.parseResult.value);
+    const allTransformBodies = [...allElements.filter(isTransformBody)];
+    expect(
+      allTransformBodies.length > 0,
+      'No transform body found in test file',
     );
+
+    for (const transformBody of allTransformBodies) {
+      validateTransformBody(
+        transformBody,
+        createJayveeValidationProps(validationAcceptorMock, services),
+      );
+    }
   }
 
   beforeAll(() => {
     // Create language services
     services = createJayveeServices(NodeFileSystem).Jayvee;
-    locator = services.workspace.AstNodeLocator;
+
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });

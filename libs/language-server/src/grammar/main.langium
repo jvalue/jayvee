@@ -17,27 +17,20 @@ entry JayveeModel:
   (
     imports+=ImportDefinition
     | exports+=ExportDefinition
+    | exportableElements+=ExportableElementDefinition
     | pipelines+=PipelineDefinition
-    | valueTypes+=(CustomValuetypeDefinition | BuiltinValuetypeDefinition)
-    | constraints+=ConstraintDefinition
-    | transforms+=TransformDefinition
-    | blockTypes+=ReferenceableBlockTypeDefinition
-    | constrainttypes+=BuiltinConstrainttypeDefinition
-    | iotypes+=IotypeDefinition
   )*;
 
-// When adding an element here, make sure the element has the following prependix in its rule
-// (isPublished?='publish')?
-// TypeScript lets us then infer that there is a field `isPublished` after using the type guard `isExportableElement`.
-ExportableElement:
-  // Must ref rules where isPublished is defined 
-  // So don't use aggregates like ReferenceableBlockTypeDefinition
-  // Otherwise it doesn't work to resolve the refenerces
+ExportableElementDefinition:
+  (isPublished?='publish')? ExportableElement;
+
+ExportableElement: 
   (CustomValuetypeDefinition | BuiltinValuetypeDefinition)
-  | (TypedConstraintDefinition | ExpressionConstraintDefinition | BuiltinConstrainttypeDefinition)
-  | TransformDefinition
-  | (BuiltinBlockTypeDefinition | CompositeBlockTypeDefinition) 
-  | IotypeDefinition;
+    | ConstraintDefinition
+    | TransformDefinition
+    | ReferenceableBlockTypeDefinition
+    | BuiltinConstrainttypeDefinition
+    | IotypeDefinition;
 
 ExportDefinition:
   'publish' element=[ExportableElement] ';';

@@ -7,7 +7,7 @@ import 'value-type'
 import 'expression'
 
 TransformDefinition:
-  (isPublished?='publish')? 'transform' name=ID body=TransformBody;
+  'transform' name=ID body=TransformBody;
 
 TransformBody:
   '{' (ports+=TransformPortDefinition)* (outputAssignments+=TransformOutputAssignment)* '}';

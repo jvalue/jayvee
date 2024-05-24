@@ -6,8 +6,8 @@ import {
   type BlockDefinition,
   type InternalValueRepresentation,
   type JayveeServices,
-  type TypedConstraintDefinition,
   createJayveeServices,
+  isTypedConstraintDefinition,
 } from '@jvalue/jayvee-language-server';
 import {
   type ParseHelperOptions,
@@ -18,6 +18,7 @@ import {
 import {
   type AstNode,
   type AstNodeLocator,
+  AstUtils,
   type LangiumDocument,
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
@@ -51,10 +52,15 @@ describe('Validation of LengthConstraintExecutor', () => {
       document.parseResult.value,
       'pipelines@0/blocks@2',
     ) as BlockDefinition;
-    const constraint = locator.getAstNode<TypedConstraintDefinition>(
-      document.parseResult.value,
-      'constraints@0',
-    ) as TypedConstraintDefinition;
+
+    const allElements = AstUtils.streamAllContents(document.parseResult.value);
+    const allConstraints = [...allElements.filter(isTypedConstraintDefinition)];
+    expect(
+      allConstraints.length > 0,
+      'No constraint definition found in test file',
+    );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const constraint = allConstraints[0]!;
 
     return new LengthConstraintExecutor().isValid(
       value,

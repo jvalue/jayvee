@@ -2,19 +2,15 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  type AstNode,
-  type AstNodeLocator,
-  type LangiumDocument,
-} from 'langium';
+import { type AstNode, AstUtils, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
   type JayveeServices,
-  type TypedConstraintDefinition,
   createJayveeServices,
   initializeWorkspace,
+  isTypedConstraintDefinition,
 } from '../../../lib';
 import {
   type ParseHelperOptions,
@@ -35,7 +31,6 @@ describe('Validation of ConstraintDefinition (typed syntax)', () => {
 
   const validationAcceptorMock = vi.fn(validationAcceptorMockImpl);
 
-  let locator: AstNodeLocator;
   let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
@@ -47,15 +42,21 @@ describe('Validation of ConstraintDefinition (typed syntax)', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const typedConstraint = locator.getAstNode<TypedConstraintDefinition>(
-      document.parseResult.value,
-      'constraints@0',
-    ) as TypedConstraintDefinition;
-
-    validateTypedConstraintDefinition(
-      typedConstraint,
-      createJayveeValidationProps(validationAcceptorMock, services),
+    const allElements = AstUtils.streamAllContents(document.parseResult.value);
+    const allTypedConstraints = [
+      ...allElements.filter(isTypedConstraintDefinition),
+    ];
+    expect(
+      allTypedConstraints.length > 0,
+      'No typed constraint definition found in test file',
     );
+
+    for (const typedConstraint of allTypedConstraints) {
+      validateTypedConstraintDefinition(
+        typedConstraint,
+        createJayveeValidationProps(validationAcceptorMock, services),
+      );
+    }
   }
 
   beforeAll(async () => {
@@ -63,7 +64,6 @@ describe('Validation of ConstraintDefinition (typed syntax)', () => {
     services = createJayveeServices(NodeFileSystem).Jayvee;
     await initializeWorkspace(services);
 
-    locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });

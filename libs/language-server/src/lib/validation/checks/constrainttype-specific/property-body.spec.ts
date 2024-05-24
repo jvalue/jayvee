@@ -2,18 +2,14 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  type AstNode,
-  type AstNodeLocator,
-  type LangiumDocument,
-} from 'langium';
+import { type AstNode, AstUtils, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
   type JayveeServices,
-  type PropertyBody,
   createJayveeServices,
+  isTypedConstraintDefinition,
 } from '../../..';
 import {
   type ParseHelperOptions,
@@ -34,7 +30,6 @@ describe('Validation of constraint type specific property bodies', () => {
 
   const validationAcceptorMock = vi.fn(validationAcceptorMockImpl);
 
-  let locator: AstNodeLocator;
   let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
@@ -46,26 +41,34 @@ describe('Validation of constraint type specific property bodies', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const propertyBody = locator.getAstNode<PropertyBody>(
-      document.parseResult.value,
-      'constraints@0/body',
-    ) as PropertyBody;
-
-    const props = createJayveeValidationProps(validationAcceptorMock, services);
-
-    const wrapper = props.wrapperFactories.TypedObject.wrap(
-      propertyBody.$container.type,
+    const allElements = AstUtils.streamAllContents(document.parseResult.value);
+    const allTypedConstraints = [
+      ...allElements.filter(isTypedConstraintDefinition),
+    ];
+    expect(
+      allTypedConstraints.length > 0,
+      'No typed constraint definition found in test file',
     );
-    expect(wrapper).toBeDefined();
 
-    checkConstraintTypeSpecificPropertyBody(propertyBody, props);
+    for (const constraint of allTypedConstraints) {
+      const propertyBody = constraint.body;
+      const props = createJayveeValidationProps(
+        validationAcceptorMock,
+        services,
+      );
+
+      const wrapper = props.wrapperFactories.TypedObject.wrap(
+        propertyBody.$container.type,
+      );
+      expect(wrapper).toBeDefined();
+
+      checkConstraintTypeSpecificPropertyBody(propertyBody, props);
+    }
   }
 
   beforeAll(() => {
     // Create language services
     services = createJayveeServices(NodeFileSystem).Jayvee;
-
-    locator = services.workspace.AstNodeLocator;
 
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);

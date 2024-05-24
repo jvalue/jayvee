@@ -2,20 +2,17 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  type AstNode,
-  type AstNodeLocator,
-  type LangiumDocument,
-} from 'langium';
+import { type AstNode, AstUtils, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
   type JayveeServices,
-  type PropertyBody,
   type PropertySpecification,
   type TypedObjectWrapper,
   createJayveeServices,
+  isPropertyBody,
+  isTypedConstraintDefinition,
 } from '../../..';
 import {
   type ParseHelperOptions,
@@ -36,7 +33,6 @@ describe('Validation of constraint type specific properties', () => {
 
   const validationAcceptorMock = vi.fn(validationAcceptorMockImpl);
 
-  let locator: AstNodeLocator;
   let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
@@ -48,10 +44,16 @@ describe('Validation of constraint type specific properties', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const propertyBody = locator.getAstNode<PropertyBody>(
-      document.parseResult.value,
-      'constraints@0/body',
-    ) as PropertyBody;
+    const allElements = AstUtils.streamAllContents(document.parseResult.value);
+    const allPropertyBodies = [
+      ...allElements
+        .filter(isPropertyBody)
+        .filter((x) => isTypedConstraintDefinition(x.$container)),
+    ];
+    expect(allPropertyBodies.length > 0, 'No property body found in test file');
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const propertyBody = allPropertyBodies[0]!;
 
     const props = createJayveeValidationProps(validationAcceptorMock, services);
 
@@ -77,8 +79,6 @@ describe('Validation of constraint type specific properties', () => {
   beforeAll(() => {
     // Create language services
     services = createJayveeServices(NodeFileSystem).Jayvee;
-
-    locator = services.workspace.AstNodeLocator;
 
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);

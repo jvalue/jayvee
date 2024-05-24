@@ -24,6 +24,7 @@ import {
   type JayveeModel,
   isExportDefinition,
   isExportableElement,
+  isExportableElementDefinition,
   isJayveeModel,
 } from '../ast';
 import { getStdLib } from '../builtin-library';
@@ -91,7 +92,11 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
     const exportedElements: ExportableElement[] = [];
 
     for (const node of AstUtils.streamAllContents(model)) {
-      if (isExportableElement(node) && node.isPublished) {
+      if (isExportableElementDefinition(node) && node.isPublished) {
+        assert(
+          isExportableElement(node),
+          'Exported node is not an ExportableElement',
+        );
         exportedElements.push(node);
       }
 
@@ -112,6 +117,7 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
     exportDefinition: ExportDefinition,
   ): ExportableElement | undefined {
     const referenced = exportDefinition.element.ref;
+
     if (referenced === undefined) {
       return undefined; // Cannot follow reference to original definition
     }
@@ -127,7 +133,7 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
    * Checks whether an exportable @param element is exported (either in definition or via an delayed export definition).
    */
   protected isElementExported(element: ExportableElement): boolean {
-    if (element.isPublished) {
+    if (isExportableElementDefinition(element) && element.isPublished) {
       return true;
     }
 
@@ -139,8 +145,7 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
     );
 
     const isExported = model.exports.some(
-      (exportDefinition: ExportDefinition) =>
-        exportDefinition.element.ref === element,
+      (exportDefinition) => exportDefinition.element.ref === element,
     );
     return isExported;
   }

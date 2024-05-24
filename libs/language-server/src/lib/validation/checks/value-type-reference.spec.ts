@@ -8,6 +8,7 @@ import { strict as assert } from 'assert';
 import {
   type AstNode,
   type AstNodeLocator,
+  AstUtils,
   type LangiumDocument,
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
@@ -16,8 +17,9 @@ import { vi } from 'vitest';
 import {
   type JayveeServices,
   type ValueTypeReference,
-  type ValuetypeDefinition,
   createJayveeServices,
+  isReferenceableBlockTypeDefinition,
+  isValuetypeDefinition,
 } from '../..';
 import {
   type ParseHelperOptions,
@@ -50,22 +52,22 @@ describe('Validation of ValueTypeReference', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const valueTypeReferences: ValueTypeReference[] = [];
+    const allElements = AstUtils.streamAllContents(document.parseResult.value);
+    const allValueTypes = [...allElements.filter(isValuetypeDefinition)];
+    expect(
+      allValueTypes.length > 0,
+      'No value type definition found in test file',
+    );
 
-    let valueTypeDefinition: ValuetypeDefinition | undefined;
-    let i = 0;
-    do {
-      valueTypeDefinition = locator.getAstNode<ValuetypeDefinition>(
-        document.parseResult.value,
-        `valueTypes@${i}`,
-      );
-      if (valueTypeDefinition !== undefined) {
-        const valueTypeRef = valueTypeDefinition.type;
-        assert(valueTypeRef !== undefined);
-        valueTypeReferences.push(valueTypeRef);
-      }
-      ++i;
-    } while (valueTypeDefinition !== undefined);
+    const valueTypeReferences: ValueTypeReference[] = [];
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
+    for (let i = 0; i < allValueTypes.length; ++i) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const valueTypeDefinition = allValueTypes[i]!;
+      const valueTypeRef = valueTypeDefinition.type;
+      assert(valueTypeRef !== undefined);
+      valueTypeReferences.push(valueTypeRef);
+    }
 
     return valueTypeReferences;
   }
@@ -284,10 +286,19 @@ describe('Validation of ValueTypeReference', () => {
 
     const document = await parse(text);
     expectNoParserAndLexerErrors(document);
-    const valueTypeRef = locator.getAstNode<ValueTypeReference>(
-      document.parseResult.value,
-      `blockTypes@0/properties@0/valueType`,
+
+    const allElements = AstUtils.streamAllContents(document.parseResult.value);
+    const allBlockTypes = [
+      ...allElements.filter(isReferenceableBlockTypeDefinition),
+    ];
+    expect(
+      allBlockTypes.length > 0,
+      'No block type definition found in test file',
     );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const blockType = allBlockTypes[0]!;
+
+    const valueTypeRef = blockType.properties[0]?.valueType;
     assert(valueTypeRef !== undefined);
 
     validateValueTypeReference(
