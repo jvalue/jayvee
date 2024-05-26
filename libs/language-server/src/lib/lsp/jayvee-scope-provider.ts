@@ -9,6 +9,7 @@ import {
   type AstNodeDescription,
   AstUtils,
   DefaultScopeProvider,
+  DocumentCache,
   EMPTY_SCOPE,
   type LangiumDocument,
   type LangiumDocuments,
@@ -35,10 +36,16 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
   protected readonly langiumDocuments: LangiumDocuments;
   protected readonly importResolver: JayveeImportResolver;
 
+  protected readonly availableElementsPerDocumentCache: DocumentCache<
+    string,
+    ExportableElement[]
+  >;
+
   constructor(services: JayveeServices) {
     super(services);
     this.langiumDocuments = services.shared.workspace.LangiumDocuments;
     this.importResolver = services.ImportResolver;
+    this.availableElementsPerDocumentCache = new DocumentCache(services.shared);
   }
 
   protected override getGlobalScope(
@@ -69,7 +76,11 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
         continue;
       }
 
-      const publishedElements = this.getExportedElements(importedDocument);
+      const publishedElements = this.availableElementsPerDocumentCache.get(
+        importedDocument.uri,
+        'exports', // we only need one key here as it is on document basis
+        () => this.getExportedElements(importedDocument),
+      );
       importedElements.push(
         ...publishedElements.map((e) =>
           this.descriptions.createDescription(e, e.name),
