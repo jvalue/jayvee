@@ -33,12 +33,12 @@ import { type JayveeImportResolver } from '../services/import-resolver';
 
 export class JayveeScopeProvider extends DefaultScopeProvider {
   protected readonly langiumDocuments: LangiumDocuments;
-  protected readonly importResover: JayveeImportResolver;
+  protected readonly importResolver: JayveeImportResolver;
 
   constructor(services: JayveeServices) {
     super(services);
     this.langiumDocuments = services.shared.workspace.LangiumDocuments;
-    this.importResover = services.ImportResolver;
+    this.importResolver = services.ImportResolver;
   }
 
   protected override getGlobalScope(
@@ -172,7 +172,7 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
     importedUris: Set<string>,
   ): void {
     for (const importDefinition of jayveeModel.imports) {
-      const uri = this.importResover.resolveImportUri(importDefinition);
+      const uri = this.importResolver.resolveImportUri(importDefinition);
       if (uri === undefined) {
         continue;
       }
