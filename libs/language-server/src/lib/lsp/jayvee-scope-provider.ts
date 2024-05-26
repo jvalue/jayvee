@@ -39,8 +39,7 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
   protected readonly availableElementsPerDocumentCache: DocumentCache<
     string,
     ExportableElement[]
-  >;
-
+  >; // DocumentCache becomes invalidated as soon the corresponding document is updated
   constructor(services: JayveeServices) {
     super(services);
     this.langiumDocuments = services.shared.workspace.LangiumDocuments;
@@ -59,8 +58,6 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
     if (!jayveeModel) {
       return EMPTY_SCOPE;
     }
-
-    // TODO: add caching to avoid performance issues
 
     const importedUris = new Set<string>();
     this.gatherImports(jayveeModel, importedUris);
