@@ -33,7 +33,7 @@ ExportableElement:
     | IotypeDefinition;
 
 ExportDefinition:
-  'publish' element=[ExportableElement] ';';
+  'publish' element=[ExportableElement] ('as' alias=ID)? ';';
 
 ImportDefinition:
   'use' '*' 'from' path=STRING ';';
