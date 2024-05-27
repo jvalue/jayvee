@@ -87,9 +87,40 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
         continue;
       }
 
-      const publishedElement =
-        this.getPublishedElementsFromDocument(importedDocument);
-      importedElements.push(...publishedElement);
+      importedElements.push(
+        ...this.getImportedElementsFromDocument(
+          importDefinition,
+          importedDocument,
+        ),
+      );
+    }
+    return importedElements;
+  }
+
+  protected getImportedElementsFromDocument(
+    importDefinition: ImportDefinition,
+    importedDocument: LangiumDocument,
+  ): AstNodeDescription[] {
+    const publishedElement =
+      this.getPublishedElementsFromDocument(importedDocument);
+
+    if (importDefinition.useAll) {
+      return publishedElement;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const importedIdentifiers = importDefinition.usedElements ?? [];
+
+    const importedElements: AstNodeDescription[] = [];
+    for (const importedIdentifier of importedIdentifiers) {
+      const matchingExportedElement = publishedElement.find(
+        (x) => x.name === importedIdentifier,
+      );
+      if (matchingExportedElement === undefined) {
+        continue;
+      }
+
+      importedElements.push(matchingExportedElement);
     }
     return importedElements;
   }

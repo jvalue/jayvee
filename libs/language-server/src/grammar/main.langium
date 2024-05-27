@@ -36,4 +36,7 @@ ExportDefinition:
   'publish' element=[ExportableElement] ('as' alias=ID)? ';';
 
 ImportDefinition:
-  'use' '*' 'from' path=STRING ';';
+  'use' (
+    useAll?='*' 
+    | '{' (usedElements+=ID) (',' usedElements+=ID)* '}'
+  ) 'from' path=STRING ';';
