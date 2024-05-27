@@ -6,6 +6,7 @@
 import { strict as assert } from 'assert';
 
 import {
+  type AstNode,
   type AstNodeDescription,
   AstUtils,
   DefaultScopeProvider,
@@ -68,9 +69,17 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
       return EMPTY_SCOPE;
     }
 
-    const importedUris = new Set<string>();
-    this.gatherImports(jayveeModel, importedUris);
-    this.gatherBuiltins(importedUris);
+    const importedElements: AstNodeDescription[] = [];
+    importedElements.push(...this.getBuiltinElements());
+    importedElements.push(...this.getExplicitlyImportedElements(jayveeModel));
+
+    return new MapScope(importedElements);
+  }
+
+  protected getExplicitlyImportedElements(
+    model: JayveeModel,
+  ): AstNodeDescription[] {
+    const importedUris = this.getImportedUris(model);
 
     const importedDocuments = [...importedUris].map((importedUri) =>
       this.langiumDocuments.getDocument(URI.parse(importedUri)),
@@ -82,19 +91,46 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
         continue;
       }
 
-      const publishedElements = this.availableElementsPerDocumentCache.get(
-        importedDocument.uri,
-        'exports', // we only need one key here as it is on document basis
-        () => this.getExportedElements(importedDocument),
-      );
       importedElements.push(
-        ...publishedElements.map((e) =>
-          this.descriptions.createDescription(e.element, e.alias),
-        ),
+        ...this.getPublishedElementsFromDocument(importedDocument),
       );
     }
 
-    return new MapScope(importedElements);
+    return importedElements;
+  }
+
+  protected getBuiltinElements(): AstNodeDescription[] {
+    const builtinUris = this.getBuiltins();
+
+    const importedDocuments = [...builtinUris].map((importedUri) =>
+      this.langiumDocuments.getDocument(URI.parse(importedUri)),
+    );
+
+    const importedElements: AstNodeDescription[] = [];
+    for (const importedDocument of importedDocuments) {
+      if (importedDocument === undefined) {
+        continue;
+      }
+
+      importedElements.push(
+        ...this.getPublishedElementsFromDocument(importedDocument),
+      );
+    }
+
+    return importedElements;
+  }
+
+  protected getPublishedElementsFromDocument(
+    document: LangiumDocument<AstNode>,
+  ): AstNodeDescription[] {
+    const publishedElements = this.availableElementsPerDocumentCache.get(
+      document.uri,
+      'exports', // we only need one key here as it is on document basis
+      () => this.getExportedElements(document),
+    );
+    return publishedElements.map((e) =>
+      this.descriptions.createDescription(e.element, e.alias),
+    );
   }
 
   /**
@@ -175,7 +211,9 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
   /**
    * Add all builtins' URIs to @param importedUris
    */
-  protected gatherBuiltins(importedUris: Set<string>) {
+  protected getBuiltins(): Set<string> {
+    const importedUris: Set<string> = new Set();
+
     const builtins = getStdLib();
     const uris = Object.keys(builtins);
 
@@ -184,15 +222,13 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
       const formattedUri = URI.parse(uri).toString();
       importedUris.add(formattedUri);
     }
+
+    return importedUris;
   }
 
-  /**
-   * Add all imported URIs of the given @jayveeModel to @param importedUris
-   */
-  protected gatherImports(
-    jayveeModel: JayveeModel,
-    importedUris: Set<string>,
-  ): void {
+  protected getImportedUris(jayveeModel: JayveeModel): Set<string> {
+    const importedUris: Set<string> = new Set();
+
     for (const importDefinition of jayveeModel.imports) {
       const uri = this.importResolver.resolveImportUri(importDefinition);
       if (uri === undefined) {
@@ -209,5 +245,7 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
         continue;
       }
     }
+
+    return importedUris;
   }
 }
