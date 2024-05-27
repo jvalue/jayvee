@@ -65,7 +65,7 @@ describe('Validation of ImportDefinition', () => {
   describe('ImportDefinition syntax', () => {
     it('should have no error if file exists in same directory', async () => {
       const relativeTestFilePath =
-        'import-definition/valid-imported-file-exists-same-dir.jv';
+        'import-definition/wildcard-import/valid-imported-file-exists-same-dir.jv';
 
       await parseAndValidateImportDefinition(relativeTestFilePath);
 
@@ -74,7 +74,7 @@ describe('Validation of ImportDefinition', () => {
 
     it('should have no error if file exists in deeper directory', async () => {
       const relativeTestFilePath =
-        'import-definition/valid-imported-file-exists-deeper-dir.jv';
+        'import-definition/wildcard-import/valid-imported-file-exists-deeper-dir.jv';
 
       await parseAndValidateImportDefinition(relativeTestFilePath);
 
@@ -83,7 +83,7 @@ describe('Validation of ImportDefinition', () => {
 
     it('should have no error if file exists in deeper directory', async () => {
       const relativeTestFilePath =
-        'import-definition/deeper/valid-imported-file-exists-higher-dir.jv';
+        'import-definition/wildcard-import/deeper/valid-imported-file-exists-higher-dir.jv';
 
       await parseAndValidateImportDefinition(relativeTestFilePath);
 
@@ -92,7 +92,7 @@ describe('Validation of ImportDefinition', () => {
 
     it('should diagnose error on imported file that does not exist', async () => {
       const relativeTestFilePath =
-        'import-definition/invalid-imported-not-existing-file.jv';
+        'import-definition/wildcard-import/invalid-imported-not-existing-file.jv';
 
       await parseAndValidateImportDefinition(relativeTestFilePath);
 
@@ -113,7 +113,7 @@ describe('Validation of ImportDefinition', () => {
 
     it('should diagnose error on unsupported file ending', async () => {
       const relativeTestFilePath =
-        'import-definition/invalid-imported-file-with-wrong-file-ending.jv';
+        'import-definition/wildcard-import/invalid-imported-file-with-wrong-file-ending.jv';
 
       await parseAndValidateImportDefinition(relativeTestFilePath);
 
@@ -134,7 +134,7 @@ describe('Validation of ImportDefinition', () => {
 
     it('should diagnose error on cyclic import', async () => {
       const relativeTestFilePath =
-        'import-definition/invalid-dependency-cycle-1.jv';
+        'import-definition/wildcard-import/invalid-dependency-cycle-1.jv';
 
       await parseAndValidateImportDefinition(relativeTestFilePath);
 
@@ -149,7 +149,7 @@ describe('Validation of ImportDefinition', () => {
 
     it('should diagnose error on cyclic import when importing itself', async () => {
       const relativeTestFilePath =
-        'import-definition/invalid-dependency-cycle-self-import.jv';
+        'import-definition/wildcard-import/invalid-dependency-cycle-self-import.jv';
 
       await parseAndValidateImportDefinition(relativeTestFilePath);
 
@@ -164,7 +164,7 @@ describe('Validation of ImportDefinition', () => {
 
     it('should diagnose error on cyclic import even when cycle resides in imported file', async () => {
       const relativeTestFilePath =
-        'import-definition/invalid-dependency-cycle-deeper-1.jv';
+        'import-definition/wildcard-import/invalid-dependency-cycle-deeper-1.jv';
 
       await parseAndValidateImportDefinition(relativeTestFilePath);
 
@@ -179,7 +179,7 @@ describe('Validation of ImportDefinition', () => {
 
     it('should diagnose error on cyclic import spans multiple files', async () => {
       const relativeTestFilePath =
-        'import-definition/invalid-dependency-cycle-transitive-1.jv';
+        'import-definition/wildcard-import/invalid-dependency-cycle-transitive-1.jv';
 
       await parseAndValidateImportDefinition(relativeTestFilePath);
 
