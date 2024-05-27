@@ -26,6 +26,7 @@ import { validateBlockDefinition } from './checks/block-definition';
 import { validateBlockTypeDefinition } from './checks/block-type-definition';
 import { validateColumnId } from './checks/column-id';
 import { validateCompositeBlockTypeDefinition } from './checks/composite-block-type-definition';
+import { validateExportDefinition } from './checks/export-definition';
 import { validateExpressionConstraintDefinition } from './checks/expression-constraint-definition';
 import { validateImportDefinition } from './checks/import-definition';
 import { validateJayveeModel } from './checks/jayvee-model';
@@ -78,6 +79,7 @@ export class JayveeValidationRegistry extends ValidationRegistry {
       ValuetypeDefinition: validateValueTypeDefinition,
       ValueTypeReference: validateValueTypeReference,
       TransformBody: validateTransformBody,
+      ExportDefinition: validateExportDefinition,
     });
   }
 
