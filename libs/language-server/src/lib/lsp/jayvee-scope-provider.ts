@@ -23,6 +23,7 @@ import {
 import {
   type ExportDefinition,
   type ExportableElement,
+  type ImportDefinition,
   type JayveeModel,
   isExportDefinition,
   isExportableElement,
@@ -79,23 +80,17 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
   protected getExplicitlyImportedElements(
     model: JayveeModel,
   ): AstNodeDescription[] {
-    const importedUris = this.getImportedUris(model);
-
-    const importedDocuments = [...importedUris].map((importedUri) =>
-      this.langiumDocuments.getDocument(URI.parse(importedUri)),
-    );
-
     const importedElements: AstNodeDescription[] = [];
-    for (const importedDocument of importedDocuments) {
+    for (const importDefinition of model.imports) {
+      const importedDocument = this.getImportedDocument(importDefinition);
       if (importedDocument === undefined) {
         continue;
       }
 
-      importedElements.push(
-        ...this.getPublishedElementsFromDocument(importedDocument),
-      );
+      const publishedElement =
+        this.getPublishedElementsFromDocument(importedDocument);
+      importedElements.push(...publishedElement);
     }
-
     return importedElements;
   }
 
@@ -226,26 +221,16 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
     return importedUris;
   }
 
-  protected getImportedUris(jayveeModel: JayveeModel): Set<string> {
-    const importedUris: Set<string> = new Set();
-
-    for (const importDefinition of jayveeModel.imports) {
-      const uri = this.importResolver.resolveImportUri(importDefinition);
-      if (uri === undefined) {
-        continue;
-      }
-
-      if (importedUris.has(uri.toString())) {
-        continue;
-      }
-
-      importedUris.add(uri.toString());
-      const importedDocument = this.langiumDocuments.getDocument(uri);
-      if (importedDocument === undefined) {
-        continue;
-      }
+  protected getImportedDocument(
+    importDefinition: ImportDefinition,
+  ): LangiumDocument | undefined {
+    const uri = this.importResolver.resolveImportUri(importDefinition);
+    if (uri === undefined) {
+      return undefined;
     }
 
-    return importedUris;
+    const importedDocument = this.langiumDocuments.getDocument(uri);
+
+    return importedDocument;
   }
 }
