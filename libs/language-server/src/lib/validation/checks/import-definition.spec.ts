@@ -191,5 +191,53 @@ describe('Validation of ImportDefinition', () => {
         expect.any(Object),
       );
     });
+
+    it('should diagnose no error on specific element use that is published via element definition', async () => {
+      const relativeTestFilePath =
+        'import-definition/named-import/valid-imported-element-exists.jv';
+
+      await parseAndValidateImportDefinition(relativeTestFilePath);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
+    });
+
+    it('should diagnose no error on specific element use that is published via export definition', async () => {
+      const relativeTestFilePath =
+        'import-definition/named-import/valid-imported-aliased-element-exists.jv';
+
+      await parseAndValidateImportDefinition(relativeTestFilePath);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
+    });
+
+    it('should diagnose error on specific element use that does not exist', async () => {
+      const relativeTestFilePath =
+        'import-definition/named-import/invalid-imported-element-not-existing.jv';
+
+      await parseAndValidateImportDefinition(relativeTestFilePath);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+      expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+        1,
+        'error',
+        'Could not find published element A in file "./publishing.jv". Check if the element exists and has been correctly published.',
+        expect.any(Object),
+      );
+    });
+
+    it('should diagnose error on specific element use that exists but is not published', async () => {
+      const relativeTestFilePath =
+        'import-definition/named-import/invalid-imported-element-not-published.jv';
+
+      await parseAndValidateImportDefinition(relativeTestFilePath);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+      expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+        1,
+        'error',
+        'Could not find published element Y in file "./publishing.jv". Check if the element exists and has been correctly published.',
+        expect.any(Object),
+      );
+    });
   });
 });
