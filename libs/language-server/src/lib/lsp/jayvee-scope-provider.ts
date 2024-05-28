@@ -86,11 +86,11 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
     importDefinition: ImportDefinition,
     importedDocument: LangiumDocument,
   ): AstNodeDescription[] {
-    const publishedElement =
+    const publishedElements =
       this.getPublishedElementsFromDocument(importedDocument);
 
     if (importDefinition.useAll) {
-      return publishedElement;
+      return publishedElements;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -98,7 +98,7 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
 
     const importedElements: AstNodeDescription[] = [];
     for (const importedIdentifier of importedIdentifiers) {
-      const matchingExportedElement = publishedElement.find(
+      const matchingExportedElement = publishedElements.find(
         (x) => x.name === importedIdentifier,
       );
       if (matchingExportedElement === undefined) {
