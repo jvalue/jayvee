@@ -3,4 +3,3 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 use * from 'existing-imported-file.jv';
-use * from './existing-imported-file.jv';

@@ -62,7 +62,7 @@ describe('Validation of ImportDefinition', () => {
     validationAcceptorMock.mockReset();
   });
 
-  describe('ImportDefinition syntax', () => {
+  describe('ImportDefinition wildcard syntax', () => {
     it('should have no error if file exists in same directory', async () => {
       const relativeTestFilePath =
         'import-definition/wildcard-import/valid-imported-file-exists-same-dir.jv';
@@ -191,7 +191,9 @@ describe('Validation of ImportDefinition', () => {
         expect.any(Object),
       );
     });
+  });
 
+  describe('ImportDefinition named element syntax', () => {
     it('should diagnose no error on specific element use that is published via element definition', async () => {
       const relativeTestFilePath =
         'import-definition/named-import/valid-imported-element-exists.jv';
@@ -236,6 +238,48 @@ describe('Validation of ImportDefinition', () => {
         1,
         'error',
         'Could not find published element Y in file "./publishing.jv". Check if the element exists and has been correctly published.',
+        expect.any(Object),
+      );
+    });
+
+    it('should diagnose error on specific element being imported multiple times in one statement', async () => {
+      const relativeTestFilePath =
+        'import-definition/named-import/invalid-imported-element-multiple-times-same-statement.jv';
+
+      await parseAndValidateImportDefinition(relativeTestFilePath);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
+      expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+        1,
+        'error',
+        'Element X is imported 2 times from file "./publishing.jv". Remove the duplicate import.',
+        expect.any(Object),
+      );
+      expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+        2,
+        'error',
+        'Element X is imported 2 times from file "./publishing.jv". Remove the duplicate import.',
+        expect.any(Object),
+      );
+    });
+
+    it('should diagnose error on specific file being imported multiple times', async () => {
+      const relativeTestFilePath =
+        'import-definition/named-import/invalid-imported-file-multiple-times.jv';
+
+      await parseAndValidateImportDefinition(relativeTestFilePath);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
+      expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+        1,
+        'error',
+        'Found 2 import statements for file "./publishing.jv". Combine both import statements.',
+        expect.any(Object),
+      );
+      expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+        2,
+        'error',
+        'Found 2 import statements for file "publishing.jv". Combine both import statements.',
         expect.any(Object),
       );
     });

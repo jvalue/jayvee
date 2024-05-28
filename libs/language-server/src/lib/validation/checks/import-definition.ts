@@ -5,9 +5,12 @@
 // eslint-disable-next-line unicorn/prefer-node-protocol
 import { strict as assert } from 'assert';
 
+import { AstUtils, UriUtils } from 'langium';
+
 import {
   type ImportDefinition,
   isExportableElement,
+  isJayveeModel,
 } from '../../ast/generated/ast';
 import { type JayveeValidationProps } from '../validation-registry';
 
@@ -22,6 +25,67 @@ export function validateImportDefinition(
 
   checkImportedElementsExist(importDefinition, props);
   checkCyclicImportChain(importDefinition, props);
+  checkElementImportedOnlyOnce(importDefinition, props);
+  checkFileImportedOnlyOnce(importDefinition, props);
+}
+
+function checkElementImportedOnlyOnce(
+  importDefinition: ImportDefinition,
+  props: JayveeValidationProps,
+): void {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const importedElements = importDefinition.usedElements ?? [];
+
+  for (const [i, importedElement] of importedElements.entries()) {
+    const occurrencesInSameImportDefinition = importedElements.filter(
+      (x) => x === importedElement,
+    ).length;
+
+    if (occurrencesInSameImportDefinition > 1) {
+      props.validationContext.accept(
+        'error',
+        `Element ${importedElement} is imported ${occurrencesInSameImportDefinition} times from file "${
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+          importDefinition.path ?? ''
+        }". Remove the duplicate import.`,
+        {
+          node: importDefinition,
+          property: 'usedElements',
+          index: i,
+        },
+      );
+    }
+  }
+}
+
+function checkFileImportedOnlyOnce(
+  importDefinition: ImportDefinition,
+  props: JayveeValidationProps,
+): void {
+  const currentImportUri =
+    props.importResolver.resolveImportUri(importDefinition);
+  const allImportsInDocument =
+    AstUtils.getContainerOfType(importDefinition, isJayveeModel)?.imports ?? [];
+
+  const occurrencesImportsFromPath = allImportsInDocument.filter((x) =>
+    UriUtils.equals(props.importResolver.resolveImportUri(x), currentImportUri),
+  ).length;
+
+  if (occurrencesImportsFromPath <= 1) {
+    return;
+  }
+
+  props.validationContext.accept(
+    'error',
+    `Found ${occurrencesImportsFromPath} import statements for file "${
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      importDefinition.path ?? ''
+    }". Combine both import statements.`,
+    {
+      node: importDefinition,
+      property: 'path',
+    },
+  );
 }
 
 function checkPathExists(

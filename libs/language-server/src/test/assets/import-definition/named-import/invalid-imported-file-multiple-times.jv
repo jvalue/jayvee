@@ -2,4 +2,5 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-use * from 'deeper/existing-imported-file-deeper.jv';
+use { X } from './publishing.jv';
+use { X } from 'publishing.jv';
