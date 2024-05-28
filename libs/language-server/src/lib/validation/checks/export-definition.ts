@@ -8,11 +8,9 @@ import { strict as assert } from 'assert';
 
 import { AstUtils } from 'langium';
 
+import { getExportedElements } from '../../ast';
 import {
   type ExportDefinition,
-  type ExportableElement,
-  type JayveeModel,
-  isExportableElement,
   isExportableElementDefinition,
   isJayveeModel,
 } from '../../ast/generated/ast';
@@ -65,7 +63,7 @@ function checkUniqueAlias(
 
   const model = AstUtils.getContainerOfType(exportDefinition, isJayveeModel);
   assert(model !== undefined);
-  const allExports = collectAllExportsWithinSameFile(model);
+  const allExports = getExportedElements(model);
 
   const elementsWithSameName = allExports.filter(
     (e) => e.alias === exportDefinition.alias,
@@ -86,49 +84,4 @@ function checkUniqueAlias(
       },
     );
   }
-}
-
-function collectAllExportsWithinSameFile(model: JayveeModel): {
-  alias: string;
-  element: ExportDefinition | ExportableElement;
-}[] {
-  const exportedElementNames: {
-    alias: string;
-    element: ExportDefinition | ExportableElement;
-  }[] = [];
-
-  for (const node of model.exportableElements) {
-    if (node.isPublished) {
-      assert(
-        isExportableElement(node),
-        'Exported node is not an ExportableElement',
-      );
-      exportedElementNames.push({
-        alias: node.name,
-        element: node,
-      });
-    }
-  }
-
-  for (const node of model.exports) {
-    if (node.alias !== undefined) {
-      exportedElementNames.push({
-        alias: node.alias,
-        element: node,
-      });
-      continue;
-    }
-
-    const originalDefinition = node.element?.ref;
-    if (
-      originalDefinition !== undefined &&
-      originalDefinition.name !== undefined
-    ) {
-      exportedElementNames.push({
-        alias: originalDefinition.name,
-        element: originalDefinition,
-      });
-    }
-  }
-  return exportedElementNames;
 }
