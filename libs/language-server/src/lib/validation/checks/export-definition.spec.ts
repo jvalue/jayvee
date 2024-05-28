@@ -2,11 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type AstNode, AstUtils, type LangiumDocument } from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
+  type ExportDefinition,
   type JayveeServices,
   createJayveeServices,
   isExportDefinition,
@@ -15,6 +16,7 @@ import {
   type ParseHelperOptions,
   createJayveeValidationProps,
   expectNoParserAndLexerErrors,
+  extractTestElements,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
@@ -41,11 +43,9 @@ describe('Validation of ExportDefinition', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const allElements = AstUtils.streamAllContents(document.parseResult.value);
-    const allExportDefinitions = [...allElements.filter(isExportDefinition)];
-    expect(
-      allExportDefinitions.length > 0,
-      'No export definition found in test file',
+    const allExportDefinitions = extractTestElements(
+      document,
+      (x): x is ExportDefinition => isExportDefinition(x),
     );
 
     for (const exportDefinition of allExportDefinitions) {
