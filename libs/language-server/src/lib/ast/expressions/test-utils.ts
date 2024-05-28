@@ -48,10 +48,7 @@ export async function executeExpressionTestHelper(
 
   const allElements = AstUtils.streamAllContents(document.parseResult.value);
   const allTransforms = [...allElements.filter(isTransformDefinition)];
-  expect(
-    allTransforms.length !== 0,
-    `Expected to find exactly 1 transform but found ${allTransforms.length}`,
-  );
+  expect(allTransforms.length).toBe(1);
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const transform = allTransforms[0]!;
 
