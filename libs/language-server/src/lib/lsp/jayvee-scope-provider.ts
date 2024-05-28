@@ -2,10 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line unicorn/prefer-node-protocol
-import { strict as assert } from 'assert';
-
 import {
+  type AstNode,
   type AstNodeDescription,
   AstUtils,
   DefaultScopeProvider,
@@ -20,26 +18,15 @@ import {
 } from 'langium';
 
 import {
-  type ExportDefinition,
-  type ExportableElement,
+  type ExportDetails,
+  type ImportDefinition,
   type JayveeModel,
-  isExportDefinition,
-  isExportableElement,
-  isExportableElementDefinition,
+  getExportedElements,
   isJayveeModel,
 } from '../ast';
 import { getStdLib } from '../builtin-library';
 import { type JayveeServices } from '../jayvee-module';
 import { type JayveeImportResolver } from '../services/import-resolver';
-
-interface ExportDetails {
-  element: ExportableElement;
-
-  /**
-   * The name which the exported element is available under.
-   */
-  alias: string;
-}
 
 export class JayveeScopeProvider extends DefaultScopeProvider {
   protected readonly langiumDocuments: LangiumDocuments;
@@ -68,11 +55,65 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
       return EMPTY_SCOPE;
     }
 
-    const importedUris = new Set<string>();
-    this.gatherImports(jayveeModel, importedUris);
-    this.gatherBuiltins(importedUris);
+    const importedElements: AstNodeDescription[] = [];
+    importedElements.push(...this.getBuiltinElements());
+    importedElements.push(...this.getExplicitlyImportedElements(jayveeModel));
 
-    const importedDocuments = [...importedUris].map((importedUri) =>
+    return new MapScope(importedElements);
+  }
+
+  protected getExplicitlyImportedElements(
+    model: JayveeModel,
+  ): AstNodeDescription[] {
+    const importedElements: AstNodeDescription[] = [];
+    for (const importDefinition of model.imports) {
+      const importedDocument = this.getImportedDocument(importDefinition);
+      if (importedDocument === undefined) {
+        continue;
+      }
+
+      importedElements.push(
+        ...this.getImportedElementsFromDocument(
+          importDefinition,
+          importedDocument,
+        ),
+      );
+    }
+    return importedElements;
+  }
+
+  protected getImportedElementsFromDocument(
+    importDefinition: ImportDefinition,
+    importedDocument: LangiumDocument,
+  ): AstNodeDescription[] {
+    const publishedElements =
+      this.getPublishedElementsFromDocument(importedDocument);
+
+    if (importDefinition.useAll) {
+      return publishedElements;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const importedIdentifiers = importDefinition.usedElements ?? [];
+
+    const importedElements: AstNodeDescription[] = [];
+    for (const importedIdentifier of importedIdentifiers) {
+      const matchingExportedElement = publishedElements.find(
+        (x) => x.name === importedIdentifier,
+      );
+      if (matchingExportedElement === undefined) {
+        continue;
+      }
+
+      importedElements.push(matchingExportedElement);
+    }
+    return importedElements;
+  }
+
+  protected getBuiltinElements(): AstNodeDescription[] {
+    const builtinUris = this.getBuiltins();
+
+    const importedDocuments = [...builtinUris].map((importedUri) =>
       this.langiumDocuments.getDocument(URI.parse(importedUri)),
     );
 
@@ -82,100 +123,35 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
         continue;
       }
 
-      const publishedElements = this.availableElementsPerDocumentCache.get(
-        importedDocument.uri,
-        'exports', // we only need one key here as it is on document basis
-        () => this.getExportedElements(importedDocument),
-      );
       importedElements.push(
-        ...publishedElements.map((e) =>
-          this.descriptions.createDescription(e.element, e.alias),
-        ),
+        ...this.getPublishedElementsFromDocument(importedDocument),
       );
     }
 
-    return new MapScope(importedElements);
+    return importedElements;
   }
 
-  /**
-   * Gets all exported elements from a document.
-   * This logic cannot reside in a {@link ScopeComputationProvider} but should be handled here:
-   * https://github.com/eclipse-langium/langium/discussions/1508#discussioncomment-9524544
-   */
-  protected getExportedElements(document: LangiumDocument): ExportDetails[] {
+  protected getPublishedElementsFromDocument(
+    document: LangiumDocument<AstNode>,
+  ): AstNodeDescription[] {
     const model = document.parseResult.value as JayveeModel;
-    const exportedElements: ExportDetails[] = [];
 
-    for (const node of AstUtils.streamAllContents(model)) {
-      if (isExportableElementDefinition(node) && node.isPublished) {
-        assert(
-          isExportableElement(node),
-          'Exported node is not an ExportableElement',
-        );
-        exportedElements.push({
-          element: node,
-          alias: node.name,
-        });
-      }
-
-      if (isExportDefinition(node)) {
-        const originalDefinition = this.followExportDefinitionChain(node);
-        if (originalDefinition !== undefined) {
-          const exportName = node.alias ?? originalDefinition.name;
-          exportedElements.push({
-            element: originalDefinition,
-            alias: exportName,
-          });
-        }
-      }
-    }
-    return exportedElements;
-  }
-
-  /**
-   * Follow an export statement to its original definition.
-   */
-  protected followExportDefinitionChain(
-    exportDefinition: ExportDefinition,
-  ): ExportableElement | undefined {
-    const referenced = exportDefinition.element.ref;
-
-    if (referenced === undefined) {
-      return undefined; // Cannot follow reference to original definition
-    }
-
-    if (!this.isElementExported(referenced)) {
-      return undefined;
-    }
-
-    return referenced; // Reached original definition
-  }
-
-  /**
-   * Checks whether an exportable @param element is exported (either in definition or via an delayed export definition).
-   */
-  protected isElementExported(element: ExportableElement): boolean {
-    if (isExportableElementDefinition(element) && element.isPublished) {
-      return true;
-    }
-
-    const model = AstUtils.getContainerOfType(element, isJayveeModel);
-    assert(
-      model !== undefined,
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      `Could not get container of exportable element ${element.name ?? ''}`,
+    const publishedElements = this.availableElementsPerDocumentCache.get(
+      document.uri,
+      'exports', // we only need one key here as it is on document basis
+      () => getExportedElements(model),
     );
-
-    const isExported = model.exports.some(
-      (exportDefinition) => exportDefinition.element.ref === element,
+    return publishedElements.map((e) =>
+      this.descriptions.createDescription(e.element, e.alias),
     );
-    return isExported;
   }
 
   /**
    * Add all builtins' URIs to @param importedUris
    */
-  protected gatherBuiltins(importedUris: Set<string>) {
+  protected getBuiltins(): Set<string> {
+    const importedUris: Set<string> = new Set();
+
     const builtins = getStdLib();
     const uris = Object.keys(builtins);
 
@@ -184,30 +160,20 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
       const formattedUri = URI.parse(uri).toString();
       importedUris.add(formattedUri);
     }
+
+    return importedUris;
   }
 
-  /**
-   * Add all imported URIs of the given @jayveeModel to @param importedUris
-   */
-  protected gatherImports(
-    jayveeModel: JayveeModel,
-    importedUris: Set<string>,
-  ): void {
-    for (const importDefinition of jayveeModel.imports) {
-      const uri = this.importResolver.resolveImportUri(importDefinition);
-      if (uri === undefined) {
-        continue;
-      }
-
-      if (importedUris.has(uri.toString())) {
-        continue;
-      }
-
-      importedUris.add(uri.toString());
-      const importedDocument = this.langiumDocuments.getDocument(uri);
-      if (importedDocument === undefined) {
-        continue;
-      }
+  protected getImportedDocument(
+    importDefinition: ImportDefinition,
+  ): LangiumDocument | undefined {
+    const uri = this.importResolver.resolveImportUri(importDefinition);
+    if (uri === undefined) {
+      return undefined;
     }
+
+    const importedDocument = this.langiumDocuments.getDocument(uri);
+
+    return importedDocument;
   }
 }

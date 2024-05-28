@@ -5,7 +5,13 @@
 // eslint-disable-next-line unicorn/prefer-node-protocol
 import { strict as assert } from 'assert';
 
-import { type ImportDefinition } from '../../ast/generated/ast';
+import { AstUtils, UriUtils } from 'langium';
+
+import {
+  type ImportDefinition,
+  isExportableElement,
+  isJayveeModel,
+} from '../../ast/generated/ast';
 import { type JayveeValidationProps } from '../validation-registry';
 
 export function validateImportDefinition(
@@ -17,7 +23,69 @@ export function validateImportDefinition(
     return;
   }
 
+  checkImportedElementsExist(importDefinition, props);
   checkCyclicImportChain(importDefinition, props);
+  checkElementImportedOnlyOnce(importDefinition, props);
+  checkFileImportedOnlyOnce(importDefinition, props);
+}
+
+function checkElementImportedOnlyOnce(
+  importDefinition: ImportDefinition,
+  props: JayveeValidationProps,
+): void {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const importedElements = importDefinition.usedElements ?? [];
+
+  for (const [i, importedElement] of importedElements.entries()) {
+    const occurrencesInSameImportDefinition = importedElements.filter(
+      (x) => x === importedElement,
+    ).length;
+
+    if (occurrencesInSameImportDefinition > 1) {
+      props.validationContext.accept(
+        'error',
+        `Element ${importedElement} is imported ${occurrencesInSameImportDefinition} times from file "${
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+          importDefinition.path ?? ''
+        }". Remove the duplicate import.`,
+        {
+          node: importDefinition,
+          property: 'usedElements',
+          index: i,
+        },
+      );
+    }
+  }
+}
+
+function checkFileImportedOnlyOnce(
+  importDefinition: ImportDefinition,
+  props: JayveeValidationProps,
+): void {
+  const currentImportUri =
+    props.importResolver.resolveImportUri(importDefinition);
+  const allImportsInDocument =
+    AstUtils.getContainerOfType(importDefinition, isJayveeModel)?.imports ?? [];
+
+  const occurrencesImportsFromPath = allImportsInDocument.filter((x) =>
+    UriUtils.equals(props.importResolver.resolveImportUri(x), currentImportUri),
+  ).length;
+
+  if (occurrencesImportsFromPath <= 1) {
+    return;
+  }
+
+  props.validationContext.accept(
+    'error',
+    `Found ${occurrencesImportsFromPath} import statements for file "${
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      importDefinition.path ?? ''
+    }". Combine both import statements.`,
+    {
+      node: importDefinition,
+      property: 'path',
+    },
+  );
 }
 
 function checkPathExists(
@@ -34,6 +102,59 @@ function checkPathExists(
         property: 'path',
       },
     );
+  }
+}
+
+function checkImportedElementsExist(
+  importDefinition: ImportDefinition,
+  props: JayveeValidationProps,
+): void {
+  const resolvedImport = props.importResolver.resolveImport(importDefinition);
+  if (resolvedImport === undefined) {
+    return;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const exportedViaElementDefinition = (resolvedImport.exportableElements ?? [])
+    .filter((x) => x.isPublished)
+    .map((x) => {
+      assert(
+        isExportableElement(x),
+        'Exported an element that is not an ExportableElement',
+      );
+      return x.name;
+    });
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const exportedViaExportDefinition = (resolvedImport.exports ?? [])
+    .map((x) => {
+      if (x.alias !== undefined) {
+        return x.alias;
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      return x.element?.ref?.name;
+    })
+    .filter((x) => x !== undefined);
+
+  const allExports = [
+    ...exportedViaElementDefinition,
+    ...exportedViaExportDefinition,
+  ];
+
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  for (const [i, importedElement] of importDefinition.usedElements?.entries() ??
+    []) {
+    if (!allExports.includes(importedElement)) {
+      props.validationContext.accept(
+        'error',
+        `Could not find published element ${importedElement} in file "${importDefinition.path}". Check if the element exists and has been correctly published.`,
+        {
+          node: importDefinition,
+          property: 'usedElements',
+          index: i,
+        },
+      );
+    }
   }
 }
 
