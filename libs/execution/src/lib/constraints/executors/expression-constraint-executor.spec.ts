@@ -8,10 +8,12 @@ import {
   type InternalValueRepresentation,
   type JayveeServices,
   createJayveeServices,
+  isExpressionConstraintDefinition,
 } from '@jvalue/jayvee-language-server';
 import {
   type ParseHelperOptions,
   expectNoParserAndLexerErrors,
+  extractTestElements,
   parseHelper,
   readJvTestAssetHelper,
 } from '@jvalue/jayvee-language-server/test';
@@ -51,10 +53,13 @@ describe('Validation of AllowlistConstraintExecutor', () => {
       document.parseResult.value,
       'pipelines@0/blocks@2',
     ) as BlockDefinition;
-    const constraint = locator.getAstNode<ExpressionConstraintDefinition>(
-      document.parseResult.value,
-      'constraints@0',
-    ) as ExpressionConstraintDefinition;
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const constraint = extractTestElements(
+      document,
+      (x): x is ExpressionConstraintDefinition =>
+        isExpressionConstraintDefinition(x),
+    )[0]!;
 
     return new ExpressionConstraintExecutor(constraint).isValid(
       value,

@@ -87,7 +87,7 @@ describe('Validation of validation-utils', () => {
           new DefaultOperatorTypeComputerRegistry(
             valueTypeProvider,
             new WrapperFactoryProvider(
-              new DefaultOperatorEvaluatorRegistry(),
+              new DefaultOperatorEvaluatorRegistry(valueTypeProvider),
               valueTypeProvider,
             ),
           ),
@@ -113,7 +113,7 @@ describe('Validation of validation-utils', () => {
           new DefaultOperatorTypeComputerRegistry(
             valueTypeProvider,
             new WrapperFactoryProvider(
-              new DefaultOperatorEvaluatorRegistry(),
+              new DefaultOperatorEvaluatorRegistry(valueTypeProvider),
               valueTypeProvider,
             ),
           ),

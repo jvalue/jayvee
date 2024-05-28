@@ -10,7 +10,7 @@
 *   path: "./agency.txt";
 * }
 */
-builtin blocktype FilePicker {
+publish builtin blocktype FilePicker {
 	input default oftype FileSystem;
 	output default oftype File;
 	

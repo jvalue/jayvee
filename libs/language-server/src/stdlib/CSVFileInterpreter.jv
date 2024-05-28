@@ -5,7 +5,7 @@
 /**
 * A CSVFileInterpreter interprets a file as CSV
 */
-composite blocktype CSVFileInterpreter {
+publish composite blocktype CSVFileInterpreter {
     property delimiter oftype text: ',';
     property enclosing oftype text: '';
     property enclosingEscape oftype text: '';

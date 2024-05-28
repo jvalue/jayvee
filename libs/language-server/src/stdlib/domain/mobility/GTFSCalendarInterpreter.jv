@@ -6,7 +6,7 @@
 * A GTFSCalendarInterpreter interprets a calendar.txt file from an extracted ZIP file according to the GTFS standard
 * See https://gtfs.org/schedule/reference/#calendartxt
 */
-composite blocktype GTFSCalendarInterpreter {
+publish composite blocktype GTFSCalendarInterpreter {
 
     input inputPort oftype FileSystem;
     output outputPort oftype Table;

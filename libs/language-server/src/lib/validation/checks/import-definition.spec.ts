@@ -131,5 +131,65 @@ describe('Validation of ImportDefinition', () => {
         expect.any(Object),
       );
     });
+
+    it('should diagnose error on cyclic import', async () => {
+      const relativeTestFilePath =
+        'import-definition/invalid-dependency-cycle-1.jv';
+
+      await parseAndValidateImportDefinition(relativeTestFilePath);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+      expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+        1,
+        'error',
+        'Import from "./invalid-dependency-cycle-2.jv" leads to import cycle: "./invalid-dependency-cycle-2.jv" -> "./invalid-dependency-cycle-1.jv" -> "./invalid-dependency-cycle-2.jv"',
+        expect.any(Object),
+      );
+    });
+
+    it('should diagnose error on cyclic import when importing itself', async () => {
+      const relativeTestFilePath =
+        'import-definition/invalid-dependency-cycle-self-import.jv';
+
+      await parseAndValidateImportDefinition(relativeTestFilePath);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+      expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+        1,
+        'error',
+        'Import from "./invalid-dependency-cycle-self-import.jv" leads to import cycle: "./invalid-dependency-cycle-self-import.jv" -> "./invalid-dependency-cycle-self-import.jv"',
+        expect.any(Object),
+      );
+    });
+
+    it('should diagnose error on cyclic import even when cycle resides in imported file', async () => {
+      const relativeTestFilePath =
+        'import-definition/invalid-dependency-cycle-deeper-1.jv';
+
+      await parseAndValidateImportDefinition(relativeTestFilePath);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+      expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+        1,
+        'error',
+        'Import from "./invalid-dependency-cycle-deeper-2.jv" leads to import cycle: "./invalid-dependency-cycle-deeper-2.jv" -> "./invalid-dependency-cycle-deeper-3.jv" -> "./invalid-dependency-cycle-deeper-2.jv"',
+        expect.any(Object),
+      );
+    });
+
+    it('should diagnose error on cyclic import spans multiple files', async () => {
+      const relativeTestFilePath =
+        'import-definition/invalid-dependency-cycle-transitive-1.jv';
+
+      await parseAndValidateImportDefinition(relativeTestFilePath);
+
+      expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+      expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+        1,
+        'error',
+        'Import from "./invalid-dependency-cycle-transitive-2.jv" leads to import cycle: "./invalid-dependency-cycle-transitive-2.jv" -> "./invalid-dependency-cycle-transitive-3.jv" -> "./invalid-dependency-cycle-transitive-1.jv" -> "./invalid-dependency-cycle-transitive-2.jv"',
+        expect.any(Object),
+      );
+    });
   });
 });

@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-builtin blocktype TestProperty {
+publish builtin blocktype TestProperty {
   input inPort oftype File;
   output outPort oftype Table;
 

@@ -8,7 +8,9 @@ import {
   type JayveeServices,
   type TypedConstraintDefinition,
   createJayveeServices,
+  isTypedConstraintDefinition,
 } from '@jvalue/jayvee-language-server';
+import { extractTestElements } from '@jvalue/jayvee-language-server/test';
 import {
   type ParseHelperOptions,
   expectNoParserAndLexerErrors,
@@ -51,10 +53,12 @@ describe('Validation of AllowlistConstraintExecutor', () => {
       document.parseResult.value,
       'pipelines@0/blocks@2',
     ) as BlockDefinition;
-    const constraint = locator.getAstNode<TypedConstraintDefinition>(
-      document.parseResult.value,
-      'constraints@0',
-    ) as TypedConstraintDefinition;
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const constraint = extractTestElements(
+      document,
+      (x): x is TypedConstraintDefinition => isTypedConstraintDefinition(x),
+    )[0]!;
 
     return new AllowlistConstraintExecutor().isValid(
       value,

@@ -25,7 +25,7 @@
 *   ];
 * }
 */
-builtin blocktype TableInterpreter {
+publish builtin blocktype TableInterpreter {
 	input default oftype Sheet;
 	output default oftype Table;
 	

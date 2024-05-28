@@ -2,11 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  type AstNode,
-  type AstNodeLocator,
-  type LangiumDocument,
-} from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
@@ -14,11 +10,13 @@ import {
   type JayveeServices,
   type TransformOutputAssignment,
   createJayveeServices,
+  isTransformOutputAssignment,
 } from '../../../lib';
 import {
   type ParseHelperOptions,
   createJayveeValidationProps,
   expectNoParserAndLexerErrors,
+  extractTestElements,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
@@ -34,7 +32,6 @@ describe('Validation of TransformOutputAssignment', () => {
 
   const validationAcceptorMock = vi.fn(validationAcceptorMockImpl);
 
-  let locator: AstNodeLocator;
   let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
@@ -46,22 +43,23 @@ describe('Validation of TransformOutputAssignment', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const transformOutputAssignment =
-      locator.getAstNode<TransformOutputAssignment>(
-        document.parseResult.value,
-        'transforms@0/body/outputAssignments@0',
-      ) as TransformOutputAssignment;
-
-    validateTransformOutputAssignment(
-      transformOutputAssignment,
-      createJayveeValidationProps(validationAcceptorMock, services),
+    const allOutputAssignments = extractTestElements(
+      document,
+      (x): x is TransformOutputAssignment => isTransformOutputAssignment(x),
     );
+
+    for (const transformOutputAssignment of allOutputAssignments) {
+      validateTransformOutputAssignment(
+        transformOutputAssignment,
+        createJayveeValidationProps(validationAcceptorMock, services),
+      );
+    }
   }
 
   beforeAll(() => {
     // Create language services
     services = createJayveeServices(NodeFileSystem).Jayvee;
-    locator = services.workspace.AstNodeLocator;
+
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });

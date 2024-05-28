@@ -5,7 +5,7 @@
 /**
 * A GTFSExtractor extracts a file from a given URL, interprets it as ZIP and extracts it
 */
-composite blocktype GTFSExtractor {
+publish composite blocktype GTFSExtractor {
     property url oftype text;
 
     input inputPort oftype None;

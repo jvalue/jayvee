@@ -15,14 +15,18 @@ import { vi } from 'vitest';
 
 import {
   type JayveeServices,
+  type ReferenceableBlockTypeDefinition,
   type ValueTypeReference,
   type ValuetypeDefinition,
   createJayveeServices,
+  isReferenceableBlockTypeDefinition,
+  isValuetypeDefinition,
 } from '../..';
 import {
   type ParseHelperOptions,
   createJayveeValidationProps,
   expectNoParserAndLexerErrors,
+  extractTestElements,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
@@ -50,22 +54,20 @@ describe('Validation of ValueTypeReference', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const valueTypeReferences: ValueTypeReference[] = [];
+    const allValueTypes = extractTestElements(
+      document,
+      (x): x is ValuetypeDefinition => isValuetypeDefinition(x),
+    );
 
-    let valueTypeDefinition: ValuetypeDefinition | undefined;
-    let i = 0;
-    do {
-      valueTypeDefinition = locator.getAstNode<ValuetypeDefinition>(
-        document.parseResult.value,
-        `valueTypes@${i}`,
-      );
-      if (valueTypeDefinition !== undefined) {
-        const valueTypeRef = valueTypeDefinition.type;
-        assert(valueTypeRef !== undefined);
-        valueTypeReferences.push(valueTypeRef);
-      }
-      ++i;
-    } while (valueTypeDefinition !== undefined);
+    const valueTypeReferences: ValueTypeReference[] = [];
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
+    for (let i = 0; i < allValueTypes.length; ++i) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const valueTypeDefinition = allValueTypes[i]!;
+      const valueTypeRef = valueTypeDefinition.type;
+      assert(valueTypeRef !== undefined);
+      valueTypeReferences.push(valueTypeRef);
+    }
 
     return valueTypeReferences;
   }
@@ -284,10 +286,15 @@ describe('Validation of ValueTypeReference', () => {
 
     const document = await parse(text);
     expectNoParserAndLexerErrors(document);
-    const valueTypeRef = locator.getAstNode<ValueTypeReference>(
-      document.parseResult.value,
-      `blockTypes@0/properties@0/valueType`,
-    );
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const blockType = extractTestElements(
+      document,
+      (x): x is ReferenceableBlockTypeDefinition =>
+        isReferenceableBlockTypeDefinition(x),
+    )[0]!;
+
+    const valueTypeRef = blockType.properties[0]?.valueType;
     assert(valueTypeRef !== undefined);
 
     validateValueTypeReference(

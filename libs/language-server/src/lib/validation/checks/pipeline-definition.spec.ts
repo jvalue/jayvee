@@ -2,11 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  type AstNode,
-  type AstNodeLocator,
-  type LangiumDocument,
-} from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
@@ -14,11 +10,13 @@ import {
   type JayveeServices,
   type PipelineDefinition,
   createJayveeServices,
+  isPipelineDefinition,
 } from '../../../lib';
 import {
   type ParseHelperOptions,
   createJayveeValidationProps,
   expectNoParserAndLexerErrors,
+  extractTestElements,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
@@ -34,7 +32,6 @@ describe('Validation of PipelineDefinition', () => {
 
   const validationAcceptorMock = vi.fn(validationAcceptorMockImpl);
 
-  let locator: AstNodeLocator;
   let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
@@ -46,21 +43,23 @@ describe('Validation of PipelineDefinition', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const pipeline = locator.getAstNode<PipelineDefinition>(
-      document.parseResult.value,
-      'pipelines@0',
-    ) as PipelineDefinition;
-
-    validatePipelineDefinition(
-      pipeline,
-      createJayveeValidationProps(validationAcceptorMock, services),
+    const allPipelines = extractTestElements(
+      document,
+      (x): x is PipelineDefinition => isPipelineDefinition(x),
     );
+
+    for (const pipeline of allPipelines) {
+      validatePipelineDefinition(
+        pipeline,
+        createJayveeValidationProps(validationAcceptorMock, services),
+      );
+    }
   }
 
   beforeAll(() => {
     // Create language services
     services = createJayveeServices(NodeFileSystem).Jayvee;
-    locator = services.workspace.AstNodeLocator;
+
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });

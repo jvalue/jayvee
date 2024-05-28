@@ -2,11 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { AstUtils } from 'langium';
 import { NodeFileSystem } from 'langium/node';
+import { expect } from 'vitest';
 
 import { parseHelper } from '../../../test/langium-utils';
 import { createJayveeServices } from '../../jayvee-module';
-import { type TransformDefinition } from '../generated/ast';
+import { isTransformDefinition } from '../generated/ast';
 
 import { evaluateExpression } from './evaluate-expression';
 import { EvaluationContext } from './evaluation-context';
@@ -34,7 +36,6 @@ export async function executeExpressionTestHelper(
 ): Promise<InternalValueRepresentation | undefined> {
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   const parse = parseHelper(services);
-  const locator = services.workspace.AstNodeLocator;
 
   const document = await parse(`
         transform TestTransform {
@@ -45,10 +46,11 @@ export async function executeExpressionTestHelper(
         }
     `);
 
-  const transform = locator.getAstNode<TransformDefinition>(
-    document.parseResult.value,
-    'transforms@0',
-  ) as TransformDefinition;
+  const allElements = AstUtils.streamAllContents(document.parseResult.value);
+  const allTransforms = [...allElements.filter(isTransformDefinition)];
+  expect(allTransforms.length).toBe(1);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const transform = allTransforms[0]!;
 
   const evaluationContext = new EvaluationContext(
     services.RuntimeParameterProvider,

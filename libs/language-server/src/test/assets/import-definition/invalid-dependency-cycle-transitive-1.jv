@@ -1,0 +1,14 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+use * from './invalid-dependency-cycle-transitive-2.jv'; // imported file has import cycle
+
+publish composite blocktype DependencyCycleBlockType2 {
+  input inPort oftype None;
+  output outPort oftype Sheet;
+
+  block TestBlock oftype DependencyCycleBlockType1 {}
+
+  inPort -> TestBlock -> outPort;
+}

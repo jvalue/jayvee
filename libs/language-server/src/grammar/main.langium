@@ -16,15 +16,24 @@ import './io-type'
 entry JayveeModel:
   (
     imports+=ImportDefinition
+    | exports+=ExportDefinition
+    | exportableElements+=ExportableElementDefinition
     | pipelines+=PipelineDefinition
-    | valueTypes+=(CustomValuetypeDefinition | BuiltinValuetypeDefinition)
-    | constraints+=ConstraintDefinition
-    | transforms+=TransformDefinition
-    | blockTypes+=ReferenceableBlockTypeDefinition
-    | constrainttypes+=BuiltinConstrainttypeDefinition
-    | iotypes+=IotypeDefinition
   )*;
 
+ExportableElementDefinition:
+  (isPublished?='publish')? ExportableElement;
+
+ExportableElement: 
+  (CustomValuetypeDefinition | BuiltinValuetypeDefinition)
+    | ConstraintDefinition
+    | TransformDefinition
+    | ReferenceableBlockTypeDefinition
+    | BuiltinConstrainttypeDefinition
+    | IotypeDefinition;
+
+ExportDefinition:
+  'publish' element=[ExportableElement] ';';
 
 ImportDefinition:
   'use' '*' 'from' path=STRING ';';

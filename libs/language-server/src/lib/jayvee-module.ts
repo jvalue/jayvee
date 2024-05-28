@@ -32,7 +32,6 @@ import {
   JayveeDefinitionProvider,
   JayveeFormatter,
   JayveeHoverProvider,
-  JayveeScopeComputation,
   JayveeScopeProvider,
 } from './lsp';
 import { JayveeImportResolver } from './services/import-resolver';
@@ -91,7 +90,6 @@ export const JayveeModule: Module<
   },
   references: {
     ScopeProvider: (services) => new JayveeScopeProvider(services),
-    ScopeComputation: (service) => new JayveeScopeComputation(service),
   },
   RuntimeParameterProvider: () => new RuntimeParameterProvider(),
   operators: {

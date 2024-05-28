@@ -2,11 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  type AstNode,
-  type AstNodeLocator,
-  type LangiumDocument,
-} from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
@@ -14,11 +10,13 @@ import {
   type ExpressionConstraintDefinition,
   type JayveeServices,
   createJayveeServices,
+  isExpressionConstraintDefinition,
 } from '../../../lib';
 import {
   type ParseHelperOptions,
   createJayveeValidationProps,
   expectNoParserAndLexerErrors,
+  extractTestElements,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
@@ -34,7 +32,6 @@ describe('Validation of ConstraintDefinition (expression syntax)', () => {
 
   const validationAcceptorMock = vi.fn(validationAcceptorMockImpl);
 
-  let locator: AstNodeLocator;
   let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
@@ -46,22 +43,24 @@ describe('Validation of ConstraintDefinition (expression syntax)', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const expressionConstraint =
-      locator.getAstNode<ExpressionConstraintDefinition>(
-        document.parseResult.value,
-        'constraints@0',
-      ) as ExpressionConstraintDefinition;
-
-    validateExpressionConstraintDefinition(
-      expressionConstraint,
-      createJayveeValidationProps(validationAcceptorMock, services),
+    const allExpressionConstraintDefinitions = extractTestElements(
+      document,
+      (x): x is ExpressionConstraintDefinition =>
+        isExpressionConstraintDefinition(x),
     );
+
+    for (const expressionConstraint of allExpressionConstraintDefinitions) {
+      validateExpressionConstraintDefinition(
+        expressionConstraint,
+        createJayveeValidationProps(validationAcceptorMock, services),
+      );
+    }
   }
 
   beforeAll(() => {
     // Create language services
     services = createJayveeServices(NodeFileSystem).Jayvee;
-    locator = services.workspace.AstNodeLocator;
+
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });

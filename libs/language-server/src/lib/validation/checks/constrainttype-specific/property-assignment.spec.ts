@@ -2,11 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  type AstNode,
-  type AstNodeLocator,
-  type LangiumDocument,
-} from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
@@ -16,11 +12,14 @@ import {
   type PropertySpecification,
   type TypedObjectWrapper,
   createJayveeServices,
+  isPropertyBody,
+  isTypedConstraintDefinition,
 } from '../../..';
 import {
   type ParseHelperOptions,
   createJayveeValidationProps,
   expectNoParserAndLexerErrors,
+  extractTestElements,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
@@ -36,7 +35,6 @@ describe('Validation of constraint type specific properties', () => {
 
   const validationAcceptorMock = vi.fn(validationAcceptorMockImpl);
 
-  let locator: AstNodeLocator;
   let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
@@ -48,10 +46,12 @@ describe('Validation of constraint type specific properties', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const propertyBody = locator.getAstNode<PropertyBody>(
-      document.parseResult.value,
-      'constraints@0/body',
-    ) as PropertyBody;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const propertyBody = extractTestElements(
+      document,
+      (x): x is PropertyBody =>
+        isPropertyBody(x) && isTypedConstraintDefinition(x.$container),
+    )[0]!;
 
     const props = createJayveeValidationProps(validationAcceptorMock, services);
 
@@ -77,8 +77,6 @@ describe('Validation of constraint type specific properties', () => {
   beforeAll(() => {
     // Create language services
     services = createJayveeServices(NodeFileSystem).Jayvee;
-
-    locator = services.workspace.AstNodeLocator;
 
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);

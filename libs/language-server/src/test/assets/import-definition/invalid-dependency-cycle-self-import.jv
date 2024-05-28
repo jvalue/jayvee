@@ -2,7 +2,4 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-builtin blocktype PublishedBlockType {
-  input inPort oftype None;
-  output outPort oftype None;
-}
+use * from './invalid-dependency-cycle-self-import.jv'; // imported file has import cycle

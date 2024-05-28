@@ -17,7 +17,7 @@
 *   write: ["Name", "Age"];
 * }
 */
-builtin blocktype CellWriter {
+publish builtin blocktype CellWriter {
 	input default oftype Sheet;
 	output default oftype Sheet;
 	

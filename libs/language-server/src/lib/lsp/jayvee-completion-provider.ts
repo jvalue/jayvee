@@ -7,6 +7,7 @@ import { strict as assert } from 'assert';
 
 import {
   type AstNode,
+  AstUtils,
   type LangiumDocument,
   type LangiumDocuments,
   type MaybePromise,
@@ -35,6 +36,7 @@ import {
   isJayveeModel,
   isPropertyAssignment,
   isPropertyBody,
+  isValuetypeDefinition,
 } from '../ast/generated/ast';
 import {
   getAllBuiltinBlockTypes,
@@ -159,7 +161,10 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
         if (!isJayveeModel(parsedDocument)) {
           throw new Error('Expected parsed document to be a JayveeModel');
         }
-        parsedDocument.valueTypes.forEach((valueTypeDefinition) => {
+        const allValueTypes = AstUtils.streamAllContents(parsedDocument).filter(
+          isValuetypeDefinition,
+        );
+        allValueTypes.forEach((valueTypeDefinition) => {
           const valueType =
             this.wrapperFactories.ValueType.wrap(valueTypeDefinition);
           if (valueType !== undefined && valueType.isReferenceableByUser()) {

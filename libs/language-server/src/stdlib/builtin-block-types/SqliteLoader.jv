@@ -11,7 +11,7 @@
 *   file: "./cars.db";
 * }
 */
-builtin blocktype SQLiteLoader {
+publish builtin blocktype SQLiteLoader {
 	input default oftype Table;
 	output default oftype None;
 	

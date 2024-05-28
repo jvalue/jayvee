@@ -2,11 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  type AstNode,
-  type AstNodeLocator,
-  type LangiumDocument,
-} from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
@@ -14,11 +10,13 @@ import {
   type JayveeServices,
   type RegexLiteral,
   createJayveeServices,
+  isRegexLiteral,
 } from '../../../lib';
 import {
   type ParseHelperOptions,
   createJayveeValidationProps,
   expectNoParserAndLexerErrors,
+  extractTestElements,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
@@ -34,7 +32,6 @@ describe('Validation of RegexLiteral', () => {
 
   const validationAcceptorMock = vi.fn(validationAcceptorMockImpl);
 
-  let locator: AstNodeLocator;
   let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
@@ -46,21 +43,23 @@ describe('Validation of RegexLiteral', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const regexLiteral = locator.getAstNode<RegexLiteral>(
-      document.parseResult.value,
-      'pipelines@0/blocks@0/body/properties@0/value',
-    ) as RegexLiteral;
-
-    validateRegexLiteral(
-      regexLiteral,
-      createJayveeValidationProps(validationAcceptorMock, services),
+    const allRegexLiterals = extractTestElements(
+      document,
+      (x): x is RegexLiteral => isRegexLiteral(x),
     );
+
+    for (const regexLiteral of allRegexLiterals) {
+      validateRegexLiteral(
+        regexLiteral,
+        createJayveeValidationProps(validationAcceptorMock, services),
+      );
+    }
   }
 
   beforeAll(() => {
     // Create language services
     services = createJayveeServices(NodeFileSystem).Jayvee;
-    locator = services.workspace.AstNodeLocator;
+
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });

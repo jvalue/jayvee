@@ -10,7 +10,7 @@
 *   archiveType: "zip";
 * }
 */
-builtin blocktype ArchiveInterpreter {
+publish builtin blocktype ArchiveInterpreter {
 	input default oftype File;
 	output default oftype FileSystem;
 	

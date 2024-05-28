@@ -8,7 +8,7 @@
 * @example Interprets an input file as a XLSX-file and outputs a `Workbook` containing `Sheet`s.
 * block AgencyXLSXInterpreter oftype XLSXInterpreter { }
 */
-builtin blocktype XLSXInterpreter {
+publish builtin blocktype XLSXInterpreter {
 	input default oftype File;
 	output default oftype Workbook;
 }

@@ -2,5 +2,4 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-use * from './publishing.jv';
-// automatically re-publishes all elements
+use * from './invalid-dependency-cycle-deeper-2.jv'; // imported file has import cycle

@@ -9,10 +9,12 @@ import {
   type TypedConstraintDefinition,
   createJayveeServices,
   initializeWorkspace,
+  isTypedConstraintDefinition,
 } from '@jvalue/jayvee-language-server';
 import {
   type ParseHelperOptions,
   expectNoParserAndLexerErrors,
+  extractTestElements,
   parseHelper,
   readJvTestAssetHelper,
 } from '@jvalue/jayvee-language-server/test';
@@ -52,10 +54,12 @@ describe('Validation of RangeConstraintExecutor', () => {
       document.parseResult.value,
       'pipelines@0/blocks@2',
     ) as BlockDefinition;
-    const constraint = locator.getAstNode<TypedConstraintDefinition>(
-      document.parseResult.value,
-      'constraints@0',
-    ) as TypedConstraintDefinition;
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const constraint = extractTestElements(
+      document,
+      (x): x is TypedConstraintDefinition => isTypedConstraintDefinition(x),
+    )[0]!;
 
     return new RangeConstraintExecutor().isValid(
       value,

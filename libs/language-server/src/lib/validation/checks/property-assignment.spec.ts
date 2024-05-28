@@ -2,25 +2,23 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  type AstNode,
-  type AstNodeLocator,
-  type LangiumDocument,
-} from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
   type JayveeServices,
-  type PropertyAssignment,
   type PropertyBody,
   type TypedObjectWrapper,
   createJayveeServices,
+  isBlockDefinition,
+  isPropertyBody,
 } from '../../../lib';
 import {
   type ParseHelperOptions,
   createJayveeValidationProps,
   expectNoParserAndLexerErrors,
+  extractTestElements,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
@@ -36,7 +34,6 @@ describe('Validation of PropertyAssignment', () => {
 
   const validationAcceptorMock = vi.fn(validationAcceptorMockImpl);
 
-  let locator: AstNodeLocator;
   let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
@@ -48,33 +45,40 @@ describe('Validation of PropertyAssignment', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const propertyBody = locator.getAstNode<PropertyBody>(
-      document.parseResult.value,
-      'pipelines@0/blocks@0/body',
-    ) as PropertyBody;
-
-    const type = propertyBody.$container.type;
-
-    const props = createJayveeValidationProps(validationAcceptorMock, services);
-    const wrapper = props.wrapperFactories.TypedObject.wrap(type);
-    expect(wrapper).toBeDefined();
-
-    const propertyAssignment = locator.getAstNode<PropertyAssignment>(
-      propertyBody,
-      'properties@0',
-    ) as PropertyAssignment;
-
-    validatePropertyAssignment(
-      propertyAssignment,
-      wrapper as TypedObjectWrapper,
-      props,
+    const allPropertyBodies = extractTestElements(
+      document,
+      (x): x is PropertyBody =>
+        isPropertyBody(x) && isBlockDefinition(x.$container),
     );
+
+    for (const propertyBody of allPropertyBodies) {
+      const type = propertyBody.$container.type;
+
+      const props = createJayveeValidationProps(
+        validationAcceptorMock,
+        services,
+      );
+      const wrapper = props.wrapperFactories.TypedObject.wrap(type);
+      expect(wrapper).toBeDefined();
+
+      const propertyAssignments = propertyBody.properties;
+      expect(
+        propertyAssignments.length > 0,
+        'No property assignment found in test file',
+      );
+
+      validatePropertyAssignment(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        propertyAssignments[0]!,
+        wrapper as TypedObjectWrapper,
+        props,
+      );
+    }
   }
 
   beforeAll(() => {
     // Create language services
     services = createJayveeServices(NodeFileSystem).Jayvee;
-    locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });

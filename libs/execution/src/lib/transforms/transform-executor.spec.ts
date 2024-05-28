@@ -11,10 +11,12 @@ import {
   type JayveeServices,
   type TransformDefinition,
   createJayveeServices,
+  isTransformDefinition,
 } from '@jvalue/jayvee-language-server';
 import {
   type ParseHelperOptions,
   expectNoParserAndLexerErrors,
+  extractTestElements,
   loadTestExtensions,
   parseHelper,
   readJvTestAssetHelper,
@@ -77,10 +79,11 @@ describe('Validation of TransformExecutor', () => {
     const document = await parse(input, { validation: true });
     expectNoParserAndLexerErrors(document);
 
-    const transform = locator.getAstNode<TransformDefinition>(
-      document.parseResult.value,
-      'transforms@0',
-    ) as TransformDefinition;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const transform = extractTestElements(
+      document,
+      (x): x is TransformDefinition => isTransformDefinition(x),
+    )[0]!;
 
     const executionContext = getTestExecutionContext(
       locator,

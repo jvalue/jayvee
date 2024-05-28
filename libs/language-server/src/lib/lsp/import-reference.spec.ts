@@ -41,51 +41,111 @@ describe('References to imported elements', () => {
     services = createJayveeServices(NodeFileSystem).Jayvee;
   });
 
-  const validCases: [string, string][] = [
-    // [test name, test file path]
-    [
-      'should resolve reference to imported element',
-      'import-published-references/valid-reference-to-imported-element.jv',
-    ],
-    [
-      'should resolve reference to transitively imported element',
-      'import-published-references/valid-reference-to-element-transitive.jv',
-    ],
-  ];
-  test.each(validCases)('%s', async (_, relativeTestFilePath) => {
-    const model = await parseModel(relativeTestFilePath);
+  describe('when element is directly published in element definition', () => {
+    const validCases: [string, string][] = [
+      // [test name, test file path]
+      [
+        'should resolve reference to imported element',
+        'import-published-references/published-via-element-definition/valid-reference-to-imported-element.jv',
+      ],
+      [
+        'should resolve reference to transitively imported element',
+        'import-published-references/published-via-element-definition/valid-reference-to-element-transitive.jv',
+      ],
+    ];
+    test.each(validCases)('%s', async (_, relativeTestFilePath) => {
+      const model = await parseModel(relativeTestFilePath);
 
-    expect(model.pipelines.length).toEqual(1); // file contains one pipeline
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const blocks = model.pipelines[0]!.blocks;
-    expect(blocks.length).toEqual(1); // pipeline contains one block
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const reference = blocks[0]!.type; // of an imported block type
+      expect(model.pipelines.length).toEqual(1); // file contains one pipeline
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const blocks = model.pipelines[0]!.blocks;
+      expect(blocks.length).toEqual(1); // pipeline contains one block
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const reference = blocks[0]!.type; // of an imported block type
 
-    expect(reference.ref).toBeDefined();
+      expect(reference.ref).toBeDefined();
+    });
+
+    const invalidCases: [string, string][] = [
+      // [test name, test file path]
+      [
+        'should not resolve reference to non-existing element',
+        'import-published-references/published-via-element-definition/invalid-reference-to-not-existing-element.jv',
+      ],
+      [
+        'should not resolve reference to non-imported element',
+        'import-published-references/published-via-element-definition/invalid-reference-to-not-imported-element.jv',
+      ],
+      [
+        'should not resolve reference to not re-published transitive element',
+        'import-published-references/published-via-element-definition/invalid-reference-to-element-transitive-no-republish.jv',
+      ],
+    ];
+    test.each(invalidCases)('%s', async (_, relativeTestFilePath) => {
+      const model = await parseModel(relativeTestFilePath);
+
+      expect(model.pipelines.length).toEqual(1); // file contains one pipeline
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const blocks = model.pipelines[0]!.blocks;
+      expect(blocks.length).toEqual(1); // pipeline contains one block
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const reference = blocks[0]!.type; // of an imported block type
+
+      expect(reference.ref).toBeUndefined();
+    });
   });
 
-  const invalidCases: [string, string][] = [
-    // [test name, test file path]
-    [
-      'should not resolve reference to non-existing element',
-      'import-published-references/invalid-reference-to-not-existing-element.jv',
-    ],
-    [
-      'should not resolve reference to non-imported element',
-      'import-published-references/invalid-reference-to-not-imported-element.jv',
-    ],
-  ];
-  test.each(invalidCases)('%s', async (_, relativeTestFilePath) => {
-    const model = await parseModel(relativeTestFilePath);
+  describe('when element is published delayed via export definition', () => {
+    const validCases: [string, string][] = [
+      // [test name, test file path]
+      [
+        'should resolve reference to imported element',
+        'import-published-references/published-via-publish-definition/valid-reference-to-imported-element.jv',
+      ],
+      [
+        'should resolve reference to transitively imported element',
+        'import-published-references/published-via-publish-definition/valid-reference-to-element-transitive.jv',
+      ],
+    ];
+    test.each(validCases)('%s', async (_, relativeTestFilePath) => {
+      const model = await parseModel(relativeTestFilePath);
 
-    expect(model.pipelines.length).toEqual(1); // file contains one pipeline
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const blocks = model.pipelines[0]!.blocks;
-    expect(blocks.length).toEqual(1); // pipeline contains one block
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const reference = blocks[0]!.type; // of an imported block type
+      expect(model.pipelines.length).toEqual(1); // file contains one pipeline
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const blocks = model.pipelines[0]!.blocks;
+      expect(blocks.length).toEqual(1); // pipeline contains one block
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const reference = blocks[0]!.type; // of an imported block type
 
-    expect(reference.ref).toBeUndefined();
+      expect(reference.ref).toBeDefined();
+    });
+
+    const invalidCases: [string, string][] = [
+      // [test name, test file path]
+      [
+        'should not resolve reference to non-existing element',
+        'import-published-references/published-via-publish-definition/invalid-reference-to-not-existing-element.jv',
+      ],
+      [
+        'should not resolve reference to non-imported element',
+        'import-published-references/published-via-publish-definition/invalid-reference-to-not-imported-element.jv',
+      ],
+      [
+        'should not resolve reference to not re-published transitive element',
+        'import-published-references/published-via-publish-definition/invalid-reference-to-element-transitive-no-republish.jv',
+      ],
+    ];
+    test.each(invalidCases)('%s', async (_, relativeTestFilePath) => {
+      const model = await parseModel(relativeTestFilePath);
+
+      expect(model.pipelines.length).toEqual(1); // file contains one pipeline
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const blocks = model.pipelines[0]!.blocks;
+      expect(blocks.length).toEqual(1); // pipeline contains one block
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const reference = blocks[0]!.type; // of an imported block type
+
+      expect(reference.ref).toBeUndefined();
+    });
   });
 });

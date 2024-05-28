@@ -10,7 +10,7 @@
 *   delete: [row 2];
 * }
 */
-builtin blocktype RowDeleter {
+publish builtin blocktype RowDeleter {
 	input default oftype Sheet;
 	output default oftype Sheet;
 	

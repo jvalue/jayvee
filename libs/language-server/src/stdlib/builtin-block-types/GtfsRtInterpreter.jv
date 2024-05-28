@@ -10,7 +10,7 @@
 *   entity: "trip_update";
 * }
 */
-builtin blocktype GtfsRTInterpreter {
+publish builtin blocktype GtfsRTInterpreter {
 	input default oftype File;
 	output default oftype Sheet;
 	

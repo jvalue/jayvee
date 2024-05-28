@@ -2,11 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  type AstNode,
-  type AstNodeLocator,
-  type LangiumDocument,
-} from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
@@ -14,11 +10,13 @@ import {
   type ColumnId,
   type JayveeServices,
   createJayveeServices,
+  isColumnId,
 } from '../../../lib';
 import {
   type ParseHelperOptions,
   createJayveeValidationProps,
   expectNoParserAndLexerErrors,
+  extractTestElements,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
@@ -34,7 +32,6 @@ describe('Validation of ColumnId', () => {
 
   const validationAcceptorMock = vi.fn(validationAcceptorMockImpl);
 
-  let locator: AstNodeLocator;
   let services: JayveeServices;
 
   const readJvTestAsset = readJvTestAssetHelper(
@@ -46,21 +43,21 @@ describe('Validation of ColumnId', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const columnId = locator.getAstNode<ColumnId>(
-      document.parseResult.value,
-      'pipelines@0/blocks@0/body/properties@0/value/columnId',
-    ) as ColumnId;
-
-    validateColumnId(
-      columnId,
-      createJayveeValidationProps(validationAcceptorMock, services),
+    const allColumnIds = extractTestElements(document, (x): x is ColumnId =>
+      isColumnId(x),
     );
+
+    for (const columnId of allColumnIds) {
+      validateColumnId(
+        columnId,
+        createJayveeValidationProps(validationAcceptorMock, services),
+      );
+    }
   }
 
   beforeAll(() => {
     // Create language services
     services = createJayveeServices(NodeFileSystem).Jayvee;
-    locator = services.workspace.AstNodeLocator;
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });
