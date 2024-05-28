@@ -32,13 +32,22 @@ import { getStdLib } from '../builtin-library';
 import { type JayveeServices } from '../jayvee-module';
 import { type JayveeImportResolver } from '../services/import-resolver';
 
+interface ExportDetails {
+  element: ExportableElement;
+
+  /**
+   * The name which the exported element is available under.
+   */
+  alias: string;
+}
+
 export class JayveeScopeProvider extends DefaultScopeProvider {
   protected readonly langiumDocuments: LangiumDocuments;
   protected readonly importResolver: JayveeImportResolver;
 
   protected readonly availableElementsPerDocumentCache: DocumentCache<
     string,
-    ExportableElement[]
+    ExportDetails[]
   >; // DocumentCache becomes invalidated as soon the corresponding document is updated
   constructor(services: JayveeServices) {
     super(services);
@@ -80,7 +89,7 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
       );
       importedElements.push(
         ...publishedElements.map((e) =>
-          this.descriptions.createDescription(e, e.name),
+          this.descriptions.createDescription(e.element, e.alias),
         ),
       );
     }
@@ -93,11 +102,9 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
    * This logic cannot reside in a {@link ScopeComputationProvider} but should be handled here:
    * https://github.com/eclipse-langium/langium/discussions/1508#discussioncomment-9524544
    */
-  protected getExportedElements(
-    document: LangiumDocument,
-  ): ExportableElement[] {
+  protected getExportedElements(document: LangiumDocument): ExportDetails[] {
     const model = document.parseResult.value as JayveeModel;
-    const exportedElements: ExportableElement[] = [];
+    const exportedElements: ExportDetails[] = [];
 
     for (const node of AstUtils.streamAllContents(model)) {
       if (isExportableElementDefinition(node) && node.isPublished) {
@@ -105,13 +112,20 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
           isExportableElement(node),
           'Exported node is not an ExportableElement',
         );
-        exportedElements.push(node);
+        exportedElements.push({
+          element: node,
+          alias: node.name,
+        });
       }
 
       if (isExportDefinition(node)) {
         const originalDefinition = this.followExportDefinitionChain(node);
         if (originalDefinition !== undefined) {
-          exportedElements.push(originalDefinition);
+          const exportName = node.alias ?? originalDefinition.name;
+          exportedElements.push({
+            element: originalDefinition,
+            alias: exportName,
+          });
         }
       }
     }

@@ -1,0 +1,9 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+constraint X on integer: value > 0;
+constraint Y on integer: value > 1;
+
+publish X as Z; 
+publish Y as Z; // invalid: multiple exports with same name
