@@ -1,7 +1,10 @@
-import { type AstNode, AstUtils, type LangiumDocument } from 'langium';
-import { expect } from 'vitest';
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
 
-import { isJayveeModel } from './generated/ast';
+import { type AstNode, AstUtils, type LangiumDocument } from 'langium';
+
+import { isJayveeModel } from '../lib/ast/generated/ast';
 
 /**
  * Extract all elements that comply with the given filter function.

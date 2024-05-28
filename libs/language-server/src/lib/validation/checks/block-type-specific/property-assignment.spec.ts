@@ -19,11 +19,11 @@ import {
   type ParseHelperOptions,
   createJayveeValidationProps,
   expectNoParserAndLexerErrors,
+  extractTestElements,
   parseHelper,
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../../test';
-import { extractTestElements } from '../../../ast/test-utils';
 
 import { checkBlockTypeSpecificProperties } from './property-assignment';
 
