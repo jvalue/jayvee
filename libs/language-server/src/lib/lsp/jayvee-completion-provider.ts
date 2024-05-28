@@ -41,20 +41,24 @@ import {
 import {
   getAllBuiltinBlockTypes,
   getAllBuiltinConstraintTypes,
+  getExportedElements,
 } from '../ast/model-util';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
 import { type JayveeServices } from '../jayvee-module';
+import { type JayveeImportResolver } from '../services';
 
 const RIGHT_ARROW_SYMBOL = '\u{2192}';
 
 export class JayveeCompletionProvider extends DefaultCompletionProvider {
   protected langiumDocuments: LangiumDocuments;
   protected readonly wrapperFactories: WrapperFactoryProvider;
+  protected readonly importResolver: JayveeImportResolver;
 
   constructor(services: JayveeServices) {
     super(services);
     this.langiumDocuments = services.shared.workspace.LangiumDocuments;
     this.wrapperFactories = services.WrapperFactories;
+    this.importResolver = services.ImportResolver;
   }
 
   override completionFor(
@@ -93,6 +97,12 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
         isImportDefinition(astNode) && next.property === 'path';
       if (isImportPathCompletion) {
         return this.completionForImportPath(astNode, context, acceptor);
+      }
+
+      const isImportElementCompletion =
+        isImportDefinition(astNode) && next.property === 'usedElements';
+      if (isImportElementCompletion) {
+        return this.completionForImportElement(astNode, context, acceptor);
       }
     }
     return super.completionFor(context, next, acceptor);
@@ -257,6 +267,47 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
           range: insertRange,
         },
         kind: CompletionItemKind.File,
+      });
+    }
+  }
+
+  private completionForImportElement(
+    importDefinition: ImportDefinition,
+    context: CompletionContext,
+    acceptor: CompletionAcceptor,
+  ) {
+    const resolvedModel = this.importResolver.resolveImport(importDefinition);
+    if (resolvedModel === undefined) {
+      return;
+    }
+
+    const documentText = context.textDocument.getText();
+    const existingElementName = documentText.substring(
+      context.tokenOffset,
+      context.offset,
+    );
+
+    const exportedElementNames = getExportedElements(resolvedModel).map(
+      (x) => x.alias,
+    );
+
+    const suggestedElementNames = exportedElementNames.filter((x) =>
+      x.startsWith(existingElementName),
+    );
+
+    const insertRange: Range = {
+      start: context.textDocument.positionAt(context.tokenOffset),
+      end: context.textDocument.positionAt(context.tokenEndOffset),
+    };
+
+    for (const elementName of suggestedElementNames) {
+      acceptor(context, {
+        label: elementName,
+        textEdit: {
+          newText: elementName,
+          range: insertRange,
+        },
+        kind: CompletionItemKind.Reference,
       });
     }
   }
