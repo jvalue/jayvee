@@ -2,11 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type AstNode, AstUtils, type LangiumDocument } from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
+  type CompositeBlockTypeDefinition,
   type JayveeServices,
   createJayveeServices,
   isCompositeBlockTypeDefinition,
@@ -19,6 +20,7 @@ import {
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../test';
+import { extractTestElements } from '../../ast/test-utils';
 
 import { validateCompositeBlockTypeDefinition } from './composite-block-type-definition';
 
@@ -41,13 +43,10 @@ describe('Validation of CompositeBlockTypeDefinition', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const allElements = AstUtils.streamAllContents(document.parseResult.value);
-    const allCompositeBlockTypes = [
-      ...allElements.filter(isCompositeBlockTypeDefinition),
-    ];
-    expect(
-      allCompositeBlockTypes.length > 0,
-      'No composite block type definition found in test file',
+    const allCompositeBlockTypes = extractTestElements(
+      document,
+      (x): x is CompositeBlockTypeDefinition =>
+        isCompositeBlockTypeDefinition(x),
     );
 
     for (const blockType of allCompositeBlockTypes) {

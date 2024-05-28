@@ -2,12 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type AstNode, AstUtils, type LangiumDocument } from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
   type JayveeServices,
+  type ValuetypeDefinition,
   createJayveeServices,
   isValuetypeDefinition,
 } from '../../../lib';
@@ -19,6 +20,7 @@ import {
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../test';
+import { extractTestElements } from '../../ast/test-utils';
 
 import { validateValueTypeDefinition } from './value-type-definition';
 
@@ -41,11 +43,9 @@ describe('Validation of ValuetypeDefinition', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const allElements = AstUtils.streamAllContents(document.parseResult.value);
-    const allValueTypes = [...allElements.filter(isValuetypeDefinition)];
-    expect(
-      allValueTypes.length > 0,
-      'No value type definition found in test file',
+    const allValueTypes = extractTestElements(
+      document,
+      (x): x is ValuetypeDefinition => isValuetypeDefinition(x),
     );
 
     for (const valueTypeDefinition of allValueTypes) {

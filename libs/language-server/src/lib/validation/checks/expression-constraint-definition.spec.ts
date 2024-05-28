@@ -2,11 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type AstNode, AstUtils, type LangiumDocument } from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
+  type ExpressionConstraintDefinition,
   type JayveeServices,
   createJayveeServices,
   isExpressionConstraintDefinition,
@@ -19,6 +20,7 @@ import {
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../test';
+import { extractTestElements } from '../../ast/test-utils';
 
 import { validateExpressionConstraintDefinition } from './expression-constraint-definition';
 
@@ -41,13 +43,10 @@ describe('Validation of ConstraintDefinition (expression syntax)', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const allElements = AstUtils.streamAllContents(document.parseResult.value);
-    const allExpressionConstraintDefinitions = [
-      ...allElements.filter(isExpressionConstraintDefinition),
-    ];
-    expect(
-      allExpressionConstraintDefinitions.length > 0,
-      'No expression constraint definition found in test file',
+    const allExpressionConstraintDefinitions = extractTestElements(
+      document,
+      (x): x is ExpressionConstraintDefinition =>
+        isExpressionConstraintDefinition(x),
     );
 
     for (const expressionConstraint of allExpressionConstraintDefinitions) {

@@ -2,12 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type AstNode, AstUtils, type LangiumDocument } from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
   type JayveeServices,
+  type PropertyBody,
   createJayveeServices,
   isBlockDefinition,
   isPropertyBody,
@@ -20,6 +21,7 @@ import {
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../test';
+import { extractTestElements } from '../../ast/test-utils';
 
 import { validatePropertyBody } from './property-body';
 
@@ -42,15 +44,10 @@ describe('Validation PropertyBody', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const allElements = AstUtils.streamAllContents(document.parseResult.value);
-    const allPropertyBodies = [
-      ...allElements
-        .filter(isPropertyBody)
-        .filter((x) => isBlockDefinition(x.$container)),
-    ];
-    expect(
-      allPropertyBodies.length > 0,
-      'No block property body found in test file',
+    const allPropertyBodies = extractTestElements(
+      document,
+      (x): x is PropertyBody =>
+        isPropertyBody(x) && isBlockDefinition(x.$container),
     );
 
     for (const propertyBody of allPropertyBodies) {

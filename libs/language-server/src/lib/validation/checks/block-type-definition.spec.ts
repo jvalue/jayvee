@@ -2,11 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type AstNode, AstUtils, type LangiumDocument } from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
+  type BuiltinBlockTypeDefinition,
   type JayveeServices,
   createJayveeServices,
   isBuiltinBlockTypeDefinition,
@@ -19,6 +20,7 @@ import {
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../test';
+import { extractTestElements } from '../../ast/test-utils';
 
 import { validateBlockTypeDefinition } from './block-type-definition';
 
@@ -41,11 +43,9 @@ describe('Validation of BuiltinBlockTypeDefinition', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const allElements = AstUtils.streamAllContents(document.parseResult.value);
-    const allBlockTypes = [...allElements.filter(isBuiltinBlockTypeDefinition)];
-    expect(
-      allBlockTypes.length > 0,
-      'No builtin block type definition found in test file',
+    const allBlockTypes = extractTestElements(
+      document,
+      (x): x is BuiltinBlockTypeDefinition => isBuiltinBlockTypeDefinition(x),
     );
 
     for (const blockType of allBlockTypes) {

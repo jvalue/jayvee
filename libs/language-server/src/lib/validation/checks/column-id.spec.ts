@@ -2,11 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type AstNode, AstUtils, type LangiumDocument } from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
+  type ColumnId,
   type JayveeServices,
   createJayveeServices,
   isColumnId,
@@ -19,6 +20,7 @@ import {
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../test';
+import { extractTestElements } from '../../ast/test-utils';
 
 import { validateColumnId } from './column-id';
 
@@ -41,11 +43,8 @@ describe('Validation of ColumnId', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const allElements = AstUtils.streamAllContents(document.parseResult.value);
-    const allColumnIds = [...allElements.filter(isColumnId)];
-    expect(
-      allColumnIds.length > 0,
-      'No column id definition found in test file',
+    const allColumnIds = extractTestElements(document, (x): x is ColumnId =>
+      isColumnId(x),
     );
 
     for (const columnId of allColumnIds) {

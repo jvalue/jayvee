@@ -2,12 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type AstNode, AstUtils, type LangiumDocument } from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
   type JayveeServices,
+  type PropertyBody,
   createJayveeServices,
   isBlockDefinition,
   isPropertyBody,
@@ -20,6 +21,7 @@ import {
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../../test';
+import { extractTestElements } from '../../../ast/test-utils';
 
 import { checkBlockTypeSpecificPropertyBody } from './property-body';
 
@@ -42,16 +44,12 @@ describe('Validation of block type specific property bodies', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const allElements = AstUtils.streamAllContents(document.parseResult.value);
-    const allPropertyBodies = [
-      ...allElements
-        .filter(isPropertyBody)
-        .filter((x) => isBlockDefinition(x.$container)),
-    ];
-    expect(allPropertyBodies.length > 0, 'No property body found in test file');
-
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const propertyBody = allPropertyBodies[0]!;
+    const propertyBody = extractTestElements(
+      document,
+      (x): x is PropertyBody =>
+        isPropertyBody(x) && isBlockDefinition(x.$container),
+    )[0]!;
 
     const props = createJayveeValidationProps(validationAcceptorMock, services);
 

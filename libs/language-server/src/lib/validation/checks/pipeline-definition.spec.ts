@@ -2,12 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type AstNode, AstUtils, type LangiumDocument } from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
   type JayveeServices,
+  type PipelineDefinition,
   createJayveeServices,
   isPipelineDefinition,
 } from '../../../lib';
@@ -19,6 +20,7 @@ import {
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../test';
+import { extractTestElements } from '../../ast/test-utils';
 
 import { validatePipelineDefinition } from './pipeline-definition';
 
@@ -41,9 +43,10 @@ describe('Validation of PipelineDefinition', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const allElements = AstUtils.streamAllContents(document.parseResult.value);
-    const allPipelines = [...allElements.filter(isPipelineDefinition)];
-    expect(allPipelines.length > 0, 'No pipes found in test file');
+    const allPipelines = extractTestElements(
+      document,
+      (x): x is PipelineDefinition => isPipelineDefinition(x),
+    );
 
     for (const pipeline of allPipelines) {
       validatePipelineDefinition(

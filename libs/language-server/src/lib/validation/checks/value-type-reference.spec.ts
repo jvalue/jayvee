@@ -8,7 +8,6 @@ import { strict as assert } from 'assert';
 import {
   type AstNode,
   type AstNodeLocator,
-  AstUtils,
   type LangiumDocument,
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
@@ -16,7 +15,9 @@ import { vi } from 'vitest';
 
 import {
   type JayveeServices,
+  type ReferenceableBlockTypeDefinition,
   type ValueTypeReference,
+  type ValuetypeDefinition,
   createJayveeServices,
   isReferenceableBlockTypeDefinition,
   isValuetypeDefinition,
@@ -29,6 +30,7 @@ import {
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../test';
+import { extractTestElements } from '../../ast/test-utils';
 
 import { validateValueTypeReference } from './value-type-reference';
 
@@ -52,11 +54,9 @@ describe('Validation of ValueTypeReference', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const allElements = AstUtils.streamAllContents(document.parseResult.value);
-    const allValueTypes = [...allElements.filter(isValuetypeDefinition)];
-    expect(
-      allValueTypes.length > 0,
-      'No value type definition found in test file',
+    const allValueTypes = extractTestElements(
+      document,
+      (x): x is ValuetypeDefinition => isValuetypeDefinition(x),
     );
 
     const valueTypeReferences: ValueTypeReference[] = [];
@@ -287,16 +287,12 @@ describe('Validation of ValueTypeReference', () => {
     const document = await parse(text);
     expectNoParserAndLexerErrors(document);
 
-    const allElements = AstUtils.streamAllContents(document.parseResult.value);
-    const allBlockTypes = [
-      ...allElements.filter(isReferenceableBlockTypeDefinition),
-    ];
-    expect(
-      allBlockTypes.length > 0,
-      'No block type definition found in test file',
-    );
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const blockType = allBlockTypes[0]!;
+    const blockType = extractTestElements(
+      document,
+      (x): x is ReferenceableBlockTypeDefinition =>
+        isReferenceableBlockTypeDefinition(x),
+    )[0]!;
 
     const valueTypeRef = blockType.properties[0]?.valueType;
     assert(valueTypeRef !== undefined);

@@ -2,12 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type AstNode, AstUtils, type LangiumDocument } from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
   type JayveeServices,
+  type TypedConstraintDefinition,
   createJayveeServices,
   isTypedConstraintDefinition,
 } from '../../..';
@@ -19,6 +20,7 @@ import {
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../../test';
+import { extractTestElements } from '../../../ast/test-utils';
 
 import { checkConstraintTypeSpecificPropertyBody } from './property-body';
 
@@ -41,13 +43,9 @@ describe('Validation of constraint type specific property bodies', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const allElements = AstUtils.streamAllContents(document.parseResult.value);
-    const allTypedConstraints = [
-      ...allElements.filter(isTypedConstraintDefinition),
-    ];
-    expect(
-      allTypedConstraints.length > 0,
-      'No typed constraint definition found in test file',
+    const allTypedConstraints = extractTestElements(
+      document,
+      (x): x is TypedConstraintDefinition => isTypedConstraintDefinition(x),
     );
 
     for (const constraint of allTypedConstraints) {

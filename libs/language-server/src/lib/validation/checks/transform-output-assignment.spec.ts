@@ -2,12 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type AstNode, AstUtils, type LangiumDocument } from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
   type JayveeServices,
+  type TransformOutputAssignment,
   createJayveeServices,
   isTransformOutputAssignment,
 } from '../../../lib';
@@ -19,6 +20,7 @@ import {
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../test';
+import { extractTestElements } from '../../ast/test-utils';
 
 import { validateTransformOutputAssignment } from './transform-output-assigment';
 
@@ -41,13 +43,9 @@ describe('Validation of TransformOutputAssignment', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const allElements = AstUtils.streamAllContents(document.parseResult.value);
-    const allOutputAssignments = [
-      ...allElements.filter(isTransformOutputAssignment),
-    ];
-    expect(
-      allOutputAssignments.length > 0,
-      'No transform output assignment found in test file',
+    const allOutputAssignments = extractTestElements(
+      document,
+      (x): x is TransformOutputAssignment => isTransformOutputAssignment(x),
     );
 
     for (const transformOutputAssignment of allOutputAssignments) {

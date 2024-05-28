@@ -2,12 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type AstNode, AstUtils, type LangiumDocument } from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
   type JayveeServices,
+  type RegexLiteral,
   createJayveeServices,
   isRegexLiteral,
 } from '../../../lib';
@@ -19,6 +20,7 @@ import {
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../test';
+import { extractTestElements } from '../../ast/test-utils';
 
 import { validateRegexLiteral } from './regex-literal';
 
@@ -41,9 +43,10 @@ describe('Validation of RegexLiteral', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const allElements = AstUtils.streamAllContents(document.parseResult.value);
-    const allRegexLiterals = [...allElements.filter(isRegexLiteral)];
-    expect(allRegexLiterals.length > 0, 'No regex literal found in test file');
+    const allRegexLiterals = extractTestElements(
+      document,
+      (x): x is RegexLiteral => isRegexLiteral(x),
+    );
 
     for (const regexLiteral of allRegexLiterals) {
       validateRegexLiteral(

@@ -2,12 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type AstNode, AstUtils, type LangiumDocument } from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
   type JayveeServices,
+  type TransformBody,
   createJayveeServices,
   isTransformBody,
 } from '../../../lib';
@@ -19,6 +20,7 @@ import {
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../test';
+import { extractTestElements } from '../../ast/test-utils';
 
 import { validateTransformBody } from './transform-body';
 
@@ -41,11 +43,9 @@ describe('Validation of TransformBody', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const allElements = AstUtils.streamAllContents(document.parseResult.value);
-    const allTransformBodies = [...allElements.filter(isTransformBody)];
-    expect(
-      allTransformBodies.length > 0,
-      'No transform body found in test file',
+    const allTransformBodies = extractTestElements(
+      document,
+      (x): x is TransformBody => isTransformBody(x),
     );
 
     for (const transformBody of allTransformBodies) {

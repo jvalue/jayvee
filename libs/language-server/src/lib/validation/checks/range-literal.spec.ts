@@ -2,12 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type AstNode, AstUtils, type LangiumDocument } from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
   type JayveeServices,
+  type RangeLiteral,
   createJayveeServices,
   isRangeLiteral,
 } from '../../../lib';
@@ -19,6 +20,7 @@ import {
   readJvTestAssetHelper,
   validationAcceptorMockImpl,
 } from '../../../test';
+import { extractTestElements } from '../../ast/test-utils';
 
 import { validateRangeLiteral } from './range-literal';
 
@@ -41,9 +43,10 @@ describe('Validation of RangeLiteral', () => {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const allElements = AstUtils.streamAllContents(document.parseResult.value);
-    const allRangeLiterals = [...allElements.filter(isRangeLiteral)];
-    expect(allRangeLiterals.length > 0, 'No range literal found in test file');
+    const allRangeLiterals = extractTestElements(
+      document,
+      (x): x is RangeLiteral => isRangeLiteral(x),
+    );
 
     for (const rangeLiteral of allRangeLiterals) {
       validateRangeLiteral(
