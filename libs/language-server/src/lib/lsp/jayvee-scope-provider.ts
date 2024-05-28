@@ -2,9 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line unicorn/prefer-node-protocol
-import { strict as assert } from 'assert';
-
 import {
   type AstNode,
   type AstNodeDescription,
@@ -21,27 +18,15 @@ import {
 } from 'langium';
 
 import {
-  type ExportDefinition,
-  type ExportableElement,
+  type ExportDetails,
   type ImportDefinition,
   type JayveeModel,
-  isExportDefinition,
-  isExportableElement,
-  isExportableElementDefinition,
+  getExportedElements,
   isJayveeModel,
 } from '../ast';
 import { getStdLib } from '../builtin-library';
 import { type JayveeServices } from '../jayvee-module';
 import { type JayveeImportResolver } from '../services/import-resolver';
-
-interface ExportDetails {
-  element: ExportableElement;
-
-  /**
-   * The name which the exported element is available under.
-   */
-  alias: string;
-}
 
 export class JayveeScopeProvider extends DefaultScopeProvider {
   protected readonly langiumDocuments: LangiumDocuments;
@@ -149,89 +134,16 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
   protected getPublishedElementsFromDocument(
     document: LangiumDocument<AstNode>,
   ): AstNodeDescription[] {
+    const model = document.parseResult.value as JayveeModel;
+
     const publishedElements = this.availableElementsPerDocumentCache.get(
       document.uri,
       'exports', // we only need one key here as it is on document basis
-      () => this.getExportedElements(document),
+      () => getExportedElements(model),
     );
     return publishedElements.map((e) =>
       this.descriptions.createDescription(e.element, e.alias),
     );
-  }
-
-  /**
-   * Gets all exported elements from a document.
-   * This logic cannot reside in a {@link ScopeComputationProvider} but should be handled here:
-   * https://github.com/eclipse-langium/langium/discussions/1508#discussioncomment-9524544
-   */
-  protected getExportedElements(document: LangiumDocument): ExportDetails[] {
-    const model = document.parseResult.value as JayveeModel;
-    const exportedElements: ExportDetails[] = [];
-
-    for (const node of AstUtils.streamAllContents(model)) {
-      if (isExportableElementDefinition(node) && node.isPublished) {
-        assert(
-          isExportableElement(node),
-          'Exported node is not an ExportableElement',
-        );
-        exportedElements.push({
-          element: node,
-          alias: node.name,
-        });
-      }
-
-      if (isExportDefinition(node)) {
-        const originalDefinition = this.followExportDefinitionChain(node);
-        if (originalDefinition !== undefined) {
-          const exportName = node.alias ?? originalDefinition.name;
-          exportedElements.push({
-            element: originalDefinition,
-            alias: exportName,
-          });
-        }
-      }
-    }
-    return exportedElements;
-  }
-
-  /**
-   * Follow an export statement to its original definition.
-   */
-  protected followExportDefinitionChain(
-    exportDefinition: ExportDefinition,
-  ): ExportableElement | undefined {
-    const referenced = exportDefinition.element.ref;
-
-    if (referenced === undefined) {
-      return undefined; // Cannot follow reference to original definition
-    }
-
-    if (!this.isElementExported(referenced)) {
-      return undefined;
-    }
-
-    return referenced; // Reached original definition
-  }
-
-  /**
-   * Checks whether an exportable @param element is exported (either in definition or via an delayed export definition).
-   */
-  protected isElementExported(element: ExportableElement): boolean {
-    if (isExportableElementDefinition(element) && element.isPublished) {
-      return true;
-    }
-
-    const model = AstUtils.getContainerOfType(element, isJayveeModel);
-    assert(
-      model !== undefined,
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      `Could not get container of exportable element ${element.name ?? ''}`,
-    );
-
-    const isExported = model.exports.some(
-      (exportDefinition) => exportDefinition.element.ref === element,
-    );
-    return isExported;
   }
 
   /**
