@@ -4,6 +4,7 @@
 
 import {
   type BlockDefinition,
+  type ExpressionConstraintDefinition,
   type InternalValueRepresentation,
   type JayveeServices,
   createJayveeServices,
@@ -12,13 +13,13 @@ import {
 import {
   type ParseHelperOptions,
   expectNoParserAndLexerErrors,
+  extractTestElements,
   parseHelper,
   readJvTestAssetHelper,
 } from '@jvalue/jayvee-language-server/test';
 import {
   type AstNode,
   type AstNodeLocator,
-  AstUtils,
   type LangiumDocument,
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
@@ -53,16 +54,12 @@ describe('Validation of AllowlistConstraintExecutor', () => {
       'pipelines@0/blocks@2',
     ) as BlockDefinition;
 
-    const allElements = AstUtils.streamAllContents(document.parseResult.value);
-    const allConstraints = [
-      ...allElements.filter(isExpressionConstraintDefinition),
-    ];
-    expect(
-      allConstraints.length > 0,
-      'No constraint definition found in test file',
-    );
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const constraint = allConstraints[0]!;
+    const constraint = extractTestElements(
+      document,
+      (x): x is ExpressionConstraintDefinition =>
+        isExpressionConstraintDefinition(x),
+    )[0]!;
 
     return new ExpressionConstraintExecutor(constraint).isValid(
       value,

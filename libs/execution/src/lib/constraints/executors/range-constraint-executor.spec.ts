@@ -6,6 +6,7 @@ import {
   type BlockDefinition,
   type InternalValueRepresentation,
   type JayveeServices,
+  type TypedConstraintDefinition,
   createJayveeServices,
   initializeWorkspace,
   isTypedConstraintDefinition,
@@ -13,13 +14,13 @@ import {
 import {
   type ParseHelperOptions,
   expectNoParserAndLexerErrors,
+  extractTestElements,
   parseHelper,
   readJvTestAssetHelper,
 } from '@jvalue/jayvee-language-server/test';
 import {
   type AstNode,
   type AstNodeLocator,
-  AstUtils,
   type LangiumDocument,
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
@@ -54,14 +55,11 @@ describe('Validation of RangeConstraintExecutor', () => {
       'pipelines@0/blocks@2',
     ) as BlockDefinition;
 
-    const allElements = AstUtils.streamAllContents(document.parseResult.value);
-    const allConstraints = [...allElements.filter(isTypedConstraintDefinition)];
-    expect(
-      allConstraints.length > 0,
-      'No constraint definition found in test file',
-    );
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const constraint = allConstraints[0]!;
+    const constraint = extractTestElements(
+      document,
+      (x): x is TypedConstraintDefinition => isTypedConstraintDefinition(x),
+    )[0]!;
 
     return new RangeConstraintExecutor().isValid(
       value,
