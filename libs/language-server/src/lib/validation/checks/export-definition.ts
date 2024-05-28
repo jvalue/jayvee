@@ -72,7 +72,7 @@ function checkUniqueAlias(
   );
   assert(
     elementsWithSameName.length > 0,
-    'Could not the export definition itself in exports',
+    'Could not find the export definition itself in exports',
   );
 
   const isAliasUnique = elementsWithSameName.length === 1;
