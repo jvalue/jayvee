@@ -38,13 +38,15 @@ function checkElementImportedOnlyOnce(
 
   for (const [i, importedElement] of importedElements.entries()) {
     const occurrencesInSameImportDefinition = importedElements.filter(
-      (x) => x === importedElement,
+      (x) => x.element === importedElement.element,
     ).length;
 
     if (occurrencesInSameImportDefinition > 1) {
       props.validationContext.accept(
         'error',
-        `Element ${importedElement} is imported ${occurrencesInSameImportDefinition} times from file "${
+        `Element ${
+          importedElement.element
+        } is imported ${occurrencesInSameImportDefinition} times from file "${
           // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
           importDefinition.path ?? ''
         }". Remove the duplicate import.`,
@@ -142,12 +144,12 @@ function checkImportedElementsExist(
   ];
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  for (const [i, importedElement] of importDefinition.usedElements?.entries() ??
+  for (const [i, namedImport] of importDefinition.usedElements?.entries() ??
     []) {
-    if (!allExports.includes(importedElement)) {
+    if (!allExports.includes(namedImport.element)) {
       props.validationContext.accept(
         'error',
-        `Could not find published element ${importedElement} in file "${importDefinition.path}". Check if the element exists and has been correctly published.`,
+        `Could not find published element ${namedImport.element} in file "${importDefinition.path}". Check if the element exists and has been correctly published.`,
         {
           node: importDefinition,
           property: 'usedElements',

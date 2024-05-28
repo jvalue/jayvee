@@ -94,18 +94,27 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const importedIdentifiers = importDefinition.usedElements ?? [];
+    const namedImports = importDefinition.usedElements ?? [];
 
     const importedElements: AstNodeDescription[] = [];
-    for (const importedIdentifier of importedIdentifiers) {
+    for (const namedImport of namedImports) {
       const matchingExportedElement = publishedElements.find(
-        (x) => x.name === importedIdentifier,
+        (x) => x.name === namedImport.element,
       );
-      if (matchingExportedElement === undefined) {
+      if (
+        matchingExportedElement === undefined ||
+        matchingExportedElement.node === undefined
+      ) {
         continue;
       }
 
-      importedElements.push(matchingExportedElement);
+      const importedElementName = namedImport.alias ?? namedImport.element;
+      importedElements.push(
+        this.descriptions.createDescription(
+          matchingExportedElement.node,
+          importedElementName,
+        ),
+      );
     }
     return importedElements;
   }

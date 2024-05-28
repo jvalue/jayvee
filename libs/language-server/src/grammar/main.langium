@@ -38,5 +38,8 @@ ExportDefinition:
 ImportDefinition:
   'use' (
     useAll?='*' 
-    | '{' (usedElements+=ID) (',' usedElements+=ID)* '}'
+    | '{' usedElements+=NamedImportElement (',' usedElements+=NamedImportElement)* '}'
   ) 'from' path=STRING ';';
+
+NamedImportElement:
+  element=ID ('as' alias=ID)?;
