@@ -107,8 +107,7 @@ export const JayveeModule: Module<
       services.operators.EvaluatorRegistry,
       services.ValueTypeProvider,
     ),
-  ImportResolver: (services) =>
-    new JayveeImportResolver(services.shared.workspace.LangiumDocuments),
+  ImportResolver: (services) => new JayveeImportResolver(services),
 };
 
 export const JayveeSharedModule: Module<

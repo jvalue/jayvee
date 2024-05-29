@@ -140,7 +140,7 @@ export interface ExportDetails {
   /**
    * The name which the exported element is available under.
    */
-  alias: string;
+  exportName: string;
 }
 
 /**
@@ -159,7 +159,7 @@ export function getExportedElements(model: JayveeModel): ExportDetails[] {
       );
       exportedElements.push({
         element: node,
-        alias: node.name,
+        exportName: node.name,
       });
     }
 
@@ -169,7 +169,7 @@ export function getExportedElements(model: JayveeModel): ExportDetails[] {
         const exportName = node.alias ?? originalDefinition.name;
         exportedElements.push({
           element: originalDefinition,
-          alias: exportName,
+          exportName: exportName,
         });
       }
     }
