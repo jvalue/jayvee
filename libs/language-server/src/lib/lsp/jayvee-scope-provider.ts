@@ -67,7 +67,8 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
   ): AstNodeDescription[] {
     const importedElements: AstNodeDescription[] = [];
     for (const importDefinition of model.imports) {
-      const importedDocument = this.getImportedDocument(importDefinition);
+      const importedDocument =
+        this.importResolver.resolveImportedDocument(importDefinition);
       if (importedDocument === undefined) {
         continue;
       }
@@ -171,18 +172,5 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
     }
 
     return importedUris;
-  }
-
-  protected getImportedDocument(
-    importDefinition: ImportDefinition,
-  ): LangiumDocument | undefined {
-    const uri = this.importResolver.resolveImportUri(importDefinition);
-    if (uri === undefined) {
-      return undefined;
-    }
-
-    const importedDocument = this.langiumDocuments.getDocument(uri);
-
-    return importedDocument;
   }
 }
