@@ -1,0 +1,78 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+// This file belongs to example 2: Electric Vehicles
+// Learning goals:
+// - Understand how to publish elements to use them in other files
+
+// 1. The publish keyword can be used directly when defining an element.
+publish valuetype UsStateCode oftype text {
+  constraints: [
+    UsStateCodeAllowlist,
+  ];
+}
+
+// 2. The publish keyword can be used after a definition as well (see below).
+// When using this delayed publish syntax, the published element can also be renamed. Doing so will make it available using the changed name whenever it is imported with the `use` syntax in another file. 
+constraint UsStateCodeAllowlist on text: value in [
+  "AL",
+  "AK",
+  "AZ",
+  "AR",
+  "AS",
+  "CA",
+  "CO",
+  "CT",
+  "DE",
+  "DC",
+  "FL",
+  "GA",
+  "GU",
+  "HI",
+  "ID",
+  "IL",
+  "IN",
+  "IA",
+  "KS",
+  "KY",
+  "LA",
+  "ME",
+  "MD",
+  "MA",
+  "MI",
+  "MN",
+  "MS",
+  "MO",
+  "MT",
+  "NE",
+  "NV",
+  "NH",
+  "NJ",
+  "NM",
+  "NY",
+  "NC",
+  "ND",
+  "MP",
+  "OH",
+  "OK",
+  "OR",
+  "PA",
+  "PR",
+  "RI",
+  "SC",
+  "SD",
+  "TN",
+  "TX",
+  "TT",
+  "UT",
+  "VT",
+  "VA",
+  "VI",
+  "WA",
+  "WV",
+  "WI",
+  "WY",
+];
+
+publish UsStateCodeAllowlist as UsStateCodeConstraint;

@@ -107,15 +107,24 @@ constraint GasFillLevelRange on decimal:
     value >= 0 and value <= 100;
 
 publish GasFillLevelRange;
+publish GasFillLevelRange as PercentGasFillLevel; // Alias for renaming the published element
 ```
 
 2. Use the element in another file
 
 ```jayvee
 // Define from where you want to take elements
+
+// Wildcard "*" makes all published elements of the file available
 use * from './relative/path/to/file.jv';
 
+// Named use only makes the named elements available
+use { GasFillLevelRange } './relative/path/to/file.jv';
+use { GasFillLevelRange as FillLevelRange } './relative/path/to/file.jv'; // Alias locally renames elements
+
+
 // Then just use them as if they were defined on root level
+
 valuetype GasFillLevel oftype integer {
     constraints: [ GasFillLevelRange ]; // GasFillLevelRange is defined in another file
 }
