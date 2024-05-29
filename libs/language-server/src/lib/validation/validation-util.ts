@@ -45,7 +45,7 @@ export function checkUniqueNames(
             elementTypeDetails !== undefined ? elementTypeDetails + ' ' : ''
           }name "${nodeName}" needs to be unique.`,
           {
-            node,
+            node: node,
             property: 'name',
           },
         );
