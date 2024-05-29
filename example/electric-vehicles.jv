@@ -8,7 +8,7 @@
 // - Understand how to construct a pipeline with multiple sinks
 // - Understand the use of runtime parameters
 
-// 0. We can use elements defined in other files using the "use" syntax.
+// 0. We can use elements defined in other files with the "use" syntax.
 // In this case, we use the value type UsStateCode when later specifying the table column value types. 
 use { UsStateCode } from './state-codes.jv';
 

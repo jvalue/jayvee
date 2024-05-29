@@ -13,8 +13,8 @@ publish valuetype UsStateCode oftype text {
   ];
 }
 
-// 2. The publish keyword can be used after definition (see below).
-// When using this delayed publish syntax, the published element can also be renamed for access from outside of the file. 
+// 2. The publish keyword can be used after a definition as well (see below).
+// When using this delayed publish syntax, the published element can also be renamed. Doing so will make it available using the changed name whenever it is imported with the `use` syntax in another file. 
 constraint UsStateCodeAllowlist on text: value in [
   "AL",
   "AK",
