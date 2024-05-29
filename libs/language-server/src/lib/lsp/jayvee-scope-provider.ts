@@ -19,6 +19,7 @@ import {
 
 import {
   type ExportDetails,
+  type ExportableElement,
   type ImportDefinition,
   type JayveeModel,
   getExportedElements,
@@ -56,16 +57,22 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
     }
 
     const importedElements: AstNodeDescription[] = [];
-    importedElements.push(...this.getBuiltinElements());
-    importedElements.push(...this.getExplicitlyImportedElements(jayveeModel));
+    importedElements.push(
+      ...this.getBuiltinElements().map((x) =>
+        this.descriptions.createDescription(x.element, x.exportName),
+      ),
+    );
+    importedElements.push(
+      ...this.getImportedElements(jayveeModel).map((x) =>
+        this.descriptions.createDescription(x.element, x.importName),
+      ),
+    );
 
     return new MapScope(importedElements);
   }
 
-  protected getExplicitlyImportedElements(
-    model: JayveeModel,
-  ): AstNodeDescription[] {
-    const importedElements: AstNodeDescription[] = [];
+  protected getImportedElements(model: JayveeModel): ImportDetails[] {
+    const importedElements: ImportDetails[] = [];
     for (const importDefinition of model.imports) {
       const importedDocument =
         this.importResolver.resolveImportedDocument(importDefinition);
@@ -86,48 +93,52 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
   protected getImportedElementsFromDocument(
     importDefinition: ImportDefinition,
     importedDocument: LangiumDocument,
-  ): AstNodeDescription[] {
+  ): ImportDetails[] {
     const publishedElements =
       this.getPublishedElementsFromDocument(importedDocument);
 
     if (importDefinition.useAll) {
-      return publishedElements;
+      return publishedElements.map((exportDetails) => {
+        return {
+          element: exportDetails.element,
+          importName: exportDetails.exportName,
+        };
+      });
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const namedImports = importDefinition.usedElements ?? [];
 
-    const importedElements: AstNodeDescription[] = [];
+    const importedElements: ImportDetails[] = [];
     for (const namedImport of namedImports) {
       const matchingExportedElement = publishedElements.find(
-        (x) => x.name === namedImport.element,
+        (x) => x.exportName === namedImport.element,
       );
       if (
         matchingExportedElement === undefined ||
-        matchingExportedElement.node === undefined
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        matchingExportedElement.element === undefined
       ) {
         continue;
       }
 
       const importedElementName = namedImport.alias ?? namedImport.element;
-      importedElements.push(
-        this.descriptions.createDescription(
-          matchingExportedElement.node,
-          importedElementName,
-        ),
-      );
+      importedElements.push({
+        element: matchingExportedElement.element,
+        importName: importedElementName,
+      });
     }
     return importedElements;
   }
 
-  protected getBuiltinElements(): AstNodeDescription[] {
-    const builtinUris = this.getBuiltins();
+  protected getBuiltinElements(): ExportDetails[] {
+    const builtinUris = this.getBuiltinUris();
 
     const importedDocuments = [...builtinUris].map((importedUri) =>
       this.langiumDocuments.getDocument(URI.parse(importedUri)),
     );
 
-    const importedElements: AstNodeDescription[] = [];
+    const importedElements: ExportDetails[] = [];
     for (const importedDocument of importedDocuments) {
       if (importedDocument === undefined) {
         continue;
@@ -143,7 +154,7 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
 
   protected getPublishedElementsFromDocument(
     document: LangiumDocument<AstNode>,
-  ): AstNodeDescription[] {
+  ): ExportDetails[] {
     const model = document.parseResult.value as JayveeModel;
 
     const publishedElements = this.availableElementsPerDocumentCache.get(
@@ -151,15 +162,13 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
       'exports', // we only need one key here as it is on document basis
       () => getExportedElements(model),
     );
-    return publishedElements.map((e) =>
-      this.descriptions.createDescription(e.element, e.alias),
-    );
+    return publishedElements;
   }
 
   /**
-   * Add all builtins' URIs to @param importedUris
+   * Gets all builtins' URIs
    */
-  protected getBuiltins(): Set<string> {
+  protected getBuiltinUris(): Set<string> {
     const importedUris: Set<string> = new Set();
 
     const builtins = getStdLib();
@@ -173,4 +182,9 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
 
     return importedUris;
   }
+}
+
+interface ImportDetails {
+  element: ExportableElement;
+  importName: string;
 }

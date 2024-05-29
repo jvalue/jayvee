@@ -77,7 +77,7 @@ export class JayveeDefinitionProvider extends DefaultDefinitionProvider {
       const allExportDefinitions = getExportedElements(importedModel);
 
       const referencedExport = allExportDefinitions.find((x) => {
-        return x.alias === sourceAstNode.element;
+        return x.exportName === sourceAstNode.element;
       });
       if (referencedExport === undefined) {
         return;
