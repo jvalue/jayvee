@@ -8,6 +8,11 @@
 // - Understand how to construct a pipeline with multiple sinks
 // - Understand the use of runtime parameters
 
+// 0. We can use elements defined in other files using the "use" syntax.
+// In this case, we use the value type UsStateCode when later specifying the table column value types. 
+use { UsStateCode } from './state-codes.jv';
+
+
 // 1. This Jayvee model describes a pipeline 
 // from a CSV file in the web 
 // to a SQLite file and a PostgreSQL db sink.
@@ -51,7 +56,7 @@ pipeline ElectricVehiclesPipeline {
       "VIN (1-10)" oftype VehicleIdentificationNumber10,
       "County" oftype text,
       "City" oftype text,
-      "State" oftype UsStateCode,
+      "State" oftype UsStateCode, // We can just use the element as if it was defined in this file.
       "Postal Code" oftype text,
       "Model Year" oftype integer,
       "Make" oftype text,
@@ -125,69 +130,3 @@ valuetype VehicleIdentificationNumber10 oftype text {
 constraint OnlyCapitalLettersAndDigits on text: value matches /^[A-Z0-9]*$/;
 
 constraint ExactlyTenCharacters on text: value.length == 10;
-
-valuetype UsStateCode oftype text {
-  constraints: [
-    UsStateCodeAllowlist,
-  ];
-}
-
-constraint UsStateCodeAllowlist on text: value in [
-  "AL",
-  "AK",
-  "AZ",
-  "AR",
-  "AS",
-  "CA",
-  "CO",
-  "CT",
-  "DE",
-  "DC",
-  "FL",
-  "GA",
-  "GU",
-  "HI",
-  "ID",
-  "IL",
-  "IN",
-  "IA",
-  "KS",
-  "KY",
-  "LA",
-  "ME",
-  "MD",
-  "MA",
-  "MI",
-  "MN",
-  "MS",
-  "MO",
-  "MT",
-  "NE",
-  "NV",
-  "NH",
-  "NJ",
-  "NM",
-  "NY",
-  "NC",
-  "ND",
-  "MP",
-  "OH",
-  "OK",
-  "OR",
-  "PA",
-  "PR",
-  "RI",
-  "SC",
-  "SD",
-  "TN",
-  "TX",
-  "TT",
-  "UT",
-  "VT",
-  "VA",
-  "VI",
-  "WA",
-  "WV",
-  "WI",
-  "WY",
-];
