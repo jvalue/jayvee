@@ -100,7 +100,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       }
 
       const isImportElementCompletion =
-        isImportDefinition(astNode) && next.property === 'usedElements';
+        isImportDefinition(astNode) && next.property === 'element';
       if (isImportElementCompletion) {
         return this.completionForImportElement(astNode, context, acceptor);
       }

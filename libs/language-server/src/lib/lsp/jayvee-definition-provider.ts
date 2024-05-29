@@ -20,7 +20,12 @@ import {
   Range,
 } from 'vscode-languageserver-protocol';
 
-import { getExportedElements, isImportDefinition, isJayveeModel } from '../ast';
+import {
+  getExportedElements,
+  isImportDefinition,
+  isJayveeModel,
+  isNamedImportElement,
+} from '../ast';
 import { type JayveeServices } from '../jayvee-module';
 import { type JayveeImportResolver } from '../services/import-resolver';
 
@@ -54,27 +59,16 @@ export class JayveeDefinitionProvider extends DefaultDefinitionProvider {
     }
 
     if (
-      isImportDefinition(sourceAstNode) &&
-      GrammarUtils.findAssignment(sourceCstNode)?.feature === 'usedElements'
+      isNamedImportElement(sourceAstNode) &&
+      GrammarUtils.findAssignment(sourceCstNode)?.feature === 'element'
     ) {
-      const clickedIndex =
-        GrammarUtils.findAssignment(sourceCstNode)?.$container?.$containerIndex;
+      const importDefinition = sourceAstNode.$container;
       assert(
-        clickedIndex !== undefined,
-        'Could not read index of selected element',
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        importDefinition !== undefined,
+        'Could not traverse to ImportDefinition',
       );
-      const indexOfElement = clickedIndex - 1;
-      assert(
-        indexOfElement < sourceAstNode.usedElements.length,
-        'Index of selected element is not correctly computed',
-      );
-      const refString = sourceAstNode.usedElements[indexOfElement];
-      assert(
-        refString !== undefined,
-        'Could not read reference text to imported element',
-      );
-
-      const importedModel = this.importResolver.resolveImport(sourceAstNode);
+      const importedModel = this.importResolver.resolveImport(importDefinition);
 
       if (importedModel?.$document === undefined) {
         return undefined;
@@ -83,7 +77,7 @@ export class JayveeDefinitionProvider extends DefaultDefinitionProvider {
       const allExportDefinitions = getExportedElements(importedModel);
 
       const referencedExport = allExportDefinitions.find((x) => {
-        return x.alias === refString;
+        return x.alias === sourceAstNode.element;
       });
       if (referencedExport === undefined) {
         return;
