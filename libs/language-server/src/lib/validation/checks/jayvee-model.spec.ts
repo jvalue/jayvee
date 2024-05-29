@@ -55,7 +55,7 @@ describe('Validation of JayveeModel', () => {
     validationAcceptorMock.mockReset();
   });
 
-  it('should diagnose error on non unique pipelines', async () => {
+  it('should diagnose error on non-unique pipelines', async () => {
     const relativeTestFilePath = 'jayvee-model/invalid-non-unique-pipelines.jv';
 
     await parseAndValidateJayveeModel(relativeTestFilePath);
@@ -75,7 +75,7 @@ describe('Validation of JayveeModel', () => {
     );
   });
 
-  it('should diagnose error on non unique transforms', async () => {
+  it('should diagnose error on non-unique transforms', async () => {
     const relativeTestFilePath =
       'jayvee-model/invalid-non-unique-transforms.jv';
 
@@ -96,7 +96,7 @@ describe('Validation of JayveeModel', () => {
     );
   });
 
-  it('should diagnose error on non unique value types', async () => {
+  it('should diagnose error on non-unique value types', async () => {
     const relativeTestFilePath =
       'jayvee-model/invalid-non-unique-value-types.jv';
 
@@ -117,7 +117,7 @@ describe('Validation of JayveeModel', () => {
     );
   });
 
-  it('should diagnose error on non unique value types (naming collision with builtin)', async () => {
+  it('should diagnose error on non-unique value types (naming collision with builtin)', async () => {
     const relativeTestFilePath =
       'jayvee-model/invalid-duplicate-name-with-builtin-value-type.jv';
 
@@ -138,7 +138,7 @@ describe('Validation of JayveeModel', () => {
     );
   });
 
-  it('should diagnose error on non unique constraints', async () => {
+  it('should diagnose error on non-unique constraints', async () => {
     const relativeTestFilePath =
       'jayvee-model/invalid-non-unique-constraints.jv';
 
@@ -159,7 +159,7 @@ describe('Validation of JayveeModel', () => {
     );
   });
 
-  it('should diagnose error on non unique block types', async () => {
+  it('should diagnose error on non-unique block types', async () => {
     const relativeTestFilePath =
       'jayvee-model/invalid-non-unique-block-types.jv';
 
@@ -180,7 +180,7 @@ describe('Validation of JayveeModel', () => {
     );
   });
 
-  it('should diagnose error on non unique name of different element types', async () => {
+  it('should diagnose error on non-unique name of different element types', async () => {
     const relativeTestFilePath =
       'jayvee-model/invalid-non-unique-different-element-types.jv';
 
@@ -201,7 +201,7 @@ describe('Validation of JayveeModel', () => {
     );
   });
 
-  it('should diagnose error on non unique name of different element types within a pipeline', async () => {
+  it('should diagnose error on non-unique name of different element types within a pipeline', async () => {
     const relativeTestFilePath =
       'jayvee-model/invalid-non-unique-name-within-pipeline-different-element-types.jv';
 
