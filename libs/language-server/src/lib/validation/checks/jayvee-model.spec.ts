@@ -64,13 +64,13 @@ describe('Validation of JayveeModel', () => {
     expect(validationAcceptorMock).toHaveBeenNthCalledWith(
       1,
       'error',
-      `The name "Pipeline" needs to be unique.`,
+      `The name "DuplicatePipelineName" needs to be unique.`,
       expect.any(Object),
     );
     expect(validationAcceptorMock).toHaveBeenNthCalledWith(
       2,
       'error',
-      `The name "Pipeline" needs to be unique.`,
+      `The name "DuplicatePipelineName" needs to be unique.`,
       expect.any(Object),
     );
   });
@@ -85,13 +85,13 @@ describe('Validation of JayveeModel', () => {
     expect(validationAcceptorMock).toHaveBeenNthCalledWith(
       1,
       'error',
-      `The name "Transform" needs to be unique.`,
+      `The name "DuplicateTransformName" needs to be unique.`,
       expect.any(Object),
     );
     expect(validationAcceptorMock).toHaveBeenNthCalledWith(
       2,
       'error',
-      `The name "Transform" needs to be unique.`,
+      `The name "DuplicateTransformName" needs to be unique.`,
       expect.any(Object),
     );
   });
@@ -106,13 +106,13 @@ describe('Validation of JayveeModel', () => {
     expect(validationAcceptorMock).toHaveBeenNthCalledWith(
       1,
       'error',
-      `The name "ValueType" needs to be unique.`,
+      `The name "DuplicateValueTypeName" needs to be unique.`,
       expect.any(Object),
     );
     expect(validationAcceptorMock).toHaveBeenNthCalledWith(
       2,
       'error',
-      `The name "ValueType" needs to be unique.`,
+      `The name "DuplicateValueTypeName" needs to be unique.`,
       expect.any(Object),
     );
   });
@@ -127,13 +127,13 @@ describe('Validation of JayveeModel', () => {
     expect(validationAcceptorMock).toHaveBeenNthCalledWith(
       1,
       'error',
-      `The name "DuplicateValuetype" needs to be unique.`,
+      `The name "DuplicateValueTypeName" needs to be unique.`,
       expect.any(Object),
     );
     expect(validationAcceptorMock).toHaveBeenNthCalledWith(
       2,
       'error',
-      `The name "DuplicateValuetype" needs to be unique.`,
+      `The name "DuplicateValueTypeName" needs to be unique.`,
       expect.any(Object),
     );
   });
@@ -148,13 +148,13 @@ describe('Validation of JayveeModel', () => {
     expect(validationAcceptorMock).toHaveBeenNthCalledWith(
       1,
       'error',
-      `The name "Constraint" needs to be unique.`,
+      `The name "DuplicateConstraintName" needs to be unique.`,
       expect.any(Object),
     );
     expect(validationAcceptorMock).toHaveBeenNthCalledWith(
       2,
       'error',
-      `The name "Constraint" needs to be unique.`,
+      `The name "DuplicateConstraintName" needs to be unique.`,
       expect.any(Object),
     );
   });
@@ -169,13 +169,13 @@ describe('Validation of JayveeModel', () => {
     expect(validationAcceptorMock).toHaveBeenNthCalledWith(
       1,
       'error',
-      `The name "TestBlock" needs to be unique.`,
+      `The name "DuplicateBlockTypeName" needs to be unique.`,
       expect.any(Object),
     );
     expect(validationAcceptorMock).toHaveBeenNthCalledWith(
       2,
       'error',
-      `The name "TestBlock" needs to be unique.`,
+      `The name "DuplicateBlockTypeName" needs to be unique.`,
       expect.any(Object),
     );
   });
@@ -271,13 +271,13 @@ describe('Validation of JayveeModel', () => {
     expect(validationAcceptorMock).toHaveBeenNthCalledWith(
       1,
       'error',
-      `The name "X" needs to be unique.`,
+      `The name "DuplicateNameAliased" needs to be unique.`,
       expect.any(Object),
     );
     expect(validationAcceptorMock).toHaveBeenNthCalledWith(
       2,
       'error',
-      `The name "X" needs to be unique.`,
+      `The name "DuplicateNameAliased" needs to be unique.`,
       expect.any(Object),
     );
   });

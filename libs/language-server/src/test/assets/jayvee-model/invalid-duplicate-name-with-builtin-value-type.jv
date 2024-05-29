@@ -2,10 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-valuetype DuplicateValuetype oftype text {
+valuetype DuplicateValueTypeName oftype text {
 	constraints: [
 		Constraint,
 	];
 }
 
-builtin valuetype DuplicateValuetype;
+builtin valuetype DuplicateValueTypeName;

@@ -2,10 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-builtin blocktype TestBlock {
+builtin blocktype DuplicateBlockTypeName {
 	input default oftype text;
 }
 
-builtin blocktype TestBlock {
+builtin blocktype DuplicateBlockTypeName {
 	input default oftype text;
 }
