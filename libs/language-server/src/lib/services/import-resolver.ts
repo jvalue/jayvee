@@ -17,14 +17,27 @@ import {
   type ExportableElement,
   type ImportDefinition,
   type JayveeModel,
+  isExportableElement,
   isJayveeModel,
 } from '../ast/generated/ast';
 import { getStdLib } from '../builtin-library/stdlib';
 import { type JayveeServices } from '../jayvee-module';
 
-interface ImportDetails {
+export interface ImportDetails {
   element: ExportableElement;
   importName: string;
+}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function isImportDetails(obj: any): obj is ImportDetails {
+  return (
+    typeof obj === 'object' &&
+    'importName' in obj &&
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    typeof obj.importName === 'string' &&
+    'element' in obj &&
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    isExportableElement(obj.element)
+  );
 }
 
 export class JayveeImportResolver {

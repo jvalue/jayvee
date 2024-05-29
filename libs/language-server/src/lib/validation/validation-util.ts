@@ -19,6 +19,10 @@ import {
   isUnaryExpression,
   isValueLiteral,
 } from '../ast';
+import {
+  type ImportDetails,
+  isImportDetails,
+} from '../services/import-resolver';
 
 import { type ValidationContext } from './validation-context';
 import { type JayveeValidationProps } from './validation-registry';
@@ -26,7 +30,7 @@ import { type JayveeValidationProps } from './validation-registry';
 export type NamedAstNode = AstNode & { name: string };
 
 export function checkUniqueNames(
-  nodes: NamedAstNode[],
+  nodes: (NamedAstNode | ImportDetails)[],
   context: ValidationContext,
   nodeKind?: string,
 ): void {
@@ -51,14 +55,17 @@ export function checkUniqueNames(
 }
 
 function groupNodesByName(
-  nodes: NamedAstNode[],
+  nodes: (NamedAstNode | ImportDetails)[],
 ): MultiMap<string, NamedAstNode> {
   const nodesByName = new MultiMap<string, NamedAstNode>();
 
   for (const node of nodes) {
+    const referableName = isImportDetails(node) ? node.importName : node.name;
+    const referableNode = isImportDetails(node) ? node.element : node;
+
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (node?.name !== undefined) {
-      nodesByName.add(node.name, node);
+    if (referableName !== undefined) {
+      nodesByName.add(referableName, referableNode);
     }
   }
 

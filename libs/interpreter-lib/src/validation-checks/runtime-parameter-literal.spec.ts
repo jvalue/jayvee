@@ -61,8 +61,10 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
       }
     }
 
-    const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry();
     const valueTypeProvider = new ValueTypeProvider();
+    const operatorEvaluatorRegistry = new DefaultOperatorEvaluatorRegistry(
+      valueTypeProvider,
+    );
     const wrapperFactories = new WrapperFactoryProvider(
       operatorEvaluatorRegistry,
       valueTypeProvider,
@@ -73,9 +75,7 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
         wrapperFactories,
       );
 
-    const importResolver = new JayveeImportResolver(
-      services.shared.workspace.LangiumDocuments,
-    );
+    const importResolver = new JayveeImportResolver(services);
 
     validateRuntimeParameterLiteral(runtimeParameter, {
       validationContext: new ValidationContext(

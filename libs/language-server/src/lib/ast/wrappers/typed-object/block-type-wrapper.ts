@@ -7,7 +7,7 @@ import { strict as assert } from 'assert';
 
 import { type Reference, isReference } from 'langium';
 
-import { RuntimeParameterProvider } from '../../../services';
+import { RuntimeParameterProvider } from '../../../services/runtime-parameter-provider';
 import {
   EvaluationContext,
   type OperatorEvaluatorRegistry,
