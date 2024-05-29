@@ -32,16 +32,23 @@ export type NamedAstNode = AstNode & { name: string };
 export function checkUniqueNames(
   nodes: (NamedAstNode | ImportDetails)[],
   context: ValidationContext,
+  elementTypeDetails: string | undefined = undefined,
 ): void {
   const nodesByName = groupNodesByName(nodes);
 
   for (const [nodeName, nodes] of nodesByName.entriesGroupedByKey()) {
     if (nodes.length > 1) {
       for (const node of nodes) {
-        context.accept('error', `The name "${nodeName}" needs to be unique.`, {
-          node,
-          property: 'name',
-        });
+        context.accept(
+          'error',
+          `The ${
+            elementTypeDetails !== undefined ? elementTypeDetails + ' ' : ''
+          }name "${nodeName}" needs to be unique.`,
+          {
+            node,
+            property: 'name',
+          },
+        );
       }
     }
   }
