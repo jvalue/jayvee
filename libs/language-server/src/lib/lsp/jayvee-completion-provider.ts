@@ -288,7 +288,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     );
 
     const exportedElementNames = getExportedElements(resolvedModel).map(
-      (x) => x.alias,
+      (x) => x.exportName,
     );
 
     const suggestedElementNames = exportedElementNames.filter((x) =>

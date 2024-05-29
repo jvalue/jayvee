@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-constraint Constraint on text:
+constraint DuplicateConstraintName on text:
 	value.length == 10;
 
-constraint Constraint on text:
+constraint DuplicateConstraintName on text:
 	value.length == 10;

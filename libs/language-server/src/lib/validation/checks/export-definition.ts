@@ -66,7 +66,7 @@ function checkUniqueAlias(
   const allExports = getExportedElements(model);
 
   const elementsWithSameName = allExports.filter(
-    (e) => e.alias === exportDefinition.alias,
+    (e) => e.exportName === exportDefinition.alias,
   );
   assert(
     elementsWithSameName.length > 0,

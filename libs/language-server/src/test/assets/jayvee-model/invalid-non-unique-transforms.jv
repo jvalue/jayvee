@@ -2,14 +2,14 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-transform Transform {
+transform DuplicateTransformName {
   from inputParam oftype decimal;
   to result oftype integer;
 
   result: floor(inputParam);
 }
 
-transform Transform {
+transform DuplicateTransformName {
   from inputParam oftype decimal;
   to inputParam oftype integer;
 
