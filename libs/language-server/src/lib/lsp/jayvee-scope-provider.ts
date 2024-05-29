@@ -46,20 +46,18 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
     }
 
     const importedElements: AstNodeDescription[] = [];
-    importedElements.push(
-      ...this.importResolver
-        .getBuiltinElements()
-        .map((x) =>
-          this.descriptions.createDescription(x.element, x.exportName),
-        ),
+    const allBuiltinElements = this.importResolver.getBuiltinElements();
+    const allBuiltinElementDescriptions = allBuiltinElements.map((x) =>
+      this.descriptions.createDescription(x.element, x.exportName),
     );
-    importedElements.push(
-      ...this.importResolver
-        .getImportedElements(jayveeModel)
-        .map((x) =>
-          this.descriptions.createDescription(x.element, x.importName),
-        ),
+    importedElements.push(...allBuiltinElementDescriptions);
+
+    const allImportedElements =
+      this.importResolver.getImportedElements(jayveeModel);
+    const allImportedElementDescriptions = allImportedElements.map((x) =>
+      this.descriptions.createDescription(x.element, x.importName),
     );
+    importedElements.push(...allImportedElementDescriptions);
 
     return new MapScope(importedElements);
   }
