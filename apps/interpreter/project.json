@@ -15,9 +15,14 @@
     },
     "run": {
       "executor": "nx:run-commands",
-      "dependsOn": ["build"],
       "options": {
-        "commands": ["node --enable-source-maps dist/apps/interpreter/main.js"],
+        "commands": [
+          {
+            "command": "nx run interpreter:build:development",
+            "forwardAllArgs": false
+          },
+          "node --enable-source-maps dist/apps/interpreter/main.js"
+        ],
         "parallel": false
       }
     },
