@@ -16,7 +16,9 @@
         "parallel": false
       }
     },
-    "build": {},
+    "build": {
+      "dependsOn": ["^build", "generate"]
+    },
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
