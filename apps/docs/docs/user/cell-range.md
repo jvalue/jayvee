@@ -44,12 +44,14 @@ Instead of a specific character or integer, the placeholder `*` denotes the last
 ### Examples
 The following `CellRangeSelector` block will select the four cells in the top left corner of a `Sheet`:
 
-<div class"side-by-side__container">
+<div class="side-by-side__container">
+
 ```jayvee
  block ExampleDataSelector oftype CellRangeSelector {
    select: range A1:B2;
  }
 ```
+
 <table>
     <tr>
         <td></td>
@@ -80,12 +82,14 @@ The following `CellRangeSelector` block will select the four cells in the top le
 
 The following `CellRangeSelector` block will select cells from the first to the last cell in row 2 in a `Sheet`:
 
-<div class"side-by-side__container">
+<div class="side-by-side__container">
+
 ```jayvee
  block ExampleDataSelector oftype CellRangeSelector {
    select: range A2:*2;
  }
 ```
+
 <table>
     <tr>
         <td></td>
@@ -116,12 +120,14 @@ The following `CellRangeSelector` block will select cells from the first to the 
 
 The following `CellRangeSelector` block will select cells from the top-left most cell to the last cell in column B in a `Sheet`:
 
-<div class"side-by-side__container">
+<div class="side-by-side__container">
+
 ```jayvee
  block ExampleDataSelector oftype CellRangeSelector {
    select: range A1:B*;
  }
 ```
+
 <table>
     <tr>
         <td></td>
@@ -157,12 +163,14 @@ Using the **`row`** keyword, individual rows can be selected. For example, `row 
 ### Examples
 The following `RowDeleter` block will delete the first two rows of a `Sheet`:
 
-<div class"side-by-side__container">
+<div class="side-by-side__container">
+
 ```jayvee
  block ExampleRowDeleter oftype RowDeleter {
    delete: [row 1, row 2];
  }
 ```
+
 <table>
     <tr>
         <td></td>
@@ -198,12 +206,14 @@ Using the **`column`** keyword, individual columns can be selected. For example,
 ### Examples
 The following `ColumnDeleter` block will delete the first two columns of a `Sheet`:
 
-<div class"side-by-side__container">
+<div class="side-by-side__container">
+
 ```jayvee
  block ExampleColumnDeleter oftype ColumnDeleter {
    delete: [column A, column B];
  }
 ```
+
 <table>
     <tr>
         <td></td>
