@@ -2,7 +2,7 @@
 import { strict as assert } from 'assert';
 
 import { isShowPipeOutputCodeLensPayload } from '@jvalue/jayvee-language-server';
-import { ViewColumn, window, workspace } from 'vscode';
+import { Location, Position, commands, window, workspace } from 'vscode';
 
 export async function showPipeOutput(payload: unknown) {
   assert(
@@ -25,6 +25,12 @@ export async function showPipeOutput(payload: unknown) {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const matchingOutputFile = matchingOutputFiles[0]!;
 
-  const document = await workspace.openTextDocument(matchingOutputFile);
-  await window.showTextDocument(document, { viewColumn: ViewColumn.Beside });
+  const outputDocument = await workspace.openTextDocument(matchingOutputFile);
+
+  await commands.executeCommand(
+    'editor.action.peekLocations',
+    window.activeTextEditor?.document.uri,
+    new Position(payload.lineNumber, 0),
+    [new Location(outputDocument.uri, new Position(0, 0))],
+  );
 }

@@ -12,6 +12,7 @@ export interface RunJayveeCodeLensPayload {
 
 export interface ShowPipeOutputCodeLensPayload {
   pipeOutputName: string;
+  lineNumber: number;
 }
 
 export function isRunJayveeCodeLensPayload(
@@ -36,7 +37,12 @@ export function isShowPipeOutputCodeLensPayload(
     return false;
   }
 
-  return 'pipeOutputName' in o && typeof o.pipeOutputName === 'string';
+  return (
+    'pipeOutputName' in o &&
+    typeof o.pipeOutputName === 'string' &&
+    'lineNumber' in o &&
+    typeof o.lineNumber === 'number'
+  );
 }
 
 export class JayveeCodeLensProvider implements CodeLensProvider {
@@ -91,6 +97,7 @@ export class JayveeCodeLensProvider implements CodeLensProvider {
       for (const pipeChainElement of pipeChainElements) {
         const payload: ShowPipeOutputCodeLensPayload = {
           pipeOutputName: pipeChainElement,
+          lineNumber: pipeRange.start.line + i,
         };
 
         lenses.push({
