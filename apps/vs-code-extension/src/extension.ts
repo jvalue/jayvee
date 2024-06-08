@@ -4,7 +4,7 @@
 
 import path from 'node:path';
 
-import { type ExtensionContext, workspace } from 'vscode';
+import { type ExtensionContext, commands, workspace } from 'vscode';
 import {
   LanguageClient,
   type LanguageClientOptions,
@@ -12,6 +12,7 @@ import {
   TransportKind,
 } from 'vscode-languageclient/node';
 
+import { runJayveeCommand } from './commands/run-jayvee';
 import { StandardLibraryFileSystemProvider } from './standard-library-file-system-provider';
 
 let client: LanguageClient;
@@ -63,6 +64,13 @@ function startLanguageClient(context: ExtensionContext): LanguageClient {
       fileEvents: fileSystemWatcher,
     },
   };
+
+  // Commands
+  const commandRunJayvee = commands.registerCommand(
+    'jayvee.pipeline.run',
+    runJayveeCommand,
+  );
+  context.subscriptions.push(commandRunJayvee);
 
   // Create the language client and start the client.
   const client = new LanguageClient(

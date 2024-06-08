@@ -28,6 +28,12 @@
         "scopeName": "source.jayvee",
         "path": "jayvee.tmLanguage.json"
       }
+    ],
+    "commands": [
+      {
+        "command": "jayvee.pipeline.run",
+        "title": "Run a Jayvee pipeline"
+      }
     ]
   },
   "activationEvents": [

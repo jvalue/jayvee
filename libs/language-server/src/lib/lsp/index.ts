@@ -8,3 +8,4 @@ export * from './jayvee-hover-provider';
 export * from './jayvee-scope-provider';
 export * from './jayvee-definition-provider';
 export * from './jayvee-code-action-provider';
+export * from './jayvee-code-lens-provider';

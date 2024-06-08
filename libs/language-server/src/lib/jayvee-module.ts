@@ -34,6 +34,7 @@ import {
   JayveeHoverProvider,
   JayveeScopeProvider,
 } from './lsp';
+import { JayveeCodeLensProvider } from './lsp/jayvee-code-lens-provider';
 import { JayveeImportResolver } from './services/import-resolver';
 import { RuntimeParameterProvider } from './services/runtime-parameter-provider';
 import { JayveeValidationRegistry } from './validation/validation-registry';
@@ -87,6 +88,7 @@ export const JayveeModule: Module<
     Formatter: () => new JayveeFormatter(),
     DefinitionProvider: (services) => new JayveeDefinitionProvider(services),
     CodeActionProvider: (services) => new JayveeCodeActionProvider(services),
+    CodeLensProvider: () => new JayveeCodeLensProvider(),
   },
   references: {
     ScopeProvider: (services) => new JayveeScopeProvider(services),
