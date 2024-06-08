@@ -3,11 +3,15 @@ import { type CodeLensProvider } from 'langium/lsp';
 import { type CodeLens } from 'vscode-languageserver';
 import { Command } from 'vscode-languageserver-protocol';
 
-import { isJayveeModel } from '../ast';
+import { type PipeDefinition, isJayveeModel } from '../ast';
 
 export interface RunJayveeCodeLensPayload {
   filePath: string;
   pipelineName: string;
+}
+
+export interface ShowPipeOutputCodeLensPayload {
+  pipeOutputName: string;
 }
 
 export function isRunJayveeCodeLensPayload(
@@ -50,6 +54,53 @@ export class JayveeCodeLensProvider implements CodeLensProvider {
         range: pipelineDefinitionRange,
         command: Command.create('Run (once)', 'jayvee.pipeline.run', payload),
       });
+
+      const pipeLenses = pipeline.pipes.flatMap((pipe) =>
+        this.getLensForPipe(pipe),
+      );
+      lenses.push(...pipeLenses);
+    }
+    return lenses;
+  }
+
+  getLensForPipe(pipe: PipeDefinition): CodeLens[] {
+    const pipeRange = pipe.$cstNode?.range;
+    const pipeLines = pipe.$cstNode?.text.split('\n') ?? [];
+
+    if (pipeRange === undefined) {
+      return [];
+    }
+
+    const lenses: CodeLens[] = [];
+    for (const [i, pipeLine] of pipeLines.entries()) {
+      const pipeChainElements = pipeLine
+        .split('->')
+        .map((s) => s.trim())
+        .filter((s) => s !== '');
+
+      for (const pipeChainElement of pipeChainElements) {
+        const payload: ShowPipeOutputCodeLensPayload = {
+          pipeOutputName: pipeChainElement,
+        };
+
+        lenses.push({
+          range: {
+            start: {
+              line: pipeRange.start.line + i,
+              character: 0,
+            },
+            end: {
+              line: pipeRange.start.line + i,
+              character: pipeLine.length,
+            },
+          },
+          command: Command.create(
+            `Show output (${pipeChainElement})`,
+            'jayvee.pipe.output',
+            payload,
+          ),
+        });
+      }
     }
     return lenses;
   }
