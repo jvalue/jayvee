@@ -29,6 +29,16 @@ export function isRunJayveeCodeLensPayload(
   );
 }
 
+export function isShowPipeOutputCodeLensPayload(
+  o: unknown,
+): o is ShowPipeOutputCodeLensPayload {
+  if (typeof o !== 'object' || o == null) {
+    return false;
+  }
+
+  return 'pipeOutputName' in o && typeof o.pipeOutputName === 'string';
+}
+
 export class JayveeCodeLensProvider implements CodeLensProvider {
   provideCodeLens(
     document: LangiumDocument<AstNode>,

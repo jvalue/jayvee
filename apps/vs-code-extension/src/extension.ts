@@ -13,6 +13,7 @@ import {
 } from 'vscode-languageclient/node';
 
 import { runJayveeCommand } from './commands/run-jayvee';
+import { showPipeOutput } from './commands/show-pipe-output';
 import { StandardLibraryFileSystemProvider } from './standard-library-file-system-provider';
 
 let client: LanguageClient;
@@ -70,7 +71,13 @@ function startLanguageClient(context: ExtensionContext): LanguageClient {
     'jayvee.pipeline.run',
     (...args: unknown[]) => runJayveeCommand(args[0], context),
   );
+  const commandOpenPipeOutput = commands.registerCommand(
+    'jayvee.pipe.output',
+    (...args: unknown[]) => showPipeOutput(args[0]),
+  );
+
   context.subscriptions.push(commandRunJayvee);
+  context.subscriptions.push(commandOpenPipeOutput);
 
   // Create the language client and start the client.
   const client = new LanguageClient(

@@ -33,6 +33,10 @@
       {
         "command": "jayvee.pipeline.run",
         "title": "Run a Jayvee pipeline"
+      },
+      {
+        "command": "jayvee.pipe.output",
+        "title": "Show pipe output"
       }
     ]
   },
@@ -48,5 +52,5 @@
     "url": "https://github.com/jvalue/jayvee.git"
   },
   "homepage": "https://github.com/jvalue/jayvee",
-  "version": "0.0.0"
+  "version": "0.4.0"
 }
