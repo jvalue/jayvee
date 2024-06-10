@@ -27,7 +27,7 @@ publish builtin blocktype CellWriter {
 	property write oftype Collection<text>;
 	
 	/**
-	* The cells to write into.
+	* The cells to write into. See <https://jvalue.github.io/jayvee/docs/user/cell-range>.
 	*/
 	property at oftype CellRange;
 }
