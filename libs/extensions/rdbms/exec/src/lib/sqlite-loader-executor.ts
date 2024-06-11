@@ -14,6 +14,7 @@ import {
 } from '@jvalue/jayvee-execution';
 import { IOType } from '@jvalue/jayvee-language-server';
 import sqlite3 from 'sqlite3';
+import sqlstring from 'sqlstring';
 
 @implementsStatic<BlockExecutorClass>()
 export class SQLiteLoaderExecutor extends AbstractBlockExecutor<
@@ -53,36 +54,42 @@ export class SQLiteLoaderExecutor extends AbstractBlockExecutor<
         context.logger.logDebug(
           `Dropping previous table "${table}" if it exists`,
         );
-        await this.runQuery(db, 'DROP TABLE IF EXISTS ?', [table]);
+        await this.runQuery(
+          db,
+          sqlstring.format(`DROP TABLE IF EXISTS ?;`, [table]),
+        );
       }
 
       context.logger.logDebug(`Creating table "${table}"`);
-      const sqlCreateTableParams = input.generateSqlColumnMap().reduce(
-        ({ parameters, values }, { name, type }) => ({
-          parameters: parameters.concat('? ?'),
-          values: values.concat(`${name} ${type}`),
-        }),
-        { parameters: [] as string[], values: [] as string[] },
-      );
+      const sqlCreateTableParams = input.generateSqlColumnList();
       await this.runQuery(
         db,
-        `CREATE TABLE IF NOT EXISTS ? (${sqlCreateTableParams.parameters.join(
-          ',',
-        )})`,
-        [table, ...sqlCreateTableParams.values],
+        sqlstring.format(
+          `CREATE TABLE IF NOT EXISTS ? (${sqlCreateTableParams
+            .map(() => '? ?')
+            .join(', ')});`,
+          [
+            table,
+            ...sqlCreateTableParams.flatMap(({ name, type }) => [name, type]),
+          ],
+        ),
       );
       context.logger.logDebug(
         `Inserting ${input.getNumberOfRows()} row(s) into table "${table}"`,
       );
       const sqlInsertQueryParams = input.generateSqlInsertValues();
       const nValues = sqlInsertQueryParams.columnNames.length;
-      const queryParamColumns = `(${new Array(nValues).fill('? ').join(', ')})`;
-      const queryParamValue = new Array(nValues)
+      const queryParamColumns = `(${new Array(nValues).fill('?').join(', ')})`;
+      const queryParamValue = new Array(sqlInsertQueryParams.values.length)
         .fill(queryParamColumns)
         .join(', ');
       await this.runQuery(
         db,
-        `INSERT INTO ? ${queryParamColumns} VALUES ${queryParamValue}`,
+        sqlstring.format(
+          `INSERT INTO ? ${queryParamColumns} VALUES ${queryParamValue};`,
+          [table, ...sqlInsertQueryParams.columnNames],
+        ),
+        [...sqlInsertQueryParams.values.flat()],
       );
 
       context.logger.logDebug(
@@ -106,9 +113,15 @@ export class SQLiteLoaderExecutor extends AbstractBlockExecutor<
     query: string,
     params?: unknown[] | Record<string, unknown>,
   ): Promise<sqlite3.RunResult> {
+    console.log(query, params);
     return new Promise((resolve, reject) => {
-      db.run(query, params, (result: sqlite3.RunResult, error: Error | null) =>
-        error ? reject(error) : resolve(result),
+      db.run(
+        query,
+        params,
+        (result: sqlite3.RunResult, error: Error | null) => {
+          console.log(result, error);
+          return error ? reject(error) : resolve(result);
+        },
       );
     });
   }

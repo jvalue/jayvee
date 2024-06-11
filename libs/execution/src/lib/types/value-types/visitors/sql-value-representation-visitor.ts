@@ -50,8 +50,7 @@ export class SQLValueRepresentationVisitor extends ValueTypeVisitor<
   ): (value: InternalValueRepresentation) => string {
     return (value: InternalValueRepresentation) => {
       assert(valueType.isInternalValueRepresentation(value));
-      const escapedValue = escapeSingleQuotes(value);
-      return `'${escapedValue}'`;
+      return value;
     };
   }
 
@@ -100,8 +99,4 @@ export class SQLValueRepresentationVisitor extends ValueTypeVisitor<
       'No visit implementation given for transforms. Cannot be the type of a column.',
     );
   }
-}
-
-function escapeSingleQuotes(value: string): string {
-  return value.replace(/'/g, `''`);
 }

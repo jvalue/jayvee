@@ -211,7 +211,10 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     )});`;
   }
 
-  generateSqlColumnMap(): { name: string; type: string }[] {
+  /**
+   * Returns an ordered list containing the name and type of each column.
+   */
+  generateSqlColumnList(): { name: string; type: string }[] {
     const columnTypeVisitor = new SQLColumnTypeVisitor();
     return Array.from(this.columns.entries()).map(([name, column]) => ({
       name,

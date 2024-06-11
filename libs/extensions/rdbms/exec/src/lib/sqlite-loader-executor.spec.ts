@@ -28,19 +28,19 @@ import {
   type LangiumDocument,
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
-import type * as sqlite3 from 'sqlite3';
-import { type Mock, vi } from 'vitest';
+import { type Database, type RunResult } from 'sqlite3';
+import { type Mock, expect, vi, vitest } from 'vitest';
 
 import { SQLiteLoaderExecutor } from './sqlite-loader-executor';
 
-type SqliteRunCallbackType = (
-  result: sqlite3.RunResult,
-  err: Error | null,
-) => void;
-// eslint-disable-next-line no-var
+type SqliteRunCallbackType = (result: RunResult, err: Error | null) => void;
+// eslint-disable-next-line no-var -- Vitest requires this to be var instead of let
 var databaseMock: Mock;
 // eslint-disable-next-line no-var
-var databaseRunMock: Mock;
+var databaseRunMock: Mock<
+  [string, unknown, (result: RunResult, err: Error | null) => void],
+  Database
+>;
 // eslint-disable-next-line no-var
 var databaseCloseMock: Mock;
 vi.mock('sqlite3', () => {
@@ -112,15 +112,15 @@ describe('Validation of SQLiteLoaderExecutor', () => {
   it('should diagnose no error on valid loader config', async () => {
     mockDatabaseDefault();
     databaseRunMock.mockImplementation(
-      (sql: string, callback: SqliteRunCallbackType) => {
+      (sql: string, params, callback: SqliteRunCallbackType) => {
         callback(
           {
             lastID: 0,
             changes: 0,
-          } as sqlite3.RunResult,
+          } as RunResult,
           null,
         );
-        return this;
+        return databaseMock as unknown as Database;
       },
     );
     const text = readJvTestAsset('valid-sqlite-loader.jv');
@@ -152,17 +152,20 @@ describe('Validation of SQLiteLoaderExecutor', () => {
       expect(databaseRunMock).toBeCalledTimes(3);
       expect(databaseRunMock).nthCalledWith(
         1,
-        'DROP TABLE IF EXISTS "Test";',
+        "DROP TABLE IF EXISTS 'Test';",
+        undefined,
         expect.any(Function),
       );
       expect(databaseRunMock).nthCalledWith(
         2,
-        `CREATE TABLE IF NOT EXISTS "Test" ("Column1" text,"Column2" real);`,
+        `CREATE TABLE IF NOT EXISTS 'Test' ('Column1' 'text', 'Column2' 'real');`,
+        undefined,
         expect.any(Function),
       );
       expect(databaseRunMock).nthCalledWith(
         3,
-        `INSERT INTO "Test" ("Column1","Column2") VALUES ('value 1',20.2)`,
+        `INSERT INTO 'Test' ('Column1', 'Column2') VALUES (?, ?);`,
+        ['value 1', '20.2'],
         expect.any(Function),
       );
       expect(databaseCloseMock).toBeCalledTimes(1);
