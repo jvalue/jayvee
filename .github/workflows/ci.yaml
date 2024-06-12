@@ -37,17 +37,17 @@ jobs:
         run: npm run generate
 
       - name: Build
-        run: npx nx affected --target=build --configuration=prod --verbose
+        run: npx nx affected --target=build --verbose  --parallel=1 --configuration=prod
 
       - name: Lint
-        run: npx nx affected --target=lint --verbose --maxWarnings=0
+        run: npx nx affected --target=lint --verbose --parallel=1 --maxWarnings=0
 
       - name: Test
-        run: npx nx affected --target=test --verbose --base=remotes/origin/main --head=HEAD --ci
+        run: npx nx affected --target=test --verbose --parallel=1 --base=remotes/origin/main --head=HEAD --ci
 
       # Ensure this works for future release publishing
       - name: Publish Dry-Run
-        run: npx nx affected --target=pre-publish --verbose --base=remotes/origin/main --head=HEAD --ci
+        run: npx nx affected --target=pre-publish --verbose --parallel=1 --base=remotes/origin/main --head=HEAD --ci
 
       # Ensure this works for future release publishing
       - name: Pack VSCode Extension
