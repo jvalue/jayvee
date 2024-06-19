@@ -38,12 +38,14 @@ import { ExitCode, extractAstNodeFromString } from './parsing-util';
 import { validateRuntimeParameterLiteral } from './validation-checks';
 
 interface InterpreterOptions {
+  pipelineMatcher: (pipelineDefinition: PipelineDefinition) => boolean;
   debugGranularity: R.DebugGranularity;
   debugTargets: R.DebugTargets;
   debug: boolean;
 }
 
 export interface RunOptions {
+  pipeline: string;
   env: Map<string, string>;
   debug: boolean;
   debugGranularity: string;
@@ -126,7 +128,18 @@ export async function interpretModel(
     options,
   );
 
-  if (model == null || services == null) {
+  const interpreterLogger = loggerFactory.createLogger('Interpreter');
+
+  const pipelineMatcherRegexp = parsePipelineMatcher(
+    options.pipeline,
+    interpreterLogger,
+  );
+
+  if (
+    model == null ||
+    services == null ||
+    pipelineMatcherRegexp === undefined
+  ) {
     return ExitCode.FAILURE;
   }
 
@@ -138,7 +151,10 @@ export async function interpretModel(
     new DefaultConstraintExtension(),
     services,
     loggerFactory,
+    interpreterLogger,
     {
+      pipelineMatcher: (pipelineDefinition) =>
+        pipelineMatcherRegexp.test(pipelineDefinition.name),
       debug: options.debug,
       // type of options.debugGranularity is asserted in parseModel
       debugGranularity: options.debugGranularity as DebugGranularity,
@@ -146,6 +162,22 @@ export async function interpretModel(
     },
   );
   return interpretationExitCode;
+}
+
+function parsePipelineMatcher(
+  matcherString: string,
+  logger: Logger,
+): RegExp | undefined {
+  try {
+    return new RegExp(matcherString);
+  } catch (e: unknown) {
+    logger.logErr(
+      `Given pipeline matcher argument is not valid: "${matcherString}" is no valid regular expression${
+        e instanceof SyntaxError ? `: ${e.message}` : ''
+      }`,
+    );
+  }
+  return undefined;
 }
 
 function setupJayveeServices(
@@ -179,18 +211,32 @@ async function interpretJayveeModel(
   constraintExtension: JayveeConstraintExtension,
   jayveeServices: JayveeServices,
   loggerFactory: LoggerFactory,
+  interpreterLogger: Logger,
   runOptions: InterpreterOptions,
 ): Promise<ExitCode> {
-  const pipelineRuns: Promise<ExitCode>[] = model.pipelines.map((pipeline) => {
-    return runPipeline(
-      pipeline,
-      executionExtension,
-      constraintExtension,
-      jayveeServices,
-      loggerFactory,
-      runOptions,
-    );
-  });
+  const selectedPipelines = model.pipelines.filter((pipeline) =>
+    runOptions.pipelineMatcher(pipeline),
+  );
+  interpreterLogger.logInfo(
+    `Found ${selectedPipelines.length} pipelines to execute${
+      selectedPipelines.length > 0
+        ? ': ' + selectedPipelines.map((p) => p.name).join(', ')
+        : ''
+    }`,
+  );
+
+  const pipelineRuns: Promise<ExitCode>[] = selectedPipelines.map(
+    (pipeline) => {
+      return runPipeline(
+        pipeline,
+        executionExtension,
+        constraintExtension,
+        jayveeServices,
+        loggerFactory,
+        runOptions,
+      );
+    },
+  );
   const exitCodes = await Promise.all(pipelineRuns);
 
   if (exitCodes.includes(ExitCode.FAILURE)) {
