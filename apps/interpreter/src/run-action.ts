@@ -4,6 +4,7 @@
 
 import process from 'node:process';
 
+import { type Logger } from '@jvalue/jayvee-execution';
 import {
   DefaultJayveeInterpreter,
   ExitCode,
@@ -28,15 +29,9 @@ export async function runAction(
     return process.exit(ExitCode.FAILURE);
   }
 
-  let pipelineRegExp: RegExp | undefined;
-  try {
-    pipelineRegExp = new RegExp(options.pipeline);
-  } catch (e: unknown) {
-    logger.logErr(
-      `Invalid value "${options.pipeline}" for pipeline selection option: -p --pipeline.\n` +
-        'Must be a valid regular expression.',
-    );
-    return undefined;
+  const pipelineRegExp = parsePipelineMatcherRegExp(options.pipeline, logger);
+  if (pipelineRegExp === undefined) {
+    return process.exit(ExitCode.FAILURE);
   }
 
   const interpreter = new DefaultJayveeInterpreter({
@@ -70,4 +65,19 @@ async function runParseOnly(
   );
   const exitCode = model === undefined ? ExitCode.FAILURE : ExitCode.SUCCESS;
   process.exit(exitCode);
+}
+
+function parsePipelineMatcherRegExp(
+  matcher: string,
+  logger: Logger,
+): RegExp | undefined {
+  try {
+    return new RegExp(matcher);
+  } catch (e: unknown) {
+    logger.logErr(
+      `Invalid value "${matcher}" for pipeline selection option: -p --pipeline.\n` +
+        'Must be a valid regular expression.',
+    );
+    return undefined;
+  }
 }
