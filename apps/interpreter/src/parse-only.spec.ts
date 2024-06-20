@@ -30,7 +30,8 @@ describe('Parse Only', () => {
     env: new Map<string, string>(),
     debug: false,
     debugGranularity: 'minimal',
-    debugTarget: undefined,
+    debugTarget: 'all',
+    parseOnly: false,
   };
 
   afterEach(() => {

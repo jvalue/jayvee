@@ -18,7 +18,7 @@ describe('Interpreter', () => {
       const interpreter = new DefaultJayveeInterpreter({
         debug: true,
         debugGranularity: 'peek',
-        debugTarget: undefined,
+        debugTarget: 'all',
         env: new Map(),
       });
       const exitCode = await interpreter.interpretString(model);

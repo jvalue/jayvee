@@ -18,7 +18,7 @@ import { NodeFileSystem } from 'langium/node';
 import nock from 'nock';
 import { type MockInstance, vi } from 'vitest';
 
-import { runAction } from './run-action';
+import { type RunOptions, runAction } from './run-action';
 
 // Mock global imports
 vi.mock('pg', () => {
@@ -46,11 +46,12 @@ vi.mock('sqlite3', () => {
 describe('jv example smoke tests', () => {
   const baseDir = path.resolve(__dirname, '../../../example/');
 
-  const defaultOptions = {
+  const defaultOptions: RunOptions = {
     env: new Map<string, string>(),
     debug: false,
     debugGranularity: 'minimal',
-    debugTarget: undefined,
+    debugTarget: 'all',
+    parseOnly: false,
   };
 
   let exitSpy: MockInstance;

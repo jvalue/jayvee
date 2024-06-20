@@ -3,16 +3,13 @@ import { strict as assert } from 'node:assert';
 
 import {
   type DebugGranularity,
-  DebugGranularityValues,
   type DebugTargets,
   DefaultConstraintExtension,
-  DefaultDebugTargetsValue,
   ExecutionContext,
   type JayveeConstraintExtension,
   type JayveeExecExtension,
   type Logger,
   executeBlocks,
-  isDebugGranularity,
   isErr,
   logExecutionDuration,
   parseValueToInternalRepresentation,
@@ -43,8 +40,8 @@ import { validateRuntimeParameterLiteral } from './validation-checks';
 export interface InterpreterOptions {
   env: Map<string, string>;
   debug: boolean;
-  debugGranularity: string;
-  debugTarget: string | undefined;
+  debugGranularity: DebugGranularity;
+  debugTarget: DebugTargets;
 }
 
 export interface JayveeInterpreter {
@@ -153,18 +150,6 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
       loggerFactory: LoggerFactory,
     ) => Promise<JayveeModel>,
   ): Promise<JayveeModel | undefined> {
-    if (!isDebugGranularity(this.options.debugGranularity)) {
-      this.loggerFactory
-        .createLogger()
-        .logErr(
-          `Unknown value "${this.options.debugGranularity}" for debug granularity option: -dg --debug-granularity.\n` +
-            `Please use one of the following values: ${DebugGranularityValues.join(
-              ', ',
-            )}.`,
-        );
-      return undefined;
-    }
-
     try {
       const model = await extractAstNodeFn(this.services, this.loggerFactory);
       return model;
@@ -237,8 +222,8 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
       this.services.ValueTypeProvider,
       {
         isDebugMode: this.options.debug,
-        debugGranularity: this.options.debugGranularity as DebugGranularity, // type of options.debugGranularity is asserted in parseModel
-        debugTargets: getDebugTargets(this.options.debugTarget),
+        debugGranularity: this.options.debugGranularity,
+        debugTargets: this.options.debugTarget,
       },
       new EvaluationContext(
         this.services.RuntimeParameterProvider,
@@ -314,13 +299,4 @@ export function logPipelineOverview(
     linesBuffer.push(toString(block, 1));
   }
   logger.logInfo(linesBuffer.join('\n'));
-}
-
-function getDebugTargets(debugTargetsString: string | undefined): DebugTargets {
-  const areAllBlocksTargeted = debugTargetsString === undefined;
-  if (areAllBlocksTargeted) {
-    return DefaultDebugTargetsValue;
-  }
-
-  return debugTargetsString.split(',').map((target) => target.trim());
 }
