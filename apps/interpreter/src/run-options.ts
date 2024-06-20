@@ -32,12 +32,12 @@ export function parseRunOptions(
   }
 
   const requiredFields = [
+    'pipeline',
     'env',
     'debug',
     'debugGranularity',
     'debugTarget',
     'parseOnly',
-    'pipeline',
   ];
   if (requiredFields.some((f) => !(f in optionsRaw))) {
     logger.logErr(
@@ -57,94 +57,20 @@ export function parseRunOptions(
     parseOnly: unknown;
   };
 
-  // options.pipeline
-  if (typeof options.pipeline !== 'string') {
-    logger.logErr(
-      `Invalid value "${JSON.stringify(
-        options.pipeline,
-      )}" for pipeline selection option: -p --pipeline.\n` +
-        'Must be a string value.',
-    );
-    return undefined;
-  }
+  isPipelineArgument(options.pipeline, logger);
+  isEnvArgument(options.env, logger);
+  isDebugArgument(options.debug, logger);
+  isDebugGranularityArgument(options.debugGranularity, logger);
+  isDebugTargetArgument(options.debugTarget, logger);
+  isParseOnlyArgument(options.parseOnly, logger);
 
-  // options.debugGranularity
-  if (!isDebugGranularity(options.debugGranularity)) {
-    logger.logErr(
-      `Invalid value "${JSON.stringify(
-        options.debugGranularity,
-      )}" for debug granularity option: -dg --debug-granularity.\n` +
-        `Must be one of the following values: ${DebugGranularityValues.join(
-          ', ',
-        )}.`,
-    );
-    return undefined;
-  }
-
-  // options.debugTarget
-  if (typeof options.debugTarget !== 'string') {
-    logger.logErr(
-      `Invalid value "${JSON.stringify(
-        options.debugTarget,
-      )}" for debug target option: -dt --debug-target.\n` +
-        'Must be a string value.',
-    );
-    return undefined;
-  }
-
-  // options.debug
-  if (
-    typeof options.debug !== 'boolean' &&
-    options.debug !== 'true' &&
-    options.debug !== 'false'
-  ) {
-    logger.logErr(
-      `Invalid value "${JSON.stringify(
-        options.debug,
-      )}" for debug option: -d --debug.\n` + 'Must be true or false.',
-    );
-    return undefined;
-  }
-
-  // options.parseOnly
-  if (
-    typeof options.parseOnly !== 'boolean' &&
-    options.parseOnly !== 'true' &&
-    options.parseOnly !== 'false'
-  ) {
-    logger.logErr(
-      `Invalid value "${JSON.stringify(
-        options.parseOnly,
-      )}" for parse-only option: -po --parse-only.\n` +
-        'Must be true or false.',
-    );
-    return undefined;
-  }
-
-  // options.env
-  if (
-    !(
-      options.env instanceof Map &&
-      [...options.env.entries()].every(
-        ([key, value]) => typeof key === 'string' && typeof value === 'string',
-      )
-    )
-  ) {
-    logger.logErr(
-      `Invalid value "${JSON.stringify(
-        options.env,
-      )}" for env option: -e --env.\n` +
-        'Must be map from string keys to string values.',
-    );
-    return undefined;
-  }
-
+  // TypeScript does not infer type from type guards, probably fixed in TS 5.5
   return {
-    pipeline: options.pipeline,
+    pipeline: options.pipeline as string,
     env: options.env as Map<string, string>,
     debug: options.debug === true || options.debug === 'true',
-    debugGranularity: options.debugGranularity,
-    debugTarget: getDebugTargets(options.debugTarget),
+    debugGranularity: options.debugGranularity as DebugGranularity,
+    debugTarget: getDebugTargets(options.debugTarget as string),
     parseOnly: options.parseOnly === true || options.parseOnly === 'true',
   };
 }
@@ -156,4 +82,100 @@ function getDebugTargets(debugTargetsString: string): DebugTargets {
   }
 
   return debugTargetsString.split(',').map((target) => target.trim());
+}
+
+function isPipelineArgument(arg: unknown, logger: Logger): arg is string {
+  if (typeof arg !== 'string') {
+    logger.logErr(
+      `Invalid value "${JSON.stringify(
+        arg,
+      )}" for pipeline selection option: -p --pipeline.\n` +
+        'Must be a string value.',
+    );
+    return false;
+  }
+  return true;
+}
+
+function isDebugGranularityArgument(
+  arg: unknown,
+  logger: Logger,
+): arg is DebugGranularity {
+  if (!isDebugGranularity(arg)) {
+    logger.logErr(
+      `Invalid value "${JSON.stringify(
+        arg,
+      )}" for debug granularity option: -dg --debug-granularity.\n` +
+        `Must be one of the following values: ${DebugGranularityValues.join(
+          ', ',
+        )}.`,
+    );
+    return false;
+  }
+  return true;
+}
+
+function isDebugTargetArgument(arg: unknown, logger: Logger): arg is string {
+  // options.debugTarget
+  if (typeof arg !== 'string') {
+    logger.logErr(
+      `Invalid value "${JSON.stringify(
+        arg,
+      )}" for debug target option: -dt --debug-target.\n` +
+        'Must be a string value.',
+    );
+    return false;
+  }
+  return true;
+}
+
+function isDebugArgument(
+  arg: unknown,
+  logger: Logger,
+): arg is boolean | 'true' | 'false' {
+  if (typeof arg !== 'boolean' && arg !== 'true' && arg !== 'false') {
+    logger.logErr(
+      `Invalid value "${JSON.stringify(arg)}" for debug option: -d --debug.\n` +
+        'Must be true or false.',
+    );
+    return false;
+  }
+  return true;
+}
+
+function isParseOnlyArgument(
+  arg: unknown,
+  logger: Logger,
+): arg is boolean | 'true' | 'false' {
+  if (typeof arg !== 'boolean' && arg !== 'true' && arg !== 'false') {
+    logger.logErr(
+      `Invalid value "${JSON.stringify(
+        arg,
+      )}" for parse-only option: -po --parse-only.\n` +
+        'Must be true or false.',
+    );
+    return false;
+  }
+  return true;
+}
+
+function isEnvArgument(
+  arg: unknown,
+  logger: Logger,
+): arg is Map<string, string> {
+  if (
+    !(
+      arg instanceof Map &&
+      [...arg.entries()].every(
+        ([key, value]) => typeof key === 'string' && typeof value === 'string',
+      )
+    )
+  ) {
+    logger.logErr(
+      `Invalid value "${JSON.stringify(arg)}" for env option: -e --env.\n` +
+        'Must be map from string keys to string values.',
+    );
+    return false;
+  }
+  return true;
 }
