@@ -47,6 +47,7 @@ describe('jv example smoke tests', () => {
   const baseDir = path.resolve(__dirname, '../../../example/');
 
   const defaultOptions: RunOptions = {
+    pipeline: '.*',
     env: new Map<string, string>(),
     debug: false,
     debugGranularity: 'minimal',

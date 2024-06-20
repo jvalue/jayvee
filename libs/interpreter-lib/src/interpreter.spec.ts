@@ -16,6 +16,7 @@ describe('Interpreter', () => {
       const model = readJvTestAsset(exampleFilePath);
 
       const interpreter = new DefaultJayveeInterpreter({
+        pipelineMatcher: () => true,
         debug: true,
         debugGranularity: 'peek',
         debugTarget: 'all',

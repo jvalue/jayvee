@@ -27,6 +27,7 @@ describe('Parse Only', () => {
   );
 
   const defaultOptions: RunOptions = {
+    pipeline: '.*',
     env: new Map<string, string>(),
     debug: false,
     debugGranularity: 'minimal',

@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line unicorn/prefer-node-protocol
-import { strict as assert } from 'assert';
 import process from 'node:process';
 
 import {
@@ -27,6 +25,7 @@ import {
 } from '@jvalue/jayvee-language-server';
 
 export interface RunOptions {
+  pipeline: string;
   env: Map<string, string>;
   debug: boolean;
   debugGranularity: DebugGranularity;
@@ -38,15 +37,26 @@ export async function runAction(
   filePath: string,
   optionsRaw: unknown,
 ): Promise<void> {
-  const options = parseRunOptions(
-    optionsRaw,
-    new LoggerFactory(true).createLogger(),
-  );
+  const logger = new LoggerFactory(true).createLogger('Arguments');
+  const options = parseRunOptions(optionsRaw, logger);
   if (options === undefined) {
     return process.exit(ExitCode.FAILURE);
   }
 
+  let pipelineRegExp: RegExp | undefined;
+  try {
+    pipelineRegExp = new RegExp(options.pipeline);
+  } catch (e: unknown) {
+    logger.logErr(
+      `Invalid value "${options.pipeline}" for pipeline selection option: -p --pipeline.\n` +
+        'Must be a valid regular expression.',
+    );
+    return undefined;
+  }
+
   const interpreter = new DefaultJayveeInterpreter({
+    pipelineMatcher: (pipelineDefinition) =>
+      pipelineRegExp.test(pipelineDefinition.name),
     env: options.env,
     debug: options.debug,
     debugGranularity: options.debugGranularity,
@@ -94,6 +104,7 @@ function parseRunOptions(
     'debugGranularity',
     'debugTarget',
     'parseOnly',
+    'pipeline',
   ];
   if (requiredFields.some((f) => !(f in optionsRaw))) {
     logger.logErr(
@@ -105,17 +116,26 @@ function parseRunOptions(
   }
 
   const options = optionsRaw as {
+    pipeline: unknown;
     env: unknown;
     debug: unknown;
     debugGranularity: unknown;
     debugTarget: unknown;
     parseOnly: unknown;
   };
-  assert(
-    options.env instanceof Map,
-    'Error in parsing env variable (see commander setup)',
-  );
 
+  // options.pipeline
+  if (typeof options.pipeline !== 'string') {
+    logger.logErr(
+      `Invalid value "${JSON.stringify(
+        options.pipeline,
+      )}" for pipeline selection option: -p --pipeline.\n` +
+        'Must be a string value.',
+    );
+    return undefined;
+  }
+
+  // options.debugGranularity
   if (!isDebugGranularity(options.debugGranularity)) {
     logger.logErr(
       `Invalid value "${JSON.stringify(
@@ -128,6 +148,7 @@ function parseRunOptions(
     return undefined;
   }
 
+  // options.debugTarget
   if (typeof options.debugTarget !== 'string') {
     logger.logErr(
       `Invalid value "${JSON.stringify(
@@ -138,6 +159,7 @@ function parseRunOptions(
     return undefined;
   }
 
+  // options.debug
   if (
     typeof options.debug !== 'boolean' &&
     options.debug !== 'true' &&
@@ -151,6 +173,7 @@ function parseRunOptions(
     return undefined;
   }
 
+  // options.parseOnly
   if (
     typeof options.parseOnly !== 'boolean' &&
     options.parseOnly !== 'true' &&
@@ -165,6 +188,7 @@ function parseRunOptions(
     return undefined;
   }
 
+  // options.env
   if (
     !(
       options.env instanceof Map &&
@@ -183,6 +207,7 @@ function parseRunOptions(
   }
 
   return {
+    pipeline: options.pipeline,
     env: options.env as Map<string, string>,
     debug: options.debug === true || options.debug === 'true',
     debugGranularity: options.debugGranularity,

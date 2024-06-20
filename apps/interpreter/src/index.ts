@@ -65,6 +65,11 @@ program
     'Only parses the model without running it. Exits with 0 if the model is valid, with 1 otherwise.',
     false,
   )
+  .option(
+    '-p, --pipeline <regular expression to match with pipeline name>',
+    'Only runs the matching pipelines (matching by name) and ignores other pipelines in the file.',
+    '.*',
+  )
   .description('Run a Jayvee file')
   .action(runAction);
 

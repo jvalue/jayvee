@@ -38,6 +38,7 @@ import {
 import { validateRuntimeParameterLiteral } from './validation-checks';
 
 export interface InterpreterOptions {
+  pipelineMatcher: (pipelineDefinition: PipelineDefinition) => boolean;
   env: Map<string, string>;
   debug: boolean;
   debugGranularity: DebugGranularity;
@@ -191,7 +192,20 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
     executionExtension: JayveeExecExtension,
     constraintExtension: JayveeConstraintExtension,
   ): Promise<ExitCode> {
-    const pipelineRuns: Promise<ExitCode>[] = model.pipelines.map(
+    const selectedPipelines = model.pipelines.filter((pipeline) =>
+      this.options.pipelineMatcher(pipeline),
+    );
+    this.loggerFactory
+      .createLogger()
+      .logInfo(
+        `Found ${selectedPipelines.length} pipelines to execute${
+          selectedPipelines.length > 0
+            ? ': ' + selectedPipelines.map((p) => p.name).join(', ')
+            : ''
+        }`,
+      );
+
+    const pipelineRuns: Promise<ExitCode>[] = selectedPipelines.map(
       (pipeline) => {
         return this.runPipeline(
           pipeline,
