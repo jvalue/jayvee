@@ -18,7 +18,8 @@ import { NodeFileSystem } from 'langium/node';
 import nock from 'nock';
 import { type MockInstance, vi } from 'vitest';
 
-import { type RunOptions, runAction } from './run-action';
+import { runAction } from './run-action';
+import { type RunOptions } from './run-options';
 
 // Mock global imports
 vi.mock('pg', () => {

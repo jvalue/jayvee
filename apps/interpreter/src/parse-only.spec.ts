@@ -8,7 +8,8 @@ import process from 'node:process';
 
 import { type JayveeInterpreter } from '@jvalue/jayvee-interpreter-lib';
 
-import { type RunOptions, runAction } from './run-action';
+import { runAction } from './run-action';
+import { type RunOptions } from './run-options';
 
 const interpreterMock: JayveeInterpreter = {
   interpretModel: vi.fn(),
