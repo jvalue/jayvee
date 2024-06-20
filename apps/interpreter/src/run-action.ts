@@ -7,6 +7,7 @@ import process from 'node:process';
 import {
   DefaultJayveeInterpreter,
   ExitCode,
+  type JayveeInterpreter,
   type LoggerFactory,
   extractAstNodeFromFile,
 } from '@jvalue/jayvee-interpreter-lib';
@@ -24,19 +25,9 @@ export interface RunOptions {
 }
 
 export async function runAction(
-  fileName: string,
+  filePath: string,
   options: RunOptions,
 ): Promise<void> {
-  const extractAstNodeFn = async (
-    services: JayveeServices,
-    loggerFactory: LoggerFactory,
-  ) =>
-    await extractAstNodeFromFile<JayveeModel>(
-      fileName,
-      services,
-      loggerFactory.createLogger(),
-    );
-
   const interpreter = new DefaultJayveeInterpreter({
     env: options.env,
     debug: options.debug,
@@ -44,15 +35,26 @@ export async function runAction(
     debugTarget: options.debugTarget,
   });
 
-  const model = await interpreter.parseModel(extractAstNodeFn);
-  if (model === undefined) {
-    process.exit(ExitCode.FAILURE);
-  }
-
   if (options.parseOnly === true) {
-    process.exit(ExitCode.SUCCESS);
+    return await runParseOnly(filePath, interpreter);
   }
 
-  const exitCode = await interpreter.interpretModel(model);
+  const exitCode = await interpreter.interpretFile(filePath);
+  process.exit(exitCode);
+}
+
+async function runParseOnly(
+  filePath: string,
+  interpreter: JayveeInterpreter,
+): Promise<void> {
+  const model = await interpreter.parseModel(
+    async (services: JayveeServices, loggerFactory: LoggerFactory) =>
+      await extractAstNodeFromFile<JayveeModel>(
+        filePath,
+        services,
+        loggerFactory.createLogger(),
+      ),
+  );
+  const exitCode = model === undefined ? ExitCode.FAILURE : ExitCode.SUCCESS;
   process.exit(exitCode);
 }

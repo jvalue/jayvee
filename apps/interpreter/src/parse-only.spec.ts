@@ -12,6 +12,7 @@ import { type RunOptions, runAction } from './run-action';
 
 const interpreterMock: JayveeInterpreter = {
   interpretModel: vi.fn(),
+  interpretFile: vi.fn(),
   interpretString: vi.fn(),
   parseModel: vi.fn(),
 };

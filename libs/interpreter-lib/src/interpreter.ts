@@ -33,7 +33,11 @@ import chalk from 'chalk';
 import { NodeFileSystem } from 'langium/node';
 
 import { LoggerFactory } from './logging';
-import { ExitCode, extractAstNodeFromString } from './parsing-util';
+import {
+  ExitCode,
+  extractAstNodeFromFile,
+  extractAstNodeFromString,
+} from './parsing-util';
 import { validateRuntimeParameterLiteral } from './validation-checks';
 
 export interface InterpreterOptions {
@@ -53,10 +57,19 @@ export interface JayveeInterpreter {
   interpretModel(model: JayveeModel): Promise<ExitCode>;
 
   /**
+   * Interprets a file as a Jayvee model.
+   * Parses the file first as a Jayvee model.
+   *
+   * @param filePath the file path to the Jayvee model.
+   * @returns the exit code indicating whether interpretation was successful or not.
+   */
+  interpretFile(filePath: string): Promise<ExitCode>;
+
+  /**
    * Interprets a string as a Jayvee model.
    * Parses the string first as a Jayvee model.
    *
-   * @param extractAstNodeFn the Jayvee model string.
+   * @param modelString the Jayvee model string.
    * @returns the exit code indicating whether interpretation was successful or not.
    */
   interpretString(modelString: string): Promise<ExitCode>;
@@ -94,6 +107,25 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
       new DefaultConstraintExtension(),
     );
     return interpretationExitCode;
+  }
+
+  async interpretFile(filePath: string): Promise<ExitCode> {
+    const extractAstNodeFn = async (
+      services: JayveeServices,
+      loggerFactory: LoggerFactory,
+    ) =>
+      await extractAstNodeFromFile<JayveeModel>(
+        filePath,
+        services,
+        loggerFactory.createLogger(),
+      );
+
+    const model = await this.parseModel(extractAstNodeFn);
+    if (model === undefined) {
+      return ExitCode.FAILURE;
+    }
+
+    return await this.interpretModel(model);
   }
 
   async interpretString(modelString: string): Promise<ExitCode> {
