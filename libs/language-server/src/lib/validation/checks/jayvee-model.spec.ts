@@ -39,7 +39,7 @@ describe('Validation of JayveeModel', () => {
     const parsedModel = document.parseResult.value;
     assert(isJayveeModel(parsedModel), 'Test file is not valid Jayvee model');
 
-    validateJayveeModel(
+    await validateJayveeModel(
       parsedModel,
       createJayveeValidationProps(validationAcceptorMock, services),
     );

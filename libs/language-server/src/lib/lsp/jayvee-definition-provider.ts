@@ -11,7 +11,6 @@ import {
   GrammarUtils,
   type LangiumDocuments,
   type LeafCstNode,
-  type MaybePromise,
 } from 'langium';
 import { DefaultDefinitionProvider } from 'langium/lsp';
 import {
@@ -39,17 +38,19 @@ export class JayveeDefinitionProvider extends DefaultDefinitionProvider {
     this.importResolver = services.ImportResolver;
   }
 
-  protected override collectLocationLinks(
+  protected override async collectLocationLinks(
     sourceCstNode: LeafCstNode,
     params: DefinitionParams,
-  ): MaybePromise<LocationLink[] | undefined> {
+  ): Promise<LocationLink[] | undefined> {
     const sourceAstNode = sourceCstNode.astNode;
 
     if (
       isImportDefinition(sourceAstNode) &&
       GrammarUtils.findAssignment(sourceCstNode)?.feature === 'path'
     ) {
-      const importedModel = this.importResolver.resolveImport(sourceAstNode);
+      const importedModel = await this.importResolver.resolveImport(
+        sourceAstNode,
+      );
 
       if (importedModel?.$document === undefined) {
         return undefined;
@@ -68,7 +69,9 @@ export class JayveeDefinitionProvider extends DefaultDefinitionProvider {
         importDefinition !== undefined,
         'Could not traverse to ImportDefinition',
       );
-      const importedModel = this.importResolver.resolveImport(importDefinition);
+      const importedModel = await this.importResolver.resolveImport(
+        importDefinition,
+      );
 
       if (importedModel?.$document === undefined) {
         return undefined;

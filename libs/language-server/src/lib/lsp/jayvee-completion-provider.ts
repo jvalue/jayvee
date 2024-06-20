@@ -61,11 +61,11 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     this.importResolver = services.ImportResolver;
   }
 
-  override completionFor(
+  override async completionFor(
     context: CompletionContext,
     next: NextFeature,
     acceptor: CompletionAcceptor,
-  ): MaybePromise<void> {
+  ): Promise<void> {
     const astNode = context.node;
     if (astNode !== undefined) {
       const isBlockTypeCompletion =
@@ -102,7 +102,11 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       const isImportElementCompletion =
         isImportDefinition(astNode) && next.property === 'element';
       if (isImportElementCompletion) {
-        return this.completionForImportElement(astNode, context, acceptor);
+        return await this.completionForImportElement(
+          astNode,
+          context,
+          acceptor,
+        );
       }
     }
     return super.completionFor(context, next, acceptor);
@@ -271,12 +275,14 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     }
   }
 
-  private completionForImportElement(
+  private async completionForImportElement(
     importDefinition: ImportDefinition,
     context: CompletionContext,
     acceptor: CompletionAcceptor,
-  ) {
-    const resolvedModel = this.importResolver.resolveImport(importDefinition);
+  ): Promise<void> {
+    const resolvedModel = await this.importResolver.resolveImport(
+      importDefinition,
+    );
     if (resolvedModel === undefined) {
       return;
     }

@@ -45,7 +45,7 @@ describe('Validation of ImportDefinition', () => {
     );
 
     for (const importDefinition of parsedModel.imports) {
-      validateImportDefinition(
+      await validateImportDefinition(
         importDefinition,
         createJayveeValidationProps(validationAcceptorMock, services),
       );

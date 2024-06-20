@@ -13,10 +13,10 @@ import {
 import { type JayveeValidationProps } from '../validation-registry';
 import { checkUniqueNames } from '../validation-util';
 
-export function validateJayveeModel(
+export async function validateJayveeModel(
   model: JayveeModel,
   props: JayveeValidationProps,
-): void {
+): Promise<void> {
   // Ignoring built-in elements. Models may define elements with the same name (makes built-in element with name collision unavailable within model)
 
   const exportableElements: ExportableElement[] = [];
@@ -32,7 +32,7 @@ export function validateJayveeModel(
   const allElementsRootLevel = [
     ...model.pipelines,
     ...exportableElements,
-    ...props.importResolver.getImportedElements(model),
+    ...(await props.importResolver.getImportedElements(model)),
   ];
   checkUniqueNames(allElementsRootLevel, props.validationContext);
 

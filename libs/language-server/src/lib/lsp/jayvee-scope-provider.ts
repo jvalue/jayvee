@@ -33,10 +33,10 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
     this.availableElementsPerDocumentCache = new DocumentCache(services.shared);
   }
 
-  protected override getGlobalScope(
+  protected override async getGlobalScope(
     referenceType: string,
     context: ReferenceInfo,
-  ): Scope {
+  ): Promise<Scope> {
     const jayveeModel = AstUtils.getContainerOfType(
       context.container,
       isJayveeModel,
@@ -52,8 +52,9 @@ export class JayveeScopeProvider extends DefaultScopeProvider {
     );
     importedElements.push(...allBuiltinElementDescriptions);
 
-    const allImportedElements =
-      this.importResolver.getImportedElements(jayveeModel);
+    const allImportedElements = await this.importResolver.getImportedElements(
+      jayveeModel,
+    );
     const allImportedElementDescriptions = allImportedElements.map((x) =>
       this.descriptions.createDescription(x.element, x.importName),
     );

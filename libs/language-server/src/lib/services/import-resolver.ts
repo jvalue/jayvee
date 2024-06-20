@@ -52,8 +52,12 @@ export class JayveeImportResolver {
     this.availableElementsPerDocumentCache = new DocumentCache(services.shared);
   }
 
-  resolveImport(importDefinition: ImportDefinition): JayveeModel | undefined {
-    const resolvedDocument = this.resolveImportedDocument(importDefinition);
+  async resolveImport(
+    importDefinition: ImportDefinition,
+  ): Promise<JayveeModel | undefined> {
+    const resolvedDocument = await this.resolveImportedDocument(
+      importDefinition,
+    );
     if (resolvedDocument === undefined) {
       return undefined;
     }
@@ -66,20 +70,30 @@ export class JayveeImportResolver {
     return parsedModel;
   }
 
-  resolveImportedDocument(
+  async resolveImportedDocument(
     importDefinition: ImportDefinition,
-  ): LangiumDocument | undefined {
+  ): Promise<LangiumDocument | undefined> {
     const resolvedUri = this.resolveImportUri(importDefinition);
     if (resolvedUri === undefined) {
       return undefined;
     }
 
-    const resolvedDocument = this.documents.getDocument(resolvedUri);
+    const resolvedDocument = await this.resolveDocument(resolvedUri);
     if (resolvedDocument === undefined) {
       return undefined;
     }
 
     return resolvedDocument;
+  }
+
+  private async resolveDocument(
+    resolvedUri: URI,
+  ): Promise<LangiumDocument | undefined> {
+    try {
+      return await this.documents.getOrCreateDocument(resolvedUri);
+    } catch (e) {
+      return undefined;
+    }
   }
 
   resolveImportUri(importDefinition: ImportDefinition): URI | undefined {
@@ -97,10 +111,12 @@ export class JayveeImportResolver {
     return UriUtils.resolvePath(dirUri, modelPath);
   }
 
-  getImportedElements(model: JayveeModel): ImportDetails[] {
+  async getImportedElements(model: JayveeModel): Promise<ImportDetails[]> {
     const importedElements: ImportDetails[] = [];
     for (const importDefinition of model.imports) {
-      const importedDocument = this.resolveImportedDocument(importDefinition);
+      const importedDocument = await this.resolveImportedDocument(
+        importDefinition,
+      );
       if (importedDocument === undefined) {
         continue;
       }

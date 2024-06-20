@@ -14,17 +14,17 @@ import {
 } from '../../ast/generated/ast';
 import { type JayveeValidationProps } from '../validation-registry';
 
-export function validateImportDefinition(
+export async function validateImportDefinition(
   importDefinition: ImportDefinition,
   props: JayveeValidationProps,
-): void {
-  checkPathExists(importDefinition, props);
+): Promise<void> {
+  await checkPathExists(importDefinition, props);
   if (props.validationContext.hasErrorOccurred()) {
     return;
   }
 
-  checkImportedElementsExist(importDefinition, props);
-  checkCyclicImportChain(importDefinition, props);
+  await checkImportedElementsExist(importDefinition, props);
+  await checkCyclicImportChain(importDefinition, props);
   checkElementImportedOnlyOnce(importDefinition, props);
   checkFileImportedOnlyOnce(importDefinition, props);
 }
@@ -90,11 +90,13 @@ function checkFileImportedOnlyOnce(
   );
 }
 
-function checkPathExists(
+async function checkPathExists(
   importDefinition: ImportDefinition,
   props: JayveeValidationProps,
-): void {
-  const resolvedImport = props.importResolver.resolveImport(importDefinition);
+): Promise<void> {
+  const resolvedImport = await props.importResolver.resolveImport(
+    importDefinition,
+  );
   if (resolvedImport === undefined) {
     props.validationContext.accept(
       'error',
@@ -107,11 +109,13 @@ function checkPathExists(
   }
 }
 
-function checkImportedElementsExist(
+async function checkImportedElementsExist(
   importDefinition: ImportDefinition,
   props: JayveeValidationProps,
-): void {
-  const resolvedImport = props.importResolver.resolveImport(importDefinition);
+): Promise<void> {
+  const resolvedImport = await props.importResolver.resolveImport(
+    importDefinition,
+  );
   if (resolvedImport === undefined) {
     return;
   }
@@ -160,11 +164,11 @@ function checkImportedElementsExist(
   }
 }
 
-function checkCyclicImportChain(
+async function checkCyclicImportChain(
   importDefinition: ImportDefinition,
   props: JayveeValidationProps,
-): void {
-  const cycleAnalysisTraces = analyzeImportChain(
+): Promise<void> {
+  const cycleAnalysisTraces = await analyzeImportChain(
     importDefinition,
     new Set(),
     props,
@@ -192,12 +196,14 @@ interface ImportChainTrace {
   path: ImportDefinition[];
 }
 
-function analyzeImportChain(
+async function analyzeImportChain(
   importDefinition: ImportDefinition,
   visitedDocumentUris: Set<string>,
   props: JayveeValidationProps,
-): ImportChainTrace[] {
-  const importedModel = props.importResolver.resolveImport(importDefinition);
+): Promise<ImportChainTrace[]> {
+  const importedModel = await props.importResolver.resolveImport(
+    importDefinition,
+  );
   if (importedModel === undefined) {
     return [
       {
@@ -226,7 +232,7 @@ function analyzeImportChain(
 
   const cycledAnalysisResult: ImportChainTrace[] = [];
   for (const furtherImport of importedModel.imports) {
-    const downwardAnalysisResult = analyzeImportChain(
+    const downwardAnalysisResult = await analyzeImportChain(
       furtherImport,
       visitedDocumentUris,
       props,
