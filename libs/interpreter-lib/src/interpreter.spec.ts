@@ -4,7 +4,7 @@
 
 import { readJvTestAssetHelper } from '@jvalue/jayvee-language-server/test';
 
-import { interpretString } from './interpreter';
+import { DefaultJayveeInterpreter } from './interpreter';
 import { ExitCode } from './parsing-util';
 
 describe('Interpreter', () => {
@@ -15,12 +15,13 @@ describe('Interpreter', () => {
       const exampleFilePath = 'example/cars.jv';
       const model = readJvTestAsset(exampleFilePath);
 
-      const exitCode = await interpretString(model, {
+      const interpreter = new DefaultJayveeInterpreter({
         debug: true,
         debugGranularity: 'peek',
         debugTarget: undefined,
         env: new Map(),
       });
+      const exitCode = await interpreter.interpretString(model);
       expect(exitCode).toEqual(ExitCode.SUCCESS);
     });
   });

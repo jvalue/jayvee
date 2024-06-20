@@ -5,16 +5,23 @@
 import process from 'node:process';
 
 import {
+  DefaultJayveeInterpreter,
+  ExitCode,
   type LoggerFactory,
-  type RunOptions,
   extractAstNodeFromFile,
-  interpretModel,
-  parseModel,
 } from '@jvalue/jayvee-interpreter-lib';
 import {
   type JayveeModel,
   type JayveeServices,
 } from '@jvalue/jayvee-language-server';
+
+export interface RunOptions {
+  env: Map<string, string>;
+  debug: boolean;
+  debugGranularity: string;
+  debugTarget: string | undefined;
+  parseOnly?: boolean;
+}
 
 export async function runAction(
   fileName: string,
@@ -29,11 +36,23 @@ export async function runAction(
       services,
       loggerFactory.createLogger(),
     );
-  if (options.parseOnly === true) {
-    const { model, services } = await parseModel(extractAstNodeFn, options);
-    const exitCode = model != null && services != null ? 0 : 1;
-    process.exit(exitCode);
+
+  const interpreter = new DefaultJayveeInterpreter({
+    env: options.env,
+    debug: options.debug,
+    debugGranularity: options.debugGranularity,
+    debugTarget: options.debugTarget,
+  });
+
+  const model = await interpreter.parseModel(extractAstNodeFn);
+  if (model === undefined) {
+    process.exit(ExitCode.FAILURE);
   }
-  const exitCode = await interpretModel(extractAstNodeFn, options);
+
+  if (options.parseOnly === true) {
+    process.exit(ExitCode.SUCCESS);
+  }
+
+  const exitCode = await interpreter.interpretModel(model);
   process.exit(exitCode);
 }
