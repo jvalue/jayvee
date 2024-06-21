@@ -6,12 +6,13 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 # RFC 0014: Attributed-based syntax for defining value types
 
-| | |
-|---|---|
-| Feature Tag | `attribute-based value types` | <!-- TODO: choose a unique and declarative feature name -->
-| Status | `DRAFT` | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED -->
-| Responsible | `dirkriehle` | <!-- TODO: assign yourself as main driver of this RFC -->
-<!-- 
+|             |                               |
+| ----------- | ----------------------------- | --------------------------------------------------------------- |
+| Feature Tag | `attribute-based value types` | <!-- TODO: choose a unique and declarative feature name -->     |
+| Status      | `DISCUSSION`                       | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED --> |
+| Responsible | `dirkriehle`                  | <!-- TODO: assign yourself as main driver of this RFC -->       |
+
+<!--
   Status Overview:
   - DRAFT: The RFC is not ready for a review and currently under change. Feel free to already ask for feedback on the structure and contents at this stage.
   - DISCUSSION: The RFC is open for discussion. Usually, we open a PR to trigger discussions.
@@ -21,16 +22,10 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 ## Summary
 
-I'd like to allow the definition of user-defined single-attribute value types. In addition to the current syntax, in which an underlying value type is referenced through 'oftype', it does not use instantiation/inheritance but rather composition. 
+Value types are a core concept in Jayvee for data validation.
+This RFC reworks the syntax to an attribute-based syntax.
 
 ## Motivation
-
-The purpose of using composition is that it is
-
-1. more similar to traditional approaches and
-2. is needed anyway for multi-attribute value types.
-
-## Explanation
 
 To define a value type like CorrelationCoefficient and its range of -1 to +1, we have to write:
 
@@ -42,47 +37,61 @@ valuetype CorrelationCoefficient oftype decimal {
 }
 ```
 
-This syntax is smart in that you don't have to list and name an attribute but rather rely on an implicit 'value' attribute. Still, I propose to make that attribute explicit. New syntax would be:
+This syntax is smart in that you don't have to list and name an attribute but rather rely on an implicit 'value' attribute.
+
+The current syntax, in which an underlying value type is referenced through 'oftype', it does not use instantiation/inheritance but rather composition.
+The purpose of using composition is that it is
+
+1. more similar to traditional approaches and
+2. is needed anyway for multi-attribute value types.
+
+Thus, this RFC removes the `oftype` keyword in a value type definitions and proposes an attribute-based syntax that is extendable to a future multi-attribute syntax.
+
+## Explanation
+
+I propose to make that attribute explicit. The new syntax would be:
 
 ```jayvee
 valuetype CorrelationCoefficient {
-  attributes: [
-    value oftype decimal;
-  ];
-  constraints: [
-    MinusOneToPlusOneRange; // Don't know how to attach this to value attribute
-  ];
+  property correlation oftype decimal;
+
+  constraint minusOneToPlusOneRange: MinusOneToPlusOneRange(value = correlation);
 }
+
+constraint MinusOneToPlusOneRange on decimal:
+  value >= -1 and value <= 1;
 ```
 
-While more verbose, it prepares the way for 
+The syntax is kept flat rather than using arrays.
+
+Despite referencing reusable constraints, the syntax also allows in-place constraint definition:
 
 ```jayvee
-valuetype Money {
-  attributes: [
-    amount oftype decimal;
-    currency oftype Currency;
-  ];
+valuetype CorrelationCoefficient {
+  property correlation oftype decimal;
+
+  constraint minusOneToPlusOneRange:
+    correlation >= 1 and correlation <=1;
 }
 ```
-which we'll need anyway. Conceivably, the step to multi-attribute value types could be merged with this one, but I simply wanted to try the RFC process rather than keep sending email ;-)
-
-<!-- 
-  TODO: Explain the details of the RFC. 
-  If the RFC contains more than a single cohesive aspect, structure this section accordingly.
-  Make sure to provide realistic modelling examples on the example data set introduced above.
--->
 
 ## Drawbacks
 
-1. Introduces a redundant syntax,
-2. Creates extra work/may be too difficult, and
-3. May be disruptive to how the language currently works. 
+1. No backward compatible syntax (breaking change).
+2. Removes the inheritance mechanism.
 
 ## Alternatives
 
-Conceivably, we could use multiple inheritance for multi-attribute value types... just joking. 
+1. Keep the current syntax.
+2. Use arrays instead of the flat syntax.
 
 ## Possible Future Changes/Enhancements
 
-This proposal is to prepare the way for multi-attribute value types.
+1. Multi-attribute value types.
+
+```jayvee
+valuetype Coordinate2D {
+  property x oftype decimal;
+  property y oftype decimal;
+}
+```
