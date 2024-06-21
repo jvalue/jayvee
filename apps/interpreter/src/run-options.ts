@@ -179,3 +179,18 @@ function isEnvArgument(
   }
   return true;
 }
+
+export function parsePipelineMatcherRegExp(
+  matcher: string,
+  logger: Logger,
+): RegExp | undefined {
+  try {
+    return new RegExp(matcher);
+  } catch (e: unknown) {
+    logger.logErr(
+      `Invalid value "${matcher}" for pipeline selection option: -p --pipeline.\n` +
+        'Must be a valid regular expression.',
+    );
+    return undefined;
+  }
+}
