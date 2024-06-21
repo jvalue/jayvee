@@ -50,20 +50,24 @@ export function parseRunOptions(
 
   const options = optionsRaw as Record<keyof RunOptions, unknown>;
 
-  isPipelineArgument(options.pipeline, logger);
-  isEnvArgument(options.env, logger);
-  isDebugArgument(options.debug, logger);
-  isDebugGranularityArgument(options.debugGranularity, logger);
-  isDebugTargetArgument(options.debugTarget, logger);
-  isParseOnlyArgument(options.parseOnly, logger);
+  if (
+    !isPipelineArgument(options.pipeline, logger) ||
+    !isEnvArgument(options.env, logger) ||
+    !isDebugArgument(options.debug, logger) ||
+    !isDebugGranularityArgument(options.debugGranularity, logger) ||
+    !isDebugTargetArgument(options.debugTarget, logger) ||
+    !isParseOnlyArgument(options.parseOnly, logger)
+  ) {
+    return undefined;
+  }
 
   // TypeScript does not infer type from type guards, probably fixed in TS 5.5
   return {
-    pipeline: options.pipeline as string,
-    env: options.env as Map<string, string>,
+    pipeline: options.pipeline,
+    env: options.env,
     debug: options.debug === true || options.debug === 'true',
     debugGranularity: options.debugGranularity as DebugGranularity,
-    debugTarget: getDebugTargets(options.debugTarget as string),
+    debugTarget: getDebugTargets(options.debugTarget),
     parseOnly: options.parseOnly === true || options.parseOnly === 'true',
   };
 }
