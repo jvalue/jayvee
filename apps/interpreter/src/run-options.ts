@@ -48,14 +48,7 @@ export function parseRunOptions(
     return undefined;
   }
 
-  const options = optionsRaw as {
-    pipeline: unknown;
-    env: unknown;
-    debug: unknown;
-    debugGranularity: unknown;
-    debugTarget: unknown;
-    parseOnly: unknown;
-  };
+  const options = optionsRaw as Record<keyof RunOptions, unknown>;
 
   isPipelineArgument(options.pipeline, logger);
   isEnvArgument(options.env, logger);
