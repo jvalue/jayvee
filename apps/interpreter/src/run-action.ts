@@ -5,35 +5,63 @@
 import process from 'node:process';
 
 import {
-  type LoggerFactory,
-  type RunOptions,
+  DefaultJayveeInterpreter,
+  ExitCode,
+  type JayveeInterpreter,
+  LoggerFactory,
   extractAstNodeFromFile,
-  interpretModel,
-  parseModel,
 } from '@jvalue/jayvee-interpreter-lib';
 import {
   type JayveeModel,
   type JayveeServices,
 } from '@jvalue/jayvee-language-server';
 
+import { parsePipelineMatcherRegExp, parseRunOptions } from './run-options';
+
 export async function runAction(
-  fileName: string,
-  options: RunOptions,
+  filePath: string,
+  optionsRaw: unknown,
 ): Promise<void> {
-  const extractAstNodeFn = async (
-    services: JayveeServices,
-    loggerFactory: LoggerFactory,
-  ) =>
-    await extractAstNodeFromFile<JayveeModel>(
-      fileName,
-      services,
-      loggerFactory.createLogger(),
-    );
-  if (options.parseOnly === true) {
-    const { model, services } = await parseModel(extractAstNodeFn, options);
-    const exitCode = model != null && services != null ? 0 : 1;
-    process.exit(exitCode);
+  const logger = new LoggerFactory(true).createLogger('Arguments');
+  const options = parseRunOptions(optionsRaw, logger);
+  if (options === undefined) {
+    return process.exit(ExitCode.FAILURE);
   }
-  const exitCode = await interpretModel(extractAstNodeFn, options);
+
+  const pipelineRegExp = parsePipelineMatcherRegExp(options.pipeline, logger);
+  if (pipelineRegExp === undefined) {
+    return process.exit(ExitCode.FAILURE);
+  }
+
+  const interpreter = new DefaultJayveeInterpreter({
+    pipelineMatcher: (pipelineDefinition) =>
+      pipelineRegExp.test(pipelineDefinition.name),
+    env: options.env,
+    debug: options.debug,
+    debugGranularity: options.debugGranularity,
+    debugTarget: options.debugTarget,
+  });
+
+  if (options.parseOnly === true) {
+    return await runParseOnly(filePath, interpreter);
+  }
+
+  const exitCode = await interpreter.interpretFile(filePath);
+  process.exit(exitCode);
+}
+
+async function runParseOnly(
+  filePath: string,
+  interpreter: JayveeInterpreter,
+): Promise<void> {
+  const model = await interpreter.parseModel(
+    async (services: JayveeServices, loggerFactory: LoggerFactory) =>
+      await extractAstNodeFromFile<JayveeModel>(
+        filePath,
+        services,
+        loggerFactory.createLogger(),
+      ),
+  );
+  const exitCode = model === undefined ? ExitCode.FAILURE : ExitCode.SUCCESS;
   process.exit(exitCode);
 }

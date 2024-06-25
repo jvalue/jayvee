@@ -2,7 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { DebugGranularityValues } from '@jvalue/jayvee-execution';
+import {
+  DebugGranularityValues,
+  DefaultDebugTargetsValue,
+} from '@jvalue/jayvee-execution';
 import { Command } from 'commander';
 
 import { version as packageJsonVersion } from '../package.json';
@@ -55,7 +58,7 @@ program
   .option(
     '-dt, --debug-target <block name>',
     `Sets the target blocks of the of block debug logging, separated by comma. If not given, all blocks are targeted.`,
-    undefined,
+    DefaultDebugTargetsValue,
   )
   .option(
     '-po, --parse-only',
