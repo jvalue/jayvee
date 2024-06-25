@@ -61,7 +61,6 @@ export function parseRunOptions(
     return undefined;
   }
 
-  // TypeScript does not infer type from type guards, probably fixed in TS 5.5
   return {
     pipeline: options.pipeline,
     env: options.env,
