@@ -18,29 +18,30 @@ publish valuetype DateYYYYMMDD oftype text {
 	];
 }
 
-// Either Mega- or Giga-Pascal
-constraint MPaOrGPaConstraint on text: value matches /\(10\^[6|9]\.0\) \* Pascal\^\(1\.0\)/;
-publish valuetype MegaOrGigaPascal oftype text {
-	constraints: [
-		MPaOrGPaConstraint
-	];
-}
-
-// Either Micro-/Nano- or Pico-Meters
-constraint MiMNMorPMConstraint on text: value matches /\(10\^-[3|6|9]\.0\) \* Meter\^\(1\.0\)/;
-publish valuetype MicroOrNanoOrPicoMeters oftype text {
-	constraints: [
-		MiMNMorPMConstraint
-	];
-}
-
 // Constraining the Unit column to be of a specific format like "Second^(1.0)", "Ampere^(1.0)" or "Candela^(1.0)".
-constraint SiUnitRegex on text: value matches /\b((Second|Metre|Kilogram|Ampere|Kelvin|Mole|Candela)+\^\(\d+(\.\d+)?\|\-\d+(\.\d+)?\)+\s)*\b/;
+constraint SiUnitConstraint on text: value matches /\b((Second|Metre|Kilogram|Ampere|Kelvin|Mole|Candela)+\^\(\d+(\.\d+)?\|\-\d+(\.\d+)?\)+\s)*\b/;
 publish valuetype SiUnit oftype text {
 	constraints: [
-		SiUnitRegex
+		SiUnitConstraint
 	];
 }
+
+// Constrains Pressure units to be Pascal^(x).
+constraint PressureUnitPascalConstraint on text: value matches /\b(Pascal\^\(\d+(\.\d+)?\|\-\d+(\.\d+)?\)+\s)*\b//;
+publish valuetype PressureUnitPascal oftype text {
+	constraints: [
+		PressureUnitPascalConstraint
+	];
+}
+
+// Constrains Length units to be Meter^(x).
+constraint LengthUnitMeterConstraint on text: value matches /\(10\^-[3|6|9]\.0\) \* Meter\^\(1\.0\)/;
+publish valuetype LengthUnitMeter oftype text {
+	constraints: [
+		LengthUnitMeterConstraint
+	];
+}
+
 
 // Constrains Temperature units to be Kelvin^(x).
 constraint TemperatureUnitKelvinConstraint on text: value matches /\b(Kelvin\^\(\d+(\.\d+)?\|\-\d+(\.\d+)?\)+\s)*\b/;
