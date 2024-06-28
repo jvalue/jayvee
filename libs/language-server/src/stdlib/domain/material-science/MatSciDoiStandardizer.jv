@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// Transformer to standardize DOI references and remove dx.doi.org/
+/** Transformer to standardize DOI references and remove dx.doi.org */
 publish transform RemoveDxDotDoiDotOrg {
 	from valueWithBraces oftype text;
 	to valueWithoutBraces oftype text;
@@ -10,7 +10,7 @@ publish transform RemoveDxDotDoiDotOrg {
 	valueWithoutBraces: valueWithBraces replace /\b(dx\.doi\.org\/)\b/ with "";
 }
 
-// Transformer to standardize DOI references and remove http://dx.doi.org/
+/** Transformer to standardize DOI references and remove http:/**dx.doi.org/ */
 publish transform RemoveHttpDxDotDoiDotOrg {
 	from valueWithBraces oftype text;
 	to valueWithoutBraces oftype text;
@@ -18,7 +18,7 @@ publish transform RemoveHttpDxDotDoiDotOrg {
 	valueWithoutBraces: valueWithBraces replace /^http:\/\/dx\.doi\.org\/\b/ with "";
 }
 
-// Transformer to standardize DOI references and remove http://
+/** Transformer to standardize DOI references and remove http:/** */
 publish transform RemoveHttp {
 	from valueWithBraces oftype text;
 	to valueWithoutBraces oftype text;
@@ -26,7 +26,7 @@ publish transform RemoveHttp {
 	valueWithoutBraces: valueWithBraces replace /(\bhttp:\/\/)/ with "";
 }
 
-// Transformer to standardize DOI references and remove https://doi.org/
+/** Transformer to standardize DOI references and remove https://doi.org/ */
 publish transform RemoveHttpsDoiDotOrg {
 	from valueWithBraces oftype text;
 	to valueWithoutBraces oftype text;
@@ -34,6 +34,7 @@ publish transform RemoveHttpsDoiDotOrg {
 	valueWithoutBraces: valueWithBraces replace /^https:\/\/doi\.org\/\b/ with "";
 }
 
+/** Forces all values in a column to follow the doi format. Removes prefixes like "http://" */
 publish composite blocktype DOIStandardizer {
 	input UnstandardizedDOI oftype Table;
 	output StandardizedDOI oftype Table;
