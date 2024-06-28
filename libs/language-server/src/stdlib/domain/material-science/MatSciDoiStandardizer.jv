@@ -1,0 +1,77 @@
+// Transformer to standardize DOI references and remove dx.doi.org/
+publish transform RemoveDxDotDoiDotOrg {
+	from valueWithBraces oftype text;
+	to valueWithoutBraces oftype text;
+
+	valueWithoutBraces: valueWithBraces replace /\b(dx\.doi\.org\/)\b/ with "";
+}
+
+// Transformer to standardize DOI references and remove http://dx.doi.org/
+publish transform RemoveHttpDxDotDoiDotOrg {
+	from valueWithBraces oftype text;
+	to valueWithoutBraces oftype text;
+
+	valueWithoutBraces: valueWithBraces replace /^http:\/\/dx\.doi\.org\/\b/ with "";
+}
+
+// Transformer to standardize DOI references and remove http://
+publish transform RemoveHttp {
+	from valueWithBraces oftype text;
+	to valueWithoutBraces oftype text;
+
+	valueWithoutBraces: valueWithBraces replace /(\bhttp:\/\/)/ with "";
+}
+
+// Transformer to standardize DOI references and remove https://doi.org/
+publish transform RemoveHttpsDoiDotOrg {
+	from valueWithBraces oftype text;
+	to valueWithoutBraces oftype text;
+
+	valueWithoutBraces: valueWithBraces replace /^https:\/\/doi\.org\/\b/ with "";
+}
+
+publish composite blocktype DOIStandardizer {
+	input UnstandardizedDOI oftype Table;
+	output StandardizedDOI oftype Table;
+
+	property doiColumn oftype text;
+
+	UnstandardizedDOI
+		-> DOIStandardizerStep1
+		-> DOIStandardizerStep2
+		-> DOIStandardizerStep3
+		-> DOIStandardizerStep4
+		-> StandardizedDOI;
+
+	block DOIStandardizerStep1 oftype TableTransformer {
+		inputColumns: [
+			doiColumn
+		];
+		outputColumn: doiColumn;
+		uses: RemoveDxDotDoiDotOrg;
+	}
+
+	block DOIStandardizerStep2 oftype TableTransformer {
+		inputColumns: [
+			doiColumn
+		];
+		outputColumn: doiColumn;
+		uses: RemoveHttpDxDotDoiDotOrg;
+	}
+
+	block DOIStandardizerStep3 oftype TableTransformer {
+		inputColumns: [
+			doiColumn
+		];
+		outputColumn: doiColumn;
+		uses: RemoveHttp;
+	}
+
+	block DOIStandardizerStep4 oftype TableTransformer {
+		inputColumns: [
+			doiColumn
+		];
+		outputColumn: doiColumn;
+		uses: RemoveHttpsDoiDotOrg;
+	}
+}
