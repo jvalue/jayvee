@@ -37,7 +37,6 @@ export async function runAction(
 
   const currentDir = getCurrentDir();
   const workingDir = currentDir;
-  console.log(workingDir);
   const absoluteFilePath = path.join(currentDir, filePath);
 
   const interpreter = new DefaultJayveeInterpreter({
