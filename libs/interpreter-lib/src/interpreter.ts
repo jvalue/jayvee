@@ -4,6 +4,7 @@
 
 // eslint-disable-next-line unicorn/prefer-node-protocol
 import { strict as assert } from 'assert';
+import path from 'node:path';
 
 import {
   type DebugGranularity,
@@ -28,9 +29,11 @@ import {
   type RuntimeParameterProvider,
   type WrapperFactoryProvider,
   createJayveeServices,
+  initializeWorkspace,
   internalValueToString,
 } from '@jvalue/jayvee-language-server';
 import chalk from 'chalk';
+import { type WorkspaceFolder } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 
 import { LoggerFactory } from './logging';
@@ -80,7 +83,7 @@ export interface JayveeInterpreter {
    * Parses a model without executing it.
    * Also sets up the environment so that the model can be properly executed.
    *
-   * @param extractAstNodeFn method that extracts the AST node; should also initialize the workspace correctly.
+   * @param extractAstNodeFn method that extracts the AST node
    * @returns the parsed Jayvee model, or undefined on failure.
    */
   parseModel(
@@ -94,6 +97,8 @@ export interface JayveeInterpreter {
 export class DefaultJayveeInterpreter implements JayveeInterpreter {
   private readonly services: JayveeServices;
   private readonly loggerFactory: LoggerFactory;
+  private readonly workspaces: WorkspaceFolder[] = [];
+  private isWorkspaceInitialized = false;
 
   constructor(private readonly options: InterpreterOptions) {
     this.services = createJayveeServices(NodeFileSystem).Jayvee;
@@ -102,7 +107,18 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
     this.loggerFactory = new LoggerFactory(options.debug);
   }
 
+  addWorkspace(uri: string): DefaultJayveeInterpreter {
+    this.isWorkspaceInitialized = false;
+    this.workspaces.push({
+      name: 'projectRoot',
+      uri: path.resolve(uri),
+    });
+    return this;
+  }
+
   async interpretModel(model: JayveeModel): Promise<ExitCode> {
+    await this.prepareInterpretation();
+
     const interpretationExitCode = await this.interpretJayveeModel(
       model,
       new StdExecExtension(),
@@ -112,6 +128,8 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
   }
 
   async interpretFile(filePath: string): Promise<ExitCode> {
+    await this.prepareInterpretation();
+
     const extractAstNodeFn = async (
       services: JayveeServices,
       loggerFactory: LoggerFactory,
@@ -131,6 +149,8 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
   }
 
   async interpretString(modelString: string): Promise<ExitCode> {
+    await this.prepareInterpretation();
+
     const extractAstNodeFn = async (
       services: JayveeServices,
       loggerFactory: LoggerFactory,
@@ -155,6 +175,8 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
       loggerFactory: LoggerFactory,
     ) => Promise<JayveeModel>,
   ): Promise<JayveeModel | undefined> {
+    await this.prepareInterpretation();
+
     try {
       const model = await extractAstNodeFn(this.services, this.loggerFactory);
       return model;
@@ -273,6 +295,13 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
 
     logExecutionDuration(startTime, executionContext.logger);
     return ExitCode.SUCCESS;
+  }
+
+  private async prepareInterpretation(): Promise<void> {
+    if (!this.isWorkspaceInitialized) {
+      await initializeWorkspace(this.services, this.workspaces);
+      this.isWorkspaceInitialized = true;
+    }
   }
 }
 
