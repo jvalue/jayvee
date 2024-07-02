@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import path from 'node:path';
 import process from 'node:process';
 
 import {
@@ -16,6 +17,7 @@ import {
   type JayveeServices,
 } from '@jvalue/jayvee-language-server';
 
+import { getCurrentDir } from './current-dir';
 import { parsePipelineMatcherRegExp, parseRunOptions } from './run-options';
 
 export async function runAction(
@@ -33,6 +35,10 @@ export async function runAction(
     return process.exit(ExitCode.FAILURE);
   }
 
+  const currentDir = getCurrentDir();
+  const workingDir = currentDir;
+  const absoluteFilePath = path.join(currentDir, filePath);
+
   const interpreter = new DefaultJayveeInterpreter({
     pipelineMatcher: (pipelineDefinition) =>
       pipelineRegExp.test(pipelineDefinition.name),
@@ -40,13 +46,13 @@ export async function runAction(
     debug: options.debug,
     debugGranularity: options.debugGranularity,
     debugTarget: options.debugTarget,
-  });
+  }).addWorkspace(workingDir);
 
   if (options.parseOnly === true) {
-    return await runParseOnly(filePath, interpreter);
+    return await runParseOnly(absoluteFilePath, interpreter);
   }
 
-  const exitCode = await interpreter.interpretFile(filePath);
+  const exitCode = await interpreter.interpretFile(absoluteFilePath);
   process.exit(exitCode);
 }
 

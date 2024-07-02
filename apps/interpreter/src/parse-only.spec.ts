@@ -5,6 +5,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 
 import { type JayveeInterpreter } from '@jvalue/jayvee-interpreter-lib';
 
@@ -20,11 +21,27 @@ const interpreterMock: JayveeInterpreter = {
 
 vi.stubGlobal('DefaultJayveeInterpreter', interpreterMock);
 
+const dirPathOfThisTest = path.dirname(fileURLToPath(import.meta.url));
+const pathExamplesRelativeToThisTest = path.join('..', '..', '..', 'example');
+
+// simulate as if we were starting the jv cli in the example dir
+vi.mock('./current-dir', () => {
+  const currentDirMock = () =>
+    path.join(dirPathOfThisTest, pathExamplesRelativeToThisTest);
+  return {
+    getCurrentDir: currentDirMock,
+  };
+});
+
 describe('Parse Only', () => {
-  const pathToValidModel = path.resolve(__dirname, '../../../example/cars.jv');
-  const pathToInvalidModel = path.resolve(
-    __dirname,
-    '../test/assets/broken-model.jv',
+  const pathToValidModelFromExamplesDir = 'cars.jv';
+  const pathToInvalidModelFromExamplesDir = path.join(
+    '..',
+    'apps',
+    'interpreter',
+    'test',
+    'assets',
+    'broken-model.jv',
   );
 
   const defaultOptions: RunOptions = {
@@ -51,7 +68,7 @@ describe('Parse Only', () => {
 
   it('should exit with 0 on a valid option', async () => {
     await expect(
-      runAction(pathToValidModel, {
+      runAction(pathToValidModelFromExamplesDir, {
         ...defaultOptions,
         parseOnly: true,
       }),
@@ -62,10 +79,15 @@ describe('Parse Only', () => {
   });
 
   it('should exit with 1 on error', async () => {
-    expect(fs.existsSync(pathToInvalidModel)).toBe(true);
+    const modelPathRelativeToThisTest = path.join(
+      dirPathOfThisTest,
+      pathExamplesRelativeToThisTest,
+      pathToInvalidModelFromExamplesDir,
+    );
+    expect(fs.existsSync(modelPathRelativeToThisTest)).toBe(true);
 
     await expect(
-      runAction(pathToInvalidModel, {
+      runAction(pathToInvalidModelFromExamplesDir, {
         ...defaultOptions,
         parseOnly: true,
       }),

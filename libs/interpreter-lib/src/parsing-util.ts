@@ -41,15 +41,6 @@ export async function extractDocumentFromFile(
     return Promise.reject(ExitCode.FAILURE);
   }
 
-  const workingDirPath = path.dirname(filePath);
-
-  await initializeWorkspace(services, [
-    {
-      name: 'projectRoot',
-      uri: path.resolve(workingDirPath),
-    },
-  ]);
-
   const document = services.shared.workspace.LangiumDocuments.getDocument(
     URI.file(path.resolve(filePath)),
   );
