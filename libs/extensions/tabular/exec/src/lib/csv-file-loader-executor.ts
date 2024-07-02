@@ -64,13 +64,16 @@ export class CSVFileLoaderExecutor extends AbstractBlockExecutor<
     };
 
     context.logger.logDebug(
-      `Writing csv using options ${JSON.stringify(formatOptions)}`,
+      `Writing csv using delimiter '${formatOptions.delimiter}', enclosing '${formatOptions.quote}' and escape '${formatOptions.escape}'`,
     );
     const stream = writeCSVToPath(file, toRows(table), formatOptions);
-    await pipeline([stream]);
-
-    context.logger.logDebug(`The data was successfully written to ${file}`);
-    return R.ok(R.NONE);
+    return new Promise(function (resolve, reject) {
+      stream.on('error', (e) => reject(e));
+      stream.on('end', () => {
+        context.logger.logDebug(`The data was successfully written to ${file}`);
+        resolve(R.ok(R.NONE));
+      });
+    });
   }
 }
 
