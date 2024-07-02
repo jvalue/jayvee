@@ -85,8 +85,42 @@ describe('Validation of CSVFileLoaderExecutor', () => {
     }
   });
 
-  it('should diagnose no error on valid loader config', async () => {
+  it('should diagnose no error on full loader config', async () => {
     const text = readJvTestAsset('valid-csv-file-loader.jv');
+
+    const inputTable = constructTable(
+      [
+        {
+          columnName: 'Column1',
+          column: {
+            values: ['value 1'],
+            valueType: services.ValueTypeProvider.Primitives.Text,
+          },
+        },
+        {
+          columnName: 'Column2',
+          column: {
+            values: [20.2],
+            valueType: services.ValueTypeProvider.Primitives.Decimal,
+          },
+        },
+      ],
+      1,
+    );
+    const result = await parseAndExecuteExecutor(text, inputTable);
+
+    expect(R.isErr(result)).toEqual(false);
+    if (R.isOk(result)) {
+      expect(result.right.ioType).toEqual(IOType.NONE);
+      const expectedOutput = `Column1,Column2
+value 1, 20.2`;
+      const actualOutput = fs.readFileSync('test.csv');
+      expect(expectedOutput).toEqual(actualOutput);
+    }
+  });
+
+  it('should diagnose no error on loader config with only necessary properties', async () => {
+    const text = readJvTestAsset('needed-only-csv-file-loader.jv');
 
     const inputTable = constructTable(
       [
