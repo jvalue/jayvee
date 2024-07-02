@@ -3,13 +3,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import assert from 'assert';
-
-import { pipeline } from 'stream/promises';
+import { writeFile } from 'node:fs';
+import { promisify } from 'node:util';
 
 import {
   type FormatterOptionsArgs,
   type Row,
   writeToPath as writeCSVToPath,
+  writeToBuffer as writeToCSVBuffer,
 } from '@fast-csv/format';
 import * as R from '@jvalue/jayvee-execution';
 import {
@@ -23,6 +24,8 @@ import {
   IOType,
   type InternalValueRepresentation,
 } from '@jvalue/jayvee-language-server';
+
+const writeFilePromise = promisify(writeFile);
 
 @implementsStatic<BlockExecutorClass>()
 export class CSVFileLoaderExecutor extends AbstractBlockExecutor<
@@ -64,16 +67,15 @@ export class CSVFileLoaderExecutor extends AbstractBlockExecutor<
     };
 
     context.logger.logDebug(
-      `Writing csv using delimiter '${formatOptions.delimiter}', enclosing '${formatOptions.quote}' and escape '${formatOptions.escape}'`,
+      `Generating csv using delimiter '${formatOptions.delimiter}', enclosing '${formatOptions.quote}' and escape '${formatOptions.escape}'`,
     );
-    const stream = writeCSVToPath(file, toRows(table), formatOptions);
-    return new Promise(function (resolve, reject) {
-      stream.on('error', (e) => reject(e));
-      stream.on('end', () => {
-        context.logger.logDebug(`The data was successfully written to ${file}`);
-        resolve(R.ok(R.NONE));
-      });
-    });
+    const csv = await writeToCSVBuffer(toRows(table), formatOptions);
+
+    context.logger.logDebug(`Writing csv to file ${file}`);
+    await writeFilePromise(file, csv);
+    context.logger.logDebug(`The data was successfully written to ${file}`);
+
+    return R.ok(R.NONE);
   }
 }
 

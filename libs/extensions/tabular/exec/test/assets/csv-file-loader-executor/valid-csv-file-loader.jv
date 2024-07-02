@@ -6,7 +6,7 @@ pipeline TestPipeline {
 
 	block TestExtractor oftype TestFileExtractor { }
 
-	block TestBlock oftype CSVFileLoaderExecutor {
+	block TestBlock oftype CSVFileLoader {
 		file: "./test.csv";
 	}
 
