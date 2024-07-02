@@ -10,6 +10,7 @@ import {
 import { CellRangeSelectorExecutor } from './lib/cell-range-selector-executor';
 import { CellWriterExecutor } from './lib/cell-writer-executor';
 import { ColumnDeleterExecutor } from './lib/column-deleter-executor';
+import { CSVFileLoaderExecutor } from './lib/csv-file-loader-executor';
 import { CSVInterpreterExecutor } from './lib/csv-interpreter-executor';
 import { RowDeleterExecutor } from './lib/row-deleter-executor';
 import { SheetPickerExecutor } from './lib/sheet-picker-executor';
@@ -26,6 +27,7 @@ export class TabularExecExtension extends JayveeExecExtension {
       CellRangeSelectorExecutor,
       TableInterpreterExecutor,
       CSVInterpreterExecutor,
+      CSVFileLoaderExecutor,
       TableTransformerExecutor,
       XLSXInterpreterExecutor,
       SheetPickerExecutor,

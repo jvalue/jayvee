@@ -1,0 +1,44 @@
+// SPDX-FileCopyrightText: 2024 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+pipeline CSVExport {
+
+	CarsExtractor
+		-> CarsTextInterpreter
+		-> CarsCSVInterpreter
+		-> CarsTableInterpreter
+		-> CarsCSVLoader;
+
+	block CarsExtractor oftype LocalFileExtractor {
+		filePath: "/home/jonas/Downloads/cars.csv";
+	}
+
+	block CarsTextInterpreter oftype TextFileInterpreter { }
+
+	block CarsCSVInterpreter oftype CSVInterpreter {
+		enclosing: '"';
+	}
+
+	block CarsTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns: [
+			"name" oftype text,
+			"mpg" oftype decimal,
+			"cyl" oftype integer,
+			"disp" oftype decimal,
+			"hp" oftype integer,
+			"drat" oftype decimal,
+			"wt" oftype decimal,
+			"qsec" oftype decimal,
+			"vs" oftype integer,
+			"am" oftype integer,
+			"gear" oftype integer,
+			"carb" oftype integer
+		];
+	}
+
+	block CarsCSVLoader oftype CSVFileLoader {
+		file: "cars.csv";
+	}
+}
