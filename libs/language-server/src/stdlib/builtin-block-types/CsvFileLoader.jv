@@ -15,7 +15,9 @@ publish builtin blocktype CSVFileLoader {
 	output default oftype None;
 
 	/**
-	* The path to a CSV file that will be created if it does not exist. The usual file extension is `.csv`.
+	* The path to a CSV file that will be created if it does not exist.
+	* IF THE FILE ALREADY EXISTS, IT WILL BE OVERWRITTEN
+	* The usual file extension is `.csv`.
 	*/
 	property file oftype text;
 
