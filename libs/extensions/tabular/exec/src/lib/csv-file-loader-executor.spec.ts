@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import * as fs from 'node:fs';
 import path from 'node:path';
 
 import * as R from '@jvalue/jayvee-execution';
@@ -76,6 +77,12 @@ describe('Validation of CSVFileLoaderExecutor', () => {
   });
   afterEach(() => {
     vi.clearAllMocks();
+    try {
+      fs.unlinkSync('test.csv');
+    } catch {
+      // INFO: This catch block is empty because the try block is just for cleanup
+      // operations. If it fails, execution can continue
+    }
   });
 
   it('should diagnose no error on valid loader config', async () => {
@@ -105,7 +112,10 @@ describe('Validation of CSVFileLoaderExecutor', () => {
     expect(R.isErr(result)).toEqual(false);
     if (R.isOk(result)) {
       expect(result.right.ioType).toEqual(IOType.NONE);
-      // FIXME: Check that the resulting csv is valid
+      const expectedOutput = `Column1,Column2
+value 1, 20.2`;
+      const actualOutput = fs.readFileSync('test.csv');
+      expect(expectedOutput).toEqual(actualOutput);
     }
   });
 });

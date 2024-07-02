@@ -8,6 +8,9 @@ pipeline TestPipeline {
 
 	block TestBlock oftype CSVFileLoaderExecutor {
 		file: "./test.csv";
+		delimiter: ',';
+		enclosing: '';
+		enclosingEscape: '';
 	}
 
 	TestExtractor
