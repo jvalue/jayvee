@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import * as fsPromise from 'node:fs/promises';
 import path from 'node:path';
-import * as fsPromise from 'fs/promises';
 
 import * as R from '@jvalue/jayvee-execution';
 import {
@@ -29,8 +29,8 @@ import {
   type LangiumDocument,
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
-import { vi } from 'vitest';
 import { vol } from 'memfs';
+import { vi } from 'vitest';
 
 import { CSVFileLoaderExecutor } from './csv-file-loader-executor';
 
@@ -112,9 +112,9 @@ describe('Validation of CSVFileLoaderExecutor', () => {
     if (R.isOk(result)) {
       expect(result.right.ioType).toEqual(IOType.NONE);
       const expectedOutput = `Column1,Column2
-value 1, 20.2`;
+value 1,20.2`;
       const actualOutput = await fsPromise.readFile('test.csv');
-      expect(actualOutput).toEqual(expectedOutput);
+      expect(actualOutput.toString()).toEqual(expectedOutput);
     }
   });
 });

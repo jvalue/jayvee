@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+// eslint-disable-next-line unicorn/prefer-node-protocol
 import assert from 'assert';
 import * as fsPromise from 'node:fs/promises';
 
