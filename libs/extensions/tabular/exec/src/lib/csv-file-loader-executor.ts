@@ -3,13 +3,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import assert from 'assert';
-import { writeFile } from 'node:fs';
-import { promisify } from 'node:util';
+import * as fsPromise from 'node:fs/promises';
 
 import {
   type FormatterOptionsArgs,
   type Row,
-  writeToPath as writeCSVToPath,
   writeToBuffer as writeToCSVBuffer,
 } from '@fast-csv/format';
 import * as R from '@jvalue/jayvee-execution';
@@ -24,8 +22,6 @@ import {
   IOType,
   type InternalValueRepresentation,
 } from '@jvalue/jayvee-language-server';
-
-const writeFilePromise = promisify(writeFile);
 
 @implementsStatic<BlockExecutorClass>()
 export class CSVFileLoaderExecutor extends AbstractBlockExecutor<
@@ -72,7 +68,7 @@ export class CSVFileLoaderExecutor extends AbstractBlockExecutor<
     const csv = await writeToCSVBuffer(toRows(table), formatOptions);
 
     context.logger.logDebug(`Writing csv to file ${file}`);
-    await writeFilePromise(file, csv);
+    await fsPromise.writeFile(file, csv);
     context.logger.logDebug(`The data was successfully written to ${file}`);
 
     return R.ok(R.NONE);

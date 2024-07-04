@@ -90,6 +90,7 @@
     "eslint-plugin-vitest": "^0.5.4",
     "jest-environment-jsdom": "^29.7.0",
     "langium-cli": "^3.0.0",
+    "memfs": "^4.9.3",
     "nock": "13.3.1",
     "nx": "18.0.1",
     "prettier": "^2.8.7",

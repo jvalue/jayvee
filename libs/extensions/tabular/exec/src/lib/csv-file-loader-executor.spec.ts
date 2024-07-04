@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as fs from 'node:fs';
 import path from 'node:path';
+import * as fsPromise from 'fs/promises';
 
 import * as R from '@jvalue/jayvee-execution';
 import {
@@ -30,6 +30,7 @@ import {
 } from 'langium';
 import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
+import { vol } from 'memfs';
 
 import { CSVFileLoaderExecutor } from './csv-file-loader-executor';
 
@@ -75,14 +76,12 @@ describe('Validation of CSVFileLoaderExecutor', () => {
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
   });
+  beforeEach(() => {
+    // NOTE: The virtual filesystem is reset before each test
+    vol.reset();
+  });
   afterEach(() => {
     vi.clearAllMocks();
-    try {
-      fs.unlinkSync('test.csv');
-    } catch {
-      // INFO: This catch block is empty because the try block is just for cleanup
-      // operations. If it fails, execution can continue
-    }
   });
 
   it('should diagnose no error on valid loader config', async () => {
@@ -114,8 +113,8 @@ describe('Validation of CSVFileLoaderExecutor', () => {
       expect(result.right.ioType).toEqual(IOType.NONE);
       const expectedOutput = `Column1,Column2
 value 1, 20.2`;
-      const actualOutput = fs.readFileSync('test.csv');
-      expect(expectedOutput).toEqual(actualOutput);
+      const actualOutput = await fsPromise.readFile('test.csv');
+      expect(actualOutput).toEqual(expectedOutput);
     }
   });
 });
