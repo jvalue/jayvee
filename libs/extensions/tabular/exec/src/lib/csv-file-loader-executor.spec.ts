@@ -92,7 +92,7 @@ describe('Validation of CSVFileLoaderExecutor', () => {
         {
           columnName: 'Column1',
           column: {
-            values: ['value 1'],
+            values: ['somestring'],
             valueType: services.ValueTypeProvider.Primitives.Text,
           },
         },
@@ -112,7 +112,94 @@ describe('Validation of CSVFileLoaderExecutor', () => {
     if (R.isOk(result)) {
       expect(result.right.ioType).toEqual(IOType.NONE);
       const expectedOutput = `Column1,Column2
-value 1,20.2`;
+somestring,20.2`;
+      const actualOutput = await fsPromise.readFile('test.csv');
+      expect(actualOutput.toString()).toEqual(expectedOutput);
+    }
+  });
+  it('should handle all allowed jayvee representations', async () => {
+    const text = readJvTestAsset('valid-csv-file-loader.jv');
+
+    const inputTable = constructTable(
+      [
+        {
+          columnName: 'Strings',
+          column: {
+            values: ['somestring'],
+            valueType: services.ValueTypeProvider.Primitives.Text,
+          },
+        },
+        {
+          columnName: 'Decimals',
+          column: {
+            values: [20.2],
+            valueType: services.ValueTypeProvider.Primitives.Decimal,
+          },
+        },
+        {
+          columnName: 'Booleans',
+          column: {
+            values: [true],
+            valueType: services.ValueTypeProvider.Primitives.Boolean,
+          },
+        },
+        {
+          columnName: 'Integers',
+          column: {
+            values: [-10],
+            valueType: services.ValueTypeProvider.Primitives.Integer,
+          },
+        },
+      ],
+      1,
+    );
+    const result = await parseAndExecuteExecutor(text, inputTable);
+
+    expect(R.isErr(result)).toEqual(false);
+    if (R.isOk(result)) {
+      expect(result.right.ioType).toEqual(IOType.NONE);
+      const expectedOutput = `Strings,Decimals,Booleans,Integers
+somestring,20.2,true,-10`;
+      const actualOutput = await fsPromise.readFile('test.csv');
+      expect(actualOutput.toString()).toEqual(expectedOutput);
+    }
+  });
+  it('should diagnose no error with user definded properties', async () => {
+    const text = readJvTestAsset('escaping-csv-file-loader.jv');
+
+    const inputTable = constructTable(
+      [
+        {
+          columnName: 'Quoted',
+          column: {
+            values: ['quoted;'],
+            valueType: services.ValueTypeProvider.Primitives.Text,
+          },
+        },
+        {
+          columnName: 'Escaped',
+          column: {
+            values: ['escaped"'],
+            valueType: services.ValueTypeProvider.Primitives.Text,
+          },
+        },
+        {
+          columnName: 'Regular',
+          column: {
+            values: ['regular'],
+            valueType: services.ValueTypeProvider.Primitives.Boolean,
+          },
+        },
+      ],
+      1,
+    );
+    const result = await parseAndExecuteExecutor(text, inputTable);
+
+    expect(R.isErr(result)).toEqual(false);
+    if (R.isOk(result)) {
+      expect(result.right.ioType).toEqual(IOType.NONE);
+      const expectedOutput = `Quoted;Escaped;Regular
+"quoted;";"escaped\\"";regular`;
       const actualOutput = await fsPromise.readFile('test.csv');
       expect(actualOutput.toString()).toEqual(expectedOutput);
     }
