@@ -2,7 +2,11 @@
   "extends": ["../../../../.eslintrc.json"],
   "ignorePatterns": ["!**/*"],
   "parserOptions": {
-    "project": ["libs/extensions/tabular/exec/tsconfig.lib.json", "libs/extensions/tabular/exec/tsconfig.spec.json"]
+    "project": [
+      "libs/extensions/tabular/exec/tsconfig.lib.json",
+      "libs/extensions/tabular/exec/tsconfig.spec.json",
+      "libs/extensions/tabular/exec/tsconfig.mock.json"
+    ]
   },
   "overrides": [
     {
