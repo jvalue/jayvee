@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { processExitMockImplementation } from '@jvalue/jayvee-execution/test';
 import {
@@ -10,11 +11,6 @@ import {
   SQLiteLoaderExecutorMock,
 } from '@jvalue/jayvee-extensions/rdbms/test';
 import { HttpExtractorExecutorMock } from '@jvalue/jayvee-extensions/std/test';
-import {
-  createJayveeServices,
-  initializeWorkspace,
-} from '@jvalue/jayvee-language-server';
-import { NodeFileSystem } from 'langium/node';
 import nock from 'nock';
 import { type MockInstance, vi } from 'vitest';
 
@@ -44,9 +40,22 @@ vi.mock('sqlite3', () => {
   };
 });
 
-describe('jv example smoke tests', () => {
-  const baseDir = path.resolve(__dirname, '../../../example/');
+// simulate as if we were starting the jv cli in the example dir
+vi.mock('./current-dir', () => {
+  const currentDirMock = () =>
+    path.join(
+      path.dirname(fileURLToPath(import.meta.url)), // relative to this test file
+      '..',
+      '..',
+      '..',
+      'example',
+    );
+  return {
+    getCurrentDir: currentDirMock,
+  };
+});
 
+describe('jv example smoke tests', () => {
   const defaultOptions: RunOptions = {
     pipeline: '.*',
     env: new Map<string, string>(),
@@ -61,10 +70,7 @@ describe('jv example smoke tests', () => {
   let postgresLoaderMock: PostgresLoaderExecutorMock;
   let sqliteLoaderMock: SQLiteLoaderExecutorMock;
 
-  beforeAll(async () => {
-    const services = createJayveeServices(NodeFileSystem).Jayvee;
-    await initializeWorkspace(services);
-
+  beforeAll(() => {
     exitSpy = vi
       .spyOn(process, 'exit')
       .mockImplementation(processExitMockImplementation);
@@ -99,7 +105,7 @@ describe('jv example smoke tests', () => {
     });
     sqliteLoaderMock.setup();
 
-    await runAction(path.resolve(baseDir, 'cars.jv'), {
+    await runAction('cars.jv', {
       ...defaultOptions,
     });
 
@@ -131,7 +137,7 @@ describe('jv example smoke tests', () => {
     postgresLoaderMock.setup();
     sqliteLoaderMock.setup();
 
-    await runAction(path.resolve(baseDir, 'electric-vehicles.jv'), {
+    await runAction('electric-vehicles.jv', {
       ...defaultOptions,
       env: new Map<string, string>([
         ['DB_HOST', 'mock'],
@@ -194,7 +200,7 @@ describe('jv example smoke tests', () => {
     });
     sqliteLoaderMock.setup();
 
-    await runAction(path.resolve(baseDir, 'gtfs-rt.jv'), {
+    await runAction('gtfs-rt.jv', {
       ...defaultOptions,
     });
 
@@ -222,7 +228,7 @@ describe('jv example smoke tests', () => {
     });
     sqliteLoaderMock.setup();
 
-    await runAction(path.resolve(baseDir, 'gtfs-static.jv'), {
+    await runAction('gtfs-static.jv', {
       ...defaultOptions,
     });
 
