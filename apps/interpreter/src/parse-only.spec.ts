@@ -6,25 +6,19 @@ import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 
-import {
-  type RunOptions,
-  interpretModel,
-  interpretString,
-} from '@jvalue/jayvee-interpreter-lib';
-import { vi } from 'vitest';
+import { type JayveeInterpreter } from '@jvalue/jayvee-interpreter-lib';
 
 import { runAction } from './run-action';
+import { type RunOptions } from './run-options';
 
-vi.mock('@jvalue/jayvee-interpreter-lib', async () => {
-  const original: object = await vi.importActual(
-    '@jvalue/jayvee-interpreter-lib',
-  );
-  return {
-    ...original,
-    interpretModel: vi.fn(),
-    interpretString: vi.fn(),
-  };
-});
+const interpreterMock: JayveeInterpreter = {
+  interpretModel: vi.fn(),
+  interpretFile: vi.fn(),
+  interpretString: vi.fn(),
+  parseModel: vi.fn(),
+};
+
+vi.stubGlobal('DefaultJayveeInterpreter', interpreterMock);
 
 describe('Parse Only', () => {
   const pathToValidModel = path.resolve(__dirname, '../../../example/cars.jv');
@@ -34,16 +28,18 @@ describe('Parse Only', () => {
   );
 
   const defaultOptions: RunOptions = {
+    pipeline: '.*',
     env: new Map<string, string>(),
     debug: false,
     debugGranularity: 'minimal',
-    debugTarget: undefined,
+    debugTarget: 'all',
+    parseOnly: false,
   };
 
   afterEach(() => {
     // Assert that model is not executed
-    expect(interpretString).not.toBeCalled();
-    expect(interpretModel).not.toBeCalled();
+    expect(interpreterMock.interpretString).not.toBeCalled();
+    expect(interpreterMock.interpretModel).not.toBeCalled();
   });
 
   beforeEach(() => {

@@ -22,12 +22,12 @@ export enum ExitCode {
  * Does load the directory of this document as the working directory.
  */
 export async function extractDocumentFromFile(
-  fileName: string,
+  filePath: string,
   services: LangiumServices,
   logger: Logger,
 ): Promise<LangiumDocument> {
   const extensions = services.LanguageMetaData.fileExtensions;
-  if (!extensions.includes(path.extname(fileName))) {
+  if (!extensions.includes(path.extname(filePath))) {
     const errorMessage = `Please choose a file with ${
       extensions.length === 1 ? 'this extension' : 'one of these extensions'
     }: ${extensions.map((extension) => `"${extension}"`).join(',')}`;
@@ -36,12 +36,12 @@ export async function extractDocumentFromFile(
     return Promise.reject(ExitCode.FAILURE);
   }
 
-  if (!fs.existsSync(fileName)) {
-    logger.logErr(`File ${fileName} does not exist.`);
+  if (!fs.existsSync(filePath)) {
+    logger.logErr(`File ${filePath} does not exist.`);
     return Promise.reject(ExitCode.FAILURE);
   }
 
-  const workingDirPath = path.dirname(fileName);
+  const workingDirPath = path.dirname(filePath);
 
   await initializeWorkspace(services, [
     {
@@ -51,10 +51,10 @@ export async function extractDocumentFromFile(
   ]);
 
   const document = services.shared.workspace.LangiumDocuments.getDocument(
-    URI.file(path.resolve(fileName)),
+    URI.file(path.resolve(filePath)),
   );
   if (document === undefined) {
-    logger.logErr(`Did not load file ${fileName} correctly.`);
+    logger.logErr(`Did not load file ${filePath} correctly.`);
     return Promise.reject(ExitCode.FAILURE);
   }
 
@@ -112,11 +112,11 @@ export async function validateDocument(
 }
 
 export async function extractAstNodeFromFile<T extends AstNode>(
-  fileName: string,
+  filePath: string,
   services: LangiumServices,
   logger: Logger,
 ): Promise<T> {
-  return (await extractDocumentFromFile(fileName, services, logger)).parseResult
+  return (await extractDocumentFromFile(filePath, services, logger)).parseResult
     .value as T;
 }
 

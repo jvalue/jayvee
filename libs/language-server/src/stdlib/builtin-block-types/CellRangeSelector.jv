@@ -15,7 +15,7 @@ publish builtin blocktype CellRangeSelector {
 	output default oftype Sheet;
 	
 	/**
-	* The cell range to select.
+	* The cell range to select. See <https://jvalue.github.io/jayvee/docs/user/cell-range>.
 	*/
 	property select oftype CellRange;
 }

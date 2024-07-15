@@ -5,16 +5,16 @@
 // eslint-disable-next-line unicorn/prefer-node-protocol
 import { strict as assert } from 'assert';
 
-import * as R from '@jvalue/jayvee-execution';
 import {
   type DebugGranularity,
+  type DebugTargets,
   DefaultConstraintExtension,
   ExecutionContext,
   type JayveeConstraintExtension,
   type JayveeExecExtension,
   type Logger,
   executeBlocks,
-  isDebugGranularity,
+  isErr,
   logExecutionDuration,
   parseValueToInternalRepresentation,
 } from '@jvalue/jayvee-execution';
@@ -34,221 +34,246 @@ import chalk from 'chalk';
 import { NodeFileSystem } from 'langium/node';
 
 import { LoggerFactory } from './logging';
-import { ExitCode, extractAstNodeFromString } from './parsing-util';
+import {
+  ExitCode,
+  extractAstNodeFromFile,
+  extractAstNodeFromString,
+} from './parsing-util';
 import { validateRuntimeParameterLiteral } from './validation-checks';
 
-interface InterpreterOptions {
-  debugGranularity: R.DebugGranularity;
-  debugTargets: R.DebugTargets;
-  debug: boolean;
-}
-
-export interface RunOptions {
+export interface InterpreterOptions {
+  pipelineMatcher: (pipelineDefinition: PipelineDefinition) => boolean;
   env: Map<string, string>;
   debug: boolean;
-  debugGranularity: string;
-  debugTarget: string | undefined;
-  parseOnly?: boolean;
+  debugGranularity: DebugGranularity;
+  debugTarget: DebugTargets;
 }
 
-export async function interpretString(
-  modelString: string,
-  options: RunOptions,
-): Promise<ExitCode> {
-  const extractAstNodeFn = async (
-    services: JayveeServices,
-    loggerFactory: LoggerFactory,
-  ) =>
-    await extractAstNodeFromString<JayveeModel>(
-      modelString,
-      services,
-      loggerFactory.createLogger(),
+export interface JayveeInterpreter {
+  /**
+   * Interprets a parsed Jayvee model.
+   *
+   * @param extractAstNodeFn the Jayvee model.
+   * @returns the exit code indicating whether interpretation was successful or not.
+   */
+  interpretModel(model: JayveeModel): Promise<ExitCode>;
+
+  /**
+   * Interprets a file as a Jayvee model.
+   * Parses the file first as a Jayvee model.
+   *
+   * @param filePath the file path to the Jayvee model.
+   * @returns the exit code indicating whether interpretation was successful or not.
+   */
+  interpretFile(filePath: string): Promise<ExitCode>;
+
+  /**
+   * Interprets a string as a Jayvee model.
+   * Parses the string first as a Jayvee model.
+   *
+   * @param modelString the Jayvee model string.
+   * @returns the exit code indicating whether interpretation was successful or not.
+   */
+  interpretString(modelString: string): Promise<ExitCode>;
+
+  /**
+   * Parses a model without executing it.
+   * Also sets up the environment so that the model can be properly executed.
+   *
+   * @param extractAstNodeFn method that extracts the AST node; should also initialize the workspace correctly.
+   * @returns the parsed Jayvee model, or undefined on failure.
+   */
+  parseModel(
+    extractAstNodeFn: (
+      services: JayveeServices,
+      loggerFactory: LoggerFactory,
+    ) => Promise<JayveeModel>,
+  ): Promise<JayveeModel | undefined>;
+}
+
+export class DefaultJayveeInterpreter implements JayveeInterpreter {
+  private readonly services: JayveeServices;
+  private readonly loggerFactory: LoggerFactory;
+
+  constructor(private readonly options: InterpreterOptions) {
+    this.services = createJayveeServices(NodeFileSystem).Jayvee;
+    this.setupJayveeServices(this.services, this.options.env);
+
+    this.loggerFactory = new LoggerFactory(options.debug);
+  }
+
+  async interpretModel(model: JayveeModel): Promise<ExitCode> {
+    const interpretationExitCode = await this.interpretJayveeModel(
+      model,
+      new StdExecExtension(),
+      new DefaultConstraintExtension(),
     );
-  return await interpretModel(extractAstNodeFn, options);
-}
+    return interpretationExitCode;
+  }
 
-/**
- * Parses a model without executing it.
- * Also sets up the environment so that the model can be properly executed.
- *
- * @param extractAstNodeFn method that extracts the AST node; should also initialize the workspace correctly.
- * @returns non-null model, services and loggerFactory on success.
- */
-export async function parseModel(
-  extractAstNodeFn: (
-    services: JayveeServices,
-    loggerFactory: LoggerFactory,
-  ) => Promise<JayveeModel>,
-  options: RunOptions,
-): Promise<{
-  model: JayveeModel | null;
-  loggerFactory: LoggerFactory;
-  services: JayveeServices | null;
-}> {
-  let services: JayveeServices | null = null;
-  let model: JayveeModel | null = null;
-  const loggerFactory = new LoggerFactory(options.debug);
-  if (!isDebugGranularity(options.debugGranularity)) {
-    loggerFactory
-      .createLogger()
-      .logErr(
-        `Unknown value "${options.debugGranularity}" for debug granularity option: -dg --debug-granularity.\n` +
-          `Please use one of the following values: ${R.DebugGranularityValues.join(
-            ', ',
-          )}.`,
+  async interpretFile(filePath: string): Promise<ExitCode> {
+    const extractAstNodeFn = async (
+      services: JayveeServices,
+      loggerFactory: LoggerFactory,
+    ) =>
+      await extractAstNodeFromFile<JayveeModel>(
+        filePath,
+        services,
+        loggerFactory.createLogger(),
       );
-    return { model, services, loggerFactory };
+
+    const model = await this.parseModel(extractAstNodeFn);
+    if (model === undefined) {
+      return ExitCode.FAILURE;
+    }
+
+    return await this.interpretModel(model);
   }
 
-  services = createJayveeServices(NodeFileSystem).Jayvee;
-  setupJayveeServices(services, options.env);
+  async interpretString(modelString: string): Promise<ExitCode> {
+    const extractAstNodeFn = async (
+      services: JayveeServices,
+      loggerFactory: LoggerFactory,
+    ) =>
+      await extractAstNodeFromString<JayveeModel>(
+        modelString,
+        services,
+        loggerFactory.createLogger(),
+      );
 
-  try {
-    model = await extractAstNodeFn(services, loggerFactory);
-    return { model, services, loggerFactory };
-  } catch (e) {
-    loggerFactory
-      .createLogger()
-      .logErr('Could not extract the AST node of the given model.');
-    return { model, services, loggerFactory };
+    const model = await this.parseModel(extractAstNodeFn);
+    if (model === undefined) {
+      return ExitCode.FAILURE;
+    }
+
+    return await this.interpretModel(model);
   }
-}
 
-export async function interpretModel(
-  extractAstNodeFn: (
+  async parseModel(
+    extractAstNodeFn: (
+      services: JayveeServices,
+      loggerFactory: LoggerFactory,
+    ) => Promise<JayveeModel>,
+  ): Promise<JayveeModel | undefined> {
+    try {
+      const model = await extractAstNodeFn(this.services, this.loggerFactory);
+      return model;
+    } catch (e) {
+      this.loggerFactory
+        .createLogger()
+        .logErr('Could not extract the AST node of the given model.');
+      return undefined;
+    }
+  }
+
+  private setupJayveeServices(
     services: JayveeServices,
-    loggerFactory: LoggerFactory,
-  ) => Promise<JayveeModel>,
-  options: RunOptions,
-): Promise<ExitCode> {
-  const { model, services, loggerFactory } = await parseModel(
-    extractAstNodeFn,
-    options,
-  );
+    rawRuntimeParameters: ReadonlyMap<string, string>,
+  ) {
+    this.setupRuntimeParameterProvider(
+      services.RuntimeParameterProvider,
+      rawRuntimeParameters,
+    );
 
-  if (model == null || services == null) {
-    return ExitCode.FAILURE;
+    services.validation.ValidationRegistry.registerJayveeValidationChecks({
+      RuntimeParameterLiteral: validateRuntimeParameterLiteral,
+    });
   }
 
-  const debugTargets = getDebugTargets(options.debugTarget);
+  private setupRuntimeParameterProvider(
+    runtimeParameterProvider: RuntimeParameterProvider,
+    rawRuntimeParameters: ReadonlyMap<string, string>,
+  ) {
+    runtimeParameterProvider.setValueParser(parseValueToInternalRepresentation);
 
-  const interpretationExitCode = await interpretJayveeModel(
-    model,
-    new StdExecExtension(),
-    new DefaultConstraintExtension(),
-    services,
-    loggerFactory,
-    {
-      debug: options.debug,
-      // type of options.debugGranularity is asserted in parseModel
-      debugGranularity: options.debugGranularity as DebugGranularity,
-      debugTargets: debugTargets,
-    },
-  );
-  return interpretationExitCode;
-}
-
-function setupJayveeServices(
-  services: JayveeServices,
-  rawRuntimeParameters: ReadonlyMap<string, string>,
-) {
-  setupRuntimeParameterProvider(
-    services.RuntimeParameterProvider,
-    rawRuntimeParameters,
-  );
-
-  services.validation.ValidationRegistry.registerJayveeValidationChecks({
-    RuntimeParameterLiteral: validateRuntimeParameterLiteral,
-  });
-}
-
-function setupRuntimeParameterProvider(
-  runtimeParameterProvider: RuntimeParameterProvider,
-  rawRuntimeParameters: ReadonlyMap<string, string>,
-) {
-  runtimeParameterProvider.setValueParser(parseValueToInternalRepresentation);
-
-  for (const [key, value] of rawRuntimeParameters.entries()) {
-    runtimeParameterProvider.setValue(key, value);
+    for (const [key, value] of rawRuntimeParameters.entries()) {
+      runtimeParameterProvider.setValue(key, value);
+    }
   }
-}
 
-async function interpretJayveeModel(
-  model: JayveeModel,
-  executionExtension: JayveeExecExtension,
-  constraintExtension: JayveeConstraintExtension,
-  jayveeServices: JayveeServices,
-  loggerFactory: LoggerFactory,
-  runOptions: InterpreterOptions,
-): Promise<ExitCode> {
-  const pipelineRuns: Promise<ExitCode>[] = model.pipelines.map((pipeline) => {
-    return runPipeline(
+  private async interpretJayveeModel(
+    model: JayveeModel,
+    executionExtension: JayveeExecExtension,
+    constraintExtension: JayveeConstraintExtension,
+  ): Promise<ExitCode> {
+    const selectedPipelines = model.pipelines.filter((pipeline) =>
+      this.options.pipelineMatcher(pipeline),
+    );
+    this.loggerFactory
+      .createLogger()
+      .logInfo(
+        `Found ${selectedPipelines.length} pipelines to execute${
+          selectedPipelines.length > 0
+            ? ': ' + selectedPipelines.map((p) => p.name).join(', ')
+            : ''
+        }`,
+      );
+
+    const pipelineRuns: Promise<ExitCode>[] = selectedPipelines.map(
+      (pipeline) => {
+        return this.runPipeline(
+          pipeline,
+          executionExtension,
+          constraintExtension,
+        );
+      },
+    );
+    const exitCodes = await Promise.all(pipelineRuns);
+
+    if (exitCodes.includes(ExitCode.FAILURE)) {
+      return ExitCode.FAILURE;
+    }
+    return ExitCode.SUCCESS;
+  }
+
+  private async runPipeline(
+    pipeline: PipelineDefinition,
+    executionExtension: JayveeExecExtension,
+    constraintExtension: JayveeConstraintExtension,
+  ): Promise<ExitCode> {
+    const executionContext = new ExecutionContext(
       pipeline,
       executionExtension,
       constraintExtension,
-      jayveeServices,
-      loggerFactory,
-      runOptions,
+      this.loggerFactory.createLogger(),
+      this.services.WrapperFactories,
+      this.services.ValueTypeProvider,
+      {
+        isDebugMode: this.options.debug,
+        debugGranularity: this.options.debugGranularity,
+        debugTargets: this.options.debugTarget,
+      },
+      new EvaluationContext(
+        this.services.RuntimeParameterProvider,
+        this.services.operators.EvaluatorRegistry,
+        this.services.ValueTypeProvider,
+      ),
     );
-  });
-  const exitCodes = await Promise.all(pipelineRuns);
 
-  if (exitCodes.includes(ExitCode.FAILURE)) {
-    return ExitCode.FAILURE;
-  }
-  return ExitCode.SUCCESS;
-}
-
-async function runPipeline(
-  pipeline: PipelineDefinition,
-  executionExtension: JayveeExecExtension,
-  constraintExtension: JayveeConstraintExtension,
-  jayveeServices: JayveeServices,
-  loggerFactory: LoggerFactory,
-  runOptions: InterpreterOptions,
-): Promise<ExitCode> {
-  const executionContext = new ExecutionContext(
-    pipeline,
-    executionExtension,
-    constraintExtension,
-    loggerFactory.createLogger(),
-    jayveeServices.WrapperFactories,
-    jayveeServices.ValueTypeProvider,
-    {
-      isDebugMode: runOptions.debug,
-      debugGranularity: runOptions.debugGranularity,
-      debugTargets: runOptions.debugTargets,
-    },
-    new EvaluationContext(
-      jayveeServices.RuntimeParameterProvider,
-      jayveeServices.operators.EvaluatorRegistry,
-      jayveeServices.ValueTypeProvider,
-    ),
-  );
-
-  logPipelineOverview(
-    pipeline,
-    jayveeServices.RuntimeParameterProvider,
-    executionContext.logger,
-    jayveeServices.WrapperFactories,
-  );
-
-  const startTime = new Date();
-
-  const executionResult = await executeBlocks(executionContext, pipeline);
-
-  if (R.isErr(executionResult)) {
-    const diagnosticError = executionResult.left;
-    executionContext.logger.logErrDiagnostic(
-      diagnosticError.message,
-      diagnosticError.diagnostic,
+    logPipelineOverview(
+      pipeline,
+      this.services.RuntimeParameterProvider,
+      executionContext.logger,
+      this.services.WrapperFactories,
     );
+
+    const startTime = new Date();
+
+    const executionResult = await executeBlocks(executionContext, pipeline);
+
+    if (isErr(executionResult)) {
+      const diagnosticError = executionResult.left;
+      executionContext.logger.logErrDiagnostic(
+        diagnosticError.message,
+        diagnosticError.diagnostic,
+      );
+      logExecutionDuration(startTime, executionContext.logger);
+      return ExitCode.FAILURE;
+    }
+
     logExecutionDuration(startTime, executionContext.logger);
-    return ExitCode.FAILURE;
+    return ExitCode.SUCCESS;
   }
-
-  logExecutionDuration(startTime, executionContext.logger);
-  return ExitCode.SUCCESS;
 }
 
 export function logPipelineOverview(
@@ -292,15 +317,4 @@ export function logPipelineOverview(
     linesBuffer.push(toString(block, 1));
   }
   logger.logInfo(linesBuffer.join('\n'));
-}
-
-function getDebugTargets(
-  debugTargetsString: string | undefined,
-): R.DebugTargets {
-  const areAllBlocksTargeted = debugTargetsString === undefined;
-  if (areAllBlocksTargeted) {
-    return R.DefaultDebugTargetsValue;
-  }
-
-  return debugTargetsString.split(',').map((target) => target.trim());
 }

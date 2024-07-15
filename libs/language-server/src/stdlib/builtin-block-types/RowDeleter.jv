@@ -15,7 +15,7 @@ publish builtin blocktype RowDeleter {
 	output default oftype Sheet;
 	
 	/**
-	* The rows to delete.
+	* The rows to delete. See <https://jvalue.github.io/jayvee/docs/user/cell-range>.
 	*/
 	property delete oftype Collection<CellRange>;
 }

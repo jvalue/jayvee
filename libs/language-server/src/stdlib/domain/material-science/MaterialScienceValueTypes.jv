@@ -1,0 +1,55 @@
+// SPDX-FileCopyrightText: 2024 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+constraint DOIFormat on text: value matches /\b10\.\d{4}\/[^\s]+\b/;
+/**
+* DOI Format has been constrained by a standard pattern, eg: 10.1007/xxxx
+* The `DOIStandardizer` block can remove common prefixes to this pattern, with the result matching this format.
+*/
+publish valuetype DOI oftype text {
+	constraints: [
+		DOIFormat
+	];
+}
+
+constraint DateFormatYYYYMMDDRegex on text: value matches /\d{4}-\d{2}-\d{2}/;
+/** DateFormat as YYYY-MM-DD */
+publish valuetype DateYYYYMMDD oftype text {
+	constraints: [
+		DateFormatYYYYMMDDRegex
+	];
+}
+
+constraint SiUnitConstraint on text: value matches /\b((Second|Metre|Kilogram|Ampere|Kelvin|Mole|Candela)+\^\(\d+(\.\d+)?\|\-\d+(\.\d+)?\)+\s)*\b/;
+/** Constraining the Unit column to be of a specific format like "Second^(1.0)", "Ampere^(1.0)" or "Candela^(1.0)". */
+publish valuetype SiUnit oftype text {
+	constraints: [
+		SiUnitConstraint
+	];
+}
+
+constraint PressureUnitPascalConstraint on text: value matches /\b(Pascal\^\(\d+(\.\d+)?\|\-\d+(\.\d+)?\)+\s)*\b/;
+/** Constrains Pressure units to be Pascal^(x). */
+publish valuetype PressureUnitPascal oftype text {
+	constraints: [
+		PressureUnitPascalConstraint
+	];
+}
+
+constraint LengthUnitMeterConstraint on text: value matches /\b(Meter\^\(\d+(\.\d+)?\|\-\d+(\.\d+)?\)+\s)*\b/;
+/** Constrains Length units to be Meter^(x). */
+publish valuetype LengthUnitMeter oftype text {
+	constraints: [
+		LengthUnitMeterConstraint
+	];
+}
+
+
+constraint TemperatureUnitKelvinConstraint on text: value matches /\b(Kelvin\^\(\d+(\.\d+)?\|\-\d+(\.\d+)?\)+\s)*\b/;
+/** Constrains Temperature units to be Kelvin^(x). */
+publish valuetype TemperatureUnitKelvin oftype text {
+	constraints: [
+		TemperatureUnitKelvinConstraint
+	];
+}

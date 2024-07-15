@@ -23,7 +23,11 @@
         "generatePackageJson": true
       },
       "configurations": {
-        "development": {},
+        "development": {
+          "esbuildOptions": {
+            "sourcemap": true
+          }
+        },
         "production": {}
       }
     },

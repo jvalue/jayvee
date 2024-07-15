@@ -1,0 +1,98 @@
+// SPDX-FileCopyrightText: 2024 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/** Transformer to standardize DOI references and remove dx.doi.org/ */
+publish transform RemoveDxDotDoiDotOrg {
+	from valueWithDxDotDoiDotOrg oftype text;
+	to valueWithoutDxDotDoiDotOrg oftype text;
+
+	valueWithoutDxDotDoiDotOrg: valueWithDxDotDoiDotOrg replace /\b(dx\.doi\.org\/)\b/ with "";
+}
+
+/** Transformer to standardize DOI references and remove http://dx.doi.org/ */
+publish transform RemoveHttpDxDotDoiDotOrg {
+	from valueWithHttpDxDotDoiDotOrg oftype text;
+	to valueWithoutHttpDxDotDoiDotOrg oftype text;
+
+	valueWithoutHttpDxDotDoiDotOrg: valueWithHttpDxDotDoiDotOrg replace /^http:\/\/dx\.doi\.org\/\b/ with "";
+}
+
+/** Transformer to standardize DOI references and remove http:// */
+publish transform RemoveHttp {
+	from valueWithHttp oftype text;
+	to valueWithoutHttp oftype text;
+
+	valueWithoutHttp: valueWithHttp replace /(\bhttp:\/\/)/ with "";
+}
+
+/** Transformer to standardize DOI references and remove https://doi.org/ */
+publish transform RemoveHttpsDoiDotOrg {
+	from valueWithHttpsDoiDotOrg oftype text;
+	to valueWithoutHttpsDotDoiDotOrg oftype text;
+
+	valueWithoutHttpsDotDoiDotOrg: valueWithHttpsDoiDotOrg replace /^https:\/\/doi\.org\/\b/ with "";
+}
+
+/**
+* A DOIStandardizer removes common prefixes to [doi references](https://www.doi.org/the-identifier/what-is-a-doi/).
+*
+* properties:
+* 	doiColumn: The name of the column with the doi references. This column will be overwritten!
+*
+* This block standardizes doi values by removing the following prefixes.
+* 	1. dx.doi.org/
+* 	2. http://dx.doi.org/
+* 	3. http://
+* 	4. https://doi.org/
+*
+* Examples:
+* 	- "https://doi.org/10.1111/example.1234" becomes "10.1111/example.1234"
+* 	- "dx.doi.org/10.0000/456" becomes "10.0000/456"
+* 	- "http://10.1015/23" becomes "10.1015/23"
+*/
+publish composite blocktype DOIStandardizer {
+	input UnstandardizedDOI oftype Table;
+	output StandardizedDOI oftype Table;
+
+	property doiColumn oftype text;
+
+	UnstandardizedDOI
+		-> DOIStandardizerDxDotDoiDotOrg
+		-> DOIStandardizerHttpDxDotDoiDotOrg
+		-> DOIStandardizerHttp
+		-> DOIStandardizerHttpsDoiDotOrg
+		-> StandardizedDOI;
+
+	block DOIStandardizerDxDotDoiDotOrg oftype TableTransformer {
+		inputColumns: [
+			doiColumn
+		];
+		outputColumn: doiColumn;
+		uses: RemoveDxDotDoiDotOrg;
+	}
+
+	block DOIStandardizerHttpDxDotDoiDotOrg oftype TableTransformer {
+		inputColumns: [
+			doiColumn
+		];
+		outputColumn: doiColumn;
+		uses: RemoveHttpDxDotDoiDotOrg;
+	}
+
+	block DOIStandardizerHttp oftype TableTransformer {
+		inputColumns: [
+			doiColumn
+		];
+		outputColumn: doiColumn;
+		uses: RemoveHttp;
+	}
+
+	block DOIStandardizerHttpsDoiDotOrg oftype TableTransformer {
+		inputColumns: [
+			doiColumn
+		];
+		outputColumn: doiColumn;
+		uses: RemoveHttpsDoiDotOrg;
+	}
+}
