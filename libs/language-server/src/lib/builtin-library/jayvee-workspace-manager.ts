@@ -62,11 +62,13 @@ function addCollectUnresolvedImportHook(services: JayveeServices): void {
       if (!isJayveeModel(model)) {
         return;
       }
-      const importURIs = importResolver.findUnresolvedImportURIs(model);
+      await services.shared.workspace.WorkspaceLock.write(async () => {
+        const importURIs = importResolver.findUnresolvedImportURIs(model);
 
-      for (const importURI of importURIs) {
-        await loadDocumentFromFs(importURI, services);
-      }
+        for (const importURI of importURIs) {
+          await loadDocumentFromFs(importURI, services);
+        }
+      });
     }
   });
 }
