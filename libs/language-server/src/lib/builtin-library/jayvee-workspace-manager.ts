@@ -77,6 +77,17 @@ async function loadDocumentFromFs(
   importURI: URI,
   services: JayveeServices,
 ): Promise<void> {
+  const allowedFileExtensions = services.shared.ServiceRegistry.all.flatMap(
+    (e) => e.LanguageMetaData.fileExtensions,
+  );
+  const fileExtension = importURI.fsPath.split('.').at(-1);
+  if (
+    fileExtension === undefined ||
+    !allowedFileExtensions.includes(fileExtension)
+  ) {
+    return;
+  }
+
   const langiumDocuments = services.shared.workspace.LangiumDocuments;
   const documentBuilder = services.shared.workspace.DocumentBuilder;
   const documentFactory = services.shared.workspace.LangiumDocumentFactory;
