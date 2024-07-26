@@ -45,11 +45,11 @@ export async function initializeWorkspace(
   services: JayveeServices,
   workspaceFolders: WorkspaceFolder[] = [],
 ): Promise<void> {
+  addCollectUnresolvedImportHook(services);
+
   await services.shared.workspace.WorkspaceManager.initializeWorkspace(
     workspaceFolders,
   );
-
-  addCollectUnresolvedImportHook(services);
 }
 
 function addCollectUnresolvedImportHook(services: JayveeServices): void {
