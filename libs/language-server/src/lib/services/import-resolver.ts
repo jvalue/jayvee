@@ -52,6 +52,25 @@ export class JayveeImportResolver {
     this.availableElementsPerDocumentCache = new DocumentCache(services.shared);
   }
 
+  /**
+   * Finds all import URIs that could not be resolved.
+   */
+  findUnresolvedImportURIs(model: JayveeModel): URI[] {
+    const unresolvedURIs: URI[] = [];
+    for (const importDefinition of model.imports) {
+      const uri = this.resolveImportUri(importDefinition);
+      if (uri === undefined) {
+        continue;
+      }
+
+      const isDocumentResolved = this.documents.getDocument(uri) !== undefined;
+      if (!isDocumentResolved) {
+        unresolvedURIs.push(uri);
+      }
+    }
+    return unresolvedURIs;
+  }
+
   resolveImport(importDefinition: ImportDefinition): JayveeModel | undefined {
     const resolvedDocument = this.resolveImportedDocument(importDefinition);
     if (resolvedDocument === undefined) {
