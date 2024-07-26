@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { readFile } from 'node:fs/promises';
+
 import {
   DefaultWorkspaceManager,
   DocumentState,
@@ -79,7 +81,22 @@ async function loadDocumentFromFs(
   const documentBuilder = services.shared.workspace.DocumentBuilder;
   const documentFactory = services.shared.workspace.LangiumDocumentFactory;
 
-  const document = await documentFactory.fromUri<JayveeModel>(importURI);
+  const file = await loadFileFromUri(importURI);
+  if (file === undefined) {
+    return;
+  }
+
+  const document = documentFactory.fromString<JayveeModel>(file, importURI);
   await documentBuilder.build([document], { validation: true });
   langiumDocuments.addDocument(document);
+}
+
+async function loadFileFromUri(uri: URI): Promise<string | undefined> {
+  try {
+    const path = uri.fsPath;
+    const fileBuffer = await readFile(path);
+    return fileBuffer.toString();
+  } catch (e) {
+    return undefined;
+  }
 }
