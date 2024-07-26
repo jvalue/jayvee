@@ -41,6 +41,12 @@
       "type": "node-terminal"
     },
     {
+      "name": "Run Electric Vehicles Example",
+      "command": "npm run example:vehicles",
+      "request": "launch",
+      "type": "node-terminal"
+    },
+    {
       "name": "Run Gas Reserve Example",
       "command": "npm run example:gas",
       "request": "launch",
