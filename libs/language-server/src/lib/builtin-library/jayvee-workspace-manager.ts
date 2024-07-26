@@ -4,20 +4,23 @@
 
 import {
   DefaultWorkspaceManager,
-  type LangiumCoreServices,
+  DocumentState,
   type LangiumDocument,
   type LangiumDocumentFactory,
-  type LangiumSharedCoreServices,
 } from 'langium';
+import { type LangiumSharedServices } from 'langium/lsp';
 import { type WorkspaceFolder } from 'vscode-languageserver';
 import { URI } from 'vscode-uri';
+
+import { type JayveeModel, isJayveeModel } from '../ast';
+import { type JayveeServices } from '../jayvee-module';
 
 import { getStdLib } from './stdlib';
 
 export class JayveeWorkspaceManager extends DefaultWorkspaceManager {
   private documentFactory: LangiumDocumentFactory;
 
-  constructor(services: LangiumSharedCoreServices) {
+  constructor(services: LangiumSharedServices) {
     super(services);
     this.documentFactory = services.workspace.LangiumDocumentFactory;
   }
@@ -39,10 +42,44 @@ export class JayveeWorkspaceManager extends DefaultWorkspaceManager {
  * Also loads additional required files, e.g., the standard library
  */
 export async function initializeWorkspace(
-  services: LangiumCoreServices,
+  services: JayveeServices,
   workspaceFolders: WorkspaceFolder[] = [],
 ): Promise<void> {
   await services.shared.workspace.WorkspaceManager.initializeWorkspace(
     workspaceFolders,
   );
+
+  addCollectUnresolvedImportHook(services);
+}
+
+function addCollectUnresolvedImportHook(services: JayveeServices): void {
+  const documentBuilder = services.shared.workspace.DocumentBuilder;
+  const importResolver = services.ImportResolver;
+
+  documentBuilder.onBuildPhase(DocumentState.IndexedContent, async (docs) => {
+    for (const doc of docs) {
+      const model = doc.parseResult.value;
+      if (!isJayveeModel(model)) {
+        return;
+      }
+      const importURIs = importResolver.findUnresolvedImportURIs(model);
+
+      for (const importURI of importURIs) {
+        await loadDocumentFromFs(importURI, services);
+      }
+    }
+  });
+}
+
+async function loadDocumentFromFs(
+  importURI: URI,
+  services: JayveeServices,
+): Promise<void> {
+  const langiumDocuments = services.shared.workspace.LangiumDocuments;
+  const documentBuilder = services.shared.workspace.DocumentBuilder;
+  const documentFactory = services.shared.workspace.LangiumDocumentFactory;
+
+  const document = await documentFactory.fromUri<JayveeModel>(importURI);
+  await documentBuilder.build([document], { validation: true });
+  langiumDocuments.addDocument(document);
 }
