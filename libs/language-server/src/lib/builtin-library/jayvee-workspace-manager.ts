@@ -80,11 +80,11 @@ async function loadDocumentFromFs(
   const allowedFileExtensions = services.shared.ServiceRegistry.all.flatMap(
     (e) => e.LanguageMetaData.fileExtensions,
   );
-  const fileExtension = importURI.fsPath.split('.').at(-1);
-  if (
-    fileExtension === undefined ||
-    !allowedFileExtensions.includes(fileExtension)
-  ) {
+  const hasAllowedFileExtension = allowedFileExtensions.some((ext) =>
+    importURI.fsPath.endsWith(ext),
+  );
+  if (!hasAllowedFileExtension) {
+    console.log(importURI.fsPath);
     return;
   }
 
