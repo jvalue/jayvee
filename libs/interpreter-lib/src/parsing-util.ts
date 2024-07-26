@@ -6,7 +6,10 @@ import * as fs from 'node:fs';
 import path from 'node:path';
 
 import { type Logger } from '@jvalue/jayvee-execution';
-import { initializeWorkspace } from '@jvalue/jayvee-language-server';
+import {
+  type JayveeServices,
+  initializeWorkspace,
+} from '@jvalue/jayvee-language-server';
 import { type AstNode, type LangiumDocument } from 'langium';
 import { type LangiumServices } from 'langium/lsp';
 import { DiagnosticSeverity } from 'vscode-languageserver-protocol';
@@ -58,7 +61,7 @@ export async function extractDocumentFromFile(
  */
 export async function extractDocumentFromString(
   modelString: string,
-  services: LangiumServices,
+  services: JayveeServices,
   logger: Logger,
 ): Promise<LangiumDocument> {
   const document = services.shared.workspace.LangiumDocumentFactory.fromString(
@@ -104,7 +107,7 @@ export async function validateDocument(
 
 export async function extractAstNodeFromFile<T extends AstNode>(
   filePath: string,
-  services: LangiumServices,
+  services: JayveeServices,
   logger: Logger,
 ): Promise<T> {
   return (await extractDocumentFromFile(filePath, services, logger)).parseResult
@@ -113,7 +116,7 @@ export async function extractAstNodeFromFile<T extends AstNode>(
 
 export async function extractAstNodeFromString<T extends AstNode>(
   modelString: string,
-  services: LangiumServices,
+  services: JayveeServices,
   logger: Logger,
 ): Promise<T> {
   return (await extractDocumentFromString(modelString, services, logger))
