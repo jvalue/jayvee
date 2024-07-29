@@ -36,6 +36,7 @@ import {
 import { JayveeImportResolver } from './services/import-resolver';
 import { RuntimeParameterProvider } from './services/runtime-parameter-provider';
 import { JayveeValidationRegistry } from './validation/validation-registry';
+import { addDynamicFileImport } from './workspace';
 import { JayveeWorkspaceManager } from './workspace/jayvee-workspace-manager';
 
 /**
@@ -149,6 +150,8 @@ export function createJayveeServices(context: DefaultSharedModuleContext): {
     JayveeModule,
   );
   shared.ServiceRegistry.register(Jayvee);
+
+  addDynamicFileImport(Jayvee);
 
   return { shared, Jayvee };
 }
