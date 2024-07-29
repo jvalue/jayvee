@@ -11,7 +11,7 @@ import { type Diagnostic } from 'vscode-languageserver';
 import { URI } from 'vscode-uri';
 
 import { type JayveeServices } from '../lib';
-import { initializeWorkspace } from '../lib/builtin-library/jayvee-workspace-manager';
+import { initializeWorkspace } from '../lib/workspace/jayvee-workspace-manager';
 
 export interface ParseHelperOptions extends BuildOptions {
   documentUri?: string;

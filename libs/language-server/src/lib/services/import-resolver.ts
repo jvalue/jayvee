@@ -20,8 +20,8 @@ import {
   isExportableElement,
   isJayveeModel,
 } from '../ast/generated/ast';
-import { getStdLib } from '../builtin-library/stdlib';
 import { type JayveeServices } from '../jayvee-module';
+import { getStdLib } from '../workspace/stdlib';
 
 export interface ImportDetails {
   element: ExportableElement;

@@ -20,7 +20,7 @@ import {
   type JayveeValidationProps,
   ValidationContext,
 } from '../lib';
-import { initializeWorkspace } from '../lib/builtin-library/jayvee-workspace-manager';
+import { initializeWorkspace } from '../lib/workspace/jayvee-workspace-manager';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export const validationAcceptorMockImpl: ValidationAcceptor = () => {};

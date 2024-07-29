@@ -9,7 +9,7 @@ import { join } from "path";
 
 const projectName = 'language-server';
 const stdLibInputPath = 'stdlib';
-const outputDirPath = join('lib', 'builtin-library', 'generated');
+const outputDirPath = join('lib', 'workspace', 'generated');
 const outputFilePath = join(outputDirPath, 'partial-stdlib.ts');
 
 // Executing this script: node path/to/generate-stdlib.mjs
