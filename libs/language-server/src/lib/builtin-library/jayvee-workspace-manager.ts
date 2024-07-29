@@ -97,7 +97,12 @@ async function loadDocumentFromFs(
 
   const document = documentFactory.fromString<JayveeModel>(file, importURI);
   await documentBuilder.build([document], { validation: true });
-  langiumDocuments.addDocument(document);
+
+  await services.shared.workspace.WorkspaceLock.write(() => {
+    if (!langiumDocuments.hasDocument(document.uri)) {
+      langiumDocuments.addDocument(document);
+    }
+  });
 }
 
 async function loadFileFromUri(
