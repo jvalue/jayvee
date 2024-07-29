@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { DocumentState } from 'langium';
 import { type URI } from 'vscode-uri';
 
@@ -34,7 +38,6 @@ async function loadDocumentFromFs(
     importURI.fsPath.endsWith(ext),
   );
   if (!hasAllowedFileExtension) {
-    console.log(importURI.fsPath);
     return;
   }
 
