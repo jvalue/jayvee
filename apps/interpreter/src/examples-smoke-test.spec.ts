@@ -40,21 +40,6 @@ vi.mock('sqlite3', () => {
   };
 });
 
-// simulate as if we were starting the jv cli in the example dir
-vi.mock('./current-dir', () => {
-  const currentDirMock = () =>
-    path.join(
-      path.dirname(fileURLToPath(import.meta.url)), // relative to this test file
-      '..',
-      '..',
-      '..',
-      'example',
-    );
-  return {
-    getCurrentDir: currentDirMock,
-  };
-});
-
 describe('jv example smoke tests', () => {
   const defaultOptions: RunOptions = {
     pipeline: '.*',
@@ -105,7 +90,7 @@ describe('jv example smoke tests', () => {
     });
     sqliteLoaderMock.setup();
 
-    await runAction('cars.jv', {
+    await runAction('example/cars.jv', {
       ...defaultOptions,
     });
 
@@ -137,7 +122,7 @@ describe('jv example smoke tests', () => {
     postgresLoaderMock.setup();
     sqliteLoaderMock.setup();
 
-    await runAction('electric-vehicles.jv', {
+    await runAction('example/electric-vehicles.jv', {
       ...defaultOptions,
       env: new Map<string, string>([
         ['DB_HOST', 'mock'],
@@ -200,7 +185,7 @@ describe('jv example smoke tests', () => {
     });
     sqliteLoaderMock.setup();
 
-    await runAction('gtfs-rt.jv', {
+    await runAction('example/gtfs-rt.jv', {
       ...defaultOptions,
     });
 
@@ -228,7 +213,7 @@ describe('jv example smoke tests', () => {
     });
     sqliteLoaderMock.setup();
 
-    await runAction('gtfs-static.jv', {
+    await runAction('example/gtfs-static.jv', {
       ...defaultOptions,
     });
 

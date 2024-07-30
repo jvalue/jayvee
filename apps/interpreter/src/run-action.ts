@@ -17,7 +17,6 @@ import {
   type JayveeServices,
 } from '@jvalue/jayvee-language-server';
 
-import { getCurrentDir } from './current-dir';
 import { parsePipelineMatcherRegExp, parseRunOptions } from './run-options';
 
 export async function runAction(
@@ -35,9 +34,9 @@ export async function runAction(
     return process.exit(ExitCode.FAILURE);
   }
 
-  const currentDir = getCurrentDir();
+  const currentDir = process.cwd();
   const workingDir = currentDir;
-  const absoluteFilePath = path.join(currentDir, filePath);
+  const filePathRelativeToCurrentDir = path.relative(currentDir, filePath);
 
   const interpreter = new DefaultJayveeInterpreter({
     pipelineMatcher: (pipelineDefinition) =>
@@ -49,10 +48,12 @@ export async function runAction(
   }).addWorkspace(workingDir);
 
   if (options.parseOnly === true) {
-    return await runParseOnly(absoluteFilePath, interpreter);
+    return await runParseOnly(filePathRelativeToCurrentDir, interpreter);
   }
 
-  const exitCode = await interpreter.interpretFile(absoluteFilePath);
+  const exitCode = await interpreter.interpretFile(
+    filePathRelativeToCurrentDir,
+  );
   process.exit(exitCode);
 }
 
