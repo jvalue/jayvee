@@ -15,9 +15,9 @@
         "tsConfig": "{projectRoot}/tsconfig.lib.json",
         "assets": [
           {
-            "glob": "{projectRoot}/README.md",
-            "input": ".",
-            "output": "."
+            "glob": "README.md",
+            "input": "{projectRoot}",
+            "output": "/"
           }
         ],
         "generatePackageJson": true
