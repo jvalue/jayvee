@@ -65,7 +65,7 @@ export function parseRunOptions(
     pipeline: options.pipeline,
     env: options.env,
     debug: options.debug === true || options.debug === 'true',
-    debugGranularity: options.debugGranularity as DebugGranularity,
+    debugGranularity: options.debugGranularity,
     debugTarget: getDebugTargets(options.debugTarget),
     parseOnly: options.parseOnly === true || options.parseOnly === 'true',
   };
