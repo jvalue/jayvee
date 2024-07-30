@@ -32,7 +32,7 @@ export class PipeWrapper<
     assert(pipe.blocks[chainIndex]?.ref !== undefined);
     assert(pipe.blocks[chainIndex + 1]?.ref !== undefined);
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.from = pipe.blocks[chainIndex]!.ref!;
+    this.from = pipe.blocks[chainIndex].ref!;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.to = pipe.blocks[chainIndex + 1]!.ref!;
     this.chainIndex = chainIndex;
