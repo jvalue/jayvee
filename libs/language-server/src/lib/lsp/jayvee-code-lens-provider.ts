@@ -20,32 +20,32 @@ export interface ShowPipeOutputCodeLensPayload {
 }
 
 export function isRunJayveeCodeLensPayload(
-  o: unknown,
-): o is RunJayveeCodeLensPayload {
-  if (typeof o !== 'object' || o == null) {
+  payload: unknown,
+): payload is RunJayveeCodeLensPayload {
+  if (typeof payload !== 'object' || payload == null) {
     return false;
   }
 
   return (
-    'filePath' in o &&
-    typeof o.filePath === 'string' &&
-    'pipelineName' in o &&
-    typeof o.pipelineName === 'string'
+    'filePath' in payload &&
+    typeof payload.filePath === 'string' &&
+    'pipelineName' in payload &&
+    typeof payload.pipelineName === 'string'
   );
 }
 
 export function isShowPipeOutputCodeLensPayload(
-  o: unknown,
-): o is ShowPipeOutputCodeLensPayload {
-  if (typeof o !== 'object' || o == null) {
+  payload: unknown,
+): payload is ShowPipeOutputCodeLensPayload {
+  if (typeof payload !== 'object' || payload == null) {
     return false;
   }
 
   return (
-    'pipeOutputName' in o &&
-    typeof o.pipeOutputName === 'string' &&
-    'lineNumber' in o &&
-    typeof o.lineNumber === 'number'
+    'pipeOutputName' in payload &&
+    typeof payload.pipeOutputName === 'string' &&
+    'lineNumber' in payload &&
+    typeof payload.lineNumber === 'number'
   );
 }
 
