@@ -24,7 +24,6 @@ import {
 } from './ast/generated/module';
 import { ValueTypeProvider } from './ast/wrappers/value-type/primitive/primitive-value-type-provider';
 import { WrapperFactoryProvider } from './ast/wrappers/wrapper-factory-provider';
-import { JayveeWorkspaceManager } from './builtin-library/jayvee-workspace-manager';
 import { JayveeValueConverter } from './jayvee-value-converter';
 import {
   JayveeCodeActionProvider,
@@ -37,6 +36,8 @@ import {
 import { JayveeImportResolver } from './services/import-resolver';
 import { RuntimeParameterProvider } from './services/runtime-parameter-provider';
 import { JayveeValidationRegistry } from './validation/validation-registry';
+import { addDynamicFileImport } from './workspace';
+import { JayveeWorkspaceManager } from './workspace/jayvee-workspace-manager';
 
 /**
  * Declaration of custom services for the Jayvee language.
@@ -149,6 +150,8 @@ export function createJayveeServices(context: DefaultSharedModuleContext): {
     JayveeModule,
   );
   shared.ServiceRegistry.register(Jayvee);
+
+  addDynamicFileImport(Jayvee);
 
   return { shared, Jayvee };
 }

@@ -7,18 +7,18 @@
  * https://github.com/langium/langium/blob/main/packages/langium/src/test/langium-test.ts
  */
 import { type AstNode, type BuildOptions, type LangiumDocument } from 'langium';
-import { type LangiumServices } from 'langium/lsp';
 import { type Diagnostic } from 'vscode-languageserver';
 import { URI } from 'vscode-uri';
 
-import { initializeWorkspace } from '../lib/builtin-library/jayvee-workspace-manager';
+import { type JayveeServices } from '../lib';
+import { initializeWorkspace } from '../lib/workspace/jayvee-workspace-manager';
 
 export interface ParseHelperOptions extends BuildOptions {
   documentUri?: string;
 }
 
 export function parseHelper<T extends AstNode = AstNode>(
-  services: LangiumServices,
+  services: JayveeServices,
 ): (
   input: string,
   options?: ParseHelperOptions,
@@ -49,7 +49,7 @@ export interface ValidationResult<T extends AstNode = AstNode> {
 }
 
 export function validationHelper<T extends AstNode = AstNode>(
-  services: LangiumServices,
+  services: JayveeServices,
 ): (input: string) => Promise<ValidationResult<T>> {
   const parse = parseHelper<T>(services);
   return async (input) => {

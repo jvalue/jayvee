@@ -42,7 +42,7 @@ We use code generation to transform these `.jv` files into TypeScript files that
 
 ### 2. Builtin libraries
 
-The solution we chose to implement the standard library mechanism is close to the [built-in library tutorial](https://langium.org/guides/builtin-library/) by Langium. The following components are of interest:
+The solution we chose to implement the standard library mechanism is close to the [built-in library tutorial](https://langium.org/guides/workspace/) by Langium. The following components are of interest:
 
-- [JayveeWorkspaceManager](https://github.com/jvalue/jayvee/tree/main/libs/language-server/src/lib/builtin-library/jayvee-workspace-manager.ts) in the `language-server` that registers all libraries with the langium framework.
+- [JayveeWorkspaceManager](https://github.com/jvalue/jayvee/tree/main/libs/language-server/src/lib/workspace/jayvee-workspace-manager.ts) in the `language-server` that registers all libraries with the langium framework.
 - [StandardLibraryFileSystemProvider](https://github.com/jvalue/jayvee/tree/main/apps/vs-code-extension/src/standard-library-file-system-provider.ts) in the `vs-code-extension` that registers all libraries with the vscode plugin framework.

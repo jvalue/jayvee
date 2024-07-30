@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 export * from './ast';
-export * from './builtin-library';
+export * from './workspace';
 export * from './docs';
 export * from './services';
 export * from './util';

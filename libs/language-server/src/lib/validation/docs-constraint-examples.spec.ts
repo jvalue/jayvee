@@ -6,8 +6,8 @@ import { NodeFileSystem } from 'langium/node';
 
 import { validationHelper } from '../../test/langium-utils';
 import { getAllBuiltinConstraintTypes } from '../ast';
-import { initializeWorkspace } from '../builtin-library';
 import { createJayveeServices } from '../jayvee-module';
+import { initializeWorkspace } from '../workspace';
 
 describe('Validation of docs examples of ConstraintTypes', () => {
   it('should have no validation errors', async () => {

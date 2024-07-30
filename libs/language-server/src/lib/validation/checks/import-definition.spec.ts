@@ -100,13 +100,13 @@ describe('Validation of ImportDefinition', () => {
       expect(validationAcceptorMock).toHaveBeenNthCalledWith(
         1,
         'error',
-        'Import from "not-existing-imported-file-deeper.jv" could be resolved. Check if the file exists in the given location.',
+        'Import from "not-existing-imported-file-deeper.jv" could not be resolved. Check if the file exists in the given location.',
         expect.any(Object),
       );
       expect(validationAcceptorMock).toHaveBeenNthCalledWith(
         2,
         'error',
-        'Import from "./not-existing-imported-file-deeper.jv" could be resolved. Check if the file exists in the given location.',
+        'Import from "./not-existing-imported-file-deeper.jv" could not be resolved. Check if the file exists in the given location.',
         expect.any(Object),
       );
     });
@@ -121,13 +121,13 @@ describe('Validation of ImportDefinition', () => {
       expect(validationAcceptorMock).toHaveBeenNthCalledWith(
         1,
         'error',
-        'Import from "existing-imported-file.njv" could be resolved. Check if the file exists in the given location.',
+        'Import from "existing-imported-file.njv" could not be resolved. Check if the file exists in the given location.',
         expect.any(Object),
       );
       expect(validationAcceptorMock).toHaveBeenNthCalledWith(
         2,
         'error',
-        'Import from "./existing-imported-file.njv" could be resolved. Check if the file exists in the given location.',
+        'Import from "./existing-imported-file.njv" could not be resolved. Check if the file exists in the given location.',
         expect.any(Object),
       );
     });

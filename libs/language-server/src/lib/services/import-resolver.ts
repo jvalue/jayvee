@@ -20,8 +20,8 @@ import {
   isExportableElement,
   isJayveeModel,
 } from '../ast/generated/ast';
-import { getStdLib } from '../builtin-library/stdlib';
 import { type JayveeServices } from '../jayvee-module';
+import { getStdLib } from '../workspace/stdlib';
 
 export interface ImportDetails {
   element: ExportableElement;
@@ -50,6 +50,25 @@ export class JayveeImportResolver {
   constructor(services: JayveeServices) {
     this.documents = services.shared.workspace.LangiumDocuments;
     this.availableElementsPerDocumentCache = new DocumentCache(services.shared);
+  }
+
+  /**
+   * Finds all import URIs that could not be resolved.
+   */
+  findUnresolvedImportURIs(model: JayveeModel): URI[] {
+    const unresolvedURIs: URI[] = [];
+    for (const importDefinition of model.imports) {
+      const uri = this.resolveImportUri(importDefinition);
+      if (uri === undefined) {
+        continue;
+      }
+
+      const isDocumentResolved = this.documents.getDocument(uri) !== undefined;
+      if (!isDocumentResolved) {
+        unresolvedURIs.push(uri);
+      }
+    }
+    return unresolvedURIs;
   }
 
   resolveImport(importDefinition: ImportDefinition): JayveeModel | undefined {
