@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-use { PublishedBlockType } from '../invvalid-to-import-wrong-file-ending.jvm';
+use { PublishedBlockType } from '../invalid-to-import-wrong-file-ending.jvm';
 
 pipeline TestPipeline {
   block UsingBlock oftype PublishedBlockType {}
