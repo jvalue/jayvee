@@ -31,7 +31,7 @@ export async function runJayveeCommand(
   const filePath = payload.filePath;
 
   const shell = window.createTerminal('Run Jayvee');
-  shell.sendText(`jv ${filePath}`);
+  shell.sendText(`jv ${filePath} --pipeline ${payload.pipelineName}`);
   shell.show();
 }
 
