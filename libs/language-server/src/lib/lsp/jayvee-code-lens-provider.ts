@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+// SPDX-FileCopyrightText: 2024 Friedrich-Alexander-Universitat Erlangen-Nurnberg
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
@@ -69,7 +69,6 @@ export class JayveeCodeLensProvider implements CodeLensProvider {
         filePath: document.uri.fsPath,
         pipelineName: pipeline.name,
       };
-      console.log(payload.filePath);
 
       lenses.push({
         range: pipelineDefinitionRange,
