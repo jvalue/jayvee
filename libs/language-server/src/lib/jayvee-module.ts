@@ -27,6 +27,7 @@ import { WrapperFactoryProvider } from './ast/wrappers/wrapper-factory-provider'
 import { JayveeValueConverter } from './jayvee-value-converter';
 import {
   JayveeCodeActionProvider,
+  JayveeCodeLensProvider,
   JayveeCompletionProvider,
   JayveeDefinitionProvider,
   JayveeFormatter,
@@ -88,6 +89,7 @@ export const JayveeModule: Module<
     Formatter: () => new JayveeFormatter(),
     DefinitionProvider: (services) => new JayveeDefinitionProvider(services),
     CodeActionProvider: (services) => new JayveeCodeActionProvider(services),
+    CodeLensProvider: () => new JayveeCodeLensProvider(),
   },
   references: {
     ScopeProvider: (services) => new JayveeScopeProvider(services),

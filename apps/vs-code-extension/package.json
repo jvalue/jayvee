@@ -1,5 +1,6 @@
 {
   "name": "jayvee",
+  "version": "0.0.0",
   "displayName": "Jayvee",
   "description": "Support for the Jayvee language",
   "engines": {
@@ -28,6 +29,12 @@
         "scopeName": "source.jayvee",
         "path": "jayvee.tmLanguage.json"
       }
+    ],
+    "commands": [
+      {
+        "command": "jayvee.pipeline.run",
+        "title": "Run a Jayvee pipeline"
+      }
     ]
   },
   "activationEvents": [
@@ -41,6 +48,5 @@
     "type": "git",
     "url": "https://github.com/jvalue/jayvee.git"
   },
-  "homepage": "https://github.com/jvalue/jayvee",
-  "version": "0.0.0"
+  "homepage": "https://github.com/jvalue/jayvee"
 }
