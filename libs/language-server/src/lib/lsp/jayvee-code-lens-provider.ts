@@ -74,6 +74,14 @@ export class JayveeCodeLensProvider implements CodeLensProvider {
         range: pipelineDefinitionRange,
         command: Command.create('Run (once)', 'jayvee.pipeline.run', payload),
       });
+      lenses.push({
+        range: pipelineDefinitionRange,
+        command: Command.create(
+          'Debug (once)',
+          'jayvee.pipeline.debug',
+          payload,
+        ),
+      });
     }
 
     return lenses;

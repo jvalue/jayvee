@@ -68,10 +68,15 @@ function startLanguageClient(context: ExtensionContext): LanguageClient {
   // Commands
   const commandRunJayvee = commands.registerCommand(
     'jayvee.pipeline.run',
-    (...args: unknown[]) => runJayveeCommand(args[0], context),
+    (...args: unknown[]) => runJayveeCommand(args[0], false, context),
+  );
+  const commandDebugJayvee = commands.registerCommand(
+    'jayvee.pipeline.debug',
+    (...args: unknown[]) => runJayveeCommand(args[0], true, context),
   );
 
   context.subscriptions.push(commandRunJayvee);
+  context.subscriptions.push(commandDebugJayvee);
 
   // Create the language client and start the client.
   const client = new LanguageClient(

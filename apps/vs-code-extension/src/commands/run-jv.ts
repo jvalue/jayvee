@@ -13,6 +13,7 @@ import { type ExtensionContext, window } from 'vscode';
 
 export async function runJayveeCommand(
   payload: unknown,
+  enableDebugOutput: boolean,
   context: ExtensionContext,
 ) {
   try {
@@ -31,7 +32,11 @@ export async function runJayveeCommand(
   const filePath = payload.filePath;
 
   const shell = window.createTerminal('Run Jayvee');
-  shell.sendText(`jv ${filePath} --pipeline ${payload.pipelineName}`);
+  shell.sendText(
+    `jv ${filePath} --pipeline ${payload.pipelineName}${
+      enableDebugOutput ? ' --debug --debug-granularity peek' : ''
+    }`,
+  );
   shell.show();
 }
 

@@ -34,6 +34,10 @@
       {
         "command": "jayvee.pipeline.run",
         "title": "Run a Jayvee pipeline"
+      },
+      {
+        "command": "jayvee.pipeline.debug",
+        "title": "Run a Jayvee pipeline with debug output"
       }
     ]
   },
