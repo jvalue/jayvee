@@ -16,34 +16,6 @@
         "configFile": "{projectRoot}/vite.config.ts",
         "passWithNoTests": false
       }
-    },
-    "pre-publish": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["build"],
-      "options": {
-        "commands": [
-          "node tools/scripts/relax-peer-dependency-versions.mjs execution",
-          "node tools/scripts/add-package-json-version.mjs execution",
-          "node tools/scripts/publish.mjs execution false"
-        ],
-        "parallel": false
-      }
-    },
-    "publish": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["pre-publish"],
-      "options": {
-        "commands": ["node tools/scripts/publish.mjs execution true"],
-        "parallel": false
-      }
-    },
-    "pack": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["pre-publish"],
-      "options": {
-        "commands": ["node tools/scripts/pack.mjs execution"],
-        "parallel": false
-      }
     }
   },
   "tags": []
