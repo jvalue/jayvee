@@ -47,36 +47,40 @@ export class LocalFileExtractorExecutor extends AbstractBlockExecutor<
       });
     }
 
+    let rawData: Buffer | undefined = undefined;
     try {
-      const rawData = await fs.readFile(filePath);
-
-      // Infer FileName and FileExtension from filePath
-      const fileName = path.basename(filePath);
-      const extName = path.extname(fileName);
-      const fileExtension =
-        inferFileExtensionFromFileExtensionString(extName) ??
-        FileExtension.NONE;
-
-      // Infer Mimetype from FileExtension, if not inferrable, then default to application/octet-stream
-      const mimeType: MimeType | undefined =
-        inferMimeTypeFromFileExtensionString(fileExtension) ??
-        MimeType.APPLICATION_OCTET_STREAM;
-
-      // Create file and return file
-      const file = new BinaryFile(
-        fileName,
-        fileExtension,
-        mimeType,
-        rawData.buffer as ArrayBuffer,
-      );
-
-      context.logger.logDebug(`Successfully extraced file ${filePath}`);
-      return R.ok(file);
-    } catch (error) {
+      rawData = await fs.readFile(filePath);
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : `Could not read file ${filePath}`;
       return R.err({
-        message: `File '${filePath}' not found.`,
+        message: message,
         diagnostic: { node: context.getCurrentNode(), property: 'filePath' },
       });
     }
+
+    // Infer FileName and FileExtension from filePath
+    const fileName = path.basename(filePath);
+    const extName = path.extname(fileName);
+    const fileExtension =
+      inferFileExtensionFromFileExtensionString(extName) ?? FileExtension.NONE;
+
+    // Infer Mimetype from FileExtension, if not inferrable, then default to application/octet-stream
+    const mimeType: MimeType | undefined =
+      inferMimeTypeFromFileExtensionString(fileExtension) ??
+      MimeType.APPLICATION_OCTET_STREAM;
+
+    // Create file and return file
+    const file = new BinaryFile(
+      fileName,
+      fileExtension,
+      mimeType,
+      rawData.buffer as ArrayBuffer,
+    );
+
+    context.logger.logDebug(`Successfully extraced file ${filePath}`);
+    return R.ok(file);
   }
 }
