@@ -11,7 +11,8 @@
         "generatePackageJson": true,
         "platform": "browser",
         "vendorChunk": false,
-        "runtimeChunk": false
+        "runtimeChunk": false,
+        "external": []
       }
     },
     "serve": {

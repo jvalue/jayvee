@@ -6,7 +6,8 @@
   "targets": {
     "build": {
       "options": {
-        "tsConfig": "{projectRoot}/tsconfig.app.json"
+        "tsConfig": "{projectRoot}/tsconfig.app.json",
+        "external": []
       }
     },
     "lint": {

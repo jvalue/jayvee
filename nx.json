@@ -20,7 +20,11 @@
             "output": "/"
           }
         ],
-        "generatePackageJson": true
+        "generatePackageJson": true,
+        "declaration": true,
+        "external": [
+          "@jvalue/jayvee-language-server"
+        ]
       },
       "configurations": {
         "development": {
