@@ -8,7 +8,8 @@
       "dependsOn": ["generate-language-server"],
       "options": {
         "main": "{projectRoot}/src/main.ts",
-        "tsConfig": "{projectRoot}/tsconfig.app.json"
+        "tsConfig": "{projectRoot}/tsconfig.app.json",
+        "external": []
       }
     },
     "start": {
