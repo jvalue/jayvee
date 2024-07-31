@@ -12,9 +12,9 @@ import { BlockTypeWrapper } from './block-type-wrapper';
 export class CompositeBlockTypeWrapper extends BlockTypeWrapper {
   /**
    * Creates a CompositeBlockTypeWrapper if possible. Otherwise, throws error.
-   * Use @see canBeWrapped to check whether wrapping will be successful.
+   * Use {@link canBeWrapped} to check whether wrapping will be successful.
    *
-   * Use @see WrapperFactoryProvider for instantiation instead of calling this constructor directly.
+   * Use {@link WrapperFactoryProvider} for instantiation instead of calling this constructor directly.
    */
   constructor(
     private blockTypeDefinition: CompositeBlockTypeDefinition,

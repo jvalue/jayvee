@@ -28,7 +28,7 @@ export abstract class PrimitiveValueType<
   /**
    * The user documentation for the value type.
    * Text only, no comment characters.
-   * Should be given for all user-referenceable value types @see isReferenceableByUser
+   * Should be given for all user-referenceable value types {@link isReferenceableByUser}
    */
   getUserDoc(): string | undefined {
     return undefined;

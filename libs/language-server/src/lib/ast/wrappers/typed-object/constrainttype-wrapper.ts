@@ -32,9 +32,9 @@ export class ConstraintTypeWrapper extends TypedObjectWrapper<BuiltinConstraintt
 
   /**
    * Creates a ConstraintTypeWrapper if possible. Otherwise, throws error.
-   * Use @see canBeWrapped to check whether wrapping will be successful.
+   * Use {@link canBeWrapped} to check whether wrapping will be successful.
    *
-   * Use @see WrapperFactoryProvider for instantiation instead of calling this constructor directly.
+   * Use {@link WrapperFactoryProvider} for instantiation instead of calling this constructor directly.
    */
   constructor(
     toBeWrapped:
