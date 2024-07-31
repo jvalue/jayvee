@@ -22,21 +22,11 @@ const interpreterMock: JayveeInterpreter = {
 vi.stubGlobal('DefaultJayveeInterpreter', interpreterMock);
 
 const dirPathOfThisTest = path.dirname(fileURLToPath(import.meta.url));
-const pathExamplesRelativeToThisTest = path.join('..', '..', '..', 'example');
-
-// simulate as if we were starting the jv cli in the example dir
-vi.mock('./current-dir', () => {
-  const currentDirMock = () =>
-    path.join(dirPathOfThisTest, pathExamplesRelativeToThisTest);
-  return {
-    getCurrentDir: currentDirMock,
-  };
-});
+const pathProjectRootRelativeToThisTest = path.join('..', '..', '..');
 
 describe('Parse Only', () => {
-  const pathToValidModelFromExamplesDir = 'cars.jv';
-  const pathToInvalidModelFromExamplesDir = path.join(
-    '..',
+  const pathToValidModelFromProjectRoot = path.join('example', 'cars.jv');
+  const pathToInvalidModelFromProjectRoot = path.join(
     'apps',
     'interpreter',
     'test',
@@ -68,7 +58,7 @@ describe('Parse Only', () => {
 
   it('should exit with 0 on a valid option', async () => {
     await expect(
-      runAction(pathToValidModelFromExamplesDir, {
+      runAction(pathToValidModelFromProjectRoot, {
         ...defaultOptions,
         parseOnly: true,
       }),
@@ -81,13 +71,13 @@ describe('Parse Only', () => {
   it('should exit with 1 on error', async () => {
     const modelPathRelativeToThisTest = path.join(
       dirPathOfThisTest,
-      pathExamplesRelativeToThisTest,
-      pathToInvalidModelFromExamplesDir,
+      pathProjectRootRelativeToThisTest,
+      pathToInvalidModelFromProjectRoot,
     );
     expect(fs.existsSync(modelPathRelativeToThisTest)).toBe(true);
 
     await expect(
-      runAction(pathToInvalidModelFromExamplesDir, {
+      runAction(pathToInvalidModelFromProjectRoot, {
         ...defaultOptions,
         parseOnly: true,
       }),
