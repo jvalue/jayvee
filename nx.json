@@ -20,7 +20,8 @@
             "output": "/"
           }
         ],
-        "generatePackageJson": true
+        "generatePackageJson": true,
+        "declaration": true
       },
       "configurations": {
         "development": {

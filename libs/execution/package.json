@@ -1,3 +1,4 @@
 {
-  "name": "@jvalue/jayvee-execution"
+  "name": "@jvalue/jayvee-execution",
+  "types": "./libs/execution/src/index.d.ts"
 }
