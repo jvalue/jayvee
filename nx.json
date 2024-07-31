@@ -21,7 +21,11 @@
           }
         ],
         "generatePackageJson": true,
-        "declaration": true
+        "declaration": true,
+        "external": [
+          "@jvalue/jayvee-execution",
+          "@jvalue/jayvee-language-server"
+        ]
       },
       "configurations": {
         "development": {
