@@ -104,7 +104,7 @@ describe('Validation of LocalFileExtractorExecutor', () => {
     expect(R.isErr(result)).toEqual(true);
     if (R.isErr(result)) {
       expect(result.left.message).toEqual(
-        `File './does-not-exist.csv' not found.`,
+        `ENOENT: no such file or directory, open './does-not-exist.csv'`,
       );
     }
   });
