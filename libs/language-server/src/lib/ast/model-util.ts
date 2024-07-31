@@ -53,7 +53,7 @@ export function getNextAstNodeContainer<T extends AstNode>(
 /**
  * Utility function that gets all builtin block types.
  * Duplicates are only added once.
- * Make sure to call @see initializeWorkspace first so that the file system is initialized.
+ * Make sure to call {@link initializeWorkspace} first so that the file system is initialized.
  */
 export function getAllBuiltinBlockTypes(
   documentService: LangiumDocuments,
@@ -93,7 +93,7 @@ export function getAllBuiltinBlockTypes(
 /**
  * Utility function that gets all builtin constraint types.
  * Duplicates are only added once.
- * Make sure to call @see initializeWorkspace first so that the file system is initialized.
+ * Make sure to call {@link initializeWorkspace} first so that the file system is initialized.
  */
 export function getAllBuiltinConstraintTypes(
   documentService: LangiumDocuments,

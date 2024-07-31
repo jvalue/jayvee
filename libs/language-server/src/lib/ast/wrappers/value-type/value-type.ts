@@ -45,7 +45,7 @@ export interface ValueType<
   /**
    * The convertible relation reflects the ability of primitive types to
    * convert into another primitive value type in a loss-less way (e.g., int to decimal).
-   * Atomic value types inherit (@see isSubtypeOf) the conversion behavior of their primitive value type.
+   * Atomic value types inherit ({@link isSubtypeOf}) the conversion behavior of their primitive value type.
    */
   isConvertibleTo(target: ValueType): boolean;
 
