@@ -9,7 +9,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 |             |                               |
 | ----------- | ----------------------------- | --------------------------------------------------------------- |
 | Feature Tag | `attribute-based value types` | <!-- TODO: choose a unique and declarative feature name -->     |
-| Status      | `DISCUSSION`                       | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED --> |
+| Status      | `DISCUSSION`                  | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED --> |
 | Responsible | `dirkriehle`                  | <!-- TODO: assign yourself as main driver of this RFC -->       |
 
 <!--
@@ -42,10 +42,10 @@ This syntax is smart in that you don't have to list and name an attribute but ra
 The current syntax, in which an underlying value type is referenced through 'oftype', it does not use instantiation/inheritance but rather composition.
 The purpose of using composition is that it is
 
-1. more similar to traditional approaches and
+1. more similar to traditional programming and
 2. is needed anyway for multi-attribute value types.
 
-Thus, this RFC removes the `oftype` keyword in a value type definitions and proposes an attribute-based syntax that is extendable to a future multi-attribute syntax.
+Thus, this RFC removes reference to a parent value type in a value type definition and proposes an explicit attribute-based syntax instead that is extendable to a future multi-attribute syntax.
 
 ## Explanation
 
@@ -55,14 +55,14 @@ I propose to make that attribute explicit. The new syntax would be:
 valuetype CorrelationCoefficient {
   property correlation oftype decimal;
 
-  constraint minusOneToPlusOneRange: MinusOneToPlusOneRange(value = correlation);
+  constraint minusOneToPlusOneRange: MinusOneToPlusOneRange on correlation;
 }
 
 constraint MinusOneToPlusOneRange on decimal:
   value >= -1 and value <= 1;
 ```
 
-The syntax is kept flat rather than using arrays.
+The syntax is kept flat rather than using arrays in alignment with the [Jayvee Design Principles](https://jvalue.github.io/jayvee/docs/0.4.0/dev/design-principles#jayvee-manifesto).
 
 Despite referencing reusable constraints, the syntax also allows in-place constraint definition:
 
@@ -71,7 +71,7 @@ valuetype CorrelationCoefficient {
   property correlation oftype decimal;
 
   constraint minusOneToPlusOneRange:
-    correlation >= 1 and correlation <=1;
+    correlation >= -1 and correlation <=1;
 }
 ```
 
