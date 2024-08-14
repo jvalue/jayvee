@@ -24,11 +24,11 @@ Explore a glimpse of our upcoming features in the following list. This overview 
 - &#9989; Column-based transformations
 - &#9989; Describe blocks via builtin block types in Jayvee
 - &#9989; Compose logic of multiple blocks via composite block types
-- &#8987; Multi-file Jayvee to distribute programs over multiple files (see [RFC 0015](./rfc/0015-multi-file-jayvee/0015-multi-file-jayvee.md))
+- &#9989; Multi-file Jayvee to distribute programs over multiple files
+- &#9989; Jayvee formatter
 - &#8987; Improve the syntax of value types (see [RFC 0014](https://github.com/jvalue/jayvee/pull/409))
-- &#8987; Jayvee formatter
+- &#8987; Reusable libraries (with a package manager)
 - &#8987; Further extractors and sinks
-- &#129300; Reusable libraries (with a package manager)
 - &#129300; Composite value types (with multiple fields)
 - &#129300; Natively support tree data (XML, JSON)
 - &#129300; Valuetypes parsers (to read and write different formats)
