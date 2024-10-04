@@ -10,7 +10,6 @@
       "inputs": [
         "{projectRoot}/langium-config.json",
         "{workspaceRoot}/apps/vs-code-extension/assets/language-configuration.json",
-        "{workspaceRoot}/tools/scripts/fix-monarch-grammar-escape.mjs",
         "{workspaceRoot}/tools/scripts/monaco-editor/copy-textmate-grammar.mjs",
         "{workspaceRoot}/tools/scripts/language-server/generate-stdlib.mjs",
         "{projectRoot}/src/grammar/**/*"
@@ -25,8 +24,6 @@
       "options": {
         "commands": [
           "langium generate -f libs/language-server/langium-config.json",
-          // Workaround until https://github.com/langium/langium/issues/740 is resolved:
-          "node tools/scripts/fix-monarch-grammar-escape.mjs",
           "node tools/scripts/monaco-editor/copy-textmate-grammar.mjs",
           "node tools/scripts/monaco-editor/copy-language-configuration.mjs",
           "node tools/scripts/language-server/generate-stdlib.mjs"
