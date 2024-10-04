@@ -11,14 +11,14 @@ const tmVscode = join(
   getSourcePath('vs-code-extension'),
   '..',
   'assets',
-  'jayvee.tmLanguage.json',
+  'language-configuration.json',
 );
 
 const tmMonaco = join(
   getSourcePath('monaco-editor'),
   'lib',
   'generated',
-  'jayvee.tmLanguage.json',
+  'language-configuration.json',
 );
 
 await copyFile(tmVscode, tmMonaco);
