@@ -16,8 +16,8 @@
       ],
       "outputs": [
         "{workspaceRoot}/apps/vs-code-extension/assets/jayvee.tmLanguage.json",
-        "{workspaceRoot}/libs/monaco-editor/src/lib/generated/jayvee.tmLanguage.json",
-        "{workspaceRoot}/libs/monaco-editor/src/lib/generated/language-configuration.json",
+        "{workspaceRoot}/libs/monaco-editor/src/lib/jayvee.tmLanguage.json",
+        "{workspaceRoot}/libs/monaco-editor/src/lib/language-configuration.json",
         "{workspaceRoot}/apps/docs/src/theme/prism-jayvee.js",
         "{projectRoot}/src/lib/ast/generated"
       ],
