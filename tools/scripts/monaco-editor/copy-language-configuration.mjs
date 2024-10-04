@@ -17,7 +17,6 @@ const confVscode = join(
 const confMonaco = join(
   getSourcePath('monaco-editor'),
   'lib',
-  'generated',
   'language-configuration.json',
 );
 

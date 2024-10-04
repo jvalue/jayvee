@@ -1,10 +1,10 @@
-import tmGrammar from './generated/jayvee.tmLanguage.json';
-import config from './generated/language-configuration.json';
+import tmGrammar from './jayvee.tmLanguage.json';
+import config from './language-configuration.json';
 
-export function getTextMateGrammar(): string {
-  return JSON.stringify(tmGrammar);
+export function getTextMateGrammar(): unknown {
+  return tmGrammar;
 }
 
-export function getLanguageConfiguration(): string {
-  return JSON.stringify(config);
+export function getLanguageConfiguration(): unknown {
+  return config;
 }

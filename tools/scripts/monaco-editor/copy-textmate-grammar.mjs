@@ -17,7 +17,6 @@ const tmVscode = join(
 const tmMonaco = join(
   getSourcePath('monaco-editor'),
   'lib',
-  'generated',
   'jayvee.tmLanguage.json',
 );
 
