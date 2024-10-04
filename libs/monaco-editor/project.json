@@ -3,13 +3,13 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/monaco-editor/src",
   "projectType": "library",
-  "tags": [],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
     },
     "build": {
+      "dependsOn": ["^build", "generate"],
       "executor": "@nx/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
@@ -42,8 +42,6 @@
       "options": {
         "commands": [
           "node tools/scripts/relax-peer-dependency-versions.mjs monaco-editor",
-          "node tools/scripts/monaco-editor/delete-vscode-peer-dependency.mjs monaco-editor",
-          "node tools/scripts/monaco-editor/relax-react-version.mjs monaco-editor",
           "node tools/scripts/add-package-json-version.mjs monaco-editor",
           "node tools/scripts/publish.mjs monaco-editor false" // dry-run
         ],
