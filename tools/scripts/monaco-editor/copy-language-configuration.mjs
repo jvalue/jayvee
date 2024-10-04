@@ -7,18 +7,18 @@ import { join } from 'node:path';
 
 import { getSourcePath } from '../shared-util.mjs';
 
-const tmVscode = join(
+const confVscode = join(
   getSourcePath('vs-code-extension'),
   '..',
   'assets',
   'language-configuration.json',
 );
 
-const tmMonaco = join(
+const confMonaco = join(
   getSourcePath('monaco-editor'),
   'lib',
   'generated',
   'language-configuration.json',
 );
 
-await copyFile(tmVscode, tmMonaco);
+await copyFile(confVscode, confMonaco);
