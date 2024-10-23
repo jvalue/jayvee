@@ -35,7 +35,6 @@ export async function runAction(
   }
 
   const currentDir = process.cwd();
-  const workingDir = currentDir;
   const filePathRelativeToCurrentDir = path.relative(currentDir, filePath);
 
   const interpreter = new DefaultJayveeInterpreter({
@@ -45,7 +44,7 @@ export async function runAction(
     debug: options.debug,
     debugGranularity: options.debugGranularity,
     debugTarget: options.debugTarget,
-  }).addWorkspace(workingDir);
+  }).addWorkspace('.');
 
   if (options.parseOnly === true) {
     return await runParseOnly(filePathRelativeToCurrentDir, interpreter);
