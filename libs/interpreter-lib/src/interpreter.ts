@@ -4,7 +4,6 @@
 
 // eslint-disable-next-line unicorn/prefer-node-protocol
 import { strict as assert } from 'assert';
-import path from 'node:path';
 
 import {
   type DebugGranularity,
@@ -111,7 +110,7 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
     this.isWorkspaceInitialized = false;
     this.workspaces.push({
       name: 'projectRoot',
-      uri: path.resolve(uri),
+      uri: uri,
     });
     return this;
   }

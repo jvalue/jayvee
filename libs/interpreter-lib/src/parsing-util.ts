@@ -10,7 +10,7 @@ import {
   type JayveeServices,
   initializeWorkspace,
 } from '@jvalue/jayvee-language-server';
-import { type AstNode, type LangiumDocument, UriUtils } from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
 import { type LangiumServices } from 'langium/lsp';
 import { DiagnosticSeverity } from 'vscode-languageserver-protocol';
 import { URI } from 'vscode-uri';
@@ -44,29 +44,19 @@ export async function extractDocumentFromFile(
     return Promise.reject(ExitCode.FAILURE);
   }
 
-  const fileUri = getFileUriLikeLangiumImpl(filePath);
+  const fileUri = URI.parse(path.resolve(filePath));
   const document =
     services.shared.workspace.LangiumDocuments.getDocument(fileUri);
+  console.log(`Getting file ${fileUri.toString()}`);
+  services.shared.workspace.LangiumDocuments.all.forEach((doc) => {
+    console.log(`Registered document: ${doc.uri.toString()}`);
+  });
   if (document === undefined) {
     logger.logErr(`Did not load file ${filePath} correctly.`);
     return Promise.reject(ExitCode.FAILURE);
   }
 
   return await validateDocument(document, services, logger);
-}
-
-/**
- * Creates the URI for a file path in a way similar to Langium.
- * This is necessary to make sure that the document lookup works on Windows.
- * Fixed https://github.com/jvalue/jayvee/issues/623.
- * Workaround needs to be removed once the issue is fixed in Langium:
- * https://github.com/eclipse-langium/langium/issues/1725
- */
-function getFileUriLikeLangiumImpl(filePath: string): URI {
-  const folderPath = path.dirname(filePath);
-  const folderUri = URI.parse(path.resolve(folderPath));
-  const fileName = path.basename(filePath);
-  return UriUtils.joinPath(folderUri, fileName);
 }
 
 /**
