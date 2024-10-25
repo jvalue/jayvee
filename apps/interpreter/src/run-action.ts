@@ -36,7 +36,7 @@ export async function runAction(
 
   const currentDir = process.cwd();
   console.log('Current directory:', currentDir);
-  const workingDir = path.normalize(currentDir);
+  const workingDir = '.';
   console.log('Working directory:', workingDir);
   const filePathRelativeToCurrentDir = path.relative(currentDir, filePath);
 
