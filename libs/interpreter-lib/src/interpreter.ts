@@ -298,6 +298,8 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
 
   private async prepareInterpretation(): Promise<void> {
     if (!this.isWorkspaceInitialized) {
+      console.log('Initializing workspace with the following folders:');
+      console.log(this.workspaces.map((w) => w.uri).join('\n'));
       await initializeWorkspace(this.services, this.workspaces);
       this.isWorkspaceInitialized = true;
     }

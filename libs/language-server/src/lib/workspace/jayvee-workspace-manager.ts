@@ -33,6 +33,33 @@ export class JayveeWorkspaceManager extends DefaultWorkspaceManager {
       collector(this.documentFactory.fromString(libCode, URI.parse(libName)));
     });
   }
+
+  override getRootFolder(workspaceFolder: WorkspaceFolder): URI {
+    const uri = super.getRootFolder(workspaceFolder);
+    console.log(`WorkspaceManager.getRootFolder: ${uri.toString()}`);
+    return uri;
+  }
+
+  override async traverseFolder(
+    workspaceFolder: WorkspaceFolder,
+    folderPath: URI,
+    fileExtensions: string[],
+    collector: (document: LangiumDocument) => void,
+  ): Promise<void> {
+    const content = await this.fileSystemProvider.readDirectory(folderPath);
+    console.log(
+      `WorkspaceManager.traverseFolder: ${workspaceFolder.uri}\n${content
+        .map((entry) => entry.uri.toString())
+        .join('\n')}`,
+    );
+
+    return super.traverseFolder(
+      workspaceFolder,
+      folderPath,
+      fileExtensions,
+      collector,
+    );
+  }
 }
 
 /**

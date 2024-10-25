@@ -35,7 +35,9 @@ export async function runAction(
   }
 
   const currentDir = process.cwd();
-  const workingDir = currentDir;
+  console.log('Current directory:', currentDir);
+  const workingDir = path.normalize(currentDir);
+  console.log('Working directory:', workingDir);
   const filePathRelativeToCurrentDir = path.relative(currentDir, filePath);
 
   const interpreter = new DefaultJayveeInterpreter({
