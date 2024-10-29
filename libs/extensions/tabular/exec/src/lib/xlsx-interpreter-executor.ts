@@ -12,7 +12,7 @@ import {
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import { IOType } from '@jvalue/jayvee-language-server';
-import * as exceljs from 'exceljs';
+import exceljs from 'exceljs';
 
 @implementsStatic<BlockExecutorClass>()
 export class XLSXInterpreterExecutor extends AbstractBlockExecutor<
