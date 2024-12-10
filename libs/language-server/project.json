@@ -9,21 +9,23 @@
       "cache": true,
       "inputs": [
         "{projectRoot}/langium-config.json",
-        "{workspaceRoot}/tools/scripts/fix-monarch-grammar-escape.mjs",
+        "{workspaceRoot}/apps/vs-code-extension/assets/language-configuration.json",
+        "{workspaceRoot}/tools/scripts/monaco-editor/copy-textmate-grammar.mjs",
         "{workspaceRoot}/tools/scripts/language-server/generate-stdlib.mjs",
         "{projectRoot}/src/grammar/**/*"
       ],
       "outputs": [
         "{workspaceRoot}/apps/vs-code-extension/assets/jayvee.tmLanguage.json",
-        "{workspaceRoot}/libs/monaco-editor/src/lib/jayvee.monarch.ts",
+        "{workspaceRoot}/libs/monaco-editor/src/lib/jayvee.tmLanguage.json",
+        "{workspaceRoot}/libs/monaco-editor/src/lib/language-configuration.json",
         "{workspaceRoot}/apps/docs/src/theme/prism-jayvee.js",
         "{projectRoot}/src/lib/ast/generated"
       ],
       "options": {
         "commands": [
           "langium generate -f libs/language-server/langium-config.json",
-          // Workaround until https://github.com/langium/langium/issues/740 is resolved:
-          "node tools/scripts/fix-monarch-grammar-escape.mjs",
+          "node tools/scripts/monaco-editor/copy-textmate-grammar.mjs",
+          "node tools/scripts/monaco-editor/copy-language-configuration.mjs",
           "node tools/scripts/language-server/generate-stdlib.mjs"
         ],
         "parallel": false
