@@ -1,0 +1,61 @@
+// SPDX-FileCopyrightText: 2024 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+/**
+* Interprets a `File` with CSV contents as a `Table`. This combines the functionality of the Blocks `TextFileInterpreter`, `CSVInterpreter` and `TableInterpreter`, leading to increased performance.
+*
+* @example Properties from all the 'subblocks' can be used.
+* block CarsTableInterpreter oftype TableInterpreter {
+*   encoding: 'utf-8';
+*   delimiter: ',';
+*   header: true;
+*   columns: [
+*     "name" oftype text,
+*     "mpg" oftype decimal,
+*     "cyl" oftype integer,
+*   ];
+* }
+*
+*/
+publish builtin blocktype CSVToTableInterpreter {
+	input default oftype File;
+	output default oftype Table;
+
+	/**
+	* The encoding used for decoding the file contents.
+	*/
+	property encoding oftype text: 'utf-8';
+
+	/**
+	* The regex for identifying line breaks.
+	*/
+	property lineBreak oftype Regex: /\r?\n/;
+
+
+	/**
+	* The delimiter for values in the CSV file.
+	*/
+	property delimiter oftype text: ',';
+
+	/**
+	* The enclosing character that may be used for values in the CSV file.
+	*/
+	property enclosing oftype text: '';
+
+	/**
+	* The character to escape enclosing characters in values.
+	*/
+	property enclosingEscape oftype text: '';
+
+
+	/**
+	* Whether the first row should be interpreted as header row.
+	*/
+	property header oftype boolean: true;
+
+	/**
+	* Collection of value type assignments. Uses column names (potentially matched with the header or by sequence depending on the `header` property) to assign a primitive value type to each column.
+	*/
+	property columns oftype Collection<ValuetypeAssignment>;
+}
