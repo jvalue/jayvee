@@ -85,6 +85,19 @@ export class CSVToTableInterpreterExecutor extends AbstractBlockExecutor<
       columnDefinitions,
       context,
     );
+
+    if (
+      header &&
+      columnDefinitions.length !== 0 &&
+      table.getNumberOfColumns() === 0
+    ) {
+      return R.err({
+        message: 'The input csv is empty and thus has no header',
+        diagnostic: {
+          node: context.getCurrentNode(),
+        },
+      });
+    }
     context.logger.logDebug(
       `Validation completed, the resulting table has ${table.getNumberOfRows()} row(s) and ${table.getNumberOfColumns()} column(s)`,
     );
