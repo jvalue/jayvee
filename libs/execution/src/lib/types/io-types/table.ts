@@ -43,6 +43,10 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     this.numberOfRows = numberOfRows;
   }
 
+  isEmpty(): boolean {
+    return this.numberOfRows === 0;
+  }
+
   addColumn(name: string, column: TableColumn): void {
     assert(column.values.length === this.numberOfRows);
     this.columns.set(name, column);
