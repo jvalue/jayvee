@@ -73,11 +73,12 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
 
       const headerRow = inputSheet.getHeaderRow();
 
-      columnEntries = this.deriveColumnDefinitionEntriesFromHeader(
-        columnDefinitions,
-        headerRow,
-        context,
-      );
+      columnEntries =
+        TableInterpreterExecutor.deriveColumnDefinitionEntriesFromHeader(
+          columnDefinitions,
+          headerRow,
+          context,
+        );
     } else {
       if (inputSheet.getNumberOfColumns() < columnDefinitions.length) {
         return R.err({
@@ -90,10 +91,11 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
         });
       }
 
-      columnEntries = this.deriveColumnDefinitionEntriesWithoutHeader(
-        columnDefinitions,
-        context,
-      );
+      columnEntries =
+        TableInterpreterExecutor.deriveColumnDefinitionEntriesWithoutHeader(
+          columnDefinitions,
+          context,
+        );
     }
 
     const numberOfTableRows = header
@@ -103,7 +105,7 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
       `Validating ${numberOfTableRows} row(s) according to the column types`,
     );
 
-    const resultingTable = this.constructAndValidateTable(
+    const resultingTable = TableInterpreterExecutor.constructAndValidateTable(
       inputSheet,
       header,
       columnEntries,
@@ -115,7 +117,7 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
     return R.ok(resultingTable);
   }
 
-  private constructAndValidateTable(
+  private static constructAndValidateTable(
     sheet: Sheet,
     header: boolean,
     columnEntries: ColumnDefinitionEntry[],
@@ -154,7 +156,7 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
     return table;
   }
 
-  private constructAndValidateTableRow(
+  private static constructAndValidateTableRow(
     sheetRow: string[],
     sheetRowIndex: number,
     columnEntries: ColumnDefinitionEntry[],
@@ -189,7 +191,7 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
     return tableRow;
   }
 
-  private parseAndValidateValue(
+  static parseAndValidateValue(
     value: string,
     valueType: ValueType,
     context: ExecutionContext,
@@ -205,7 +207,7 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
     return parsedValue;
   }
 
-  private deriveColumnDefinitionEntriesWithoutHeader(
+  static deriveColumnDefinitionEntriesWithoutHeader(
     columnDefinitions: ValuetypeAssignment[],
     context: ExecutionContext,
   ): ColumnDefinitionEntry[] {
@@ -225,7 +227,7 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
     );
   }
 
-  private deriveColumnDefinitionEntriesFromHeader(
+  private static deriveColumnDefinitionEntriesFromHeader(
     columnDefinitions: ValuetypeAssignment[],
     headerRow: string[],
     context: ExecutionContext,
