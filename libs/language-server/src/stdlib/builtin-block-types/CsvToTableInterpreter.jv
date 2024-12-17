@@ -5,8 +5,8 @@
 /**
 * Interprets a `File` with CSV contents as a `Table`. This combines the functionality of the Blocks `TextFileInterpreter`, `CSVInterpreter` and `TableInterpreter`, leading to increased performance.
 *
-* @example Properties from all the 'subblocks' can be used.
-* block CarsTableInterpreter oftype TableInterpreter {
+* @example All properties from all the 'subblocks' can be used, except 'lineBreak'.
+* block CarsTableInterpreter oftype CSVToTableInterpreter {
 *   encoding: 'utf-8';
 *   delimiter: ',';
 *   header: true;
@@ -26,12 +26,6 @@ publish builtin blocktype CSVToTableInterpreter {
 	* The encoding used for decoding the file contents.
 	*/
 	property encoding oftype text: 'utf-8';
-
-	/**
-	* The regex for identifying line breaks.
-	*/
-	property lineBreak oftype Regex: /\r?\n/;
-
 
 	/**
 	* The delimiter for values in the CSV file.
