@@ -8,17 +8,17 @@ import { strict as assert } from 'assert';
 import { type AstNode, AstUtils, type LangiumDocuments } from 'langium';
 
 import {
-  type BuiltinBlockTypeDefinition,
   type BuiltinConstrainttypeDefinition,
   type ExportDefinition,
   type ExportableElement,
   type JayveeModel,
-  isBuiltinBlockTypeDefinition,
+  type ReferenceableBlockTypeDefinition,
   isBuiltinConstrainttypeDefinition,
   isExportDefinition,
   isExportableElement,
   isExportableElementDefinition,
   isJayveeModel,
+  isReferenceableBlockTypeDefinition,
 } from './generated/ast';
 import {
   type BlockTypeWrapper,
@@ -51,17 +51,20 @@ export function getNextAstNodeContainer<T extends AstNode>(
 }
 
 /**
- * Utility function that gets all builtin block types.
+ * Utility function that gets all referenceable block types, optionally filtered by a provided filter function.
  * Duplicates are only added once.
  * Make sure to call {@link initializeWorkspace} first so that the file system is initialized.
  */
-export function getAllBuiltinBlockTypes(
+export function getAllReferenceableBlockTypes(
   documentService: LangiumDocuments,
   wrapperFactories: WrapperFactoryProvider,
+  filter: (
+    blockTypeDefinition: ReferenceableBlockTypeDefinition,
+  ) => boolean = () => true,
 ): BlockTypeWrapper[] {
-  const allBuiltinBlockTypes: BlockTypeWrapper[] = [];
-  const visitedBuiltinBlockTypeDefinitions =
-    new Set<BuiltinBlockTypeDefinition>();
+  const allBlockTypes: BlockTypeWrapper[] = [];
+  const visitedBlockTypeDefinitions =
+    new Set<ReferenceableBlockTypeDefinition>();
 
   documentService.all
     .map((document) => document.parseResult.value)
@@ -69,25 +72,27 @@ export function getAllBuiltinBlockTypes(
       if (!isJayveeModel(parsedDocument)) {
         throw new Error('Expected parsed document to be a JayveeModel');
       }
-      const allBlockTypes = AstUtils.streamAllContents(parsedDocument).filter(
-        isBuiltinBlockTypeDefinition,
-      );
-      allBlockTypes.forEach((blockTypeDefinition) => {
+      const allReferenceableBlockTypes = AstUtils.streamAllContents(
+        parsedDocument,
+      )
+        .filter(isReferenceableBlockTypeDefinition)
+        .filter(filter);
+      allReferenceableBlockTypes.forEach((blockTypeDefinition) => {
         const wasAlreadyVisited =
-          visitedBuiltinBlockTypeDefinitions.has(blockTypeDefinition);
+          visitedBlockTypeDefinitions.has(blockTypeDefinition);
         if (wasAlreadyVisited) {
           return;
         }
 
         if (wrapperFactories.BlockType.canWrap(blockTypeDefinition)) {
-          allBuiltinBlockTypes.push(
+          allBlockTypes.push(
             wrapperFactories.BlockType.wrap(blockTypeDefinition),
           );
-          visitedBuiltinBlockTypeDefinitions.add(blockTypeDefinition);
+          visitedBlockTypeDefinitions.add(blockTypeDefinition);
         }
       });
     });
-  return allBuiltinBlockTypes;
+  return allBlockTypes;
 }
 
 /**

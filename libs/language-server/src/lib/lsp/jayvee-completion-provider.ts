@@ -39,8 +39,8 @@ import {
   isValuetypeDefinition,
 } from '../ast/generated/ast';
 import {
-  getAllBuiltinBlockTypes,
   getAllBuiltinConstraintTypes,
+  getAllReferenceableBlockTypes,
   getExportedElements,
 } from '../ast/model-util';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
@@ -112,7 +112,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     context: CompletionContext,
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
-    const blockTypes = getAllBuiltinBlockTypes(
+    const blockTypes = getAllReferenceableBlockTypes(
       this.langiumDocuments,
       this.wrapperFactories,
     );
