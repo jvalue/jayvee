@@ -45,7 +45,7 @@ that fullfil [_constraints_](./primitive-value-types#constraints).`.trim(),
       .filter((valueType) => valueType.isReferenceableByUser())
       .forEach((valueType) => {
         assert(
-          valueType.getUserDoc(),
+          valueType.getUserDoc() !== undefined,
           `Documentation is missing for user extendable value type: ${valueType.getName()}`,
         );
         builder
