@@ -9,17 +9,19 @@ import { StdExecExtension } from '@jvalue/jayvee-extensions/std/exec';
 import {
   type BlockTypeWrapper,
   createJayveeServices,
-  getAllBuiltinBlockTypes,
+  getAllReferenceableBlockTypes,
   initializeWorkspace,
+  isBuiltinBlockTypeDefinition,
 } from '@jvalue/jayvee-language-server';
 import { NodeFileSystem } from 'langium/node';
 
 async function loadAllBuiltinBlockTypes(): Promise<BlockTypeWrapper[]> {
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   await initializeWorkspace(services);
-  return getAllBuiltinBlockTypes(
+  return getAllReferenceableBlockTypes(
     services.shared.workspace.LangiumDocuments,
     services.WrapperFactories,
+    (blockType) => isBuiltinBlockTypeDefinition(blockType),
   );
 }
 

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+// SPDX-FileCopyrightText: 2024 Friedrich-Alexander-Universitat Erlangen-Nurnberg
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
@@ -9,13 +9,15 @@ import { fileURLToPath } from 'node:url';
 import {
   type JayveeServices,
   createJayveeServices,
-  getAllBuiltinBlockTypes,
   getAllBuiltinConstraintTypes,
+  getAllReferenceableBlockTypes,
   initializeWorkspace,
 } from '@jvalue/jayvee-language-server';
 import { NodeFileSystem } from 'langium/node';
 
 import { UserDocGenerator } from './user-doc-generator';
+import { getBlockTypeDomain } from './util';
+import { UserDocCategoryBuilder } from './UserDocCategoryBuilder';
 
 /** ESM does not know __filename and __dirname, so defined here */
 const __filename = fileURLToPath(import.meta.url);
@@ -38,21 +40,49 @@ function generateBlockTypeDocs(
   services: JayveeServices,
   docsAppPath: string,
 ): void {
-  const blockTypes = getAllBuiltinBlockTypes(
+  const blockTypes = getAllReferenceableBlockTypes(
     services.shared.workspace.LangiumDocuments,
     services.WrapperFactories,
   );
-
   const docsPath = join(docsAppPath, 'docs', 'user', 'block-types');
 
+  const domainsGenerated: string[] = [];
+
+  const userCategoryBuilder = new UserDocCategoryBuilder();
+  userCategoryBuilder.generateDocsCategory(
+    docsPath,
+    'builtin',
+    'Built-in Blocks',
+    0,
+    `Built-in Blocks.`,
+  );
+
   for (const blockType of blockTypes) {
+    const blockDomain = getBlockTypeDomain(blockType);
+    if (blockDomain !== undefined) {
+      if (!domainsGenerated.includes(blockDomain)) {
+        const userCategoryBuilder = new UserDocCategoryBuilder();
+        userCategoryBuilder.generateDocsCategory(
+          docsPath,
+          blockDomain,
+          `Domain extension: ${blockDomain}`,
+          domainsGenerated.length + 1,
+          `Blocks from the ${blockDomain} domain extension.`,
+        );
+        domainsGenerated.push(blockDomain);
+      }
+    }
     const userDocBuilder = new UserDocGenerator(services);
     const blockTypeDoc = userDocBuilder.generateBlockTypeDoc(blockType);
 
     const fileName = `${blockType.type}.md`;
-    writeFileSync(join(docsPath, fileName), blockTypeDoc, {
-      flag: 'w',
-    });
+    writeFileSync(
+      join(docsPath, blockDomain ?? 'builtin', fileName),
+      blockTypeDoc,
+      {
+        flag: 'w',
+      },
+    );
     console.info(`Generated file ${fileName}`);
   }
 }
