@@ -12,6 +12,7 @@ import { CellWriterExecutor } from './lib/cell-writer-executor';
 import { ColumnDeleterExecutor } from './lib/column-deleter-executor';
 import { CSVFileLoaderExecutor } from './lib/csv-file-loader-executor';
 import { CSVInterpreterExecutor } from './lib/csv-interpreter-executor';
+import { CSVToTableInterpreterExecutor } from './lib/csv-to-table-interpreter-executor';
 import { RowDeleterExecutor } from './lib/row-deleter-executor';
 import { SheetPickerExecutor } from './lib/sheet-picker-executor';
 import { TableInterpreterExecutor } from './lib/table-interpreter-executor';
@@ -31,6 +32,7 @@ export class TabularExecExtension extends JayveeExecExtension {
       TableTransformerExecutor,
       XLSXInterpreterExecutor,
       SheetPickerExecutor,
+      CSVToTableInterpreterExecutor,
     ];
   }
 }
