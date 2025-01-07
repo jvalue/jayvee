@@ -74,4 +74,4 @@ transform StatusToBoolean {
 ## Applying transforms to table columns
 
 Transforms can be applied to columns of a table.
-Please refer to the documentation of the [`TableTransformer` block type](./block-types/TableTransformer.md) to find out how.
+Please refer to the documentation of the [`TableTransformer` block type](./block-types/builtin/TableTransformer.md) to find out how.
