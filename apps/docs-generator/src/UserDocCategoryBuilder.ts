@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as fs from 'node:fs';
+import fs from 'node:fs';
 import path from 'node:path';
 
 export class UserDocCategoryBuilder {
@@ -15,7 +15,7 @@ export class UserDocCategoryBuilder {
   ): string {
     const categoryPath = path.join(rootPath, dirName);
 
-    fs.mkdirSync(categoryPath);
+    fs.mkdirSync(categoryPath, { recursive: true });
 
     fs.writeFileSync(
       path.join(categoryPath, '_category_.json'),
