@@ -51,16 +51,20 @@ export class UserDocCategoryBuilder {
   }
 
   private getCategoryLicenseString(year: number): string {
+    // REUSE-IgnoreStart
     return `SPDX-FileCopyrightText: ${year} Friedrich-Alexander-Universitat Erlangen-Nurnberg
 
 SPDX-License-Identifier: AGPL-3.0-only`;
+    // REUSE-IgnoreEnd
   }
 
   private getCategoryGitignoreString(year: number): string {
+    // REUSE-IgnoreStart
     return `# SPDX-FileCopyrightText: ${year} Friedrich-Alexander-Universitat Erlangen-Nurnberg
 #
 # SPDX-License-Identifier: AGPL-3.0-only
 
 *.md`;
+    // REUSE-IgnoreEnd
   }
 }
