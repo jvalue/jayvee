@@ -25,6 +25,9 @@ node_modules
 *.launch
 .settings/
 *.sublime-workspace
+.nvim.lua
+.nvimrc
+.exrc
 
 # IDE - VSCode
 .vscode/*
