@@ -13,3 +13,4 @@ export * from './types/value-types/visitors';
 export * from './execution-context';
 export * from './extension';
 export * from './logging';
+export * from './hooks';

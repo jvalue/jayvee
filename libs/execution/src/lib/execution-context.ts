@@ -4,6 +4,7 @@
 
 // eslint-disable-next-line unicorn/prefer-node-protocol
 import { strict as assert } from 'assert';
+import { inspect } from 'node:util';
 
 import {
   type BlockDefinition,
@@ -26,13 +27,16 @@ import {
 } from '@jvalue/jayvee-language-server';
 import { assertUnreachable, isReference } from 'langium';
 
+import { type BlockExecutor } from './blocks';
 import { type JayveeConstraintExtension } from './constraints';
 import {
   type DebugGranularity,
   type DebugTargets,
 } from './debugging/debug-configuration';
 import { type JayveeExecExtension } from './extension';
+import { type Hook, type HookContext } from './hooks';
 import { type Logger } from './logging/logger';
+import { type IOTypeImplementation } from './types';
 
 export type StackNode =
   | BlockDefinition
@@ -55,6 +59,7 @@ export class ExecutionContext {
       debugTargets: DebugTargets;
     },
     public readonly evaluationContext: EvaluationContext,
+    public readonly hookContext: HookContext,
   ) {
     logger.setLoggingContext(pipeline.name);
   }
@@ -131,6 +136,26 @@ export class ExecutionContext {
     assert(property !== undefined);
 
     return property;
+  }
+
+  public async executeHooks(
+    position: 'before' | 'after',
+    input: IOTypeImplementation,
+    context: ExecutionContext,
+  ) {
+    const node = this.getCurrentNode();
+    assert(
+      isBlockDefinition(node),
+      `Expected node to be \`BlockDefinition\`: ${inspect(node)}`,
+    );
+
+    const blocktype = node.type.ref?.name;
+    assert(
+      blocktype !== undefined,
+      `Expected block definition to have a blocktype: ${inspect(node)}`,
+    );
+
+    return this.hookContext.executeHooks(position, blocktype, input, context);
   }
 
   private getDefaultPropertyValue<I extends InternalValueRepresentation>(

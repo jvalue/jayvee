@@ -2,10 +2,17 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { type JayveeModel } from '@jvalue/jayvee-language-server';
 import { readJvTestAssetHelper } from '@jvalue/jayvee-language-server/test';
 
 import { DefaultJayveeInterpreter } from './interpreter';
-import { ExitCode } from './parsing-util';
+import { ExitCode, extractAstNodeFromString } from './parsing-util';
+
+function infiniteLoop() {
+  setTimeout(function () {
+    infiniteLoop();
+  }, 3000);
+}
 
 describe('Interpreter', () => {
   const readJvTestAsset = readJvTestAssetHelper(__dirname, '../../../');
@@ -23,6 +30,83 @@ describe('Interpreter', () => {
         env: new Map(),
       });
       const exitCode = await interpreter.interpretString(model);
+      expect(exitCode).toEqual(ExitCode.SUCCESS);
+    });
+  });
+
+  describe('hooks', () => {
+    it('should execute a general hook on every block', async () => {
+      const exampleFilePath = 'example/cars.jv';
+      const model = readJvTestAsset(exampleFilePath);
+
+      const interpreter = new DefaultJayveeInterpreter({
+        pipelineMatcher: () => true,
+        debug: true,
+        debugGranularity: 'peek',
+        debugTarget: 'all',
+        env: new Map(),
+      });
+
+      const program = await interpreter.parseModel(
+        async (services, loggerFactory) =>
+          await extractAstNodeFromString<JayveeModel>(
+            model,
+            services,
+            loggerFactory.createLogger(),
+          ),
+      );
+      expect(program).toBeDefined();
+      assert(program !== undefined);
+
+      const spy = vi.fn<any, Promise<undefined>>().mockResolvedValue(undefined);
+
+      program.addHook(
+        async () => {
+          return spy();
+        },
+        { position: 'before', blocking: true },
+      );
+
+      const exitCode = await interpreter.interpretProgram(program);
+      expect(exitCode).toEqual(ExitCode.SUCCESS);
+
+      expect(spy).toHaveBeenCalledTimes(6);
+    });
+
+    it('should not wait for non-blocking hooks', async () => {
+      const exampleFilePath = 'example/cars.jv';
+      const model = readJvTestAsset(exampleFilePath);
+
+      const interpreter = new DefaultJayveeInterpreter({
+        pipelineMatcher: () => true,
+        debug: true,
+        debugGranularity: 'peek',
+        debugTarget: 'all',
+        env: new Map(),
+      });
+
+      const program = await interpreter.parseModel(
+        async (services, loggerFactory) =>
+          await extractAstNodeFromString<JayveeModel>(
+            model,
+            services,
+            loggerFactory.createLogger(),
+          ),
+      );
+      expect(program).toBeDefined();
+      assert(program !== undefined);
+
+      program.addHook(
+        () => {
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, no-constant-condition
+          while (true) {
+            infiniteLoop();
+          }
+        },
+        { position: 'before', blocking: false },
+      );
+
+      const exitCode = await interpreter.interpretProgram(program);
       expect(exitCode).toEqual(ExitCode.SUCCESS);
     });
   });

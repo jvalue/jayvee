@@ -36,11 +36,15 @@ export abstract class AbstractBlockExecutor<I extends IOType, O extends IOType>
     input: IOTypeImplementation<I>,
     context: ExecutionContext,
   ): Promise<R.Result<IOTypeImplementation<O> | null>> {
+    await context.executeHooks('before', input, context); // FIXME #634: Pass the blocktype to also execute block specific hooks
+
     const executionResult = await this.doExecute(input, context);
 
     if (R.isOk(executionResult)) {
       this.logBlockResult(executionResult.right, context);
     }
+
+    await context.executeHooks('after', input, context); // FIXME #634: Pass the blocktype to also execute block specific hooks
     return executionResult;
   }
 

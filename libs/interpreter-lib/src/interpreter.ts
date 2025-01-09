@@ -11,6 +11,9 @@ import {
   type DebugTargets,
   DefaultConstraintExtension,
   ExecutionContext,
+  type Hook,
+  HookContext,
+  type HookOptions,
   type JayveeConstraintExtension,
   type JayveeExecExtension,
   type Logger,
@@ -52,6 +55,20 @@ export interface InterpreterOptions {
   debugTarget: DebugTargets;
 }
 
+export class JayveeProgram {
+  private _hooks: HookContext = new HookContext();
+
+  constructor(public model: JayveeModel) {}
+
+  public addHook(hook: Hook, opts: HookOptions) {
+    this._hooks.addHook(hook, opts);
+  }
+
+  public get hooks() {
+    return this._hooks;
+  }
+}
+
 export interface JayveeInterpreter {
   /**
    * Interprets a parsed Jayvee model.
@@ -59,7 +76,7 @@ export interface JayveeInterpreter {
    * @param extractAstNodeFn the Jayvee model.
    * @returns the exit code indicating whether interpretation was successful or not.
    */
-  interpretModel(model: JayveeModel): Promise<ExitCode>;
+  interpretProgram(program: JayveeProgram): Promise<ExitCode>;
 
   /**
    * Interprets a file as a Jayvee model.
@@ -80,18 +97,18 @@ export interface JayveeInterpreter {
   interpretString(modelString: string): Promise<ExitCode>;
 
   /**
-   * Parses a model without executing it.
+   * Parses a program without executing it.
    * Also sets up the environment so that the model can be properly executed.
    *
    * @param extractAstNodeFn method that extracts the AST node
-   * @returns the parsed Jayvee model, or undefined on failure.
+   * @returns the parsed Jayvee program, or undefined on failure.
    */
   parseModel(
     extractAstNodeFn: (
       services: JayveeServices,
       loggerFactory: LoggerFactory,
     ) => Promise<JayveeModel>,
-  ): Promise<JayveeModel | undefined>;
+  ): Promise<JayveeProgram | undefined>;
 }
 
 export class DefaultJayveeInterpreter implements JayveeInterpreter {
@@ -116,11 +133,11 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
     return this;
   }
 
-  async interpretModel(model: JayveeModel): Promise<ExitCode> {
+  async interpretProgram(program: JayveeProgram): Promise<ExitCode> {
     await this.prepareInterpretation();
 
-    const interpretationExitCode = await this.interpretJayveeModel(
-      model,
+    const interpretationExitCode = await this.interpretJayveeProgram(
+      program,
       new StdExecExtension(),
       new DefaultConstraintExtension(),
     );
@@ -145,7 +162,7 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
       return ExitCode.FAILURE;
     }
 
-    return await this.interpretModel(model);
+    return await this.interpretProgram(model);
   }
 
   async interpretString(modelString: string): Promise<ExitCode> {
@@ -166,7 +183,7 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
       return ExitCode.FAILURE;
     }
 
-    return await this.interpretModel(model);
+    return await this.interpretProgram(model);
   }
 
   async parseModel(
@@ -174,12 +191,12 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
       services: JayveeServices,
       loggerFactory: LoggerFactory,
     ) => Promise<JayveeModel>,
-  ): Promise<JayveeModel | undefined> {
+  ): Promise<JayveeProgram | undefined> {
     await this.prepareInterpretation();
 
     try {
       const model = await extractAstNodeFn(this.services, this.loggerFactory);
-      return model;
+      return new JayveeProgram(model);
     } catch (e) {
       this.loggerFactory
         .createLogger()
@@ -213,11 +230,12 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
     }
   }
 
-  private async interpretJayveeModel(
-    model: JayveeModel,
+  private async interpretJayveeProgram(
+    program: JayveeProgram,
     executionExtension: JayveeExecExtension,
     constraintExtension: JayveeConstraintExtension,
   ): Promise<ExitCode> {
+    const model = program.model;
     const selectedPipelines = model.pipelines.filter((pipeline) =>
       this.options.pipelineMatcher(pipeline),
     );
@@ -237,6 +255,7 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
           pipeline,
           executionExtension,
           constraintExtension,
+          program.hooks,
         );
       },
     );
@@ -252,6 +271,7 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
     pipeline: PipelineDefinition,
     executionExtension: JayveeExecExtension,
     constraintExtension: JayveeConstraintExtension,
+    hooks: HookContext,
   ): Promise<ExitCode> {
     const executionContext = new ExecutionContext(
       pipeline,
@@ -270,6 +290,7 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
         this.services.operators.EvaluatorRegistry,
         this.services.ValueTypeProvider,
       ),
+      hooks,
     );
 
     logPipelineOverview(
