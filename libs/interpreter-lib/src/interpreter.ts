@@ -11,12 +11,14 @@ import {
   type DebugTargets,
   DefaultConstraintExtension,
   ExecutionContext,
-  type Hook,
   HookContext,
   type HookOptions,
+  type HookPosition,
   type JayveeConstraintExtension,
   type JayveeExecExtension,
   type Logger,
+  type PostBlockHook,
+  type PreBlockHook,
   executeBlocks,
   isErr,
   logExecutionDuration,
@@ -56,12 +58,18 @@ export interface InterpreterOptions {
 }
 
 export class JayveeProgram {
-  private _hooks: HookContext = new HookContext();
+  private _hooks = new HookContext();
 
   constructor(public model: JayveeModel) {}
 
-  public addHook(hook: Hook, opts: HookOptions) {
-    this._hooks.addHook(hook, opts);
+  // FIXME #634: Pass the blocktype to also execute block specific hooks
+  /** Add a hook to all blocks in the pipeline.*/
+  public addHook(
+    position: HookPosition,
+    hook: PreBlockHook | PostBlockHook,
+    opts: HookOptions,
+  ) {
+    this._hooks.addHook(position, hook, opts);
   }
 
   public get hooks() {

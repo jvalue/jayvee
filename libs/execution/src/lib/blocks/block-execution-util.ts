@@ -62,11 +62,13 @@ export async function executeBlocks(
 
     executionContext.enterNode(block);
 
+    await executionContext.executeHooks(inputValue); // FIXME #634: Pass the blocktype to also execute block specific hooks
     const executionResult = await executeBlock(
       inputValue,
       block,
       executionContext,
     );
+    await executionContext.executeHooks(inputValue, executionResult); // FIXME #634: Pass the blocktype to also execute block specific hooks
     if (R.isErr(executionResult)) {
       return executionResult;
     }

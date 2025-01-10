@@ -27,14 +27,14 @@ import {
 } from '@jvalue/jayvee-language-server';
 import { assertUnreachable, isReference } from 'langium';
 
-import { type BlockExecutor } from './blocks';
+import { type Result } from './blocks';
 import { type JayveeConstraintExtension } from './constraints';
 import {
   type DebugGranularity,
   type DebugTargets,
 } from './debugging/debug-configuration';
 import { type JayveeExecExtension } from './extension';
-import { type Hook, type HookContext } from './hooks';
+import { type HookContext, type HookPosition } from './hooks';
 import { type Logger } from './logging/logger';
 import { type IOTypeImplementation } from './types';
 
@@ -138,10 +138,9 @@ export class ExecutionContext {
     return property;
   }
 
-  public async executeHooks(
-    position: 'before' | 'after',
-    input: IOTypeImplementation,
-    context: ExecutionContext,
+  public executeHooks(
+    input: IOTypeImplementation | null,
+    output?: Result<IOTypeImplementation | null>,
   ) {
     const node = this.getCurrentNode();
     assert(
@@ -155,7 +154,7 @@ export class ExecutionContext {
       `Expected block definition to have a blocktype: ${inspect(node)}`,
     );
 
-    return this.hookContext.executeHooks(position, blocktype, input, context);
+    return this.hookContext.executeHooks(blocktype, input, this, output);
   }
 
   private getDefaultPropertyValue<I extends InternalValueRepresentation>(

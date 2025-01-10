@@ -57,10 +57,11 @@ describe('Interpreter', () => {
         .mockResolvedValue(undefined);
 
       program.addHook(
+        'preBlock',
         async () => {
           return spy();
         },
-        { position: 'before', blocking: true },
+        { blocking: true },
       );
 
       const exitCode = await interpreter.interpretProgram(program);
@@ -93,12 +94,13 @@ describe('Interpreter', () => {
       assert(program !== undefined);
 
       program.addHook(
-        () => {
+        'postBlock',
+        (): Promise<void> => {
           return new Promise((resolve) => {
             setTimeout(resolve, 30000);
           });
         },
-        { position: 'before', blocking: false },
+        { blocking: false },
       );
 
       const exitCode = await interpreter.interpretProgram(program);
