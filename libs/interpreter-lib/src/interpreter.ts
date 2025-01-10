@@ -67,9 +67,9 @@ export class JayveeProgram {
   public addHook(
     position: HookPosition,
     hook: PreBlockHook | PostBlockHook,
-    opts: HookOptions,
+    opts?: HookOptions,
   ) {
-    this._hooks.addHook(position, hook, opts);
+    this._hooks.addHook(position, hook, opts ?? {});
   }
 
   public get hooks() {
