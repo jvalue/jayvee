@@ -34,7 +34,7 @@ import {
   type DebugTargets,
 } from './debugging/debug-configuration';
 import { type JayveeExecExtension } from './extension';
-import { type HookContext, type HookPosition } from './hooks';
+import { type HookContext } from './hooks';
 import { type Logger } from './logging/logger';
 import { type IOTypeImplementation } from './types';
 
