@@ -8,12 +8,6 @@ import { readJvTestAssetHelper } from '@jvalue/jayvee-language-server/test';
 import { DefaultJayveeInterpreter } from './interpreter';
 import { ExitCode, extractAstNodeFromString } from './parsing-util';
 
-function infiniteLoop() {
-  setTimeout(function () {
-    infiniteLoop();
-  }, 3000);
-}
-
 describe('Interpreter', () => {
   const readJvTestAsset = readJvTestAssetHelper(__dirname, '../../../');
 
@@ -58,7 +52,9 @@ describe('Interpreter', () => {
       expect(program).toBeDefined();
       assert(program !== undefined);
 
-      const spy = vi.fn<any, Promise<undefined>>().mockResolvedValue(undefined);
+      const spy = vi
+        .fn<unknown[], Promise<undefined>>()
+        .mockResolvedValue(undefined);
 
       program.addHook(
         async () => {
@@ -98,16 +94,15 @@ describe('Interpreter', () => {
 
       program.addHook(
         () => {
-          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, no-constant-condition
-          while (true) {
-            infiniteLoop();
-          }
+          return new Promise((resolve) => {
+            setTimeout(resolve, 30000);
+          });
         },
         { position: 'before', blocking: false },
       );
 
       const exitCode = await interpreter.interpretProgram(program);
       expect(exitCode).toEqual(ExitCode.SUCCESS);
-    });
+    }, 10000);
   });
 });
