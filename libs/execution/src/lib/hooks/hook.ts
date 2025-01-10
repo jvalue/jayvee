@@ -45,7 +45,7 @@ export class HookContext {
         this.hooks[opts.position][blocktype] = [];
       }
       this.hooks[opts.position][blocktype]?.push({
-        blocking: opts.blocking ?? true,
+        blocking: opts.blocking ?? false,
         hook,
       });
     });
@@ -79,7 +79,7 @@ export interface HookOptions {
   /** Whether the hook is executed `before` or `after` a block.*/
   // FIXME: find a better name than `position`
   position: HookPosition;
-  /** Whether the pipeline should await the hooks completion. `true` if omitted.*/
+  /** Whether the pipeline should await the hooks completion. `false` if omitted.*/
   blocking?: boolean;
   /** Optionally specify one or more blocks to limit this hook to. If omitted, the hook will be executed on all blocks*/
   // FIXME #634: Add `BlockExecutor` type
