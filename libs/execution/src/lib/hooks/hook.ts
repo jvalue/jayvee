@@ -13,7 +13,6 @@ export interface HookOptions {
   /** Whether the pipeline should await the hooks completion. `false` if omitted.*/
   blocking?: boolean;
   /** Optionally specify one or more blocks to limit this hook to. If omitted, the hook will be executed on all blocks*/
-  // FIXME #634: Add `BlockExecutor[]` variant
   blocktypes?: string | string[];
 }
 

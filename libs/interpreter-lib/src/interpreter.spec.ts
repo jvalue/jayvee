@@ -70,6 +70,63 @@ describe('Interpreter', () => {
       expect(spy).toHaveBeenCalledTimes(6);
     });
 
+    it('should execute a block specific hook only on that blocktype', async () => {
+      const exampleFilePath =
+        'libs/interpreter-lib/test/assets/hooks/valid-builtin-and-composite-blocks.jv';
+      const model = readJvTestAsset(exampleFilePath);
+
+      const interpreter = new DefaultJayveeInterpreter({
+        pipelineMatcher: () => true,
+        debug: true,
+        debugGranularity: 'peek',
+        debugTarget: 'all',
+        env: new Map(),
+      });
+
+      const program = await interpreter.parseModel(
+        async (services, loggerFactory) =>
+          await extractAstNodeFromString<JayveeModel>(
+            model,
+            services,
+            loggerFactory.createLogger(),
+          ),
+      );
+      expect(program).toBeDefined();
+      assert(program !== undefined);
+
+      const sqlite_spy = vi
+        .fn<unknown[], Promise<undefined>>()
+        .mockResolvedValue(undefined);
+
+      program.addHook(
+        'preBlock',
+        async (blocktype) => {
+          return sqlite_spy(blocktype);
+        },
+        { blocking: true, blocktypes: 'SQLiteLoader' },
+      );
+
+      const interpreter_spy = vi
+        .fn<unknown[], Promise<undefined>>()
+        .mockResolvedValue(undefined);
+
+      program.addHook(
+        'postBlock',
+        async (blocktype) => {
+          return interpreter_spy(blocktype);
+        },
+        { blocking: true, blocktypes: 'CSVFileInterpreter' },
+      );
+
+      const exitCode = await interpreter.interpretProgram(program);
+      expect(exitCode).toEqual(ExitCode.SUCCESS);
+
+      expect(sqlite_spy).toHaveBeenCalledTimes(1);
+      expect(sqlite_spy).toHaveBeenCalledWith('SQLiteLoader');
+      expect(interpreter_spy).toHaveBeenCalledTimes(1);
+      expect(interpreter_spy).toHaveBeenCalledWith('CSVFileInterpreter');
+    });
+
     it('should not wait for non-blocking hooks', async () => {
       const exampleFilePath = 'example/cars.jv';
       const model = readJvTestAsset(exampleFilePath);
