@@ -62,8 +62,17 @@ export class JayveeProgram {
 
   constructor(public model: JayveeModel) {}
 
-  // FIXME #634: Pass the blocktype to also execute block specific hooks
-  /** Add a hook to all blocks in the pipeline.*/
+  /** Add a hook to one or more blocks in the pipeline.*/
+  public addHook(
+    position: 'preBlock',
+    hook: PreBlockHook,
+    opts?: HookOptions,
+  ): void;
+  public addHook(
+    position: 'postBlock',
+    hook: PostBlockHook,
+    opts?: HookOptions,
+  ): void;
   public addHook(
     position: HookPosition,
     hook: PreBlockHook | PostBlockHook,
