@@ -42,6 +42,6 @@ export type PostBlockHook = (
 export function isPostBlockHook(
   hook: PreBlockHook | PostBlockHook,
   position: HookPosition,
-): hook is PreBlockHook {
+): hook is PostBlockHook {
   return position === 'postBlock';
 }
