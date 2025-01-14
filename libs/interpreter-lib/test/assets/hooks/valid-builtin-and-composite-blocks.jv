@@ -8,6 +8,7 @@ pipeline CarsPipeline {
 		-> CarsInterpreter
 		-> NameHeaderWriter
 		-> CarsTableInterpreter
+		-> CarsTableTransformer
 		-> CarsLoader;
 
 
@@ -31,18 +32,24 @@ pipeline CarsPipeline {
 		header: true;
 		columns: [
 			"name" oftype text,
-			"mpg" oftype decimal,
-			"cyl" oftype integer,
-			"disp" oftype decimal,
-			"hp" oftype integer,
-			"drat" oftype decimal,
-			"wt" oftype decimal,
-			"qsec" oftype decimal,
-			"vs" oftype integer,
-			"am" oftype integer,
-			"gear" oftype integer,
-			"carb" oftype integer
 		];
+	}
+
+	transform copy {
+		from s oftype text;
+		to t oftype text;
+
+		t: s;
+	}
+
+	block CarsTableTransformer oftype TableTransformer {
+		inputColumns: [
+			"name",
+		];
+
+		outputColumn: "nameCopy";
+
+		uses: copy;
 	}
 
 	block CarsLoader oftype SQLiteLoader {
