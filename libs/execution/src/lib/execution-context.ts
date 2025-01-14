@@ -154,7 +154,16 @@ export class ExecutionContext {
       `Expected block definition to have a blocktype: ${inspect(node)}`,
     );
 
-    return this.hookContext.executeHooks(blocktype, input, this, output);
+    if (output === undefined) {
+      return this.hookContext.executePreBlockHooks(blocktype, input, this);
+    }
+
+    return this.hookContext.executePostBlockHooks(
+      blocktype,
+      input,
+      this,
+      output,
+    );
   }
 
   private getDefaultPropertyValue<I extends InternalValueRepresentation>(

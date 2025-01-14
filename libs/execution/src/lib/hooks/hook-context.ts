@@ -2,9 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line unicorn/prefer-node-protocol
-import assert from 'assert';
-
 import { type Result } from '../blocks';
 import { type ExecutionContext } from '../execution-context';
 import { type IOTypeImplementation } from '../types';
@@ -24,53 +21,41 @@ interface HookSpec<H extends PreBlockHook | PostBlockHook> {
   hook: H;
 }
 
-async function executeTheseHooks(
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+function noop() {}
+
+async function executePreBlockHooks(
   hooks: HookSpec<PreBlockHook>[],
   blocktype: string,
   input: IOTypeImplementation | null,
   context: ExecutionContext,
-): Promise<void>;
-async function executeTheseHooks(
+) {
+  await Promise.all(
+    hooks.map(async ({ blocking, hook }) => {
+      if (blocking) {
+        await hook(blocktype, input, context);
+      } else {
+        hook(blocktype, input, context).catch(noop);
+      }
+    }),
+  );
+}
+
+async function executePostBlockHooks(
   hooks: HookSpec<PostBlockHook>[],
   blocktype: string,
   input: IOTypeImplementation | null,
   context: ExecutionContext,
   output: Result<IOTypeImplementation | null>,
-): Promise<void>;
-async function executeTheseHooks(
-  hooks: HookSpec<PreBlockHook>[] | HookSpec<PostBlockHook>[],
-  blocktype: string,
-  input: IOTypeImplementation | null,
-  context: ExecutionContext,
-  output?: Result<IOTypeImplementation | null>,
 ) {
-  const position = output === undefined ? 'preBlock' : 'postBlock';
-  return (
-    Promise.all(
-      hooks.map(async ({ blocking, hook }) => {
-        if (blocking) {
-          if (isPreBlockHook(hook, position)) {
-            await hook(blocktype, input, context);
-          } else {
-            assert(output !== undefined, 'Guaranteed to be a postBlock hook');
-            await hook(blocktype, input, output, context);
-          }
-        } else {
-          if (isPreBlockHook(hook, position)) {
-            hook(blocktype, input, context)
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
-              .catch(() => {});
-          } else {
-            assert(output !== undefined, 'Guaranteed to be a postBlock hook');
-            hook(blocktype, input, output, context)
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
-              .catch(() => {});
-          }
-        }
-      }),
-    )
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      .then(() => {})
+  await Promise.all(
+    hooks.map(async ({ blocking, hook }) => {
+      if (blocking) {
+        await hook(blocktype, input, output, context);
+      } else {
+        hook(blocktype, input, output, context).catch(noop);
+      }
+    }),
   );
 }
 
@@ -126,52 +111,39 @@ export class HookContext {
     });
   }
 
-  public async executeHooks(
+  public async executePreBlockHooks(
     blocktype: string,
     input: IOTypeImplementation | null,
     context: ExecutionContext,
-  ): Promise<void>;
-  public async executeHooks(
+  ) {
+    context.logger.logInfo(`Executing general pre-block-hooks`);
+    const general = executePreBlockHooks(
+      this.hooks.pre[AllBlocks] ?? [],
+      blocktype,
+      input,
+      context,
+    );
+    context.logger.logInfo(
+      `Executing pre-block-hooks for blocktype ${blocktype}`,
+    );
+    const blockSpecific = executePreBlockHooks(
+      this.hooks.pre[blocktype] ?? [],
+      blocktype,
+      input,
+      context,
+    );
+
+    await Promise.all([general, blockSpecific]);
+  }
+
+  public async executePostBlockHooks(
     blocktype: string,
     input: IOTypeImplementation | null,
     context: ExecutionContext,
     output: Result<IOTypeImplementation | null>,
-  ): Promise<void>;
-  public async executeHooks(
-    blocktype: string,
-    input: IOTypeImplementation | null,
-    context: ExecutionContext,
-    output?: Result<IOTypeImplementation | null>,
-  ): Promise<void>;
-  public async executeHooks(
-    blocktype: string,
-    input: IOTypeImplementation | null,
-    context: ExecutionContext,
-    output?: Result<IOTypeImplementation | null>,
   ) {
-    if (output === undefined) {
-      context.logger.logInfo(`Executing general pre-block-hooks`);
-      const general = executeTheseHooks(
-        this.hooks.pre[AllBlocks] ?? [],
-        blocktype,
-        input,
-        context,
-      );
-      context.logger.logInfo(
-        `Executing pre-block-hooks for blocktype ${blocktype}`,
-      );
-      const blockSpecific = executeTheseHooks(
-        this.hooks.pre[blocktype] ?? [],
-        blocktype,
-        input,
-        context,
-      );
-
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      return Promise.all([general, blockSpecific]).then(() => {});
-    }
     context.logger.logInfo(`Executing general post-block-hooks`);
-    const general = executeTheseHooks(
+    const general = executePostBlockHooks(
       this.hooks.post[AllBlocks] ?? [],
       blocktype,
       input,
@@ -181,7 +153,7 @@ export class HookContext {
     context.logger.logInfo(
       `Executing post-block-hooks for blocktype ${blocktype}`,
     );
-    const blockSpecific = executeTheseHooks(
+    const blockSpecific = executePostBlockHooks(
       this.hooks.post[blocktype] ?? [],
       blocktype,
       input,
@@ -189,7 +161,6 @@ export class HookContext {
       output,
     );
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    return Promise.all([general, blockSpecific]).then(() => {});
+    await Promise.all([general, blockSpecific]);
   }
 }
