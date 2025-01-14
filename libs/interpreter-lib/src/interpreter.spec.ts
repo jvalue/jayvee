@@ -104,7 +104,7 @@ describe('Interpreter', () => {
         async (blocktype) => {
           return sqlite_spy(blocktype);
         },
-        { blocking: true, blocktypes: 'SQLiteLoader' },
+        { blocking: true, blocktypes: ['SQLiteLoader'] },
       );
 
       const interpreter_spy = vi
@@ -116,7 +116,7 @@ describe('Interpreter', () => {
         async (blocktype) => {
           return interpreter_spy(blocktype);
         },
-        { blocking: true, blocktypes: 'CSVFileInterpreter' },
+        { blocking: true, blocktypes: ['CSVFileInterpreter'] },
       );
 
       const exitCode = await interpreter.interpretProgram(program);
@@ -218,7 +218,7 @@ describe('Interpreter', () => {
 
           return parameter_spy();
         },
-        { blocking: true, blocktypes: 'TableTransformer' },
+        { blocking: true, blocktypes: ['TableTransformer'] },
       );
 
       const exitCode = await interpreter.interpretProgram(program);

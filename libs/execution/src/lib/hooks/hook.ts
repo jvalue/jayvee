@@ -13,7 +13,7 @@ export interface HookOptions {
   /** Whether the pipeline should await the hooks completion. `false` if omitted.*/
   blocking?: boolean;
   /** Optionally specify one or more blocks to limit this hook to. If omitted, the hook will be executed on all blocks*/
-  blocktypes?: string | string[];
+  blocktypes?: string[];
 }
 
 /** This function will be executed before a block.*/

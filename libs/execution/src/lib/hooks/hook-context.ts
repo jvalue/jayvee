@@ -85,12 +85,7 @@ export class HookContext {
     hook: PreBlockHook | PostBlockHook,
     opts: HookOptions,
   ) {
-    const blocktypes: string[] =
-      typeof opts.blocktypes === 'string'
-        ? [opts.blocktypes]
-        : opts.blocktypes ?? [AllBlocks];
-
-    blocktypes.forEach((blocktype) => {
+    for (const blocktype of opts.blocktypes ?? [AllBlocks]) {
       if (isPreBlockHook(hook, position)) {
         if (this.hooks.pre[blocktype] === undefined) {
           this.hooks.pre[blocktype] = [];
@@ -108,7 +103,7 @@ export class HookContext {
           hook,
         });
       }
-    });
+    }
   }
 
   public async executePreBlockHooks(
