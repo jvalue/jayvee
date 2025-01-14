@@ -150,11 +150,15 @@ export class HookContext {
     output?: Result<IOTypeImplementation | null>,
   ) {
     if (output === undefined) {
+      context.logger.logInfo(`Executing general pre-block-hooks`);
       const general = executeTheseHooks(
         this.hooks.pre[AllBlocks] ?? [],
         blocktype,
         input,
         context,
+      );
+      context.logger.logInfo(
+        `Executing pre-block-hooks for blocktype ${blocktype}`,
       );
       const blockSpecific = executeTheseHooks(
         this.hooks.pre[blocktype] ?? [],
@@ -166,12 +170,16 @@ export class HookContext {
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       return Promise.all([general, blockSpecific]).then(() => {});
     }
+    context.logger.logInfo(`Executing general post-block-hooks`);
     const general = executeTheseHooks(
       this.hooks.post[AllBlocks] ?? [],
       blocktype,
       input,
       context,
       output,
+    );
+    context.logger.logInfo(
+      `Executing post-block-hooks for blocktype ${blocktype}`,
     );
     const blockSpecific = executeTheseHooks(
       this.hooks.post[blocktype] ?? [],
