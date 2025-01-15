@@ -1,0 +1,59 @@
+// SPDX-FileCopyrightText: 2025 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+pipeline CarsPipeline {
+
+	CarsExtractor
+		-> CarsInterpreter
+		-> NameHeaderWriter
+		-> CarsTableInterpreter
+		-> CarsTableTransformer
+		-> CarsLoader;
+
+
+	block CarsExtractor oftype HttpExtractor {
+		url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
+	}
+
+	block CarsInterpreter oftype CSVFileInterpreter {
+		enclosing: '"';
+	}
+
+	block NameHeaderWriter oftype CellWriter {
+		at: cell A1;
+
+		write: [
+			"name"
+		];
+	}
+
+	block CarsTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns: [
+			"name" oftype text,
+		];
+	}
+
+	transform copy {
+		from s oftype text;
+		to t oftype text;
+
+		t: s;
+	}
+
+	block CarsTableTransformer oftype TableTransformer {
+		inputColumns: [
+			"name",
+		];
+
+		outputColumn: "nameCopy";
+
+		uses: copy;
+	}
+
+	block CarsLoader oftype SQLiteLoader {
+		table: "Cars";
+		file: "./cars.sqlite";
+	}
+}
