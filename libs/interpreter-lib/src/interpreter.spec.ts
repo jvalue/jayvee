@@ -101,7 +101,7 @@ describe('Interpreter', () => {
 
       program.addHook(
         'preBlock',
-        async (blocktype) => {
+        async ({ blocktype }) => {
           return sqlite_spy(blocktype);
         },
         { blocking: true, blocktypes: ['SQLiteLoader'] },
@@ -113,7 +113,7 @@ describe('Interpreter', () => {
 
       program.addHook(
         'postBlock',
-        async (blocktype) => {
+        async ({ blocktype }) => {
           return interpreter_spy(blocktype);
         },
         { blocking: true, blocktypes: ['CSVFileInterpreter'] },
@@ -193,7 +193,7 @@ describe('Interpreter', () => {
 
       program.addHook(
         'postBlock',
-        async (blocktype, input, output) => {
+        async ({ blocktype, input, output }) => {
           expect(blocktype).toBe('TableTransformer');
 
           expect(input).not.toBeNull();

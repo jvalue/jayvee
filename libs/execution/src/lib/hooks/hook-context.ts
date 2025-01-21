@@ -2,15 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type Result } from '../blocks';
-import { type ExecutionContext } from '../execution-context';
-import { type IOTypeImplementation } from '../types';
-
 import {
   type HookOptions,
   type HookPosition,
   type PostBlockHook,
+  type PostBlockHookArgs,
   type PreBlockHook,
+  type PreBlockHookArgs,
   isPreBlockHook,
 } from './hook';
 
@@ -26,16 +24,14 @@ function noop() {}
 
 async function executePreBlockHooks(
   hooks: HookSpec<PreBlockHook>[],
-  blocktype: string,
-  input: IOTypeImplementation | null,
-  context: ExecutionContext,
+  args: PreBlockHookArgs,
 ) {
   await Promise.all(
     hooks.map(async ({ blocking, hook }) => {
       if (blocking) {
-        await hook(blocktype, input, context);
+        await hook(args);
       } else {
-        hook(blocktype, input, context).catch(noop);
+        hook(args).catch(noop);
       }
     }),
   );
@@ -43,17 +39,14 @@ async function executePreBlockHooks(
 
 async function executePostBlockHooks(
   hooks: HookSpec<PostBlockHook>[],
-  blocktype: string,
-  input: IOTypeImplementation | null,
-  context: ExecutionContext,
-  output: Result<IOTypeImplementation | null>,
+  args: PostBlockHookArgs,
 ) {
   await Promise.all(
     hooks.map(async ({ blocking, hook }) => {
       if (blocking) {
-        await hook(blocktype, input, output, context);
+        await hook(args);
       } else {
-        hook(blocktype, input, output, context).catch(noop);
+        hook(args).catch(noop);
       }
     }),
   );
@@ -106,54 +99,32 @@ export class HookContext {
     }
   }
 
-  public async executePreBlockHooks(
-    blocktype: string,
-    input: IOTypeImplementation | null,
-    context: ExecutionContext,
-  ) {
-    context.logger.logDebug(`Executing general pre-block-hooks`);
-    const general = executePreBlockHooks(
-      this.hooks.pre[AllBlocks] ?? [],
-      blocktype,
-      input,
-      context,
-    );
-    context.logger.logDebug(
-      `Executing pre-block-hooks for blocktype ${blocktype}`,
+  public async executePreBlockHooks(args: PreBlockHookArgs) {
+    args.context.logger.logDebug(`Executing general pre-block-hooks`);
+    const general = executePreBlockHooks(this.hooks.pre[AllBlocks] ?? [], args);
+    args.context.logger.logDebug(
+      `Executing pre-block-hooks for blocktype ${args.blocktype}`,
     );
     const blockSpecific = executePreBlockHooks(
-      this.hooks.pre[blocktype] ?? [],
-      blocktype,
-      input,
-      context,
+      this.hooks.pre[args.blocktype] ?? [],
+      args,
     );
 
     await Promise.all([general, blockSpecific]);
   }
 
-  public async executePostBlockHooks(
-    blocktype: string,
-    input: IOTypeImplementation | null,
-    context: ExecutionContext,
-    output: Result<IOTypeImplementation | null>,
-  ) {
-    context.logger.logDebug(`Executing general post-block-hooks`);
+  public async executePostBlockHooks(args: PostBlockHookArgs) {
+    args.context.logger.logDebug(`Executing general post-block-hooks`);
     const general = executePostBlockHooks(
       this.hooks.post[AllBlocks] ?? [],
-      blocktype,
-      input,
-      context,
-      output,
+      args,
     );
-    context.logger.logDebug(
-      `Executing post-block-hooks for blocktype ${blocktype}`,
+    args.context.logger.logDebug(
+      `Executing post-block-hooks for blocktype ${args.blocktype}`,
     );
     const blockSpecific = executePostBlockHooks(
-      this.hooks.post[blocktype] ?? [],
-      blocktype,
-      input,
-      context,
-      output,
+      this.hooks.post[args.blocktype] ?? [],
+      args,
     );
 
     await Promise.all([general, blockSpecific]);

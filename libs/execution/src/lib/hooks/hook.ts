@@ -16,12 +16,14 @@ export interface HookOptions {
   blocktypes?: string[];
 }
 
+export interface PreBlockHookArgs {
+  blocktype: string;
+  input: IOTypeImplementation | null;
+  context: ExecutionContext;
+}
+
 /** This function will be executed before a block.*/
-export type PreBlockHook = (
-  blocktype: string,
-  input: IOTypeImplementation | null,
-  context: ExecutionContext,
-) => Promise<void>;
+export type PreBlockHook = (args: PreBlockHookArgs) => Promise<void>;
 
 export function isPreBlockHook(
   hook: PreBlockHook | PostBlockHook,
@@ -30,13 +32,12 @@ export function isPreBlockHook(
   return position === 'preBlock';
 }
 
+export interface PostBlockHookArgs extends PreBlockHookArgs {
+  output: Result<IOTypeImplementation | null>;
+}
+
 /** This function will be executed before a block.*/
-export type PostBlockHook = (
-  blocktype: string,
-  input: IOTypeImplementation | null,
-  output: Result<IOTypeImplementation | null>,
-  context: ExecutionContext,
-) => Promise<void>;
+export type PostBlockHook = (args: PostBlockHookArgs) => Promise<void>;
 
 export function isPostBlockHook(
   hook: PreBlockHook | PostBlockHook,
