@@ -155,15 +155,20 @@ export class ExecutionContext {
     );
 
     if (output === undefined) {
-      return this.hookContext.executePreBlockHooks(blocktype, input, this);
+      return this.hookContext.executePreBlockHooks({
+        blocktype,
+        input,
+        context: this,
+      });
+      // eslint-disable-next-line no-else-return
+    } else {
+      return this.hookContext.executePostBlockHooks({
+        blocktype,
+        input,
+        output,
+        context: this,
+      });
     }
-
-    return this.hookContext.executePostBlockHooks(
-      blocktype,
-      input,
-      this,
-      output,
-    );
   }
 
   private getDefaultPropertyValue<I extends InternalValueRepresentation>(
