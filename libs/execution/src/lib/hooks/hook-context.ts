@@ -111,14 +111,14 @@ export class HookContext {
     input: IOTypeImplementation | null,
     context: ExecutionContext,
   ) {
-    context.logger.logInfo(`Executing general pre-block-hooks`);
+    context.logger.logDebug(`Executing general pre-block-hooks`);
     const general = executePreBlockHooks(
       this.hooks.pre[AllBlocks] ?? [],
       blocktype,
       input,
       context,
     );
-    context.logger.logInfo(
+    context.logger.logDebug(
       `Executing pre-block-hooks for blocktype ${blocktype}`,
     );
     const blockSpecific = executePreBlockHooks(
@@ -137,7 +137,7 @@ export class HookContext {
     context: ExecutionContext,
     output: Result<IOTypeImplementation | null>,
   ) {
-    context.logger.logInfo(`Executing general post-block-hooks`);
+    context.logger.logDebug(`Executing general post-block-hooks`);
     const general = executePostBlockHooks(
       this.hooks.post[AllBlocks] ?? [],
       blocktype,
@@ -145,7 +145,7 @@ export class HookContext {
       context,
       output,
     );
-    context.logger.logInfo(
+    context.logger.logDebug(
       `Executing post-block-hooks for blocktype ${blocktype}`,
     );
     const blockSpecific = executePostBlockHooks(
