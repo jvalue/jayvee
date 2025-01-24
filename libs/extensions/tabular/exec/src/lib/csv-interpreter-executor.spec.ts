@@ -100,4 +100,27 @@ describe('Validation of CSVInterpreterExecutor', () => {
       ]);
     }
   });
+
+  it('should correctly parse newlines within csv string values', async () => {
+    const text = readJvTestAsset('csv-with-newline-interpreter.jv');
+
+    const testCsv = readTestFile('csv-with-newline.csv');
+    const result = await parseAndExecuteExecutor(text, testCsv);
+
+    expect(R.isErr(result)).toEqual(false);
+    if (R.isOk(result)) {
+      expect(result.right.ioType).toEqual(IOType.SHEET);
+      expect(result.right.getNumberOfColumns()).toEqual(2);
+      expect(result.right.getNumberOfRows()).toEqual(2);
+      expect(result.right.getData()).toEqual([
+        ['C1', 'C2', 'C3'],
+        [
+          '2',
+          `some
+text`,
+          true,
+        ],
+      ]);
+    }
+  });
 });
