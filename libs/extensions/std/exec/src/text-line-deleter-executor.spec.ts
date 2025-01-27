@@ -92,8 +92,9 @@ describe('Validation of TextLineDeleterExecutor', () => {
     expect(R.isErr(result)).toEqual(false);
     if (R.isOk(result)) {
       expect(result.right.ioType).toEqual(IOType.TEXT_FILE);
-      expect(result.right.content).toEqual(
-        expect.arrayContaining(['Test  File']),
+      expect(result.right.content).toBe(
+        `Test  File
+`,
       );
     }
   });
@@ -107,8 +108,10 @@ describe('Validation of TextLineDeleterExecutor', () => {
     expect(R.isErr(result)).toEqual(false);
     if (R.isOk(result)) {
       expect(result.right.ioType).toEqual(IOType.TEXT_FILE);
-      expect(result.right.content).toEqual(
-        expect.arrayContaining(['Multiline', 'Test  File']),
+      expect(result.right.content).toBe(
+        `Multiline
+Test  File
+`,
       );
     }
   });
@@ -136,8 +139,9 @@ describe('Validation of TextLineDeleterExecutor', () => {
     expect(R.isErr(result)).toEqual(false);
     if (R.isOk(result)) {
       expect(result.right.ioType).toEqual(IOType.TEXT_FILE);
-      expect(result.right.content).toEqual(
-        expect.arrayContaining(['Test  File']),
+      expect(result.right.content).toBe(
+        `Test  File
+`,
       );
     }
   });

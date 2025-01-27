@@ -12,6 +12,40 @@ import {
 } from '@jvalue/jayvee-execution';
 import { IOType } from '@jvalue/jayvee-language-server';
 
+// eslint-disable-next-line @typescript-eslint/require-await
+async function deleteLines(
+  lines: string[],
+  deleteIdxs: number[],
+  context: ExecutionContext,
+): Promise<R.Result<string[]>> {
+  let lineIdx = 0;
+  for (const deleteIdx of deleteIdxs) {
+    if (deleteIdx > lines.length) {
+      return R.err({
+        message: `Line ${deleteIdx} does not exist in the text file, only ${lines.length} line(s) are present`,
+        diagnostic: {
+          node: context.getOrFailProperty('lines').value,
+          property: 'values',
+          index: lineIdx,
+        },
+      });
+    }
+    ++lineIdx;
+  }
+
+  const distinctLines = new Set(deleteIdxs);
+  const sortedLines = [...distinctLines].sort((a, b) => a - b);
+
+  context.logger.logDebug(`Deleting line(s) ${sortedLines.join(', ')}`);
+
+  const reversedLines = sortedLines.reverse();
+  for (const lineToDelete of reversedLines) {
+    lines.splice(lineToDelete - 1, 1);
+  }
+
+  return R.ok(lines);
+}
+
 @implementsStatic<BlockExecutorClass>()
 export class TextLineDeleterExecutor extends AbstractBlockExecutor<
   IOType.TEXT_FILE,
@@ -23,48 +57,23 @@ export class TextLineDeleterExecutor extends AbstractBlockExecutor<
     super(IOType.TEXT_FILE, IOType.TEXT_FILE);
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
   async doExecute(
     file: TextFile,
     context: ExecutionContext,
   ): Promise<R.Result<TextFile>> {
-    const lines = context.getPropertyValue(
+    const deleteIdxs = context.getPropertyValue(
       'lines',
       context.valueTypeProvider.createCollectionValueTypeOf(
         context.valueTypeProvider.Primitives.Integer,
       ),
     );
-    const numberOfLines = file.content.length;
+    const lineBreakPattern = context.getPropertyValue(
+      'lineBreak',
+      context.valueTypeProvider.Primitives.Regex,
+    );
 
-    let lineIndex = 0;
-    for (const lineNumber of lines) {
-      if (lineNumber > numberOfLines) {
-        return R.err({
-          message: `Line ${lineNumber} does not exist in the text file, only ${file.content.length} line(s) are present`,
-          diagnostic: {
-            node: context.getOrFailProperty('lines').value,
-            property: 'values',
-            index: lineIndex,
-          },
-        });
-      }
-
-      ++lineIndex;
-    }
-
-    const distinctLines = new Set(lines);
-    const sortedLines = [...distinctLines].sort((a, b) => a - b);
-
-    context.logger.logDebug(`Deleting line(s) ${sortedLines.join(', ')}`);
-
-    const reversedLines = sortedLines.reverse();
-    const newContent = [...file.content];
-    for (const lineToDelete of reversedLines) {
-      newContent.splice(lineToDelete - 1, 1);
-    }
-
-    return R.ok(
-      new TextFile(file.name, file.extension, file.mimeType, newContent),
+    return R.transformTextFileLines(file, lineBreakPattern, (lines) =>
+      deleteLines(lines, deleteIdxs, context),
     );
   }
 }
