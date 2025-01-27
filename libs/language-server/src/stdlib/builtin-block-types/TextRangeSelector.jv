@@ -19,4 +19,9 @@ publish builtin blocktype TextRangeSelector {
 	* The default value is the biggest usable integer.
 	*/
 	property lineTo oftype integer: 9007199254740991;
+
+	/**
+	* The regex for identifying line breaks.
+	*/
+	property lineBreak oftype Regex: /\r?\n/;
 }

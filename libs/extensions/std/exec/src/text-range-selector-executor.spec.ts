@@ -93,7 +93,9 @@ describe('Validation of TextRangeSelectorExecutor', () => {
     if (R.isOk(result)) {
       expect(result.right.ioType).toEqual(IOType.TEXT_FILE);
       expect(result.right.content).toEqual(
-        expect.arrayContaining(['Multiline', 'Test ']),
+        `Multiline
+Test 
+`,
       );
     }
   });
