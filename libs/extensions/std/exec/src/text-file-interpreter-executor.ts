@@ -12,7 +12,6 @@ import {
   type ExecutionContext,
   TextFile,
   implementsStatic,
-  splitLines,
 } from '@jvalue/jayvee-execution';
 import { IOType } from '@jvalue/jayvee-language-server';
 
@@ -36,10 +35,6 @@ export class TextFileInterpreterExecutor extends AbstractBlockExecutor<
       'encoding',
       context.valueTypeProvider.Primitives.Text,
     );
-    const lineBreak = context.getPropertyValue(
-      'lineBreak',
-      context.valueTypeProvider.Primitives.Regex,
-    );
 
     const decoder = new TextDecoder(encoding);
     context.logger.logDebug(
@@ -47,14 +42,8 @@ export class TextFileInterpreterExecutor extends AbstractBlockExecutor<
     );
     const textContent = decoder.decode(file.content);
 
-    context.logger.logDebug(
-      `Splitting lines using line break /${lineBreak.source}/`,
+    return R.ok(
+      new TextFile(file.name, file.extension, file.mimeType, textContent),
     );
-    const lines = splitLines(textContent, lineBreak);
-    context.logger.logDebug(
-      `Lines were split successfully, the resulting text file has ${lines.length} lines`,
-    );
-
-    return R.ok(new TextFile(file.name, file.extension, file.mimeType, lines));
   }
 }
