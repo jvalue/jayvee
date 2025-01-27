@@ -2,7 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { parseString as parseStringAsCsv } from '@fast-csv/parse';
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import assert from 'assert';
+
+import { Row, parseString as parseStringAsCsv } from '@fast-csv/parse';
 import { type ParserOptionsArgs } from '@fast-csv/parse/build/src/ParserOptions';
 import * as R from '@jvalue/jayvee-execution';
 import {
@@ -14,7 +17,6 @@ import {
   implementsStatic,
 } from '@jvalue/jayvee-execution';
 import { IOType } from '@jvalue/jayvee-language-server';
-import { either as E } from 'fp-ts';
 
 @implementsStatic<BlockExecutorClass>()
 export class CSVInterpreterExecutor extends AbstractBlockExecutor<
@@ -53,56 +55,51 @@ export class CSVInterpreterExecutor extends AbstractBlockExecutor<
       quote: enclosing,
       escape: enclosingEscape,
     };
-    const csvData = await parseAsCsv(file.content, parseOptions);
-
-    if (E.isLeft(csvData)) {
-      return Promise.resolve(
-        R.err({
-          message: `CSV parse failed in line ${csvData.left.lineNumber}: ${csvData.left.error.message}`,
-          diagnostic: { node: context.getCurrentNode(), property: 'name' },
-        }),
-      );
-    }
-    const sheet = new Sheet(csvData.right);
-
-    context.logger.logDebug(`Parsing raw data as CSV-sheet successful`);
-    return Promise.resolve(R.ok(sheet));
+    return parseAsCSV(file.content, parseOptions).then(
+      (csvData) => {
+        context.logger.logDebug(`Parsing raw data as CSV-sheet successful`);
+        return R.ok(new Sheet(csvData));
+      },
+      (reason) => {
+        assert(typeof reason === 'string');
+        return R.err({
+          message: reason,
+          diagnostic: {
+            node: context.getCurrentNode(),
+            property: 'name',
+          },
+        });
+      },
+    );
   }
 }
 
-async function parseAsCsv(
-  lines: string[],
+async function parseAsCSV(
+  text: string,
   parseOptions: ParserOptionsArgs,
-): Promise<E.Either<{ error: Error; lineNumber: number }, string[][]>> {
-  let lineNumber = 1;
-  const rows: string[][] = [];
-  for await (const line of lines) {
-    const rowParseResult = await parseLineAsRow(line, parseOptions);
-    if (E.isLeft(rowParseResult)) {
-      return E.left({ error: rowParseResult.left, lineNumber });
-    }
-    rows.push(rowParseResult.right);
-
-    ++lineNumber;
-  }
-  return E.right(rows);
-}
-
-async function parseLineAsRow(
-  line: string,
-  parseOptions: ParserOptionsArgs,
-): Promise<E.Either<Error, string[]>> {
-  return new Promise((resolve) => {
-    let row: string[];
-    parseStringAsCsv(line, parseOptions)
-      .on('data', (data: string[]) => {
-        row = data;
+): Promise<string[][]> {
+  return new Promise((resolve, reject) => {
+    const rows: string[][] = [];
+    parseStringAsCsv(text, parseOptions)
+      .on('data', (row: string[]) => {
+        rows.push(row);
       })
-      .on('error', (error) => {
-        resolve(E.left(error));
-      })
+      .on('error', (error) =>
+        reject(
+          `Unexpected error while parsing CSV: ${error.name}: ${error.message}`,
+        ),
+      )
+      .on(
+        'data-invalid',
+        (row: Row | null, rowCount: number, reason?: string) =>
+          reject(
+            `Invalid row ${rowCount}: ${
+              reason ?? 'Unknwon reason'
+            }: ${JSON.stringify(row ?? '')}`,
+          ),
+      )
       .on('end', () => {
-        resolve(E.right(row));
+        resolve(rows);
       });
   });
 }

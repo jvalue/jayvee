@@ -110,7 +110,7 @@ describe('Validation of CSVInterpreterExecutor', () => {
     expect(R.isErr(result)).toEqual(false);
     if (R.isOk(result)) {
       expect(result.right.ioType).toEqual(IOType.SHEET);
-      expect(result.right.getNumberOfColumns()).toEqual(2);
+      expect(result.right.getNumberOfColumns()).toEqual(3);
       expect(result.right.getNumberOfRows()).toEqual(2);
       expect(result.right.getData()).toEqual([
         ['C1', 'C2', 'C3'],
@@ -118,7 +118,7 @@ describe('Validation of CSVInterpreterExecutor', () => {
           '2',
           `some
 text`,
-          true,
+          'true',
         ],
       ]);
     }
