@@ -11,7 +11,7 @@ import {
 } from './io-type-implementation';
 
 export class TextFile
-  extends FileSystemFile<string[]>
+  extends FileSystemFile<string>
   implements IOTypeImplementation<IOType.TEXT_FILE>
 {
   public readonly ioType = IOType.TEXT_FILE;

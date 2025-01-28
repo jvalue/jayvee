@@ -92,9 +92,9 @@ describe('Validation of TextFileInterpreterExecutor', () => {
     expect(R.isErr(result)).toEqual(false);
     if (R.isOk(result)) {
       expect(result.right.ioType).toEqual(IOType.TEXT_FILE);
-      expect(result.right.content).toEqual(
-        expect.arrayContaining(['Multiline ', 'Test  File']),
-      );
+      expect(result.right.content).toBe(`Multiline 
+Test  File
+`);
     }
   });
 
@@ -107,24 +107,18 @@ describe('Validation of TextFileInterpreterExecutor', () => {
     expect(R.isErr(result)).toEqual(false);
     if (R.isOk(result)) {
       expect(result.right.ioType).toEqual(IOType.TEXT_FILE);
-      expect(result.right.content).toEqual(
-        expect.arrayContaining(['vehicle:268435857"0']),
-      );
-    }
-  });
-
-  it('should diagnose no error on custom lineBreak', async () => {
-    const text = readJvTestAsset('valid-custom-line-break.jv');
-
-    const testFile = readTestFile('test.txt');
-    const result = await parseAndExecuteExecutor(text, testFile);
-
-    expect(R.isErr(result)).toEqual(false);
-    if (R.isOk(result)) {
-      expect(result.right.ioType).toEqual(IOType.TEXT_FILE);
-      expect(result.right.content).toEqual(
-        expect.arrayContaining(['Multiline \nTest', 'File\n']),
-      );
+      const expectedBytes = Buffer.from([
+        0xa, 0xd, 0xa, 0x3, 0x32, 0x2e, 0x30, 0x10, 0x0, 0x18, 0xe9, 0xa9, 0xba,
+        0xef, 0xbf, 0xbd, 0x6, 0x12, 0x45, 0xa, 0x11, 0x76, 0x65, 0x68, 0x69,
+        0x63, 0x6c, 0x65, 0x3a, 0x32, 0x36, 0x38, 0x34, 0x33, 0x35, 0x38, 0x35,
+        0x37, 0x22, 0x30, 0xa, 0xe, 0xa, 0x8, 0x31, 0x35, 0x39, 0x32, 0x33,
+        0x34, 0x37, 0x34, 0x2a, 0x2, 0x31, 0x30, 0x12, 0xf, 0xd, 0x27, 0xef,
+        0xbf, 0xbd, 0x39, 0x42, 0x15, 0xef, 0xbf, 0xbd, 0xf, 0x1f, 0xef, 0xbf,
+        0xbd, 0x1d, 0x0, 0x0, 0x2c, 0x43, 0x28, 0x0, 0x42, 0xb, 0xa, 0x9, 0x32,
+        0x36, 0x38, 0x34, 0x33, 0x35, 0x38, 0x35, 0x37,
+      ]);
+      const actualBytes = Buffer.from(result.right.content);
+      expect(actualBytes).toStrictEqual(expectedBytes);
     }
   });
 });

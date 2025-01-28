@@ -12,7 +12,6 @@ import {
   TextFile,
   inferFileExtensionFromFileExtensionString,
   inferMimeTypeFromFileExtensionString,
-  splitLines,
 } from '../../src';
 
 export function createBinaryFileFromLocalFile(fileName: string): BinaryFile {
@@ -39,6 +38,6 @@ export function createTextFileFromLocalFile(fileName: string): TextFile {
     path.basename(fileName),
     fileExtension,
     mimeType,
-    splitLines(fileContent, /\r?\n/),
+    fileContent,
   );
 }

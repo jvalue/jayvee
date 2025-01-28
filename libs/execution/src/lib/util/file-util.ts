@@ -4,7 +4,8 @@
 
 import * as mime from 'mime-types';
 
-import { FileExtension, MimeType } from '../types';
+import * as R from '../blocks';
+import { FileExtension, MimeType, TextFile } from '../types';
 
 export function inferMimeTypeFromFileExtensionString(
   fileExtension: string | undefined,
@@ -49,4 +50,34 @@ export function inferFileExtensionFromContentTypeString(
     }
   }
   return undefined;
+}
+
+export async function transformTextFileLines(
+  file: TextFile,
+  lineBreakPattern: RegExp,
+  transformFn: (lines: string[]) => Promise<R.Result<string[]>>,
+): Promise<R.Result<TextFile>> {
+  const lines = file.content.split(lineBreakPattern);
+  const lineBreak = file.content.match(lineBreakPattern)?.at(0) ?? '';
+
+  // There may be an additional empty line due to the previous splitting
+  let emptyNewline = false;
+  if (lines[lines.length - 1] === '') {
+    emptyNewline = true;
+    lines.pop();
+  }
+
+  const newLines = await transformFn(lines);
+  if (R.isErr(newLines)) {
+    return newLines;
+  }
+
+  let newContent = newLines.right.join(lineBreak);
+  if (emptyNewline) {
+    newContent += lineBreak;
+  }
+
+  return R.ok(
+    new TextFile(file.name, file.extension, file.mimeType, newContent),
+  );
 }

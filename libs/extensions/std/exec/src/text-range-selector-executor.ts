@@ -23,7 +23,6 @@ export class TextRangeSelectorExecutor extends AbstractBlockExecutor<
     super(IOType.TEXT_FILE, IOType.TEXT_FILE);
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
   async doExecute(
     file: TextFile,
     context: ExecutionContext,
@@ -36,20 +35,21 @@ export class TextRangeSelectorExecutor extends AbstractBlockExecutor<
       'lineTo',
       context.valueTypeProvider.Primitives.Integer,
     );
-
-    const numberOfLines = file.content.length;
-
-    context.logger.logDebug(
-      `Selecting lines from ${lineFrom} to ${
-        lineTo === Number.MAX_SAFE_INTEGER || lineTo >= numberOfLines
-          ? 'the end'
-          : `${lineTo}`
-      }`,
+    const lineBreakPattern = context.getPropertyValue(
+      'lineBreak',
+      context.valueTypeProvider.Primitives.Regex,
     );
-    const selectedLines = file.content.slice(lineFrom - 1, lineTo);
 
-    return R.ok(
-      new TextFile(file.name, file.extension, file.mimeType, selectedLines),
-    );
+    // eslint-disable-next-line @typescript-eslint/require-await
+    return R.transformTextFileLines(file, lineBreakPattern, async (lines) => {
+      context.logger.logDebug(
+        `Selecting lines from ${lineFrom} to ${
+          lineTo === Number.MAX_SAFE_INTEGER || lineTo >= lines.length
+            ? 'the end'
+            : `${lineTo}`
+        }`,
+      );
+      return R.ok(lines.slice(lineFrom - 1, lineTo));
+    });
   }
 }

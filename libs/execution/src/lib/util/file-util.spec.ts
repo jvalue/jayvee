@@ -2,13 +2,24 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { FileExtension, MimeType } from '../types';
+import * as R from '../blocks';
+import { FileExtension, MimeType, TextFile } from '../types';
 
 import {
   inferFileExtensionFromContentTypeString,
   inferFileExtensionFromFileExtensionString,
   inferMimeTypeFromFileExtensionString,
+  transformTextFileLines,
 } from './file-util';
+
+function exampleTextFile(content: string): TextFile {
+  return new TextFile(
+    'exampleTextFile',
+    FileExtension.TXT,
+    MimeType.TEXT_PLAIN,
+    content,
+  );
+}
 
 describe('Validation of file-util', () => {
   describe('Function inferMimeTypeFromContentTypeString', () => {
@@ -66,6 +77,58 @@ describe('Validation of file-util', () => {
         inferFileExtensionFromContentTypeString('application/unity');
 
       expect(result).toEqual(undefined);
+    });
+  });
+  describe('Function transformTextFileLines', () => {
+    it('should diagnose no error without newline', async () => {
+      const file = exampleTextFile('some text content without a newline');
+      // eslint-disable-next-line @typescript-eslint/require-await
+      const spy = vi.fn(async (lines: string[]) => R.ok(lines));
+      const result = await transformTextFileLines(file, /\r?\n/, spy);
+
+      expect(spy).toHaveBeenCalledOnce();
+      expect(spy).toHaveBeenCalledWith(['some text content without a newline']);
+
+      expect(R.isOk(result)).toBe(true);
+      assert(R.isOk(result));
+
+      expect(result.right).toStrictEqual(file);
+    });
+    it('should diagnose no error on empty file', async () => {
+      const file = exampleTextFile('');
+
+      // eslint-disable-next-line @typescript-eslint/require-await
+      const spy = vi.fn(async (lines: string[]) => R.ok(lines));
+      const result = await transformTextFileLines(file, /\r?\n/, spy);
+
+      expect(spy).toHaveBeenCalledOnce();
+      expect(spy).toHaveBeenCalledWith([]);
+
+      expect(R.isOk(result)).toBe(true);
+      assert(R.isOk(result));
+
+      expect(result.right).toStrictEqual(file);
+    });
+    it('should diagnose no error on file with trailing newline', async () => {
+      const file = exampleTextFile(`some text content
+with a 
+trailing newline
+`);
+      // eslint-disable-next-line @typescript-eslint/require-await
+      const spy = vi.fn(async (lines: string[]) => R.ok(lines));
+      const result = await transformTextFileLines(file, /\r?\n/, spy);
+
+      expect(spy).toHaveBeenCalledOnce();
+      expect(spy).toHaveBeenCalledWith([
+        'some text content',
+        'with a ',
+        'trailing newline',
+      ]);
+
+      expect(R.isOk(result)).toBe(true);
+      assert(R.isOk(result));
+
+      expect(result.right).toStrictEqual(file);
     });
   });
 });
