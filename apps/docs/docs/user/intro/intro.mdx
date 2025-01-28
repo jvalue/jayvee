@@ -102,6 +102,13 @@ and download the `jayvee.vsix` file from the release assets.
 Next, go to [this page](https://code.visualstudio.com/docs/editor/extension-marketplace#_install-from-a-vsix) and
 follow the instructions for installing the downloaded extension.
 
+## Neovim Plugin
+
+To set up Jayvee locally in Neovim, you need to install the [jayvee.nvim](https://github.com/jvalue/jayvee.nvim) plugin.
+This enables Neovim to detect Jayvee source files, sets up the jayvee-language-server and also includes basic syntax highlighting.
+You need to install the language-server seperately, but you can easily do that via [mason.nvim](https://github.com/williamboman/mason.nvim)
+If you need advanced treesitter syntax highlighting, you can try the experimental [tree-sitter parser](https://github.com/jvalue/tree-sitter-jayvee).
+
 ## Troubleshooting
 
 1. Error `structuredClone is not defined`
