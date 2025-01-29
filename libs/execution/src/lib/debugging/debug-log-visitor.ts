@@ -6,6 +6,7 @@ import {
   type WrapperFactoryProvider,
   internalValueToString,
 } from '@jvalue/jayvee-language-server';
+import { either } from 'fp-ts';
 
 import { type Logger } from '../logging/logger';
 import { type Workbook } from '../types';
@@ -15,6 +16,7 @@ import { type TextFile } from '../types/io-types/filesystem-node-file-text';
 import { type IoTypeVisitor } from '../types/io-types/io-type-implementation';
 import { type Sheet } from '../types/io-types/sheet';
 import { type Table } from '../types/io-types/table';
+import { findLineBounds } from '../util/string-util';
 
 import { type DebugGranularity } from './debug-configuration';
 
@@ -115,18 +117,31 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
     this.logPeekComment();
   }
 
-  visitTextFile(binaryFile: TextFile): void {
-    if (this.debugGranularity === 'minimal') {
-      return;
-    }
+  visitTextFile(textFile: TextFile): void {
+    switch (this.debugGranularity) {
+      case 'minimal':
+        return;
 
-    for (let i = 0; i < binaryFile.content.length; ++i) {
-      if (i > this.PEEK_NUMBER_OF_LINES) {
-        break;
+      case 'exhaustive':
+        this.log(textFile.content);
+        return;
+
+      case 'peek': {
+        // BUG: /\r?\n/ might not be the correct line break
+        const result = findLineBounds(
+          [this.PEEK_NUMBER_OF_LINES - 1],
+          /\r?\n/,
+          textFile.content,
+        );
+        const { start: firsNonIncludedLineStart } = (either.isRight(result)
+          ? result.right[0]
+          : undefined) ?? {
+          start: textFile.content.length,
+        };
+        this.log(textFile.content.slice(0, firsNonIncludedLineStart));
+        this.logPeekComment();
       }
-      this.log(`[Line ${i}] ${binaryFile.content[i] ?? '<undefined>'}`);
     }
-    this.logPeekComment();
   }
 
   private logPeekComment(): void {

@@ -125,7 +125,7 @@ Test  File
     expect(R.isOk(result)).toEqual(false);
     if (R.isErr(result)) {
       expect(result.left.message).toEqual(
-        'Line 1 does not exist in the text file, only 0 line(s) are present',
+        'Line 1 does not exist in the text file.',
       );
     }
   });
