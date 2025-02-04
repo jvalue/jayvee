@@ -12,7 +12,6 @@ import {
   type ValueType,
 } from '@jvalue/jayvee-language-server';
 
-import { type ExecutionContext } from '../../execution-context';
 import { SQLColumnTypeVisitor } from '../value-types/visitors/sql-column-type-visitor';
 import { SQLValueRepresentationVisitor } from '../value-types/visitors/sql-value-representation-visitor';
 
