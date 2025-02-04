@@ -18,8 +18,15 @@ import {
 
 export function parseValueToInternalRepresentation<
   I extends InternalValueRepresentation,
->(value: string, valueType: ValueType<I>): I | undefined {
-  const visitor = new InternalRepresentationParserVisitor(value);
+>(
+  value: string,
+  valueType: ValueType<I>,
+  parseOpts?: ParseOpts,
+): I | undefined {
+  const visitor = new InternalRepresentationParserVisitor(
+    value,
+    parseOpts ?? { skipLeadingWhitespace: true, skipTrailingWhitespace: true },
+  );
   const result = valueType.acceptVisitor(visitor);
   if (!valueType.isInternalValueRepresentation(result)) {
     return undefined;
@@ -27,22 +34,43 @@ export function parseValueToInternalRepresentation<
   return result;
 }
 
+export interface ParseOpts {
+  skipLeadingWhitespace: boolean;
+  skipTrailingWhitespace: boolean;
+}
+
 class InternalRepresentationParserVisitor extends ValueTypeVisitor<
   InternalValueRepresentation | undefined
 > {
-  constructor(private value: string) {
+  constructor(private value: string, private parseOpts: ParseOpts) {
     super();
   }
 
+  private trim() {
+    // BUG: https://github.com/jvalue/jayvee/issues/646
+    if (typeof this.value !== 'string') {
+      return;
+    }
+    if (this.parseOpts.skipLeadingWhitespace) {
+      this.value = this.value.trimStart();
+    }
+    if (this.parseOpts.skipTrailingWhitespace) {
+      this.value = this.value.trimEnd();
+    }
+  }
+
   visitBoolean(vt: BooleanValuetype): boolean | undefined {
+    this.trim();
     return vt.fromString(this.value);
   }
 
   visitDecimal(vt: DecimalValuetype): number | undefined {
+    this.trim();
     return vt.fromString(this.value);
   }
 
   visitInteger(vt: IntegerValuetype): number | undefined {
+    this.trim();
     return vt.fromString(this.value);
   }
 

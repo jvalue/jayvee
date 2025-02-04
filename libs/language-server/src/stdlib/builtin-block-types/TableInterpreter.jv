@@ -4,7 +4,7 @@
 
 /**
 * Interprets a `Sheet` as a `Table`. In case a header row is present in the sheet, its names can be matched with the provided column names. Otherwise, the provided column names are assigned in order.
-* 
+*
 * @example Interprets a `Sheet` about cars with a topmost header row and interprets it as a `Table` by assigning a primitive value type to each column. The column names are matched to the header, so the order of the type assignments does not matter.
 * block CarsTableInterpreter oftype TableInterpreter {
 *   header: true;
@@ -14,7 +14,7 @@
 *     "cyl" oftype integer,
 *   ];
 * }
-* 
+*
 * @example Interprets a `Sheet` about cars without a topmost header row and interprets it as a `Table` by sequentially assigning a name and a primitive value type to each column of the sheet. Note that the order of columns matters here. The first column (column `A`) will be named "name", the second column (column `B`) will be named "mpg" etc.
 * block CarsTableInterpreter oftype TableInterpreter {
 *   header: false;
@@ -28,14 +28,24 @@
 publish builtin blocktype TableInterpreter {
 	input default oftype Sheet;
 	output default oftype Table;
-	
-  /**
-  * Whether the first row should be interpreted as header row.
+
+	/**
+	* Whether the first row should be interpreted as header row.
 	*/
-  property header oftype boolean: true;
-	
-  /**
-  * Collection of value type assignments. Uses column names (potentially matched with the header or by sequence depending on the `header` property) to assign a primitive value type to each column.
+	property header oftype boolean: true;
+
+	/**
+	* Collection of value type assignments. Uses column names (potentially matched with the header or by sequence depending on the `header` property) to assign a primitive value type to each column.
 	*/
-  property columns oftype Collection<ValuetypeAssignment>;
+	property columns oftype Collection<ValuetypeAssignment>;
+
+	/**
+	* Whether to ignore whitespace before values. Does not apply to `text` cells
+	*/
+	property skipLeadingWhitespace oftype boolean: true;
+
+	/**
+	* Whether to ignore whitespace after values. Does not apply to `text` cells
+	*/
+	property skipTrailingWhitespace oftype boolean: true;
 }
