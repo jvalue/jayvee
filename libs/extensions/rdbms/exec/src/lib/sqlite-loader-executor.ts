@@ -57,11 +57,23 @@ export class SQLiteLoaderExecutor extends AbstractBlockExecutor<
       }
 
       context.logger.logDebug(`Creating table "${table}"`);
-      await this.runQuery(db, input.generateCreateTableStatement(table));
+      await this.runQuery(
+        db,
+        input.generateCreateTableStatement(
+          table,
+          context.valueTypeProvider.Primitives.Text,
+        ),
+      );
       context.logger.logDebug(
         `Inserting ${input.getNumberOfRows()} row(s) into table "${table}"`,
       );
-      await this.runQuery(db, input.generateInsertValuesStatement(table));
+      await this.runQuery(
+        db,
+        input.generateInsertValuesStatement(
+          table,
+          context.valueTypeProvider.Primitives.Text,
+        ),
+      );
 
       context.logger.logDebug(
         `The data was successfully loaded into the database`,
@@ -84,9 +96,15 @@ export class SQLiteLoaderExecutor extends AbstractBlockExecutor<
     query: string,
   ): Promise<sqlite3.RunResult> {
     return new Promise((resolve, reject) => {
-      db.run(query, (result: sqlite3.RunResult, error: Error | null) =>
-        error ? reject(error) : resolve(result),
-      );
+      db.run(query, (result: sqlite3.RunResult, error: Error | null) => {
+        if (error) {
+          reject(error);
+        } else if (result instanceof Error) {
+          reject(result);
+        } else {
+          resolve(result);
+        }
+      });
     });
   }
 }
