@@ -16,10 +16,27 @@ import {
   ValueTypeVisitor,
 } from '@jvalue/jayvee-language-server';
 
+export interface ParseOpts {
+  skipLeadingWhitespace: boolean;
+  skipTrailingWhitespace: boolean;
+}
+
+const DEFAULT_PARSE_OPTS: ParseOpts = {
+  skipLeadingWhitespace: true,
+  skipTrailingWhitespace: true,
+};
+
 export function parseValueToInternalRepresentation<
   I extends InternalValueRepresentation,
->(value: string, valueType: ValueType<I>): I | undefined {
-  const visitor = new InternalRepresentationParserVisitor(value);
+>(
+  value: string,
+  valueType: ValueType<I>,
+  parseOpts?: Partial<ParseOpts>,
+): I | undefined {
+  const visitor = new InternalRepresentationParserVisitor(value, {
+    ...DEFAULT_PARSE_OPTS,
+    ...parseOpts,
+  });
   const result = valueType.acceptVisitor(visitor);
   if (!valueType.isInternalValueRepresentation(result)) {
     return undefined;
@@ -30,20 +47,33 @@ export function parseValueToInternalRepresentation<
 class InternalRepresentationParserVisitor extends ValueTypeVisitor<
   InternalValueRepresentation | undefined
 > {
-  constructor(private value: string) {
+  constructor(private value: string, private parseOpts: ParseOpts) {
     super();
   }
 
+  private applyTrimOptions(value: string): string {
+    // BUG: https://github.com/jvalue/jayvee/issues/646
+    if (typeof this.value === 'string') {
+      if (this.parseOpts.skipLeadingWhitespace) {
+        value = value.trimStart();
+      }
+      if (this.parseOpts.skipTrailingWhitespace) {
+        value = value.trimEnd();
+      }
+    }
+    return value;
+  }
+
   visitBoolean(vt: BooleanValuetype): boolean | undefined {
-    return vt.fromString(this.value);
+    return vt.fromString(this.applyTrimOptions(this.value));
   }
 
   visitDecimal(vt: DecimalValuetype): number | undefined {
-    return vt.fromString(this.value);
+    return vt.fromString(this.applyTrimOptions(this.value));
   }
 
   visitInteger(vt: IntegerValuetype): number | undefined {
-    return vt.fromString(this.value);
+    return vt.fromString(this.applyTrimOptions(this.value));
   }
 
   visitText(vt: TextValuetype): string {

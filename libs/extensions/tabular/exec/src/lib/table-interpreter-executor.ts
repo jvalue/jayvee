@@ -58,6 +58,14 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
         context.valueTypeProvider.Primitives.ValuetypeAssignment,
       ),
     );
+    const skipLeadingWhitespace = context.getPropertyValue(
+      'skipLeadingWhitespace',
+      context.valueTypeProvider.Primitives.Boolean,
+    );
+    const skipTrailingWhitespace = context.getPropertyValue(
+      'skipTrailingWhitespace',
+      context.valueTypeProvider.Primitives.Boolean,
+    );
 
     let columnEntries: ColumnDefinitionEntry[];
 
@@ -107,6 +115,8 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
       inputSheet,
       header,
       columnEntries,
+      skipLeadingWhitespace,
+      skipTrailingWhitespace,
       context,
     );
     context.logger.logDebug(
@@ -119,6 +129,8 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
     sheet: Sheet,
     header: boolean,
     columnEntries: ColumnDefinitionEntry[],
+    skipLeadingWhitespace: boolean,
+    skipTrailingWhitespace: boolean,
     context: ExecutionContext,
   ): Table {
     const table = new Table();
@@ -141,6 +153,8 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
         sheetRow,
         sheetRowIndex,
         columnEntries,
+        skipLeadingWhitespace,
+        skipTrailingWhitespace,
         context,
       );
       if (tableRow === undefined) {
@@ -158,6 +172,8 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
     sheetRow: string[],
     sheetRowIndex: number,
     columnEntries: ColumnDefinitionEntry[],
+    skipLeadingWhitespace: boolean,
+    skipTrailingWhitespace: boolean,
     context: ExecutionContext,
   ): R.TableRow | undefined {
     let invalidRow = false;
@@ -168,7 +184,13 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
       const value = sheetRow[sheetColumnIndex]!;
       const valueType = columnEntry.valueType;
 
-      const parsedValue = this.parseAndValidateValue(value, valueType, context);
+      const parsedValue = this.parseAndValidateValue(
+        value,
+        valueType,
+        skipLeadingWhitespace,
+        skipTrailingWhitespace,
+        context,
+      );
       if (parsedValue === undefined) {
         const currentCellIndex = new CellIndex(sheetColumnIndex, sheetRowIndex);
         context.logger.logDebug(
@@ -192,9 +214,14 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
   private parseAndValidateValue(
     value: string,
     valueType: ValueType,
+    skipLeadingWhitespace: boolean,
+    skipTrailingWhitespace: boolean,
     context: ExecutionContext,
   ): InternalValueRepresentation | undefined {
-    const parsedValue = parseValueToInternalRepresentation(value, valueType);
+    const parsedValue = parseValueToInternalRepresentation(value, valueType, {
+      skipLeadingWhitespace,
+      skipTrailingWhitespace,
+    });
     if (parsedValue === undefined) {
       return undefined;
     }
