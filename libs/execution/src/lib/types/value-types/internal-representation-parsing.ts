@@ -16,27 +16,32 @@ import {
   ValueTypeVisitor,
 } from '@jvalue/jayvee-language-server';
 
+export interface ParseOpts {
+  skipLeadingWhitespace: boolean;
+  skipTrailingWhitespace: boolean;
+}
+
+const DEFAULT_PARSE_OPTS: ParseOpts = {
+  skipLeadingWhitespace: true,
+  skipTrailingWhitespace: true,
+};
+
 export function parseValueToInternalRepresentation<
   I extends InternalValueRepresentation,
 >(
   value: string,
   valueType: ValueType<I>,
-  parseOpts?: ParseOpts,
+  parseOpts?: Partial<ParseOpts>,
 ): I | undefined {
-  const visitor = new InternalRepresentationParserVisitor(
-    value,
-    parseOpts ?? { skipLeadingWhitespace: true, skipTrailingWhitespace: true },
-  );
+  const visitor = new InternalRepresentationParserVisitor(value, {
+    ...DEFAULT_PARSE_OPTS,
+    ...parseOpts,
+  });
   const result = valueType.acceptVisitor(visitor);
   if (!valueType.isInternalValueRepresentation(result)) {
     return undefined;
   }
   return result;
-}
-
-export interface ParseOpts {
-  skipLeadingWhitespace: boolean;
-  skipTrailingWhitespace: boolean;
 }
 
 class InternalRepresentationParserVisitor extends ValueTypeVisitor<
