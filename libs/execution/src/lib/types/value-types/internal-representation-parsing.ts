@@ -51,32 +51,29 @@ class InternalRepresentationParserVisitor extends ValueTypeVisitor<
     super();
   }
 
-  private trim() {
+  private applyTrimOptions(value: string): string {
     // BUG: https://github.com/jvalue/jayvee/issues/646
-    if (typeof this.value !== 'string') {
-      return;
+    if (typeof this.value === 'string') {
+      if (this.parseOpts.skipLeadingWhitespace) {
+        value = value.trimStart();
+      }
+      if (this.parseOpts.skipTrailingWhitespace) {
+        value = value.trimEnd();
+      }
     }
-    if (this.parseOpts.skipLeadingWhitespace) {
-      this.value = this.value.trimStart();
-    }
-    if (this.parseOpts.skipTrailingWhitespace) {
-      this.value = this.value.trimEnd();
-    }
+    return value;
   }
 
   visitBoolean(vt: BooleanValuetype): boolean | undefined {
-    this.trim();
-    return vt.fromString(this.value);
+    return vt.fromString(this.applyTrimOptions(this.value));
   }
 
   visitDecimal(vt: DecimalValuetype): number | undefined {
-    this.trim();
-    return vt.fromString(this.value);
+    return vt.fromString(this.applyTrimOptions(this.value));
   }
 
   visitInteger(vt: IntegerValuetype): number | undefined {
-    this.trim();
-    return vt.fromString(this.value);
+    return vt.fromString(this.applyTrimOptions(this.value));
   }
 
   visitText(vt: TextValuetype): string {
