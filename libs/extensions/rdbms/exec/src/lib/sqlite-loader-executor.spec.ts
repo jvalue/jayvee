@@ -157,14 +157,114 @@ describe('Validation of SQLiteLoaderExecutor', () => {
       );
       expect(databaseRunMock).nthCalledWith(
         2,
-        `CREATE TABLE IF NOT EXISTS "Test" ("Column1" text,"Column2" real);`,
+        `CREATE TABLE IF NOT EXISTS "Test" ('Column1' text,'Column2' real);`,
         expect.any(Function),
       );
       expect(databaseRunMock).nthCalledWith(
         3,
-        `INSERT INTO "Test" ("Column1","Column2") VALUES ('value 1',20.2)`,
+        `INSERT INTO "Test" ('Column1','Column2') VALUES ('value 1',20.2)`,
         expect.any(Function),
       );
+      expect(databaseCloseMock).toBeCalledTimes(1);
+    }
+  });
+
+  it('should diagnose no error on column names with quotes', async () => {
+    mockDatabaseDefault();
+    databaseRunMock.mockImplementation(
+      (sql: string, callback: SqliteRunCallbackType) => {
+        callback(
+          {
+            lastID: 0,
+            changes: 0,
+          } as sqlite3.RunResult,
+          null,
+        );
+        return this;
+      },
+    );
+    const text = readJvTestAsset('valid-sqlite-loader.jv');
+
+    const inputTable = constructTable(
+      [
+        {
+          columnName: '"ColumnWithDoubleQuotes"',
+          column: {
+            values: ['value 1'],
+            valueType: services.ValueTypeProvider.Primitives.Text,
+          },
+        },
+        {
+          columnName: "'ColumnWithSingleQuotes'",
+          column: {
+            values: [20.2],
+            valueType: services.ValueTypeProvider.Primitives.Decimal,
+          },
+        },
+      ],
+      1,
+    );
+    const result = await parseAndExecuteExecutor(text, inputTable);
+
+    expect(R.isErr(result)).toEqual(false);
+    if (R.isOk(result)) {
+      expect(result.right.ioType).toEqual(IOType.NONE);
+      expect(databaseRunMock).toBeCalledTimes(3);
+      expect(databaseRunMock).nthCalledWith(
+        1,
+        'DROP TABLE IF EXISTS "Test";',
+        expect.any(Function),
+      );
+      expect(databaseRunMock).nthCalledWith(
+        2,
+        `CREATE TABLE IF NOT EXISTS "Test" ('"ColumnWithDoubleQuotes"' text,'''ColumnWithSingleQuotes''' real);`,
+        expect.any(Function),
+      );
+      expect(databaseRunMock).nthCalledWith(
+        3,
+        `INSERT INTO "Test" ('"ColumnWithDoubleQuotes"','''ColumnWithSingleQuotes''') VALUES ('value 1',20.2)`,
+        expect.any(Function),
+      );
+      expect(databaseCloseMock).toBeCalledTimes(1);
+    }
+  });
+
+  it('should diagnose error on query error', async () => {
+    mockDatabaseDefault();
+    databaseRunMock.mockImplementation(
+      (sql: string, callback: SqliteRunCallbackType) => {
+        callback(
+          {
+            lastID: 0,
+            changes: 0,
+          } as sqlite3.RunResult,
+          new Error('mock error message'),
+        );
+        return this;
+      },
+    );
+    const text = readJvTestAsset('valid-sqlite-loader.jv');
+
+    const inputTable = constructTable(
+      [
+        {
+          columnName: 'Column1',
+          column: {
+            values: ['value 1'],
+            valueType: services.ValueTypeProvider.Primitives.Text,
+          },
+        },
+      ],
+      1,
+    );
+    const result = await parseAndExecuteExecutor(text, inputTable);
+
+    expect(R.isOk(result)).toEqual(false);
+    if (R.isErr(result)) {
+      expect(result.left.message).toEqual(
+        'Could not write to sqlite database: mock error message',
+      );
+      expect(databaseRunMock).toBeCalledTimes(1);
       expect(databaseCloseMock).toBeCalledTimes(1);
     }
   });

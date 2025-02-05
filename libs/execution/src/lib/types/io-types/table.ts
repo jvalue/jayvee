@@ -8,6 +8,7 @@ import { strict as assert } from 'assert';
 import {
   IOType,
   type InternalValueRepresentation,
+  type TextValuetype,
   type ValueType,
 } from '@jvalue/jayvee-language-server';
 
@@ -137,41 +138,47 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     return `DROP TABLE IF EXISTS "${tableName}";`;
   }
 
-  generateInsertValuesStatement(tableName: string): string {
+  generateInsertValuesStatement(
+    tableName: string,
+    text: TextValuetype,
+  ): string {
     const valueRepresentationVisitor = new SQLValueRepresentationVisitor();
 
-    const columnNames = [...this.columns.keys()];
+    const columns = [...this.columns.entries()];
     const formattedRowValues: string[] = [];
     for (let rowIndex = 0; rowIndex < this.numberOfRows; ++rowIndex) {
       const rowValues: string[] = [];
-      for (const columnName of columnNames) {
-        const column = this.columns.get(columnName);
-        const entry = column?.values[rowIndex];
+      for (const [, column] of columns) {
+        const entry = column.values[rowIndex];
         assert(entry !== undefined);
-        const formattedValue = column?.valueType.acceptVisitor(
+        const formattedValue = column.valueType.acceptVisitor(
           valueRepresentationVisitor,
         )(entry);
-        assert(formattedValue !== undefined);
         rowValues.push(formattedValue);
       }
       formattedRowValues.push(`(${rowValues.join(',')})`);
     }
 
-    const formattedColumns = columnNames.map((c) => `"${c}"`).join(',');
+    const formattedColumns = columns
+      .map(([colName]) => {
+        return text.acceptVisitor(valueRepresentationVisitor)(colName);
+      })
+      .join(',');
 
     return `INSERT INTO "${tableName}" (${formattedColumns}) VALUES ${formattedRowValues.join(
       ', ',
     )}`;
   }
 
-  generateCreateTableStatement(tableName: string): string {
+  generateCreateTableStatement(tableName: string, text: TextValuetype): string {
     const columnTypeVisitor = new SQLColumnTypeVisitor();
+    const valueRepresentationVisitor = new SQLValueRepresentationVisitor();
 
     const columns = [...this.columns.entries()];
     const columnStatements = columns.map(([columnName, column]) => {
-      return `"${columnName}" ${column.valueType.acceptVisitor(
-        columnTypeVisitor,
-      )}`;
+      return `${text.acceptVisitor(valueRepresentationVisitor)(
+        columnName,
+      )} ${column.valueType.acceptVisitor(columnTypeVisitor)}`;
     });
 
     return `CREATE TABLE IF NOT EXISTS "${tableName}" (${columnStatements.join(

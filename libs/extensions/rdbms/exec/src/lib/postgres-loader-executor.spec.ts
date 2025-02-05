@@ -134,11 +134,11 @@ describe('Validation of PostgresLoaderExecutor', () => {
       );
       expect(databaseQueryMock).nthCalledWith(
         2,
-        `CREATE TABLE IF NOT EXISTS "Test" ("Column1" text,"Column2" real);`,
+        `CREATE TABLE IF NOT EXISTS "Test" ('Column1' text,'Column2' real);`,
       );
       expect(databaseQueryMock).nthCalledWith(
         3,
-        `INSERT INTO "Test" ("Column1","Column2") VALUES ('value 1',20.2)`,
+        `INSERT INTO "Test" ('Column1','Column2') VALUES ('value 1',20.2)`,
       );
       expect(databaseEndMock).toBeCalledTimes(1);
     }

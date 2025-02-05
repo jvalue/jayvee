@@ -74,11 +74,21 @@ export class PostgresLoaderExecutor extends AbstractBlockExecutor<
       );
       await client.query(Table.generateDropTableStatement(table));
       context.logger.logDebug(`Creating table "${table}"`);
-      await client.query(input.generateCreateTableStatement(table));
+      await client.query(
+        input.generateCreateTableStatement(
+          table,
+          context.valueTypeProvider.Primitives.Text,
+        ),
+      );
       context.logger.logDebug(
         `Inserting ${input.getNumberOfRows()} row(s) into table "${table}"`,
       );
-      await client.query(input.generateInsertValuesStatement(table));
+      await client.query(
+        input.generateInsertValuesStatement(
+          table,
+          context.valueTypeProvider.Primitives.Text,
+        ),
+      );
 
       context.logger.logDebug(
         `The data was successfully loaded into the database`,
