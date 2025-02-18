@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { performance } from 'node:perf_hooks';
+
 import {
   type BlockDefinition,
   type CompositeBlockTypeDefinition,
@@ -88,69 +90,75 @@ export async function executeBlock(
   const blockExecutor =
     executionContext.executionExtension.createBlockExecutor(block);
 
-  const startTime = new Date();
+  const prefix = `${executionContext.pipeline.name}::${block.name}`;
 
-  await executionContext.executeHooks(inputValue);
-  logDurationUntilNow(startTime, 'pre-block-hooks', (msg) =>
-    executionContext.logger.logDebug(msg),
-  );
+  return perfMeasure(prefix, executionContext.logger, async () => {
+    await perfMeasure(prefix + '::preBlockHooks', executionContext.logger, () =>
+      executionContext.executeHooks(inputValue),
+    );
 
-  if (inputValue == null) {
-    executionContext.logger.logInfoDiagnostic(
-      `Skipped execution because parent block emitted no value.`,
-      { node: block, property: 'name' },
+    if (inputValue == null) {
+      executionContext.logger.logInfoDiagnostic(
+        `Skipped execution because parent block emitted no value.`,
+        { node: block, property: 'name' },
+      );
+      const result = R.ok(null);
+      await perfMeasure(
+        prefix + '::postBlockHooks',
+        executionContext.logger,
+        () => executionContext.executeHooks(inputValue, result),
+      );
+      return result;
+    }
+
+    const result = await perfMeasure(
+      prefix + '::blockExecution',
+      executionContext.logger,
+      async () => {
+        let result: R.Result<IOTypeImplementation | null>;
+        try {
+          result = await blockExecutor.execute(inputValue, executionContext);
+        } catch (unexpectedError) {
+          result = R.err({
+            message: `An unknown error occurred: ${
+              unexpectedError instanceof Error
+                ? unexpectedError.stack ?? unexpectedError.message
+                : JSON.stringify(unexpectedError)
+            }`,
+            diagnostic: { node: block, property: 'name' },
+          });
+        }
+        return result;
+      },
     );
-    const result = R.ok(null);
-    const postHookStartTime = new Date();
-    await executionContext.executeHooks(inputValue, result);
-    logDurationUntilNow(postHookStartTime, 'post-block-hooks', (msg) =>
-      executionContext.logger.logDebug(msg),
+
+    await perfMeasure(
+      prefix + '::postBlockHooks',
+      executionContext.logger,
+      () => executionContext.executeHooks(inputValue, result),
     );
+
     return result;
-  }
+  });
+}
 
-  const blockStartTime = new Date();
+export async function perfMeasure<R>(
+  prefix: string,
+  logger: Logger,
+  action: () => Promise<R>,
+): Promise<R> {
+  const start = prefix + '::start';
+  const end = prefix + '::end';
 
-  let result: R.Result<IOTypeImplementation | null>;
-  try {
-    result = await blockExecutor.execute(inputValue, executionContext);
-  } catch (unexpectedError) {
-    result = R.err({
-      message: `An unknown error occurred: ${
-        unexpectedError instanceof Error
-          ? unexpectedError.stack ?? unexpectedError.message
-          : JSON.stringify(unexpectedError)
-      }`,
-      diagnostic: { node: block, property: 'name' },
-    });
-  }
-  logDurationUntilNow(blockStartTime, 'Block', (msg) =>
-    executionContext.logger.logDebug(msg),
-  );
+  performance.mark(start);
+  const result = await action();
+  performance.mark(end);
 
-  const postHookStartTime = new Date();
-  await executionContext.executeHooks(inputValue, result);
-  logDurationUntilNow(postHookStartTime, 'post-block-hooks', (msg) =>
-    executionContext.logger.logDebug(msg),
-  );
+  const measure = performance.measure(prefix, start, end);
 
-  logDurationUntilNow(startTime, 'Total', (msg) =>
-    executionContext.logger.logDebug(msg),
-  );
-
+  const name_idx = measure.name.lastIndexOf(':');
+  const name =
+    name_idx >= 0 ? measure.name.substring(name_idx + 1) : measure.name;
+  logger.logDebug(`Duration of ${name}: ${Math.round(measure.duration)} ms`);
   return result;
-}
-
-export function logExecutionDuration(startTime: Date, logger: Logger) {
-  logDurationUntilNow(startTime, 'Execution', (msg) => logger.logDebug(msg));
-}
-
-function logDurationUntilNow(
-  startTime: Date,
-  name: string,
-  log: (message: string) => void,
-) {
-  const endTime = new Date();
-  const durationMs = Math.round(endTime.getTime() - startTime.getTime());
-  log(`${name} duration: ${durationMs} ms.`);
 }

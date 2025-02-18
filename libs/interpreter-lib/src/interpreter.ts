@@ -21,8 +21,8 @@ import {
   type PreBlockHook,
   executeBlocks,
   isErr,
-  logExecutionDuration,
   parseValueToInternalRepresentation,
+  perfMeasure,
 } from '@jvalue/jayvee-execution';
 import { StdExecExtension } from '@jvalue/jayvee-extensions/std/exec';
 import {
@@ -317,22 +317,20 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
       this.services.WrapperFactories,
     );
 
-    const startTime = new Date();
+    return perfMeasure(pipeline.name, executionContext.logger, async () => {
+      const executionResult = await executeBlocks(executionContext, pipeline);
 
-    const executionResult = await executeBlocks(executionContext, pipeline);
+      if (isErr(executionResult)) {
+        const diagnosticError = executionResult.left;
+        executionContext.logger.logErrDiagnostic(
+          diagnosticError.message,
+          diagnosticError.diagnostic,
+        );
+        return ExitCode.FAILURE;
+      }
 
-    if (isErr(executionResult)) {
-      const diagnosticError = executionResult.left;
-      executionContext.logger.logErrDiagnostic(
-        diagnosticError.message,
-        diagnosticError.diagnostic,
-      );
-      logExecutionDuration(startTime, executionContext.logger);
-      return ExitCode.FAILURE;
-    }
-
-    logExecutionDuration(startTime, executionContext.logger);
-    return ExitCode.SUCCESS;
+      return ExitCode.SUCCESS;
+    });
   }
 
   private async prepareInterpretation(): Promise<void> {
