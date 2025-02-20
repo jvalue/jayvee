@@ -10,6 +10,7 @@
     "test": "nx run-many --target test",
     "generate": "nx run language-server:generate",
     "reproduce": "nx run interpreter:run -d repro.jv -dg exhaustive",
+    "bench": "nx run benchmark:run",
     "example:cars": "nx run interpreter:run -d example/cars.jv -dg peek",
     "example:gtfs": "nx run interpreter:run -d example/gtfs-static.jv -dg peek",
     "example:gtfs-rt": "nx run interpreter:run -d example/gtfs-rt.jv -dg peek",
