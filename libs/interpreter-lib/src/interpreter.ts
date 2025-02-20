@@ -10,6 +10,7 @@ import {
   type DebugGranularity,
   type DebugTargets,
   DefaultConstraintExtension,
+  DefaultDebugTargetsValue,
   ExecutionContext,
   HookContext,
   type HookOptions,
@@ -18,10 +19,12 @@ import {
   type JayveeExecExtension,
   type Logger,
   MeasureLocation,
+  type PipelineMeasure,
   type PostBlockHook,
   type PreBlockHook,
   executeBlocks,
   isErr,
+  listMeasures,
   measure,
   parseValueToInternalRepresentation,
 } from '@jvalue/jayvee-execution';
@@ -127,19 +130,43 @@ export interface JayveeInterpreter {
       loggerFactory: LoggerFactory,
     ) => Promise<JayveeModel>,
   ): Promise<JayveeProgram | undefined>;
+
+  /**
+   * WARN: Only call this FULLY interpreting a model.
+   * Lists the duration measures made while interpreting.
+   *
+   * @returns a list containing the measures made, grouped by pipelines and blocks.
+   */
+  listMeasures(): PipelineMeasure[];
+
+  /**
+   * Clear all existing measures
+   */
+  clearMeasures(): void;
 }
+
+export const DefaultInterpreterOptions: InterpreterOptions = {
+  pipelineMatcher: (pipelineDefinition) =>
+    new RegExp('.*').test(pipelineDefinition.name),
+  env: new Map<string, string>(),
+  debug: false,
+  debugGranularity: 'minimal',
+  debugTarget: DefaultDebugTargetsValue,
+};
 
 export class DefaultJayveeInterpreter implements JayveeInterpreter {
   private readonly services: JayveeServices;
   private readonly loggerFactory: LoggerFactory;
   private readonly workspaces: WorkspaceFolder[] = [];
+  private readonly options: InterpreterOptions;
   private isWorkspaceInitialized = false;
 
-  constructor(private readonly options: InterpreterOptions) {
+  constructor(options?: Partial<InterpreterOptions>) {
+    this.options = { ...DefaultInterpreterOptions, ...options };
     this.services = createJayveeServices(NodeFileSystem).Jayvee;
     this.setupJayveeServices(this.services, this.options.env);
 
-    this.loggerFactory = new LoggerFactory(options.debug);
+    this.loggerFactory = new LoggerFactory(this.options.debug);
   }
 
   addWorkspace(uri: string): DefaultJayveeInterpreter {
@@ -221,6 +248,15 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
         .logErr('Could not extract the AST node of the given model.');
       return undefined;
     }
+  }
+
+  listMeasures(): PipelineMeasure[] {
+    return listMeasures();
+  }
+
+  clearMeasures() {
+    performance.clearMarks();
+    performance.clearMeasures();
   }
 
   private setupJayveeServices(
