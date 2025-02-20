@@ -2,7 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { performance } from 'node:perf_hooks';
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import assert from 'assert';
 
 import {
   type BlockDefinition,
@@ -11,7 +12,7 @@ import {
 } from '@jvalue/jayvee-language-server';
 
 import { type ExecutionContext } from '../execution-context';
-import { type Logger } from '../logging/logger';
+import { MeasureLocation, measure } from '../perf';
 import { type IOTypeImplementation, NONE } from '../types';
 
 import * as R from './execution-result';
@@ -90,75 +91,78 @@ export async function executeBlock(
   const blockExecutor =
     executionContext.executionExtension.createBlockExecutor(block);
 
-  const prefix = `${executionContext.pipeline.name}::${block.name}`;
+  const blockType = block.type.ref?.name;
+  assert(blockType !== undefined);
 
-  return perfMeasure(prefix, executionContext.logger, async () => {
-    await perfMeasure(prefix + '::preBlockHooks', executionContext.logger, () =>
-      executionContext.executeHooks(inputValue),
-    );
+  const location = new MeasureLocation(executionContext.pipeline.name, {
+    name: block.name,
+    type: blockType,
+  });
+  const { result, durationMs: totalDurMs } = await measure(
+    location,
+    async () => {
+      assert(location.block !== undefined);
 
-    if (inputValue == null) {
-      executionContext.logger.logInfoDiagnostic(
-        `Skipped execution because parent block emitted no value.`,
-        { node: block, property: 'name' },
+      const { durationMs: preDurMs } = await measure(
+        location.withBlockInternalLocation('preBlockHooks'),
+        () => executionContext.executeHooks(inputValue),
       );
-      const result = R.ok(null);
-      await perfMeasure(
-        prefix + '::postBlockHooks',
-        executionContext.logger,
+      executionContext.logger.logDebug(
+        `Pre-block hooks took ${Math.round(preDurMs)} ms`,
+      );
+
+      if (inputValue == null) {
+        executionContext.logger.logInfoDiagnostic(
+          `Skipped execution because parent block emitted no value.`,
+          { node: block, property: 'name' },
+        );
+        const result = R.ok(null);
+        const { durationMs: postDurMs } = await measure(
+          location.withBlockInternalLocation('postBlockHooks'),
+          () => executionContext.executeHooks(inputValue, result),
+        );
+        executionContext.logger.logDebug(
+          `Post-block hooks took ${Math.round(postDurMs)} ms`,
+        );
+        return result;
+      }
+
+      const { result, durationMs: blockDurMs } = await measure(
+        location.withBlockInternalLocation('blockExecution'),
+        async () => {
+          let result: R.Result<IOTypeImplementation | null>;
+          try {
+            result = await blockExecutor.execute(inputValue, executionContext);
+          } catch (unexpectedError) {
+            result = R.err({
+              message: `An unknown error occurred: ${
+                unexpectedError instanceof Error
+                  ? unexpectedError.stack ?? unexpectedError.message
+                  : JSON.stringify(unexpectedError)
+              }`,
+              diagnostic: { node: block, property: 'name' },
+            });
+          }
+          return result;
+        },
+      );
+      executionContext.logger.logDebug(
+        `Block execution itself took ${Math.round(blockDurMs)} ms`,
+      );
+
+      const { durationMs: postDurMs } = await measure(
+        location.withBlockInternalLocation('postBlockHooks'),
         () => executionContext.executeHooks(inputValue, result),
       );
+      executionContext.logger.logDebug(
+        `Post-block hooks took ${Math.round(postDurMs)} ms`,
+      );
+
       return result;
-    }
-
-    const result = await perfMeasure(
-      prefix + '::blockExecution',
-      executionContext.logger,
-      async () => {
-        let result: R.Result<IOTypeImplementation | null>;
-        try {
-          result = await blockExecutor.execute(inputValue, executionContext);
-        } catch (unexpectedError) {
-          result = R.err({
-            message: `An unknown error occurred: ${
-              unexpectedError instanceof Error
-                ? unexpectedError.stack ?? unexpectedError.message
-                : JSON.stringify(unexpectedError)
-            }`,
-            diagnostic: { node: block, property: 'name' },
-          });
-        }
-        return result;
-      },
-    );
-
-    await perfMeasure(
-      prefix + '::postBlockHooks',
-      executionContext.logger,
-      () => executionContext.executeHooks(inputValue, result),
-    );
-
-    return result;
-  });
-}
-
-export async function perfMeasure<R>(
-  prefix: string,
-  logger: Logger,
-  action: () => Promise<R>,
-): Promise<R> {
-  const start = prefix + '::start';
-  const end = prefix + '::end';
-
-  performance.mark(start);
-  const result = await action();
-  performance.mark(end);
-
-  const measure = performance.measure(prefix, start, end);
-
-  const name_idx = measure.name.lastIndexOf(':');
-  const name =
-    name_idx >= 0 ? measure.name.substring(name_idx + 1) : measure.name;
-  logger.logDebug(`Duration of ${name}: ${Math.round(measure.duration)} ms`);
+    },
+  );
+  executionContext.logger.logDebug(
+    `${block.name} took ${Math.round(totalDurMs)} ms`,
+  );
   return result;
 }

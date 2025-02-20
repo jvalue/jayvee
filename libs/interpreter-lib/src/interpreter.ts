@@ -17,12 +17,13 @@ import {
   type JayveeConstraintExtension,
   type JayveeExecExtension,
   type Logger,
+  MeasureLocation,
   type PostBlockHook,
   type PreBlockHook,
   executeBlocks,
   isErr,
+  measure,
   parseValueToInternalRepresentation,
-  perfMeasure,
 } from '@jvalue/jayvee-execution';
 import { StdExecExtension } from '@jvalue/jayvee-extensions/std/exec';
 import {
@@ -317,20 +318,27 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
       this.services.WrapperFactories,
     );
 
-    return perfMeasure(pipeline.name, executionContext.logger, async () => {
-      const executionResult = await executeBlocks(executionContext, pipeline);
+    const { result, durationMs } = await measure(
+      new MeasureLocation(pipeline.name),
+      async () => {
+        const executionResult = await executeBlocks(executionContext, pipeline);
 
-      if (isErr(executionResult)) {
-        const diagnosticError = executionResult.left;
-        executionContext.logger.logErrDiagnostic(
-          diagnosticError.message,
-          diagnosticError.diagnostic,
-        );
-        return ExitCode.FAILURE;
-      }
+        if (isErr(executionResult)) {
+          const diagnosticError = executionResult.left;
+          executionContext.logger.logErrDiagnostic(
+            diagnosticError.message,
+            diagnosticError.diagnostic,
+          );
+          return ExitCode.FAILURE;
+        }
 
-      return ExitCode.SUCCESS;
-    });
+        return ExitCode.SUCCESS;
+      },
+    );
+    executionContext.logger.logDebug(
+      `${pipeline.name} took ${Math.round(durationMs)} ms`,
+    );
+    return result;
   }
 
   private async prepareInterpretation(): Promise<void> {
