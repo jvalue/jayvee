@@ -1,0 +1,22 @@
+{
+  "name": "@jvalue/jayvee-benchmark",
+  "description": "Benchmark tool for the Jayvee interpreter",
+  "main": "main.js",
+  "bin": {
+    "jv-bench": "main.js",
+    "jayvee-bench": "main.js"
+  },
+  "bugs": {
+    "url": "https://github.com/jvalue/jayvee/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jvalue/jayvee.git"
+  },
+  "homepage": "https://github.com/jvalue/jayvee",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "version": "$REPLACE_WITH_PROGRAM_VERSION_IN_PREPUBLISH_STEP"
+}
