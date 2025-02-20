@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "module": "es2022",
+    "target": "es2020",
+    "types": [
+      "node"
+    ]
+  },
+  "exclude": [
+    "vite.config.ts",
+    "**/*.spec.ts",
+    "**/*.test.ts"
+  ],
+  "include": [
+    "**/*.ts"
+  ]
+}
