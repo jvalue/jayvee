@@ -13,10 +13,12 @@ import { runAction } from './run-action';
 import { type RunOptions } from './run-options';
 
 const interpreterMock: JayveeInterpreter = {
-  interpretModel: vi.fn(),
+  interpretProgram: vi.fn(),
   interpretFile: vi.fn(),
   interpretString: vi.fn(),
   parseModel: vi.fn(),
+  listMeasures: vi.fn(),
+  clearMeasures: vi.fn(),
 };
 
 vi.stubGlobal('DefaultJayveeInterpreter', interpreterMock);
@@ -46,7 +48,7 @@ describe('Parse Only', () => {
   afterEach(() => {
     // Assert that model is not executed
     expect(interpreterMock.interpretString).not.toBeCalled();
-    expect(interpreterMock.interpretModel).not.toBeCalled();
+    expect(interpreterMock.interpretProgram).not.toBeCalled();
   });
 
   beforeEach(() => {

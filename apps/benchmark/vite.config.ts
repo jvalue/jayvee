@@ -8,7 +8,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   root: __dirname,
-  cacheDir: '../../node_modules/.vite/apps/interpreter',
+  cacheDir: '../../node_modules/.vite/apps/benchmark',
 
   plugins: [nxViteTsPaths()],
 
@@ -20,7 +20,7 @@ export default defineConfig({
 
     reporters: ['default'],
     coverage: {
-      reportsDirectory: '../../coverage/apps/interpreter',
+      reportsDirectory: '../../coverage/apps/benchmark',
       provider: 'v8',
     },
   },
