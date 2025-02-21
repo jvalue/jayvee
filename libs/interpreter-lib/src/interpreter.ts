@@ -132,15 +132,16 @@ export interface JayveeInterpreter {
   ): Promise<JayveeProgram | undefined>;
 
   /**
-   * WARN: Only call this FULLY interpreting a model.
-   * Lists the duration measures made while interpreting.
+   * List all measures made until this point. Should only be called after
+   * interpreting a model.
    *
-   * @returns a list containing the measures made, grouped by pipelines and blocks.
+   * @returns a list of pipeline durations
+   * {@link PipelineMeasure}
    */
   listMeasures(): PipelineMeasure[];
 
   /**
-   * Clear all existing measures
+   * Clear all existing measures.
    */
   clearMeasures(): void;
 }
