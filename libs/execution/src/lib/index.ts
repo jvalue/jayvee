@@ -9,6 +9,7 @@ export * from './types';
 export * from './util';
 export * from './debugging';
 export * from './types/value-types/visitors';
+export * from './perf';
 
 export * from './execution-context';
 export * from './extension';

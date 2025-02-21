@@ -2,6 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import assert from 'assert';
+
 import {
   type BlockDefinition,
   type CompositeBlockTypeDefinition,
@@ -9,7 +12,7 @@ import {
 } from '@jvalue/jayvee-language-server';
 
 import { type ExecutionContext } from '../execution-context';
-import { type Logger } from '../logging/logger';
+import { MeasureLocation, measure } from '../perf';
 import { type IOTypeImplementation, NONE } from '../types';
 
 import * as R from './execution-result';
@@ -88,69 +91,72 @@ export async function executeBlock(
   const blockExecutor =
     executionContext.executionExtension.createBlockExecutor(block);
 
-  const startTime = new Date();
+  const blockType = block.type.ref?.name;
+  assert(blockType !== undefined);
 
-  await executionContext.executeHooks(inputValue);
-  logDurationUntilNow(startTime, 'pre-block-hooks', (msg) =>
-    executionContext.logger.logDebug(msg),
-  );
+  const location = new MeasureLocation(executionContext.pipeline.name, {
+    name: block.name,
+    type: blockType,
+  });
+  const { result, durationMs: totalDurMs } = await measure(async () => {
+    assert(location.block !== undefined);
 
-  if (inputValue == null) {
-    executionContext.logger.logInfoDiagnostic(
-      `Skipped execution because parent block emitted no value.`,
-      { node: block, property: 'name' },
+    const { durationMs: preDurMs } = await measure(
+      () => executionContext.executeHooks(inputValue),
+      location.withBlockInternalLocation('preBlockHooks'),
     );
-    const result = R.ok(null);
-    const postHookStartTime = new Date();
-    await executionContext.executeHooks(inputValue, result);
-    logDurationUntilNow(postHookStartTime, 'post-block-hooks', (msg) =>
-      executionContext.logger.logDebug(msg),
+    executionContext.logger.logDebug(
+      `Pre-block hooks took ${Math.round(preDurMs)} ms`,
     );
+
+    if (inputValue == null) {
+      executionContext.logger.logInfoDiagnostic(
+        `Skipped execution because parent block emitted no value.`,
+        { node: block, property: 'name' },
+      );
+      const result = R.ok(null);
+      const { durationMs: postDurMs } = await measure(
+        () => executionContext.executeHooks(inputValue, result),
+        location.withBlockInternalLocation('postBlockHooks'),
+      );
+      executionContext.logger.logDebug(
+        `Post-block hooks took ${Math.round(postDurMs)} ms`,
+      );
+      return result;
+    }
+
+    const { result, durationMs: blockDurMs } = await measure(async () => {
+      let result: R.Result<IOTypeImplementation | null>;
+      try {
+        result = await blockExecutor.execute(inputValue, executionContext);
+      } catch (unexpectedError) {
+        result = R.err({
+          message: `An unknown error occurred: ${
+            unexpectedError instanceof Error
+              ? unexpectedError.stack ?? unexpectedError.message
+              : JSON.stringify(unexpectedError)
+          }`,
+          diagnostic: { node: block, property: 'name' },
+        });
+      }
+      return result;
+    }, location.withBlockInternalLocation('blockExecution'));
+    executionContext.logger.logDebug(
+      `Block execution itself took ${Math.round(blockDurMs)} ms`,
+    );
+
+    const { durationMs: postDurMs } = await measure(
+      () => executionContext.executeHooks(inputValue, result),
+      location.withBlockInternalLocation('postBlockHooks'),
+    );
+    executionContext.logger.logDebug(
+      `Post-block hooks took ${Math.round(postDurMs)} ms`,
+    );
+
     return result;
-  }
-
-  const blockStartTime = new Date();
-
-  let result: R.Result<IOTypeImplementation | null>;
-  try {
-    result = await blockExecutor.execute(inputValue, executionContext);
-  } catch (unexpectedError) {
-    result = R.err({
-      message: `An unknown error occurred: ${
-        unexpectedError instanceof Error
-          ? unexpectedError.stack ?? unexpectedError.message
-          : JSON.stringify(unexpectedError)
-      }`,
-      diagnostic: { node: block, property: 'name' },
-    });
-  }
-  logDurationUntilNow(blockStartTime, 'Block', (msg) =>
-    executionContext.logger.logDebug(msg),
+  }, location);
+  executionContext.logger.logDebug(
+    `${block.name} took ${Math.round(totalDurMs)} ms`,
   );
-
-  const postHookStartTime = new Date();
-  await executionContext.executeHooks(inputValue, result);
-  logDurationUntilNow(postHookStartTime, 'post-block-hooks', (msg) =>
-    executionContext.logger.logDebug(msg),
-  );
-
-  logDurationUntilNow(startTime, 'Total', (msg) =>
-    executionContext.logger.logDebug(msg),
-  );
-
   return result;
-}
-
-export function logExecutionDuration(startTime: Date, logger: Logger) {
-  logDurationUntilNow(startTime, 'Execution', (msg) => logger.logDebug(msg));
-}
-
-function logDurationUntilNow(
-  startTime: Date,
-  name: string,
-  log: (message: string) => void,
-) {
-  const endTime = new Date();
-  const durationMs = Math.round(endTime.getTime() - startTime.getTime());
-  log(`${name} duration: ${durationMs} ms.`);
 }
