@@ -14,7 +14,7 @@ export type BlockInternalLocation =
  * The location/type of a measure. Can be one of:
  * - pipeline
  * - block
- * - block-internal @see BlockInternalLocation
+ * - block-internal {@link BlockInternalLocation}
  */
 export class MeasureLocation {
   private readonly _pipeline: string;
@@ -180,7 +180,7 @@ export interface PipelineMeasure {
   durationMs: number;
   /**
    * The measures of blocks executed as part of the pipeline.
-   * @see BlockMeasure
+   * {@link BlockMeasure}
    */
   blocks: BlockMeasure[];
 }
@@ -221,7 +221,7 @@ export interface BlockMeasure {
  * interpreting a model.
  *
  * @returns a list of pipeline durations
- * @see PipelineMeasure
+ * {@link PipelineMeasure}
  */
 export function listMeasures(): PipelineMeasure[] {
   const pipelines: PipelineMeasure[] = [];
