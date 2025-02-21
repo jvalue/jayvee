@@ -98,69 +98,63 @@ export async function executeBlock(
     name: block.name,
     type: blockType,
   });
-  const { result, durationMs: totalDurMs } = await measure(
-    location,
-    async () => {
-      assert(location.block !== undefined);
+  const { result, durationMs: totalDurMs } = await measure(async () => {
+    assert(location.block !== undefined);
 
-      const { durationMs: preDurMs } = await measure(
-        location.withBlockInternalLocation('preBlockHooks'),
-        () => executionContext.executeHooks(inputValue),
-      );
-      executionContext.logger.logDebug(
-        `Pre-block hooks took ${Math.round(preDurMs)} ms`,
-      );
+    const { durationMs: preDurMs } = await measure(
+      () => executionContext.executeHooks(inputValue),
+      location.withBlockInternalLocation('preBlockHooks'),
+    );
+    executionContext.logger.logDebug(
+      `Pre-block hooks took ${Math.round(preDurMs)} ms`,
+    );
 
-      if (inputValue == null) {
-        executionContext.logger.logInfoDiagnostic(
-          `Skipped execution because parent block emitted no value.`,
-          { node: block, property: 'name' },
-        );
-        const result = R.ok(null);
-        const { durationMs: postDurMs } = await measure(
-          location.withBlockInternalLocation('postBlockHooks'),
-          () => executionContext.executeHooks(inputValue, result),
-        );
-        executionContext.logger.logDebug(
-          `Post-block hooks took ${Math.round(postDurMs)} ms`,
-        );
-        return result;
-      }
-
-      const { result, durationMs: blockDurMs } = await measure(
-        location.withBlockInternalLocation('blockExecution'),
-        async () => {
-          let result: R.Result<IOTypeImplementation | null>;
-          try {
-            result = await blockExecutor.execute(inputValue, executionContext);
-          } catch (unexpectedError) {
-            result = R.err({
-              message: `An unknown error occurred: ${
-                unexpectedError instanceof Error
-                  ? unexpectedError.stack ?? unexpectedError.message
-                  : JSON.stringify(unexpectedError)
-              }`,
-              diagnostic: { node: block, property: 'name' },
-            });
-          }
-          return result;
-        },
+    if (inputValue == null) {
+      executionContext.logger.logInfoDiagnostic(
+        `Skipped execution because parent block emitted no value.`,
+        { node: block, property: 'name' },
       );
-      executionContext.logger.logDebug(
-        `Block execution itself took ${Math.round(blockDurMs)} ms`,
-      );
-
+      const result = R.ok(null);
       const { durationMs: postDurMs } = await measure(
-        location.withBlockInternalLocation('postBlockHooks'),
         () => executionContext.executeHooks(inputValue, result),
+        location.withBlockInternalLocation('postBlockHooks'),
       );
       executionContext.logger.logDebug(
         `Post-block hooks took ${Math.round(postDurMs)} ms`,
       );
-
       return result;
-    },
-  );
+    }
+
+    const { result, durationMs: blockDurMs } = await measure(async () => {
+      let result: R.Result<IOTypeImplementation | null>;
+      try {
+        result = await blockExecutor.execute(inputValue, executionContext);
+      } catch (unexpectedError) {
+        result = R.err({
+          message: `An unknown error occurred: ${
+            unexpectedError instanceof Error
+              ? unexpectedError.stack ?? unexpectedError.message
+              : JSON.stringify(unexpectedError)
+          }`,
+          diagnostic: { node: block, property: 'name' },
+        });
+      }
+      return result;
+    }, location.withBlockInternalLocation('blockExecution'));
+    executionContext.logger.logDebug(
+      `Block execution itself took ${Math.round(blockDurMs)} ms`,
+    );
+
+    const { durationMs: postDurMs } = await measure(
+      () => executionContext.executeHooks(inputValue, result),
+      location.withBlockInternalLocation('postBlockHooks'),
+    );
+    executionContext.logger.logDebug(
+      `Post-block hooks took ${Math.round(postDurMs)} ms`,
+    );
+
+    return result;
+  }, location);
   executionContext.logger.logDebug(
     `${block.name} took ${Math.round(totalDurMs)} ms`,
   );

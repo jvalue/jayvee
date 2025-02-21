@@ -318,23 +318,20 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
       this.services.WrapperFactories,
     );
 
-    const { result, durationMs } = await measure(
-      new MeasureLocation(pipeline.name),
-      async () => {
-        const executionResult = await executeBlocks(executionContext, pipeline);
+    const { result, durationMs } = await measure(async () => {
+      const executionResult = await executeBlocks(executionContext, pipeline);
 
-        if (isErr(executionResult)) {
-          const diagnosticError = executionResult.left;
-          executionContext.logger.logErrDiagnostic(
-            diagnosticError.message,
-            diagnosticError.diagnostic,
-          );
-          return ExitCode.FAILURE;
-        }
+      if (isErr(executionResult)) {
+        const diagnosticError = executionResult.left;
+        executionContext.logger.logErrDiagnostic(
+          diagnosticError.message,
+          diagnosticError.diagnostic,
+        );
+        return ExitCode.FAILURE;
+      }
 
-        return ExitCode.SUCCESS;
-      },
-    );
+      return ExitCode.SUCCESS;
+    }, new MeasureLocation(pipeline.name));
     executionContext.logger.logDebug(
       `${pipeline.name} took ${Math.round(durationMs)} ms`,
     );

@@ -86,13 +86,39 @@ export class MeasureLocation {
   }
 }
 
+/**
+ * Measure the duration of any action.
+ * @param id The action's name/identifier
+ * @param action The action to measure
+ * @returns The action's result and the actions duration in milliseconds
+ */
 export async function measure<R>(
-  location: MeasureLocation,
   action: () => Promise<R>,
+  id: string,
+  detail?: unknown,
+): Promise<{ result: R; durationMs: number }>;
+/**
+ * Measure the duration of a pipeline, block or block-internal.
+ * @param location The measure's location
+ * @param action The action to measure
+ * @returns The action's result and the actions duration in milliseconds
+ */
+export async function measure<R>(
+  action: () => Promise<R>,
+  location: MeasureLocation,
+): Promise<{ result: R; durationMs: number }>;
+export async function measure<R>(
+  action: () => Promise<R>,
+  location: MeasureLocation | string,
+  detail?: unknown,
 ): Promise<{ result: R; durationMs: number }> {
-  const name = location.name;
-  const start = name + '::start';
-  const end = name + '::end';
+  const id = typeof location === 'string' ? location : location.id;
+  if (typeof location !== 'string') {
+    assert(detail === undefined);
+    detail = location;
+  }
+  const start = id + '::start';
+  const end = id + '::end';
 
   performance.mark(start);
   const result = await action();
