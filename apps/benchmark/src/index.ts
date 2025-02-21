@@ -7,11 +7,11 @@ import assert from 'assert';
 import path from 'node:path';
 import process from 'node:process';
 
-import { type PipelineMeasure } from '@jvalue/jayvee-execution';
 import {
   DefaultJayveeInterpreter,
   ExitCode,
   type JayveeInterpreter,
+  type PipelineMeasure,
 } from '@jvalue/jayvee-interpreter-lib';
 
 function createInterpreter(): JayveeInterpreter {
