@@ -53,6 +53,11 @@ import {
 } from './parsing-util';
 import { validateRuntimeParameterLiteral } from './validation-checks';
 
+export {
+  type PipelineMeasure,
+  type BlockMeasure,
+} from '@jvalue/jayvee-execution';
+
 export interface InterpreterOptions {
   pipelineMatcher: (pipelineDefinition: PipelineDefinition) => boolean;
   env: Map<string, string>;
