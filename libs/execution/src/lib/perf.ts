@@ -10,6 +10,12 @@ export type BlockInternalLocation =
   | 'blockExecution'
   | 'postBlockHooks';
 
+/**
+ * The location/type of a measure. Can be one of:
+ * - pipeline
+ * - block
+ * - block-internal @see BlockInternalLocation
+ */
 export class MeasureLocation {
   private readonly _pipeline: string;
   private readonly _block?: {
@@ -18,6 +24,12 @@ export class MeasureLocation {
     internalLocation?: BlockInternalLocation;
   };
 
+  /**
+   * Creates a new measure location. If the measures location is block-internal, use `withBlockInternalLocation()`.
+   * @param pipeline The name of the pipeline the measure is in.
+   * @param block If the measure is inside a block, this parameter specifies name and type.
+   * @returns A measure location
+   */
   constructor(pipeline: string, block?: { name: string; type: string }) {
     this._pipeline = pipeline;
     if (block === undefined) {
@@ -117,21 +129,63 @@ function assertMeasureLocation(obj: unknown): MeasureLocation {
   return location.withBlockInternalLocation(obj._block.internalLocation);
 }
 
+/**
+ * The measured duration of a pipeline. Includes a list of block measures.
+ */
 export interface PipelineMeasure {
+  /**
+   * The pipeline's name.
+   */
   name: string;
+  /**
+   * The pipeline's duration in milliseconds
+   */
   durationMs: number;
+  /**
+   * The measures of blocks executed as part of the pipeline.
+   * @see BlockMeasure
+   */
   blocks: BlockMeasure[];
 }
 
+/**
+ * The measured duration of a block. Also includes the duration of the pre- and
+ * post-block hooks.
+ */
 export interface BlockMeasure {
+  /**
+   * The block's name.
+   */
   name: string;
+  /**
+   * The block's block type (e.g. 'TableInterpreter').
+   */
   type: string;
+  /**
+   * The block's total duration in milliseconds.
+   */
   durationMs: number;
+  /**
+   * The duration of the pre-block hooks in milliseconds.
+   */
   preBlockHooksDurationMs: number;
+  /**
+   * The duration of the block execution method itself in milliseconds.
+   */
   blockExecutionDurationMs: number;
+  /**
+   * The duration of the post-block hooks in milliseconds.
+   */
   postBlockHooksDurationMs: number;
 }
 
+/**
+ * List all measures made until this point. Should only be called after
+ * interpreting a model.
+ *
+ * @returns a list of pipeline durations
+ * @see PipelineMeasure
+ */
 export function listMeasures(): PipelineMeasure[] {
   const pipelines: PipelineMeasure[] = [];
   for (const entry of performance.getEntriesByType('measure')) {
