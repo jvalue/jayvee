@@ -64,6 +64,17 @@ export class MeasureLocation {
     return this._block;
   }
 
+  get id(): string {
+    let id = this._pipeline;
+    if (this._block !== undefined) {
+      id += `::${this._block.name}`;
+      if (this._block.internalLocation !== undefined) {
+        id += `::${this._block.internalLocation}`;
+      }
+    }
+    return id;
+  }
+
   get name(): string {
     if (this._block === undefined) {
       return this._pipeline;
@@ -87,10 +98,10 @@ export async function measure<R>(
   const result = await action();
   performance.mark(end);
 
-  const measure = performance.measure(name, {
+  const measure = performance.measure(id, {
     start,
     end,
-    detail: location,
+    detail,
   });
   return { result, durationMs: measure.duration };
 }
@@ -190,10 +201,11 @@ export function listMeasures(): PipelineMeasure[] {
   const pipelines: PipelineMeasure[] = [];
   for (const entry of performance.getEntriesByType('measure')) {
     const location = assertMeasureLocation(entry.detail);
+    assert(entry.name === location.id);
     if (location.block === undefined) {
       assert(entry.name === location.pipeline);
       pipelines.push({
-        name: entry.name,
+        name: location.pipeline,
         durationMs: entry.duration,
         blocks: [],
       });
@@ -205,9 +217,9 @@ export function listMeasures(): PipelineMeasure[] {
     assert(location.pipeline === pipeline.name);
 
     if (location.block.internalLocation === undefined) {
-      assert(entry.name === location.block.name);
+      assert(entry.name.endsWith(location.block.name));
       pipeline.blocks.push({
-        name: entry.name,
+        name: location.block.name,
         type: location.block.type,
         durationMs: entry.duration,
         preBlockHooksDurationMs: 0,
@@ -221,7 +233,7 @@ export function listMeasures(): PipelineMeasure[] {
     const block = pipeline.blocks.pop();
     assert(block !== undefined);
     assert(location.block.name === block.name);
-    assert(entry.name === location.block.internalLocation);
+    assert(entry.name.endsWith(location.block.internalLocation));
 
     switch (location.block.internalLocation) {
       case 'preBlockHooks':
