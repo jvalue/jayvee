@@ -43,6 +43,7 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
     super(IOType.SHEET, IOType.TABLE);
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async doExecute(
     inputSheet: Sheet,
     context: ExecutionContext,
@@ -65,12 +66,6 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
       'skipTrailingWhitespace',
       context.valueTypeProvider.Primitives.Boolean,
     );
-
-    // FIXME: REMOVE THIS BEFORE MERGING
-    function sleep(ms: number) {
-      return new Promise((resolve) => setTimeout(resolve, ms));
-    }
-    await sleep(100);
 
     let columnEntries: ColumnDefinitionEntry[];
 
