@@ -1,0 +1,11 @@
+[
+  {
+    "modelPath": "example/cars.jv",
+    "expectedMeasure": {
+      "name": "cars",
+      "durationMs": 30,
+      "blocks": []
+    },
+    "allowedDeviationFactor": 0.5
+  }
+]

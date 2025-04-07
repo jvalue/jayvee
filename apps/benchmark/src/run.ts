@@ -14,6 +14,8 @@ import {
   type PipelineMeasure,
 } from '@jvalue/jayvee-interpreter-lib';
 
+import { avgPipelineMeasure } from './calc';
+
 export function createInterpreter(): JayveeInterpreter {
   const currentDir = process.cwd();
   const workingDir = currentDir;
@@ -51,4 +53,31 @@ export async function runOneModel(
     measures = measures.concat(newMeasures);
   }
   return measures;
+}
+
+interface BenchmarkDefinition {
+  modelPath: string;
+  expectedMeasure: PipelineMeasure;
+  times?: number;
+  allowedDeviationFactor: number;
+}
+
+interface BenchmarkResult extends BenchmarkDefinition {
+  actualMeasure: PipelineMeasure;
+}
+
+export async function runBenchmark(
+  interpreter: JayveeInterpreter,
+  benchmark: BenchmarkDefinition,
+): Promise<BenchmarkResult> {
+  const actualMeasures = await runOneModel(
+    interpreter,
+    benchmark.modelPath,
+    benchmark.times,
+  );
+
+  return {
+    actualMeasure: actualMeasures.reduce(avgPipelineMeasure),
+    ...benchmark,
+  };
 }
