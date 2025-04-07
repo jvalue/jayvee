@@ -38,57 +38,6 @@
         "configFile": "{projectRoot}/vite.config.ts",
         "passWithNoTests": false
       }
-    },
-    "pre-publish": {
-      "executor": "nx:run-commands",
-      "dependsOn": [
-        "build"
-      ],
-      "options": {
-        "commands": [
-          "node tools/scripts/benchmark/prepend-shebang.mjs benchmark main.js",
-          "node tools/scripts/add-package-json-version.mjs benchmark",
-          "node tools/scripts/benchmark/rewrite-version-mainjs.mjs benchmark",
-          "node tools/scripts/publish.mjs benchmark false"
-        ],
-        "parallel": false
-      }
-    },
-    "publish": {
-      "executor": "nx:run-commands",
-      "dependsOn": [
-        "pre-publish"
-      ],
-      "options": {
-        "commands": [
-          "node tools/scripts/publish.mjs benchmark true"
-        ],
-        "parallel": false
-      }
-    },
-    "pack": {
-      "executor": "nx:run-commands",
-      "dependsOn": [
-        "pre-publish"
-      ],
-      "options": {
-        "commands": [
-          "node tools/scripts/pack.mjs benchmark"
-        ],
-        "parallel": false
-      }
-    },
-    "install": {
-      "executor": "nx:run-commands",
-      "dependsOn": [
-        "pack"
-      ],
-      "options": {
-        "commands": [
-          "npm i -g dist/apps/benchmark/jvalue-jayvee-benchmark-*.tgz"
-        ],
-        "parallel": false
-      }
     }
   },
   "tags": []
