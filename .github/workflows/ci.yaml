@@ -45,6 +45,9 @@ jobs:
       - name: Test
         run: npx nx affected --target=test --verbose --parallel=1 --base=remotes/origin/main --head=HEAD --ci
 
+      - name: Benchmark
+        run: npm run benchmark
+
       # Ensure this works for future release publishing
       - name: Publish Dry-Run
         run: npx nx affected --target=pre-publish --verbose --parallel=1 --base=remotes/origin/main --head=HEAD --ci
