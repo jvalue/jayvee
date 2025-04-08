@@ -6,8 +6,8 @@
 import assert from 'assert';
 
 import {
-  type BlockMeasure,
-  type PipelineMeasure,
+  type BlockMeasurement,
+  type PipelineMeasurement,
 } from '@jvalue/jayvee-interpreter-lib';
 
 function avgWith(
@@ -18,10 +18,14 @@ function avgWith(
   return oldAverage + (newValue - oldAverage) / newSize;
 }
 
-function avgBlkMeasure(b1: BlockMeasure, b2: BlockMeasure, bIdx: number) {
+function avgBlkMeasure(
+  b1: BlockMeasurement,
+  b2: BlockMeasurement,
+  bIdx: number,
+) {
   assert(b1.name === b2.name);
   assert(b1.type === b2.type);
-  const bRes: BlockMeasure = {
+  const bRes: BlockMeasurement = {
     name: b1.name,
     type: b1.type,
     durationMs: avgWith(b1.durationMs, b2.durationMs, bIdx + 1),
@@ -45,10 +49,10 @@ function avgBlkMeasure(b1: BlockMeasure, b2: BlockMeasure, bIdx: number) {
 }
 
 export function avgPipelineMeasure(
-  p1: PipelineMeasure,
-  p2: PipelineMeasure,
+  p1: PipelineMeasurement,
+  p2: PipelineMeasurement,
   pIdx: number,
-): PipelineMeasure {
+): PipelineMeasurement {
   assert(p1.name === p2.name);
 
   const blocks = p1.blocks.map((b1, bIdx) => {
@@ -57,7 +61,7 @@ export function avgPipelineMeasure(
     return avgBlkMeasure(b1, b2, bIdx);
   });
 
-  const pRes: PipelineMeasure = {
+  const pRes: PipelineMeasurement = {
     name: p1.name,
     durationMs: avgWith(p1.durationMs, p2.durationMs, pIdx + 1),
     blocks: blocks,

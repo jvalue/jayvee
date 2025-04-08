@@ -18,13 +18,13 @@ import {
   type JayveeConstraintExtension,
   type JayveeExecExtension,
   type Logger,
-  MeasureLocation,
-  type PipelineMeasure,
+  MeasurementLocation,
+  type PipelineMeasurement,
   type PostBlockHook,
   type PreBlockHook,
   executeBlocks,
   isErr,
-  listMeasures,
+  listMeasurements,
   measure,
   parseValueToInternalRepresentation,
 } from '@jvalue/jayvee-execution';
@@ -54,8 +54,8 @@ import {
 import { validateRuntimeParameterLiteral } from './validation-checks';
 
 export {
-  type PipelineMeasure,
-  type BlockMeasure,
+  type PipelineMeasurement,
+  type BlockMeasurement,
 } from '@jvalue/jayvee-execution';
 
 export interface InterpreterOptions {
@@ -137,18 +137,18 @@ export interface JayveeInterpreter {
   ): Promise<JayveeProgram | undefined>;
 
   /**
-   * List all measures made until this point. Should only be called after
+   * List all measurements made until this point. Should only be called after
    * interpreting a model.
    *
    * @returns a list of pipeline durations
    * {@link PipelineMeasure}
    */
-  listMeasures(): PipelineMeasure[];
+  listMeasures(): PipelineMeasurement[];
 
   /**
-   * Clear all existing measures.
+   * Clear all existing measurements.
    */
-  clearMeasures(): void;
+  clearMeasurements(): void;
 }
 
 export const DefaultInterpreterOptions: InterpreterOptions = {
@@ -256,11 +256,11 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
     }
   }
 
-  listMeasures(): PipelineMeasure[] {
-    return listMeasures();
+  listMeasures(): PipelineMeasurement[] {
+    return listMeasurements();
   }
 
-  clearMeasures() {
+  clearMeasurements() {
     performance.clearMarks();
     performance.clearMeasures();
   }
@@ -373,7 +373,7 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
       }
 
       return ExitCode.SUCCESS;
-    }, new MeasureLocation(pipeline.name));
+    }, new MeasurementLocation(pipeline.name));
     executionContext.logger.logDebug(
       `${pipeline.name} took ${Math.round(durationMs)} ms`,
     );

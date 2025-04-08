@@ -11,7 +11,7 @@ import {
   DefaultJayveeInterpreter,
   ExitCode,
   type JayveeInterpreter,
-  type PipelineMeasure,
+  type PipelineMeasurement,
 } from '@jvalue/jayvee-interpreter-lib';
 
 import { avgPipelineMeasure } from './calc';
@@ -26,7 +26,7 @@ export function createInterpreter(): JayveeInterpreter {
 async function runOneModelOnce(
   interpreter: JayveeInterpreter,
   modelPath: string,
-): Promise<PipelineMeasure[]> {
+): Promise<PipelineMeasurement[]> {
   const logBackup = console.log;
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   console.log = () => {};
@@ -36,9 +36,9 @@ async function runOneModelOnce(
   console.log = logBackup;
   assert(exitCode === ExitCode.SUCCESS);
 
-  const measures = interpreter.listMeasures();
-  interpreter.clearMeasures();
-  return measures;
+  const measurements = interpreter.listMeasures();
+  interpreter.clearMeasurements();
+  return measurements;
 }
 
 export async function runOneModel(
@@ -46,22 +46,22 @@ export async function runOneModel(
   interpreter: JayveeInterpreter,
   modelPath: string,
   times = 10,
-): Promise<PipelineMeasure[]> {
+): Promise<PipelineMeasurement[]> {
   assert(times >= 0);
   console.log(`[${name}] Running model '${modelPath}' ${times} times`);
 
-  let measures: PipelineMeasure[] = [];
+  let measurements: PipelineMeasurement[] = [];
   for (let i = 0; i < times; i += 1) {
     const newMeasures = await runOneModelOnce(interpreter, modelPath);
-    measures = measures.concat(newMeasures);
+    measurements = measurements.concat(newMeasures);
   }
-  return measures;
+  return measurements;
 }
 
 interface BenchmarkDefinition {
   name: string;
   modelPath: string;
-  expectedMeasure: PipelineMeasure;
+  expectedMeasure: PipelineMeasurement;
   times?: number;
   allowedDeviationFactor: number;
 }

@@ -11,12 +11,12 @@ export type BlockInternalLocation =
   | 'postBlockHooks';
 
 /**
- * The location/type of a measure. Can be one of:
+ * The location/type of a measurement. Can be one of:
  * - pipeline
  * - block
  * - block-internal {@link BlockInternalLocation}
  */
-export class MeasureLocation {
+export class MeasurementLocation {
   private readonly _pipeline: string;
   private readonly _block?: {
     name: string;
@@ -25,10 +25,10 @@ export class MeasureLocation {
   };
 
   /**
-   * Creates a new measure location. If the measures location is block-internal, use `withBlockInternalLocation()`.
-   * @param pipeline The name of the pipeline the measure is in.
-   * @param block If the measure is inside a block, this parameter specifies name and type.
-   * @returns A measure location
+   * Creates a new measurement location. If the measurement's location is block-internal, use `withBlockInternalLocation()`.
+   * @param pipeline The name of the pipeline the measurement is in.
+   * @param block If the measurement is inside a block, this parameter specifies name and type.
+   * @returns A measurement location
    */
   constructor(pipeline: string, block?: { name: string; type: string }) {
     this._pipeline = pipeline;
@@ -40,8 +40,8 @@ export class MeasureLocation {
 
   withBlockInternalLocation(
     blockInternalLocation: BlockInternalLocation,
-  ): MeasureLocation {
-    const cpy = new MeasureLocation(
+  ): MeasurementLocation {
+    const cpy = new MeasurementLocation(
       this._pipeline,
       structuredClone(this._block),
     );
@@ -99,17 +99,17 @@ export async function measure<R>(
 ): Promise<{ result: R; durationMs: number }>;
 /**
  * Measure the duration of a pipeline, block or block-internal.
- * @param location The measure's location
+ * @param location The measurement's location
  * @param action The action to measure
  * @returns The action's result and the actions duration in milliseconds
  */
 export async function measure<R>(
   action: () => Promise<R>,
-  location: MeasureLocation,
+  location: MeasurementLocation,
 ): Promise<{ result: R; durationMs: number }>;
 export async function measure<R>(
   action: () => Promise<R>,
-  location: MeasureLocation | string,
+  location: MeasurementLocation | string,
   detail?: unknown,
 ): Promise<{ result: R; durationMs: number }> {
   const id = typeof location === 'string' ? location : location.id;
@@ -124,22 +124,22 @@ export async function measure<R>(
   const result = await action();
   performance.mark(end);
 
-  const measure = performance.measure(id, {
+  const measurement = performance.measure(id, {
     start,
     end,
     detail,
   });
-  return { result, durationMs: measure.duration };
+  return { result, durationMs: measurement.duration };
 }
 
-function assertMeasureLocation(obj: unknown): MeasureLocation {
+function assertMeasurementLocation(obj: unknown): MeasurementLocation {
   assert(obj != null);
   assert(typeof obj === 'object');
   assert('_pipeline' in obj);
   assert(typeof obj._pipeline === 'string');
 
   if (!('_block' in obj)) {
-    return new MeasureLocation(obj._pipeline);
+    return new MeasurementLocation(obj._pipeline);
   }
 
   assert(typeof obj._block === 'object');
@@ -149,7 +149,7 @@ function assertMeasureLocation(obj: unknown): MeasureLocation {
   assert('type' in obj._block);
   assert(typeof obj._block.type === 'string');
 
-  const location = new MeasureLocation(obj._pipeline, {
+  const location = new MeasurementLocation(obj._pipeline, {
     name: obj._block.name,
     type: obj._block.type,
   });
@@ -167,9 +167,9 @@ function assertMeasureLocation(obj: unknown): MeasureLocation {
 }
 
 /**
- * The measured duration of a pipeline. Includes a list of block measures.
+ * The measured duration of a pipeline. Includes a list of block measurements.
  */
-export interface PipelineMeasure {
+export interface PipelineMeasurement {
   /**
    * The pipeline's name.
    */
@@ -179,17 +179,17 @@ export interface PipelineMeasure {
    */
   durationMs: number;
   /**
-   * The measures of blocks executed as part of the pipeline.
-   * {@link BlockMeasure}
+   * The measurements of blocks executed as part of the pipeline.
+   * {@link BlockMeasurement}
    */
-  blocks: BlockMeasure[];
+  blocks: BlockMeasurement[];
 }
 
 /**
  * The measured duration of a block. Also includes the duration of the pre- and
  * post-block hooks.
  */
-export interface BlockMeasure {
+export interface BlockMeasurement {
   /**
    * The block's name.
    */
@@ -217,16 +217,16 @@ export interface BlockMeasure {
 }
 
 /**
- * List all measures made until this point. Should only be called after
+ * List all measurements made until this point. Should only be called after
  * interpreting a model.
  *
  * @returns a list of pipeline durations
- * {@link PipelineMeasure}
+ * {@link PipelineMeasurement}
  */
-export function listMeasures(): PipelineMeasure[] {
-  const pipelines: PipelineMeasure[] = [];
+export function listMeasurements(): PipelineMeasurement[] {
+  const pipelines: PipelineMeasurement[] = [];
   for (const entry of performance.getEntriesByType('measure')) {
-    const location = assertMeasureLocation(entry.detail);
+    const location = assertMeasurementLocation(entry.detail);
     assert(entry.name === location.id);
     if (location.block === undefined) {
       assert(entry.name === location.pipeline);
