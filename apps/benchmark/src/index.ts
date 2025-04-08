@@ -2,6 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import assert from 'assert';
+
 import { type PipelineMeasure } from '@jvalue/jayvee-execution';
 
 import benchmarkDefinitions from './benchmark_definitions.json';
@@ -37,28 +40,20 @@ async function main() {
     }),
   );
 
-  const outOfBounds = results.find(({ cmp }) => cmp !== '=');
+  const outOfBounds = results.filter(({ cmp }) => cmp !== '=');
 
-  if (outOfBounds === undefined) {
+  if (outOfBounds.length === 0) {
     console.info('No anomalies in the benchmark');
     process.exitCode = 0;
     return;
   }
 
-  console.warn(outOfBounds);
+  process.exitCode = 1;
 
-  switch (outOfBounds.cmp) {
-    case '<': {
-      process.exitCode = 1;
-      break;
-    }
-    case '>': {
-      process.exitCode = 2;
-      break;
-    }
-    case '=': {
-      throw new Error("`cmp` cannot be `'='`");
-    }
+  for (const { result, cmp } of outOfBounds) {
+    assert(cmp !== '=', "`'='` is filtered out above");
+    const msg = cmp === '<' ? 'Faster than expected:' : 'Slower than expected:';
+    console.warn(msg, result);
   }
 }
 
