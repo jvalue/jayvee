@@ -10,6 +10,7 @@ import {
   type DebugGranularity,
   type DebugTargets,
   DefaultConstraintExtension,
+  DefaultDebugTargetsValue,
   ExecutionContext,
   HookContext,
   type HookOptions,
@@ -17,11 +18,13 @@ import {
   type JayveeConstraintExtension,
   type JayveeExecExtension,
   type Logger,
-  MeasureLocation,
+  MeasurementLocation,
+  type PipelineMeasurement,
   type PostBlockHook,
   type PreBlockHook,
   executeBlocks,
   isErr,
+  listMeasurements,
   measure,
   parseValueToInternalRepresentation,
 } from '@jvalue/jayvee-execution';
@@ -49,6 +52,11 @@ import {
   extractAstNodeFromString,
 } from './parsing-util';
 import { validateRuntimeParameterLiteral } from './validation-checks';
+
+export {
+  type PipelineMeasurement,
+  type BlockMeasurement,
+} from '@jvalue/jayvee-execution';
 
 export interface InterpreterOptions {
   pipelineMatcher: (pipelineDefinition: PipelineDefinition) => boolean;
@@ -127,19 +135,44 @@ export interface JayveeInterpreter {
       loggerFactory: LoggerFactory,
     ) => Promise<JayveeModel>,
   ): Promise<JayveeProgram | undefined>;
+
+  /**
+   * List all measurements made until this point. Should only be called after
+   * interpreting a model.
+   *
+   * @returns a list of pipeline durations
+   * {@link PipelineMeasure}
+   */
+  listMeasures(): PipelineMeasurement[];
+
+  /**
+   * Clear all existing measurements.
+   */
+  clearMeasurements(): void;
 }
+
+export const DefaultInterpreterOptions: InterpreterOptions = {
+  pipelineMatcher: (pipelineDefinition) =>
+    new RegExp('.*').test(pipelineDefinition.name),
+  env: new Map<string, string>(),
+  debug: false,
+  debugGranularity: 'minimal',
+  debugTarget: DefaultDebugTargetsValue,
+};
 
 export class DefaultJayveeInterpreter implements JayveeInterpreter {
   private readonly services: JayveeServices;
   private readonly loggerFactory: LoggerFactory;
   private readonly workspaces: WorkspaceFolder[] = [];
+  private readonly options: InterpreterOptions;
   private isWorkspaceInitialized = false;
 
-  constructor(private readonly options: InterpreterOptions) {
+  constructor(options?: Partial<InterpreterOptions>) {
+    this.options = { ...DefaultInterpreterOptions, ...options };
     this.services = createJayveeServices(NodeFileSystem).Jayvee;
     this.setupJayveeServices(this.services, this.options.env);
 
-    this.loggerFactory = new LoggerFactory(options.debug);
+    this.loggerFactory = new LoggerFactory(this.options.debug);
   }
 
   addWorkspace(uri: string): DefaultJayveeInterpreter {
@@ -221,6 +254,15 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
         .logErr('Could not extract the AST node of the given model.');
       return undefined;
     }
+  }
+
+  listMeasures(): PipelineMeasurement[] {
+    return listMeasurements();
+  }
+
+  clearMeasurements() {
+    performance.clearMarks();
+    performance.clearMeasures();
   }
 
   private setupJayveeServices(
@@ -331,7 +373,7 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
       }
 
       return ExitCode.SUCCESS;
-    }, new MeasureLocation(pipeline.name));
+    }, new MeasurementLocation(pipeline.name));
     executionContext.logger.logDebug(
       `${pipeline.name} took ${Math.round(durationMs)} ms`,
     );

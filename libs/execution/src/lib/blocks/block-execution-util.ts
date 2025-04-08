@@ -12,7 +12,7 @@ import {
 } from '@jvalue/jayvee-language-server';
 
 import { type ExecutionContext } from '../execution-context';
-import { MeasureLocation, measure } from '../perf';
+import { MeasurementLocation, measure } from '../perf';
 import { type IOTypeImplementation, NONE } from '../types';
 
 import * as R from './execution-result';
@@ -94,7 +94,7 @@ export async function executeBlock(
   const blockType = block.type.ref?.name;
   assert(blockType !== undefined);
 
-  const location = new MeasureLocation(executionContext.pipeline.name, {
+  const location = new MeasurementLocation(executionContext.pipeline.name, {
     name: block.name,
     type: blockType,
   });

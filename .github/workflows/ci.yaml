@@ -52,3 +52,23 @@ jobs:
       # Ensure this works for future release publishing
       - name: Pack VSCode Extension
         run: npx nx run vs-code-extension:pack:prod
+
+  benchmark:
+    name: benchmark
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 'lts/*'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Benchmark
+        run: npm run benchmark
+

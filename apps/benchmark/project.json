@@ -1,0 +1,44 @@
+{
+  "name": "benchmark",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/benchmark/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "options": {
+        "tsConfig": "{projectRoot}/tsconfig.app.json",
+        "external": []
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": [
+        "{options.outputFile}"
+      ]
+    },
+    "run": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "nx run benchmark:build:development",
+            "forwardAllArgs": false
+          },
+          "node --enable-source-maps dist/apps/benchmark/main.js"
+        ],
+        "parallel": false
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
+      "options": {
+        "configFile": "{projectRoot}/vite.config.ts",
+        "passWithNoTests": false
+      }
+    }
+  },
+  "tags": []
+}
