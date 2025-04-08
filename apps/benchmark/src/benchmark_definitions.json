@@ -1,5 +1,6 @@
 [
   {
+    "name": "cars",
     "modelPath": "example/cars.jv",
     "expectedMeasure": {
       "name": "cars",

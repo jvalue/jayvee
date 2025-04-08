@@ -42,11 +42,14 @@ async function runOneModelOnce(
 }
 
 export async function runOneModel(
+  name: string,
   interpreter: JayveeInterpreter,
   modelPath: string,
   times = 10,
 ): Promise<PipelineMeasure[]> {
   assert(times >= 0);
+  console.log(`[${name}] Running model '${modelPath}' ${times} times`);
+
   let measures: PipelineMeasure[] = [];
   for (let i = 0; i < times; i += 1) {
     const newMeasures = await runOneModelOnce(interpreter, modelPath);
@@ -56,28 +59,44 @@ export async function runOneModel(
 }
 
 interface BenchmarkDefinition {
+  name: string;
   modelPath: string;
   expectedMeasure: PipelineMeasure;
   times?: number;
   allowedDeviationFactor: number;
 }
 
-interface BenchmarkResult extends BenchmarkDefinition {
-  actualMeasure: PipelineMeasure;
-}
-
 export async function runBenchmark(
   interpreter: JayveeInterpreter,
   benchmark: BenchmarkDefinition,
-): Promise<BenchmarkResult> {
+): Promise<boolean> {
   const actualMeasures = await runOneModel(
+    benchmark.name,
     interpreter,
     benchmark.modelPath,
     benchmark.times,
   );
+  const actualMeasure = actualMeasures.reduce(avgPipelineMeasure);
 
-  return {
-    actualMeasure: actualMeasures.reduce(avgPipelineMeasure),
-    ...benchmark,
-  };
+  const expected = benchmark.expectedMeasure.durationMs;
+  const actual = actualMeasure.durationMs;
+  const deviation = actual / expected - 1;
+
+  console.log(
+    `[${benchmark.name}] Benchmark calculated an average runtime of ${actual}ms (deviation from ${expected}: ${deviation})`,
+  );
+
+  const deviates = Math.abs(deviation) > benchmark.allowedDeviationFactor;
+
+  if (deviates) {
+    console.warn(
+      `[${benchmark.name}] This benchmark exceeds the maximum allowed deviation (${benchmark.allowedDeviationFactor}):`,
+      '\nexpected:',
+      benchmark.expectedMeasure,
+      '\nactual:',
+      actualMeasure,
+    );
+  }
+
+  return deviates;
 }
