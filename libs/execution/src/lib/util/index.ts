@@ -5,3 +5,4 @@
 export * from './implements-static-decorator';
 export * from './file-util';
 export * from './string-util';
+export * from './mermaid-util';
