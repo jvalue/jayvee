@@ -18,6 +18,7 @@ export interface RunOptions {
   debugGranularity: DebugGranularity;
   debugTarget: DebugTargets;
   parseOnly: boolean;
+  graph: boolean;
 }
 
 export function parseRunOptions(
@@ -38,6 +39,7 @@ export function parseRunOptions(
     'debugGranularity',
     'debugTarget',
     'parseOnly',
+    'graph',
   ];
   if (requiredFields.some((f) => !(f in optionsRaw))) {
     logger.logErr(
@@ -56,7 +58,8 @@ export function parseRunOptions(
     !isDebugArgument(options.debug, logger) ||
     !isDebugGranularityArgument(options.debugGranularity, logger) ||
     !isDebugTargetArgument(options.debugTarget, logger) ||
-    !isParseOnlyArgument(options.parseOnly, logger)
+    !isParseOnlyArgument(options.parseOnly, logger) ||
+    !isGraphArgument(options.graph, logger)
   ) {
     return undefined;
   }
@@ -68,6 +71,7 @@ export function parseRunOptions(
     debugGranularity: options.debugGranularity,
     debugTarget: getDebugTargets(options.debugTarget),
     parseOnly: options.parseOnly === true || options.parseOnly === 'true',
+    graph: options.graph === true || options.parseOnly === 'true',
   };
 }
 
@@ -148,6 +152,20 @@ function isParseOnlyArgument(
       `Invalid value "${JSON.stringify(
         arg,
       )}" for parse-only option: -po --parse-only.\n` +
+        'Must be true or false.',
+    );
+    return false;
+  }
+  return true;
+}
+
+function isGraphArgument(
+  arg: unknown,
+  logger: Logger,
+): arg is boolean | 'true' | 'false' {
+  if (typeof arg !== 'boolean' && arg !== 'true' && arg !== 'false') {
+    logger.logErr(
+      `Invalid value "${JSON.stringify(arg)}" for graph option: -g --graph.\n` +
         'Must be true or false.',
     );
     return false;
