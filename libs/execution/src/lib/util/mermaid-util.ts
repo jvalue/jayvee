@@ -1,13 +1,27 @@
-import { createHash } from 'node:crypto';
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import assert from 'assert';
 
 import { type BlockDefinition } from '@jvalue/jayvee-language-server';
 
 import { type ExecutionContext } from '../execution-context';
 
 export type Id = string;
-function generateId(obj: object): string {
-  const s = JSON.stringify(obj);
-  return createHash('sha256').update(s).digest('hex');
+let nextIdx = 0;
+const ALPHABET = 'abcdefghijklmnopqrstuvwxyz';
+function getId(): Id {
+  let idx = nextIdx++;
+  if (idx === 0) {
+    return 'a';
+  }
+
+  let id = '';
+  while (idx > 0) {
+    const letter = ALPHABET[idx % ALPHABET.length];
+    assert(letter !== undefined);
+    id += letter;
+    idx = Math.floor(idx / ALPHABET.length);
+  }
+  return id;
 }
 
 export type NodeShape =
@@ -21,7 +35,7 @@ export type NodeShape =
     };
 
 export class Node {
-  private readonly _id: Id = generateId(this);
+  private readonly _id: Id = getId();
   constructor(public text: string, public shape: NodeShape) {}
 
   get id(): Id {
@@ -36,7 +50,7 @@ export class Node {
 export type Arrow = '-->' | '---' | '-.->' | '==>' | '~~~' | '--o' | '--x';
 
 export class Edge {
-  private readonly _id: Id = generateId(this);
+  private readonly _id: Id = getId();
   constructor(
     public from: Id,
     public to: Id,
@@ -103,7 +117,7 @@ export class ClassAssignment {
 
 export type GraphDirection = 'TD' | 'LR';
 export class Graph {
-  private readonly _id: Id = generateId(this);
+  private readonly _id: Id = getId();
   private direction: GraphDirection = 'TD';
   private nodes = new Map<Id, Node>();
 
