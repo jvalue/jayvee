@@ -188,12 +188,12 @@ export class Graph {
   public toSubgraph(): string {
     return `subgraph ${this.id} [${this.title}]
   direction ${this.direction}
-  ${this.content()}`;
+    ${this.content()}
+  end`;
   }
 
   toString(): string {
-    return `
----
+    return `---
 title: ${this.title}
 ---
 flowchart ${this.direction}
