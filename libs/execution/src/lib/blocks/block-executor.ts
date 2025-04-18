@@ -11,7 +11,7 @@ import { isBlockTargetedForDebugLogging } from '../debugging/debug-configuration
 import { DebugLogVisitor } from '../debugging/debug-log-visitor';
 import { type ExecutionContext } from '../execution-context';
 import { type IOTypeImplementation } from '../types/io-types/io-type-implementation';
-import { Edge, type Graph, type Id, Node } from '../util';
+import { Edge, type Graph, type Id, Node } from '../util/mermaid-util';
 
 import * as R from './execution-result';
 
