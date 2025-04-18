@@ -23,8 +23,9 @@ import {
 
 import { type ExecutionContext } from '../execution-context';
 import { type IOTypeImplementation } from '../types';
+import { Edge, type Graph, type Id } from '../util';
 
-import { executeBlocks } from './block-execution-util';
+import { executeBlocks, executionGraph } from './block-execution-util';
 import { AbstractBlockExecutor, type BlockExecutor } from './block-executor';
 import { type BlockExecutorClass } from './block-executor-class';
 import * as R from './execution-result';
@@ -54,6 +55,22 @@ export function createCompositeBlockExecutor(
 
     constructor() {
       super(inputType, outputType);
+    }
+
+    override addToGraph(
+      graph: Graph,
+      parents: Id[],
+      context: ExecutionContext,
+    ): Id {
+      const subgraph = executionGraph(context, blockTypeReference);
+      graph.addSubgraph(subgraph);
+
+      for (const parent of parents) {
+        const edge = new Edge(parent, subgraph.id, this.inputType, '-->');
+        graph.addEdge(edge);
+      }
+
+      return graph.id;
     }
 
     async doExecute(

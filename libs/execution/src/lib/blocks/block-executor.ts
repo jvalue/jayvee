@@ -11,6 +11,7 @@ import { isBlockTargetedForDebugLogging } from '../debugging/debug-configuration
 import { DebugLogVisitor } from '../debugging/debug-log-visitor';
 import { type ExecutionContext } from '../execution-context';
 import { type IOTypeImplementation } from '../types/io-types/io-type-implementation';
+import { Edge, type Graph, type Id, Node } from '../util';
 
 import * as R from './execution-result';
 
@@ -25,6 +26,8 @@ export interface BlockExecutor<
     input: IOTypeImplementation<I>,
     context: ExecutionContext,
   ): Promise<R.Result<IOTypeImplementation<O> | null>>;
+
+  addToGraph(graph: Graph, parents: Id[], context: ExecutionContext): Id;
 }
 
 export abstract class AbstractBlockExecutor<I extends IOType, O extends IOType>
@@ -80,4 +83,19 @@ export abstract class AbstractBlockExecutor<I extends IOType, O extends IOType>
     input: IOTypeImplementation<I>,
     context: ExecutionContext,
   ): Promise<R.Result<IOTypeImplementation<O> | null>>;
+
+  addToGraph(graph: Graph, parents: Id[], context: ExecutionContext): Id {
+    const node = new Node(context.getCurrentNode().name, {
+      start: '[',
+      end: ']',
+    });
+    graph.addNode(node);
+
+    for (const parent of parents) {
+      const edge = new Edge(parent, node.id, this.inputType, '-->');
+      graph.addEdge(edge);
+    }
+
+    return node.id;
+  }
 }
