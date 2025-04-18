@@ -24,15 +24,8 @@ function getId(): Id {
   return id;
 }
 
-export type NodeShape =
-  | {
-      start: '[';
-      end: ']';
-    }
-  | {
-      start: '(';
-      end: ')';
-    };
+// NOTE: The space is required, as it's a placeholder for the node's text
+export type NodeShape = '[ ]' | '( )';
 
 export class Node {
   private readonly _id: Id = getId();
@@ -43,7 +36,11 @@ export class Node {
   }
 
   toString(): string {
-    return this.id + this.shape.start + this.text + this.shape.end;
+    const [start, end, ...rem] = this.shape.split(' ');
+    assert(start !== undefined);
+    assert(end !== undefined);
+    assert(rem.length === 0);
+    return this.id + start + this.text + end;
   }
 }
 

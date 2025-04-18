@@ -85,10 +85,7 @@ export abstract class AbstractBlockExecutor<I extends IOType, O extends IOType>
   ): Promise<R.Result<IOTypeImplementation<O> | null>>;
 
   addToGraph(graph: Graph, parents: Id[], context: ExecutionContext): Id {
-    const node = new Node(context.getCurrentNode().name, {
-      start: '[',
-      end: ']',
-    });
+    const node = new Node(context.getCurrentNode().name, '[ ]');
     graph.addNode(node);
 
     for (const parent of parents) {
