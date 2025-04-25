@@ -71,7 +71,7 @@ export function parseRunOptions(
     debugGranularity: options.debugGranularity,
     debugTarget: getDebugTargets(options.debugTarget),
     parseOnly: options.parseOnly === true || options.parseOnly === 'true',
-    graph: options.graph === true || options.parseOnly === 'true',
+    graph: options.graph === true || options.graph === 'true',
   };
 }
 
