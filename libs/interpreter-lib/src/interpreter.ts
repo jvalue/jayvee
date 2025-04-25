@@ -380,9 +380,11 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
       );
     }
 
-    const name = path.basename(
-      program.model.$document?.uri.path ?? 'Unknown model',
-    );
+    const name =
+      program.model.$document !== undefined &&
+      program.model.$document.uri.path !== ''
+        ? path.basename(program.model.$document.uri.path)
+        : undefined;
     const graph = new Graph(name);
 
     for (const pipeline of selectedPipelines) {

@@ -138,7 +138,7 @@ export class Graph {
 
   private blocks = new Map<BlockDefinition, Id>();
 
-  constructor(public title: string) {}
+  constructor(public title?: string) {}
 
   get id(): Id {
     return this._id;
@@ -189,15 +189,16 @@ export class Graph {
   }
 
   public toSubgraph(indents: number): string {
-    return `subgraph ${this.id} [${this.title}]
+    const title = this.title !== undefined ? ` [${this.title}]` : '';
+    return `subgraph ${this.id}${title}
 ${'\t'.repeat(indents)}direction ${this.direction}
 ${this.content(indents)}
 ${indents > 0 ? '\t'.repeat(indents - 1) : ''}end`;
   }
 
   toString(): string {
-    return `---
-title: ${this.title}
+    const title = this.title !== undefined ? `\ntitle: ${this.title}` : '';
+    return `---${title}
 ---
 flowchart ${this.direction}
 ${this.content(1)}`;
