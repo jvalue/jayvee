@@ -336,8 +336,6 @@ flowchart TB
       expect(graph).not.toBe('No pipelines to graph');
       assert(graph !== 'No pipelines to graph');
 
-      console.log(graph);
-
       expect(graph.toString()).toBe(`---
 title: CarsPipeline
 ---
@@ -358,6 +356,67 @@ flowchart TB
 
 \t\to q@-->|File| p
 \t\tp s@-->|TextFile| r
+\tend`);
+    });
+    it('should graph models with two contained pipelines', async () => {
+      const assetPath =
+        'libs/interpreter-lib/test/assets/graph/two-pipelines.jv';
+      const model = readJvTestAsset(assetPath);
+
+      const interpreter = new DefaultJayveeInterpreter({
+        pipelineMatcher: () => true,
+        debug: true,
+        debugGranularity: 'peek',
+        debugTarget: 'all',
+        env: new Map(),
+      });
+
+      const program = await interpreter.parseModel((services, loggerFactory) =>
+        extractAstNodeFromString<JayveeModel>(
+          model,
+          services,
+          loggerFactory.createLogger(),
+        ),
+      );
+      expect(program).toBeDefined();
+      assert(program !== undefined);
+
+      const graph = interpreter.graphProgram(program);
+      expect(graph).not.toBe('No pipelines to graph');
+      assert(graph !== 'No pipelines to graph');
+
+      expect(graph.toString()).toBe(`---
+---
+flowchart TB
+\tsubgraph ba [CarsPipeline]
+\t\tdirection TB
+\t\tbb[CarsExtractor]
+\t\tbc[CarsTextFileInterpreter]
+\t\tbe[CarsCSVInterpreter]
+\t\tbg[NameHeaderWriter]
+\t\tbi[CarsTableInterpreter]
+\t\tbk[CarsLoader]
+
+\t\tbb bd@-->|File| bc
+\t\tbc bf@-->|TextFile| be
+\t\tbe bh@-->|Sheet| bg
+\t\tbg bj@-->|Sheet| bi
+\t\tbi bl@-->|Table| bk
+\tend
+\tsubgraph bm [ElectricVehiclesPipeline]
+\t\tdirection TB
+\t\tbn[ElectricVehiclesHttpExtractor]
+\t\tbo[ElectricVehiclesTextFileInterpreter]
+\t\tbq[ElectricVehiclesCSVInterpreter]
+\t\tbs[ElectricVehiclesTableInterpreter]
+\t\tbu[ElectricRangeTransformer]
+\t\tbw[ElectricVehiclesSQLiteLoader]
+
+\t\tbn bp@-->|File| bo
+\t\tbo br@-->|TextFile| bq
+\t\tbq bt@-->|Sheet| bs
+\t\tbs bv@-->|Table| bu
+\t\tbu bx@-->|Table| bw
 \tend`);
     });
   });
