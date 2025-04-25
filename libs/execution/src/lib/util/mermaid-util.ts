@@ -12,19 +12,17 @@ import { type ExecutionContext } from '../execution-context';
 export type Id = string;
 let nextIdx = 0;
 const ALPHABET = 'abcdefghijklmnopqrstuvwxyz';
-function getId(): Id {
-  let idx = nextIdx++;
-  if (idx === 0) {
-    return 'a';
-  }
-
+export function getId(): Id {
+  let remaining = nextIdx++;
   let id = '';
-  while (idx > 0) {
-    const letter = ALPHABET[idx % ALPHABET.length];
+
+  do {
+    const letter = ALPHABET[remaining % ALPHABET.length];
     assert(letter !== undefined);
-    id += letter;
-    idx = Math.floor(idx / ALPHABET.length);
-  }
+    id = letter + id;
+    remaining = Math.floor(remaining / ALPHABET.length);
+  } while (remaining > 0);
+
   return id;
 }
 
