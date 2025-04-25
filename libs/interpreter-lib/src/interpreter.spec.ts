@@ -264,4 +264,101 @@ describe('Interpreter', () => {
       expect(exitCode).toEqual(ExitCode.SUCCESS);
     }, 10000);
   });
+
+  describe('graphProgram', () => {
+    it('should graph the cars example', async () => {
+      const exampleFilePath = 'example/cars.jv';
+      const model = readJvTestAsset(exampleFilePath);
+
+      const interpreter = new DefaultJayveeInterpreter({
+        pipelineMatcher: () => true,
+        debug: true,
+        debugGranularity: 'peek',
+        debugTarget: 'all',
+        env: new Map(),
+      });
+
+      const program = await interpreter.parseModel((services, loggerFactory) =>
+        extractAstNodeFromString<JayveeModel>(
+          model,
+          services,
+          loggerFactory.createLogger(),
+        ),
+      );
+      expect(program).toBeDefined();
+      assert(program !== undefined);
+
+      const graph = interpreter.graphProgram(program);
+      expect(graph).not.toBe('No pipelines to graph');
+      assert(graph !== 'No pipelines to graph');
+
+      expect(graph.toString()).toBe(`---
+title: CarsPipeline
+---
+flowchart TB
+\tb[CarsExtractor]
+\tc[CarsTextFileInterpreter]
+\te[CarsCSVInterpreter]
+\tg[NameHeaderWriter]
+\ti[CarsTableInterpreter]
+\tk[CarsLoader]
+
+\tb d@-->|File| c
+\tc f@-->|TextFile| e
+\te h@-->|Sheet| g
+\tg j@-->|Sheet| i
+\ti l@-->|Table| k`);
+    });
+    it('should graph the composite-blocks example', async () => {
+      const assetPath =
+        'libs/interpreter-lib/test/assets/graph/composite-block.jv';
+      const model = readJvTestAsset(assetPath);
+
+      const interpreter = new DefaultJayveeInterpreter({
+        pipelineMatcher: () => true,
+        debug: true,
+        debugGranularity: 'peek',
+        debugTarget: 'all',
+        env: new Map(),
+      });
+
+      const program = await interpreter.parseModel((services, loggerFactory) =>
+        extractAstNodeFromString<JayveeModel>(
+          model,
+          services,
+          loggerFactory.createLogger(),
+        ),
+      );
+      expect(program).toBeDefined();
+      assert(program !== undefined);
+
+      const graph = interpreter.graphProgram(program);
+      expect(graph).not.toBe('No pipelines to graph');
+      assert(graph !== 'No pipelines to graph');
+
+      console.log(graph);
+
+      expect(graph.toString()).toBe(`---
+title: CarsPipeline
+---
+flowchart TB
+\tt[CarsTableInterpreter]
+\tv[CarsTableTransformer]
+\tx[CarsLoader]
+
+\tn u@-->|Sheet| t
+\tt w@-->|Table| v
+\tv y@-->|Table| x
+
+\tsubgraph n [CSVExtractor]
+\t\tdirection TB
+\t\to[FileExtractor]
+\t\tp[FileTextInterpreter]
+\t\tr[FileCSVInterpreter]
+
+\t\to q@-->|File| p
+\t\tp s@-->|TextFile| r
+\tend`);
+    });
+  });
 });
