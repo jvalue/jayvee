@@ -155,8 +155,8 @@ export class Graph {
   ) {
     const executor = context.executionExtension.createBlockExecutor(block);
 
-    const block_id = executor.addToGraph(this, parents, context);
-    this.blocks.set(block, block_id);
+    const blockId = executor.addToGraph(this, parents, context);
+    this.blocks.set(block, blockId);
   }
 
   private content(indents: number): string {

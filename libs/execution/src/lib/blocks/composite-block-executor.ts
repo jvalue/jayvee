@@ -70,7 +70,7 @@ export function createCompositeBlockExecutor(
         graph.addEdge(edge);
       }
 
-      return graph.id;
+      return subgraph.id;
     }
 
     async doExecute(
