@@ -100,9 +100,14 @@ export class ClassDefinition {
   }
 
   toString(): string {
-    return `classDef ${this.className} ${[...this.properties.entries()]
+    const properties = [...this.properties.entries()]
       .map(([key, value]) => `${key}: ${value}`)
-      .join(',')}`;
+      .join(',');
+
+    if (properties === '') {
+      return `classDef ${this.className}`;
+    }
+    return `classDef ${this.className} ${properties}`;
   }
 }
 
