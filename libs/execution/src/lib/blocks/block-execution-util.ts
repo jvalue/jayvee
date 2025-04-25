@@ -174,7 +174,6 @@ export async function executeBlock(
 export function executionGraph(
   executionContext: ExecutionContext,
   pipesContainer: CompositeBlockTypeDefinition | PipelineDefinition,
-  _initialInputValue: IOTypeImplementation | undefined = undefined,
 ): Graph {
   const pipelineWrapper =
     executionContext.wrapperFactories.Pipeline.wrap(pipesContainer);
