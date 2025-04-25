@@ -17,8 +17,8 @@ const interpreterMock: JayveeInterpreter = {
   interpretFile: vi.fn(),
   interpretString: vi.fn(),
   parseModel: vi.fn(),
-  listMeasures: vi.fn(),
-  clearMeasures: vi.fn(),
+  listMeasurements: vi.fn(),
+  clearMeasurements: vi.fn(),
 };
 
 vi.stubGlobal('DefaultJayveeInterpreter', interpreterMock);

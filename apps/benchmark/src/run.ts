@@ -36,7 +36,7 @@ async function runOneModelOnce(
   console.log = logBackup;
   assert(exitCode === ExitCode.SUCCESS);
 
-  const measurements = interpreter.listMeasures();
+  const measurements = interpreter.listMeasurements();
   interpreter.clearMeasurements();
   return measurements;
 }

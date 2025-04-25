@@ -153,7 +153,7 @@ export interface JayveeInterpreter {
    * @returns a list of pipeline durations
    * {@link PipelineMeasure}
    */
-  listMeasures(): PipelineMeasurement[];
+  listMeasurements(): PipelineMeasurement[];
 
   /**
    * Clear all existing measurements.
@@ -274,7 +274,7 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
     }
   }
 
-  listMeasures(): PipelineMeasurement[] {
+  listMeasurements(): PipelineMeasurement[] {
     return listMeasurements();
   }
 
