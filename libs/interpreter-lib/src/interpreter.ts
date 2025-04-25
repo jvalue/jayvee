@@ -112,7 +112,7 @@ export interface JayveeInterpreter {
    * @param program The Jayvee program.
    * @returns An object that can be printed to the console. The output follows `mermaid.js` syntax
    */
-  graphProgram(program: JayveeProgram): Graph;
+  graphProgram(program: JayveeProgram): Graph | 'No pipelines to graph';
 
   /**
    * Interprets a file as a Jayvee model.
@@ -205,7 +205,7 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
     return interpretationExitCode;
   }
 
-  graphProgram(program: JayveeProgram): Graph {
+  graphProgram(program: JayveeProgram): Graph | 'No pipelines to graph' {
     return this.graphJayveeModel(
       program,
       new StdExecExtension(),
@@ -349,23 +349,22 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
     program: JayveeProgram,
     executionExtension: JayveeExecExtension,
     constraintExtension: JayveeConstraintExtension,
-  ): Graph {
+  ): Graph | 'No pipelines to graph' {
     const model = program.model;
     const selectedPipelines = model.pipelines.filter((pipeline) =>
       this.options.pipelineMatcher(pipeline),
     );
-    this.loggerFactory
-      .createLogger()
-      .logInfo(
-        `Found ${selectedPipelines.length} pipelines to graph${
-          selectedPipelines.length > 0
-            ? ': ' + selectedPipelines.map((p) => p.name).join(', ')
-            : ''
-        }`,
-      );
+    const logger = this.loggerFactory.createLogger();
+    logger.logInfo(
+      `Found ${selectedPipelines.length} pipelines to graph${
+        selectedPipelines.length > 0
+          ? ': ' + selectedPipelines.map((p) => p.name).join(', ')
+          : ''
+      }`,
+    );
 
     if (selectedPipelines.length === 0) {
-      return new Graph('empty model'); // FIXME: improve
+      return 'No pipelines to graph';
     }
 
     if (selectedPipelines.length === 1) {
@@ -381,7 +380,10 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
       );
     }
 
-    const graph = new Graph('model'); // FIXME: Correct name
+    const name = path.basename(
+      program.model.$document?.uri.path ?? 'Unknown model',
+    );
+    const graph = new Graph(name);
 
     for (const pipeline of selectedPipelines) {
       const subgraph = this.graphPipeline(

@@ -87,9 +87,12 @@ async function printGraph(
         loggerFactory.createLogger(),
       ),
   );
-  const graph =
-    program !== undefined ? interpreter.graphProgram(program) : undefined;
-  console.log(graph?.toString() ?? 'Parsing error');
+
+  if (program !== undefined) {
+    const graph = interpreter.graphProgram(program);
+    const log = graph === 'No pipelines to graph' ? console.warn : console.log;
+    log(graph.toString());
+  }
 
   const exitCode = program === undefined ? ExitCode.FAILURE : ExitCode.SUCCESS;
   process.exit(exitCode);
