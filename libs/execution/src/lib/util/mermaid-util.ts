@@ -116,10 +116,10 @@ export class ClassAssignment {
   }
 }
 
-export type GraphDirection = 'TD' | 'LR';
+export type GraphDirection = 'TB' | 'BT' | 'RL' | 'LR';
 export class Graph {
   private readonly _id: Id = getId();
-  private direction: GraphDirection = 'TD';
+  private direction: GraphDirection = 'TB';
   private nodes = new Map<Id, Node>();
 
   private edges = new Map<Id, Edge>();
@@ -156,21 +156,21 @@ export class Graph {
     this.blocks.set(block, block_id);
   }
 
-  private content(): string {
+  private content(indents: number): string {
+    const indent = '\t'.repeat(indents);
     return [
       this.nodes,
       this.edges,
-      [...this.subgraphs.values()].map((sg) => sg.toSubgraph()),
+      [...this.subgraphs.values()].map((sg) => sg.toSubgraph(indents + 1)),
       this.edgeAttributes,
       this.classDefinitions,
       this.classAssignments,
     ]
       .map((arr) => {
-        if (Array.isArray(arr)) {
-          return arr.join('\n\t');
-        }
-        return [...arr.values()].join('\n\t');
+        const ar = Array.isArray(arr) ? arr : [...arr.values()];
+        return indent + ar.join(`\n${indent}`);
       })
+      .filter((s) => s !== '')
       .join('\n\n');
   }
 
@@ -186,11 +186,11 @@ export class Graph {
     this.edges.set(edge.id, edge);
   }
 
-  public toSubgraph(): string {
+  public toSubgraph(indents: number): string {
     return `subgraph ${this.id} [${this.title}]
-  direction ${this.direction}
-    ${this.content()}
-  end`;
+${'\t'.repeat(indents)}direction ${this.direction}
+${this.content(indents)}
+end`;
   }
 
   toString(): string {
@@ -198,7 +198,7 @@ export class Graph {
 title: ${this.title}
 ---
 flowchart ${this.direction}
-  ${this.content()}
+${this.content(1)}
 `;
   }
 }
