@@ -166,11 +166,10 @@ export class Graph {
       this.classDefinitions,
       this.classAssignments,
     ]
-      .map((arr) => {
+      .flatMap((arr) => {
         const ar = Array.isArray(arr) ? arr : [...arr.values()];
-        return indent + ar.join(`\n${indent}`);
+        return ar.length > 0 ? [indent + ar.join(`\n${indent}`)] : [];
       })
-      .filter((s) => s !== '')
       .join('\n\n');
   }
 
@@ -198,7 +197,6 @@ end`;
 title: ${this.title}
 ---
 flowchart ${this.direction}
-${this.content(1)}
-`;
+${this.content(1)}`;
   }
 }
