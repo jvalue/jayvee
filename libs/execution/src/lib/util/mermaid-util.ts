@@ -192,7 +192,7 @@ export class Graph {
     return `subgraph ${this.id} [${this.title}]
 ${'\t'.repeat(indents)}direction ${this.direction}
 ${this.content(indents)}
-end`;
+${indents > 0 ? '\t'.repeat(indents - 1) : ''}end`;
   }
 
   toString(): string {
