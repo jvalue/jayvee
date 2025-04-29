@@ -12,6 +12,7 @@
     "reproduce": "nx run interpreter:run -d repro.jv -dg exhaustive",
     "benchmark": "nx run benchmark:run",
     "example:cars": "nx run interpreter:run -d example/cars.jv -dg peek",
+    "graph:cars": "nx run interpreter:run -g example/cars.jv -d -dg peek",
     "example:gtfs": "nx run interpreter:run -d example/gtfs-static.jv -dg peek",
     "example:gtfs-rt": "nx run interpreter:run -d example/gtfs-rt.jv -dg peek",
     "example:workbooks": "nx run interpreter:run -d example/workbooks-xlsx.jv -dg peek",

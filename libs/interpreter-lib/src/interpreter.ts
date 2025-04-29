@@ -12,6 +12,7 @@ import {
   DefaultConstraintExtension,
   DefaultDebugTargetsValue,
   ExecutionContext,
+  Graph,
   HookContext,
   type HookOptions,
   type HookPosition,
@@ -23,6 +24,7 @@ import {
   type PostBlockHook,
   type PreBlockHook,
   executeBlocks,
+  executionGraph,
   isErr,
   listMeasurements,
   measure,
@@ -105,6 +107,14 @@ export interface JayveeInterpreter {
   interpretProgram(program: JayveeProgram): Promise<ExitCode>;
 
   /**
+   * Graphs a parsed jayvee program.
+   *
+   * @param program The Jayvee program.
+   * @returns An object that can be printed to the console. The output follows `mermaid.js` syntax
+   */
+  graphProgram(program: JayveeProgram): Graph | 'No pipelines to graph';
+
+  /**
    * Interprets a file as a Jayvee model.
    * Parses the file first as a Jayvee model.
    *
@@ -143,7 +153,7 @@ export interface JayveeInterpreter {
    * @returns a list of pipeline durations
    * {@link PipelineMeasure}
    */
-  listMeasures(): PipelineMeasurement[];
+  listMeasurements(): PipelineMeasurement[];
 
   /**
    * Clear all existing measurements.
@@ -193,6 +203,14 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
       new DefaultConstraintExtension(),
     );
     return interpretationExitCode;
+  }
+
+  graphProgram(program: JayveeProgram): Graph | 'No pipelines to graph' {
+    return this.graphJayveeModel(
+      program,
+      new StdExecExtension(),
+      new DefaultConstraintExtension(),
+    );
   }
 
   async interpretFile(filePath: string): Promise<ExitCode> {
@@ -256,7 +274,7 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
     }
   }
 
-  listMeasures(): PipelineMeasurement[] {
+  listMeasurements(): PipelineMeasurement[] {
     return listMeasurements();
   }
 
@@ -327,13 +345,68 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
     return ExitCode.SUCCESS;
   }
 
-  private async runPipeline(
+  private graphJayveeModel(
+    program: JayveeProgram,
+    executionExtension: JayveeExecExtension,
+    constraintExtension: JayveeConstraintExtension,
+  ): Graph | 'No pipelines to graph' {
+    const model = program.model;
+    const selectedPipelines = model.pipelines.filter((pipeline) =>
+      this.options.pipelineMatcher(pipeline),
+    );
+    const logger = this.loggerFactory.createLogger();
+    logger.logInfo(
+      `Found ${selectedPipelines.length} pipelines to graph${
+        selectedPipelines.length > 0
+          ? ': ' + selectedPipelines.map((p) => p.name).join(', ')
+          : ''
+      }`,
+    );
+
+    if (selectedPipelines.length === 0) {
+      return 'No pipelines to graph';
+    }
+
+    if (selectedPipelines.length === 1) {
+      const [pipeline, ...rest] = selectedPipelines;
+      assert(pipeline !== undefined);
+      assert(rest.length === 0);
+
+      return this.graphPipeline(
+        pipeline,
+        executionExtension,
+        constraintExtension,
+        program.hooks,
+      );
+    }
+
+    const name =
+      program.model.$document !== undefined &&
+      program.model.$document.uri.path !== ''
+        ? path.basename(program.model.$document.uri.path)
+        : undefined;
+    const graph = new Graph(name);
+
+    for (const pipeline of selectedPipelines) {
+      const subgraph = this.graphPipeline(
+        pipeline,
+        executionExtension,
+        constraintExtension,
+        program.hooks,
+      );
+      graph.addSubgraph(subgraph);
+    }
+
+    return graph;
+  }
+
+  private defaultExecutionContext(
     pipeline: PipelineDefinition,
     executionExtension: JayveeExecExtension,
     constraintExtension: JayveeConstraintExtension,
     hooks: HookContext,
-  ): Promise<ExitCode> {
-    const executionContext = new ExecutionContext(
+  ): ExecutionContext {
+    return new ExecutionContext(
       pipeline,
       executionExtension,
       constraintExtension,
@@ -350,6 +423,20 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
         this.services.operators.EvaluatorRegistry,
         this.services.ValueTypeProvider,
       ),
+      hooks,
+    );
+  }
+
+  private async runPipeline(
+    pipeline: PipelineDefinition,
+    executionExtension: JayveeExecExtension,
+    constraintExtension: JayveeConstraintExtension,
+    hooks: HookContext,
+  ): Promise<ExitCode> {
+    const executionContext = this.defaultExecutionContext(
+      pipeline,
+      executionExtension,
+      constraintExtension,
       hooks,
     );
 
@@ -378,6 +465,22 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
       `${pipeline.name} took ${Math.round(durationMs)} ms`,
     );
     return result;
+  }
+
+  private graphPipeline(
+    pipeline: PipelineDefinition,
+    executionExtension: JayveeExecExtension,
+    constraintExtension: JayveeConstraintExtension,
+    hooks: HookContext,
+  ): Graph {
+    const executionContext = this.defaultExecutionContext(
+      pipeline,
+      executionExtension,
+      constraintExtension,
+      hooks,
+    );
+
+    return executionGraph(executionContext, pipeline);
   }
 
   private async prepareInterpretation(): Promise<void> {

@@ -14,6 +14,7 @@ import {
 import { type ExecutionContext } from '../execution-context';
 import { MeasurementLocation, measure } from '../perf';
 import { type IOTypeImplementation, NONE } from '../types';
+import { Graph } from '../util/mermaid-util';
 
 import * as R from './execution-result';
 
@@ -159,4 +160,35 @@ export async function executeBlock(
     `${block.name} took ${Math.round(totalDurMs)} ms`,
   );
   return result;
+}
+
+/**
+ * Visualizes the pipelines exectution order
+ *
+ * @param executionContext The context the blocks are executed in, e.g., a pipeline or composite block
+ * @param pipesContainer The pipelines to be executed
+ * @param initialInputValue An initial input that was produced outside of this block chain, e.g., as input to a composite block
+ *
+ * @returns A graph representantion of the execution
+ */
+export function executionGraph(
+  executionContext: ExecutionContext,
+  pipesContainer: CompositeBlockTypeDefinition | PipelineDefinition,
+): Graph {
+  const pipelineWrapper =
+    executionContext.wrapperFactories.Pipeline.wrap(pipesContainer);
+
+  const graph = new Graph(pipesContainer.name);
+
+  for (const block of pipelineWrapper.getBlocksInTopologicalSorting()) {
+    const parents = pipelineWrapper.getParentBlocks(block).flatMap((parent) => {
+      const parentId = graph.getBlockId(parent);
+      return parentId !== undefined ? [parentId] : [];
+    });
+    executionContext.enterNode(block);
+    graph.addBlock(executionContext, block, parents);
+    executionContext.exitNode(block);
+  }
+
+  return graph;
 }

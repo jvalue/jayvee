@@ -1,0 +1,139 @@
+// SPDX-FileCopyrightText: 2025 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+pipeline CarsPipeline {
+
+	CarsExtractor
+		-> CarsTextFileInterpreter;
+
+	CarsTextFileInterpreter
+		-> CarsCSVInterpreter
+		-> NameHeaderWriter
+		-> CarsTableInterpreter
+		-> CarsLoader;
+
+	block CarsExtractor oftype HttpExtractor {
+		url: "https://gist.githubusercontent.com/noamross/e5d3e859aa0c794be10b/raw/b999fb4425b54c63cab088c0ce2c0d6ce961a563/cars.csv";
+	}
+
+	block CarsTextFileInterpreter oftype TextFileInterpreter { }
+
+	block CarsCSVInterpreter oftype CSVInterpreter {
+		enclosing: '"';
+	}
+
+	block NameHeaderWriter oftype CellWriter {
+		at: cell A1;
+
+		write: [
+			"name"
+		];
+	}
+
+	block CarsTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns: [
+			"name" oftype text,
+			"mpg" oftype decimal,
+			"cyl" oftype integer,
+			"disp" oftype decimal,
+			"hp" oftype integer,
+			"drat" oftype decimal,
+			"wt" oftype decimal,
+			"qsec" oftype decimal,
+			"vs" oftype integer,
+			"am" oftype integer,
+			"gear" oftype integer,
+			"carb" oftype integer
+		];
+	}
+
+	block CarsLoader oftype SQLiteLoader {
+		table: "Cars";
+		file: "./cars.sqlite";
+	}
+}
+
+pipeline ElectricVehiclesPipeline {
+	// See here for meta-data of the data source
+	// https://catalog.data.gov/dataset/electric-vehicle-population-data/resource/fa51be35-691f-45d2-9f3e-535877965e69
+
+	// 2. At the top of a pipeline, we describe the
+	// structure of the pipeline. The first part until 
+	// the ElectricRangeTransformer is a linear sequence
+	// of blocks. From there we can see a split into two
+	// parallel sequences that load the data in to two
+	// different sinks.
+	ElectricVehiclesHttpExtractor
+		-> ElectricVehiclesTextFileInterpreter
+		-> ElectricVehiclesCSVInterpreter
+		-> ElectricVehiclesTableInterpreter
+		-> ElectricRangeTransformer;
+
+	ElectricRangeTransformer
+		-> ElectricVehiclesSQLiteLoader;
+
+	// 3. After the pipeline structure, we define the blocks used.
+	block ElectricVehiclesHttpExtractor oftype HttpExtractor {
+		url: "https://data.wa.gov/api/views/f6w7-q2d2/rows.csv?accessType=DOWNLOAD";
+	}
+
+	block ElectricVehiclesTextFileInterpreter oftype TextFileInterpreter { }
+
+	block ElectricVehiclesCSVInterpreter oftype CSVInterpreter { }
+
+	block ElectricVehiclesTableInterpreter oftype TableInterpreter {
+		header: true;
+		columns: [
+			"VIN (1-10)" oftype VehicleIdentificationNumber10,
+			"County" oftype text,
+			"City" oftype text,
+			"State" oftype text,
+			"Postal Code" oftype text,
+			"Model Year" oftype integer,
+			"Make" oftype text,
+			"Model" oftype text,
+			"Electric Vehicle Type" oftype text,
+			"Clean Alternative Fuel Vehicle (CAFV) Eligibility" oftype text,
+			"Electric Range" oftype integer,
+			"Base MSRP" oftype integer,
+			"Legislative District" oftype text,
+			"DOL Vehicle ID" oftype integer,
+			"Vehicle Location" oftype text,
+			"Electric Utility" oftype text,
+			"2020 Census Tract" oftype text,
+		];
+	}
+
+	block ElectricRangeTransformer oftype TableTransformer {
+		inputColumns: [
+			"Electric Range"
+		];
+		outputColumn: "Electric Range (km)";
+		uses: MilesToKilometers;
+	}
+
+	transform MilesToKilometers {
+		from miles oftype decimal;
+		to kilometers oftype integer;
+
+		kilometers: round (miles * 1.609344);
+	}
+
+	block ElectricVehiclesSQLiteLoader oftype SQLiteLoader {
+		table: "ElectricVehiclePopulationData";
+		file: "./electric-vehicles.sqlite";
+	}
+}
+
+valuetype VehicleIdentificationNumber10 oftype text {
+	constraints: [
+		OnlyCapitalLettersAndDigits,
+		ExactlyTenCharacters,
+	];
+}
+
+constraint OnlyCapitalLettersAndDigits on text: value matches /^[A-Z0-9]*$/;
+
+constraint ExactlyTenCharacters on text: value.length == 10;

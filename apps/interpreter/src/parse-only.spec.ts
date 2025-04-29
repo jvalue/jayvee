@@ -17,8 +17,9 @@ const interpreterMock: JayveeInterpreter = {
   interpretFile: vi.fn(),
   interpretString: vi.fn(),
   parseModel: vi.fn(),
-  listMeasures: vi.fn(),
-  clearMeasures: vi.fn(),
+  listMeasurements: vi.fn(),
+  clearMeasurements: vi.fn(),
+  graphProgram: vi.fn(),
 };
 
 vi.stubGlobal('DefaultJayveeInterpreter', interpreterMock);
@@ -43,6 +44,7 @@ describe('Parse Only', () => {
     debugGranularity: 'minimal',
     debugTarget: 'all',
     parseOnly: false,
+    graph: false,
   };
 
   afterEach(() => {

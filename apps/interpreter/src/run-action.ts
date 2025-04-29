@@ -47,7 +47,9 @@ export async function runAction(
     debugTarget: options.debugTarget,
   }).addWorkspace(workingDir);
 
-  if (options.parseOnly === true) {
+  if (options.graph === true) {
+    return await printGraph(filePathRelativeToCurrentDir, interpreter);
+  } else if (options.parseOnly === true) {
     return await runParseOnly(filePathRelativeToCurrentDir, interpreter);
   }
 
@@ -70,5 +72,28 @@ async function runParseOnly(
       ),
   );
   const exitCode = model === undefined ? ExitCode.FAILURE : ExitCode.SUCCESS;
+  process.exit(exitCode);
+}
+
+async function printGraph(
+  filePath: string,
+  interpreter: JayveeInterpreter,
+): Promise<void> {
+  const program = await interpreter.parseModel(
+    async (services: JayveeServices, loggerFactory: LoggerFactory) =>
+      await extractAstNodeFromFile<JayveeModel>(
+        filePath,
+        services,
+        loggerFactory.createLogger(),
+      ),
+  );
+
+  if (program !== undefined) {
+    const graph = interpreter.graphProgram(program);
+    const log = graph === 'No pipelines to graph' ? console.warn : console.log;
+    log(graph.toString());
+  }
+
+  const exitCode = program === undefined ? ExitCode.FAILURE : ExitCode.SUCCESS;
   process.exit(exitCode);
 }

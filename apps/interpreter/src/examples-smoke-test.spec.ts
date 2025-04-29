@@ -47,6 +47,7 @@ describe('jv example smoke tests', () => {
     debugGranularity: 'minimal',
     debugTarget: 'all',
     parseOnly: false,
+    graph: false,
   };
 
   let exitSpy: MockInstance;

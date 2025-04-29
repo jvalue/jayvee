@@ -47,6 +47,7 @@ program
     collectRuntimeParameters,
     new Map<string, string>(),
   )
+  .option('-g, --graph', 'parse the model and print a mermaid.js graph', false)
   .option('-d, --debug', 'enable debug logging', false)
   .option(
     '-dg, --debug-granularity <granularity>',
