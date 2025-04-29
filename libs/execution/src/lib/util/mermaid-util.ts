@@ -119,6 +119,55 @@ export class ClassAssignment {
   }
 }
 
+export interface ThemeVariables {
+  darkMode: boolean;
+  background: string;
+  fontFamily: string;
+  fontSize: string;
+  primaryColor: string;
+  primaryTextColor: string;
+  primaryBorderColor: string;
+  secondaryColor: string;
+  secondaryTextColor: string;
+  secondaryBorderColor: string;
+  tertiaryColor: string;
+  tertiaryTextColor: string;
+  tertiaryBorderColor: string;
+  noteBkgColor: string;
+  noteTextColor: string;
+  noteBorderColor: string;
+  lineColor: string;
+  textColor: string;
+  mainBkg: string;
+  errorBkgColor: string;
+  errorTextColor: string;
+
+  nodeBorder: string;
+  clusterBkg: string;
+  clusterBorder: string;
+  defaultLinkColor: string;
+  titleColor: string;
+  edgeLabelBackground: string;
+  nodeTextColor: string;
+}
+
+export interface ElkLayoutConfig {
+  mergeEdges: boolean;
+  nodePlacementStrategy:
+    | 'BRANDES_KOEPF'
+    | 'SIMPLE'
+    | 'NETWORK_SIMPLEX'
+    | 'LINEAR_SEGMENTS';
+}
+
+export interface GraphConfiguration {
+  look: 'classic' | 'handDrawn';
+  theme: 'default' | 'neutral' | 'dark' | 'forest' | 'plain';
+  themeVariables: Partial<ThemeVariables>;
+  layout: 'dagre' | 'elk';
+  elk: Partial<ElkLayoutConfig>;
+}
+
 export type GraphDirection = 'TB' | 'BT' | 'RL' | 'LR';
 export class Graph {
   private readonly _id: Id = getId();
@@ -138,7 +187,10 @@ export class Graph {
 
   private blocks = new Map<BlockDefinition, Id>();
 
-  constructor(public title?: string) {}
+  constructor(
+    public title?: string,
+    public configuration?: Partial<GraphConfiguration>,
+  ) {}
 
   get id(): Id {
     return this._id;
