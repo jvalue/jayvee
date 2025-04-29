@@ -6,6 +6,7 @@
 import assert from 'assert';
 
 import { type BlockDefinition } from '@jvalue/jayvee-language-server';
+import { stringify } from 'yaml';
 
 import { type ExecutionContext } from '../execution-context';
 
@@ -249,9 +250,15 @@ ${indents > 0 ? '\t'.repeat(indents - 1) : ''}end`;
   }
 
   toString(): string {
-    const title = this.title !== undefined ? `\ntitle: ${this.title}` : '';
-    return `---${title}
----
+    return `---
+${
+  this.title !== undefined || this.configuration !== undefined
+    ? stringify({
+        title: this.title,
+        config: this.configuration,
+      })
+    : '\n'
+}---
 flowchart ${this.direction}
 ${this.content(1)}`;
   }
