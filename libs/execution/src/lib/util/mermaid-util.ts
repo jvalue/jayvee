@@ -176,15 +176,12 @@ export class Graph {
   private nodes = new Map<Id, Node>();
 
   private edges = new Map<Id, Edge>();
-  private edgeAttributes: { id: Id; attributes: string[] }[] = [];
+  private edgeAttributes: EdgeAttribute[] = [];
 
   private subgraphs = new Map<Id, Graph>();
 
-  private classDefinitions: {
-    class: string;
-    propertiesAndValues: string[];
-  }[] = [];
-  private classAssignments: { id: Id; class: string }[] = [];
+  private classDefinitions: ClassDefinition[] = [];
+  private classAssignments: ClassAssignment[] = [];
 
   private blocks = new Map<BlockDefinition, Id>();
 
