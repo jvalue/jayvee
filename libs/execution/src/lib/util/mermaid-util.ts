@@ -170,6 +170,7 @@ export interface GraphConfiguration {
 }
 
 export type GraphDirection = 'TB' | 'BT' | 'RL' | 'LR';
+
 export class Graph {
   private readonly _id: Id = getId();
   private direction: GraphDirection = 'TB';
@@ -236,6 +237,14 @@ export class Graph {
 
   public addEdge(edge: Edge) {
     this.edges.set(edge.id, edge);
+  }
+
+  public addClassAssignment(assignment: ClassAssignment) {
+    this.classAssignments.push(assignment);
+  }
+
+  public addClassDefinition(classDefinition: ClassDefinition) {
+    this.classDefinitions.push(classDefinition);
   }
 
   public toSubgraph(indents: number): string {
