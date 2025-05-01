@@ -23,7 +23,7 @@ import {
 
 import { type ExecutionContext } from '../execution-context';
 import { type IOTypeImplementation } from '../types';
-import { Edge, type Graph, type Id } from '../util';
+import { ClassAssignment, Edge, type Graph, type Id } from '../util';
 
 import { executeBlocks, executionGraph } from './block-execution-util';
 import { AbstractBlockExecutor, type BlockExecutor } from './block-executor';
@@ -65,9 +65,18 @@ export function createCompositeBlockExecutor(
       const subgraph = executionGraph(context, blockTypeReference);
       graph.addSubgraph(subgraph);
 
+      graph.addClassAssignment(
+        new ClassAssignment(subgraph.id, 'composite-block'),
+      );
+      assert(subgraph.title !== undefined);
+      graph.addClassAssignment(
+        new ClassAssignment(subgraph.id, subgraph.title),
+      );
+
       for (const parent of parents) {
         const edge = new Edge(parent, subgraph.id, this.inputType, '-->');
         graph.addEdge(edge);
+        graph.addClassAssignment(new ClassAssignment(edge.id, 'edge'));
       }
 
       return subgraph.id;
