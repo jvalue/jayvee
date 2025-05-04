@@ -15,7 +15,7 @@ publish builtin blocktype ColumnDeleter {
 	output default oftype Sheet;
 	
 	/** 
-	* The columns to delete. Has to be a full column. See <https://jvalue.github.io/jayvee/docs/user/cell-range>.
+	* The columns to delete. Has to be a full column. See [https://jvalue.github.io/jayvee/docs/user/cell-range](https://jvalue.github.io/jayvee/docs/user/cell-range).
 	*/
 	property delete oftype Collection<CellRange>;
 }

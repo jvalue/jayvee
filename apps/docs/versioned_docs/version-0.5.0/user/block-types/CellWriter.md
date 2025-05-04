@@ -50,4 +50,4 @@ Type `CellRange`
 
 #### Description
 
-The cells to write into. See <https://jvalue.github.io/jayvee/docs/user/cell-range>.
+The cells to write into. See [https://jvalue.github.io/jayvee/docs/user/cell-range](https://jvalue.github.io/jayvee/docs/user/cell-range).
