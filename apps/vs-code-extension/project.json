@@ -3,15 +3,14 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/vs-code-extension/src",
   "projectType": "application",
+  "tags": [],
   "targets": {
     "build": {
       "options": {
         "tsConfig": "{projectRoot}/tsconfig.app.json",
         "main": "{projectRoot}/src/extension.ts",
         "outputFileName": "",
-        "additionalEntryPoints": [
-          "{projectRoot}/src/language-server.ts"
-        ],
+        "additionalEntryPoints": ["{projectRoot}/src/language-server.ts"],
         "external": ["vscode"],
         "platform": "node",
         "format": ["cjs"],
@@ -70,6 +69,5 @@
         "parallel": false
       }
     }
-  },
-  "tags": []
+  }
 }

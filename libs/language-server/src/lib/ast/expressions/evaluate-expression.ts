@@ -75,7 +75,7 @@ export function evaluatePropertyValue<T extends InternalValueRepresentation>(
   assert(
     result === undefined || valueType.isInternalValueRepresentation(result),
     `Evaluation result ${
-      result?.toString() ?? 'undefined'
+      result === undefined ? 'undefined' : JSON.stringify(result)
     } is not valid: Neither undefined, nor of type ${valueType.getName()}`,
   );
   return result;
