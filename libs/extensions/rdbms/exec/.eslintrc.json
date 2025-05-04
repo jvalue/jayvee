@@ -1,8 +1,15 @@
 {
   "extends": ["../../../../.eslintrc.json"],
-  "ignorePatterns": ["!**/*"],
+  "ignorePatterns": [
+    "!**/*",
+    "**/vite.config.*.timestamp*",
+    "**/vitest.config.*.timestamp*"
+  ],
   "parserOptions": {
-    "project": ["libs/extensions/rdbms/exec/tsconfig.lib.json", "libs/extensions/rdbms/exec/tsconfig.spec.json"]
+    "project": [
+      "libs/extensions/rdbms/exec/tsconfig.lib.json",
+      "libs/extensions/rdbms/exec/tsconfig.spec.json"
+    ]
   },
   "overrides": [
     {

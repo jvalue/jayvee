@@ -1,8 +1,15 @@
 {
   "extends": ["../../.eslintrc.json"],
-  "ignorePatterns": ["!**/*"],
+  "ignorePatterns": [
+    "!**/*",
+    "**/vite.config.*.timestamp*",
+    "**/vitest.config.*.timestamp*"
+  ],
   "parserOptions": {
-    "project": ["apps/benchmark/tsconfig.app.json", "apps/benchmark/tsconfig.spec.json"]
+    "project": [
+      "apps/benchmark/tsconfig.app.json",
+      "apps/benchmark/tsconfig.spec.json"
+    ]
   },
   "overrides": [
     {
