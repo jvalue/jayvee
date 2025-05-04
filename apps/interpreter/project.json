@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/interpreter/src",
   "projectType": "application",
+  "tags": [],
   "targets": {
     "build": {
       "options": {
@@ -74,6 +75,5 @@
         "parallel": false
       }
     }
-  },
-  "tags": []
+  }
 }

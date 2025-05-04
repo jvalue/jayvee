@@ -3,8 +3,18 @@
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "module": "esnext",
-    "lib": ["esnext", "DOM", "WebWorker"],
+    "lib": [
+      "esnext",
+      "DOM",
+      "WebWorker"
+    ]
   },
-  "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"],
-  "include": ["src/**/*.ts"]
+  "exclude": [
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts"
+  ],
+  "include": [
+    "src/**/*.ts",
+    "eslint.config.mjs"
+  ]
 }
