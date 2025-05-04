@@ -5,14 +5,14 @@
   "sourceRoot": "apps/docs/src",
   "targets": {
     "build": {
-      "executor": "@nx-plus/docusaurus:browser",
+      "executor": "@nx-extend/docusaurus:browser",
       "options": {
         "outputPath": "dist/apps/docs"
       },
       "dependsOn": ["generate"]
     },
     "serve": {
-      "executor": "@nx-plus/docusaurus:dev-server",
+      "executor": "@nx-extend/docusaurus:dev-server",
       "options": {
         "port": 3000
       },

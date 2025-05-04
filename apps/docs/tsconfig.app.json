@@ -8,7 +8,7 @@
     "skipLibCheck": false
   },
   "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"],
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "docusaurus.config.ts", "sidebars.ts"],
   "types": [
     "node",
     "@docusaurus/module-type-aliases",
