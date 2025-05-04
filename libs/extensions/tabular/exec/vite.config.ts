@@ -2,15 +2,17 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// / <reference types='vitest' />
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+// / <reference types='vitest' />
 import { defineConfig } from 'vite';
 
 export default defineConfig({
   root: __dirname,
   cacheDir: '../../../../node_modules/.vite/libs/extensions/tabular/exec',
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   plugins: [nxViteTsPaths()],
+
   test: {
     globals: true,
     cacheDir: '../../../../node_modules/.vitest',

@@ -184,7 +184,7 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
             fileName,
             fileExtension,
             mimeType,
-            rawData.buffer as ArrayBuffer,
+            rawData.buffer,
           );
           resolve(R.ok(file));
         });
