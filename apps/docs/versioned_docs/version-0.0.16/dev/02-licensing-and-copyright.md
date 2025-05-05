@@ -10,7 +10,7 @@ humans but also for machines.
 This is done by explicitly adding copyright and licensing information to each file of the project. This is achieved 
 by either using a comment header or a separate `*.license` file in case comments are not possible.
 
-See <https://reuse.software/> more information.
+See [https://reuse.software/](https://reuse.software/) more information.
 
 ## What license is used in this project and who is the copyright holder?
 

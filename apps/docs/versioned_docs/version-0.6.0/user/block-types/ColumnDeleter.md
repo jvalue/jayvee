@@ -30,4 +30,4 @@ Type `Collection<CellRange>`
 
 #### Description
 
-The columns to delete. Has to be a full column. See <https://jvalue.github.io/jayvee/docs/user/cell-range>.
+The columns to delete. Has to be a full column. See [https://jvalue.github.io/jayvee/docs/user/cell-range](https://jvalue.github.io/jayvee/docs/user/cell-range).

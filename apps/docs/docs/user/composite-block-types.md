@@ -8,7 +8,7 @@ _Composite block types_ are a way to create new _block types_ in Jayvee by combi
 
 _Composite block types_ define:
 
-- with the `property` keyword: properties with a name and [value type](<./core-concepts.md#value types>), optionally a default value
+- with the `property` keyword: properties with a name and [value type](./core-concepts.md#value types), optionally a default value
 - with the `input` keyword: one input with a name and _io type_ (that can be `None`)
 - with the `output` keyword: one output with a name and _io type_ (that can be `None`)
 - one _pipeline_ definition, starting from the input (using its name) and ending in the output (again using its name)

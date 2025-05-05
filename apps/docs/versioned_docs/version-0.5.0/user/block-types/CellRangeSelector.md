@@ -30,4 +30,4 @@ Type `CellRange`
 
 #### Description
 
-The cell range to select. See <https://jvalue.github.io/jayvee/docs/user/cell-range>.
+The cell range to select. See [https://jvalue.github.io/jayvee/docs/user/cell-range](https://jvalue.github.io/jayvee/docs/user/cell-range).

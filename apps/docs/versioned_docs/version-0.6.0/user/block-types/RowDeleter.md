@@ -30,4 +30,4 @@ Type `Collection<CellRange>`
 
 #### Description
 
-The rows to delete. See <https://jvalue.github.io/jayvee/docs/user/cell-range>.
+The rows to delete. See [https://jvalue.github.io/jayvee/docs/user/cell-range](https://jvalue.github.io/jayvee/docs/user/cell-range).
