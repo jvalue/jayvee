@@ -1,8 +1,15 @@
 {
   "extends": ["../../.eslintrc.json"],
-  "ignorePatterns": ["!**/*"],
+  "ignorePatterns": [
+    "!**/*",
+    "**/vite.config.*.timestamp*",
+    "**/vitest.config.*.timestamp*"
+  ],
   "parserOptions": {
-    "project": ["libs/interpreter-lib/tsconfig.lib.json", "libs/interpreter-lib/tsconfig.spec.json"]
+    "project": [
+      "libs/interpreter-lib/tsconfig.lib.json",
+      "libs/interpreter-lib/tsconfig.spec.json"
+    ]
   },
   "overrides": [
     {
