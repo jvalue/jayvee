@@ -86,16 +86,20 @@ async function parseAsCSV(
       })
       .on('error', (error) =>
         reject(
-          `Unexpected error while parsing CSV: ${error.name}: ${error.message}`,
+          Error(
+            `Unexpected error while parsing CSV: ${error.name}: ${error.message}`,
+          ),
         ),
       )
       .on(
         'data-invalid',
         (row: Row | null, rowCount: number, reason?: string) =>
           reject(
-            `Invalid row ${rowCount}: ${
-              reason ?? 'Unknwon reason'
-            }: ${JSON.stringify(row ?? '')}`,
+            Error(
+              `Invalid row ${rowCount}: ${
+                reason ?? 'Unknwon reason'
+              }: ${JSON.stringify(row ?? '')}`,
+            ),
           ),
       )
       .on('end', () => {

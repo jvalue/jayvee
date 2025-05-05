@@ -89,14 +89,13 @@ function toRows(table: Table): Row[] {
 }
 
 function transposeArray<T>(array: T[][]): T[][] {
-  if (array[0] === undefined) {
-    return [];
-  }
-  return array[0]?.map((_, colIndex) =>
-    array.map((row): T => {
-      const cell = row[colIndex];
-      assert(cell !== undefined);
-      return cell;
-    }),
+  return (
+    array[0]?.map((_, colIndex) =>
+      array.map((row): T => {
+        const cell = row[colIndex];
+        assert(cell !== undefined);
+        return cell;
+      }),
+    ) ?? []
   );
 }
