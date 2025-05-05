@@ -32,6 +32,26 @@ import { EvaluationStrategy } from './evaluation-strategy';
 import { type InternalValueRepresentation } from './internal-value-representation';
 import { isEveryValueDefined } from './typeguards';
 
+// NOTE: From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cyclic_object_value#circular_references
+function getCircularReplacer() {
+  const ancestors: unknown[] = [];
+  return function (this: unknown, _: unknown, value: unknown) {
+    if (typeof value !== 'object' || value == null) {
+      return value;
+    }
+    // `this` is the object that value is contained in,
+    // i.e., its direct parent.
+    while (ancestors.length > 0 && ancestors.at(-1) !== this) {
+      ancestors.pop();
+    }
+    if (ancestors.includes(value)) {
+      return '[Circular]';
+    }
+    ancestors.push(value);
+    return value;
+  };
+}
+
 export function evaluatePropertyValue<T extends InternalValueRepresentation>(
   property: PropertyAssignment,
   evaluationContext: EvaluationContext,
@@ -72,11 +92,13 @@ export function evaluatePropertyValue<T extends InternalValueRepresentation>(
     assertUnreachable(propertyValue);
   }
 
+  if (result === undefined) {
+    return undefined;
+  }
+
   assert(
-    result === undefined || valueType.isInternalValueRepresentation(result),
-    `Evaluation result ${
-      result === undefined ? 'undefined' : JSON.stringify(result)
-    } is not valid: Neither undefined, nor of type ${valueType.getName()}`,
+    valueType.isInternalValueRepresentation(result),
+    `Evaluation result ${JSON.stringify(result, getCircularReplacer())} is not valid: Neither undefined, nor of type ${valueType.getName()}`,
   );
   return result;
 }

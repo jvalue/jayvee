@@ -39,7 +39,10 @@ export interface BlockExecutor<
 export abstract class AbstractBlockExecutor<I extends IOType, O extends IOType>
   implements BlockExecutor<I, O>
 {
-  constructor(public readonly inputType: I, public readonly outputType: O) {}
+  constructor(
+    public readonly inputType: I,
+    public readonly outputType: O,
+  ) {}
 
   async execute(
     input: IOTypeImplementation<I>,

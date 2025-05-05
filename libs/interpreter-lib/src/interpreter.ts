@@ -267,7 +267,7 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
     try {
       const model = await extractAstNodeFn(this.services, this.loggerFactory);
       return new JayveeProgram(model);
-    } catch (e) {
+    } catch {
       this.loggerFactory
         .createLogger()
         .logErr('Could not extract the AST node of the given model.');

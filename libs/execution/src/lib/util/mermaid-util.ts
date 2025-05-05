@@ -32,7 +32,10 @@ export type NodeShape = '[ ]' | '( )';
 
 export class Node {
   private readonly _id: Id = getId();
-  constructor(public text: string, public shape: NodeShape) {}
+  constructor(
+    public text: string,
+    public shape: NodeShape,
+  ) {}
 
   get id(): Id {
     return this._id;
@@ -113,7 +116,10 @@ export class ClassDefinition {
 }
 
 export class ClassAssignment {
-  constructor(public id: string, public className: string) {}
+  constructor(
+    public id: string,
+    public className: string,
+  ) {}
 
   toString(): string {
     return `class ${this.id} ${this.className}`;

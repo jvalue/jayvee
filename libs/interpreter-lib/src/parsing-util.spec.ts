@@ -63,7 +63,7 @@ describe('Validation of parsing-util', () => {
 
       try {
         await parseAndValidateDocument(relativeTestFilePath);
-      } catch (e) {
+      } catch {
         expect(logger.getLogs(DiagnosticSeverity.INFO)).toHaveLength(0);
         expect(logger.getLogs(DiagnosticSeverity.ERROR)).toHaveLength(2 * 5); // 2 calls that get formated to 5 lines each
         expect(logger.getLogs(DiagnosticSeverity.DEBUG)).toHaveLength(0);
@@ -77,7 +77,7 @@ describe('Validation of parsing-util', () => {
 
       try {
         await parseAndValidateDocument(relativeTestFilePath);
-      } catch (e) {
+      } catch {
         expect(logger.getLogs(DiagnosticSeverity.INFO)).toHaveLength(0);
         expect(logger.getLogs(DiagnosticSeverity.ERROR)).toHaveLength(1);
         expect(logger.getLogs(DiagnosticSeverity.DEBUG)).toHaveLength(0);
@@ -127,7 +127,7 @@ describe('Validation of parsing-util', () => {
           services,
           logger,
         );
-      } catch (e) {
+      } catch {
         expect(logger.getLogs(DiagnosticSeverity.INFO)).toHaveLength(0);
         expect(logger.getLogs(DiagnosticSeverity.ERROR)).toHaveLength(1);
         expect(logger.getLogs(DiagnosticSeverity.ERROR)[0]?.message).toEqual(
@@ -152,7 +152,7 @@ describe('Validation of parsing-util', () => {
           services,
           logger,
         );
-      } catch (e) {
+      } catch {
         expect(logger.getLogs(DiagnosticSeverity.INFO)).toHaveLength(0);
         expect(logger.getLogs(DiagnosticSeverity.ERROR)).toHaveLength(1);
         expect(logger.getLogs(DiagnosticSeverity.ERROR)[0]?.message).toMatch(

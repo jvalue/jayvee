@@ -14,7 +14,7 @@ export function checkConstraintTypeSpecificPropertyBody(
       return checkLengthConstraintPropertyBody(propertyBody, props);
     case 'RangeConstraint':
       return checkRangeConstraintPropertyBody(propertyBody, props);
-    default:
+    case undefined:
   }
 }
 

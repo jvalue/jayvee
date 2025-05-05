@@ -78,7 +78,7 @@ export function checkBlockTypeSpecificProperties(
         property,
         props,
       );
-    default:
+    case undefined:
   }
 }
 

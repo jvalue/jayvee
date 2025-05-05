@@ -134,7 +134,7 @@ export async function executeBlock(
         result = R.err({
           message: `An unknown error occurred: ${
             unexpectedError instanceof Error
-              ? unexpectedError.stack ?? unexpectedError.message
+              ? (unexpectedError.stack ?? unexpectedError.message)
               : JSON.stringify(unexpectedError)
           }`,
           diagnostic: { node: block, property: 'name' },
