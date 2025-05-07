@@ -11,7 +11,13 @@ import { isBlockTargetedForDebugLogging } from '../debugging/debug-configuration
 import { DebugLogVisitor } from '../debugging/debug-log-visitor';
 import { type ExecutionContext } from '../execution-context';
 import { type IOTypeImplementation } from '../types/io-types/io-type-implementation';
-import { Edge, type Graph, type Id, Node } from '../util/mermaid-util';
+import {
+  ClassAssignment,
+  Edge,
+  type Graph,
+  type Id,
+  Node,
+} from '../util/mermaid-util';
 
 import * as R from './execution-result';
 
@@ -88,9 +94,13 @@ export abstract class AbstractBlockExecutor<I extends IOType, O extends IOType>
     const node = new Node(context.getCurrentNode().name, '[ ]');
     graph.addNode(node);
 
+    graph.addClassAssignment(new ClassAssignment(node.id, 'block'));
+    graph.addClassAssignment(new ClassAssignment(node.id, node.text));
+
     for (const parent of parents) {
       const edge = new Edge(parent, node.id, this.inputType, '-->');
       graph.addEdge(edge);
+      graph.addClassAssignment(new ClassAssignment(edge.id, 'edge'));
     }
 
     return node.id;

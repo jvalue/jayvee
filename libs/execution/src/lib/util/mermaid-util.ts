@@ -6,6 +6,7 @@
 import assert from 'assert';
 
 import { type BlockDefinition } from '@jvalue/jayvee-language-server';
+import { stringify } from 'yaml';
 
 import { type ExecutionContext } from '../execution-context';
 
@@ -119,26 +120,76 @@ export class ClassAssignment {
   }
 }
 
+export interface ThemeVariables {
+  darkMode: boolean;
+  background: string;
+  fontFamily: string;
+  fontSize: string;
+  primaryColor: string;
+  primaryTextColor: string;
+  primaryBorderColor: string;
+  secondaryColor: string;
+  secondaryTextColor: string;
+  secondaryBorderColor: string;
+  tertiaryColor: string;
+  tertiaryTextColor: string;
+  tertiaryBorderColor: string;
+  noteBkgColor: string;
+  noteTextColor: string;
+  noteBorderColor: string;
+  lineColor: string;
+  textColor: string;
+  mainBkg: string;
+  errorBkgColor: string;
+  errorTextColor: string;
+
+  nodeBorder: string;
+  clusterBkg: string;
+  clusterBorder: string;
+  defaultLinkColor: string;
+  titleColor: string;
+  edgeLabelBackground: string;
+  nodeTextColor: string;
+}
+
+export interface ElkLayoutConfig {
+  mergeEdges: boolean;
+  nodePlacementStrategy:
+    | 'BRANDES_KOEPF'
+    | 'SIMPLE'
+    | 'NETWORK_SIMPLEX'
+    | 'LINEAR_SEGMENTS';
+}
+
+export interface GraphConfiguration {
+  look: 'classic' | 'handDrawn';
+  theme: 'default' | 'neutral' | 'dark' | 'forest' | 'plain';
+  themeVariables: Partial<ThemeVariables>;
+  layout: 'dagre' | 'elk';
+  elk: Partial<ElkLayoutConfig>;
+}
+
 export type GraphDirection = 'TB' | 'BT' | 'RL' | 'LR';
+
 export class Graph {
   private readonly _id: Id = getId();
   private direction: GraphDirection = 'TB';
   private nodes = new Map<Id, Node>();
 
   private edges = new Map<Id, Edge>();
-  private edgeAttributes: { id: Id; attributes: string[] }[] = [];
+  private edgeAttributes: EdgeAttribute[] = [];
 
   private subgraphs = new Map<Id, Graph>();
 
-  private classDefinitions: {
-    class: string;
-    propertiesAndValues: string[];
-  }[] = [];
-  private classAssignments: { id: Id; class: string }[] = [];
+  private classDefinitions: ClassDefinition[] = [];
+  private classAssignments: ClassAssignment[] = [];
 
   private blocks = new Map<BlockDefinition, Id>();
 
-  constructor(public title?: string) {}
+  constructor(
+    public title?: string,
+    public configuration?: Partial<GraphConfiguration>,
+  ) {}
 
   get id(): Id {
     return this._id;
@@ -188,6 +239,14 @@ export class Graph {
     this.edges.set(edge.id, edge);
   }
 
+  public addClassAssignment(assignment: ClassAssignment) {
+    this.classAssignments.push(assignment);
+  }
+
+  public addClassDefinition(classDefinition: ClassDefinition) {
+    this.classDefinitions.push(classDefinition);
+  }
+
   public toSubgraph(indents: number): string {
     const title = this.title !== undefined ? ` [${this.title}]` : '';
     return `subgraph ${this.id}${title}
@@ -197,9 +256,15 @@ ${indents > 0 ? '\t'.repeat(indents - 1) : ''}end`;
   }
 
   toString(): string {
-    const title = this.title !== undefined ? `\ntitle: ${this.title}` : '';
-    return `---${title}
----
+    return `---
+${
+  this.title !== undefined || this.configuration !== undefined
+    ? stringify({
+        title: this.title,
+        config: this.configuration,
+      })
+    : '\n'
+}---
 flowchart ${this.direction}
 ${this.content(1)}`;
   }

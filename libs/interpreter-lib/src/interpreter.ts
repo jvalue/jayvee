@@ -7,6 +7,7 @@ import { strict as assert } from 'assert';
 import path from 'node:path';
 
 import {
+  ClassAssignment,
   type DebugGranularity,
   type DebugTargets,
   DefaultConstraintExtension,
@@ -395,6 +396,9 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
         program.hooks,
       );
       graph.addSubgraph(subgraph);
+      graph.addClassAssignment(new ClassAssignment(subgraph.id, 'pipeline'));
+      if (subgraph.title !== undefined)
+        graph.addClassAssignment(new ClassAssignment(subgraph.id, 'pipeline'));
     }
 
     return graph;
