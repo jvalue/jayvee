@@ -307,7 +307,25 @@ flowchart TB
 \tc f@-->|TextFile| e
 \te h@-->|Sheet| g
 \tg j@-->|Sheet| i
-\ti l@-->|Table| k`);
+\ti l@-->|Table| k
+
+\tclass b block
+\tclass b CarsExtractor
+\tclass c block
+\tclass c CarsTextFileInterpreter
+\tclass d edge
+\tclass e block
+\tclass e CarsCSVInterpreter
+\tclass f edge
+\tclass g block
+\tclass g NameHeaderWriter
+\tclass h edge
+\tclass i block
+\tclass i CarsTableInterpreter
+\tclass j edge
+\tclass k block
+\tclass k CarsLoader
+\tclass l edge`);
     });
     it('should graph the composite-blocks example', async () => {
       const assetPath =
@@ -356,7 +374,28 @@ flowchart TB
 
 \t\to q@-->|File| p
 \t\tp s@-->|TextFile| r
-\tend`);
+
+\t\tclass o block
+\t\tclass o FileExtractor
+\t\tclass p block
+\t\tclass p FileTextInterpreter
+\t\tclass q edge
+\t\tclass r block
+\t\tclass r FileCSVInterpreter
+\t\tclass s edge
+\tend
+
+\tclass n composite-block
+\tclass n CSVExtractor
+\tclass t block
+\tclass t CarsTableInterpreter
+\tclass u edge
+\tclass v block
+\tclass v CarsTableTransformer
+\tclass w edge
+\tclass x block
+\tclass x CarsLoader
+\tclass y edge`);
     });
     it('should graph models with two contained pipelines', async () => {
       const assetPath =
@@ -403,6 +442,24 @@ flowchart TB
 \t\tbe bh@-->|Sheet| bg
 \t\tbg bj@-->|Sheet| bi
 \t\tbi bl@-->|Table| bk
+
+\t\tclass bb block
+\t\tclass bb CarsExtractor
+\t\tclass bc block
+\t\tclass bc CarsTextFileInterpreter
+\t\tclass bd edge
+\t\tclass be block
+\t\tclass be CarsCSVInterpreter
+\t\tclass bf edge
+\t\tclass bg block
+\t\tclass bg NameHeaderWriter
+\t\tclass bh edge
+\t\tclass bi block
+\t\tclass bi CarsTableInterpreter
+\t\tclass bj edge
+\t\tclass bk block
+\t\tclass bk CarsLoader
+\t\tclass bl edge
 \tend
 \tsubgraph bm [ElectricVehiclesPipeline]
 \t\tdirection TB
@@ -418,7 +475,30 @@ flowchart TB
 \t\tbq bt@-->|Sheet| bs
 \t\tbs bv@-->|Table| bu
 \t\tbu bx@-->|Table| bw
-\tend`);
+
+\t\tclass bn block
+\t\tclass bn ElectricVehiclesHttpExtractor
+\t\tclass bo block
+\t\tclass bo ElectricVehiclesTextFileInterpreter
+\t\tclass bp edge
+\t\tclass bq block
+\t\tclass bq ElectricVehiclesCSVInterpreter
+\t\tclass br edge
+\t\tclass bs block
+\t\tclass bs ElectricVehiclesTableInterpreter
+\t\tclass bt edge
+\t\tclass bu block
+\t\tclass bu ElectricRangeTransformer
+\t\tclass bv edge
+\t\tclass bw block
+\t\tclass bw ElectricVehiclesSQLiteLoader
+\t\tclass bx edge
+\tend
+
+\tclass ba pipeline
+\tclass ba pipeline
+\tclass bm pipeline
+\tclass bm pipeline`);
     });
   });
 });
