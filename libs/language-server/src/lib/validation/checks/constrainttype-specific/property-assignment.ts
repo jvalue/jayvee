@@ -28,7 +28,7 @@ export function checkConstraintTypeSpecificProperties(
   switch (property.$container.$container.type.ref?.name) {
     case 'LengthConstraint':
       return checkLengthConstraintProperty(propName, property, props);
-    default:
+    case undefined:
   }
 }
 

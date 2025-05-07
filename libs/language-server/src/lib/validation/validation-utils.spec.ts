@@ -77,9 +77,8 @@ describe('Validation of validation-utils', () => {
       );
       const valueTypeProvider = new ValueTypeProvider();
 
-      const propertyBody: PropertyBody = await parseAndExtractPropertyBody(
-        text,
-      );
+      const propertyBody: PropertyBody =
+        await parseAndExtractPropertyBody(text);
       checkUniqueNames(
         propertyBody.properties,
         new ValidationContext(
@@ -103,9 +102,8 @@ describe('Validation of validation-utils', () => {
       );
       const valueTypeProvider = new ValueTypeProvider();
 
-      const propertyBody: PropertyBody = await parseAndExtractPropertyBody(
-        text,
-      );
+      const propertyBody: PropertyBody =
+        await parseAndExtractPropertyBody(text);
       checkUniqueNames(
         propertyBody.properties,
         new ValidationContext(

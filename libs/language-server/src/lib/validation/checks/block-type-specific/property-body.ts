@@ -16,7 +16,7 @@ export function checkBlockTypeSpecificPropertyBody(
       return checkCellWriterPropertyBody(propertyBody, props);
     case 'TableTransformer':
       return checkTableTransformerPropertyBody(propertyBody, props);
-    default:
+    case undefined:
   }
 }
 

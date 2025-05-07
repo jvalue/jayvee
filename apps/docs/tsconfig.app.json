@@ -2,13 +2,27 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "jsx": "react",
-    "types": ["node"],
-    "lib": ["DOM", "ESNext"],
+    "types": [
+      "node"
+    ],
+    "lib": [
+      "DOM",
+      "ESNext"
+    ],
     "esModuleInterop": true,
     "skipLibCheck": false
   },
-  "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"],
-  "include": ["src/**/*.ts", "src/**/*.tsx", "docusaurus.config.ts", "sidebars.ts"],
+  "exclude": [
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts"
+  ],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "docusaurus.config.ts",
+    "sidebars.ts",
+    "eslint.config.mjs"
+  ],
   "types": [
     "node",
     "@docusaurus/module-type-aliases",
@@ -16,6 +30,8 @@
   ],
   "baseUrl": ".",
   "paths": {
-    "@site/*": ["./*"]
+    "@site/*": [
+      "./*"
+    ]
   }
 }

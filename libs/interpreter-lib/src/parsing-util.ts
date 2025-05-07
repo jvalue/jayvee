@@ -36,20 +36,22 @@ export async function extractDocumentFromFile(
     }: ${extensions.map((extension) => `"${extension}"`).join(',')}`;
 
     logger.logErr(errorMessage);
-    return Promise.reject(ExitCode.FAILURE);
+    return Promise.reject(new Error(errorMessage));
   }
 
   if (!fs.existsSync(filePath)) {
-    logger.logErr(`File ${filePath} does not exist.`);
-    return Promise.reject(ExitCode.FAILURE);
+    const errorMessage = `File ${filePath} does not exist.`;
+    logger.logErr(errorMessage);
+    return Promise.reject(new Error(errorMessage));
   }
 
   const fileUri = getFileUriLikeLangiumImpl(filePath);
   const document =
     services.shared.workspace.LangiumDocuments.getDocument(fileUri);
   if (document === undefined) {
-    logger.logErr(`Did not load file ${filePath} correctly.`);
-    return Promise.reject(ExitCode.FAILURE);
+    const errorMessage = `Did not load file ${filePath} correctly.`;
+    logger.logErr(errorMessage);
+    return Promise.reject(new Error(errorMessage));
   }
 
   return await validateDocument(document, services, logger);
@@ -106,7 +108,7 @@ export async function validateDocument(
     for (const errDiagnostic of errDiagnostics) {
       logger.logLanguageServerDiagnostic(errDiagnostic, document);
     }
-    return Promise.reject(ExitCode.FAILURE);
+    return Promise.reject(new Error('Errors occured during validation'));
   }
 
   const nonErrDiagnostics = diagnostics.filter(

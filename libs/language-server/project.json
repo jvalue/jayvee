@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/language-server/src",
   "projectType": "library",
+  "tags": [],
   "targets": {
     "generate": {
       "executor": "nx:run-commands",
@@ -74,6 +75,5 @@
         "parallel": false
       }
     }
-  },
-  "tags": []
+  }
 }

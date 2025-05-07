@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/benchmark/src",
   "projectType": "application",
+  "tags": [],
   "targets": {
     "build": {
       "options": {
@@ -12,9 +13,7 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": [
-        "{options.outputFile}"
-      ]
+      "outputs": ["{options.outputFile}"]
     },
     "run": {
       "executor": "nx:run-commands",
@@ -31,14 +30,11 @@
     },
     "test": {
       "executor": "@nx/vite:test",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "configFile": "{projectRoot}/vite.config.ts",
         "passWithNoTests": false
       }
     }
-  },
-  "tags": []
+  }
 }
