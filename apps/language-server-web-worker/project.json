@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/language-server-web-worker/src",
   "projectType": "application",
+  "tags": [],
   "targets": {
     "build": {
       "options": {
@@ -48,6 +49,5 @@
         "parallel": false
       }
     }
-  },
-  "tags": []
+  }
 }

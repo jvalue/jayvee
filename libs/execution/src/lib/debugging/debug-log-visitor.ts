@@ -101,7 +101,8 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
       return;
     }
 
-    this.log(fileSystem.getFile('/')?.toString() ?? '<found no root file>');
+    const root = fileSystem.getFile('/');
+    this.log(root != null ? JSON.stringify(root) : '<found no root file>');
   }
 
   visitBinaryFile(binaryFile: BinaryFile): void {
