@@ -71,7 +71,7 @@ valuetype CorrelationCoefficient {
   property correlation oftype decimal;
 
   constraint minusOneToPlusOneRange:
-    correlation >= -1 and correlation <=1;
+    correlation >= -1 and correlation <= 1;
 }
 ```
 
