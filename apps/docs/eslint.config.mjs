@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import baseConfig from '../../eslint.config.mjs';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const configs = [
   {
@@ -12,7 +14,8 @@ const configs = [
   {
   languageOptions: {
       parserOptions: {
-	project: ['apps/docs/tsconfig.app.json'],
+	project: ['./tsconfig.app.json'],
+	tsconfigRootDir: dirname(fileURLToPath(import.meta.url)),
       },
     },
   },

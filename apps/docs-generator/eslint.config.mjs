@@ -4,6 +4,8 @@
 
 import { defineConfig, globalIgnores } from "eslint/config";
 import baseConfig from "../../eslint.config.mjs";
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 export default defineConfig(baseConfig, [globalIgnores(["!**/*"]), {
 	languageOptions: {
@@ -11,7 +13,8 @@ export default defineConfig(baseConfig, [globalIgnores(["!**/*"]), {
 		sourceType: "script",
 
 		parserOptions: {
-			project: ["apps/docs-generator/tsconfig.app.json"],
+			project: ["./tsconfig.app.json"],
+			tsconfigRootDir: dirname(fileURLToPath(import.meta.url))
 		},
 	},
 }, {

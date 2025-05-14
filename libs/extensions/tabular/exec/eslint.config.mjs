@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import baseConfig from '../../../../eslint.config.mjs';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 export default [
   {
@@ -13,10 +15,11 @@ export default [
     languageOptions: {
       parserOptions: {
         project: [
-          'libs/extensions/tabular/exec/tsconfig.lib.json',
-          'libs/extensions/tabular/exec/tsconfig.spec.json',
-          'libs/extensions/tabular/exec/tsconfig.mock.json',
+          './tsconfig.lib.json',
+          './tsconfig.spec.json',
+          './tsconfig.mock.json',
         ],
+        tsconfigRootDir: dirname(fileURLToPath(import.meta.url))
       },
     },
   },
