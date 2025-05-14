@@ -13,6 +13,7 @@ export default [
     languageOptions: {
       parserOptions: {
         project: [
+          'libs/execution/tsconfig.json',
           'libs/execution/tsconfig.lib.json',
           'libs/execution/tsconfig.spec.json',
         ],
