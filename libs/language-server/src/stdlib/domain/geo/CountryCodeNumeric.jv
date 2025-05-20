@@ -5,7 +5,8 @@
 /**
 * Numeric code for countries as defined by ISO 3166.
 */
-publish valuetype CountryCodeNumeric oftype text {
+publish valuetype CountryCodeNumeric {
+  property attr oftype text;
   constraints: [
     CountryCodeNumericConstraint
   ];

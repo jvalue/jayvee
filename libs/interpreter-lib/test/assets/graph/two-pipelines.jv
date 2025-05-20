@@ -127,7 +127,8 @@ pipeline ElectricVehiclesPipeline {
 	}
 }
 
-valuetype VehicleIdentificationNumber10 oftype text {
+valuetype VehicleIdentificationNumber10 {
+	property attr oftype text;
 	constraints: [
 		OnlyCapitalLettersAndDigits,
 		ExactlyTenCharacters,
