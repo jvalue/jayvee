@@ -41,11 +41,12 @@ function checkSupertypeCycle(
     )?.hasSupertypeCycle() ?? false;
   if (hasCycle) {
     assert(!valueTypeDefinition.isBuiltin);
+    assert(valueTypeDefinition.attribute?.type !== undefined);
     props.validationContext.accept(
       'error',
       'Could not construct this value type since there is a cycle in the (transitive) "oftype" relation.',
       {
-        node: valueTypeDefinition,
+        node: valueTypeDefinition.attribute,
         property: 'type',
       },
     );

@@ -13,9 +13,13 @@ BuiltinValuetypeDefinition infers ValuetypeDefinition:
 CustomValuetypeDefinition infers ValuetypeDefinition:
   'valuetype' name=ID 
     (genericDefinition=ValuetypeGenericsDefinition)?
-  'oftype' type=ValueTypeReference '{'
+  '{'
+    attribute=ValueTypeAttribute
     'constraints' ':' constraints=CollectionLiteral ';'
   '}';
+
+ValueTypeAttribute:
+  'property' name=ID 'oftype' type=ValueTypeReference ';';
 
 ValuetypeAssignmentLiteral:
   value=ValuetypeAssignment;
