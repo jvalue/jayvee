@@ -4,7 +4,5 @@
 
 valuetype ValueType {
   property attr oftype text;
-  constraints: [
-    10>9
-  ];
+  constraint cons: 10>9 on attr;
 }

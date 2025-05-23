@@ -9,45 +9,35 @@ constraint DOIFormat on text: value matches /\b10\.\d{4}\/[^\s]+\b/;
 */
 publish valuetype DOI {
 	property doi oftype text;
-	constraints: [
-		DOIFormat
-	];
+  	constraint doiFormat: DOIFormat on doi;
 }
 
 constraint DateFormatYYYYMMDDRegex on text: value matches /\d{4}-\d{2}-\d{2}/;
 /** DateFormat as YYYY-MM-DD */
 publish valuetype DateYYYYMMDD {
 	property date oftype text;
-	constraints: [
-		DateFormatYYYYMMDDRegex
-	];
+  	constraint yyyymmdd: DateFormatYYYYMMDDRegex on date;
 }
 
 constraint SiUnitConstraint on text: value matches /\b((Second|Metre|Kilogram|Ampere|Kelvin|Mole|Candela)+\^\(\d+(\.\d+)?\|\-\d+(\.\d+)?\)+\s)*\b/;
 /** Constraining the Unit column to be of a specific format like "Second^(1.0)", "Ampere^(1.0)" or "Candela^(1.0)". */
 publish valuetype SiUnit {
 	property unit oftype text;
-	constraints: [
-		SiUnitConstraint
-	];
+  	constraint si: SiUnitConstraint on unit;
 }
 
 constraint PressureUnitPascalConstraint on text: value matches /\b(Pascal\^\(\d+(\.\d+)?\|\-\d+(\.\d+)?\)+\s)*\b/;
 /** Constrains Pressure units to be Pascal^(x). */
 publish valuetype PressureUnitPascal {
 	property unit oftype text;
-	constraints: [
-		PressureUnitPascalConstraint
-	];
+  	constraint pascal: PressureUnitPascalConstraint on unit;
 }
 
 constraint LengthUnitMeterConstraint on text: value matches /\b(Meter\^\(\d+(\.\d+)?\|\-\d+(\.\d+)?\)+\s)*\b/;
 /** Constrains Length units to be Meter^(x). */
 publish valuetype LengthUnitMeter {
 	property unit oftype text;
-	constraints: [
-		LengthUnitMeterConstraint
-	];
+  	constraint meter: LengthUnitMeterConstraint on unit;
 }
 
 
@@ -55,7 +45,5 @@ constraint TemperatureUnitKelvinConstraint on text: value matches /\b(Kelvin\^\(
 /** Constrains Temperature units to be Kelvin^(x). */
 publish valuetype TemperatureUnitKelvin {
 	property unit oftype text;
-	constraints: [
-		TemperatureUnitKelvinConstraint
-	];
+  	constraint kelvin: TemperatureUnitKelvinConstraint on unit;
 }

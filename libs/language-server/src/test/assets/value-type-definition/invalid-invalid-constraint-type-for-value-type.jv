@@ -6,7 +6,5 @@ constraint Constraint on integer: value>10;
 
 valuetype ValueType {
   property attr oftype text;
-  constraints: [
-    Constraint
-  ];
+  constraint cons: Constraint on attr;
 }

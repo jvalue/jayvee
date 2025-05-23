@@ -9,9 +9,7 @@
 // 1. The publish keyword can be used directly when defining an element.
 publish valuetype UsStateCode {
   property code oftype text;
-  constraints: [
-    UsStateCodeAllowlist,
-  ];
+  constraint allowed: UsStateCodeAllowlist on code;
 }
 
 // 2. The publish keyword can be used after a definition as well (see below).

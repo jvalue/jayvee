@@ -4,10 +4,8 @@
 
 valuetype ValueType<T> {
   property attr oftype text;
-  constraints: [ ];
 }
 
 valuetype Ref {
   property ref oftype ValueType<text>;
-  constraints: [ ];
 }

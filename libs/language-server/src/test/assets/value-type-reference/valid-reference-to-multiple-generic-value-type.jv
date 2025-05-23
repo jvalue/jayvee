@@ -4,10 +4,8 @@
 
 valuetype ValueType<S, T, R, Q, P> {
   property attr oftype text;
-  constraints: [ ];
 }
 
 valuetype Ref {
   property ref oftype ValueType<text, integer, decimal, text, text>;
-  constraints: [ ];
 }

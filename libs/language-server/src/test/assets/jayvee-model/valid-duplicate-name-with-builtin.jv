@@ -5,5 +5,4 @@
 // File is an io type as well
 valuetype File {
   property attr oftype text;
-  constraints: [ ];
 }

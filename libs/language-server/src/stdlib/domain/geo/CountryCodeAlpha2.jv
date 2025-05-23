@@ -7,9 +7,7 @@
 */
 publish valuetype CountryCodeAlpha2 {
   property code oftype text;
-  constraints: [
-    CountryCodeAlpha2Constraint
-  ];
+  constraint alpha2: CountryCodeAlpha2Constraint on code;
 }
 
 publish constraint CountryCodeAlpha2Constraint on text: value in [

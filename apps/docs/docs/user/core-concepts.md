@@ -72,7 +72,7 @@ We differentiate the following kinds of _value types_:
 ```jayvee
 valuetype GasFillLevel {
     property level oftype integer;
-    constraints: [ GasFillLevelRange ];
+    constraint levelRange: GasFillLevelRange on level;
 }
 
 constraint GasFillLevelRange on decimal:
@@ -128,7 +128,7 @@ use { GasFillLevelRange as FillLevelRange } './relative/path/to/file.jv'; // Ali
 
 valuetype GasFillLevel {
     property level oftype integer;
-    constraints: [ GasFillLevelRange ]; // GasFillLevelRange is defined in another file
+    constraint levelRange: GasFillLevelRange on level; // GasFillLevelRange is defined in another file
 }
 ```
 
