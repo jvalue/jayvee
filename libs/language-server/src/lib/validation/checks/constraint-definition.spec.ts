@@ -7,10 +7,10 @@ import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
-  type ExpressionConstraintDefinition,
+  type ConstraintDefinition,
   type JayveeServices,
   createJayveeServices,
-  isExpressionConstraintDefinition,
+  isConstraintDefinition,
 } from '../../../lib';
 import {
   type ParseHelperOptions,
@@ -22,9 +22,9 @@ import {
   validationAcceptorMockImpl,
 } from '../../../test';
 
-import { validateExpressionConstraintDefinition } from './expression-constraint-definition';
+import { validateConstraintDefinition } from './constraint-definition';
 
-describe('Validation of ConstraintDefinition (expression syntax)', () => {
+describe('Validation of ConstraintDefinition', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
@@ -39,19 +39,18 @@ describe('Validation of ConstraintDefinition (expression syntax)', () => {
     '../../../test/assets/',
   );
 
-  async function parseAndValidateExpressionConstraintDefinition(input: string) {
+  async function parseAndValidateConstraintDefinition(input: string) {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const allExpressionConstraintDefinitions = extractTestElements(
+    const allConstraintDefinitions = extractTestElements(
       document,
-      (x): x is ExpressionConstraintDefinition =>
-        isExpressionConstraintDefinition(x),
+      (x): x is ConstraintDefinition => isConstraintDefinition(x),
     );
 
-    for (const expressionConstraint of allExpressionConstraintDefinitions) {
-      validateExpressionConstraintDefinition(
-        expressionConstraint,
+    for (const constraint of allConstraintDefinitions) {
+      validateConstraintDefinition(
+        constraint,
         createJayveeValidationProps(validationAcceptorMock, services),
       );
     }
@@ -70,22 +69,22 @@ describe('Validation of ConstraintDefinition (expression syntax)', () => {
     validationAcceptorMock.mockReset();
   });
 
-  it('should have no error on valid expression constraint', async () => {
+  it('should have no error on valid constraint', async () => {
     const text = readJvTestAsset(
-      'expression-constraint-definition/valid-text-constraint.jv',
+      'constraint-definition/valid-text-constraint.jv',
     );
 
-    await parseAndValidateExpressionConstraintDefinition(text);
+    await parseAndValidateConstraintDefinition(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
 
   it('should diagnose error on incompatible type', async () => {
     const text = readJvTestAsset(
-      'expression-constraint-definition/invalid-incompatible-type.jv',
+      'constraint-definition/invalid-incompatible-type.jv',
     );
 
-    await parseAndValidateExpressionConstraintDefinition(text);
+    await parseAndValidateConstraintDefinition(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
@@ -95,12 +94,12 @@ describe('Validation of ConstraintDefinition (expression syntax)', () => {
     );
   });
 
-  it('should diagnose info on simplifiable expression constraint', async () => {
+  it('should diagnose info on simplifiable constraint', async () => {
     const text = readJvTestAsset(
-      'expression-constraint-definition/valid-simplify-info.jv',
+      'constraint-definition/valid-simplify-info.jv',
     );
 
-    await parseAndValidateExpressionConstraintDefinition(text);
+    await parseAndValidateConstraintDefinition(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(

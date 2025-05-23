@@ -7,7 +7,7 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { ConstraintDefinition } from '../../ast';
+import { type ConstraintDefinition } from '../../ast';
 import { inferExpressionType } from '../../ast/expressions/type-inference';
 import { type JayveeValidationProps } from '../validation-registry';
 import { checkExpressionSimplification } from '../validation-util';

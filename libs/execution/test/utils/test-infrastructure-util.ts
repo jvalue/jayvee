@@ -18,8 +18,8 @@ import {
   CachedLogger,
   type DebugGranularity,
   type DebugTargets,
-  DefaultConstraintExtension,
   ExecutionContext,
+  HookContext,
   JayveeExecExtension,
   type StackNode,
   Table,
@@ -63,7 +63,6 @@ export function getTestExecutionContext(
   const executionContext = new ExecutionContext(
     pipeline,
     new TestExecExtension(),
-    new DefaultConstraintExtension(),
     new CachedLogger(runOptions.isDebugMode, undefined, loggerPrintLogs),
     services.WrapperFactories,
     services.ValueTypeProvider,
@@ -73,6 +72,7 @@ export function getTestExecutionContext(
       services.operators.EvaluatorRegistry,
       services.ValueTypeProvider,
     ),
+    new HookContext(),
   );
 
   initialStack.forEach((node) => executionContext.enterNode(node));
