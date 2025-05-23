@@ -23,6 +23,7 @@ import {
   type ValuetypeAssignmentValuetype,
 } from '@jvalue/jayvee-language-server';
 
+import { ConstraintExecutor } from '../../constraints';
 import { type ExecutionContext } from '../../execution-context';
 
 export function isValidValueRepresentation(
@@ -53,8 +54,7 @@ class ValueRepresentationValidityVisitor extends ValueTypeVisitor<boolean> {
       this.context.evaluationContext,
     );
     for (const constraint of constraints) {
-      const constraintExecutor =
-        this.context.constraintExtension.createConstraintExecutor(constraint);
+      const constraintExecutor = new ConstraintExecutor(constraint);
 
       this.context.enterNode(constraint);
       const valueFulfilledConstraint = constraintExecutor.isValid(
