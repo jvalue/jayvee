@@ -8,23 +8,17 @@ import { strict as assert } from 'assert';
 import { type AstNode, AstUtils, type LangiumDocuments } from 'langium';
 
 import {
-  type BuiltinConstrainttypeDefinition,
   type ExportDefinition,
   type ExportableElement,
   type JayveeModel,
   type ReferenceableBlockTypeDefinition,
-  isBuiltinConstrainttypeDefinition,
   isExportDefinition,
   isExportableElement,
   isExportableElementDefinition,
   isJayveeModel,
   isReferenceableBlockTypeDefinition,
 } from './generated/ast';
-import {
-  type BlockTypeWrapper,
-  type ConstraintTypeWrapper,
-  type WrapperFactoryProvider,
-} from './wrappers';
+import { type BlockTypeWrapper, type WrapperFactoryProvider } from './wrappers';
 
 export type AstTypeGuard<T extends AstNode = AstNode> = (
   obj: unknown,
@@ -93,47 +87,6 @@ export function getAllReferenceableBlockTypes(
       });
     });
   return allBlockTypes;
-}
-
-/**
- * Utility function that gets all builtin constraint types.
- * Duplicates are only added once.
- * Make sure to call {@link initializeWorkspace} first so that the file system is initialized.
- */
-export function getAllBuiltinConstraintTypes(
-  documentService: LangiumDocuments,
-  wrapperFactories: WrapperFactoryProvider,
-): ConstraintTypeWrapper[] {
-  const allBuiltinConstraintTypes: ConstraintTypeWrapper[] = [];
-  const visitedBuiltinConstraintTypeDefinitions =
-    new Set<BuiltinConstrainttypeDefinition>();
-
-  documentService.all
-    .map((document) => document.parseResult.value)
-    .forEach((parsedDocument) => {
-      if (!isJayveeModel(parsedDocument)) {
-        throw new Error('Expected parsed document to be a JayveeModel');
-      }
-      const allConstraintTypes = AstUtils.streamAllContents(
-        parsedDocument,
-      ).filter(isBuiltinConstrainttypeDefinition);
-      allConstraintTypes.forEach((constraintTypeDefinition) => {
-        const wasAlreadyVisited = visitedBuiltinConstraintTypeDefinitions.has(
-          constraintTypeDefinition,
-        );
-        if (wasAlreadyVisited) {
-          return;
-        }
-
-        if (wrapperFactories.ConstraintType.canWrap(constraintTypeDefinition)) {
-          allBuiltinConstraintTypes.push(
-            wrapperFactories.ConstraintType.wrap(constraintTypeDefinition),
-          );
-          visitedBuiltinConstraintTypeDefinitions.add(constraintTypeDefinition);
-        }
-      });
-    });
-  return allBuiltinConstraintTypes;
 }
 
 export interface ExportDetails {

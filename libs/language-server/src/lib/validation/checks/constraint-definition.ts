@@ -7,20 +7,20 @@
  */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
+import { ConstraintDefinition } from '../../ast';
 import { inferExpressionType } from '../../ast/expressions/type-inference';
-import { type ExpressionConstraintDefinition } from '../../ast/generated/ast';
 import { type JayveeValidationProps } from '../validation-registry';
 import { checkExpressionSimplification } from '../validation-util';
 
-export function validateExpressionConstraintDefinition(
-  constraint: ExpressionConstraintDefinition,
+export function validateConstraintDefinition(
+  constraint: ConstraintDefinition,
   props: JayveeValidationProps,
 ): void {
   checkConstraintExpression(constraint, props);
 }
 
 function checkConstraintExpression(
-  constraint: ExpressionConstraintDefinition,
+  constraint: ConstraintDefinition,
   props: JayveeValidationProps,
 ): void {
   const expression = constraint?.expression;

@@ -31,7 +31,6 @@ import {
   type PropertyBody,
   ValueTypeReference,
   isBlockDefinition,
-  isConstraintDefinition,
   isImportDefinition,
   isJayveeModel,
   isPropertyAssignment,
@@ -39,7 +38,6 @@ import {
   isValuetypeDefinition,
 } from '../ast/generated/ast';
 import {
-  getAllBuiltinConstraintTypes,
   getAllReferenceableBlockTypes,
   getExportedElements,
 } from '../ast/model-util';
@@ -72,12 +70,6 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
         isBlockDefinition(astNode) && next.property === 'type';
       if (isBlockTypeCompletion) {
         return this.completionForBlockType(context, acceptor);
-      }
-
-      const isConstraintTypeCompletion =
-        isConstraintDefinition(astNode) && next.property === 'type';
-      if (isConstraintTypeCompletion) {
-        return this.completionForConstraintType(context, acceptor);
       }
 
       const isValuetypeDefinitionCompletion = next.type === ValueTypeReference;
@@ -134,33 +126,6 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     });
   }
 
-  private completionForConstraintType(
-    context: CompletionContext,
-    acceptor: CompletionAcceptor,
-  ): MaybePromise<void> {
-    const constraintTypes = getAllBuiltinConstraintTypes(
-      this.langiumDocuments,
-      this.wrapperFactories,
-    );
-    constraintTypes.forEach((constraintType) => {
-      const lspDocBuilder = new LspDocGenerator();
-      const markdownDoc =
-        lspDocBuilder.generateConstraintTypeDoc(constraintType);
-      acceptor(context, {
-        label: constraintType.type,
-        labelDetails: {
-          detail: ` on ${constraintType.on.getName()}`,
-        },
-        kind: CompletionItemKind.Class,
-        detail: `(constraint type)`,
-        documentation: {
-          kind: 'markdown',
-          value: markdownDoc,
-        },
-      });
-    });
-  }
-
   private completionForValuetype(
     context: CompletionContext,
     acceptor: CompletionAcceptor,
@@ -200,7 +165,11 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       container = astNode.$container.$container;
     }
 
-    const wrapper = this.wrapperFactories.TypedObject.wrap(container.type);
+    const wrapper =
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      container.type !== undefined
+        ? this.wrapperFactories.BlockType.wrap(container.type)
+        : undefined;
     if (wrapper === undefined) {
       return;
     }

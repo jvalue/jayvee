@@ -15,7 +15,6 @@ import {
 import { type OperatorEvaluatorRegistry } from '../expressions';
 import {
   type BlockTypePipeline,
-  type BuiltinConstrainttypeDefinition,
   type CellRangeLiteral,
   type CompositeBlockTypeDefinition,
   type PipeDefinition,
@@ -23,8 +22,6 @@ import {
   type ReferenceableBlockTypeDefinition,
   type ValueTypeReference,
   type ValuetypeDefinition,
-  isBuiltinConstrainttypeDefinition,
-  isReferenceableBlockTypeDefinition,
   isValueTypeReference,
   isValuetypeDefinition,
 } from '../generated/ast';
@@ -34,7 +31,6 @@ import { CellRangeWrapper } from './cell-range-wrapper';
 import { PipeWrapper } from './pipe-wrapper';
 import { PipelineWrapper } from './pipeline-wrapper';
 import { BlockTypeWrapper } from './typed-object/block-type-wrapper';
-import { ConstraintTypeWrapper } from './typed-object/constrainttype-wrapper';
 import { type PrimitiveValueType, type ValueType } from './value-type';
 import { AtomicValueType } from './value-type/atomic-value-type';
 import { CollectionValueType } from './value-type/primitive/collection/collection-value-type';
@@ -69,16 +65,14 @@ abstract class AstNodeWrapperFactory<
 
 export class WrapperFactoryProvider {
   readonly BlockType: BlockTypeWrapperFactory;
-  readonly ConstraintType: ConstraintTypeWrapperFactory;
   readonly Pipeline: PipelineWrapperFactory;
   readonly Pipe: PipeWrapperFactory;
   readonly CellRange: CellRangeWrapperFactory;
-  readonly TypedObject: TypedObjectWrapperFactory;
   readonly ValueType: ValueTypeWrapperFactory;
 
   constructor(
     private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
-    private readonly primitiveValueTypeContainer: ValueTypeProvider,
+    primitiveValueTypeContainer: ValueTypeProvider,
   ) {
     this.CellRange = new CellRangeWrapperFactory();
     this.BlockType = new BlockTypeWrapperFactory(
@@ -86,17 +80,8 @@ export class WrapperFactoryProvider {
       primitiveValueTypeContainer,
       this,
     );
-    this.ConstraintType = new ConstraintTypeWrapperFactory(
-      this.operatorEvaluatorRegistry,
-      primitiveValueTypeContainer,
-      this,
-    );
     this.Pipe = new PipeWrapperFactory();
     this.Pipeline = new PipelineWrapperFactory(this.Pipe);
-    this.TypedObject = new TypedObjectWrapperFactory(
-      this.BlockType,
-      this.ConstraintType,
-    );
     this.ValueType = new ValueTypeWrapperFactory(
       this,
       primitiveValueTypeContainer,
@@ -141,39 +126,6 @@ class BlockTypeWrapperFactory extends AstNodeWrapperFactory<
       | Reference<ReferenceableBlockTypeDefinition>,
   ): BlockTypeWrapper {
     return new BlockTypeWrapper(
-      toBeWrapped,
-      this.operatorEvaluatorRegistry,
-      this.valueTypeProvider,
-      this.wrapperFactories,
-    );
-  }
-}
-
-class ConstraintTypeWrapperFactory extends AstNodeWrapperFactory<
-  BuiltinConstrainttypeDefinition,
-  ConstraintTypeWrapper
-> {
-  constructor(
-    private readonly operatorEvaluatorRegistry: OperatorEvaluatorRegistry,
-    private readonly valueTypeProvider: ValueTypeProvider,
-    private readonly wrapperFactories: WrapperFactoryProvider,
-  ) {
-    super();
-  }
-
-  canWrap(
-    toBeWrapped:
-      | BuiltinConstrainttypeDefinition
-      | Reference<BuiltinConstrainttypeDefinition>,
-  ): boolean {
-    return ConstraintTypeWrapper.canBeWrapped(toBeWrapped);
-  }
-  doWrap(
-    toBeWrapped:
-      | BuiltinConstrainttypeDefinition
-      | Reference<BuiltinConstrainttypeDefinition>,
-  ): ConstraintTypeWrapper {
-    return new ConstraintTypeWrapper(
       toBeWrapped,
       this.operatorEvaluatorRegistry,
       this.valueTypeProvider,
@@ -271,45 +223,6 @@ class PipeWrapperFactory implements IPipeWrapperFactory {
       result.push(pipeWrapper);
     }
     return result;
-  }
-}
-
-class TypedObjectWrapperFactory {
-  // does not extend AstNodeWrapperFactory as behavior differs, e.g., no thrown error, allowing undefined as parameter
-  constructor(
-    private readonly blockTypeWrapperFactory: BlockTypeWrapperFactory,
-    private readonly constraintTypeWrapperFactory: ConstraintTypeWrapperFactory,
-  ) {}
-
-  /**
-   * Creates a wrapper for the typed object.
-   * Returns undefined if wrapping is not possible (does not throw an error).
-   */
-  wrap(
-    toBeWrapped:
-      | Reference<ReferenceableBlockTypeDefinition>
-      | Reference<BuiltinConstrainttypeDefinition>
-      | BuiltinConstrainttypeDefinition
-      | ReferenceableBlockTypeDefinition
-      | undefined,
-  ): BlockTypeWrapper | ConstraintTypeWrapper | undefined {
-    const type = isReference(toBeWrapped) ? toBeWrapped.ref : toBeWrapped;
-    if (type === undefined) {
-      return undefined;
-    }
-
-    if (isReferenceableBlockTypeDefinition(type)) {
-      if (!this.blockTypeWrapperFactory.canWrap(type)) {
-        return undefined;
-      }
-      return this.blockTypeWrapperFactory.wrap(type);
-    } else if (isBuiltinConstrainttypeDefinition(type)) {
-      if (!this.constraintTypeWrapperFactory.canWrap(type)) {
-        return undefined;
-      }
-      return this.constraintTypeWrapperFactory.wrap(type);
-    }
-    assertUnreachable(type);
   }
 }
 

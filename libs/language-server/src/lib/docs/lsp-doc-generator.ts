@@ -2,33 +2,20 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import {
-  type BlockTypeWrapper,
-  type ConstraintTypeWrapper,
-  type TypedObjectWrapper,
-} from '../ast';
+import { type BlockTypeWrapper, type TypedObjectWrapper } from '../ast';
 
 import {
   type JayveeBlockTypeDocGenerator,
-  type JayveeConstraintTypeDocGenerator,
   type JayveePropertyDocGenerator,
 } from './jayvee-doc-generator';
 import { MarkdownBuilder } from './markdown-builder';
 
 export class LspDocGenerator
-  implements
-    JayveeBlockTypeDocGenerator,
-    JayveeConstraintTypeDocGenerator,
-    JayveePropertyDocGenerator
+  implements JayveeBlockTypeDocGenerator, JayveePropertyDocGenerator
 {
   generateBlockTypeDoc(blockType: BlockTypeWrapper): string {
     const markdownBuilder = new MarkdownBuilder();
     return markdownBuilder.line(blockType.docs.description).build();
-  }
-
-  generateConstraintTypeDoc(constraintType: ConstraintTypeWrapper): string {
-    const markdownBuilder = new MarkdownBuilder();
-    return markdownBuilder.line(constraintType.docs.description).build();
   }
 
   generatePropertyDoc(

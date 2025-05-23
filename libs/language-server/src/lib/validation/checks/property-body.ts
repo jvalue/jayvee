@@ -12,13 +12,11 @@ import {
   type PropertyAssignment,
   type PropertyBody,
   isBlockDefinition,
-  isTypedConstraintDefinition,
 } from '../../ast/generated/ast';
 import { type JayveeValidationProps } from '../validation-registry';
 import { checkUniqueNames } from '../validation-util';
 
 import { checkBlockTypeSpecificPropertyBody } from './block-type-specific/property-body';
-import { checkConstraintTypeSpecificPropertyBody } from './constrainttype-specific/property-body';
 import { validatePropertyAssignment } from './property-assignment';
 
 export function validatePropertyBody(
@@ -49,7 +47,9 @@ function inferTypedObjectWrapper(
   props: JayveeValidationProps,
 ): TypedObjectWrapper | undefined {
   const type = propertyBody.$container?.type.ref;
-  return props.wrapperFactories.TypedObject.wrap(type);
+  return type !== undefined
+    ? props.wrapperFactories.BlockType.wrap(type)
+    : undefined;
 }
 
 function checkPropertyCompleteness(
@@ -89,7 +89,5 @@ function checkCustomPropertyValidation(
 
   if (isBlockDefinition(propertyBody.$container)) {
     checkBlockTypeSpecificPropertyBody(propertyBody, props);
-  } else if (isTypedConstraintDefinition(propertyBody.$container)) {
-    checkConstraintTypeSpecificPropertyBody(propertyBody, props);
   }
 }

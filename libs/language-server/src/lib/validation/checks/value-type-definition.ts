@@ -10,16 +10,11 @@
 // eslint-disable-next-line unicorn/prefer-node-protocol
 import { strict as assert } from 'assert';
 
-import { assertUnreachable } from 'langium';
-
 import {
   type CollectionLiteral,
   type ConstraintDefinition,
-  type ValueType,
   evaluateExpression,
   inferExpressionType,
-  isExpressionConstraintDefinition,
-  isTypedConstraintDefinition,
 } from '../../ast';
 import {
   type ValuetypeDefinition,
@@ -117,7 +112,9 @@ function checkConstraintMatchesValuetype(
 ): void {
   const actualValuetype =
     props.wrapperFactories.ValueType.wrap(valueTypeDefinition);
-  const compatibleValuetype = getCompatibleValuetype(constraint, props);
+  const compatibleValuetype = props.wrapperFactories.ValueType.wrap(
+    constraint?.valueType,
+  );
 
   if (actualValuetype === undefined || compatibleValuetype === undefined) {
     return;
@@ -136,21 +133,6 @@ function checkConstraintMatchesValuetype(
       },
     );
   }
-}
-
-function getCompatibleValuetype(
-  constraint: ConstraintDefinition,
-  props: JayveeValidationProps,
-): ValueType | undefined {
-  if (isTypedConstraintDefinition(constraint)) {
-    if (props.wrapperFactories.ConstraintType.canWrap(constraint.type)) {
-      return undefined;
-    }
-    return props.wrapperFactories.ConstraintType.wrap(constraint.type).on;
-  } else if (isExpressionConstraintDefinition(constraint)) {
-    return props.wrapperFactories.ValueType.wrap(constraint?.valueType);
-  }
-  assertUnreachable(constraint);
 }
 
 function checkGenericsHaveNoDuplicate(

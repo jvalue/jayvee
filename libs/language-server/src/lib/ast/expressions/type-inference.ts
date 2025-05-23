@@ -18,7 +18,6 @@ import {
   isCellRangeLiteral,
   isCollectionLiteral,
   isConstraintDefinition,
-  isExpressionConstraintDefinition,
   isExpressionLiteral,
   isFreeVariableLiteral,
   isNumericLiteral,
@@ -293,11 +292,11 @@ function inferTypeFromValueKeyword(
   valueTypeProvider: ValueTypeProvider,
   wrapperFactories: WrapperFactoryProvider,
 ): ValueType | undefined {
-  const expressionConstraintContainer = getNextAstNodeContainer(
+  const constraintContainer = getNextAstNodeContainer(
     expression,
-    isExpressionConstraintDefinition,
+    isConstraintDefinition,
   );
-  if (expressionConstraintContainer === undefined) {
+  if (constraintContainer === undefined) {
     validationContext.accept(
       'error',
       'The value keyword is not allowed in this context',
@@ -310,7 +309,7 @@ function inferTypeFromValueKeyword(
 
   const valueType = wrapperFactories.ValueType.wrap(
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    expressionConstraintContainer?.valueType,
+    constraintContainer?.valueType,
   );
   if (valueType === undefined) {
     return undefined;

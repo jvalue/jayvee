@@ -8,11 +8,9 @@ import { type Hover } from 'vscode-languageserver-protocol';
 
 import {
   type BuiltinBlockTypeDefinition,
-  type BuiltinConstrainttypeDefinition,
   type PropertyAssignment,
   type WrapperFactoryProvider,
   isBuiltinBlockTypeDefinition,
-  isBuiltinConstrainttypeDefinition,
   isPropertyAssignment,
 } from '../ast';
 import { LspDocGenerator } from '../docs/lsp-doc-generator';
@@ -32,9 +30,6 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
     let doc = undefined;
     if (isBuiltinBlockTypeDefinition(astNode)) {
       doc = this.getBlockTypeMarkdownDoc(astNode);
-    }
-    if (isBuiltinConstrainttypeDefinition(astNode)) {
-      doc = this.getConstraintTypeMarkdownDoc(astNode);
     }
     if (isPropertyAssignment(astNode)) {
       doc = this.getPropertyMarkdownDoc(astNode);
@@ -64,27 +59,15 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
     return lspDocBuilder.generateBlockTypeDoc(blockType);
   }
 
-  private getConstraintTypeMarkdownDoc(
-    constraintTypeDefinition: BuiltinConstrainttypeDefinition,
-  ): string | undefined {
-    if (
-      !this.wrapperFactories.ConstraintType.canWrap(constraintTypeDefinition)
-    ) {
-      return;
-    }
-    const constraintType = this.wrapperFactories.ConstraintType.wrap(
-      constraintTypeDefinition,
-    );
-
-    const lspDocBuilder = new LspDocGenerator();
-    return lspDocBuilder.generateConstraintTypeDoc(constraintType);
-  }
-
   private getPropertyMarkdownDoc(
     property: PropertyAssignment,
   ): string | undefined {
     const container = property.$container.$container;
-    const wrapper = this.wrapperFactories.TypedObject.wrap(container.type);
+    const wrapper =
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      container.type !== undefined
+        ? this.wrapperFactories.BlockType.wrap(container.type)
+        : undefined;
     if (wrapper === undefined) {
       return;
     }

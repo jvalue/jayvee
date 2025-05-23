@@ -26,8 +26,8 @@ import { validateBlockDefinition } from './checks/block-definition';
 import { validateBlockTypeDefinition } from './checks/block-type-definition';
 import { validateColumnId } from './checks/column-id';
 import { validateCompositeBlockTypeDefinition } from './checks/composite-block-type-definition';
+import { validateConstraintDefinition } from './checks/constraint-definition';
 import { validateExportDefinition } from './checks/export-definition';
-import { validateExpressionConstraintDefinition } from './checks/expression-constraint-definition';
 import { validateImportDefinition } from './checks/import-definition';
 import { validateJayveeModel } from './checks/jayvee-model';
 import { validatePipeDefinition } from './checks/pipe-definition';
@@ -36,7 +36,6 @@ import { validatePropertyBody } from './checks/property-body';
 import { validateRangeLiteral } from './checks/range-literal';
 import { validateRegexLiteral } from './checks/regex-literal';
 import { validateTransformBody } from './checks/transform-body';
-import { validateTypedConstraintDefinition } from './checks/typed-constraint-definition';
 import { validateValueTypeDefinition } from './checks/value-type-definition';
 import { validateValueTypeReference } from './checks/value-type-reference';
 import { ValidationContext } from './validation-context';
@@ -68,8 +67,7 @@ export class JayveeValidationRegistry extends ValidationRegistry {
       BlockDefinition: validateBlockDefinition,
       CompositeBlockTypeDefinition: validateCompositeBlockTypeDefinition,
       ColumnId: validateColumnId,
-      TypedConstraintDefinition: validateTypedConstraintDefinition,
-      ExpressionConstraintDefinition: validateExpressionConstraintDefinition,
+      ConstraintDefinition: validateConstraintDefinition,
       JayveeModel: validateJayveeModel,
       PipeDefinition: validatePipeDefinition,
       PipelineDefinition: validatePipelineDefinition,
