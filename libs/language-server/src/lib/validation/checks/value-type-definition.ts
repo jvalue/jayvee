@@ -40,8 +40,14 @@ function checkSupertypeCycle(
       valueTypeDefinition,
     )?.hasSupertypeCycle() ?? false;
   if (hasCycle) {
-    assert(!valueTypeDefinition.isBuiltin);
-    assert(valueTypeDefinition.attribute?.type !== undefined);
+    assert(
+      !valueTypeDefinition.isBuiltin,
+      "`builtin` valuetypes don't have cycles",
+    );
+    assert(
+      valueTypeDefinition.attribute?.type !== undefined,
+      '`hasCycle == true`, so `valueTypeDefinition` MUST have an attribute with a type',
+    );
     props.validationContext.accept(
       'error',
       'Could not construct this value type since there is a cycle in the (transitive) "oftype" relation.',
