@@ -9,15 +9,14 @@ import { fileURLToPath } from 'node:url';
 import {
   type JayveeServices,
   createJayveeServices,
-  getAllBuiltinConstraintTypes,
   getAllReferenceableBlockTypes,
   initializeWorkspace,
 } from '@jvalue/jayvee-language-server';
 import { NodeFileSystem } from 'langium/node';
 
 import { UserDocGenerator } from './user-doc-generator';
-import { getBlockTypeDomain } from './util';
 import { UserDocCategoryBuilder } from './UserDocCategoryBuilder';
+import { getBlockTypeDomain } from './util';
 
 /** ESM does not know __filename and __dirname, so defined here */
 const __filename = fileURLToPath(import.meta.url);
@@ -31,7 +30,6 @@ async function main(): Promise<void> {
   await initializeWorkspace(services);
 
   generateBlockTypeDocs(services, docsAppPath);
-  generateConstraintTypeDocs(services, docsAppPath);
   generateValueTypeDocs(services, docsAppPath);
   generateExampleDocs(jayveeExamplesPath, docsAppPath);
 }
@@ -83,29 +81,6 @@ function generateBlockTypeDocs(
         flag: 'w',
       },
     );
-    console.info(`Generated file ${fileName}`);
-  }
-}
-
-function generateConstraintTypeDocs(
-  services: JayveeServices,
-  docsAppPath: string,
-): void {
-  const docsPath = join(docsAppPath, 'docs', 'user', 'constraint-types');
-  const constraintTypes = getAllBuiltinConstraintTypes(
-    services.shared.workspace.LangiumDocuments,
-    services.WrapperFactories,
-  );
-
-  for (const constraintType of constraintTypes) {
-    const userDocBuilder = new UserDocGenerator(services);
-    const blockTypeDoc =
-      userDocBuilder.generateConstraintTypeDoc(constraintType);
-
-    const fileName = `${constraintType.type}.md`;
-    writeFileSync(join(docsPath, fileName), blockTypeDoc, {
-      flag: 'w',
-    });
     console.info(`Generated file ${fileName}`);
   }
 }

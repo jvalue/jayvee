@@ -7,10 +7,8 @@ import { strict as assert } from 'assert';
 
 import {
   type BlockTypeWrapper,
-  type ConstraintTypeWrapper,
   type ExampleDoc,
   type JayveeBlockTypeDocGenerator,
-  type JayveeConstraintTypeDocGenerator,
   type JayveeServices,
   type JayveeValueTypesDocGenerator,
   type PrimitiveValueType,
@@ -19,10 +17,7 @@ import {
 import { UserDocMarkdownBuilder } from './UserDocMarkdownBuilder';
 
 export class UserDocGenerator
-  implements
-    JayveeBlockTypeDocGenerator,
-    JayveeConstraintTypeDocGenerator,
-    JayveeValueTypesDocGenerator
+  implements JayveeBlockTypeDocGenerator, JayveeValueTypesDocGenerator
 {
   constructor(private services: JayveeServices) {}
 
@@ -108,37 +103,6 @@ block ExampleTableInterpreter oftype TableInterpreter {
           .description(propDocsFromComments?.description, 4)
           .validation(property.docs?.validation, 4)
           .examples(propDocsFromComments?.examples, 4);
-      },
-    );
-
-    return builder.build();
-  }
-
-  generateConstraintTypeDoc(constraintType: ConstraintTypeWrapper): string {
-    const documentationService =
-      this.services.documentation.DocumentationProvider;
-    const blocktypeDocs = documentationService.getDocumentation(
-      constraintType.astNode,
-    );
-    const constraintTypeDocsFromComments =
-      this.extractDocsFromComment(blocktypeDocs);
-
-    const builder = new UserDocMarkdownBuilder()
-      .docTitle(constraintType.type)
-      .generationComment()
-      .compatibleValueType(constraintType.on.getName())
-      .description(constraintTypeDocsFromComments?.description)
-      .examples(constraintTypeDocsFromComments?.examples);
-
-    builder.propertiesHeading();
-    Object.entries(constraintType.getPropertySpecifications()).forEach(
-      ([key, property]) => {
-        builder
-          .propertyHeading(key, 3)
-          .propertySpec(property)
-          .description(property.docs?.description, 4)
-          .validation(property.docs?.validation, 4)
-          .examples(property.docs?.examples, 4);
       },
     );
 
