@@ -50,9 +50,12 @@ function checkRuntimeParameterValueParsing(
 ) {
   const enclosingPropertyBody = getEnclosingPropertyBody(runtimeParameter);
   const type: Reference<ReferenceableBlockTypeDefinition> | undefined =
+    enclosingPropertyBody.$container.type;
+  const wrapper =
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    enclosingPropertyBody.$container?.type;
-  const wrapper = props.wrapperFactories.BlockType.wrap(type);
+    type !== undefined
+      ? props.wrapperFactories.BlockType.wrap(type)
+      : undefined;
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const propertyName = runtimeParameter.$container?.name;
@@ -61,7 +64,7 @@ function checkRuntimeParameterValueParsing(
     return;
   }
 
-  const propertySpec = wrapper.getPropertySpecification(propertyName);
+  const propertySpec = wrapper?.getPropertySpecification(propertyName);
   if (propertySpec === undefined) {
     return;
   }
