@@ -5,7 +5,6 @@
 import {
   type ValueTypeReference,
   isBuiltinBlockTypeDefinition,
-  isBuiltinConstrainttypeDefinition,
 } from '../../ast/generated/ast';
 import { type JayveeValidationProps } from '../validation-registry';
 
@@ -53,9 +52,9 @@ function checkIsValueTypeReferenceable(
     return;
   }
 
-  const isUsedInBuiltinDefinition =
-    isBuiltinBlockTypeDefinition(valueTypeRef.$container.$container) ||
-    isBuiltinConstrainttypeDefinition(valueTypeRef.$container.$container);
+  const isUsedInBuiltinDefinition = isBuiltinBlockTypeDefinition(
+    valueTypeRef.$container.$container,
+  );
   if (isUsedInBuiltinDefinition) {
     return;
   }

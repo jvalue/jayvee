@@ -19,16 +19,14 @@ import {
   type WrapperFactoryProvider,
   evaluatePropertyValue,
   isBlockDefinition,
-  isExpressionConstraintDefinition,
+  isConstraintDefinition,
   isPipelineDefinition,
   isPropertyBody,
   isTransformDefinition,
-  isTypedConstraintDefinition,
 } from '@jvalue/jayvee-language-server';
-import { assertUnreachable, isReference } from 'langium';
+import { isReference } from 'langium';
 
 import { type Result } from './blocks';
-import { type JayveeConstraintExtension } from './constraints';
 import {
   type DebugGranularity,
   type DebugTargets,
@@ -49,7 +47,6 @@ export class ExecutionContext {
   constructor(
     public readonly pipeline: PipelineDefinition,
     public readonly executionExtension: JayveeExecExtension,
-    public readonly constraintExtension: JayveeConstraintExtension,
     public readonly logger: Logger,
     public readonly wrapperFactories: WrapperFactoryProvider,
     public readonly valueTypeProvider: ValueTypeProvider,
@@ -118,7 +115,7 @@ export class ExecutionContext {
     const currentNode = this.getCurrentNode();
     if (
       isPipelineDefinition(currentNode) ||
-      isExpressionConstraintDefinition(currentNode)
+      isConstraintDefinition(currentNode)
     ) {
       return undefined;
     }
@@ -189,15 +186,11 @@ export class ExecutionContext {
   private getWrapperOfCurrentNode() {
     const currentNode = this.getCurrentNode();
     assert(!isPipelineDefinition(currentNode));
-    assert(!isExpressionConstraintDefinition(currentNode));
+    assert(!isConstraintDefinition(currentNode));
     assert(!isTransformDefinition(currentNode));
 
     assert(isReference(currentNode.type));
-    if (isTypedConstraintDefinition(currentNode)) {
-      return this.wrapperFactories.ConstraintType.wrap(currentNode.type);
-    } else if (isBlockDefinition(currentNode)) {
-      return this.wrapperFactories.BlockType.wrap(currentNode.type);
-    }
-    assertUnreachable(currentNode);
+    assert(isBlockDefinition(currentNode));
+    return this.wrapperFactories.BlockType.wrap(currentNode.type);
   }
 }

@@ -29,7 +29,6 @@ ExportableElement:
     | ConstraintDefinition
     | TransformDefinition
     | ReferenceableBlockTypeDefinition
-    | BuiltinConstrainttypeDefinition
     | IotypeDefinition;
 
 ExportDefinition:

@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  type BuiltinConstrainttypeDefinition,
   type JayveeValidationProps,
   type PropertyBody,
   type ReferenceableBlockTypeDefinition,
@@ -50,13 +49,13 @@ function checkRuntimeParameterValueParsing(
   props: JayveeValidationProps,
 ) {
   const enclosingPropertyBody = getEnclosingPropertyBody(runtimeParameter);
-  const type:
-    | Reference<ReferenceableBlockTypeDefinition>
-    | Reference<BuiltinConstrainttypeDefinition>
-    | undefined =
+  const type: Reference<ReferenceableBlockTypeDefinition> | undefined =
+    enclosingPropertyBody.$container.type;
+  const wrapper =
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    enclosingPropertyBody.$container?.type;
-  const wrapper = props.wrapperFactories.TypedObject.wrap(type);
+    type !== undefined
+      ? props.wrapperFactories.BlockType.wrap(type)
+      : undefined;
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const propertyName = runtimeParameter.$container?.name;

@@ -54,7 +54,7 @@ describe('Validation of block type specific properties', () => {
     )[0]!;
 
     const props = createJayveeValidationProps(validationAcceptorMock, services);
-    const wrapper = props.wrapperFactories.TypedObject.wrap(
+    const wrapper = props.wrapperFactories.BlockType.wrap(
       propertyBody.$container.type,
     );
     expect(wrapper).toBeDefined();

@@ -58,7 +58,7 @@ describe('Validation of PropertyAssignment', () => {
         validationAcceptorMock,
         services,
       );
-      const wrapper = props.wrapperFactories.TypedObject.wrap(type);
+      const wrapper = props.wrapperFactories.BlockType.wrap(type);
       expect(wrapper).toBeDefined();
 
       const propertyAssignments = propertyBody.properties;

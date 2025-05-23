@@ -22,7 +22,6 @@ export { type PipelineWrapper } from './pipeline-wrapper';
 
 export { type BlockTypeWrapper } from './typed-object/block-type-wrapper';
 export { type CompositeBlockTypeWrapper } from './typed-object/composite-block-type-wrapper';
-export { type ConstraintTypeWrapper } from './typed-object/constrainttype-wrapper';
 export {
   ExampleDoc,
   PropertyDocs,

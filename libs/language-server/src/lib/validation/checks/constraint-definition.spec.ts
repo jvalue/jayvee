@@ -7,11 +7,10 @@ import { NodeFileSystem } from 'langium/node';
 import { vi } from 'vitest';
 
 import {
+  type ConstraintDefinition,
   type JayveeServices,
-  type TypedConstraintDefinition,
   createJayveeServices,
-  initializeWorkspace,
-  isTypedConstraintDefinition,
+  isConstraintDefinition,
 } from '../../../lib';
 import {
   type ParseHelperOptions,
@@ -23,9 +22,9 @@ import {
   validationAcceptorMockImpl,
 } from '../../../test';
 
-import { validateTypedConstraintDefinition } from './typed-constraint-definition';
+import { validateConstraintDefinition } from './constraint-definition';
 
-describe('Validation of ConstraintDefinition (typed syntax)', () => {
+describe('Validation of ConstraintDefinition', () => {
   let parse: (
     input: string,
     options?: ParseHelperOptions,
@@ -40,27 +39,26 @@ describe('Validation of ConstraintDefinition (typed syntax)', () => {
     '../../../test/assets/',
   );
 
-  async function parseAndValidateTypedConstraintDefinition(input: string) {
+  async function parseAndValidateConstraintDefinition(input: string) {
     const document = await parse(input);
     expectNoParserAndLexerErrors(document);
 
-    const allTypedConstraints = extractTestElements(
+    const allConstraintDefinitions = extractTestElements(
       document,
-      (x): x is TypedConstraintDefinition => isTypedConstraintDefinition(x),
+      (x): x is ConstraintDefinition => isConstraintDefinition(x),
     );
 
-    for (const typedConstraint of allTypedConstraints) {
-      validateTypedConstraintDefinition(
-        typedConstraint,
+    for (const constraint of allConstraintDefinitions) {
+      validateConstraintDefinition(
+        constraint,
         createJayveeValidationProps(validationAcceptorMock, services),
       );
     }
   }
 
-  beforeAll(async () => {
+  beforeAll(() => {
     // Create language services
     services = createJayveeServices(NodeFileSystem).Jayvee;
-    await initializeWorkspace(services);
 
     // Parse function for Jayvee (without validation)
     parse = parseHelper(services);
@@ -71,27 +69,42 @@ describe('Validation of ConstraintDefinition (typed syntax)', () => {
     validationAcceptorMock.mockReset();
   });
 
-  it('should have no error on valid typed constraint', async () => {
+  it('should have no error on valid constraint', async () => {
     const text = readJvTestAsset(
-      'typed-constraint-definition/valid-typed-constraint.jv',
+      'constraint-definition/valid-text-constraint.jv',
     );
 
-    await parseAndValidateTypedConstraintDefinition(text);
+    await parseAndValidateConstraintDefinition(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
   });
 
-  it('should diagnose error on unknown constraint type', async () => {
+  it('should diagnose error on incompatible type', async () => {
     const text = readJvTestAsset(
-      'typed-constraint-definition/invalid-unknown-constraint-type.jv',
+      'constraint-definition/invalid-incompatible-type.jv',
     );
 
-    await parseAndValidateTypedConstraintDefinition(text);
+    await parseAndValidateConstraintDefinition(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
-      `Unknown constraint type 'UnknownConstraint'`,
+      `The value needs to be of type boolean but is of type integer`,
+      expect.any(Object),
+    );
+  });
+
+  it('should diagnose info on simplifiable constraint', async () => {
+    const text = readJvTestAsset(
+      'constraint-definition/valid-simplify-info.jv',
+    );
+
+    await parseAndValidateConstraintDefinition(text);
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+    expect(validationAcceptorMock).toHaveBeenCalledWith(
+      'info',
+      `The expression can be simplified to 8`,
       expect.any(Object),
     );
   });

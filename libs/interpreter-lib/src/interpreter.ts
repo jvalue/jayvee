@@ -10,14 +10,12 @@ import {
   ClassAssignment,
   type DebugGranularity,
   type DebugTargets,
-  DefaultConstraintExtension,
   DefaultDebugTargetsValue,
   ExecutionContext,
   Graph,
   HookContext,
   type HookOptions,
   type HookPosition,
-  type JayveeConstraintExtension,
   type JayveeExecExtension,
   type Logger,
   MeasurementLocation,
@@ -201,17 +199,12 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
     const interpretationExitCode = await this.interpretJayveeProgram(
       program,
       new StdExecExtension(),
-      new DefaultConstraintExtension(),
     );
     return interpretationExitCode;
   }
 
   graphProgram(program: JayveeProgram): Graph | 'No pipelines to graph' {
-    return this.graphJayveeModel(
-      program,
-      new StdExecExtension(),
-      new DefaultConstraintExtension(),
-    );
+    return this.graphJayveeModel(program, new StdExecExtension());
   }
 
   async interpretFile(filePath: string): Promise<ExitCode> {
@@ -312,7 +305,6 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
   private async interpretJayveeProgram(
     program: JayveeProgram,
     executionExtension: JayveeExecExtension,
-    constraintExtension: JayveeConstraintExtension,
   ): Promise<ExitCode> {
     const model = program.model;
     const selectedPipelines = model.pipelines.filter((pipeline) =>
@@ -330,12 +322,7 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
 
     const pipelineRuns: Promise<ExitCode>[] = selectedPipelines.map(
       (pipeline) => {
-        return this.runPipeline(
-          pipeline,
-          executionExtension,
-          constraintExtension,
-          program.hooks,
-        );
+        return this.runPipeline(pipeline, executionExtension, program.hooks);
       },
     );
     const exitCodes = await Promise.all(pipelineRuns);
@@ -349,7 +336,6 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
   private graphJayveeModel(
     program: JayveeProgram,
     executionExtension: JayveeExecExtension,
-    constraintExtension: JayveeConstraintExtension,
   ): Graph | 'No pipelines to graph' {
     const model = program.model;
     const selectedPipelines = model.pipelines.filter((pipeline) =>
@@ -373,12 +359,7 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
       assert(pipeline !== undefined);
       assert(rest.length === 0);
 
-      return this.graphPipeline(
-        pipeline,
-        executionExtension,
-        constraintExtension,
-        program.hooks,
-      );
+      return this.graphPipeline(pipeline, executionExtension, program.hooks);
     }
 
     const name =
@@ -392,7 +373,6 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
       const subgraph = this.graphPipeline(
         pipeline,
         executionExtension,
-        constraintExtension,
         program.hooks,
       );
       graph.addSubgraph(subgraph);
@@ -407,13 +387,11 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
   private defaultExecutionContext(
     pipeline: PipelineDefinition,
     executionExtension: JayveeExecExtension,
-    constraintExtension: JayveeConstraintExtension,
     hooks: HookContext,
   ): ExecutionContext {
     return new ExecutionContext(
       pipeline,
       executionExtension,
-      constraintExtension,
       this.loggerFactory.createLogger(),
       this.services.WrapperFactories,
       this.services.ValueTypeProvider,
@@ -434,13 +412,11 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
   private async runPipeline(
     pipeline: PipelineDefinition,
     executionExtension: JayveeExecExtension,
-    constraintExtension: JayveeConstraintExtension,
     hooks: HookContext,
   ): Promise<ExitCode> {
     const executionContext = this.defaultExecutionContext(
       pipeline,
       executionExtension,
-      constraintExtension,
       hooks,
     );
 
@@ -474,13 +450,11 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
   private graphPipeline(
     pipeline: PipelineDefinition,
     executionExtension: JayveeExecExtension,
-    constraintExtension: JayveeConstraintExtension,
     hooks: HookContext,
   ): Graph {
     const executionContext = this.defaultExecutionContext(
       pipeline,
       executionExtension,
-      constraintExtension,
       hooks,
     );
 
