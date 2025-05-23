@@ -6,7 +6,7 @@
 * Alpha-3 code for countries as defined by ISO 3166.
 */
 publish valuetype CountryCodeAlpha3 {
-  property attr oftype text;
+  property code oftype text;
   constraints: [
     CountryCodeAlpha3Constraint
   ];

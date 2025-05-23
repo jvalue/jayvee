@@ -8,7 +8,7 @@ constraint DOIFormat on text: value matches /\b10\.\d{4}\/[^\s]+\b/;
 * The `DOIStandardizer` block can remove common prefixes to this pattern, with the result matching this format.
 */
 publish valuetype DOI {
-	property attr oftype text;
+	property doi oftype text;
 	constraints: [
 		DOIFormat
 	];
@@ -17,7 +17,7 @@ publish valuetype DOI {
 constraint DateFormatYYYYMMDDRegex on text: value matches /\d{4}-\d{2}-\d{2}/;
 /** DateFormat as YYYY-MM-DD */
 publish valuetype DateYYYYMMDD {
-	property attr oftype text;
+	property date oftype text;
 	constraints: [
 		DateFormatYYYYMMDDRegex
 	];
@@ -26,7 +26,7 @@ publish valuetype DateYYYYMMDD {
 constraint SiUnitConstraint on text: value matches /\b((Second|Metre|Kilogram|Ampere|Kelvin|Mole|Candela)+\^\(\d+(\.\d+)?\|\-\d+(\.\d+)?\)+\s)*\b/;
 /** Constraining the Unit column to be of a specific format like "Second^(1.0)", "Ampere^(1.0)" or "Candela^(1.0)". */
 publish valuetype SiUnit {
-	property attr oftype text;
+	property unit oftype text;
 	constraints: [
 		SiUnitConstraint
 	];
@@ -35,7 +35,7 @@ publish valuetype SiUnit {
 constraint PressureUnitPascalConstraint on text: value matches /\b(Pascal\^\(\d+(\.\d+)?\|\-\d+(\.\d+)?\)+\s)*\b/;
 /** Constrains Pressure units to be Pascal^(x). */
 publish valuetype PressureUnitPascal {
-	property attr oftype text;
+	property unit oftype text;
 	constraints: [
 		PressureUnitPascalConstraint
 	];
@@ -44,7 +44,7 @@ publish valuetype PressureUnitPascal {
 constraint LengthUnitMeterConstraint on text: value matches /\b(Meter\^\(\d+(\.\d+)?\|\-\d+(\.\d+)?\)+\s)*\b/;
 /** Constrains Length units to be Meter^(x). */
 publish valuetype LengthUnitMeter {
-	property attr oftype text;
+	property unit oftype text;
 	constraints: [
 		LengthUnitMeterConstraint
 	];
@@ -54,7 +54,7 @@ publish valuetype LengthUnitMeter {
 constraint TemperatureUnitKelvinConstraint on text: value matches /\b(Kelvin\^\(\d+(\.\d+)?\|\-\d+(\.\d+)?\)+\s)*\b/;
 /** Constrains Temperature units to be Kelvin^(x). */
 publish valuetype TemperatureUnitKelvin {
-	property attr oftype text;
+	property unit oftype text;
 	constraints: [
 		TemperatureUnitKelvinConstraint
 	];
