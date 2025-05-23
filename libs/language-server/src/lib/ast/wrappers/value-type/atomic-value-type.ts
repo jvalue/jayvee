@@ -5,8 +5,6 @@
 // eslint-disable-next-line unicorn/prefer-node-protocol
 import { strict as assert } from 'assert';
 
-import { evaluateExpression } from '../../expressions/evaluate-expression';
-import { type EvaluationContext } from '../../expressions/evaluation-context';
 import { type InternalValueRepresentation } from '../../expressions/internal-value-representation';
 import {
   type ConstraintDefinition,
@@ -17,7 +15,6 @@ import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
 
 import { AbstractValueType } from './abstract-value-type';
 import { type ValueTypeProvider } from './primitive';
-import { CollectionValueType } from './primitive/collection/collection-value-type';
 import { type ValueType, type ValueTypeVisitor } from './value-type';
 
 export class AtomicValueType
@@ -36,24 +33,18 @@ export class AtomicValueType
     return visitor.visitAtomicValueType(this);
   }
 
-  getConstraints(context: EvaluationContext): ConstraintDefinition[] {
+  getConstraints(): ConstraintDefinition[] {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const constraintCollection = this.astNode?.constraints;
-    assert(constraintCollection !== undefined);
-    const constraintCollectionType = new CollectionValueType(
-      this.valueTypeProvider.Primitives.Constraint,
-    );
-    const constraints =
-      evaluateExpression(
-        constraintCollection,
-        context,
-        this.wrapperFactories,
-      ) ?? [];
-    if (!constraintCollectionType.isInternalValueRepresentation(constraints)) {
-      return [];
-    }
-
-    return constraints;
+    return this.astNode?.constraints?.map((constraintReference) => {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      const constraintDefinition = constraintReference?.definition?.ref;
+      assert(
+        this.valueTypeProvider.Primitives.Constraint.isInternalValueRepresentation(
+          constraintDefinition,
+        ),
+      );
+      return constraintDefinition;
+    });
   }
 
   override isConvertibleTo(target: ValueType): boolean {

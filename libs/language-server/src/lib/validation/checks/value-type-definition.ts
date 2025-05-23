@@ -10,13 +10,10 @@
 // eslint-disable-next-line unicorn/prefer-node-protocol
 import { strict as assert } from 'assert';
 
+import { type ConstraintDefinition } from '../../ast';
 import {
-  type CollectionLiteral,
-  type ConstraintDefinition,
-  evaluateExpression,
-  inferExpressionType,
-} from '../../ast';
-import {
+  type ValueTypeAttribute,
+  type ValueTypeConstraintReference,
   type ValuetypeDefinition,
   type ValuetypeGenericDefinition,
 } from '../../ast/generated/ast';
@@ -27,7 +24,7 @@ export function validateValueTypeDefinition(
   props: JayveeValidationProps,
 ): void {
   checkSupertypeCycle(valueType, props);
-  checkConstraintsCollectionValues(valueType, props);
+  checkConstraints(valueType, props);
   checkGenericsHaveNoDuplicate(valueType, props);
 }
 
@@ -59,66 +56,36 @@ function checkSupertypeCycle(
   }
 }
 
-function checkConstraintsCollectionValues(
+function checkConstraints(
   valueType: ValuetypeDefinition,
   props: JayveeValidationProps,
 ): void {
-  const constraintCollection = valueType?.constraints;
-  if (constraintCollection === undefined) {
+  const constraintReferences = valueType?.constraints;
+  if (constraintReferences === undefined) {
     return;
   }
 
-  const inferredCollectionType = inferExpressionType(
-    constraintCollection,
-    props.validationContext,
-    props.valueTypeProvider,
-    props.wrapperFactories,
-  );
-  const expectedType = props.valueTypeProvider.createCollectionValueTypeOf(
-    props.valueTypeProvider.Primitives.Constraint,
-  );
-  if (inferredCollectionType === undefined) {
-    return;
-  }
-  if (!inferredCollectionType.isConvertibleTo(expectedType)) {
-    props.validationContext.accept(
-      'error',
-      `The value needs to be of type ${expectedType.getName()} but is of type ${inferredCollectionType.getName()}`,
-      {
-        node: constraintCollection,
-      },
-    );
-    return;
-  }
-
-  const constraints = evaluateExpression(
-    constraintCollection,
-    props.evaluationContext,
-    props.wrapperFactories,
-    props.validationContext,
-  );
-  assert(expectedType.isInternalValueRepresentation(constraints));
-
-  constraints.forEach((constraint, index) => {
-    checkConstraintMatchesValuetype(
-      valueType,
+  constraintReferences.forEach((constraintReference) => {
+    const constraint = constraintReference.definition.ref;
+    assert(constraint !== undefined);
+    const attribute = constraintReference.attribute.ref;
+    assert(attribute !== undefined);
+    checkConstraintMatchesAttribute(
+      attribute,
       constraint,
-      constraintCollection,
-      index,
+      constraintReference,
       props,
     );
   });
 }
 
-function checkConstraintMatchesValuetype(
-  valueTypeDefinition: ValuetypeDefinition,
+function checkConstraintMatchesAttribute(
+  attribute: ValueTypeAttribute,
   constraint: ConstraintDefinition,
-  diagnosticNode: CollectionLiteral,
-  diagnosticIndex: number,
+  diagnosticNode: ValueTypeConstraintReference,
   props: JayveeValidationProps,
 ): void {
-  const actualValuetype =
-    props.wrapperFactories.ValueType.wrap(valueTypeDefinition);
+  const actualValuetype = props.wrapperFactories.ValueType.wrap(attribute.type);
   const compatibleValuetype = props.wrapperFactories.ValueType.wrap(
     constraint?.valueType,
   );
@@ -130,13 +97,14 @@ function checkConstraintMatchesValuetype(
   if (!actualValuetype.isConvertibleTo(compatibleValuetype)) {
     props.validationContext.accept(
       'error',
-      `This value type ${actualValuetype.getName()} is not convertible to the type ${compatibleValuetype.getName()} of the constraint "${
+      `The constraint ${
         constraint.name
-      }"`,
+      } of type ${compatibleValuetype.getName()} cannot be applied to the property ${
+        attribute.name
+      } of type ${actualValuetype.getName()}`,
       {
         node: diagnosticNode,
-        property: 'values',
-        index: diagnosticIndex,
+        property: 'attribute',
       },
     );
   }
