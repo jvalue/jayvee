@@ -17,7 +17,8 @@ builtin blocktype TestProperty {
   property customValidationTextProperty oftype CustomValuetype;
 }
 
-valuetype CustomValuetype oftype text {
+valuetype CustomValuetype {
+  property attr oftype text;
   constraints: [CustomConstraint];
 }
 

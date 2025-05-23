@@ -70,7 +70,8 @@ We differentiate the following kinds of _value types_:
 - _Compound value types_: UPCOMING.
 
 ```jayvee
-valuetype GasFillLevel oftype integer {
+valuetype GasFillLevel {
+    property level oftype integer;
     constraints: [ GasFillLevelRange ];
 }
 
@@ -125,7 +126,8 @@ use { GasFillLevelRange as FillLevelRange } './relative/path/to/file.jv'; // Ali
 
 // Then just use them as if they were defined on root level
 
-valuetype GasFillLevel oftype integer {
+valuetype GasFillLevel {
+    property level oftype integer;
     constraints: [ GasFillLevelRange ]; // GasFillLevelRange is defined in another file
 }
 ```

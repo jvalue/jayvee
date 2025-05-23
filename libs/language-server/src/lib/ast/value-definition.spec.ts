@@ -33,7 +33,7 @@ describe('Parsing of ValuetypeDefinition', () => {
     const document = await parse(text);
     expect(document.parseResult.parserErrors.length).toBeGreaterThanOrEqual(1);
     expect(document.parseResult.parserErrors[0]?.message).toBe(
-      "Expecting token of type 'oftype' but found `;`.",
+      "Expecting token of type '{' but found `;`.",
     );
   });
 

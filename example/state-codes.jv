@@ -7,7 +7,8 @@
 // - Understand how to publish elements to use them in other files
 
 // 1. The publish keyword can be used directly when defining an element.
-publish valuetype UsStateCode oftype text {
+publish valuetype UsStateCode {
+  property code oftype text;
   constraints: [
     UsStateCodeAllowlist,
   ];

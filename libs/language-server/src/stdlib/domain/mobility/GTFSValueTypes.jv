@@ -11,7 +11,8 @@
  *      Example: FFFFFF for white, 000000 for black or 0039A6 for the A,C,E lines in NYMTA.
  */
 publish constraint GTFSColorConstraint on text: value matches /^[A-F]{6}$/;
-publish valuetype GTFSColor oftype text {
+publish valuetype GTFSColor {
+    property color oftype text;
     constraints: [GTFSColorConstraint];
 }
 
@@ -20,7 +21,8 @@ publish valuetype GTFSColor oftype text {
  *      Example: 20180913 for September 13th, 2018.
  */
 publish constraint DateYYYYMMDD on text: value matches /^[0-9]{4}[0-9]{2}[0-9]{2}$/;
-publish valuetype GTFSDate oftype text {
+publish valuetype GTFSDate {
+    property date oftype text;
     constraints: [DateYYYYMMDD];
 }
 
@@ -29,7 +31,8 @@ publish valuetype GTFSDate oftype text {
  *      Example: CAD for Canadian dollars, EUR for euros or JPY for Japanese yen.
  */
 publish constraint CurrencyConstraint on text: value matches /^[A-Z]{3}$/;
-publish valuetype GTFSCurrency oftype text {
+publish valuetype GTFSCurrency {
+    property currency oftype text;
     constraints: [CurrencyConstraint];
 }
 
@@ -38,7 +41,8 @@ publish valuetype GTFSCurrency oftype text {
  *      Example: 14:30:00 for 2:30PM or 25:35:00 for 1:35AM on the next day.
  */
 publish constraint TimeHHMMSS on text: value matches /^[0-9]{1,2}:{1}[0-9]{2}:{1}[0-9]{2}$/;
-publish valuetype GTFSTime oftype text {
+publish valuetype GTFSTime {
+    property time oftype text;
     constraints: [TimeHHMMSS];
 }
 
@@ -47,15 +51,18 @@ publish constraint EnumTwo on integer: value in [0, 1];
 publish constraint EnumOneOrTwo on integer: value in [1, 2];
 publish constraint EnumThree on integer: value in [0, 1, 2];
 
-publish valuetype GTFSEnumTwo oftype integer {
+publish valuetype GTFSEnumTwo {
+    property number oftype integer;
     constraints: [EnumTwo];
 }
 
-publish valuetype GTFSEnumOneOrTwo oftype integer {
+publish valuetype GTFSEnumOneOrTwo {
+    property number oftype integer;
     constraints: [EnumOneOrTwo];
 }
 
-publish valuetype GTFSEnumThree oftype integer {
+publish valuetype GTFSEnumThree {
+    property number oftype integer;
     constraints: [EnumThree];
 }
 
@@ -66,7 +73,8 @@ publish valuetype GTFSEnumThree oftype integer {
  *      Example: 41.890169 for the Colosseum in Rome.
  */
 publish constraint Latitude on decimal: value >= -90 and value <= 90;
-publish valuetype GTFSLatitude oftype decimal {
+publish valuetype GTFSLatitude {
+    property latitude oftype decimal;
     constraints: [Latitude];
 }
 
@@ -75,16 +83,19 @@ publish valuetype GTFSLatitude oftype decimal {
  *      Example: 12.492269 for the Colosseum in Rome.
  */
 publish constraint Longitude on decimal: value >= -180 and value <= 180;
-publish valuetype GTFSLongitude oftype decimal {
+publish valuetype GTFSLongitude {
+    property longitude oftype decimal;
     constraints: [Longitude];
 }
 
 publish constraint NonNegativeNumber on decimal: value >= 0;
-publish valuetype GTFSNonNegativeDecimal oftype decimal {
+publish valuetype GTFSNonNegativeDecimal {
+    property number oftype decimal;
     constraints: [NonNegativeNumber];
 }
 
-publish valuetype GTFSNonNegativeInteger oftype integer {
+publish valuetype GTFSNonNegativeInteger {
+    property number oftype integer;
     constraints: [NonNegativeNumber];
 }
 
@@ -92,6 +103,7 @@ publish valuetype GTFSNonNegativeInteger oftype integer {
  * URL - A fully qualified URL that includes http:// or https://, and any special characters in the URL must be correctly escaped. See the following http://www.w3.org/Addressing/URL/4_URI_Recommentations.html for a description of how to create fully qualified URL values.
  */
 publish constraint URLIncludingSchema on text: value matches /^(http)s?(:\/\/)/;
-publish valuetype GTFSUrl oftype text {
+publish valuetype GTFSUrl {
+    property url oftype text;
     constraints: [URLIncludingSchema];
 }

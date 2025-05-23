@@ -91,7 +91,7 @@ export class AtomicValueType
 
   protected override doGetSupertype(): ValueType | undefined {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const supertype = this.astNode?.type;
+    const supertype = this.astNode?.attribute?.type;
     return this.wrapperFactories.ValueType.wrap(supertype);
   }
 

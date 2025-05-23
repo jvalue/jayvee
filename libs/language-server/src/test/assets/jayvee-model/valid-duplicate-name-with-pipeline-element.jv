@@ -2,12 +2,14 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-valuetype DuplicateName oftype text {
-	constraints: [];
+valuetype DuplicateName {
+  property attr oftype text;
+  constraints: [ ];
 }
 
 pipeline TestPipeline {
-  valuetype DuplicateName oftype text {
-    constraints: [];
+  valuetype DuplicateName {
+    property attr oftype text;
+    constraints: [ ];
   }
 }

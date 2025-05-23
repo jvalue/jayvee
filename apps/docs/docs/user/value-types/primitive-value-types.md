@@ -9,7 +9,8 @@ Such _constraints_ are implicitly connected via a logical `AND` relation.
 Note that the _constraints_ need to be applicable to the base-type of the _value type_ - indicated by the identifier after the keyword `oftype`:
 
 ```jayvee
-valuetype GasFillLevel oftype integer {
+valuetype GasFillLevel {
+    property level oftype integer;
     constraints: [ GasFillLevelRange ];
 }
 ```

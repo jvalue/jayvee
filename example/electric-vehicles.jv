@@ -9,19 +9,21 @@
 // - Understand the use of runtime parameters
 
 // 0. We can use elements defined in other files with the "use" syntax.
-// In this case, we use the value type UsStateCode when later specifying the table column value types. 
-use { UsStateCode } from './state-codes.jv';
+// In this case, we use the value type UsStateCode when later specifying the table column value types.
+use {
+  UsStateCode
+} from './state-codes.jv';
 
 
-// 1. This Jayvee model describes a pipeline 
-// from a CSV file in the web 
+// 1. This Jayvee model describes a pipeline
+// from a CSV file in the web
 // to a SQLite file and a PostgreSQL db sink.
 pipeline ElectricVehiclesPipeline {
   // See here for meta-data of the data source
   // https://catalog.data.gov/dataset/electric-vehicle-population-data/resource/fa51be35-691f-45d2-9f3e-535877965e69
 
   // 2. At the top of a pipeline, we describe the
-  // structure of the pipeline. The first part until 
+  // structure of the pipeline. The first part until
   // the ElectricRangeTransformer is a linear sequence
   // of blocks. From there we can see a split into two
   // parallel sequences that load the data in to two
@@ -52,7 +54,7 @@ pipeline ElectricVehiclesPipeline {
     columns: [
       // 4. Here, a user-deifned value type is used to describe this column.
       // The capital letter indicates that the value type is not built-in
-      // by convention. The value type itself is defined further below. 
+      // by convention. The value type itself is defined further below.
       "VIN (1-10)" oftype VehicleIdentificationNumber10,
       "County" oftype text,
       "City" oftype text,
@@ -75,7 +77,7 @@ pipeline ElectricVehiclesPipeline {
 
   // 5. This block describes the application of a transform function
   // taking a column as input and adding another computed column.
-  // The applied transform function is defined below and referenced 
+  // The applied transform function is defined below and referenced
   // by the "use" property.
   block ElectricRangeTransformer oftype TableTransformer {
     inputColumns: [
@@ -92,7 +94,7 @@ pipeline ElectricVehiclesPipeline {
     from miles oftype decimal;
     to kilometers oftype integer;
 
-    // 7. In order to express what the transform function does, 
+    // 7. In order to express what the transform function does,
     // we assign an expression to the output. Values from the input and output of the transform can be referred to by name.
     kilometers: round (miles * 1.609344);
   }
@@ -117,7 +119,8 @@ pipeline ElectricVehiclesPipeline {
 // 9. Below the pipeline, we model user-define value types.
 // We give them a speaking name and provide a base value type
 // that this value type builts on. User-defined value types always place additional constraints on existing value types.
-valuetype VehicleIdentificationNumber10 oftype text {
+valuetype VehicleIdentificationNumber10 {
+  property id oftype text;
   // 10. Value types can be further refined by providing constraints.
   constraints: [
     OnlyCapitalLettersAndDigits,
@@ -125,7 +128,7 @@ valuetype VehicleIdentificationNumber10 oftype text {
   ];
 }
 
-// 11. This constraint works on text value types and requires values 
+// 11. This constraint works on text value types and requires values
 // to match a given regular expression in order to be valid.
 constraint OnlyCapitalLettersAndDigits on text: value matches /^[A-Z0-9]*$/;
 

@@ -5,7 +5,8 @@
 /**
 * Alpha-2 code for countries as defined by ISO 3166.
 */
-publish valuetype CountryCodeAlpha2 oftype text {
+publish valuetype CountryCodeAlpha2 {
+  property code oftype text;
   constraints: [
     CountryCodeAlpha2Constraint
   ];
