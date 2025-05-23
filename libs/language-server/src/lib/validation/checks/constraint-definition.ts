@@ -5,9 +5,8 @@
 /**
  * See https://jvalue.github.io/jayvee/docs/dev/guides/working-with-the-ast/ for why the following ESLint rule is disabled for this file.
  */
-/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
-import { type ConstraintDefinition } from '../../ast';
+import { type ConstraintDefinition, type Expression } from '../../ast';
 import { inferExpressionType } from '../../ast/expressions/type-inference';
 import { type JayveeValidationProps } from '../validation-registry';
 import { checkExpressionSimplification } from '../validation-util';
@@ -16,14 +15,13 @@ export function validateConstraintDefinition(
   constraint: ConstraintDefinition,
   props: JayveeValidationProps,
 ): void {
-  checkConstraintExpression(constraint, props);
+  checkConstraintExpression(constraint.expression, props);
 }
 
-function checkConstraintExpression(
-  constraint: ConstraintDefinition,
+export function checkConstraintExpression(
+  expression: Expression,
   props: JayveeValidationProps,
 ): void {
-  const expression = constraint?.expression;
   const inferredType = inferExpressionType(
     expression,
     props.validationContext,
