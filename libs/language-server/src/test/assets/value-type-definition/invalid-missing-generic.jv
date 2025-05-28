@@ -4,5 +4,4 @@
 
 valuetype ValueType<> {
   proptery attr oftype text;
-  constraints: [];
 };

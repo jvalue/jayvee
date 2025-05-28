@@ -11,7 +11,7 @@ Note that the _constraints_ need to be applicable to the base-type of the _value
 ```jayvee
 valuetype GasFillLevel {
     property level oftype integer;
-    constraints: [ GasFillLevelRange ];
+    constraint levelRange: GasFillLevelRange on level;
 }
 ```
 

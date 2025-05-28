@@ -4,10 +4,8 @@
 
 valuetype ValueType1 {
   property constr oftype Constraint;
-  constraints: [ ];
 }
 
 valuetype ValueType2 {
   property rege oftype Regex;
-  constraints: [ ];
 }

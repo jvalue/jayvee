@@ -4,9 +4,7 @@
 
 valuetype DuplicateValueTypeName {
   property attr oftype text;
-  constraints: [
-    Constraint,
-  ];
+  constraint constraintName: Constraint on attr;
 }
 
 builtin valuetype DuplicateValueTypeName;

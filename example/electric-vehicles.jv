@@ -122,10 +122,8 @@ pipeline ElectricVehiclesPipeline {
 valuetype VehicleIdentificationNumber10 {
   property id oftype text;
   // 10. Value types can be further refined by providing constraints.
-  constraints: [
-    OnlyCapitalLettersAndDigits,
-    ExactlyTenCharacters,
-  ];
+  constraint capitalized: OnlyCapitalLettersAndDigits on id;
+  constraint len: ExactlyTenCharacters on id;
 }
 
 // 11. This constraint works on text value types and requires values

@@ -19,7 +19,7 @@ builtin blocktype TestProperty {
 
 valuetype CustomValuetype {
   property attr oftype text;
-  constraints: [CustomConstraint];
+  constraint cons: CustomConstraint on attr;
 }
 
 constraint CustomConstraint on text:

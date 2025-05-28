@@ -80,8 +80,10 @@ describe('Validation of CSVFileLoaderExecutor', () => {
     // NOTE: The virtual filesystem is reset before each test
     vol.reset();
   });
-  afterEach(() => {
+  afterEach(async () => {
     vi.clearAllMocks();
+    vol.reset();
+    await fsPromise.rm('test.csv');
   });
 
   it('should diagnose no error on valid loader config', async () => {

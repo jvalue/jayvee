@@ -4,7 +4,6 @@
 
 valuetype DuplicateName {
   property attr oftype text;
-  constraints: [ ];
 }
 
 pipeline DuplicateName { } 

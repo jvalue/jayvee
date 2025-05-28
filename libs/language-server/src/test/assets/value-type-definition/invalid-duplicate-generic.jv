@@ -4,5 +4,4 @@
 
 valuetype ValueType<T, T> {
   property attr oftype text;
-  constraints: [ ];
 }

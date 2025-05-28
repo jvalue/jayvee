@@ -4,12 +4,10 @@
 
 valuetype DuplicateName {
   property attr oftype text;
-  constraints: [ ];
 }
 
 pipeline TestPipeline {
   valuetype DuplicateName {
     property attr oftype text;
-    constraints: [ ];
   }
 }

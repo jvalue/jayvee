@@ -50,9 +50,7 @@ class ValueRepresentationValidityVisitor extends ValueTypeVisitor<boolean> {
       return false;
     }
 
-    const constraints = valueType.getConstraints(
-      this.context.evaluationContext,
-    );
+    const constraints = valueType.getConstraints();
     for (const constraint of constraints) {
       const constraintExecutor = new ConstraintExecutor(constraint);
 

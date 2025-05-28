@@ -4,5 +4,4 @@
 
 valuetype ValueType {
   property self oftype ValueType;
-  constraints: [ ];
 }
