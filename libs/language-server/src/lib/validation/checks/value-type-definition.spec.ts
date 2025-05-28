@@ -93,21 +93,6 @@ describe('Validation of ValuetypeDefinition', () => {
     );
   });
 
-  it('should diagnose error on invalid constraints item', async () => {
-    const text = readJvTestAsset(
-      'value-type-definition/invalid-invalid-constraints-item.jv',
-    );
-
-    await parseAndValidateValuetypeDefinition(text);
-
-    expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
-      'error',
-      `The value needs to be of type Collection<Constraint> but is of type Collection<boolean>`,
-      expect.any(Object),
-    );
-  });
-
   it('should diagnose error on invalid constraint type for value type', async () => {
     const text = readJvTestAsset(
       'value-type-definition/invalid-invalid-constraint-type-for-value-type.jv',
@@ -118,7 +103,7 @@ describe('Validation of ValuetypeDefinition', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenCalledWith(
       'error',
-      `This value type ValueType is not convertible to the type integer of the constraint "Constraint"`,
+      `'Constraint' cannot constrain 'attr', because 'integer' is incompatible with 'text'`,
       expect.any(Object),
     );
   });

@@ -97,11 +97,9 @@ function checkConstraintMatchesAttribute(
   if (!actualValuetype.isConvertibleTo(compatibleValuetype)) {
     props.validationContext.accept(
       'error',
-      `The constraint ${
-        constraint.name
-      } of type ${compatibleValuetype.getName()} cannot be applied to the property ${
+      `'${constraint.name}' cannot constrain '${
         attribute.name
-      } of type ${actualValuetype.getName()}`,
+      }', because '${compatibleValuetype.getName()}' is incompatible with '${actualValuetype.getName()}'`,
       {
         node: diagnosticNode,
         property: 'attribute',
