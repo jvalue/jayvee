@@ -34,17 +34,19 @@ export class AtomicValueType
   }
 
   getConstraints(): ConstraintDefinition[] {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    return this.astNode?.constraints?.map((constraintReference) => {
+    return (
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      const constraintDefinition = constraintReference?.definition?.ref;
-      assert(
-        this.valueTypeProvider.Primitives.Constraint.isInternalValueRepresentation(
-          constraintDefinition,
-        ),
-      );
-      return constraintDefinition;
-    });
+      this.astNode?.constraints?.map((constraintReference) => {
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        const constraintDefinition = constraintReference?.definition?.ref;
+        assert(
+          this.valueTypeProvider.Primitives.Constraint.isInternalValueRepresentation(
+            constraintDefinition,
+          ),
+        );
+        return constraintDefinition;
+      }) ?? []
+    );
   }
 
   override isConvertibleTo(target: ValueType): boolean {
