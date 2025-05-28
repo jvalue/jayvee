@@ -65,7 +65,21 @@ function checkConstraints(
     return;
   }
 
+  const seenConstraintNames: Set<string> = new Set();
+
   constraintReferences.forEach((constraintReference) => {
+    const name = constraintReference.name;
+    assert(name !== undefined);
+    if (seenConstraintNames.has(name)) {
+      props.validationContext.accept(
+        'error',
+        'Constraint names must be unique',
+        { node: constraintReference, property: 'name' },
+      );
+    } else {
+      seenConstraintNames.add(name);
+    }
+
     const constraint = constraintReference.definition.ref;
     assert(constraint !== undefined);
     const attribute = constraintReference.attribute.ref;
