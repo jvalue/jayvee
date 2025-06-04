@@ -21,6 +21,7 @@ import {
   type ValueType,
   ValueTypeVisitor,
   type ValuetypeAssignmentValuetype,
+  isConstraintDefinition,
 } from '@jvalue/jayvee-language-server';
 
 import { ConstraintExecutor } from '../../constraints';
@@ -52,7 +53,14 @@ class ValueRepresentationValidityVisitor extends ValueTypeVisitor<boolean> {
 
     const constraints = valueType.getConstraints();
     for (const constraint of constraints) {
-      const constraintExecutor = new ConstraintExecutor(constraint);
+      let constraintExecutor: ConstraintExecutor | undefined = undefined;
+      if (isConstraintDefinition(constraint)) {
+        constraintExecutor = new ConstraintExecutor(constraint);
+      } else {
+        const attribute = valueType.getAttribute();
+        assert(attribute !== undefined);
+        constraintExecutor = new ConstraintExecutor(constraint, attribute.name);
+      }
 
       this.context.enterNode(constraint);
       const valueFulfilledConstraint = constraintExecutor.isValid(

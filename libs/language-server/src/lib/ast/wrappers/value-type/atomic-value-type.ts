@@ -8,7 +8,10 @@ import { strict as assert } from 'assert';
 import { type InternalValueRepresentation } from '../../expressions/internal-value-representation';
 import {
   type ConstraintDefinition,
+  type ValueTypeAttribute,
+  type ValueTypeConstraintInlineDefinition,
   type ValuetypeDefinition,
+  isValueTypeConstraintInlineDefinition,
 } from '../../generated/ast';
 import { type AstNodeWrapper } from '../ast-node-wrapper';
 import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
@@ -33,18 +36,31 @@ export class AtomicValueType
     return visitor.visitAtomicValueType(this);
   }
 
-  getConstraints(): ConstraintDefinition[] {
+  getAttribute(): ValueTypeAttribute | undefined {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    return this.astNode?.attribute;
+  }
+
+  getConstraints(): (
+    | ConstraintDefinition
+    | ValueTypeConstraintInlineDefinition
+  )[] {
     return (
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      this.astNode?.constraints?.map((constraintReference) => {
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        const constraintDefinition = constraintReference?.definition?.ref;
-        assert(
-          this.valueTypeProvider.Primitives.Constraint.isInternalValueRepresentation(
-            constraintDefinition,
-          ),
-        );
-        return constraintDefinition;
+      this.astNode?.constraints?.map((constraint) => {
+        if (isValueTypeConstraintInlineDefinition(constraint)) {
+          return constraint;
+          // eslint-disable-next-line no-else-return
+        } else {
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+          const constraintDefinition = constraint?.definition?.ref;
+          assert(
+            this.valueTypeProvider.Primitives.Constraint.isInternalValueRepresentation(
+              constraintDefinition,
+            ),
+          );
+          return constraintDefinition;
+        }
       }) ?? []
     );
   }

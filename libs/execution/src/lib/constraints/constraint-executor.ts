@@ -9,15 +9,27 @@ import {
   type AstNodeWrapper,
   type ConstraintDefinition,
   type InternalValueRepresentation,
+  type ValueTypeConstraintInlineDefinition,
   evaluateExpression,
 } from '@jvalue/jayvee-language-server';
 
 import { type ExecutionContext } from '../execution-context';
 
 export class ConstraintExecutor
-  implements AstNodeWrapper<ConstraintDefinition>
+  implements
+    AstNodeWrapper<ConstraintDefinition | ValueTypeConstraintInlineDefinition>
 {
-  constructor(public readonly astNode: ConstraintDefinition) {}
+  constructor(astNode: ConstraintDefinition);
+  constructor(
+    astNode: ValueTypeConstraintInlineDefinition,
+    attributeName: string,
+  );
+  constructor(
+    public readonly astNode:
+      | ConstraintDefinition
+      | ValueTypeConstraintInlineDefinition,
+    public readonly attributeName?: string,
+  ) {}
 
   isValid(
     value: InternalValueRepresentation,
@@ -25,7 +37,11 @@ export class ConstraintExecutor
   ): boolean {
     const expression = this.astNode.expression;
 
-    context.evaluationContext.setValueForValueKeyword(value);
+    if (this.attributeName === undefined) {
+      context.evaluationContext.setValueForValueKeyword(value);
+    } else {
+      context.evaluationContext.setValueForReference(this.attributeName, value);
+    }
 
     const result = evaluateExpression(
       expression,
@@ -38,7 +54,11 @@ export class ConstraintExecutor
       ),
     );
 
-    context.evaluationContext.deleteValueForValueKeyword();
+    if (this.attributeName === undefined) {
+      context.evaluationContext.deleteValueForValueKeyword();
+    } else {
+      context.evaluationContext.deleteValueForReference(this.attributeName);
+    }
 
     return result;
   }

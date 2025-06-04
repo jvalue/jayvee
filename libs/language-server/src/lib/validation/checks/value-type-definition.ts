@@ -16,8 +16,11 @@ import {
   type ValueTypeConstraintReference,
   type ValuetypeDefinition,
   type ValuetypeGenericDefinition,
+  isValueTypeConstraintInlineDefinition,
 } from '../../ast/generated/ast';
 import { type JayveeValidationProps } from '../validation-registry';
+
+import { checkConstraintExpression } from './constraint-definition';
 
 export function validateValueTypeDefinition(
   valueType: ValuetypeDefinition,
@@ -67,29 +70,33 @@ function checkConstraints(
 
   const seenConstraintNames: Set<string> = new Set();
 
-  constraintReferences.forEach((constraintReference) => {
-    const name = constraintReference.name;
+  constraintReferences.forEach((constraint) => {
+    const name = constraint.name;
     assert(name !== undefined);
     if (seenConstraintNames.has(name)) {
       props.validationContext.accept(
         'error',
         'Constraint names must be unique',
-        { node: constraintReference, property: 'name' },
+        { node: constraint, property: 'name' },
       );
     } else {
       seenConstraintNames.add(name);
     }
 
-    const constraint = constraintReference.definition.ref;
-    assert(constraint !== undefined);
-    const attribute = constraintReference.attribute.ref;
-    assert(attribute !== undefined);
-    checkConstraintMatchesAttribute(
-      attribute,
-      constraint,
-      constraintReference,
-      props,
-    );
+    if (isValueTypeConstraintInlineDefinition(constraint)) {
+      checkConstraintExpression(constraint.expression, props);
+    } else {
+      const constraintDef = constraint.definition.ref;
+      assert(constraintDef !== undefined);
+      const attribute = constraint.attribute.ref;
+      assert(attribute !== undefined);
+      checkConstraintMatchesAttribute(
+        attribute,
+        constraintDef,
+        constraint,
+        props,
+      );
+    }
   });
 }
 
