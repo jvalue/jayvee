@@ -32,7 +32,7 @@ export async function executeExpressionTestHelper(
   inputValueName: string,
   inputValueType: 'text',
   inputValueValue: InternalValueRepresentation,
-  outputValueType: 'text',
+  outputValueType: 'text' | 'integer',
 ): Promise<InternalValueRepresentation | undefined> {
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   const parse = parseHelper(services);

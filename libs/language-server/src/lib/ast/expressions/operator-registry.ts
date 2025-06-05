@@ -22,6 +22,7 @@ import { GreaterEqualOperatorEvaluator } from './evaluators/greater-equal-operat
 import { GreaterThanOperatorEvaluator } from './evaluators/greater-than-operator-evaluator';
 import { InOperatorEvaluator } from './evaluators/in-operator-evaluator';
 import { InequalityOperatorEvaluator } from './evaluators/inequality-operator-evaluator';
+import { LengthofOperatorEvaluator } from './evaluators/lengthof-operator-evaluator';
 import { LessEqualOperatorEvaluator } from './evaluators/less-equal-operator-evaluator';
 import { LessThanOperatorEvaluator } from './evaluators/less-than-operator-evaluator';
 import { LowercaseOperatorEvaluator } from './evaluators/lowercase-operator-evaluator';
@@ -63,6 +64,7 @@ import { EqualityOperatorTypeComputer } from './type-computers/equality-operator
 import { ExponentialOperatorTypeComputer } from './type-computers/exponential-operator-type-computer';
 import { InOperatorTypeComputer } from './type-computers/in-operator-type-computer';
 import { IntegerConversionOperatorTypeComputer } from './type-computers/integer-conversion-operator-type-computer';
+import { LengthofOperatorTypeComputer } from './type-computers/lengthof-operator-type-computer';
 import { LogicalOperatorTypeComputer } from './type-computers/logical-operator-type-computer';
 import { MatchesOperatorTypeComputer } from './type-computers/matches-operator-type-computer';
 import { NotOperatorTypeComputer } from './type-computers/not-operator-type-computer';
@@ -110,6 +112,7 @@ export class DefaultOperatorEvaluatorRegistry
     asInteger: new AsIntegerOperatorEvaluator(this.valueTypeProvider),
     asBoolean: new AsBooleanOperatorEvaluator(this.valueTypeProvider),
     asText: new AsTextOperatorEvaluator(this.valueTypeProvider),
+    lengthof: new LengthofOperatorEvaluator(),
   };
   binary = {
     pow: new PowOperatorEvaluator(),
@@ -155,6 +158,7 @@ export class DefaultOperatorTypeComputerRegistry
     asInteger: new AsIntegerOperatorTypeComputer(this.valueTypeProvider),
     asBoolean: new AsBooleanOperatorTypeComputer(this.valueTypeProvider),
     asText: new AsTextOperatorTypeComputer(this.valueTypeProvider),
+    lengthof: new LengthofOperatorTypeComputer(this.valueTypeProvider),
   };
   binary = {
     pow: new ExponentialOperatorTypeComputer(this.valueTypeProvider),
