@@ -2,5 +2,4 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-constraint Constraint on text:
-	value.length == (10 + -2);
+constraint Constraint on text: lengthof value == (10 + -2);

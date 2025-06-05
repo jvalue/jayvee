@@ -136,4 +136,4 @@ valuetype VehicleIdentificationNumber10 {
 
 constraint OnlyCapitalLettersAndDigits on text: value matches /^[A-Z0-9]*$/;
 
-constraint ExactlyTenCharacters on text: value.length == 10;
+constraint ExactlyTenCharacters on text: lengthof value == 10;
