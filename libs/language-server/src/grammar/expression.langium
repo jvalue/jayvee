@@ -86,7 +86,7 @@ FreeVariableLiteral:
   ValueKeywordLiteral | ReferenceLiteral;
 
 ValueKeywordLiteral:
-  'value' ('.' lengthAccess?='length')?;
+  value='value';
 
 ReferenceLiteral:
   value=[Referencable];

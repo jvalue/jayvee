@@ -182,7 +182,6 @@ function inferTypeFromExpressionLiteral(
       return inferTypeFromValueKeyword(
         expression,
         validationContext,
-        valueTypeProvider,
         wrapperFactories,
       );
     } else if (isReferenceLiteral(expression)) {
@@ -289,7 +288,6 @@ function inferCollectionElementTypes(
 function inferTypeFromValueKeyword(
   expression: ValueKeywordLiteral,
   validationContext: ValidationContext,
-  valueTypeProvider: ValueTypeProvider,
   wrapperFactories: WrapperFactoryProvider,
 ): ValueType | undefined {
   const constraintContainer = getNextAstNodeContainer(
@@ -315,20 +313,6 @@ function inferTypeFromValueKeyword(
     return undefined;
   }
 
-  if (expression.lengthAccess) {
-    if (!valueType.isConvertibleTo(valueTypeProvider.Primitives.Text)) {
-      validationContext.accept(
-        'error',
-        'The length can only be accessed from text values ',
-        {
-          node: expression,
-          keyword: 'length',
-        },
-      );
-      return undefined;
-    }
-    return valueTypeProvider.Primitives.Integer;
-  }
   return valueType;
 }
 
