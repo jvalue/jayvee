@@ -16,4 +16,16 @@ describe('The lengthof operator', () => {
 
     expect(result).toBe(testString.length);
   });
+
+  it('should determine the length of a collection successfully', async () => {
+    const result = await executeExpressionTestHelper(
+      `lengthof [1, 353, 23]`,
+      'inputValue',
+      'text',
+      'irrelevant',
+      'integer',
+    );
+
+    expect(result).toBe(3);
+  });
 });
