@@ -2,9 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-// eslint-disable-next-line unicorn/prefer-node-protocol
-import { strict as assert } from 'assert';
-
 import { assertUnreachable } from 'langium';
 
 import { type RuntimeParameterProvider } from '../../services';
@@ -12,7 +9,6 @@ import {} from '../../validation/validation-context';
 import {
   type FreeVariableLiteral,
   type ReferenceLiteral,
-  type ValueKeywordLiteral,
   isBlockTypeProperty,
   isConstraintDefinition,
   isReferenceLiteral,
@@ -46,7 +42,7 @@ export class EvaluationContext {
     if (isReferenceLiteral(literal)) {
       return this.getValueForReference(literal);
     } else if (isValueKeywordLiteral(literal)) {
-      return this.getValueForValueKeyword(literal, this.valueTypeProvider);
+      return this.getValueForValueKeyword();
     }
     assertUnreachable(literal);
   }
@@ -105,23 +101,7 @@ export class EvaluationContext {
     this.valueKeywordValue = undefined;
   }
 
-  getValueForValueKeyword(
-    literal: ValueKeywordLiteral,
-    valueTypeProvider: ValueTypeProvider,
-  ): InternalValueRepresentation | undefined {
-    if (this.valueKeywordValue === undefined) {
-      return undefined;
-    }
-
-    if (literal.lengthAccess) {
-      assert(
-        valueTypeProvider.Primitives.Text.isInternalValueRepresentation(
-          this.valueKeywordValue,
-        ),
-      );
-      return this.valueKeywordValue.length;
-    }
-
+  getValueForValueKeyword(): InternalValueRepresentation | undefined {
     return this.valueKeywordValue;
   }
 }

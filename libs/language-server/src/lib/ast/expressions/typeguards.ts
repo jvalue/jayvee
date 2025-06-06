@@ -47,6 +47,14 @@ export const VALUETYPEASSIGNMENT_TYPEGUARD: InternalValueRepresentationTypeguard
   return isValuetypeAssignment(value);
 };
 
+export const COLLECTION_TYPEGUARD: InternalValueRepresentationTypeguard<
+  InternalValueRepresentation[]
+> = (
+  value: InternalValueRepresentation,
+): value is InternalValueRepresentation[] => {
+  return Array.isArray(value);
+};
+
 export function isEveryValueDefined<T>(array: (T | undefined)[]): array is T[] {
   return array.every((value) => value !== undefined);
 }

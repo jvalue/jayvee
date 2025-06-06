@@ -52,7 +52,7 @@ PrimaryExpression infers Expression:
   | ExpressionLiteral;
 
 UnaryExpression:
-  operator=('not' | '+' | '-' | 'sqrt' | 'floor' | 'ceil' | 'round' | 'lowercase' | 'uppercase' | 'asDecimal' | 'asInteger' | 'asBoolean' | 'asText') expression=PrimaryExpression;
+  operator=('not' | '+' | '-' | 'sqrt' | 'floor' | 'ceil' | 'round' | 'lowercase' | 'uppercase' | 'asDecimal' | 'asInteger' | 'asBoolean' | 'asText' | 'lengthof') expression=PrimaryExpression;
 
 ExpressionLiteral:
   ValueLiteral | FreeVariableLiteral;
@@ -86,7 +86,7 @@ FreeVariableLiteral:
   ValueKeywordLiteral | ReferenceLiteral;
 
 ValueKeywordLiteral:
-  'value' ('.' lengthAccess?='length')?;
+  value='value';
 
 ReferenceLiteral:
   value=[Referencable];
