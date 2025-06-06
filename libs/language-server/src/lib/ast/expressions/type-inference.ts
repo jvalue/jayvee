@@ -30,6 +30,7 @@ import {
   isUnaryExpression,
   isValueKeywordLiteral,
   isValueLiteral,
+  isValueTypeAttribute,
   isValuetypeAssignmentLiteral,
 } from '../generated/ast';
 import { getNextAstNodeContainer } from '../model-util';
@@ -335,7 +336,8 @@ function inferTypeFromReferenceLiteral(
   }
   if (
     isTransformPortDefinition(referenced) ||
-    isBlockTypeProperty(referenced)
+    isBlockTypeProperty(referenced) ||
+    isValueTypeAttribute(referenced)
   ) {
     const valueType = referenced.valueType;
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
