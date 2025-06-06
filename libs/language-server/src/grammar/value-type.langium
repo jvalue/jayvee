@@ -19,7 +19,7 @@ CustomValuetypeDefinition infers ValuetypeDefinition:
   '}';
 
 ValueTypeAttribute:
-  'property' name=ID 'oftype' type=ValueTypeReference ';';
+  'property' name=ID 'oftype' valueType=ValueTypeReference ';';
 
 ValueTypeConstraintReference:
   'constraint' name=ID ':' definition=[ConstraintDefinition] 'on' attribute=[ValueTypeAttribute] ';';

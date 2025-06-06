@@ -45,7 +45,7 @@ function checkSupertypeCycle(
       "`builtin` valuetypes don't have cycles",
     );
     assert(
-      valueTypeDefinition.attribute?.type !== undefined,
+      valueTypeDefinition.attribute?.valueType !== undefined,
       '`hasCycle == true`, so `valueTypeDefinition` MUST have an attribute with a type',
     );
     props.validationContext.accept(
@@ -53,7 +53,7 @@ function checkSupertypeCycle(
       'Could not construct this value type since there is a cycle in the (transitive) "oftype" relation.',
       {
         node: valueTypeDefinition.attribute,
-        property: 'type',
+        property: 'valueType',
       },
     );
   }
@@ -106,7 +106,9 @@ function checkConstraintMatchesAttribute(
   diagnosticNode: ValueTypeConstraintReference,
   props: JayveeValidationProps,
 ): void {
-  const actualValuetype = props.wrapperFactories.ValueType.wrap(attribute.type);
+  const actualValuetype = props.wrapperFactories.ValueType.wrap(
+    attribute.valueType,
+  );
   const compatibleValuetype = props.wrapperFactories.ValueType.wrap(
     constraint?.valueType,
   );

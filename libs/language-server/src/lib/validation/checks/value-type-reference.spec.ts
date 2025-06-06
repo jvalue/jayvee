@@ -64,7 +64,7 @@ describe('Validation of ValueTypeReference', () => {
     for (let i = 0; i < allValueTypes.length; ++i) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const valueTypeDefinition = allValueTypes[i]!;
-      const valueTypeRef = valueTypeDefinition.attribute?.type;
+      const valueTypeRef = valueTypeDefinition.attribute?.valueType;
       assert(valueTypeRef !== undefined);
       valueTypeReferences.push(valueTypeRef);
     }
