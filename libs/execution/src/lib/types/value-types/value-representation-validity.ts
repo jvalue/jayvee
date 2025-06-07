@@ -51,22 +51,20 @@ class ValueRepresentationValidityVisitor extends ValueTypeVisitor<boolean> {
       return false;
     }
 
+    const attribute = valueType.getAttribute();
+    assert(attribute !== undefined);
     const constraints = valueType.getConstraints();
     for (const constraint of constraints) {
-      let constraintExecutor: ConstraintExecutor | undefined = undefined;
-      if (isConstraintDefinition(constraint)) {
-        constraintExecutor = new ConstraintExecutor(constraint);
-      } else {
-        const attribute = valueType.getAttribute();
-        assert(attribute !== undefined);
-        constraintExecutor = new ConstraintExecutor(constraint, attribute.name);
-      }
-
       this.context.enterNode(constraint);
-      const valueFulfilledConstraint = constraintExecutor.isValid(
-        this.value,
-        this.context,
-      );
+
+      const valueFulfilledConstraint = isConstraintDefinition(constraint)
+        ? new ConstraintExecutor(constraint).isValid(this.value, this.context)
+        : new ConstraintExecutor(constraint).isValid(
+            this.value,
+            this.context,
+            attribute,
+          );
+
       this.context.exitNode(constraint);
 
       if (!valueFulfilledConstraint) {

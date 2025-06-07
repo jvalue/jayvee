@@ -9,38 +9,32 @@ import {
   type AstNodeWrapper,
   type ConstraintDefinition,
   type InternalValueRepresentation,
+  type ValueTypeAttribute,
   type ValueTypeConstraintInlineDefinition,
   evaluateExpression,
 } from '@jvalue/jayvee-language-server';
 
 import { type ExecutionContext } from '../execution-context';
 
-export class ConstraintExecutor
-  implements
-    AstNodeWrapper<ConstraintDefinition | ValueTypeConstraintInlineDefinition>
+export class ConstraintExecutor<
+  T extends ConstraintDefinition | ValueTypeConstraintInlineDefinition,
+> implements AstNodeWrapper<T>
 {
-  constructor(astNode: ConstraintDefinition);
-  constructor(
-    astNode: ValueTypeConstraintInlineDefinition,
-    attributeName: string,
-  );
-  constructor(
-    public readonly astNode:
-      | ConstraintDefinition
-      | ValueTypeConstraintInlineDefinition,
-    public readonly attributeName?: string,
-  ) {}
+  constructor(public readonly astNode: T) {}
 
   isValid(
     value: InternalValueRepresentation,
     context: ExecutionContext,
+    attribute: T extends ValueTypeConstraintInlineDefinition
+      ? ValueTypeAttribute
+      : void,
   ): boolean {
     const expression = this.astNode.expression;
 
-    if (this.attributeName === undefined) {
+    if (attribute === undefined) {
       context.evaluationContext.setValueForValueKeyword(value);
     } else {
-      context.evaluationContext.setValueForReference(this.attributeName, value);
+      context.evaluationContext.setValueForReference(attribute.name, value);
     }
 
     const result = evaluateExpression(
@@ -54,10 +48,10 @@ export class ConstraintExecutor
       ),
     );
 
-    if (this.attributeName === undefined) {
+    if (attribute === undefined) {
       context.evaluationContext.deleteValueForValueKeyword();
     } else {
-      context.evaluationContext.deleteValueForReference(this.attributeName);
+      context.evaluationContext.deleteValueForReference(attribute.name);
     }
 
     return result;
