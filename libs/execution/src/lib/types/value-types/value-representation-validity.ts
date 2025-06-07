@@ -45,9 +45,9 @@ class ValueRepresentationValidityVisitor extends ValueTypeVisitor<boolean> {
   }
 
   override visitAtomicValueType(valueType: AtomicValueType): boolean {
-    const supertype = valueType.getSupertype();
-    assert(supertype !== undefined);
-    if (!supertype.acceptVisitor(this)) {
+    const contained = valueType.getContainedType();
+    assert(contained !== undefined);
+    if (!contained.acceptVisitor(this)) {
       return false;
     }
 

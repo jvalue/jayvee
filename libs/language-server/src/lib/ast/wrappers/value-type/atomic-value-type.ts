@@ -70,7 +70,7 @@ export class AtomicValueType
       return true;
     }
 
-    const supertype = this.getSupertype();
+    const supertype = this.getContainedType();
     if (supertype === undefined) {
       return false;
     }
@@ -78,7 +78,7 @@ export class AtomicValueType
   }
 
   override isReferenceableByUser(): boolean {
-    const supertype = this.getSupertype();
+    const supertype = this.getContainedType();
     if (supertype === undefined) {
       return false;
     }
@@ -86,7 +86,7 @@ export class AtomicValueType
   }
 
   override isAllowedAsRuntimeParameter(): boolean {
-    const supertype = this.getSupertype();
+    const supertype = this.getContainedType();
     if (supertype === undefined) {
       return false;
     }
@@ -98,7 +98,7 @@ export class AtomicValueType
     return this.astNode.name ?? '';
   }
 
-  protected override doGetSupertype(): ValueType | undefined {
+  protected override doGetContainedType(): ValueType | undefined {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const supertype = this.astNode?.attribute?.valueType;
     return this.wrapperFactories.ValueType.wrap(supertype);
@@ -107,7 +107,7 @@ export class AtomicValueType
   override isInternalValueRepresentation(
     operandValue: InternalValueRepresentation | undefined,
   ): operandValue is InternalValueRepresentation {
-    const supertype = this.getSupertype();
+    const supertype = this.getContainedType();
     if (supertype === undefined) {
       return false;
     }

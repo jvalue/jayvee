@@ -83,10 +83,10 @@ class InternalRepresentationParserVisitor extends ValueTypeVisitor<
   visitAtomicValueType(
     valueType: AtomicValueType,
   ): InternalValueRepresentation | undefined {
-    const supertype = valueType.getSupertype();
-    assert(supertype !== undefined);
+    const contained = valueType.getContainedType();
+    assert(contained !== undefined);
 
-    return supertype.acceptVisitor(this);
+    return contained.acceptVisitor(this);
   }
 
   visitCellRange(): undefined {

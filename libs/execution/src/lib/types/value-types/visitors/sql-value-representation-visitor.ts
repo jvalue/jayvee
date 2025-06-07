@@ -58,9 +58,9 @@ export class SQLValueRepresentationVisitor extends ValueTypeVisitor<
   override visitAtomicValueType(
     valueType: AtomicValueType,
   ): (value: InternalValueRepresentation) => string {
-    const supertype = valueType.getSupertype();
-    assert(supertype !== undefined);
-    return supertype.acceptVisitor(this);
+    const contained = valueType.getContainedType();
+    assert(contained !== undefined);
+    return contained.acceptVisitor(this);
   }
 
   override visitRegex(): (value: InternalValueRepresentation) => string {

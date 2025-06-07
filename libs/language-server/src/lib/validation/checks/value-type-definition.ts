@@ -38,7 +38,7 @@ function checkSupertypeCycle(
   const hasCycle =
     props.wrapperFactories.ValueType.wrap(
       valueTypeDefinition,
-    )?.hasSupertypeCycle() ?? false;
+    )?.hasTypeCycle() ?? false;
   if (hasCycle) {
     assert(
       !valueTypeDefinition.isBuiltin,
