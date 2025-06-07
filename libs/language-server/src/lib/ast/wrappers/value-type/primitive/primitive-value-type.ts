@@ -21,7 +21,7 @@ export abstract class PrimitiveValueType<
     return target === this;
   }
 
-  protected override doGetSupertype(): undefined {
+  protected override doGetContainedType(): undefined {
     return undefined;
   }
 

@@ -29,23 +29,15 @@ export interface ValueType<
   acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R;
 
   /**
-   * The subtype relation reflects the hierarchy of value types.
-   * Primitive value types are never a subtype of another value type.
-   * Atomic value types may form a hierarchy below a primitive value type.
+   * Primitive value types never contain types.
+   * Atomic value types may contain an atomic or primitive value type.
    */
-  isSubtypeOf(other: ValueType): boolean;
-
-  /**
-   * The supertype relation reflects the hierarchy of value types.
-   * Primitive value types never have a supertype.
-   * Atomic value types may have a atomic or primitive value type as supertype.
-   */
-  getSupertype(): ValueType | undefined;
+  getContainedType(): ValueType | undefined;
 
   /**
    * The convertible relation reflects the ability of primitive types to
    * convert into another primitive value type in a loss-less way (e.g., int to decimal).
-   * Atomic value types inherit ({@link isSubtypeOf}) the conversion behavior of their primitive value type.
+   * Atomic value types have the same conversion behaviour as their contained type.
    */
   isConvertibleTo(target: ValueType): boolean;
 
@@ -66,9 +58,9 @@ export interface ValueType<
   ): operandValue is I;
 
   /**
-   * Checks if there is a cycle in the supertype relation.
+   * Checks if there is a cycle in the contained type relation.
    */
-  hasSupertypeCycle(visited?: ValueType[]): boolean;
+  hasTypeCycle(visited?: ValueType[]): boolean;
 
   isAllowedAsRuntimeParameter(): boolean;
   getName(): string;

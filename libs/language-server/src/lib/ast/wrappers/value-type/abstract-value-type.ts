@@ -11,25 +11,14 @@ export abstract class AbstractValueType<I extends InternalValueRepresentation>
 {
   abstract acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R;
 
-  isSubtypeOf(other: ValueType): boolean {
-    let othersSupertype = other.getSupertype();
-    while (othersSupertype !== undefined) {
-      if (othersSupertype === this) {
-        return true;
-      }
-      othersSupertype = othersSupertype.getSupertype();
-    }
-    return false;
-  }
-
-  getSupertype(): ValueType | undefined {
-    if (this.hasSupertypeCycle()) {
+  getContainedType(): ValueType | undefined {
+    if (this.hasTypeCycle()) {
       return undefined;
     }
-    return this.doGetSupertype();
+    return this.doGetContainedType();
   }
 
-  protected abstract doGetSupertype(): ValueType | undefined;
+  protected abstract doGetContainedType(): ValueType | undefined;
 
   abstract equals(target: ValueType): boolean;
 
@@ -47,18 +36,18 @@ export abstract class AbstractValueType<I extends InternalValueRepresentation>
 
   abstract getName(): string;
 
-  hasSupertypeCycle(visited: ValueType[] = []): boolean {
+  hasTypeCycle(visited: ValueType[] = []): boolean {
     const cycleDetected = visited.some((v) => v.equals(this));
     if (cycleDetected) {
       return true;
     }
     visited.push(this);
 
-    const supertype = this.doGetSupertype();
+    const supertype = this.doGetContainedType();
     if (supertype === undefined) {
       return false;
     }
 
-    return supertype.hasSupertypeCycle(visited);
+    return supertype.hasTypeCycle(visited);
   }
 }

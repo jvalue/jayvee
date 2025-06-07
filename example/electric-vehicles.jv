@@ -123,11 +123,12 @@ valuetype VehicleIdentificationNumber10 {
   property id oftype text;
   // 10. Value types can be further refined by providing constraints.
   constraint capitalized: OnlyCapitalLettersAndDigits on id;
-  constraint len: ExactlyTenCharacters on id;
+  // 11. Constraints can also be defined inside the value type. This constraint
+  // ensures that all ids have a length of 10 characters
+  constraint exactlyTenCharacters: lengthof id == 10;
 }
 
-// 11. This constraint works on text value types and requires values
+// 12. This constraint works on text value types and requires values
 // to match a given regular expression in order to be valid.
 constraint OnlyCapitalLettersAndDigits on text: value matches /^[A-Z0-9]*$/;
 
-constraint ExactlyTenCharacters on text: lengthof value == 10;

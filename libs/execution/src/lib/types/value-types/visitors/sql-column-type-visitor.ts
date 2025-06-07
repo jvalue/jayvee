@@ -28,9 +28,9 @@ export class SQLColumnTypeVisitor extends ValueTypeVisitor<string> {
   }
 
   override visitAtomicValueType(valueType: AtomicValueType): string {
-    const supertype = valueType.getSupertype();
-    assert(supertype !== undefined);
-    return supertype.acceptVisitor(this);
+    const contained = valueType.getContainedType();
+    assert(contained !== undefined);
+    return contained.acceptVisitor(this);
   }
 
   override visitRegex(): string {

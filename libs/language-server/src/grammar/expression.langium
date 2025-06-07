@@ -95,4 +95,5 @@ Referencable:
   ConstraintDefinition
   | BlockTypeProperty
   | TransformDefinition
-  | TransformPortDefinition;
+  | TransformPortDefinition
+  | ValueTypeAttribute;

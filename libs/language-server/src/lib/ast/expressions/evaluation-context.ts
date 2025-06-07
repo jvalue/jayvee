@@ -15,6 +15,7 @@ import {
   isTransformDefinition,
   isTransformPortDefinition,
   isValueKeywordLiteral,
+  isValueTypeAttribute,
 } from '../generated/ast';
 import { type ValueTypeProvider } from '../wrappers';
 import { type ValueType } from '../wrappers/value-type/value-type';
@@ -77,6 +78,9 @@ export class EvaluationContext {
       return this.variableValues.get(dereferenced.name);
     }
     if (isBlockTypeProperty(dereferenced)) {
+      return this.variableValues.get(dereferenced.name);
+    }
+    if (isValueTypeAttribute(dereferenced)) {
       return this.variableValues.get(dereferenced.name);
     }
     assertUnreachable(dereferenced);

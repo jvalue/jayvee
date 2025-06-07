@@ -16,8 +16,11 @@ import {
   type ValueTypeConstraintReference,
   type ValuetypeDefinition,
   type ValuetypeGenericDefinition,
+  isValueTypeConstraintInlineDefinition,
 } from '../../ast/generated/ast';
 import { type JayveeValidationProps } from '../validation-registry';
+
+import { checkConstraintExpression } from './constraint-definition';
 
 export function validateValueTypeDefinition(
   valueType: ValuetypeDefinition,
@@ -35,14 +38,14 @@ function checkSupertypeCycle(
   const hasCycle =
     props.wrapperFactories.ValueType.wrap(
       valueTypeDefinition,
-    )?.hasSupertypeCycle() ?? false;
+    )?.hasTypeCycle() ?? false;
   if (hasCycle) {
     assert(
       !valueTypeDefinition.isBuiltin,
       "`builtin` valuetypes don't have cycles",
     );
     assert(
-      valueTypeDefinition.attribute?.type !== undefined,
+      valueTypeDefinition.attribute?.valueType !== undefined,
       '`hasCycle == true`, so `valueTypeDefinition` MUST have an attribute with a type',
     );
     props.validationContext.accept(
@@ -50,7 +53,7 @@ function checkSupertypeCycle(
       'Could not construct this value type since there is a cycle in the (transitive) "oftype" relation.',
       {
         node: valueTypeDefinition.attribute,
-        property: 'type',
+        property: 'valueType',
       },
     );
   }
@@ -67,29 +70,33 @@ function checkConstraints(
 
   const seenConstraintNames: Set<string> = new Set();
 
-  constraintReferences.forEach((constraintReference) => {
-    const name = constraintReference.name;
+  constraintReferences.forEach((constraint) => {
+    const name = constraint.name;
     assert(name !== undefined);
     if (seenConstraintNames.has(name)) {
       props.validationContext.accept(
         'error',
         'Constraint names must be unique',
-        { node: constraintReference, property: 'name' },
+        { node: constraint, property: 'name' },
       );
     } else {
       seenConstraintNames.add(name);
     }
 
-    const constraint = constraintReference.definition.ref;
-    assert(constraint !== undefined);
-    const attribute = constraintReference.attribute.ref;
-    assert(attribute !== undefined);
-    checkConstraintMatchesAttribute(
-      attribute,
-      constraint,
-      constraintReference,
-      props,
-    );
+    if (isValueTypeConstraintInlineDefinition(constraint)) {
+      checkConstraintExpression(constraint.expression, props);
+    } else {
+      const constraintDef = constraint.definition.ref;
+      assert(constraintDef !== undefined);
+      const attribute = constraint.attribute.ref;
+      assert(attribute !== undefined);
+      checkConstraintMatchesAttribute(
+        attribute,
+        constraintDef,
+        constraint,
+        props,
+      );
+    }
   });
 }
 
@@ -99,7 +106,9 @@ function checkConstraintMatchesAttribute(
   diagnosticNode: ValueTypeConstraintReference,
   props: JayveeValidationProps,
 ): void {
-  const actualValuetype = props.wrapperFactories.ValueType.wrap(attribute.type);
+  const actualValuetype = props.wrapperFactories.ValueType.wrap(
+    attribute.valueType,
+  );
   const compatibleValuetype = props.wrapperFactories.ValueType.wrap(
     constraint?.valueType,
   );

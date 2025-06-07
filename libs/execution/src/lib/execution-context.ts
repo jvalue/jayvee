@@ -15,6 +15,7 @@ import {
   type PropertyAssignment,
   type TransformDefinition,
   type ValueType,
+  type ValueTypeConstraintInlineDefinition,
   type ValueTypeProvider,
   type WrapperFactoryProvider,
   evaluatePropertyValue,
@@ -23,6 +24,7 @@ import {
   isPipelineDefinition,
   isPropertyBody,
   isTransformDefinition,
+  isValueTypeConstraintInlineDefinition,
 } from '@jvalue/jayvee-language-server';
 import { isReference } from 'langium';
 
@@ -39,7 +41,8 @@ import { type IOTypeImplementation } from './types';
 export type StackNode =
   | BlockDefinition
   | ConstraintDefinition
-  | TransformDefinition;
+  | TransformDefinition
+  | ValueTypeConstraintInlineDefinition;
 
 export class ExecutionContext {
   private readonly stack: StackNode[] = [];
@@ -115,7 +118,8 @@ export class ExecutionContext {
     const currentNode = this.getCurrentNode();
     if (
       isPipelineDefinition(currentNode) ||
-      isConstraintDefinition(currentNode)
+      isConstraintDefinition(currentNode) ||
+      isValueTypeConstraintInlineDefinition(currentNode)
     ) {
       return undefined;
     }
@@ -188,6 +192,7 @@ export class ExecutionContext {
     assert(!isPipelineDefinition(currentNode));
     assert(!isConstraintDefinition(currentNode));
     assert(!isTransformDefinition(currentNode));
+    assert(!isValueTypeConstraintInlineDefinition(currentNode));
 
     assert(isReference(currentNode.type));
     assert(isBlockDefinition(currentNode));
