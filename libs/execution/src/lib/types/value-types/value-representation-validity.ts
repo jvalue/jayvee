@@ -21,6 +21,7 @@ import {
   type ValueType,
   ValueTypeVisitor,
   type ValuetypeAssignmentValuetype,
+  isConstraintDefinition,
 } from '@jvalue/jayvee-language-server';
 
 import { ConstraintExecutor } from '../../constraints';
@@ -44,21 +45,26 @@ class ValueRepresentationValidityVisitor extends ValueTypeVisitor<boolean> {
   }
 
   override visitAtomicValueType(valueType: AtomicValueType): boolean {
-    const supertype = valueType.getSupertype();
-    assert(supertype !== undefined);
-    if (!supertype.acceptVisitor(this)) {
+    const contained = valueType.getContainedType();
+    assert(contained !== undefined);
+    if (!contained.acceptVisitor(this)) {
       return false;
     }
 
+    const attribute = valueType.getAttribute();
+    assert(attribute !== undefined);
     const constraints = valueType.getConstraints();
     for (const constraint of constraints) {
-      const constraintExecutor = new ConstraintExecutor(constraint);
-
       this.context.enterNode(constraint);
-      const valueFulfilledConstraint = constraintExecutor.isValid(
-        this.value,
-        this.context,
-      );
+
+      const valueFulfilledConstraint = isConstraintDefinition(constraint)
+        ? new ConstraintExecutor(constraint).isValid(this.value, this.context)
+        : new ConstraintExecutor(constraint).isValid(
+            this.value,
+            this.context,
+            attribute,
+          );
+
       this.context.exitNode(constraint);
 
       if (!valueFulfilledConstraint) {

@@ -9,23 +9,33 @@ import {
   type AstNodeWrapper,
   type ConstraintDefinition,
   type InternalValueRepresentation,
+  type ValueTypeAttribute,
+  type ValueTypeConstraintInlineDefinition,
   evaluateExpression,
 } from '@jvalue/jayvee-language-server';
 
 import { type ExecutionContext } from '../execution-context';
 
-export class ConstraintExecutor
-  implements AstNodeWrapper<ConstraintDefinition>
+export class ConstraintExecutor<
+  T extends ConstraintDefinition | ValueTypeConstraintInlineDefinition,
+> implements AstNodeWrapper<T>
 {
-  constructor(public readonly astNode: ConstraintDefinition) {}
+  constructor(public readonly astNode: T) {}
 
   isValid(
     value: InternalValueRepresentation,
     context: ExecutionContext,
+    attribute: T extends ValueTypeConstraintInlineDefinition
+      ? ValueTypeAttribute
+      : void,
   ): boolean {
     const expression = this.astNode.expression;
 
-    context.evaluationContext.setValueForValueKeyword(value);
+    if (attribute === undefined) {
+      context.evaluationContext.setValueForValueKeyword(value);
+    } else {
+      context.evaluationContext.setValueForReference(attribute.name, value);
+    }
 
     const result = evaluateExpression(
       expression,
@@ -38,7 +48,11 @@ export class ConstraintExecutor
       ),
     );
 
-    context.evaluationContext.deleteValueForValueKeyword();
+    if (attribute === undefined) {
+      context.evaluationContext.deleteValueForValueKeyword();
+    } else {
+      context.evaluationContext.deleteValueForReference(attribute.name);
+    }
 
     return result;
   }

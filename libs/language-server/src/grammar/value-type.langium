@@ -15,14 +15,17 @@ CustomValuetypeDefinition infers ValuetypeDefinition:
     (genericDefinition=ValuetypeGenericsDefinition)?
   '{'
     attribute=ValueTypeAttribute
-    (constraints+=ValueTypeConstraintReference)*
+    (constraints+=ValueTypeConstraintReference | constraints+=ValueTypeConstraintInlineDefinition)*
   '}';
 
 ValueTypeAttribute:
-  'property' name=ID 'oftype' type=ValueTypeReference ';';
+  'property' name=ID 'oftype' valueType=ValueTypeReference ';';
 
 ValueTypeConstraintReference:
   'constraint' name=ID ':' definition=[ConstraintDefinition] 'on' attribute=[ValueTypeAttribute] ';';
+
+ValueTypeConstraintInlineDefinition:
+  'constraint' name=ID ':' expression=Expression ';';
 
 ValuetypeAssignmentLiteral:
   value=ValuetypeAssignment;

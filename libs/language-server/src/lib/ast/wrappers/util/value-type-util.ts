@@ -23,7 +23,7 @@ export function getValuetypeHierarchyStack(
   if (isPrimitiveValueType(valueType)) {
     return [valueType];
   } else if (isAtomicValueType(valueType)) {
-    const supertype = valueType.getSupertype();
+    const supertype = valueType.getContainedType();
     assert(supertype !== undefined);
     return [...getValuetypeHierarchyStack(supertype), valueType];
   }
