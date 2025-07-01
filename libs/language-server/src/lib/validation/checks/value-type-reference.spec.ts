@@ -151,7 +151,7 @@ describe('Validation of ValueTypeReference', () => {
     );
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `The referenced value type ValueType requires 2 generic parameters but found 0.`,
       expect.any(Object),
@@ -173,7 +173,7 @@ describe('Validation of ValueTypeReference', () => {
     );
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `The referenced value type ValueType requires 2 generic parameters but found 1.`,
       expect.any(Object),
@@ -195,7 +195,7 @@ describe('Validation of ValueTypeReference', () => {
     );
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `The referenced value type ValueType requires 2 generic parameters but found 3.`,
       expect.any(Object),
@@ -217,7 +217,7 @@ describe('Validation of ValueTypeReference', () => {
     );
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `The referenced value type ValueType requires 0 generic parameters but found 1.`,
       expect.any(Object),
@@ -272,7 +272,7 @@ describe('Validation of ValueTypeReference', () => {
     );
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `Value type Constraint cannot be referenced in this context`,
       expect.any(Object),

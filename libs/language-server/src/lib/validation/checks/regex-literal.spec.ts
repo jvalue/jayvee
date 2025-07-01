@@ -85,7 +85,7 @@ describe('Validation of RegexLiteral', () => {
     await parseAndValidateRangeLiteral(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `A parsing error occurred: Invalid regular expression: /a[+/: Unterminated character class`,
       expect.any(Object),

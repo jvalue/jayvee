@@ -77,7 +77,7 @@ describe('Validation PropertyBody', () => {
     await parseAndValidatePropertyBody(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `The following required properties are missing: "textProperty"`,
       expect.any(Object),
@@ -100,7 +100,7 @@ describe('Validation PropertyBody', () => {
     await parseAndValidatePropertyBody(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       'The value of property "customValidationTextProperty" needs to be of type CustomValuetype but is of type text',
       expect.any(Object),

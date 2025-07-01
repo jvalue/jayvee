@@ -98,7 +98,7 @@ describe('jv example smoke tests', () => {
     expect(sqliteLoaderMock.sqliteClient.run).toBeCalledTimes(3);
     expect(sqliteLoaderMock.sqliteClient.close).toBeCalledTimes(1);
 
-    expect(exitSpy).toHaveBeenCalledWith(0);
+    expect(exitSpy).toHaveBeenLastCalledWith(0);
   });
 
   it('should have no errors when executing electric-vehicles.jv example', async () => {
@@ -140,7 +140,7 @@ describe('jv example smoke tests', () => {
     expect(sqliteLoaderMock.sqliteClient.run).toBeCalledTimes(3);
     expect(sqliteLoaderMock.sqliteClient.close).toBeCalledTimes(1);
 
-    expect(exitSpy).toHaveBeenCalledWith(0);
+    expect(exitSpy).toHaveBeenLastCalledWith(0);
   });
 
   it('should have no errors when executing gtfs-rt.jv example', async () => {
@@ -193,7 +193,7 @@ describe('jv example smoke tests', () => {
     expect(sqliteLoaderMock.sqliteClient.run).toBeCalledTimes(6);
     expect(sqliteLoaderMock.sqliteClient.close).toBeCalledTimes(3);
 
-    expect(exitSpy).toHaveBeenCalledWith(0);
+    expect(exitSpy).toHaveBeenLastCalledWith(0);
   });
 
   it('should have no errors when executing gtfs-static.jv example', async () => {
@@ -221,6 +221,6 @@ describe('jv example smoke tests', () => {
     expect(sqliteLoaderMock.sqliteClient.run).toBeCalledTimes(33);
     expect(sqliteLoaderMock.sqliteClient.close).toBeCalledTimes(11);
 
-    expect(exitSpy).toHaveBeenCalledWith(0);
+    expect(exitSpy).toHaveBeenLastCalledWith(0);
   });
 });

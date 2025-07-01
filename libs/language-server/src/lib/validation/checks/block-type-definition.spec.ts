@@ -77,7 +77,7 @@ describe('Validation of BuiltinBlockTypeDefinition', () => {
     await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `Property 'testProp' in block type 'TestBlock' is defined multiple times`,
       expect.any(Object),
@@ -92,7 +92,7 @@ describe('Validation of BuiltinBlockTypeDefinition', () => {
     await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `Found more than one input definition in block type 'TestBlock'`,
       expect.any(Object),
@@ -107,7 +107,7 @@ describe('Validation of BuiltinBlockTypeDefinition', () => {
     await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `Found more than one output definition in block type 'TestBlock'`,
       expect.any(Object),
@@ -122,7 +122,7 @@ describe('Validation of BuiltinBlockTypeDefinition', () => {
     await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `Found no input in block type 'TestBlock' - consider using iotype "none" if the block type consumes no input`,
       expect.any(Object),
@@ -137,7 +137,7 @@ describe('Validation of BuiltinBlockTypeDefinition', () => {
     await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `Found no output in block type 'TestBlock' - consider using iotype "none" if the block type produces no output`,
       expect.any(Object),
@@ -152,7 +152,7 @@ describe('Validation of BuiltinBlockTypeDefinition', () => {
     await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `This default value is not compatible with value type decimal`,
       expect.any(Object),

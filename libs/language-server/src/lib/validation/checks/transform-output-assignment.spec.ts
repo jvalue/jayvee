@@ -87,7 +87,7 @@ describe('Validation of TransformOutputAssignment', () => {
     await parseAndValidateTransformOutputAssignment(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `The value needs to be of type integer but is of type decimal`,
       expect.any(Object),
@@ -102,7 +102,7 @@ describe('Validation of TransformOutputAssignment', () => {
     await parseAndValidateTransformOutputAssignment(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `Output ports are not allowed in this expression`,
       expect.any(Object),

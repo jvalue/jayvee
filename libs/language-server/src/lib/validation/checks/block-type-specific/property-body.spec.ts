@@ -82,7 +82,7 @@ describe('Validation of block type specific property bodies', () => {
       await parseAndValidatePropertyAssignment(text);
 
       expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
-      expect(validationAcceptorMock).toHaveBeenCalledWith(
+      expect(validationAcceptorMock).toHaveBeenLastCalledWith(
         'error',
         'The lower line number needs to be smaller or equal to the upper line number',
         expect.any(Object),
@@ -143,7 +143,7 @@ describe('Validation of block type specific property bodies', () => {
       await parseAndValidatePropertyAssignment(text);
 
       expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-      expect(validationAcceptorMock).toHaveBeenCalledWith(
+      expect(validationAcceptorMock).toHaveBeenLastCalledWith(
         'error',
         'Expected 1 columns but only got 2',
         expect.any(Object),

@@ -87,7 +87,7 @@ describe('Validation of ConstraintDefinition', () => {
     await parseAndValidateConstraintDefinition(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `The value needs to be of type boolean but is of type integer`,
       expect.any(Object),
@@ -102,7 +102,7 @@ describe('Validation of ConstraintDefinition', () => {
     await parseAndValidateConstraintDefinition(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'info',
       `The expression can be simplified to 8`,
       expect.any(Object),

@@ -105,7 +105,7 @@ describe('Validation of block type specific properties', () => {
       await parseAndValidatePropertyAssignment(text);
 
       expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-      expect(validationAcceptorMock).toHaveBeenCalledWith(
+      expect(validationAcceptorMock).toHaveBeenLastCalledWith(
         'error',
         'The value of property "archiveType" must be one of the following values: "zip", "gz"',
         expect.any(Object),
@@ -122,7 +122,7 @@ describe('Validation of block type specific properties', () => {
       await parseAndValidatePropertyAssignment(text);
 
       expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-      expect(validationAcceptorMock).toHaveBeenCalledWith(
+      expect(validationAcceptorMock).toHaveBeenLastCalledWith(
         'error',
         'The cell range needs to be one-dimensional',
         expect.any(Object),
@@ -149,7 +149,7 @@ describe('Validation of block type specific properties', () => {
       await parseAndValidatePropertyAssignment(text);
 
       expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-      expect(validationAcceptorMock).toHaveBeenCalledWith(
+      expect(validationAcceptorMock).toHaveBeenLastCalledWith(
         'error',
         'An entire column needs to be selected',
         expect.any(Object),
@@ -186,7 +186,7 @@ describe('Validation of block type specific properties', () => {
       await parseAndValidatePropertyAssignment(text);
 
       expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-      expect(validationAcceptorMock).toHaveBeenCalledWith(
+      expect(validationAcceptorMock).toHaveBeenLastCalledWith(
         'error',
         'The value of property "entity" must be one of the following values: "trip_update", "alert", "vehicle"',
         expect.any(Object),
@@ -213,7 +213,7 @@ describe('Validation of block type specific properties', () => {
       await parseAndValidatePropertyAssignment(text);
 
       expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-      expect(validationAcceptorMock).toHaveBeenCalledWith(
+      expect(validationAcceptorMock).toHaveBeenLastCalledWith(
         'error',
         'The value of property "retries" must not be smaller than 0',
         expect.any(Object),
@@ -238,7 +238,7 @@ describe('Validation of block type specific properties', () => {
       await parseAndValidatePropertyAssignment(text);
 
       expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-      expect(validationAcceptorMock).toHaveBeenCalledWith(
+      expect(validationAcceptorMock).toHaveBeenLastCalledWith(
         'error',
         'The value of property "retryBackoffMilliseconds" must not be smaller than 1000',
         expect.any(Object),
@@ -263,7 +263,7 @@ describe('Validation of block type specific properties', () => {
       await parseAndValidatePropertyAssignment(text);
 
       expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-      expect(validationAcceptorMock).toHaveBeenCalledWith(
+      expect(validationAcceptorMock).toHaveBeenLastCalledWith(
         'error',
         'The value of property "retryBackoffStrategy" must be one of the following values: "exponential", "linear"',
         expect.any(Object),
@@ -290,7 +290,7 @@ describe('Validation of block type specific properties', () => {
       await parseAndValidatePropertyAssignment(text);
 
       expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-      expect(validationAcceptorMock).toHaveBeenCalledWith(
+      expect(validationAcceptorMock).toHaveBeenLastCalledWith(
         'error',
         'File path cannot include "..". Path traversal is restricted.',
         expect.any(Object),
@@ -307,7 +307,7 @@ describe('Validation of block type specific properties', () => {
       await parseAndValidatePropertyAssignment(text);
 
       expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-      expect(validationAcceptorMock).toHaveBeenCalledWith(
+      expect(validationAcceptorMock).toHaveBeenLastCalledWith(
         'error',
         'An entire row needs to be selected',
         expect.any(Object),
@@ -378,7 +378,7 @@ describe('Validation of block type specific properties', () => {
       await parseAndValidatePropertyAssignment(text);
 
       expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-      expect(validationAcceptorMock).toHaveBeenCalledWith(
+      expect(validationAcceptorMock).toHaveBeenLastCalledWith(
         'error',
         'The value of property "encoding" must be one of the following values: "utf8", "ibm866", "latin2", "latin3", "latin4", "cyrillic", "arabic", "greek", "hebrew", "logical", "latin6", "utf-16"',
         expect.any(Object),
@@ -405,7 +405,7 @@ describe('Validation of block type specific properties', () => {
       await parseAndValidatePropertyAssignment(text);
 
       expect(validationAcceptorMock).toHaveBeenCalledTimes(3);
-      expect(validationAcceptorMock).toHaveBeenCalledWith(
+      expect(validationAcceptorMock).toHaveBeenLastCalledWith(
         'error',
         'Line numbers need to be greater than zero',
         expect.any(Object),
@@ -432,7 +432,7 @@ describe('Validation of block type specific properties', () => {
       await parseAndValidatePropertyAssignment(text);
 
       expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-      expect(validationAcceptorMock).toHaveBeenCalledWith(
+      expect(validationAcceptorMock).toHaveBeenLastCalledWith(
         'error',
         'The value of property "lineFrom" must not be smaller than 1',
         expect.any(Object),
@@ -457,7 +457,7 @@ describe('Validation of block type specific properties', () => {
       await parseAndValidatePropertyAssignment(text);
 
       expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-      expect(validationAcceptorMock).toHaveBeenCalledWith(
+      expect(validationAcceptorMock).toHaveBeenLastCalledWith(
         'error',
         'The value of property "lineTo" must not be smaller than 1',
         expect.any(Object),

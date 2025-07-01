@@ -96,7 +96,7 @@ describe('Validation of PropertyAssignment', () => {
     await parseAndValidatePropertyAssignment(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `Invalid property name "unknownProperty".`,
       expect.any(Object),
@@ -122,7 +122,7 @@ describe('Validation of PropertyAssignment', () => {
       await parseAndValidatePropertyAssignment(text);
 
       expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-      expect(validationAcceptorMock).toHaveBeenCalledWith(
+      expect(validationAcceptorMock).toHaveBeenLastCalledWith(
         'error',
         `Runtime parameters are not allowed for properties of type Regex`,
         expect.any(Object),
@@ -138,7 +138,7 @@ describe('Validation of PropertyAssignment', () => {
     await parseAndValidatePropertyAssignment(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `The value of property "textProperty" needs to be of type text but is of type integer`,
       expect.any(Object),
@@ -151,7 +151,7 @@ describe('Validation of PropertyAssignment', () => {
     await parseAndValidatePropertyAssignment(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'info',
       `The expression can be simplified to 1019`,
       expect.any(Object),
@@ -166,7 +166,7 @@ describe('Validation of PropertyAssignment', () => {
     await parseAndValidatePropertyAssignment(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'info',
       `The expression can be simplified to 30`,
       expect.any(Object),
