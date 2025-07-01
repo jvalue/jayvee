@@ -108,4 +108,19 @@ describe('Validation of ConstraintDefinition', () => {
       expect.any(Object),
     );
   });
+
+  it('should diagnose error on missing value literal', async () => {
+    const text = readJvTestAsset(
+      'constraint-definition/invalid-missing-value-literal.jv',
+    );
+
+    await parseAndValidateConstraintDefinition(text);
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
+      'error',
+      'A constraint expression must contain the `value` keyword',
+      expect.any(Object),
+    );
+  });
 });
