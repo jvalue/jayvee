@@ -34,6 +34,47 @@ const { http, https } = followRedirects;
 
 type HttpGetFunction = typeof http.get;
 
+class DownloadProgress {
+  private downloadedBytes = 0;
+  private firstPrint = true;
+
+  constructor(
+    private readonly logger: R.Logger,
+    private readonly totalBytes?: number,
+  ) {}
+
+  private formatBytes(bytes: number): string {
+    if (bytes / 1_000_000_000 >= 1) {
+      return `${Math.round(bytes / 1_000_000_000)}GB`;
+    } else if (bytes / 1_000_000 >= 1) {
+      return `${Math.round(bytes / 1_000_000)}MB`;
+    } else if (bytes / 1_000 >= 1) {
+      return `${Math.round(bytes / 1_000)}KB`;
+    }
+    return `${bytes}B`;
+  }
+
+  onNewBytesDownloaded(newBytes: number) {
+    this.downloadedBytes += newBytes;
+
+    if (!this.firstPrint) {
+      console.log('\x1b[2k\r');
+    }
+    this.firstPrint = false;
+
+    const message =
+      this.totalBytes === undefined
+        ? `Downloaded ${this.formatBytes(this.downloadedBytes)}`
+        : `Downloaded ${this.formatBytes(
+            this.downloadedBytes,
+          )} out of ${this.formatBytes(this.totalBytes)} -- ${(
+            (this.downloadedBytes / this.totalBytes) *
+            100
+          ).toFixed(1)}%`;
+    this.logger.logInfo(message);
+  }
+}
+
 @implementsStatic<BlockExecutorClass>()
 export class HttpExtractorExecutor extends AbstractBlockExecutor<
   IOType.NONE,
@@ -140,13 +181,28 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
           );
         }
 
+        const totalBytes =
+          response.headers['content-length'] !== undefined
+            ? Number.parseInt(response.headers['content-length'], 10)
+            : undefined;
+        if (totalBytes === undefined) {
+          context.logger.logDebug(
+            'Response did not contain the total file size',
+          );
+        }
+
         // Get chunked data and store to ArrayBuffer
         let rawData = new Uint8Array(0);
+        const downloadProgress = new DownloadProgress(
+          context.logger,
+          totalBytes,
+        );
         response.on('data', (chunk: Buffer) => {
           const tmp = new Uint8Array(rawData.length + chunk.length);
           tmp.set(rawData, 0);
           tmp.set(chunk, rawData.length);
           rawData = tmp;
+          downloadProgress.onNewBytesDownloaded(chunk.byteLength);
         });
 
         // When all data is downloaded, create file
