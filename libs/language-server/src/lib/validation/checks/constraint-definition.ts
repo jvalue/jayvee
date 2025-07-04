@@ -8,6 +8,7 @@
 
 import { assertUnreachable } from 'langium';
 
+import { type ValidationContext } from '..';
 import {
   type ConstraintDefinition,
   type Expression,
@@ -58,34 +59,11 @@ export function checkConstraintExpression(
 
   checkExpressionSimplification(expression, props);
 
-  const foundFittingFreeVariable =
-    iterateSubExpressionBreadthFirst(expression, (exp): true | undefined => {
-      if (isValueKeywordLiteral(exp)) {
-        if (valueTypePropertyName !== undefined) {
-          props.validationContext.accept(
-            'error',
-            "Inline constraint definitions must not contain the value keyword literal. Use the valuetype's property instead",
-            {
-              node: exp,
-            },
-          );
-          return undefined;
-        }
-        return true;
-      } else if (isReferenceLiteral(exp)) {
-        if (valueTypePropertyName === undefined) {
-          return undefined;
-        }
-        return valueTypePropertyName === exp.value.ref?.name ? true : undefined;
-      } else if (isFreeVariableLiteral(exp)) {
-        assertUnreachable(exp);
-      }
-      return undefined;
-    }) ?? false;
-
-  // HACK(jonas): ESLint does not realize that `expressionContainsValueLiteral` is
-  // modified from inside the anonymous function, thus the
-  // `no-unnecessary-condition` rule emitts a false positive
+  const foundFittingFreeVariable = findFittingFreeVariable(
+    expression,
+    valueTypePropertyName,
+    props.validationContext,
+  );
   if (!foundFittingFreeVariable) {
     const errorMessage =
       valueTypePropertyName === undefined
@@ -95,4 +73,44 @@ export function checkConstraintExpression(
       node: expression,
     });
   }
+}
+
+function findFittingFreeVariable(
+  expression: Expression,
+  valueTypePropertyName: string | undefined,
+  validationContext: ValidationContext,
+): boolean {
+  return (
+    iterateSubExpressionBreadthFirst(
+      expression,
+      // INFO: If the anonymous function returns `true` iteration stops early,
+      // if it returns `undefined` the search continues. See
+      // `iterateSubExpressionBreadthFirst`'s documentation for more information
+      (subExpression): true | undefined => {
+        if (isValueKeywordLiteral(subExpression)) {
+          if (valueTypePropertyName !== undefined) {
+            validationContext.accept(
+              'error',
+              "Inline constraint definitions must not contain the value keyword literal. Use the valuetype's property instead",
+              {
+                node: subExpression,
+              },
+            );
+            return undefined;
+          }
+          return true;
+        } else if (isReferenceLiteral(subExpression)) {
+          if (valueTypePropertyName === undefined) {
+            return undefined;
+          }
+          return valueTypePropertyName === subExpression.value.ref?.name
+            ? true
+            : undefined;
+        } else if (isFreeVariableLiteral(subExpression)) {
+          assertUnreachable(subExpression);
+        }
+        return undefined;
+      },
+    ) ?? false
+  );
 }
