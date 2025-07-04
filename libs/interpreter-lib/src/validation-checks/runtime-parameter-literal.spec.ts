@@ -126,7 +126,7 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
     );
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `Unable to parse the value "Value 1" as integer.`,
       expect.any(Object),
@@ -140,7 +140,7 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
     await parseAndValidateRuntimeParameterLiteral(relativeTestFilePath); // don't pass parameter
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `A value needs to be provided by adding "-e TEXT_ENV=<value>" to the command.`,
       expect.any(Object),

@@ -91,7 +91,7 @@ describe('Validation of ColumnId', () => {
     await parseAndValidateColumnId(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `Columns need to be denoted via capital letters or the * character`,
       expect.any(Object),

@@ -77,7 +77,7 @@ describe('Validation of CompositeBlockTypeDefinition', () => {
     await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `Composite block types must define one pipeline 'TestBlock'`,
       expect.any(Object),
@@ -92,7 +92,7 @@ describe('Validation of CompositeBlockTypeDefinition', () => {
     await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `Found more than one pipeline definition in composite block type 'TestBlock'`,
       expect.any(Object),
@@ -150,12 +150,14 @@ describe('Validation of CompositeBlockTypeDefinition', () => {
     await parseAndValidateBlockType(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+      1,
       'warning',
       'A pipe should be connected to the input of this block',
       expect.any(Object),
     );
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+      2,
       'warning',
       'A pipe should be connected to the output of this block',
       expect.any(Object),

@@ -84,7 +84,11 @@ function checkConstraints(
     }
 
     if (isValueTypeConstraintInlineDefinition(constraint)) {
-      checkConstraintExpression(constraint.expression, props);
+      checkConstraintExpression(
+        constraint.expression,
+        valueType.attribute?.name,
+        props,
+      );
     } else {
       const constraintDef = constraint.definition.ref;
       assert(constraintDef !== undefined);

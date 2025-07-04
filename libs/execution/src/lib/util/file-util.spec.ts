@@ -87,7 +87,9 @@ describe('Validation of file-util', () => {
       const result = await transformTextFileLines(file, /\r?\n/, spy);
 
       expect(spy).toHaveBeenCalledOnce();
-      expect(spy).toHaveBeenCalledWith(['some text content without a newline']);
+      expect(spy).toHaveBeenLastCalledWith([
+        'some text content without a newline',
+      ]);
 
       expect(R.isOk(result)).toBe(true);
       assert(R.isOk(result));
@@ -102,7 +104,7 @@ describe('Validation of file-util', () => {
       const result = await transformTextFileLines(file, /\r?\n/, spy);
 
       expect(spy).toHaveBeenCalledOnce();
-      expect(spy).toHaveBeenCalledWith([]);
+      expect(spy).toHaveBeenLastCalledWith([]);
 
       expect(R.isOk(result)).toBe(true);
       assert(R.isOk(result));
@@ -119,7 +121,7 @@ trailing newline
       const result = await transformTextFileLines(file, /\r?\n/, spy);
 
       expect(spy).toHaveBeenCalledOnce();
-      expect(spy).toHaveBeenCalledWith([
+      expect(spy).toHaveBeenLastCalledWith([
         'some text content',
         'with a ',
         'trailing newline',

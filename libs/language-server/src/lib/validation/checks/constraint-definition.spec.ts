@@ -87,7 +87,7 @@ describe('Validation of ConstraintDefinition', () => {
     await parseAndValidateConstraintDefinition(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `The value needs to be of type boolean but is of type integer`,
       expect.any(Object),
@@ -102,9 +102,24 @@ describe('Validation of ConstraintDefinition', () => {
     await parseAndValidateConstraintDefinition(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'info',
       `The expression can be simplified to 8`,
+      expect.any(Object),
+    );
+  });
+
+  it('should diagnose error on missing value literal', async () => {
+    const text = readJvTestAsset(
+      'constraint-definition/invalid-missing-value-literal.jv',
+    );
+
+    await parseAndValidateConstraintDefinition(text);
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
+      'error',
+      'A constraint expression must contain the `value` keyword',
       expect.any(Object),
     );
   });

@@ -83,7 +83,7 @@ describe('Validation of TransformBody', () => {
     await parseAndValidateTransformBody(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `The transform port name "inputParam" needs to be unique.`,
       expect.any(Object),
@@ -98,12 +98,14 @@ describe('Validation of TransformBody', () => {
     await parseAndValidateTransformBody(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+      1,
       'error',
       `An output assignment is required for this port`,
       expect.any(Object),
     );
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+      2,
       'warning',
       `This input port is never used`,
       expect.any(Object),
@@ -118,7 +120,7 @@ describe('Validation of TransformBody', () => {
     await parseAndValidateTransformBody(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `At most one assignment per output port`,
       expect.any(Object),
@@ -133,7 +135,7 @@ describe('Validation of TransformBody', () => {
     await parseAndValidateTransformBody(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `More than one output port is defined`,
       expect.any(Object),
@@ -148,9 +150,16 @@ describe('Validation of TransformBody', () => {
     await parseAndValidateTransformBody(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+      1,
       'error',
       `There has to be a single output port`,
+      expect.any(Object),
+    );
+    expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+      2,
+      'warning',
+      `This input port is never used`,
       expect.any(Object),
     );
   });
@@ -163,7 +172,7 @@ describe('Validation of TransformBody', () => {
     await parseAndValidateTransformBody(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'warning',
       `This input port is never used`,
       expect.any(Object),

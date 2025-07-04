@@ -101,6 +101,83 @@ export function checkExpressionSimplification(
   });
 }
 
+/**
+ * Iterates through every sub expression in a breadth first order, each time calling
+ * `onSubExpression`.
+ *
+ * @param expression The expression to traverse
+ * @param onSubExpression Recieves the encountered sub expression as its only
+ * parameter. If the return value is NOT `undefined` iteration stops.
+ *
+ * @returns Either a value returned by `onSubExpression` or `undefined`
+ */
+export function iterateSubExpressionBreadthFirst<R>(
+  expression: Expression,
+  onSubExpression: (expression: Expression) => NonNullable<R> | undefined,
+): NonNullable<R> | undefined {
+  const todo: Expression[] = [expression];
+  for (let expr: Expression | undefined; (expr = todo.shift()); ) {
+    const earlyReturn = onSubExpression(expr);
+    if (earlyReturn !== undefined) {
+      return earlyReturn;
+    }
+
+    if (isTernaryExpression(expr)) {
+      todo.push(expr.first, expr.second, expr.third);
+    } else if (isBinaryExpression(expr)) {
+      todo.push(expr.left, expr.right);
+    } else if (isUnaryExpression(expr)) {
+      todo.push(expr.expression);
+    } else if (isExpressionLiteral(expr)) {
+      // No operation
+    } else {
+      assertUnreachable(expr);
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Iterates through every sub expression in a depth first order, each time calling
+ * `onSubExpression`.
+ *
+ * @param expression The expression to traverse
+ * @param onSubExpression Recieves the encountered sub expression as its only
+ * parameter. If the return value is NOT `undefined` iteration stops.
+ *
+ * @returns Either a value returned by `onSubExpression` or `undefined`
+ */
+export function iterateSubExpressionDepthFirst<R>(
+  expression: Expression,
+  onSubExpression: (expression: Expression) => NonNullable<R> | undefined,
+): NonNullable<R> | undefined {
+  const earlyReturn = onSubExpression(expression);
+  if (earlyReturn !== undefined) {
+    return earlyReturn;
+  }
+
+  if (isTernaryExpression(expression)) {
+    return (
+      iterateSubExpressionDepthFirst(expression.first, onSubExpression) ??
+      iterateSubExpressionDepthFirst(expression.second, onSubExpression) ??
+      iterateSubExpressionDepthFirst(expression.third, onSubExpression)
+    );
+  } else if (isBinaryExpression(expression)) {
+    return (
+      iterateSubExpressionDepthFirst(expression.left, onSubExpression) ??
+      iterateSubExpressionDepthFirst(expression.right, onSubExpression)
+    );
+  } else if (isUnaryExpression(expression)) {
+    return iterateSubExpressionDepthFirst(
+      expression.expression,
+      onSubExpression,
+    );
+  } else if (isExpressionLiteral(expression)) {
+    return iterateSubExpressionDepthFirst(expression, onSubExpression);
+  }
+  assertUnreachable(expression);
+}
+
 function collectSubExpressionsWithoutFreeVariables(
   expression: Expression | undefined,
 ): Expression[] {

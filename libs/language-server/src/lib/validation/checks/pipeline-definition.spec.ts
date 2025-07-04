@@ -77,7 +77,7 @@ describe('Validation of PipelineDefinition', () => {
     await parseAndValidatePipeline(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `An extractor block is required for this pipeline`,
       expect.any(Object),
@@ -92,9 +92,16 @@ describe('Validation of PipelineDefinition', () => {
     await parseAndValidatePipeline(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(2); // one warning for unused blocks
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+      1,
       'error',
       `An extractor block is required for this pipeline`,
+      expect.any(Object),
+    );
+    expect(validationAcceptorMock).toHaveBeenNthCalledWith(
+      2,
+      'warning',
+      `A pipe should be connected to the output of this block`,
       expect.any(Object),
     );
   });
@@ -129,7 +136,7 @@ describe('Validation of PipelineDefinition', () => {
     await parseAndValidatePipeline(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(2); // one error since missing extractor
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'warning',
       'A pipe should be connected to the output of this block',
       expect.any(Object),

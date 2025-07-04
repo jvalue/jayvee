@@ -69,7 +69,7 @@ describe('Parse Only', () => {
     ).rejects.toBeDefined();
 
     expect(process.exit).toBeCalledTimes(1);
-    expect(process.exit).toHaveBeenCalledWith(0);
+    expect(process.exit).toHaveBeenLastCalledWith(0);
   });
 
   it('should exit with 1 on error', async () => {
@@ -88,6 +88,6 @@ describe('Parse Only', () => {
     ).rejects.toBeDefined();
 
     expect(process.exit).toBeCalledTimes(1);
-    expect(process.exit).toHaveBeenCalledWith(1);
+    expect(process.exit).toHaveBeenLastCalledWith(1);
   });
 });

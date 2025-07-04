@@ -85,7 +85,7 @@ describe('Validation of RangeLiteral', () => {
     await parseAndValidateRangeLiteral(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `Cell ranges need to be spanned from top-left to bottom-right`,
       expect.any(Object),

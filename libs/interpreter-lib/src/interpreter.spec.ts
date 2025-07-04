@@ -123,9 +123,9 @@ describe('Interpreter', () => {
       expect(exitCode).toEqual(ExitCode.SUCCESS);
 
       expect(sqlite_spy).toHaveBeenCalledTimes(1);
-      expect(sqlite_spy).toHaveBeenCalledWith('SQLiteLoader');
+      expect(sqlite_spy).toHaveBeenLastCalledWith('SQLiteLoader');
       expect(interpreter_spy).toHaveBeenCalledTimes(1);
-      expect(interpreter_spy).toHaveBeenCalledWith('CSVFileInterpreter');
+      expect(interpreter_spy).toHaveBeenLastCalledWith('CSVFileInterpreter');
     });
 
     it('should be called with the correct parameters', async () => {

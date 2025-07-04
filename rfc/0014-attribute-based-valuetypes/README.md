@@ -9,7 +9,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 |             |                               |
 | ----------- | ----------------------------- | --------------------------------------------------------------- |
 | Feature Tag | `attribute-based value types` | <!-- TODO: choose a unique and declarative feature name -->     |
-| Status      | `DISCUSSION`                  | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED --> |
+| Status      | `ACCEPTED`                    | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED --> |
 | Responsible | `dirkriehle`                  | <!-- TODO: assign yourself as main driver of this RFC -->       |
 
 <!--

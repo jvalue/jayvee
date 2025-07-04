@@ -86,7 +86,7 @@ describe('Validation of ValuetypeDefinition', () => {
     await parseAndValidateValuetypeDefinition(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `Could not construct this value type since there is a cycle in the (transitive) "oftype" relation.`,
       expect.any(Object),
@@ -101,7 +101,7 @@ describe('Validation of ValuetypeDefinition', () => {
     await parseAndValidateValuetypeDefinition(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `'Constraint' cannot constrain 'attr', because 'integer' is incompatible with 'text'`,
       expect.any(Object),
@@ -116,9 +116,39 @@ describe('Validation of ValuetypeDefinition', () => {
     await parseAndValidateValuetypeDefinition(text);
 
     expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
-    expect(validationAcceptorMock).toHaveBeenCalledWith(
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
       `Generic parameter T is not unique`,
+      expect.any(Object),
+    );
+  });
+
+  it('should diagnose error on missing value type property in inline constraint definition', async () => {
+    const text = readJvTestAsset(
+      'value-type-definition/invalid-invalid-constraint-type-for-value-type.jv',
+    );
+
+    await parseAndValidateValuetypeDefinition(text);
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
+      'error',
+      `'Constraint' cannot constrain 'attr', because 'integer' is incompatible with 'text'`,
+      expect.any(Object),
+    );
+  });
+
+  it('should diagnose error on duplicate generic on value type', async () => {
+    const text = readJvTestAsset(
+      'value-type-definition/invalid-missing-property-in-inline-constraint.jv',
+    );
+
+    await parseAndValidateValuetypeDefinition(text);
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
+      'error',
+      `An inline constraint expression must contain a reference to the valuetype's property`,
       expect.any(Object),
     );
   });
