@@ -101,6 +101,16 @@ export function checkExpressionSimplification(
   });
 }
 
+/**
+ * Iterates through every sub expression in a breadth first order, each time calling
+ * `onSubExpression`.
+ *
+ * @param expression The expression to traverse
+ * @param onSubExpression Recieves the encountered sub expression as its only
+ * parameter. If the return value is NOT `undefined` iteration stops.
+ *
+ * @returns Either a value returned by `onSubExpression` or `undefined`
+ */
 export function iterateSubExpressionBreadthFirst<R>(
   expression: Expression,
   onSubExpression: (expression: Expression) => NonNullable<R> | undefined,
@@ -127,6 +137,16 @@ export function iterateSubExpressionBreadthFirst<R>(
   return undefined;
 }
 
+/**
+ * Iterates through every sub expression in a depth first order, each time calling
+ * `onSubExpression`.
+ *
+ * @param expression The expression to traverse
+ * @param onSubExpression Recieves the encountered sub expression as its only
+ * parameter. If the return value is NOT `undefined` iteration stops.
+ *
+ * @returns Either a value returned by `onSubExpression` or `undefined`
+ */
 export function iterateSubExpressionDepthFirst<R>(
   expression: Expression,
   onSubExpression: (expression: Expression) => NonNullable<R> | undefined,
