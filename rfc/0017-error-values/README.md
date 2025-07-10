@@ -21,9 +21,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 ## Summary
 
-This RFC introduces the concept of runtime errors to the Jayvee interpreter.
-Specifically, it distinguishes two different kinds of errors that the Jayvee
-interpreter must be able to handle.
+This RFC introduces the concept of invalid or missing values to the Jayvee interpreter.
+Specifically, it defines two new special values that the Jayvee interpreter must be able to handle.
 
 > [!NOTE]
 > This RFC does not define any changes to the Jayvee grammar
@@ -45,27 +44,27 @@ instead of discarding the entire row.
 
 ## Explanation
 
-This RFC introduces two error values (naming suggestions welcome):
-- `EINVAL`: Represents an invalid value.
-- `EMISSING`: Represents a missing value.
+This RFC introduces two error values:
+- `invalid`: Represents an invalid value.
+- `missing`: Represents a missing value.
 
 This distinction is made in order to allow both users and the interpreter more
-fine grained control. FIXME
+fine grained control.
 
-### EINVAL
+### invalid
 
 This error's primary use case is to represent an erroneous calculation result
 (e.g. Division by zero). It is intended to be used by operator evaluators.
 
-Additionally, parsers can represent a failed value parse using `EINVAL` (e.g.
+Additionally, parsers can represent a failed value parse using `invalid` (e.g.
 when attempting to parse a number but encountering a letter).
 
-### EMISSING
+### missing
 
 This error's use case is related to parsing text data and exporting SQL.
 When a parser encounters a missing value (e.g. empty cell in CSV) it can now use
 this error instead of crashing.
-Similarly, SQL exporters can now replace any table cell containing `EMISSING`
+Similarly, SQL exporters can now replace any table cell containing `missing`
 with `NULL`.
 
 ## Drawbacks
@@ -74,15 +73,19 @@ with `NULL`.
 
 ## Alternatives
 
-- One single `ERROR`. 
+- One single `ERROR`.
 - More fine-grained errors. E.g `ParsingError`, `DivisionByZeroError`,
-`EmtyCellError`
+`EmptyCellError`
 
 ## Possible Future Changes/Enhancements
 
 - Allow the user to define the interpreter's behavior in case of an error. This
   could mean replacing missing values, or crashing in case of an erroneous
 calculation.
+
+- Type unions to express a value can be `number | invalid | missing`
+
+- Add context to errors (reason, location)
 
 - Change the syntax to define which blocks can throw which errors. This may lead
   to more generic error handling (try/catch)
