@@ -67,6 +67,28 @@ this error instead of crashing.
 Similarly, SQL exporters can now replace any table cell containing `missing`
 with `NULL`.
 
+### Operator interactions
+
+- Unary operators:
+  - If the parameter is `invalid`, the result is `invalid`
+  - If the parameter is `missing`, the result is `missing`
+  - The following operations evaluate to `invalid`:
+    - Square root of a negative number
+    - Parsing failure for `asDecimal`, `asInteger` or `asBoolean`
+
+- Binary operators:
+  - The following operations always evaluate to `invalid`:
+    - Division by zero
+    - Root of a negative number
+    - 0th root of a number
+    - Number modulo zero
+  - If at least one of the parameters is `invalid`, the result is `invalid`
+  - If at least one of the parameters is `missing` and no parameter is `invalid`, the result is `missing`
+
+- Ternary operators:
+  - If at least one of the parameters is `invalid`, the result is `invalid`
+  - If at least one of the parameters is `missing` and no parameter is `invalid`, the result is `missing`
+
 ## Drawbacks
 
 <!-- TODO: (optional) Discuss the drawbacks of the proposed design. -->
