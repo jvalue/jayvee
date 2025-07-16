@@ -51,6 +51,9 @@ This RFC introduces two error values:
 This distinction is made in order to allow both users and the interpreter more
 fine grained control.
 
+For now, these values are valid for all types (see
+[Possible Future Changes/Enhancements](#possible-future-changesenhancements))
+
 ### invalid
 
 This error's primary use case is to represent an erroneous calculation result
