@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2023 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+SPDX-FileCopyrightText: 2025 Friedrich-Alexander-Universitat Erlangen-Nurnberg
 
 SPDX-License-Identifier: AGPL-3.0-only
 -->
@@ -88,6 +88,70 @@ with `NULL`.
 - Ternary operators:
   - If at least one of the parameters is `invalid`, the result is `invalid`
   - If at least one of the parameters is `missing` and no parameter is `invalid`, the result is `missing`
+
+### Example
+
+data.csv:
+```csv
+column
+3
+```
+
+pipeline.jv:
+```
+pipeline CarsPipeline {
+  Extractor
+    -> ToTextFile
+    -> ToCSV
+    -> ToTable
+    -> ProduceInvalid
+    -> ToSQLite;
+
+  block Extractor oftype LocalFileExtractor {
+    filePath: "data.csv";
+  }
+  block ToTextFile oftype TextFileInterpreter {}
+  block ToCSV oftype CSVInterpreter {}
+  block ToTable oftype TableInterpreter {
+    header: true;
+    columns: [
+      "column" oftype integer,
+    ];
+  }
+  /*
+  | column |
+  |--------|
+  | 3      |
+  */
+  transform divideByZero {
+    from num oftype integer;
+    to out oftype decimal;
+
+    // This calculation results in `invalid`
+    out: num / 0;
+  }
+  block ProduceInvalid oftype TableTransformer {
+    inputColumns: ["column"];
+    outputColumn: "result";
+    uses: divideByZero;
+  }
+  /*
+  | column | result  |
+  |--------|---------|
+  | 3      | invalid |
+  */
+  // `invalid` is replaced with `NULL`
+  block ToSQLite oftype SQLiteLoader {
+    table: "Table";
+    file: "data.sqlite";
+  }
+}
+```
+
+data.sqlite:
+| column | result |
+|--------|--------|
+| 3      | NULL   |
 
 ## Drawbacks
 
