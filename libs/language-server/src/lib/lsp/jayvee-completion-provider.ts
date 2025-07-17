@@ -20,7 +20,11 @@ import {
   DefaultCompletionProvider,
   type NextFeature,
 } from 'langium/lsp';
-import { CompletionItemKind, type Range } from 'vscode-languageserver';
+import {
+  CompletionItemKind,
+  type CompletionItemLabelDetails,
+  type Range,
+} from 'vscode-languageserver';
 
 import { type TypedObjectWrapper, type WrapperFactoryProvider } from '../ast';
 import {
@@ -29,12 +33,14 @@ import {
   type ImportDefinition,
   PropertyAssignment,
   type PropertyBody,
+  type ValueTypeConstraintReference,
   ValueTypeReference,
   isBlockDefinition,
   isImportDefinition,
   isJayveeModel,
   isPropertyAssignment,
   isPropertyBody,
+  isValueTypeConstraintReference,
   isValuetypeDefinition,
 } from '../ast/generated/ast';
 import {
@@ -75,6 +81,17 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       const isValuetypeDefinitionCompletion = next.type === ValueTypeReference;
       if (isValuetypeDefinitionCompletion) {
         return this.completionForValuetype(context, acceptor);
+      }
+
+      const isValueTypeConstraintReferenceCompletion =
+        isValueTypeConstraintReference(astNode) &&
+        next.property === 'attribute';
+      if (isValueTypeConstraintReferenceCompletion) {
+        return this.completionForValueTypeConstraintReference(
+          astNode,
+          context,
+          acceptor,
+        );
       }
 
       const isFirstPropertyCompletion =
@@ -151,6 +168,28 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
           }
         });
       });
+  }
+
+  private completionForValueTypeConstraintReference(
+    astNode: ValueTypeConstraintReference,
+    context: CompletionContext,
+    acceptor: CompletionAcceptor,
+  ) {
+    const property = astNode.$container.attribute;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (property !== undefined && property.name !== undefined) {
+      const proptertyTypeName = property.valueType.reference.ref?.name;
+      const labelDetails: CompletionItemLabelDetails =
+        proptertyTypeName !== undefined
+          ? { detail: ` oftype ${proptertyTypeName}` }
+          : {};
+      acceptor(context, {
+        label: property.name,
+        labelDetails: labelDetails,
+        kind: CompletionItemKind.Reference,
+        detail: '(valueType property)',
+      });
+    }
   }
 
   private completionForPropertyName(
