@@ -11,6 +11,7 @@ import {
   type LangiumDocument,
   type LangiumDocuments,
   type MaybePromise,
+  type Stream,
   UriUtils,
 } from 'langium';
 import {
@@ -36,6 +37,7 @@ import {
   type ValueTypeConstraintReference,
   ValueTypeReference,
   isBlockDefinition,
+  isConstraintDefinition,
   isImportDefinition,
   isJayveeModel,
   isPropertyAssignment,
@@ -83,11 +85,22 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
         return this.completionForValuetype(context, acceptor);
       }
 
-      const isValueTypeConstraintReferenceCompletion =
+      const isValueTypeConstraintReferenceDefinitionCompletion =
+        isValueTypeConstraintReference(astNode) &&
+        next.property === 'definition';
+      if (isValueTypeConstraintReferenceDefinitionCompletion) {
+        return this.completionForValueTypeConstraintDefinitionReference(
+          astNode,
+          context,
+          acceptor,
+        );
+      }
+
+      const isValueTypeConstraintReferenceAttributeCompletion =
         isValueTypeConstraintReference(astNode) &&
         next.property === 'attribute';
-      if (isValueTypeConstraintReferenceCompletion) {
-        return this.completionForValueTypeConstraintReference(
+      if (isValueTypeConstraintReferenceAttributeCompletion) {
+        return this.completionForValueTypeConstraintAttributeReference(
           astNode,
           context,
           acceptor,
@@ -143,34 +156,70 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     });
   }
 
+  private allAstNodes(): Stream<AstNode> {
+    return this.langiumDocuments.all
+      .map((document) => document.parseResult.value)
+      .flatMap((parsedDocument) => {
+        if (!isJayveeModel(parsedDocument)) {
+          throw new Error('Expected parsed document to be a JayveeModel');
+        }
+        return AstUtils.streamAllContents(parsedDocument);
+      });
+  }
+
   private completionForValuetype(
     context: CompletionContext,
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
-    this.langiumDocuments.all
-      .map((document) => document.parseResult.value)
-      .forEach((parsedDocument) => {
-        if (!isJayveeModel(parsedDocument)) {
-          throw new Error('Expected parsed document to be a JayveeModel');
+    this.allAstNodes()
+      .filter(isValuetypeDefinition)
+      .forEach((valueTypeDefinition) => {
+        const valueType =
+          this.wrapperFactories.ValueType.wrap(valueTypeDefinition);
+        if (valueType !== undefined && valueType.isReferenceableByUser()) {
+          acceptor(context, {
+            label: valueTypeDefinition.name,
+            kind: CompletionItemKind.Class,
+            detail: `(valueType)`,
+          });
         }
-        const allValueTypes = AstUtils.streamAllContents(parsedDocument).filter(
-          isValuetypeDefinition,
-        );
-        allValueTypes.forEach((valueTypeDefinition) => {
-          const valueType =
-            this.wrapperFactories.ValueType.wrap(valueTypeDefinition);
-          if (valueType !== undefined && valueType.isReferenceableByUser()) {
-            acceptor(context, {
-              label: valueTypeDefinition.name,
-              kind: CompletionItemKind.Class,
-              detail: `(valueType)`,
-            });
-          }
-        });
       });
   }
 
-  private completionForValueTypeConstraintReference(
+  private completionForValueTypeConstraintDefinitionReference(
+    astNode: ValueTypeConstraintReference,
+    context: CompletionContext,
+    acceptor: CompletionAcceptor,
+  ) {
+    const propertyValueType = this.wrapperFactories.ValueType.wrap(
+      astNode.$container.attribute?.valueType.reference.ref,
+    );
+
+    const constraintDefinitionsWithSameValueType = this.allAstNodes()
+      .filter(isConstraintDefinition)
+      .filter((constraintDefinition) => {
+        if (propertyValueType === undefined) {
+          return true;
+        }
+        const constraintValueType = this.wrapperFactories.ValueType.wrap(
+          constraintDefinition.valueType.reference.ref,
+        );
+        if (constraintValueType === undefined) {
+          return false;
+        }
+        return constraintValueType.equals(propertyValueType);
+      });
+
+    constraintDefinitionsWithSameValueType.forEach((constraintDefinition) => {
+      acceptor(context, {
+        label: constraintDefinition.name,
+        kind: CompletionItemKind.Reference,
+        detail: '(constraint definition)',
+      });
+    });
+  }
+
+  private completionForValueTypeConstraintAttributeReference(
     astNode: ValueTypeConstraintReference,
     context: CompletionContext,
     acceptor: CompletionAcceptor,
