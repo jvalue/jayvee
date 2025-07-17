@@ -24,9 +24,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 This RFC introduces the concept of invalid or missing values to the Jayvee interpreter.
 Specifically, it defines two new special values that the Jayvee interpreter must be able to handle.
 
-> [!NOTE]
-> This RFC does not define any changes to the Jayvee grammar
-
 ## Motivation
 
 Currently, there are two behaviors when an error occurs during pipeline
