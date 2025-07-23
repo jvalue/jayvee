@@ -48,8 +48,14 @@ This RFC introduces two error values:
 This distinction is made in order to allow both users and the interpreter more
 fine grained control.
 
-For now, these values are valid for all types (see
-[Possible Future Changes/Enhancements](#possible-future-changesenhancements))
+For now, these values are valid for the valuetypes `text`, `boolean`, `integer` and `decimal` (see
+[Possible Future Changes/Enhancements](#possible-future-changesenhancements)).
+However, the user is always notified (perhaps with a log message), when such
+a values occurs.
+
+This RFC also introduces two keywords `invalid` and `missing`, which represent
+the corresponding error value.
+For their usage see [Operator Interactions](#operator-interactions)
 
 ### invalid
 
@@ -68,6 +74,12 @@ Similarly, SQL exporters can now replace any table cell containing `missing`
 with `NULL`.
 
 ### Operator interactions
+
+#### `invalid` and `missing` as keywords
+
+The new keywords, `invalid` and `missing`, may be used as a parameter for the `==` and `!=` operators to check for (in)equality.
+
+#### `invalid` and `missing` as values
 
 - Unary operators:
   - If the parameter is `invalid`, the result is `invalid`
@@ -155,7 +167,7 @@ data.sqlite:
 
 ## Drawbacks
 
-<!-- TODO: (optional) Discuss the drawbacks of the proposed design. -->
+May ultimately require us to replace the current csv parser, as it does not allow us to parse empty cells into `missing`.
 
 ## Alternatives
 
@@ -165,14 +177,9 @@ data.sqlite:
 
 ## Possible Future Changes/Enhancements
 
-- Allow the user to define the interpreter's behavior in case of an error. This
-  could mean replacing missing values, or crashing in case of an erroneous
-calculation.
-
+- Introduce a ternary `if then else` operator to allow users to handle `invalid` and `missing` values
 - Type unions to express a value can be `number | invalid | missing`
-
 - Add context to errors (reason, location)
-
 - Change the syntax to define which blocks can throw which errors. This may lead
   to more generic error handling (try/catch)
 
