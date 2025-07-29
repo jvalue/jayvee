@@ -49,8 +49,10 @@ fine grained control.
 
 For now, these values are valid for the valuetypes `text`, `boolean`, `integer` and `decimal` (see
 [Possible Future Changes/Enhancements](#possible-future-changesenhancements)).
-However, the user is always notified (perhaps with a log message), when such
-a values occurs.
+
+When a value becomes `invalid` or `missing` for the first time, the user is
+notified with a log message. This message must contain the reason for the
+error's occurrence.
 
 This RFC also introduces two keywords `invalid` and `missing`, which represent
 the corresponding error value.
