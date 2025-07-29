@@ -35,7 +35,6 @@ execution.
 
 These behaviors make the following impossible:
 - Exporting tables that contain `NULL`
-- Parsing CSV that contains missing cells
 - Gracefully recovering from calculation errors occurring during transforms,
 instead of discarding the entire row.
 
@@ -67,11 +66,10 @@ when attempting to parse a number but encountering a letter).
 
 ### missing
 
-This error's use case is related to parsing text data and exporting SQL.
-When a parser encounters a missing value (e.g. empty cell in CSV) it can now use
-this error instead of crashing.
-Similarly, SQL exporters can now replace any table cell containing `missing`
-with `NULL`.
+Can be emitted when "something" that should exist doesn't (e.g. a file / a table
+column).
+SQL exporters can now replace any table cell containing `missing` with `NULL`.
+However, when parsing CSV, empty cells will be parsed as `""` not `missing`.
 
 ### Operator interactions
 
@@ -166,8 +164,6 @@ data.sqlite:
 | 3      | NULL   |
 
 ## Drawbacks
-
-May ultimately require us to replace the current csv parser, as it does not allow us to parse empty cells into `missing`.
 
 ## Alternatives
 
