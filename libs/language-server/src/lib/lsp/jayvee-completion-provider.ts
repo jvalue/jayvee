@@ -11,6 +11,7 @@ import {
   type LangiumDocument,
   type LangiumDocuments,
   type MaybePromise,
+  type Stream,
   UriUtils,
 } from 'langium';
 import {
@@ -20,7 +21,11 @@ import {
   DefaultCompletionProvider,
   type NextFeature,
 } from 'langium/lsp';
-import { CompletionItemKind, type Range } from 'vscode-languageserver';
+import {
+  CompletionItemKind,
+  type CompletionItemLabelDetails,
+  type Range,
+} from 'vscode-languageserver';
 
 import { type TypedObjectWrapper, type WrapperFactoryProvider } from '../ast';
 import {
@@ -29,12 +34,15 @@ import {
   type ImportDefinition,
   PropertyAssignment,
   type PropertyBody,
+  type ValueTypeConstraintReference,
   ValueTypeReference,
   isBlockDefinition,
+  isConstraintDefinition,
   isImportDefinition,
   isJayveeModel,
   isPropertyAssignment,
   isPropertyBody,
+  isValueTypeConstraintReference,
   isValuetypeDefinition,
 } from '../ast/generated/ast';
 import {
@@ -75,6 +83,28 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       const isValuetypeDefinitionCompletion = next.type === ValueTypeReference;
       if (isValuetypeDefinitionCompletion) {
         return this.completionForValuetype(context, acceptor);
+      }
+
+      const isValueTypeConstraintReferenceDefinitionCompletion =
+        isValueTypeConstraintReference(astNode) &&
+        next.property === 'definition';
+      if (isValueTypeConstraintReferenceDefinitionCompletion) {
+        return this.completionForValueTypeConstraintDefinitionReference(
+          astNode,
+          context,
+          acceptor,
+        );
+      }
+
+      const isValueTypeConstraintReferenceAttributeCompletion =
+        isValueTypeConstraintReference(astNode) &&
+        next.property === 'attribute';
+      if (isValueTypeConstraintReferenceAttributeCompletion) {
+        return this.completionForValueTypeConstraintAttributeReference(
+          astNode,
+          context,
+          acceptor,
+        );
       }
 
       const isFirstPropertyCompletion =
@@ -126,31 +156,89 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     });
   }
 
+  private allAstNodes(): Stream<AstNode> {
+    return this.langiumDocuments.all
+      .map((document) => document.parseResult.value)
+      .flatMap((parsedDocument) => {
+        if (!isJayveeModel(parsedDocument)) {
+          throw new Error('Expected parsed document to be a JayveeModel');
+        }
+        return AstUtils.streamAllContents(parsedDocument);
+      });
+  }
+
   private completionForValuetype(
     context: CompletionContext,
     acceptor: CompletionAcceptor,
   ): MaybePromise<void> {
-    this.langiumDocuments.all
-      .map((document) => document.parseResult.value)
-      .forEach((parsedDocument) => {
-        if (!isJayveeModel(parsedDocument)) {
-          throw new Error('Expected parsed document to be a JayveeModel');
+    this.allAstNodes()
+      .filter(isValuetypeDefinition)
+      .forEach((valueTypeDefinition) => {
+        const valueType =
+          this.wrapperFactories.ValueType.wrap(valueTypeDefinition);
+        if (valueType !== undefined && valueType.isReferenceableByUser()) {
+          acceptor(context, {
+            label: valueTypeDefinition.name,
+            kind: CompletionItemKind.Class,
+            detail: `(valueType)`,
+          });
         }
-        const allValueTypes = AstUtils.streamAllContents(parsedDocument).filter(
-          isValuetypeDefinition,
-        );
-        allValueTypes.forEach((valueTypeDefinition) => {
-          const valueType =
-            this.wrapperFactories.ValueType.wrap(valueTypeDefinition);
-          if (valueType !== undefined && valueType.isReferenceableByUser()) {
-            acceptor(context, {
-              label: valueTypeDefinition.name,
-              kind: CompletionItemKind.Class,
-              detail: `(valueType)`,
-            });
-          }
-        });
       });
+  }
+
+  private completionForValueTypeConstraintDefinitionReference(
+    astNode: ValueTypeConstraintReference,
+    context: CompletionContext,
+    acceptor: CompletionAcceptor,
+  ) {
+    const propertyValueType = this.wrapperFactories.ValueType.wrap(
+      astNode.$container.attribute?.valueType.reference.ref,
+    );
+
+    const constraintDefinitionsWithSameValueType = this.allAstNodes()
+      .filter(isConstraintDefinition)
+      .filter((constraintDefinition) => {
+        if (propertyValueType === undefined) {
+          return true;
+        }
+        const constraintValueType = this.wrapperFactories.ValueType.wrap(
+          constraintDefinition.valueType.reference.ref,
+        );
+        if (constraintValueType === undefined) {
+          return false;
+        }
+        return constraintValueType.equals(propertyValueType);
+      });
+
+    constraintDefinitionsWithSameValueType.forEach((constraintDefinition) => {
+      acceptor(context, {
+        label: constraintDefinition.name,
+        kind: CompletionItemKind.Reference,
+        detail: '(constraint definition)',
+      });
+    });
+  }
+
+  private completionForValueTypeConstraintAttributeReference(
+    astNode: ValueTypeConstraintReference,
+    context: CompletionContext,
+    acceptor: CompletionAcceptor,
+  ) {
+    const property = astNode.$container.attribute;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (property !== undefined && property.name !== undefined) {
+      const proptertyTypeName = property.valueType.reference.ref?.name;
+      const labelDetails: CompletionItemLabelDetails =
+        proptertyTypeName !== undefined
+          ? { detail: ` oftype ${proptertyTypeName}` }
+          : {};
+      acceptor(context, {
+        label: property.name,
+        labelDetails: labelDetails,
+        kind: CompletionItemKind.Reference,
+        detail: '(valueType property)',
+      });
+    }
   }
 
   private completionForPropertyName(
