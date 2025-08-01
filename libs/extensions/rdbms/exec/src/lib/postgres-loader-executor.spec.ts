@@ -174,7 +174,7 @@ describe('Validation of PostgresLoaderExecutor', () => {
     expect(R.isOk(result)).toEqual(false);
     if (R.isErr(result)) {
       expect(result.left.message).toEqual(
-        'Could not write to postgres database: Connection error',
+        'Could not connect to postgres database: Connection error',
       );
       expect(databaseConnectMock).toBeCalledTimes(1);
       expect(databaseQueryMock).toBeCalledTimes(0);
