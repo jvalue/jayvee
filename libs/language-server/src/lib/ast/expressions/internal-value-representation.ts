@@ -16,7 +16,50 @@ import {
   isTransformDefinition,
   isValuetypeAssignment,
 } from '../generated/ast';
-import type { WrapperFactoryProvider } from '../wrappers';
+import { type WrapperFactoryProvider } from '../wrappers';
+
+abstract class JayveeError extends Error {
+  abstract override name: string;
+
+  constructor(message: string) {
+    super(message);
+  }
+
+  override toString(): string {
+    return `${this.name}: ${this.message}`;
+  }
+
+  abstract clone(): JayveeError;
+}
+
+export class InvalidError extends JayveeError {
+  public override name = 'InvalidError' as const;
+
+  constructor(message: string, stack?: string) {
+    super(message);
+    if (stack !== undefined) {
+      this.stack = stack;
+    }
+  }
+
+  override clone(): InvalidError {
+    return new InvalidError(this.message, this.stack);
+  }
+}
+
+export class MissingError extends JayveeError {
+  override name = 'MissingError' as const;
+
+  override clone(): MissingError {
+    const cloned = new MissingError(this.message);
+    if (this.stack !== undefined) {
+      cloned.stack = this.stack;
+    }
+    return cloned;
+  }
+}
+
+export type InternalErrorRepresentation = InvalidError | MissingError;
 
 import { COLLECTION_TYPEGUARD } from './typeguards';
 
