@@ -8,6 +8,7 @@ import { strict as assert } from 'assert';
 import { type AstNode, MultiMap, assertUnreachable } from 'langium';
 
 import {
+  ERROR_TYPEGUARD,
   EvaluationStrategy,
   type Expression,
   evaluateExpression,
@@ -88,7 +89,7 @@ export function checkExpressionSimplification(
       props.validationContext,
       EvaluationStrategy.EXHAUSTIVE,
     );
-    assert(evaluatedExpression !== undefined);
+    assert(!ERROR_TYPEGUARD(evaluatedExpression));
 
     props.validationContext.accept(
       'info',
