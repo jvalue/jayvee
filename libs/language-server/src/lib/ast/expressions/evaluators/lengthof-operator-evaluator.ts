@@ -11,8 +11,13 @@ import { type WrapperFactoryProvider } from '../../wrappers/wrapper-factory-prov
 import { evaluateExpression } from '../evaluate-expression';
 import { type EvaluationContext } from '../evaluation-context';
 import { type EvaluationStrategy } from '../evaluation-strategy';
+import { type InternalErrorRepresentation } from '../internal-value-representation';
 import { type OperatorEvaluator } from '../operator-evaluator';
-import { COLLECTION_TYPEGUARD, STRING_TYPEGUARD } from '../typeguards';
+import {
+  COLLECTION_TYPEGUARD,
+  ERROR_TYPEGUARD,
+  STRING_TYPEGUARD,
+} from '../typeguards';
 
 export class LengthofOperatorEvaluator
   implements OperatorEvaluator<UnaryExpression>
@@ -25,7 +30,7 @@ export class LengthofOperatorEvaluator
     wrapperFactories: WrapperFactoryProvider,
     strategy: EvaluationStrategy,
     validationContext: ValidationContext | undefined,
-  ): number | undefined {
+  ): number | InternalErrorRepresentation {
     assert(expression.operator === this.operator);
     const operandValue = evaluateExpression(
       expression.expression,
@@ -34,16 +39,14 @@ export class LengthofOperatorEvaluator
       validationContext,
       strategy,
     );
-    if (operandValue === undefined) {
-      return undefined;
+    if (ERROR_TYPEGUARD(operandValue)) {
+      return operandValue;
     }
 
-    if (STRING_TYPEGUARD(operandValue)) {
-      return operandValue.length;
-    } else if (COLLECTION_TYPEGUARD(operandValue)) {
-      return operandValue.length;
-    }
+    assert(
+      STRING_TYPEGUARD(operandValue) || COLLECTION_TYPEGUARD(operandValue),
+    );
 
-    return undefined;
+    return operandValue.length;
   }
 }

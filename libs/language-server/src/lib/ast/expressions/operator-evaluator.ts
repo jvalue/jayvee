@@ -17,6 +17,7 @@ import { evaluateExpression } from './evaluate-expression';
 import { type EvaluationContext } from './evaluation-context';
 import { EvaluationStrategy } from './evaluation-strategy';
 import {
+  type InternalErrorRepresentation,
   type InternalValueRepresentation,
   type InternalValueRepresentationTypeguard,
 } from './internal-value-representation';
@@ -25,6 +26,11 @@ import {
   type TernaryExpressionOperator,
   type UnaryExpressionOperator,
 } from './operator-types';
+import {
+  ERROR_TYPEGUARD,
+  INVALID_TYPEGUARD,
+  MISSING_TYPEGUARD,
+} from './typeguards';
 
 export interface OperatorEvaluator<
   E extends UnaryExpression | BinaryExpression | TernaryExpression,
@@ -40,7 +46,7 @@ export interface OperatorEvaluator<
     wrapperFactories: WrapperFactoryProvider,
     strategy: EvaluationStrategy,
     validationContext: ValidationContext | undefined,
-  ): InternalValueRepresentation | undefined;
+  ): InternalValueRepresentation | InternalErrorRepresentation;
 }
 
 export abstract class DefaultUnaryOperatorEvaluator<
@@ -57,7 +63,7 @@ export abstract class DefaultUnaryOperatorEvaluator<
     operandValue: O,
     expression: UnaryExpression,
     context: ValidationContext | undefined,
-  ): T | undefined;
+  ): T | InternalErrorRepresentation;
 
   evaluate(
     expression: UnaryExpression,
@@ -65,7 +71,7 @@ export abstract class DefaultUnaryOperatorEvaluator<
     wrapperFactories: WrapperFactoryProvider,
     strategy: EvaluationStrategy,
     validationContext: ValidationContext | undefined,
-  ): T | undefined {
+  ): T | InternalErrorRepresentation {
     assert(expression.operator === this.operator);
     const operandValue = evaluateExpression(
       expression.expression,
@@ -74,8 +80,8 @@ export abstract class DefaultUnaryOperatorEvaluator<
       validationContext,
       strategy,
     );
-    if (operandValue === undefined) {
-      return undefined;
+    if (ERROR_TYPEGUARD(operandValue)) {
+      return operandValue;
     }
 
     assert(this.operandValueTypeguard(operandValue));
@@ -101,7 +107,7 @@ export abstract class DefaultBinaryOperatorEvaluator<
     rightValue: R,
     expression: BinaryExpression,
     context: ValidationContext | undefined,
-  ): T | undefined;
+  ): T | InternalErrorRepresentation;
 
   evaluate(
     expression: BinaryExpression,
@@ -109,7 +115,7 @@ export abstract class DefaultBinaryOperatorEvaluator<
     wrapperFactories: WrapperFactoryProvider,
     strategy: EvaluationStrategy,
     validationContext: ValidationContext | undefined,
-  ): T | undefined {
+  ): T | InternalErrorRepresentation {
     assert(expression.operator === this.operator);
     const leftValue = evaluateExpression(
       expression.left,
@@ -118,8 +124,8 @@ export abstract class DefaultBinaryOperatorEvaluator<
       validationContext,
       strategy,
     );
-    if (strategy === EvaluationStrategy.LAZY && leftValue === undefined) {
-      return undefined;
+    if (strategy === EvaluationStrategy.LAZY && ERROR_TYPEGUARD(leftValue)) {
+      return leftValue;
     }
     const rightValue = evaluateExpression(
       expression.right,
@@ -128,8 +134,17 @@ export abstract class DefaultBinaryOperatorEvaluator<
       validationContext,
       strategy,
     );
-    if (leftValue === undefined || rightValue === undefined) {
-      return undefined;
+    if (INVALID_TYPEGUARD(leftValue)) {
+      return leftValue;
+    }
+    if (INVALID_TYPEGUARD(rightValue)) {
+      return rightValue;
+    }
+    if (MISSING_TYPEGUARD(leftValue)) {
+      return leftValue;
+    }
+    if (MISSING_TYPEGUARD(rightValue)) {
+      return rightValue;
     }
 
     assert(this.leftValueTypeguard(leftValue));
@@ -168,7 +183,7 @@ export abstract class BooleanShortCircuitOperatorEvaluator
     wrapperFactories: WrapperFactoryProvider,
     strategy: EvaluationStrategy,
     validationContext: ValidationContext | undefined,
-  ): boolean | undefined {
+  ): boolean | InternalErrorRepresentation {
     assert(expression.operator === this.operator);
     const leftValue = evaluateExpression(
       expression.left,
@@ -177,10 +192,10 @@ export abstract class BooleanShortCircuitOperatorEvaluator
       validationContext,
       strategy,
     );
-    assert(leftValue === undefined || typeof leftValue === 'boolean');
+    assert(ERROR_TYPEGUARD(leftValue) || typeof leftValue === 'boolean');
     if (strategy === EvaluationStrategy.LAZY) {
-      if (leftValue === undefined) {
-        return undefined;
+      if (ERROR_TYPEGUARD(leftValue)) {
+        return leftValue;
       }
       if (this.canSkipRightOperandEvaluation(leftValue)) {
         return this.getShortCircuitValue();
@@ -194,8 +209,17 @@ export abstract class BooleanShortCircuitOperatorEvaluator
       validationContext,
       strategy,
     );
-    if (leftValue === undefined || rightValue === undefined) {
-      return undefined;
+    if (INVALID_TYPEGUARD(leftValue)) {
+      return leftValue;
+    }
+    if (INVALID_TYPEGUARD(rightValue)) {
+      return rightValue;
+    }
+    if (MISSING_TYPEGUARD(leftValue)) {
+      return leftValue;
+    }
+    if (MISSING_TYPEGUARD(rightValue)) {
+      return rightValue;
     }
     assert(typeof rightValue === 'boolean');
 
@@ -223,7 +247,7 @@ export abstract class DefaultTernaryOperatorEvaluator<
     thirdValue: ThirdValue,
     expression: TernaryExpression,
     context: ValidationContext | undefined,
-  ): ReturnValue | undefined;
+  ): ReturnValue | InternalErrorRepresentation;
 
   evaluate(
     expression: TernaryExpression,
@@ -231,7 +255,7 @@ export abstract class DefaultTernaryOperatorEvaluator<
     wrapperFactories: WrapperFactoryProvider,
     strategy: EvaluationStrategy,
     validationContext: ValidationContext | undefined,
-  ): ReturnValue | undefined {
+  ): ReturnValue | InternalErrorRepresentation {
     // The following linting exception can be removed when a second ternary operator is added
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     assert(expression.operator === this.operator);
@@ -244,8 +268,8 @@ export abstract class DefaultTernaryOperatorEvaluator<
       strategy,
     );
 
-    if (strategy === EvaluationStrategy.LAZY && firstValue === undefined) {
-      return undefined;
+    if (strategy === EvaluationStrategy.LAZY && ERROR_TYPEGUARD(firstValue)) {
+      return firstValue;
     }
 
     const secondValue = evaluateExpression(
@@ -264,12 +288,23 @@ export abstract class DefaultTernaryOperatorEvaluator<
       strategy,
     );
 
-    if (
-      firstValue === undefined ||
-      secondValue === undefined ||
-      thirdValue === undefined
-    ) {
-      return undefined;
+    if (INVALID_TYPEGUARD(firstValue)) {
+      return firstValue;
+    }
+    if (INVALID_TYPEGUARD(secondValue)) {
+      return secondValue;
+    }
+    if (INVALID_TYPEGUARD(thirdValue)) {
+      return thirdValue;
+    }
+    if (MISSING_TYPEGUARD(firstValue)) {
+      return firstValue;
+    }
+    if (MISSING_TYPEGUARD(secondValue)) {
+      return secondValue;
+    }
+    if (MISSING_TYPEGUARD(thirdValue)) {
+      return thirdValue;
     }
 
     assert(this.firstValueTypeguard(firstValue));
