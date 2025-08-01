@@ -64,7 +64,8 @@ ValueLiteral:
   | RegexLiteral
   | CellRangeLiteral
   | ValuetypeAssignmentLiteral
-  | CollectionLiteral;
+  | CollectionLiteral
+  | ErrorLiteral;
 
 TextLiteral:
   value=STRING;
@@ -81,6 +82,9 @@ RegexLiteral:
 
 CollectionLiteral:
   '[' (values+=(Expression) (',' values+=(Expression))*)? ','? ']';
+
+ErrorLiteral:
+  error= "invalid" | "missing";
 
 FreeVariableLiteral:
   ValueKeywordLiteral | ReferenceLiteral;
