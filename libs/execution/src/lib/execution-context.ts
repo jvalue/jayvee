@@ -9,6 +9,7 @@ import { inspect } from 'node:util';
 import {
   type BlockDefinition,
   type ConstraintDefinition,
+  ERROR_TYPEGUARD,
   type EvaluationContext,
   type InternalValueRepresentation,
   type PipelineDefinition,
@@ -110,7 +111,7 @@ export class ExecutionContext {
       this.wrapperFactories,
       valueType,
     );
-    assert(propertyValue !== undefined);
+    assert(!ERROR_TYPEGUARD(propertyValue));
     return propertyValue;
   }
 
