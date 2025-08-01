@@ -2,6 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import assert from 'assert';
+
+import { assertUnreachable } from 'langium';
+
 import {
   type BlockTypeProperty,
   type CellRangeLiteral,
@@ -80,14 +85,27 @@ export type InternalValueRepresentationTypeguard<
 > = (value: InternalValueRepresentation) => value is T;
 
 export function internalValueToString(
+  valueRepresentation: Exclude<InternalValueRepresentation, CellRangeLiteral>,
+): string;
+export function internalValueToString(
   valueRepresentation: InternalValueRepresentation,
   wrapperFactories: WrapperFactoryProvider,
+): string;
+export function internalValueToString(
+  valueRepresentation: InternalValueRepresentation,
+  wrapperFactories?: WrapperFactoryProvider,
 ): string {
   if (Array.isArray(valueRepresentation)) {
     return (
       '[ ' +
       valueRepresentation
-        .map((item) => internalValueToString(item, wrapperFactories))
+        .map((value) => {
+          if (isCellRangeLiteral(value)) {
+            assert(wrapperFactories !== undefined);
+            return internalValueToString(value, wrapperFactories);
+          }
+          return internalValueToString(value);
+        })
         .join(', ') +
       ' ]'
     );
@@ -116,6 +134,7 @@ export function internalValueToString(
     return valueRepresentation.source;
   }
   if (isCellRangeLiteral(valueRepresentation)) {
+    assert(wrapperFactories !== undefined);
     return wrapperFactories.CellRange.wrap(valueRepresentation).toString();
   }
   if (isConstraintDefinition(valueRepresentation)) {
@@ -130,7 +149,5 @@ export function internalValueToString(
   if (isBlockTypeProperty(valueRepresentation)) {
     return valueRepresentation.name;
   }
-  throw new Error(
-    'Convert of this InternalValueRepresentation is not implemented',
-  );
+  assertUnreachable(valueRepresentation);
 }
