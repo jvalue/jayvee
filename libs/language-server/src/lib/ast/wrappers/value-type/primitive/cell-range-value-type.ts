@@ -25,7 +25,7 @@ export class CellRangeValuetype extends PrimitiveValueType<CellRangeLiteral> {
   }
 
   override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation | undefined,
+    operandValue: InternalValueRepresentation,
   ): operandValue is CellRangeLiteral {
     return isCellRangeLiteral(operandValue);
   }
