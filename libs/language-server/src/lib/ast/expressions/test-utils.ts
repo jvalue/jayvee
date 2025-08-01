@@ -12,7 +12,10 @@ import { isTransformDefinition } from '../generated/ast';
 
 import { evaluateExpression } from './evaluate-expression';
 import { EvaluationContext } from './evaluation-context';
-import { type InternalValueRepresentation } from './internal-value-representation';
+import {
+  type InternalErrorRepresentation,
+  type InternalValueRepresentation,
+} from './internal-value-representation';
 
 export async function executeDefaultTextToTextExpression(
   expression: string,
@@ -33,7 +36,7 @@ export async function executeExpressionTestHelper(
   inputValueType: 'text',
   inputValueValue: InternalValueRepresentation,
   outputValueType: 'text' | 'integer',
-): Promise<InternalValueRepresentation | undefined> {
+): Promise<InternalValueRepresentation | InternalErrorRepresentation> {
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   const parse = parseHelper(services);
 

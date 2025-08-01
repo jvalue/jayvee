@@ -18,6 +18,7 @@ import {
   isCellRangeLiteral,
   isCollectionLiteral,
   isConstraintDefinition,
+  isErrorLiteral,
   isExpressionLiteral,
   isFreeVariableLiteral,
   isNumericLiteral,
@@ -44,8 +45,6 @@ import {
   pickCommonAtomicValueType,
   pickCommonPrimitiveValuetype,
 } from '../wrappers/util/value-type-util';
-
-import { isEveryValueDefined } from './typeguards';
 
 export function inferExpressionType(
   expression: Expression | undefined,
@@ -176,6 +175,8 @@ function inferTypeFromExpressionLiteral(
         valueTypeProvider,
         wrapperFactories,
       );
+    } else if (isErrorLiteral(expression)) {
+      return undefined; // FIXME: make sure `undefined` means any type
     }
     assertUnreachable(expression);
   } else if (isFreeVariableLiteral(expression)) {
@@ -280,10 +281,12 @@ function inferCollectionElementTypes(
       wrapperFactories,
     ),
   );
-  if (!isEveryValueDefined(elementValuetypes)) {
-    return undefined;
+
+  if (elementValuetypes.every((value) => value !== undefined)) {
+    return elementValuetypes;
   }
-  return elementValuetypes;
+
+  return undefined;
 }
 
 function inferTypeFromValueKeyword(

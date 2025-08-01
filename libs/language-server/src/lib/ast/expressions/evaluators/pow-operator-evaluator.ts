@@ -4,6 +4,7 @@
 
 import { type ValidationContext } from '../../../validation/validation-context';
 import { type BinaryExpression } from '../../generated/ast';
+import { InvalidError } from '../internal-value-representation';
 import { DefaultBinaryOperatorEvaluator } from '../operator-evaluator';
 import { NUMBER_TYPEGUARD } from '../typeguards';
 
@@ -21,7 +22,7 @@ export class PowOperatorEvaluator extends DefaultBinaryOperatorEvaluator<
     rightValue: number,
     expression: BinaryExpression,
     context: ValidationContext | undefined,
-  ): number | undefined {
+  ): number | InvalidError {
     const resultingValue = leftValue ** rightValue;
 
     if (!isFinite(resultingValue)) {
@@ -31,12 +32,16 @@ export class PowOperatorEvaluator extends DefaultBinaryOperatorEvaluator<
           'Arithmetic error: zero raised to a negative number',
           { node: expression },
         );
-      } else {
-        context?.accept('error', 'Unknown arithmetic error', {
-          node: expression,
-        });
+        return new InvalidError(
+          'Cannot compute zero raised to a negative number',
+        );
       }
-      return undefined;
+      context?.accept('error', 'Unknown arithmetic error', {
+        node: expression,
+      });
+      return new InvalidError(
+        `Cannot compute ${leftValue} raised to ${rightValue}`,
+      );
     }
     return resultingValue;
   }

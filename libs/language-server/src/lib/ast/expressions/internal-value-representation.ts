@@ -2,6 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import assert from 'assert';
+
 import { assertUnreachable, isAstNode } from 'langium';
 
 import {
@@ -17,6 +20,8 @@ import {
   isValuetypeAssignment,
 } from '../generated/ast';
 import { type WrapperFactoryProvider } from '../wrappers';
+
+import { COLLECTION_TYPEGUARD } from './typeguards';
 
 abstract class JayveeError extends Error {
   abstract override name: string;
@@ -61,8 +66,6 @@ export class MissingError extends JayveeError {
 
 export type InternalErrorRepresentation = InvalidError | MissingError;
 
-import { COLLECTION_TYPEGUARD } from './typeguards';
-
 export type InternalValueRepresentation =
   | AtomicInternalValueRepresentation
   | InternalValueRepresentation[];
@@ -83,14 +86,27 @@ export type InternalValueRepresentationTypeguard<
 > = (value: unknown) => value is T;
 
 export function internalValueToString(
+  valueRepresentation: Exclude<InternalValueRepresentation, CellRangeLiteral>,
+): string;
+export function internalValueToString(
   valueRepresentation: InternalValueRepresentation,
   wrapperFactories: WrapperFactoryProvider,
+): string;
+export function internalValueToString(
+  valueRepresentation: InternalValueRepresentation,
+  wrapperFactories?: WrapperFactoryProvider,
 ): string {
   if (Array.isArray(valueRepresentation)) {
     return (
       '[ ' +
       valueRepresentation
-        .map((item) => internalValueToString(item, wrapperFactories))
+        .map((value) => {
+          if (isCellRangeLiteral(value)) {
+            assert(wrapperFactories !== undefined);
+            return internalValueToString(value, wrapperFactories);
+          }
+          return internalValueToString(value);
+        })
         .join(', ') +
       ' ]'
     );
@@ -119,6 +135,7 @@ export function internalValueToString(
     return valueRepresentation.source;
   }
   if (isCellRangeLiteral(valueRepresentation)) {
+    assert(wrapperFactories !== undefined);
     return wrapperFactories.CellRange.wrap(valueRepresentation).toString();
   }
   if (isConstraintDefinition(valueRepresentation)) {
