@@ -2,16 +2,19 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
+import {
+  type InternalValueRepresentation,
+  InvalidError,
+} from '../../../expressions/internal-value-representation';
 import { type ValueTypeVisitor } from '../value-type';
 
 import { PrimitiveValueType } from './primitive-value-type';
 
 const NUMBER_REGEX = /^[+-]?([0-9]*[,.])?[0-9]+([eE][+-]?\d+)?$/;
 
-export function parseDecimal(s: string): number | undefined {
+export function parseDecimal(s: string): number | InvalidError {
   if (!NUMBER_REGEX.test(s)) {
-    return undefined;
+    return new InvalidError(`"${s}" is not a number`);
   }
 
   return Number.parseFloat(s.replace(',', '.'));
@@ -31,7 +34,7 @@ export class DecimalValuetype extends PrimitiveValueType<number> {
   }
 
   override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation | undefined,
+    operandValue: InternalValueRepresentation,
   ): operandValue is number {
     return typeof operandValue === 'number' && Number.isFinite(operandValue);
   }
@@ -47,7 +50,7 @@ Example: 3.14
 `.trim();
   }
 
-  override fromString(s: string): number | undefined {
+  override fromString(s: string): number | InvalidError {
     return parseDecimal(s);
   }
 }

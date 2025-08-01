@@ -24,7 +24,7 @@ export class EmptyCollectionValueType extends AbstractCollectionValueType<undefi
   }
 
   override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation | undefined,
+    operandValue: InternalValueRepresentation,
   ): operandValue is [] {
     return Array.isArray(operandValue) && operandValue.length === 0;
   }
