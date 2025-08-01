@@ -6,7 +6,10 @@
 import { strict as assert } from 'assert';
 
 import {
+  ERROR_TYPEGUARD,
+  type InternalErrorRepresentation,
   type InternalValueRepresentation,
+  InvalidError,
   type TransformDefinition,
   type TransformOutputAssignment,
   type TransformPortDefinition,
@@ -70,10 +73,7 @@ export class TransformExecutor {
     columns: Map<string, TableColumn>,
     numberOfRows: number,
     context: ExecutionContext,
-  ): {
-    resultingColumn: TableColumn;
-    rowsToDelete: number[];
-  } {
+  ): TableColumn {
     context.enterNode(this.transform);
 
     const result = this.doExecuteTransform(columns, numberOfRows, context);
@@ -86,20 +86,19 @@ export class TransformExecutor {
     columns: Map<string, TableColumn>,
     numberOfRows: number,
     context: ExecutionContext,
-  ): {
-    resultingColumn: TableColumn;
-    rowsToDelete: number[];
-  } {
+  ): TableColumn {
     const inputDetailsList = this.getInputDetails();
     const outputDetails = this.getOutputDetails();
 
-    const newColumn: InternalValueRepresentation[] = [];
-    const rowsToDelete: number[] = [];
+    const newColumn: (
+      | InternalValueRepresentation
+      | InternalErrorRepresentation
+    )[] = [];
 
     for (let rowIndex = 0; rowIndex < numberOfRows; ++rowIndex) {
       this.addVariablesToContext(inputDetailsList, columns, rowIndex, context);
 
-      let newValue: InternalValueRepresentation | undefined = undefined;
+      let newValue: InternalValueRepresentation | InternalErrorRepresentation;
       try {
         newValue = evaluateExpression(
           this.getOutputAssignment().expression,
@@ -108,20 +107,14 @@ export class TransformExecutor {
         );
       } catch (e) {
         if (e instanceof Error) {
-          context.logger.logDebug(e.message);
+          newValue = new InvalidError(e.message, e.stack);
         } else {
-          context.logger.logDebug(String(e));
+          newValue = new InvalidError(String(e));
         }
       }
 
-      if (newValue === undefined) {
-        context.logger.logDebug(
-          `Dropping row ${
-            rowIndex + 1
-          }: Could not evaluate transform expression`,
-        );
-        rowsToDelete.push(rowIndex);
-      } else if (
+      if (
+        !ERROR_TYPEGUARD(newValue) &&
         !isValidValueRepresentation(newValue, outputDetails.valueType, context)
       ) {
         assert(
@@ -129,12 +122,11 @@ export class TransformExecutor {
             typeof newValue === 'boolean' ||
             typeof newValue === 'number',
         );
-        context.logger.logDebug(
-          `Invalid value in row ${
-            rowIndex + 1
-          }: "${newValue.toString()}" does not match the type ${outputDetails.valueType.getName()}`,
-        );
-        rowsToDelete.push(rowIndex);
+        const message = `Invalid value in row ${
+          rowIndex + 1
+        }: "${newValue.toString()}" does not match the type ${outputDetails.valueType.getName()}`;
+        context.logger.logDebug(message);
+        newColumn.push(new InvalidError(message));
       } else {
         newColumn.push(newValue);
       }
@@ -142,13 +134,7 @@ export class TransformExecutor {
       this.removeVariablesFromContext(inputDetailsList, context);
     }
 
-    return {
-      rowsToDelete: rowsToDelete,
-      resultingColumn: {
-        values: newColumn,
-        valueType: outputDetails.valueType,
-      },
-    };
+    return { values: newColumn, valueType: outputDetails.valueType };
   }
 
   private removeVariablesFromContext(
