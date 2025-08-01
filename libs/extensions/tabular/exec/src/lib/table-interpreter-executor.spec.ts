@@ -9,6 +9,7 @@ import { getTestExecutionContext } from '@jvalue/jayvee-execution/test';
 import {
   type BlockDefinition,
   IOType,
+  InvalidError,
   type JayveeServices,
   createJayveeServices,
 } from '@jvalue/jayvee-language-server';
@@ -166,7 +167,7 @@ describe('Validation of TableInterpreterExecutor', () => {
       }
     });
 
-    it('should diagnose skipping row on wrong cell value type', async () => {
+    it('should diagnose InvalidError on wrong cell value type', async () => {
       const text = readJvTestAsset('valid-wrong-value-type-with-header.jv');
 
       const testWorkbook = await readTestWorkbook('test-with-header.xlsx');
@@ -179,7 +180,13 @@ describe('Validation of TableInterpreterExecutor', () => {
       if (R.isOk(result)) {
         expect(result.right.ioType).toEqual(IOType.TABLE);
         expect(result.right.getNumberOfColumns()).toEqual(3);
-        expect(result.right.getNumberOfRows()).toEqual(0);
+        expect(result.right.getNumberOfRows()).toEqual(16);
+        const flagColumn = result.right.getColumn('flag');
+        expect(flagColumn).toBeDefined();
+        assert(flagColumn !== undefined);
+        for (const cell of flagColumn.values) {
+          expect(cell).toBeInstanceOf(InvalidError);
+        }
       }
     });
   });
@@ -230,7 +237,7 @@ describe('Validation of TableInterpreterExecutor', () => {
       if (R.isOk(result)) {
         expect(result.right.ioType).toEqual(IOType.TABLE);
         expect(result.right.getNumberOfColumns()).toEqual(3);
-        expect(result.right.getNumberOfRows()).toEqual(16);
+        expect(result.right.getNumberOfRows()).toEqual(17);
         expect(result.right.getColumn('index')).toEqual(
           expect.objectContaining({
             values: expect.arrayContaining([0, 1, 2, 15]) as number[],
@@ -246,6 +253,12 @@ describe('Validation of TableInterpreterExecutor', () => {
             values: expect.arrayContaining([true, false]) as boolean[],
           }),
         );
+        for (const value of result.right.getRow(0).values()) {
+          if (value === 'name') {
+            continue;
+          }
+          expect(value).toBeInstanceOf(InvalidError);
+        }
       }
     });
 
@@ -283,7 +296,7 @@ describe('Validation of TableInterpreterExecutor', () => {
       }
     });
 
-    it('should diagnose skipping row on wrong cell value type', async () => {
+    it('should insert InvalidError on wrong cell value type', async () => {
       const text = readJvTestAsset('valid-wrong-value-type-without-header.jv');
 
       const testWorkbook = await readTestWorkbook('test-without-header.xlsx');
@@ -296,7 +309,13 @@ describe('Validation of TableInterpreterExecutor', () => {
       if (R.isOk(result)) {
         expect(result.right.ioType).toEqual(IOType.TABLE);
         expect(result.right.getNumberOfColumns()).toEqual(3);
-        expect(result.right.getNumberOfRows()).toEqual(0);
+        expect(result.right.getNumberOfRows()).toEqual(16);
+        const flagColumn = result.right.getColumn('flag');
+        expect(flagColumn).toBeDefined();
+        assert(flagColumn !== undefined);
+        for (const cell of flagColumn.values) {
+          expect(cell).toBeInstanceOf(InvalidError);
+        }
       }
     });
 
@@ -348,7 +367,13 @@ describe('Validation of TableInterpreterExecutor', () => {
       if (R.isOk(result)) {
         expect(result.right.ioType).toEqual(IOType.TABLE);
         expect(result.right.getNumberOfColumns()).toEqual(3);
-        expect(result.right.getNumberOfRows()).toEqual(0);
+        expect(result.right.getNumberOfRows()).toEqual(3);
+        const indexColumn = result.right.getColumn('index')?.values;
+        expect(indexColumn).toBeDefined();
+        assert(indexColumn !== undefined);
+        indexColumn.forEach((cell) =>
+          expect(cell).toBeInstanceOf(InvalidError),
+        );
       }
     });
   });

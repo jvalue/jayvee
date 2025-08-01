@@ -11,6 +11,7 @@ import {
   parseValueToInternalRepresentation,
 } from '@jvalue/jayvee-execution';
 import {
+  type InternalErrorRepresentation,
   type InternalValueRepresentation,
   type ValueType,
 } from '@jvalue/jayvee-language-server';
@@ -101,12 +102,10 @@ function constructTableRow(
       const value = cell.text;
       const valueType = columnDefinition.valueType;
 
-      const parsedValue = parseAndValidatePrimitiveValue(value, valueType);
-      if (parsedValue === undefined) {
-        return;
-      }
-
-      tableRow[columnDefinition.columnName] = parsedValue;
+      tableRow[columnDefinition.columnName] = parseAndValidatePrimitiveValue(
+        value,
+        valueType,
+      );
     },
   );
   return tableRow;
@@ -114,11 +113,6 @@ function constructTableRow(
 function parseAndValidatePrimitiveValue(
   value: string,
   valueType: ValueType,
-): InternalValueRepresentation | undefined {
-  const parsedValue = parseValueToInternalRepresentation(value, valueType);
-  if (parsedValue === undefined) {
-    return undefined;
-  }
-
-  return parsedValue;
+): InternalValueRepresentation | InternalErrorRepresentation {
+  return parseValueToInternalRepresentation(value, valueType);
 }

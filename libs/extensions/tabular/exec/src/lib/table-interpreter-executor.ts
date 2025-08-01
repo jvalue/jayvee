@@ -18,11 +18,15 @@ import {
 } from '@jvalue/jayvee-execution';
 import {
   CellIndex,
+  ERROR_TYPEGUARD,
   IOType,
+  InternalErrorRepresentation,
   type InternalValueRepresentation,
+  InvalidError,
+  MissingError,
   type ValueType,
   type ValuetypeAssignment,
-  rowIndexToString,
+  internalValueToString,
 } from '@jvalue/jayvee-language-server';
 
 export interface ColumnDefinitionEntry {
@@ -157,12 +161,6 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
         skipTrailingWhitespace,
         context,
       );
-      if (tableRow === undefined) {
-        context.logger.logDebug(
-          `Omitting row ${rowIndexToString(sheetRowIndex)}`,
-        );
-        return;
-      }
       table.addRow(tableRow);
     });
     return table;
@@ -175,37 +173,34 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
     skipLeadingWhitespace: boolean,
     skipTrailingWhitespace: boolean,
     context: ExecutionContext,
-  ): R.TableRow | undefined {
-    let invalidRow = false;
+  ): R.TableRow {
     const tableRow: R.TableRow = {};
     columnEntries.forEach((columnEntry) => {
-      const sheetColumnIndex = columnEntry.sheetColumnIndex;
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const value = sheetRow[sheetColumnIndex]!;
       const valueType = columnEntry.valueType;
+      const sheetColumnIndex = columnEntry.sheetColumnIndex;
+      const value = sheetRow[sheetColumnIndex];
 
-      const parsedValue = this.parseAndValidateValue(
-        value,
-        valueType,
-        skipLeadingWhitespace,
-        skipTrailingWhitespace,
-        context,
-      );
-      if (parsedValue === undefined) {
+      const parsedValue =
+        value !== undefined
+          ? this.parseAndValidateValue(
+              value,
+              valueType,
+              skipLeadingWhitespace,
+              skipTrailingWhitespace,
+              context,
+            )
+          : new MissingError(
+              `The sheet row did not contain a value at index ${sheetColumnIndex}`,
+            );
+      if (ERROR_TYPEGUARD(parsedValue)) {
         const currentCellIndex = new CellIndex(sheetColumnIndex, sheetRowIndex);
         context.logger.logDebug(
           `Invalid value at cell ${currentCellIndex.toString()}: "${value}" does not match the type ${columnEntry.valueType.getName()}`,
         );
-        invalidRow = true;
-        return;
       }
 
       tableRow[columnEntry.columnName] = parsedValue;
     });
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (invalidRow) {
-      return undefined;
-    }
 
     assert(Object.keys(tableRow).length === columnEntries.length);
     return tableRow;
@@ -217,17 +212,22 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
     skipLeadingWhitespace: boolean,
     skipTrailingWhitespace: boolean,
     context: ExecutionContext,
-  ): InternalValueRepresentation | undefined {
+  ): InternalValueRepresentation | InternalErrorRepresentation {
     const parsedValue = parseValueToInternalRepresentation(value, valueType, {
       skipLeadingWhitespace,
       skipTrailingWhitespace,
     });
-    if (parsedValue === undefined) {
-      return undefined;
-    }
 
-    if (!isValidValueRepresentation(parsedValue, valueType, context)) {
-      return undefined;
+    if (
+      !ERROR_TYPEGUARD(parsedValue) &&
+      !isValidValueRepresentation(parsedValue, valueType, context)
+    ) {
+      return new InvalidError(
+        `The following value was not valid for valuetype ${valueType.getName()}: ${internalValueToString(
+          parsedValue,
+          context.wrapperFactories,
+        )}`,
+      );
     }
     return parsedValue;
   }

@@ -21,6 +21,7 @@ import {
 } from '@jvalue/jayvee-execution';
 import {
   IOType,
+  InternalErrorRepresentation,
   type InternalValueRepresentation,
 } from '@jvalue/jayvee-language-server';
 
@@ -81,9 +82,10 @@ function getHeaders(table: Table): string[] {
 }
 
 function toRows(table: Table): Row[] {
-  const columns: InternalValueRepresentation[][] = [
-    ...table.getColumns().entries(),
-  ].map((column) => column[1].values);
+  const columns: (
+    | InternalValueRepresentation
+    | InternalErrorRepresentation
+  )[][] = [...table.getColumns().entries()].map((column) => column[1].values);
 
   return transposeArray(columns);
 }

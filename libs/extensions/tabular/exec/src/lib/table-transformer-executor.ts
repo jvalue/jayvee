@@ -158,15 +158,11 @@ export class TableTransformerExecutor extends AbstractBlockExecutor<
 
   private createOutputTable(
     inputTable: R.Table,
-    transformResult: {
-      resultingColumn: R.TableColumn<InternalValueRepresentation>;
-      rowsToDelete: number[];
-    },
+    transformResult: R.TableColumn<InternalValueRepresentation>,
     outputColumnName: string,
   ) {
     const outputTable = inputTable.clone();
-    outputTable.dropRows(transformResult.rowsToDelete);
-    outputTable.addColumn(outputColumnName, transformResult.resultingColumn);
+    outputTable.addColumn(outputColumnName, transformResult);
     return outputTable;
   }
 
