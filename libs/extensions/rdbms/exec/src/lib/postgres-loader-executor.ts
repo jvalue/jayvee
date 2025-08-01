@@ -28,10 +28,7 @@ export class PostgresLoaderExecutor extends AbstractBlockExecutor<
     super(IOType.TABLE, IOType.NONE);
   }
 
-  async doExecute(
-    input: Table,
-    context: ExecutionContext,
-  ): Promise<R.Result<None>> {
+  private createClient(context: ExecutionContext) {
     const host = context.getPropertyValue(
       'host',
       context.valueTypeProvider.Primitives.Text,
@@ -52,57 +49,136 @@ export class PostgresLoaderExecutor extends AbstractBlockExecutor<
       'database',
       context.valueTypeProvider.Primitives.Text,
     );
-    const table = context.getPropertyValue(
-      'table',
-      context.valueTypeProvider.Primitives.Text,
-    );
-
-    const client = new Client({
+    return new Client({
       host,
       port,
       user,
       password,
       database,
     });
+  }
 
+  private createError(
+    message: string,
+    error: unknown,
+    context: ExecutionContext,
+  ): R.Result<None> {
+    return R.err({
+      message:
+        message +
+        ': ' +
+        (error instanceof Error ? error.message : JSON.stringify(error)),
+      diagnostic: { node: context.getCurrentNode(), property: 'name' },
+    });
+  }
+
+  private async connectToDB(
+    client: pg.Client,
+    context: ExecutionContext,
+  ): Promise<R.Result<None> | undefined> {
+    context.logger.logDebug(`Connecting to database`);
     try {
-      context.logger.logDebug(`Connecting to database`);
       await client.connect();
-
-      context.logger.logDebug(
-        `Dropping previous table "${table}" if it exists`,
+    } catch (error) {
+      return this.createError(
+        `Could not connect to postgres database`,
+        error,
+        context,
       );
-      await client.query(Table.generateDropTableStatement(table));
-      context.logger.logDebug(`Creating table "${table}"`);
-      await client.query(
-        input.generateCreateTableStatement(
-          table,
-          context.valueTypeProvider.Primitives.Text,
-        ),
-      );
-      context.logger.logDebug(
-        `Inserting ${input.getNumberOfRows()} row(s) into table "${table}"`,
-      );
-      await client.query(
-        input.generateInsertValuesStatement(
-          table,
-          context.valueTypeProvider.Primitives.Text,
-        ),
-      );
-
-      context.logger.logDebug(
-        `The data was successfully loaded into the database`,
-      );
-      return R.ok(NONE);
-    } catch (err: unknown) {
-      return R.err({
-        message: `Could not write to postgres database: ${
-          err instanceof Error ? err.message : JSON.stringify(err)
-        }`,
-        diagnostic: { node: context.getCurrentNode(), property: 'name' },
-      });
-    } finally {
-      await client.end();
     }
+    return undefined;
+  }
+
+  private async dropTable(
+    client: pg.Client,
+    table: string,
+    context: ExecutionContext,
+  ): Promise<R.Result<None> | undefined> {
+    context.logger.logDebug(`Dropping previous table "${table}" if it exists`);
+    const dropTableStatement = Table.generateDropTableStatement(table);
+    try {
+      await client.query(dropTableStatement);
+    } catch (err) {
+      return this.createError(
+        `Could not drop table ${table} from postgres database`,
+        err,
+        context,
+      );
+    }
+    return undefined;
+  }
+  private async createTable(
+    client: pg.Client,
+    table: string,
+    input: Table,
+    context: ExecutionContext,
+  ): Promise<R.Result<None> | undefined> {
+    context.logger.logDebug(`Creating table "${table}"`);
+    const createTableStatement = input.generateCreateTableStatement(
+      table,
+      context.valueTypeProvider.Primitives.Text,
+    );
+    try {
+      await client.query(createTableStatement);
+    } catch (err) {
+      return this.createError(
+        `Could not create table ${table} in postgres database`,
+        err,
+        context,
+      );
+    }
+    return undefined;
+  }
+
+  private async insertValues(
+    client: pg.Client,
+    table: string,
+    input: Table,
+    context: ExecutionContext,
+  ): Promise<R.Result<None> | undefined> {
+    context.logger.logDebug(
+      `Inserting ${input.getNumberOfRows()} row(s) into table "${table}"`,
+    );
+    const insertValuesStatement = input.generateInsertValuesStatement(
+      table,
+      context.valueTypeProvider.Primitives.Text,
+    );
+    try {
+      await client.query(insertValuesStatement);
+    } catch (err) {
+      return this.createError(
+        `Could not write to postgres database`,
+        err,
+        context,
+      );
+    }
+    return undefined;
+  }
+
+  async doExecute(
+    input: Table,
+    context: ExecutionContext,
+  ): Promise<R.Result<None>> {
+    const table = context.getPropertyValue(
+      'table',
+      context.valueTypeProvider.Primitives.Text,
+    );
+
+    const client = this.createClient(context);
+
+    const result =
+      (await this.connectToDB(client, context)) ??
+      (await this.dropTable(client, table, context)) ??
+      (await this.createTable(client, table, input, context)) ??
+      (await this.insertValues(client, table, input, context));
+    await client.end();
+    if (result !== undefined) {
+      return result;
+    }
+
+    context.logger.logDebug(
+      `The data was successfully loaded into the database`,
+    );
+    return R.ok(NONE);
   }
 }
