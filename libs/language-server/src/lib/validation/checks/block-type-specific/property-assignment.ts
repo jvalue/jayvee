@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
+  ERROR_TYPEGUARD,
   type InternalValueRepresentation,
   type PropertyAssignment,
   type PropertySpecification,
@@ -26,7 +27,7 @@ export function checkBlockTypeSpecificProperties(
     props.wrapperFactories,
     propertySpec.type,
   );
-  if (propValue === undefined) {
+  if (ERROR_TYPEGUARD(propValue)) {
     return;
   }
 
@@ -112,7 +113,7 @@ function checkCellWriterProperty(
       props.wrapperFactories,
       props.valueTypeProvider.Primitives.CellRange,
     );
-    if (cellRange === undefined) {
+    if (ERROR_TYPEGUARD(cellRange)) {
       return;
     }
 
@@ -147,8 +148,11 @@ function checkColumnDeleterProperty(
         props.valueTypeProvider.Primitives.CellRange,
       ),
     );
+    if (ERROR_TYPEGUARD(cellRanges)) {
+      return;
+    }
 
-    cellRanges?.forEach((cellRange) => {
+    cellRanges.forEach((cellRange) => {
       if (!props.wrapperFactories.CellRange.canWrap(cellRange)) {
         return;
       }
@@ -271,8 +275,11 @@ function checkRowDeleterProperty(
         props.valueTypeProvider.Primitives.CellRange,
       ),
     );
+    if (ERROR_TYPEGUARD(cellRanges)) {
+      return;
+    }
 
-    cellRanges?.forEach((cellRange) => {
+    cellRanges.forEach((cellRange) => {
       if (!props.wrapperFactories.CellRange.canWrap(cellRange)) {
         return;
       }
@@ -305,7 +312,7 @@ function checkTableInterpreterProperty(
         props.valueTypeProvider.Primitives.ValuetypeAssignment,
       ),
     );
-    if (valueTypeAssignments === undefined) {
+    if (ERROR_TYPEGUARD(valueTypeAssignments)) {
       return;
     }
 
@@ -360,7 +367,10 @@ function checkTextLineDeleterProperty(
         props.valueTypeProvider.Primitives.Integer,
       ),
     );
-    lines?.forEach((value, index) => {
+    if (ERROR_TYPEGUARD(lines)) {
+      return;
+    }
+    lines.forEach((value, index) => {
       if (value < minTextLineIndex) {
         props.validationContext.accept(
           'error',
