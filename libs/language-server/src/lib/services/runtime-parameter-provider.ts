@@ -2,7 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../ast/expressions/internal-value-representation';
+import {
+  type InternalErrorRepresentation,
+  type InternalValueRepresentation,
+  MissingError,
+} from '../ast/expressions/internal-value-representation';
 import { type ValueType } from '../ast/wrappers/value-type/value-type';
 
 export type InternalValueRepresentationParser = <
@@ -10,7 +14,7 @@ export type InternalValueRepresentationParser = <
 >(
   value: string,
   valueType: ValueType<I>,
-) => I | undefined;
+) => I | InternalErrorRepresentation;
 
 export class RuntimeParameterProvider {
   private runtimeParameters = new Map<string, string>();
@@ -24,12 +28,17 @@ export class RuntimeParameterProvider {
   getParsedValue<I extends InternalValueRepresentation>(
     key: string,
     valueType: ValueType<I>,
-  ): I | undefined {
+  ): I | InternalErrorRepresentation {
     const stringValue = this.getRawValue(key);
     if (stringValue === undefined) {
-      return undefined;
+      return new MissingError(
+        `Could not find value for runtime parameter ${key}`,
+      );
     }
-    return this.valueParser?.(stringValue, valueType);
+
+    if (this.valueParser === undefined)
+      return new MissingError(`Did not have value parser set`); // FIXME: undefined is probably better here
+    return this.valueParser(stringValue, valueType);
   }
 
   getRawValue(key: string): string | undefined {
