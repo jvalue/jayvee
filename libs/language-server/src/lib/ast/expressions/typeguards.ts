@@ -8,8 +8,11 @@ import {
 } from '../generated/ast';
 
 import {
+  type InternalErrorRepresentation,
   type InternalValueRepresentation,
   type InternalValueRepresentationTypeguard,
+  type InvalidError,
+  type MissingError,
 } from './internal-value-representation';
 
 export const INTERNAL_VALUE_REPRESENTATION_TYPEGUARD: InternalValueRepresentationTypeguard<
@@ -55,6 +58,16 @@ export const COLLECTION_TYPEGUARD: InternalValueRepresentationTypeguard<
   return Array.isArray(value);
 };
 
-export function isEveryValueDefined<T>(array: (T | undefined)[]): array is T[] {
-  return array.every((value) => value !== undefined);
-}
+export const INVALID_TYPEGUARD = (value: unknown): value is InvalidError => {
+  return value instanceof Error && value.name === 'InvalidError';
+};
+
+export const MISSING_TYPEGUARD = (value: unknown): value is MissingError => {
+  return value instanceof Error && value.name === 'MissingError';
+};
+
+export const ERROR_TYPEGUARD = (
+  value: unknown,
+): value is InternalErrorRepresentation => {
+  return INVALID_TYPEGUARD(value) || MISSING_TYPEGUARD(value);
+};
