@@ -25,7 +25,7 @@ export class ConstraintValuetype extends PrimitiveValueType<ConstraintDefinition
   }
 
   override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation | undefined,
+    operandValue: InternalValueRepresentation,
   ): operandValue is ConstraintDefinition {
     return isConstraintDefinition(operandValue);
   }

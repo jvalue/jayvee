@@ -21,7 +21,7 @@ export class RegexValuetype extends PrimitiveValueType<RegExp> {
   }
 
   override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation | undefined,
+    operandValue: InternalValueRepresentation,
   ): operandValue is RegExp {
     return operandValue instanceof RegExp;
   }

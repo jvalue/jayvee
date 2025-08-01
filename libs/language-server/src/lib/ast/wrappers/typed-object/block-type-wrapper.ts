@@ -9,6 +9,7 @@ import { type Reference, isReference } from 'langium';
 
 import { RuntimeParameterProvider } from '../../../services/runtime-parameter-provider';
 import {
+  ERROR_TYPEGUARD,
   EvaluationContext,
   type OperatorEvaluatorRegistry,
   evaluateExpression,
@@ -65,18 +66,20 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlockTypeD
         type: valueType,
       };
 
-      const defaultValue = evaluateExpression(
-        property.defaultValue,
-        new EvaluationContext(
-          new RuntimeParameterProvider(),
-          operatorEvaluatorRegistry,
-          valueTypeProvider,
-        ),
-        wrapperFactories,
-      );
-      if (defaultValue !== undefined) {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        properties[property.name]!.defaultValue = defaultValue;
+      if (property.defaultValue !== undefined) {
+        const defaultValue = evaluateExpression(
+          property.defaultValue,
+          new EvaluationContext(
+            new RuntimeParameterProvider(),
+            operatorEvaluatorRegistry,
+            valueTypeProvider,
+          ),
+          wrapperFactories,
+        );
+        if (!ERROR_TYPEGUARD(defaultValue)) {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          properties[property.name]!.defaultValue = defaultValue;
+        }
       }
     }
 

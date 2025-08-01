@@ -36,7 +36,7 @@ export class CollectionValueType<
   }
 
   override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation | undefined,
+    operandValue: InternalValueRepresentation,
   ): operandValue is ToArray<I> {
     return (
       Array.isArray(operandValue) &&

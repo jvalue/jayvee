@@ -6,6 +6,7 @@
 import { strict as assert } from 'assert';
 
 import { type InternalValueRepresentation } from '../../expressions/internal-value-representation';
+import {} from '../../expressions/typeguards';
 import {
   type ConstraintDefinition,
   type ValueTypeAttribute,
@@ -45,24 +46,39 @@ export class AtomicValueType
     | ConstraintDefinition
     | ValueTypeConstraintInlineDefinition
   )[] {
-    return (
+    const result: (
+      | ConstraintDefinition
+      | ValueTypeConstraintInlineDefinition
+    )[] = [];
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    const constraints = this.astNode?.constraints;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (constraints === undefined) {
+      return result;
+    }
+
+    for (const constraint of constraints) {
+      if (isValueTypeConstraintInlineDefinition(constraint)) {
+        result.push(constraint);
+        continue;
+      }
+
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      this.astNode?.constraints?.map((constraint) => {
-        if (isValueTypeConstraintInlineDefinition(constraint)) {
-          return constraint;
-          // eslint-disable-next-line no-else-return
-        } else {
-          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-          const constraintDefinition = constraint?.definition?.ref;
-          assert(
-            this.valueTypeProvider.Primitives.Constraint.isInternalValueRepresentation(
-              constraintDefinition,
-            ),
-          );
-          return constraintDefinition;
-        }
-      }) ?? []
-    );
+      const constraintDefinition = constraint?.definition?.ref;
+      if (constraintDefinition === undefined) {
+        continue;
+      }
+
+      assert(
+        this.valueTypeProvider.Primitives.Constraint.isInternalValueRepresentation(
+          constraintDefinition,
+        ),
+      );
+      result.push(constraintDefinition);
+    }
+
+    return result;
   }
 
   override isConvertibleTo(target: ValueType): boolean {
@@ -105,7 +121,7 @@ export class AtomicValueType
   }
 
   override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation | undefined,
+    operandValue: InternalValueRepresentation,
   ): operandValue is InternalValueRepresentation {
     const supertype = this.getContainedType();
     if (supertype === undefined) {

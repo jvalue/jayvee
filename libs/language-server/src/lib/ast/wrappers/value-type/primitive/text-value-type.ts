@@ -21,7 +21,7 @@ export class TextValuetype extends PrimitiveValueType<string> {
   }
 
   override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation | undefined,
+    operandValue: InternalValueRepresentation,
   ): operandValue is string {
     return typeof operandValue === 'string';
   }

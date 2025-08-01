@@ -25,7 +25,7 @@ export class TransformValuetype extends PrimitiveValueType<TransformDefinition> 
   }
 
   override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation | undefined,
+    operandValue: InternalValueRepresentation,
   ): operandValue is TransformDefinition {
     return isTransformDefinition(operandValue);
   }

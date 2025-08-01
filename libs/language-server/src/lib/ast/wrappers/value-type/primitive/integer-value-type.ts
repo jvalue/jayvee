@@ -2,7 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
+import {
+  type InternalValueRepresentation,
+  InvalidError,
+} from '../../../expressions/internal-value-representation';
+import { INVALID_TYPEGUARD } from '../../../expressions/typeguards';
 import { type ValueType, type ValueTypeVisitor } from '../value-type';
 
 import { DecimalValuetype, parseDecimal } from './decimal-value-type';
@@ -26,7 +30,7 @@ export class IntegerValuetype extends PrimitiveValueType<number> {
   }
 
   override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation | undefined,
+    operandValue: InternalValueRepresentation,
   ): operandValue is number {
     return typeof operandValue === 'number' && Number.isInteger(operandValue);
   }
@@ -42,7 +46,7 @@ Example: 3
 `.trim();
   }
 
-  override fromString(s: string): number | undefined {
+  override fromString(s: string): number | InvalidError {
     /**
      * Reuse decimal number parsing to capture valid scientific notation
      * of integers like 5.3e3 = 5300. In contrast to decimal, if the final number
@@ -50,14 +54,14 @@ Example: 3
      */
     const decimalNumber = parseDecimal(s);
 
-    if (decimalNumber === undefined) {
-      return undefined;
+    if (INVALID_TYPEGUARD(decimalNumber)) {
+      return decimalNumber;
     }
 
     const integerNumber = Math.trunc(decimalNumber);
 
     if (decimalNumber !== integerNumber) {
-      return undefined;
+      return new InvalidError(`${decimalNumber} is a decimal, not an integer`);
     }
 
     return integerNumber;
