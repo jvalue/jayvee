@@ -78,7 +78,7 @@ export class EvaluationContext {
     if (dereferenced === undefined) {
       const error = referenceLiteral.value.error;
       assert(error !== undefined);
-      return new MissingError(`Could not resolve reverence: ${error.message}`);
+      return new MissingError(`Could not resolve reference: ${error.message}`);
     }
 
     if (isConstraintDefinition(dereferenced)) {
