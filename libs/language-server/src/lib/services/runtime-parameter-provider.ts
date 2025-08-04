@@ -2,6 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import assert from 'assert';
+
 import {
   type InternalErrorRepresentation,
   type InternalValueRepresentation,
@@ -36,8 +39,7 @@ export class RuntimeParameterProvider {
       );
     }
 
-    if (this.valueParser === undefined)
-      return new MissingError(`Did not have value parser set`); // FIXME: undefined is probably better here
+    assert(this.valueParser !== undefined);
     return this.valueParser(stringValue, valueType);
   }
 

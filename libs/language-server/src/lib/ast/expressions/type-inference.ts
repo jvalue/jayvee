@@ -46,6 +46,10 @@ import {
   pickCommonPrimitiveValuetype,
 } from '../wrappers/util/value-type-util';
 
+/**
+ * @returns The inferred ValueType. `undefined` means that any type could be
+ * present here
+ * */
 export function inferExpressionType(
   expression: Expression | undefined,
   validationContext: ValidationContext,
@@ -176,7 +180,7 @@ function inferTypeFromExpressionLiteral(
         wrapperFactories,
       );
     } else if (isErrorLiteral(expression)) {
-      return undefined; // FIXME: make sure `undefined` means any type
+      return undefined;
     }
     assertUnreachable(expression);
   } else if (isFreeVariableLiteral(expression)) {
