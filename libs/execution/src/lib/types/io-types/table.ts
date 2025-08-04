@@ -199,27 +199,11 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
   }
 
   clone(): Table {
-    for (const column of this.getColumns().values()) {
-      for (const cell of column.values) {
-        if (cell instanceof Error) {
-          assert(ERROR_TYPEGUARD(cell), 'original');
-        }
-      }
-    }
-
     const cloned = new Table();
     cloned.numberOfRows = this.numberOfRows;
     [...this.columns.entries()].forEach(([columnName, column]) => {
       cloned.addColumn(columnName, column.clone());
     });
-
-    for (const column of cloned.getColumns().values()) {
-      for (const cell of column.values) {
-        if (cell instanceof Error) {
-          assert(ERROR_TYPEGUARD(cell), 'cloned');
-        }
-      }
-    }
 
     return cloned;
   }
