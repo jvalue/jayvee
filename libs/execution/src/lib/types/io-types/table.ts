@@ -6,7 +6,9 @@
 import { strict as assert } from 'assert';
 
 import {
+  ERROR_TYPEGUARD,
   IOType,
+  type InternalErrorRepresentation,
   type InternalValueRepresentation,
   type TextValuetype,
   type ValueType,
@@ -20,14 +22,34 @@ import {
   type IoTypeVisitor,
 } from './io-type-implementation';
 
-export interface TableColumn<
+export class TableColumn<
   T extends InternalValueRepresentation = InternalValueRepresentation,
 > {
-  values: T[];
-  valueType: ValueType;
+  constructor(
+    public values: (T | InternalErrorRepresentation)[],
+    public valueType: ValueType,
+  ) {}
+
+  clone(): TableColumn<T> {
+    const cloned: (T | InternalErrorRepresentation)[] = [];
+    for (const value of this.values) {
+      if (ERROR_TYPEGUARD(value)) {
+        cloned.push(value.clone());
+      } else {
+        // WARNING: structuredClone does not support all types!
+        // See
+        // https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm#supported_types
+        cloned.push(structuredClone(value));
+      }
+    }
+    return new TableColumn(cloned, this.valueType);
+  }
 }
 
-export type TableRow = Record<string, InternalValueRepresentation>;
+export type TableRow = Record<
+  string,
+  InternalValueRepresentation | InternalErrorRepresentation
+>;
 
 /**
  * Invariant: the shape of the table is always a rectangle.
@@ -72,29 +94,14 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
       const column = this.columns.get(columnName);
       assert(column !== undefined);
 
-      assert(column.valueType.isInternalValueRepresentation(value));
+      assert(
+        ERROR_TYPEGUARD(value) ||
+          column.valueType.isInternalValueRepresentation(value),
+      );
       column.values.push(value);
     });
 
     this.numberOfRows++;
-  }
-
-  dropRow(rowId: number): void {
-    assert(rowId < this.numberOfRows);
-
-    this.columns.forEach((column) => {
-      column.values.splice(rowId, 1);
-    });
-
-    this.numberOfRows--;
-  }
-
-  dropRows(rowIds: number[]): void {
-    rowIds
-      .sort((a, b) => b - a) // delete descending to avoid messing up row indices
-      .forEach((rowId) => {
-        this.dropRow(rowId);
-      });
   }
 
   getNumberOfRows(): number {
@@ -117,7 +124,9 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     return this.columns.get(name);
   }
 
-  getRow(rowId: number): Map<string, InternalValueRepresentation> {
+  getRow(
+    rowId: number,
+  ): Map<string, InternalValueRepresentation | InternalErrorRepresentation> {
     const numberOfRows = this.getNumberOfRows();
     if (rowId >= numberOfRows) {
       throw new Error(
@@ -125,7 +134,10 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
       );
     }
 
-    const row = new Map<string, InternalValueRepresentation>();
+    const row = new Map<
+      string,
+      InternalValueRepresentation | InternalErrorRepresentation
+    >();
     [...this.columns.entries()].forEach(([columnName, column]) => {
       const value = column.values[rowId];
       assert(value !== undefined);
@@ -190,10 +202,7 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     const cloned = new Table();
     cloned.numberOfRows = this.numberOfRows;
     [...this.columns.entries()].forEach(([columnName, column]) => {
-      cloned.addColumn(columnName, {
-        values: structuredClone(column.values),
-        valueType: column.valueType,
-      });
+      cloned.addColumn(columnName, column.clone());
     });
 
     return cloned;

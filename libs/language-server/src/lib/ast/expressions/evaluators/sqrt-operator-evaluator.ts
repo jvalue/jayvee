@@ -7,6 +7,7 @@ import { strict as assert } from 'assert';
 
 import { type ValidationContext } from '../../../validation/validation-context';
 import { type UnaryExpression } from '../../generated/ast';
+import { InvalidError } from '../internal-value-representation';
 import { DefaultUnaryOperatorEvaluator } from '../operator-evaluator';
 import { NUMBER_TYPEGUARD } from '../typeguards';
 
@@ -21,7 +22,7 @@ export class SqrtOperatorEvaluator extends DefaultUnaryOperatorEvaluator<
     operandValue: number,
     expression: UnaryExpression,
     context: ValidationContext | undefined,
-  ): number | undefined {
+  ): number | InvalidError {
     const resultingValue = Math.sqrt(operandValue);
 
     if (!isFinite(resultingValue)) {
@@ -31,7 +32,9 @@ export class SqrtOperatorEvaluator extends DefaultUnaryOperatorEvaluator<
         'Arithmetic error: square root of negative number',
         { node: expression },
       );
-      return undefined;
+      return new InvalidError(
+        `Cannot compute the square root of the negative number ${operandValue}`,
+      );
     }
     return resultingValue;
   }

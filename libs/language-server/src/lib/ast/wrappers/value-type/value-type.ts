@@ -2,7 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../expressions/internal-value-representation';
+import {
+  type InternalErrorRepresentation,
+  type InternalValueRepresentation,
+} from '../../expressions/internal-value-representation';
 
 import { type AtomicValueType } from './atomic-value-type';
 import {
@@ -54,7 +57,7 @@ export interface ValueType<
    * For example, a TextValuetype has the internal representation string.
    */
   isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation | undefined,
+    operandValue: InternalValueRepresentation | InternalErrorRepresentation,
   ): operandValue is I;
 
   /**

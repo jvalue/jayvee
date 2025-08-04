@@ -6,11 +6,13 @@ import path from 'node:path';
 
 import {
   Table,
+  TableColumn,
   type TableRow,
   Workbook,
   parseValueToInternalRepresentation,
 } from '@jvalue/jayvee-execution';
 import {
+  type InternalErrorRepresentation,
   type InternalValueRepresentation,
   type ValueType,
 } from '@jvalue/jayvee-language-server';
@@ -73,10 +75,10 @@ export async function createTableFromLocalExcelFile(
   const table = new Table();
 
   columnDefinitions.forEach((columnDefinition) => {
-    table.addColumn(columnDefinition.columnName, {
-      values: [],
-      valueType: columnDefinition.valueType,
-    });
+    table.addColumn(
+      columnDefinition.columnName,
+      new TableColumn([], columnDefinition.valueType),
+    );
   });
 
   workSheet.eachRow((row) => {
@@ -101,12 +103,10 @@ function constructTableRow(
       const value = cell.text;
       const valueType = columnDefinition.valueType;
 
-      const parsedValue = parseAndValidatePrimitiveValue(value, valueType);
-      if (parsedValue === undefined) {
-        return;
-      }
-
-      tableRow[columnDefinition.columnName] = parsedValue;
+      tableRow[columnDefinition.columnName] = parseAndValidatePrimitiveValue(
+        value,
+        valueType,
+      );
     },
   );
   return tableRow;
@@ -114,11 +114,6 @@ function constructTableRow(
 function parseAndValidatePrimitiveValue(
   value: string,
   valueType: ValueType,
-): InternalValueRepresentation | undefined {
-  const parsedValue = parseValueToInternalRepresentation(value, valueType);
-  if (parsedValue === undefined) {
-    return undefined;
-  }
-
-  return parsedValue;
+): InternalValueRepresentation | InternalErrorRepresentation {
+  return parseValueToInternalRepresentation(value, valueType);
 }

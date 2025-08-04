@@ -2,6 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import assert from 'assert';
+
+import { assertUnreachable } from 'langium';
+
 import {
   type BlockTypeProperty,
   type CellRangeLiteral,
@@ -14,7 +19,50 @@ import {
   isTransformDefinition,
   isValuetypeAssignment,
 } from '../generated/ast';
-import type { WrapperFactoryProvider } from '../wrappers';
+import { type WrapperFactoryProvider } from '../wrappers';
+
+abstract class JayveeError extends Error {
+  abstract override name: string;
+
+  constructor(message: string) {
+    super(message);
+  }
+
+  override toString(): string {
+    return `${this.name}: ${this.message}`;
+  }
+
+  abstract clone(): JayveeError;
+}
+
+export class InvalidError extends JayveeError {
+  public override name = 'InvalidError' as const;
+
+  constructor(message: string, stack?: string) {
+    super(message);
+    if (stack !== undefined) {
+      this.stack = stack;
+    }
+  }
+
+  override clone(): InvalidError {
+    return new InvalidError(this.message, this.stack);
+  }
+}
+
+export class MissingError extends JayveeError {
+  override name = 'MissingError' as const;
+
+  override clone(): MissingError {
+    const cloned = new MissingError(this.message);
+    if (this.stack !== undefined) {
+      cloned.stack = this.stack;
+    }
+    return cloned;
+  }
+}
+
+export type InternalErrorRepresentation = InvalidError | MissingError;
 
 export type InternalValueRepresentation =
   | AtomicInternalValueRepresentation
@@ -37,14 +85,27 @@ export type InternalValueRepresentationTypeguard<
 > = (value: InternalValueRepresentation) => value is T;
 
 export function internalValueToString(
+  valueRepresentation: Exclude<InternalValueRepresentation, CellRangeLiteral>,
+): string;
+export function internalValueToString(
   valueRepresentation: InternalValueRepresentation,
   wrapperFactories: WrapperFactoryProvider,
+): string;
+export function internalValueToString(
+  valueRepresentation: InternalValueRepresentation,
+  wrapperFactories?: WrapperFactoryProvider,
 ): string {
   if (Array.isArray(valueRepresentation)) {
     return (
       '[ ' +
       valueRepresentation
-        .map((item) => internalValueToString(item, wrapperFactories))
+        .map((value) => {
+          if (isCellRangeLiteral(value)) {
+            assert(wrapperFactories !== undefined);
+            return internalValueToString(value, wrapperFactories);
+          }
+          return internalValueToString(value);
+        })
         .join(', ') +
       ' ]'
     );
@@ -73,6 +134,7 @@ export function internalValueToString(
     return valueRepresentation.source;
   }
   if (isCellRangeLiteral(valueRepresentation)) {
+    assert(wrapperFactories !== undefined);
     return wrapperFactories.CellRange.wrap(valueRepresentation).toString();
   }
   if (isConstraintDefinition(valueRepresentation)) {
@@ -87,7 +149,5 @@ export function internalValueToString(
   if (isBlockTypeProperty(valueRepresentation)) {
     return valueRepresentation.name;
   }
-  throw new Error(
-    'Convert of this InternalValueRepresentation is not implemented',
-  );
+  assertUnreachable(valueRepresentation);
 }
