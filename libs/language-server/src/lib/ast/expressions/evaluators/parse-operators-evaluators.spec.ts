@@ -33,20 +33,20 @@ async function expectResult(
     `${op} inputValue`,
     input,
   );
-  if (ERROR_TYPEGUARD(expected)) {
-    if (INVALID_TYPEGUARD(expected)) {
-      expect(result).toBeInstanceOf(InvalidValue);
-      assert(result instanceof InvalidValue);
-      expect(result.message).toBe(expected.message);
-    } else if (MISSING_TYPEGUARD(expected)) {
-      expect(result).toBeInstanceOf(MissingValue);
-      assert(result instanceof MissingValue);
-      expect(result.message).toBe(expected.message);
-    } else {
-      assertUnreachable(expected);
-    }
-  } else {
+  if (!ERROR_TYPEGUARD(expected)) {
     expect(result).toStrictEqual(expected);
+    return;
+  }
+  if (INVALID_TYPEGUARD(expected)) {
+    expect(result).toBeInstanceOf(InvalidValue);
+    assert(result instanceof InvalidValue);
+    expect(result.message).toBe(expected.message);
+  } else if (MISSING_TYPEGUARD(expected)) {
+    expect(result).toBeInstanceOf(MissingValue);
+    assert(result instanceof MissingValue);
+    expect(result.message).toBe(expected.message);
+  } else {
+    assertUnreachable(expected);
   }
 }
 
