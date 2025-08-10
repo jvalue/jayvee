@@ -18,8 +18,7 @@ import type { WrapperFactoryProvider } from '../wrappers';
 
 export type InternalValueRepresentation =
   | AtomicInternalValueRepresentation
-  | InternalValueRepresentation[]
-  | [];
+  | InternalValueRepresentation[];
 
 export type AtomicInternalValueRepresentation =
   | boolean
