@@ -11,7 +11,7 @@ import { type WrapperFactoryProvider } from '../../wrappers/wrapper-factory-prov
 import { evaluateExpression } from '../evaluate-expression';
 import { type EvaluationContext } from '../evaluation-context';
 import { type EvaluationStrategy } from '../evaluation-strategy';
-import { type InternalErrorRepresentation } from '../internal-value-representation';
+import { type InternalErrorValueRepresentation } from '../internal-value-representation';
 import { type OperatorEvaluator } from '../operator-evaluator';
 import {
   COLLECTION_TYPEGUARD,
@@ -30,7 +30,7 @@ export class LengthofOperatorEvaluator
     wrapperFactories: WrapperFactoryProvider,
     strategy: EvaluationStrategy,
     validationContext: ValidationContext | undefined,
-  ): number | InternalErrorRepresentation {
+  ): number | InternalErrorValueRepresentation {
     assert(expression.operator === this.operator);
     const operandValue = evaluateExpression(
       expression.expression,

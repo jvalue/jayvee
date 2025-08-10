@@ -16,26 +16,23 @@ import {
 } from '../generated/ast';
 
 import {
-  type AtomicInternalValueRepresentation,
-  type InternalErrorRepresentation,
-  type InternalValueRepresentation,
-  type InternalValueRepresentationTypeguard,
-  type InvalidError,
-  type MissingError,
+  type AtomicInternalValidValueRepresentation,
+  type InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
+  type InternalValidValueRepresentationTypeguard,
+  type InvalidValue,
+  type MissingValue,
 } from './internal-value-representation';
 
-export const INTERNAL_VALUE_REPRESENTATION_TYPEGUARD: InternalValueRepresentationTypeguard<
-  InternalValueRepresentation
-> = (value): value is InternalValueRepresentation => {
-  return (
-    ATOMIC_INTERNAL_VALUE_REPRESENTATION_TYPEGUARD(value) ||
-    COLLECTION_TYPEGUARD(value)
-  );
-};
+export const INTERNAL_VALID_VALUE_REPRESENTATION_TYPEGUARD: InternalValidValueRepresentationTypeguard<
+  InternalValidValueRepresentation
+> = (value): value is InternalValidValueRepresentation =>
+  ATOMIC_INTERNAL_VALUE_REPRESENTATION_TYPEGUARD(value) ||
+  COLLECTION_TYPEGUARD(value);
 
-export const ATOMIC_INTERNAL_VALUE_REPRESENTATION_TYPEGUARD: InternalValueRepresentationTypeguard<
-  AtomicInternalValueRepresentation
-> = (value): value is AtomicInternalValueRepresentation =>
+export const ATOMIC_INTERNAL_VALUE_REPRESENTATION_TYPEGUARD: InternalValidValueRepresentationTypeguard<
+  AtomicInternalValidValueRepresentation
+> = (value): value is AtomicInternalValidValueRepresentation =>
   BOOLEAN_TYPEGUARD(value) ||
   NUMBER_TYPEGUARD(value) ||
   STRING_TYPEGUARD(value) ||
@@ -45,56 +42,59 @@ export const ATOMIC_INTERNAL_VALUE_REPRESENTATION_TYPEGUARD: InternalValueRepres
   BLOCKTYPEPROPERTY_TYPEGUARD(value) ||
   TRANSFORMDEFINITION_TYPEGUARD(value);
 
-export const NUMBER_TYPEGUARD: InternalValueRepresentationTypeguard<number> = (
-  value,
-) => typeof value === 'number';
-export const BOOLEAN_TYPEGUARD: InternalValueRepresentationTypeguard<
+export const NUMBER_TYPEGUARD: InternalValidValueRepresentationTypeguard<
+  number
+> = (value) => typeof value === 'number';
+export const BOOLEAN_TYPEGUARD: InternalValidValueRepresentationTypeguard<
   boolean
 > = (value) => typeof value === 'boolean';
-export const STRING_TYPEGUARD: InternalValueRepresentationTypeguard<string> = (
-  value,
-) => typeof value === 'string';
+export const STRING_TYPEGUARD: InternalValidValueRepresentationTypeguard<
+  string
+> = (value) => typeof value === 'string';
 
-export const REGEXP_TYPEGUARD: InternalValueRepresentationTypeguard<RegExp> = (
-  value,
-) => value instanceof RegExp;
+export const REGEXP_TYPEGUARD: InternalValidValueRepresentationTypeguard<
+  RegExp
+> = (value) => value instanceof RegExp;
 
-export const CELLRANGELITERAL_TYPEGUARD: InternalValueRepresentationTypeguard<
+export const CELLRANGELITERAL_TYPEGUARD: InternalValidValueRepresentationTypeguard<
   CellRangeLiteral
 > = (value) => isCellRangeLiteral(value);
 
-export const CONSTRAINTDEFINITION_TYPEGUARD: InternalValueRepresentationTypeguard<
+export const CONSTRAINTDEFINITION_TYPEGUARD: InternalValidValueRepresentationTypeguard<
   ConstraintDefinition
 > = (value) => isConstraintDefinition(value);
 
-export const VALUETYPEASSIGNMENT_TYPEGUARD: InternalValueRepresentationTypeguard<
+export const VALUETYPEASSIGNMENT_TYPEGUARD: InternalValidValueRepresentationTypeguard<
   ValuetypeAssignment
 > = (value) => isValuetypeAssignment(value);
 
-export const BLOCKTYPEPROPERTY_TYPEGUARD: InternalValueRepresentationTypeguard<
+export const BLOCKTYPEPROPERTY_TYPEGUARD: InternalValidValueRepresentationTypeguard<
   BlockTypeProperty
 > = (value) => isBlockTypeProperty(value);
 
-export const TRANSFORMDEFINITION_TYPEGUARD: InternalValueRepresentationTypeguard<
+export const TRANSFORMDEFINITION_TYPEGUARD: InternalValidValueRepresentationTypeguard<
   TransformDefinition
 > = (value) => isTransformDefinition(value);
 
-export const COLLECTION_TYPEGUARD: InternalValueRepresentationTypeguard<
-  InternalValueRepresentation[]
+export const COLLECTION_TYPEGUARD: InternalValidValueRepresentationTypeguard<
+  (InternalValidValueRepresentation | InternalErrorValueRepresentation)[]
 > = (value) =>
   Array.isArray(value) &&
-  value.every((v) => INTERNAL_VALUE_REPRESENTATION_TYPEGUARD(v));
+  value.every(
+    (v) =>
+      INTERNAL_VALID_VALUE_REPRESENTATION_TYPEGUARD(v) || ERROR_TYPEGUARD(v),
+  );
 
-export const INVALID_TYPEGUARD = (value: unknown): value is InvalidError => {
-  return value instanceof Error && value.name === 'InvalidError';
+export const INVALID_TYPEGUARD = (value: unknown): value is InvalidValue => {
+  return value instanceof Error && value.name === 'InvalidValue';
 };
 
-export const MISSING_TYPEGUARD = (value: unknown): value is MissingError => {
-  return value instanceof Error && value.name === 'MissingError';
+export const MISSING_TYPEGUARD = (value: unknown): value is MissingValue => {
+  return value instanceof Error && value.name === 'MissingValue';
 };
 
 export const ERROR_TYPEGUARD = (
   value: unknown,
-): value is InternalErrorRepresentation => {
+): value is InternalErrorValueRepresentation => {
   return INVALID_TYPEGUARD(value) || MISSING_TYPEGUARD(value);
 };

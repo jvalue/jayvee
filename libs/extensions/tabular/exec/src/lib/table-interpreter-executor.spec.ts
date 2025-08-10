@@ -9,7 +9,7 @@ import { getTestExecutionContext } from '@jvalue/jayvee-execution/test';
 import {
   type BlockDefinition,
   IOType,
-  InvalidError,
+  InvalidValue,
   type JayveeServices,
   createJayveeServices,
 } from '@jvalue/jayvee-language-server';
@@ -167,7 +167,7 @@ describe('Validation of TableInterpreterExecutor', () => {
       }
     });
 
-    it('should diagnose InvalidError on wrong cell value type', async () => {
+    it('should diagnose InvalidValue on wrong cell value type', async () => {
       const text = readJvTestAsset('valid-wrong-value-type-with-header.jv');
 
       const testWorkbook = await readTestWorkbook('test-with-header.xlsx');
@@ -185,7 +185,7 @@ describe('Validation of TableInterpreterExecutor', () => {
         expect(flagColumn).toBeDefined();
         assert(flagColumn !== undefined);
         for (const cell of flagColumn.values) {
-          expect(cell).toBeInstanceOf(InvalidError);
+          expect(cell).toBeInstanceOf(InvalidValue);
         }
       }
     });
@@ -257,7 +257,7 @@ describe('Validation of TableInterpreterExecutor', () => {
           if (value === 'name') {
             continue;
           }
-          expect(value).toBeInstanceOf(InvalidError);
+          expect(value).toBeInstanceOf(InvalidValue);
         }
       }
     });
@@ -296,7 +296,7 @@ describe('Validation of TableInterpreterExecutor', () => {
       }
     });
 
-    it('should insert InvalidError on wrong cell value type', async () => {
+    it('should insert InvalidValue on wrong cell value type', async () => {
       const text = readJvTestAsset('valid-wrong-value-type-without-header.jv');
 
       const testWorkbook = await readTestWorkbook('test-without-header.xlsx');
@@ -314,7 +314,7 @@ describe('Validation of TableInterpreterExecutor', () => {
         expect(flagColumn).toBeDefined();
         assert(flagColumn !== undefined);
         for (const cell of flagColumn.values) {
-          expect(cell).toBeInstanceOf(InvalidError);
+          expect(cell).toBeInstanceOf(InvalidValue);
         }
       }
     });
@@ -372,7 +372,7 @@ describe('Validation of TableInterpreterExecutor', () => {
         expect(indexColumn).toBeDefined();
         assert(indexColumn !== undefined);
         indexColumn.forEach((cell) =>
-          expect(cell).toBeInstanceOf(InvalidError),
+          expect(cell).toBeInstanceOf(InvalidValue),
         );
       }
     });

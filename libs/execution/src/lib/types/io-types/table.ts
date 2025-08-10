@@ -8,8 +8,8 @@ import { strict as assert } from 'assert';
 import {
   ERROR_TYPEGUARD,
   IOType,
-  type InternalErrorRepresentation,
-  type InternalValueRepresentation,
+  type InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
   type TextValuetype,
   type ValueType,
   cloneInternalValue,
@@ -24,15 +24,15 @@ import {
 } from './io-type-implementation';
 
 export interface TableColumn<
-  T extends InternalValueRepresentation = InternalValueRepresentation,
+  T extends InternalValidValueRepresentation = InternalValidValueRepresentation,
 > {
-  values: (T | InternalErrorRepresentation)[];
+  values: (T | InternalErrorValueRepresentation)[];
   valueType: ValueType;
 }
 
 export type TableRow = Record<
   string,
-  InternalValueRepresentation | InternalErrorRepresentation
+  InternalValidValueRepresentation | InternalErrorValueRepresentation
 >;
 
 /**
@@ -80,7 +80,7 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
 
       assert(
         ERROR_TYPEGUARD(value) ||
-          column.valueType.isInternalValueRepresentation(value),
+          column.valueType.isInternalValidValueRepresentation(value),
       );
       column.values.push(value);
     });
@@ -110,7 +110,10 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
 
   getRow(
     rowId: number,
-  ): Map<string, InternalValueRepresentation | InternalErrorRepresentation> {
+  ): Map<
+    string,
+    InternalValidValueRepresentation | InternalErrorValueRepresentation
+  > {
     const numberOfRows = this.getNumberOfRows();
     if (rowId >= numberOfRows) {
       throw new Error(
@@ -120,7 +123,7 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
 
     const row = new Map<
       string,
-      InternalValueRepresentation | InternalErrorRepresentation
+      InternalValidValueRepresentation | InternalErrorValueRepresentation
     >();
     [...this.columns.entries()].forEach(([columnName, column]) => {
       const value = column.values[rowId];

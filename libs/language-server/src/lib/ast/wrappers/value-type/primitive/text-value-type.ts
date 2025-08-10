@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
+import { type InternalValidValueRepresentation } from '../../../expressions/internal-value-representation';
 import { type ValueTypeVisitor } from '../value-type';
 
 import { PrimitiveValueType } from './primitive-value-type';
@@ -20,8 +20,8 @@ export class TextValuetype extends PrimitiveValueType<string> {
     return 'text';
   }
 
-  override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation,
+  override isInternalValidValueRepresentation(
+    operandValue: InternalValidValueRepresentation,
   ): operandValue is string {
     return typeof operandValue === 'string';
   }

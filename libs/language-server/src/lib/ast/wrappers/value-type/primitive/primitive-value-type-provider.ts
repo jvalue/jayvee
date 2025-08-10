@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../../expressions';
+import { type InternalValidValueRepresentation } from '../../../expressions';
 import { type ValueType } from '../value-type';
 
 import { BooleanValuetype } from './boolean-value-type';
@@ -26,7 +26,7 @@ export class ValueTypeProvider {
   Primitives = new PrimitiveValueTypeProvider();
   EmptyCollection = new EmptyCollectionValueType();
 
-  createCollectionValueTypeOf<I extends InternalValueRepresentation>(
+  createCollectionValueTypeOf<I extends InternalValidValueRepresentation>(
     input: ValueType<I>,
   ): CollectionValueType<I> {
     return new CollectionValueType(input);

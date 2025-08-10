@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
+import { type InternalValidValueRepresentation } from '../../../expressions/internal-value-representation';
 import {
   type CellRangeLiteral,
   isCellRangeLiteral,
@@ -24,8 +24,8 @@ export class CellRangeValuetype extends PrimitiveValueType<CellRangeLiteral> {
     return 'CellRange';
   }
 
-  override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation,
+  override isInternalValidValueRepresentation(
+    operandValue: InternalValidValueRepresentation,
   ): operandValue is CellRangeLiteral {
     return isCellRangeLiteral(operandValue);
   }

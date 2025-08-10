@@ -9,8 +9,8 @@ import {
   type AstNodeWrapper,
   type ConstraintDefinition,
   ERROR_TYPEGUARD,
-  type InternalErrorRepresentation,
-  type InternalValueRepresentation,
+  type InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
   type ValueTypeAttribute,
   type ValueTypeConstraintInlineDefinition,
   evaluateExpression,
@@ -25,7 +25,7 @@ export class ConstraintExecutor<
   constructor(public readonly astNode: T) {}
 
   isValid(
-    value: InternalValueRepresentation | InternalErrorRepresentation,
+    value: InternalValidValueRepresentation | InternalErrorValueRepresentation,
     context: ExecutionContext,
     attribute: T extends ValueTypeConstraintInlineDefinition
       ? ValueTypeAttribute
@@ -49,7 +49,7 @@ export class ConstraintExecutor<
       return false;
     }
     assert(
-      context.valueTypeProvider.Primitives.Boolean.isInternalValueRepresentation(
+      context.valueTypeProvider.Primitives.Boolean.isInternalValidValueRepresentation(
         result,
       ),
     );

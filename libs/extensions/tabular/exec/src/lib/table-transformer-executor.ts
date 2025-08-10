@@ -17,7 +17,7 @@ import {
 } from '@jvalue/jayvee-execution';
 import {
   IOType,
-  type InternalValueRepresentation,
+  type InternalValidValueRepresentation,
 } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
@@ -158,7 +158,7 @@ export class TableTransformerExecutor extends AbstractBlockExecutor<
 
   private createOutputTable(
     inputTable: R.Table,
-    transformResult: R.TableColumn<InternalValueRepresentation>,
+    transformResult: R.TableColumn<InternalValidValueRepresentation>,
     outputColumnName: string,
   ) {
     const outputTable = inputTable.clone();

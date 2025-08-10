@@ -6,28 +6,28 @@ import { assertUnreachable } from 'langium';
 import {
   ERROR_TYPEGUARD,
   INVALID_TYPEGUARD,
-  type InternalErrorRepresentation,
-  type InternalValueRepresentation,
-  InvalidError,
+  type InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
+  InvalidValue,
   MISSING_TYPEGUARD,
-  MissingError,
+  MissingValue,
 } from '..';
 import { executeDefaultTextToTextExpression } from '../test-utils';
 
 async function expectResult(
   op: string,
   input: string,
-  expected: InternalValueRepresentation,
+  expected: InternalValidValueRepresentation,
 ): Promise<void>;
 async function expectResult(
   op: string,
   input: string,
-  expected: InternalErrorRepresentation,
+  expected: InternalErrorValueRepresentation,
 ): Promise<void>;
 async function expectResult(
   op: string,
   input: string,
-  expected: InternalValueRepresentation | InternalErrorRepresentation,
+  expected: InternalValidValueRepresentation | InternalErrorValueRepresentation,
 ) {
   const result = await executeDefaultTextToTextExpression(
     `${op} inputValue`,
@@ -35,12 +35,12 @@ async function expectResult(
   );
   if (ERROR_TYPEGUARD(expected)) {
     if (INVALID_TYPEGUARD(expected)) {
-      expect(result).toBeInstanceOf(InvalidError);
-      assert(result instanceof InvalidError);
+      expect(result).toBeInstanceOf(InvalidValue);
+      assert(result instanceof InvalidValue);
       expect(result.message).toBe(expected.message);
     } else if (MISSING_TYPEGUARD(expected)) {
-      expect(result).toBeInstanceOf(MissingError);
-      assert(result instanceof MissingError);
+      expect(result).toBeInstanceOf(MissingValue);
+      assert(result instanceof MissingValue);
       expect(result.message).toBe(expected.message);
     } else {
       assertUnreachable(expected);
@@ -83,7 +83,7 @@ describe('The asInteger operator', () => {
     await expectResult(
       'asInteger',
       '32.5',
-      new InvalidError('32.5 is a decimal, not an integer'),
+      new InvalidValue('32.5 is a decimal, not an integer'),
     );
   });
 });
@@ -103,12 +103,12 @@ describe('The asBoolean operator', () => {
     await expectResult(
       'asBoolean',
       '0',
-      new InvalidError('"0" is not a boolean'),
+      new InvalidValue('"0" is not a boolean'),
     );
     await expectResult(
       'asBoolean',
       '1',
-      new InvalidError('"1" is not a boolean'),
+      new InvalidValue('"1" is not a boolean'),
     );
   });
 
@@ -116,7 +116,7 @@ describe('The asBoolean operator', () => {
     await expectResult(
       'asBoolean',
       'notABoolean',
-      new InvalidError('"notABoolean" is not a boolean'),
+      new InvalidValue('"notABoolean" is not a boolean'),
     );
   });
 });

@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  type InternalValueRepresentation,
-  InvalidError,
+  type InternalValidValueRepresentation,
+  InvalidValue,
 } from '../../../expressions/internal-value-representation';
 import { INVALID_TYPEGUARD } from '../../../expressions/typeguards';
 import { type ValueType, type ValueTypeVisitor } from '../value-type';
@@ -29,8 +29,8 @@ export class IntegerValuetype extends PrimitiveValueType<number> {
     return 'integer';
   }
 
-  override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation,
+  override isInternalValidValueRepresentation(
+    operandValue: InternalValidValueRepresentation,
   ): operandValue is number {
     return typeof operandValue === 'number' && Number.isInteger(operandValue);
   }
@@ -46,7 +46,7 @@ Example: 3
 `.trim();
   }
 
-  override fromString(s: string): number | InvalidError {
+  override fromString(s: string): number | InvalidValue {
     /**
      * Reuse decimal number parsing to capture valid scientific notation
      * of integers like 5.3e3 = 5300. In contrast to decimal, if the final number
@@ -61,7 +61,7 @@ Example: 3
     const integerNumber = Math.trunc(decimalNumber);
 
     if (decimalNumber !== integerNumber) {
-      return new InvalidError(`${decimalNumber} is a decimal, not an integer`);
+      return new InvalidValue(`${decimalNumber} is a decimal, not an integer`);
     }
 
     return integerNumber;

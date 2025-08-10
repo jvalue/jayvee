@@ -8,8 +8,8 @@ import path from 'node:path';
 
 import {
   ERROR_TYPEGUARD,
-  type InternalValueRepresentation,
-  InvalidError,
+  type InternalValidValueRepresentation,
+  InvalidValue,
   type JayveeServices,
   type TransformDefinition,
   createJayveeServices,
@@ -78,7 +78,7 @@ describe('Validation of TransformExecutor', () => {
     input: string,
     inputTable: Table,
     columnNames: string[],
-  ): Promise<TableColumn<InternalValueRepresentation>> {
+  ): Promise<TableColumn<InternalValidValueRepresentation>> {
     const document = await parse(input, { validation: true });
     expectNoParserAndLexerErrors(document);
 
@@ -158,7 +158,7 @@ describe('Validation of TransformExecutor', () => {
     expect(result.values).toEqual(expect.arrayContaining([21]));
   });
 
-  it('should evaluate InvalidError on invalid value representation', async () => {
+  it('should evaluate InvalidValue on invalid value representation', async () => {
     const text = readJvTestAsset(
       'transform-executor/invalid-input-output-type-transform.jv',
     );
@@ -196,7 +196,7 @@ describe('Validation of TransformExecutor', () => {
     expect(result.values).toHaveLength(1);
     const [value] = result.values;
     assert(value !== undefined);
-    expect(value).toBeInstanceOf(InvalidError);
+    expect(value).toBeInstanceOf(InvalidValue);
   });
 
   it('should diagnose no error on valid value', async () => {
@@ -289,7 +289,7 @@ describe('Validation of TransformExecutor', () => {
     }
   });
 
-  it('should evaluate InvalidError on invalid column type', async () => {
+  it('should evaluate InvalidValue on invalid column type', async () => {
     const text = readJvTestAsset(
       'transform-executor/valid-decimal-integer-transform.jv',
     );
@@ -327,10 +327,10 @@ describe('Validation of TransformExecutor', () => {
     expect(result.values).toHaveLength(1);
     const [value] = result.values;
     assert(value !== undefined);
-    expect(value).toBeInstanceOf(InvalidError);
+    expect(value).toBeInstanceOf(InvalidValue);
   });
 
-  it('should evaluate InvalidError on invalid row value', async () => {
+  it('should evaluate InvalidValue on invalid row value', async () => {
     const text = readJvTestAsset(
       'transform-executor/valid-decimal-integer-transform.jv',
     );
@@ -369,12 +369,12 @@ describe('Validation of TransformExecutor', () => {
     const [a, b] = result.values;
     assert(a !== undefined);
     assert(b !== undefined);
-    expect(a).toBeInstanceOf(InvalidError);
+    expect(a).toBeInstanceOf(InvalidValue);
     expect(b).toBe(21);
     expect(result.values).toEqual(expect.arrayContaining([21]));
   });
 
-  it('should evaluate InvalidError on an erroneous expression', async () => {
+  it('should evaluate InvalidValue on an erroneous expression', async () => {
     const text = readJvTestAsset(
       'transform-executor/invalid-expression-evaluation-error.jv',
     );
@@ -419,6 +419,6 @@ describe('Validation of TransformExecutor', () => {
     expect(result.values).toHaveLength(1);
     const [value] = result.values;
     assert(value !== undefined);
-    expect(value).toBeInstanceOf(InvalidError);
+    expect(value).toBeInstanceOf(InvalidValue);
   });
 });

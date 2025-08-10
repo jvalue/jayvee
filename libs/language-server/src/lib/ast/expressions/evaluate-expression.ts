@@ -31,20 +31,22 @@ import { type ValueType, type WrapperFactoryProvider } from '../wrappers';
 import { type EvaluationContext } from './evaluation-context';
 import { EvaluationStrategy } from './evaluation-strategy';
 import {
-  type InternalErrorRepresentation,
-  type InternalValueRepresentation,
-  InvalidError,
-  MissingError,
+  type InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
+  InvalidValue,
+  MissingValue,
   internalValueToString,
 } from './internal-value-representation';
 import { ERROR_TYPEGUARD } from './typeguards';
 
-export function evaluatePropertyValue<T extends InternalValueRepresentation>(
+export function evaluatePropertyValue<
+  T extends InternalValidValueRepresentation,
+>(
   property: PropertyAssignment,
   evaluationContext: EvaluationContext,
   wrapperFactories: WrapperFactoryProvider,
   valueType: ValueType<T>,
-): T | InternalErrorRepresentation {
+): T | InternalErrorValueRepresentation {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const propertyValue = property?.value;
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -54,7 +56,9 @@ export function evaluatePropertyValue<T extends InternalValueRepresentation>(
   // because they are set in the block that instantiates the block type
   assert(!isBlockTypeProperty(propertyValue));
 
-  let result: InternalValueRepresentation | InternalErrorRepresentation;
+  let result:
+    | InternalValidValueRepresentation
+    | InternalErrorValueRepresentation;
   if (isRuntimeParameterLiteral(propertyValue)) {
     const runtimeParameterName = propertyValue.name;
     result = evaluationContext.getValueForRuntimeParameter(
@@ -72,7 +76,8 @@ export function evaluatePropertyValue<T extends InternalValueRepresentation>(
   }
 
   assert(
-    ERROR_TYPEGUARD(result) || valueType.isInternalValueRepresentation(result),
+    ERROR_TYPEGUARD(result) ||
+      valueType.isInternalValidValueRepresentation(result),
     `Evaluation result ${
       ERROR_TYPEGUARD(result)
         ? result.name
@@ -88,7 +93,7 @@ export function evaluateExpression(
   wrapperFactories: WrapperFactoryProvider,
   context: ValidationContext | undefined = undefined,
   strategy: EvaluationStrategy = EvaluationStrategy.LAZY,
-): InternalValueRepresentation | InternalErrorRepresentation {
+): InternalValidValueRepresentation | InternalErrorValueRepresentation {
   if (isExpressionLiteral(expression)) {
     if (isFreeVariableLiteral(expression)) {
       return evaluationContext.getValueFor(expression);
@@ -145,14 +150,14 @@ function evaluateValueLiteral(
   wrapperFactories: WrapperFactoryProvider,
   validationContext: ValidationContext | undefined = undefined,
   strategy: EvaluationStrategy = EvaluationStrategy.LAZY,
-): InternalValueRepresentation | InternalErrorRepresentation {
+): InternalValidValueRepresentation | InternalErrorValueRepresentation {
   if (isErrorLiteral(expression)) {
     return expression.error === 'invalid'
-      ? new InvalidError('Created by user')
-      : new MissingError('Created by user');
+      ? new InvalidValue('Created by user')
+      : new MissingValue('Created by user');
   }
   if (isCollectionLiteral(expression)) {
-    const evaluatedCollection: InternalValueRepresentation[] = [];
+    const evaluatedCollection: InternalValidValueRepresentation[] = [];
     for (const value of expression.values) {
       const result = evaluateExpression(
         value,
@@ -170,7 +175,7 @@ function evaluateValueLiteral(
   }
   if (isCellRangeLiteral(expression)) {
     if (!wrapperFactories.CellRange.canWrap(expression)) {
-      return new InvalidError(
+      return new InvalidValue(
         `${internalValueToString(
           expression,
           wrapperFactories,

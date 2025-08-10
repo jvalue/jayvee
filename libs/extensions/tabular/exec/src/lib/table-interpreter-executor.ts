@@ -20,10 +20,10 @@ import {
   CellIndex,
   ERROR_TYPEGUARD,
   IOType,
-  InternalErrorRepresentation,
-  type InternalValueRepresentation,
-  InvalidError,
-  MissingError,
+  InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
+  InvalidValue,
+  MissingValue,
   type ValueType,
   type ValuetypeAssignment,
   internalValueToString,
@@ -189,7 +189,7 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
               skipTrailingWhitespace,
               context,
             )
-          : new MissingError(
+          : new MissingValue(
               `The sheet row did not contain a value at index ${sheetColumnIndex}`,
             );
       if (ERROR_TYPEGUARD(parsedValue)) {
@@ -212,7 +212,7 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
     skipLeadingWhitespace: boolean,
     skipTrailingWhitespace: boolean,
     context: ExecutionContext,
-  ): InternalValueRepresentation | InternalErrorRepresentation {
+  ): InternalValidValueRepresentation | InternalErrorValueRepresentation {
     const parsedValue = parseValueToInternalRepresentation(value, valueType, {
       skipLeadingWhitespace,
       skipTrailingWhitespace,
@@ -222,7 +222,7 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
       !ERROR_TYPEGUARD(parsedValue) &&
       !isValidValueRepresentation(parsedValue, valueType, context)
     ) {
-      return new InvalidError(
+      return new InvalidValue(
         `The following value was not valid for valuetype ${valueType.getName()}: ${internalValueToString(
           parsedValue,
           context.wrapperFactories,

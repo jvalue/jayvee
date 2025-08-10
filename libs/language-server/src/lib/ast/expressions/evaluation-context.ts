@@ -24,24 +24,24 @@ import { type ValueTypeProvider } from '../wrappers';
 import { type ValueType } from '../wrappers/value-type/value-type';
 
 import {
-  type InternalErrorRepresentation,
-  type InternalValueRepresentation,
-  MissingError,
+  type InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
+  MissingValue,
 } from './internal-value-representation';
 import { type OperatorEvaluatorRegistry } from './operator-registry';
 
-const NO_KEYWORD_ERROR: MissingError = new MissingError(
+const NO_KEYWORD_ERROR: MissingValue = new MissingValue(
   'No value keyword literal',
 );
 
 export class EvaluationContext {
   private readonly variableValues = new Map<
     string,
-    InternalValueRepresentation | InternalErrorRepresentation
+    InternalValidValueRepresentation | InternalErrorValueRepresentation
   >();
   private valueKeywordValue:
-    | InternalValueRepresentation
-    | InternalErrorRepresentation = NO_KEYWORD_ERROR;
+    | InternalValidValueRepresentation
+    | InternalErrorValueRepresentation = NO_KEYWORD_ERROR;
 
   constructor(
     public readonly runtimeParameterProvider: RuntimeParameterProvider,
@@ -51,7 +51,7 @@ export class EvaluationContext {
 
   getValueFor(
     literal: FreeVariableLiteral,
-  ): InternalValueRepresentation | InternalErrorRepresentation {
+  ): InternalValidValueRepresentation | InternalErrorValueRepresentation {
     if (isReferenceLiteral(literal)) {
       return this.getValueForReference(literal);
     } else if (isValueKeywordLiteral(literal)) {
@@ -62,7 +62,7 @@ export class EvaluationContext {
 
   setValueForReference(
     refText: string,
-    value: InternalValueRepresentation | InternalErrorRepresentation,
+    value: InternalValidValueRepresentation | InternalErrorValueRepresentation,
   ): void {
     this.variableValues.set(refText, value);
   }
@@ -73,12 +73,12 @@ export class EvaluationContext {
 
   getValueForReference(
     referenceLiteral: ReferenceLiteral,
-  ): InternalValueRepresentation | InternalErrorRepresentation {
+  ): InternalValidValueRepresentation | InternalErrorValueRepresentation {
     const dereferenced = referenceLiteral.value.ref;
     if (dereferenced === undefined) {
       const error = referenceLiteral.value.error;
       assert(error !== undefined);
-      return new MissingError(`Could not resolve reference: ${error.message}`);
+      return new MissingValue(`Could not resolve reference: ${error.message}`);
     }
 
     if (isConstraintDefinition(dereferenced)) {
@@ -90,19 +90,19 @@ export class EvaluationContext {
     if (isTransformPortDefinition(dereferenced)) {
       return (
         this.variableValues.get(dereferenced.name) ??
-        new MissingError(`Could not find value for ${dereferenced.name}`)
+        new MissingValue(`Could not find value for ${dereferenced.name}`)
       );
     }
     if (isBlockTypeProperty(dereferenced)) {
       return (
         this.variableValues.get(dereferenced.name) ??
-        new MissingError(`Could not find value for ${dereferenced.name}`)
+        new MissingValue(`Could not find value for ${dereferenced.name}`)
       );
     }
     if (isValueTypeAttribute(dereferenced)) {
       return (
         this.variableValues.get(dereferenced.name) ??
-        new MissingError(`Could not find value for ${dereferenced.name}`)
+        new MissingValue(`Could not find value for ${dereferenced.name}`)
       );
     }
     assertUnreachable(dereferenced);
@@ -112,15 +112,15 @@ export class EvaluationContext {
     return this.runtimeParameterProvider.hasValue(key);
   }
 
-  getValueForRuntimeParameter<I extends InternalValueRepresentation>(
+  getValueForRuntimeParameter<I extends InternalValidValueRepresentation>(
     key: string,
     valueType: ValueType<I>,
-  ): I | InternalErrorRepresentation {
+  ): I | InternalErrorValueRepresentation {
     return this.runtimeParameterProvider.getParsedValue(key, valueType);
   }
 
   setValueForValueKeyword(
-    value: InternalValueRepresentation | InternalErrorRepresentation,
+    value: InternalValidValueRepresentation | InternalErrorValueRepresentation,
   ) {
     this.valueKeywordValue = value;
   }
@@ -130,8 +130,8 @@ export class EvaluationContext {
   }
 
   getValueForValueKeyword():
-    | InternalValueRepresentation
-    | InternalErrorRepresentation {
+    | InternalValidValueRepresentation
+    | InternalErrorValueRepresentation {
     return this.valueKeywordValue;
   }
 }

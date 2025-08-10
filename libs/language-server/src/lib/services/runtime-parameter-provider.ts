@@ -6,35 +6,35 @@
 import assert from 'assert';
 
 import {
-  type InternalErrorRepresentation,
-  type InternalValueRepresentation,
-  MissingError,
+  type InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
+  MissingValue,
 } from '../ast/expressions/internal-value-representation';
 import { type ValueType } from '../ast/wrappers/value-type/value-type';
 
-export type InternalValueRepresentationParser = <
-  I extends InternalValueRepresentation,
+export type InternalValidValueRepresentationParser = <
+  I extends InternalValidValueRepresentation,
 >(
   value: string,
   valueType: ValueType<I>,
-) => I | InternalErrorRepresentation;
+) => I | InternalErrorValueRepresentation;
 
 export class RuntimeParameterProvider {
   private runtimeParameters = new Map<string, string>();
-  private valueParser: InternalValueRepresentationParser | undefined =
+  private valueParser: InternalValidValueRepresentationParser | undefined =
     undefined;
 
-  setValueParser(valueParser: InternalValueRepresentationParser) {
+  setValueParser(valueParser: InternalValidValueRepresentationParser) {
     this.valueParser = valueParser;
   }
 
-  getParsedValue<I extends InternalValueRepresentation>(
+  getParsedValue<I extends InternalValidValueRepresentation>(
     key: string,
     valueType: ValueType<I>,
-  ): I | InternalErrorRepresentation {
+  ): I | InternalErrorValueRepresentation {
     const stringValue = this.getRawValue(key);
     if (stringValue === undefined) {
-      return new MissingError(
+      return new MissingValue(
         `Could not find value for runtime parameter ${key}`,
       );
     }
@@ -55,7 +55,7 @@ export class RuntimeParameterProvider {
     return this.runtimeParameters.has(key);
   }
 
-  getReadonlyMap(): ReadonlyMap<string, InternalValueRepresentation> {
+  getReadonlyMap(): ReadonlyMap<string, InternalValidValueRepresentation> {
     return this.runtimeParameters;
   }
 }

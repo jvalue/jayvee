@@ -23,7 +23,7 @@ import { type WrapperFactoryProvider } from '../wrappers';
 
 import { COLLECTION_TYPEGUARD, ERROR_TYPEGUARD } from './typeguards';
 
-abstract class JayveeError extends Error {
+abstract class ErroneousValue extends Error {
   abstract override name: string;
 
   constructor(message: string) {
@@ -34,11 +34,11 @@ abstract class JayveeError extends Error {
     return `${this.name}: ${this.message}`;
   }
 
-  abstract clone(): JayveeError;
+  abstract clone(): ErroneousValue;
 }
 
-export class InvalidError extends JayveeError {
-  public override name = 'InvalidError' as const;
+export class InvalidValue extends ErroneousValue {
+  public override name = 'InvalidValue' as const;
 
   constructor(message: string, stack?: string) {
     super(message);
@@ -47,16 +47,16 @@ export class InvalidError extends JayveeError {
     }
   }
 
-  override clone(): InvalidError {
-    return new InvalidError(this.message, this.stack);
+  override clone(): InvalidValue {
+    return new InvalidValue(this.message, this.stack);
   }
 }
 
-export class MissingError extends JayveeError {
-  override name = 'MissingError' as const;
+export class MissingValue extends ErroneousValue {
+  override name = 'MissingValue' as const;
 
-  override clone(): MissingError {
-    const cloned = new MissingError(this.message);
+  override clone(): MissingValue {
+    const cloned = new MissingValue(this.message);
     if (this.stack !== undefined) {
       cloned.stack = this.stack;
     }
@@ -64,13 +64,13 @@ export class MissingError extends JayveeError {
   }
 }
 
-export type InternalErrorRepresentation = InvalidError | MissingError;
+export type InternalErrorValueRepresentation = InvalidValue | MissingValue;
 
-export type InternalValueRepresentation =
-  | AtomicInternalValueRepresentation
-  | InternalValueRepresentation[];
+export type InternalValidValueRepresentation =
+  | AtomicInternalValidValueRepresentation
+  | (InternalValidValueRepresentation | InternalErrorValueRepresentation)[];
 
-export type AtomicInternalValueRepresentation =
+export type AtomicInternalValidValueRepresentation =
   | boolean
   | number
   | string
@@ -81,19 +81,22 @@ export type AtomicInternalValueRepresentation =
   | BlockTypeProperty
   | TransformDefinition;
 
-export type InternalValueRepresentationTypeguard<
-  T extends InternalValueRepresentation,
+export type InternalValidValueRepresentationTypeguard<
+  T extends InternalValidValueRepresentation,
 > = (value: unknown) => value is T;
 
 export function internalValueToString(
-  valueRepresentation: Exclude<InternalValueRepresentation, CellRangeLiteral>,
+  valueRepresentation: Exclude<
+    InternalValidValueRepresentation,
+    CellRangeLiteral
+  >,
 ): string;
 export function internalValueToString(
-  valueRepresentation: InternalValueRepresentation,
+  valueRepresentation: InternalValidValueRepresentation,
   wrapperFactories: WrapperFactoryProvider,
 ): string;
 export function internalValueToString(
-  valueRepresentation: InternalValueRepresentation,
+  valueRepresentation: InternalValidValueRepresentation,
   wrapperFactories?: WrapperFactoryProvider,
 ): string {
   if (Array.isArray(valueRepresentation)) {
@@ -104,6 +107,9 @@ export function internalValueToString(
           if (isCellRangeLiteral(value)) {
             assert(wrapperFactories !== undefined);
             return internalValueToString(value, wrapperFactories);
+          }
+          if (ERROR_TYPEGUARD(value)) {
+            return value.name;
           }
           return internalValueToString(value);
         })
@@ -154,7 +160,7 @@ export function internalValueToString(
 }
 
 export function cloneInternalValue<
-  T extends InternalValueRepresentation | InternalErrorRepresentation,
+  T extends InternalValidValueRepresentation | InternalErrorValueRepresentation,
 >(valueRepresentation: T): T {
   if (COLLECTION_TYPEGUARD(valueRepresentation)) {
     return valueRepresentation.map(cloneInternalValue) as T;

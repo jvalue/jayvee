@@ -7,9 +7,9 @@ import { strict as assert } from 'assert';
 
 import {
   ERROR_TYPEGUARD,
-  type InternalErrorRepresentation,
-  type InternalValueRepresentation,
-  InvalidError,
+  type InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
+  InvalidValue,
   type TransformDefinition,
   type TransformOutputAssignment,
   type TransformPortDefinition,
@@ -91,14 +91,16 @@ export class TransformExecutor {
     const outputDetails = this.getOutputDetails();
 
     const newColumn: (
-      | InternalValueRepresentation
-      | InternalErrorRepresentation
+      | InternalValidValueRepresentation
+      | InternalErrorValueRepresentation
     )[] = [];
 
     for (let rowIndex = 0; rowIndex < numberOfRows; ++rowIndex) {
       this.addVariablesToContext(inputDetailsList, columns, rowIndex, context);
 
-      let newValue: InternalValueRepresentation | InternalErrorRepresentation;
+      let newValue:
+        | InternalValidValueRepresentation
+        | InternalErrorValueRepresentation;
       try {
         newValue = evaluateExpression(
           this.getOutputAssignment().expression,
@@ -107,9 +109,9 @@ export class TransformExecutor {
         );
       } catch (e) {
         if (e instanceof Error) {
-          newValue = new InvalidError(e.message, e.stack);
+          newValue = new InvalidValue(e.message, e.stack);
         } else {
-          newValue = new InvalidError(String(e));
+          newValue = new InvalidValue(String(e));
         }
       }
 
@@ -117,6 +119,15 @@ export class TransformExecutor {
         !ERROR_TYPEGUARD(newValue) &&
         !isValidValueRepresentation(newValue, outputDetails.valueType, context)
       ) {
+        if (
+          !(
+            typeof newValue === 'string' ||
+            typeof newValue === 'boolean' ||
+            typeof newValue === 'number'
+          )
+        ) {
+          console.log(newValue);
+        }
         assert(
           typeof newValue === 'string' ||
             typeof newValue === 'boolean' ||
@@ -126,7 +137,7 @@ export class TransformExecutor {
           rowIndex + 1
         }: "${newValue.toString()}" does not match the type ${outputDetails.valueType.getName()}`;
         context.logger.logDebug(message);
-        newColumn.push(new InvalidError(message));
+        newColumn.push(new InvalidValue(message));
       } else {
         newColumn.push(newValue);
       }
@@ -148,7 +159,7 @@ export class TransformExecutor {
 
   private addVariablesToContext(
     inputDetailsList: PortDetails[],
-    columns: Map<string, TableColumn<InternalValueRepresentation>>,
+    columns: Map<string, TableColumn<InternalValidValueRepresentation>>,
     rowIndex: number,
     context: ExecutionContext,
   ) {

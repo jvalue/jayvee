@@ -3,14 +3,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  type InternalValueRepresentation,
-  InvalidError,
+  type InternalValidValueRepresentation,
+  InvalidValue,
 } from '../../../expressions/internal-value-representation';
 import { AbstractValueType } from '../abstract-value-type';
 import { type ValueType } from '../value-type';
 
 export abstract class PrimitiveValueType<
-  I extends InternalValueRepresentation = InternalValueRepresentation,
+  I extends InternalValidValueRepresentation = InternalValidValueRepresentation,
 > extends AbstractValueType<I> {
   constructor() {
     super();
@@ -38,8 +38,8 @@ export abstract class PrimitiveValueType<
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  fromString(_s: string): I | InvalidError {
-    return new InvalidError(`Cannot parse ${this.getName()}`);
+  fromString(_s: string): I | InvalidValue {
+    return new InvalidValue(`Cannot parse ${this.getName()}`);
   }
 }
 

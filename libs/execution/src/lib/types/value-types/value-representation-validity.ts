@@ -13,7 +13,7 @@ import {
   type ConstraintValuetype,
   type DecimalValuetype,
   type IntegerValuetype,
-  type InternalValueRepresentation,
+  type InternalValidValueRepresentation,
   type PrimitiveValueType,
   type RegexValuetype,
   type TextValuetype,
@@ -28,7 +28,7 @@ import { ConstraintExecutor } from '../../constraints';
 import { type ExecutionContext } from '../../execution-context';
 
 export function isValidValueRepresentation(
-  value: InternalValueRepresentation,
+  value: InternalValidValueRepresentation,
   valueType: ValueType,
   context: ExecutionContext,
 ): boolean {
@@ -38,7 +38,7 @@ export function isValidValueRepresentation(
 
 class ValueRepresentationValidityVisitor extends ValueTypeVisitor<boolean> {
   constructor(
-    private value: InternalValueRepresentation,
+    private value: InternalValidValueRepresentation,
     private context: ExecutionContext,
   ) {
     super();
@@ -118,6 +118,6 @@ class ValueRepresentationValidityVisitor extends ValueTypeVisitor<boolean> {
   }
 
   private isValidForPrimitiveValuetype(valueType: PrimitiveValueType): boolean {
-    return valueType.isInternalValueRepresentation(this.value);
+    return valueType.isInternalValidValueRepresentation(this.value);
   }
 }

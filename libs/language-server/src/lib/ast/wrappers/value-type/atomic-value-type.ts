@@ -5,7 +5,7 @@
 // eslint-disable-next-line unicorn/prefer-node-protocol
 import { strict as assert } from 'assert';
 
-import { type InternalValueRepresentation } from '../../expressions/internal-value-representation';
+import { type InternalValidValueRepresentation } from '../../expressions/internal-value-representation';
 import {} from '../../expressions/typeguards';
 import {
   type ConstraintDefinition,
@@ -22,7 +22,7 @@ import { type ValueTypeProvider } from './primitive';
 import { type ValueType, type ValueTypeVisitor } from './value-type';
 
 export class AtomicValueType
-  extends AbstractValueType<InternalValueRepresentation>
+  extends AbstractValueType<InternalValidValueRepresentation>
   implements AstNodeWrapper<ValuetypeDefinition>
 {
   constructor(
@@ -71,7 +71,7 @@ export class AtomicValueType
       }
 
       assert(
-        this.valueTypeProvider.Primitives.Constraint.isInternalValueRepresentation(
+        this.valueTypeProvider.Primitives.Constraint.isInternalValidValueRepresentation(
           constraintDefinition,
         ),
       );
@@ -120,14 +120,14 @@ export class AtomicValueType
     return this.wrapperFactories.ValueType.wrap(supertype);
   }
 
-  override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation,
-  ): operandValue is InternalValueRepresentation {
+  override isInternalValidValueRepresentation(
+    operandValue: InternalValidValueRepresentation,
+  ): operandValue is InternalValidValueRepresentation {
     const supertype = this.getContainedType();
     if (supertype === undefined) {
       return false;
     }
-    return supertype.isInternalValueRepresentation(operandValue);
+    return supertype.isInternalValidValueRepresentation(operandValue);
   }
 
   override equals(target: ValueType): boolean {

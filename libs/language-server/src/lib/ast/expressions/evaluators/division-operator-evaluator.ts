@@ -7,7 +7,7 @@ import { strict as assert } from 'assert';
 
 import { type ValidationContext } from '../../../validation/validation-context';
 import { type BinaryExpression } from '../../generated/ast';
-import { InvalidError } from '../internal-value-representation';
+import { InvalidValue } from '../internal-value-representation';
 import { DefaultBinaryOperatorEvaluator } from '../operator-evaluator';
 import { NUMBER_TYPEGUARD } from '../typeguards';
 
@@ -25,7 +25,7 @@ export class DivisionOperatorEvaluator extends DefaultBinaryOperatorEvaluator<
     rightValue: number,
     expression: BinaryExpression,
     context: ValidationContext | undefined,
-  ): number | InvalidError {
+  ): number | InvalidValue {
     const resultingValue = leftValue / rightValue;
 
     if (!isFinite(resultingValue)) {
@@ -33,7 +33,7 @@ export class DivisionOperatorEvaluator extends DefaultBinaryOperatorEvaluator<
       context?.accept('error', 'Arithmetic error: division by zero', {
         node: expression,
       });
-      return new InvalidError('Cannot divide by zero!');
+      return new InvalidValue('Cannot divide by zero!');
     }
     return resultingValue;
   }

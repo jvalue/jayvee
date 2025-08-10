@@ -13,9 +13,9 @@ import {
   ERROR_TYPEGUARD,
   type EvaluationContext,
   IOType,
-  type InternalErrorRepresentation,
-  type InternalValueRepresentation,
-  MissingError,
+  type InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
+  MissingValue,
   type ValueType,
   type WrapperFactoryProvider,
   evaluateExpression,
@@ -182,7 +182,7 @@ export function createCompositeBlockExecutor(
       properties: BlockTypeProperty[],
       evaluationContext: EvaluationContext,
       wrapperFactories: WrapperFactoryProvider,
-    ): InternalValueRepresentation | InternalErrorRepresentation {
+    ): InternalValidValueRepresentation | InternalErrorValueRepresentation {
       const propertyFromBlock = block.body.properties.find(
         (property) => property.name === name,
       );
@@ -205,7 +205,7 @@ export function createCompositeBlockExecutor(
       );
 
       if (propertyFromBlockType?.defaultValue === undefined) {
-        return new MissingError(
+        return new MissingValue(
           `Could not find default value for property ${name}`,
         );
       }

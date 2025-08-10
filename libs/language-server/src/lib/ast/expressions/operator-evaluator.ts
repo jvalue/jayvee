@@ -17,9 +17,9 @@ import { evaluateExpression } from './evaluate-expression';
 import { type EvaluationContext } from './evaluation-context';
 import { EvaluationStrategy } from './evaluation-strategy';
 import {
-  type InternalErrorRepresentation,
-  type InternalValueRepresentation,
-  type InternalValueRepresentationTypeguard,
+  type InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
+  type InternalValidValueRepresentationTypeguard,
 } from './internal-value-representation';
 import {
   type BinaryExpressionOperator,
@@ -46,24 +46,24 @@ export interface OperatorEvaluator<
     wrapperFactories: WrapperFactoryProvider,
     strategy: EvaluationStrategy,
     validationContext: ValidationContext | undefined,
-  ): InternalValueRepresentation | InternalErrorRepresentation;
+  ): InternalValidValueRepresentation | InternalErrorValueRepresentation;
 }
 
 export abstract class DefaultUnaryOperatorEvaluator<
-  O extends InternalValueRepresentation,
-  T extends InternalValueRepresentation,
+  O extends InternalValidValueRepresentation,
+  T extends InternalValidValueRepresentation,
 > implements OperatorEvaluator<UnaryExpression>
 {
   constructor(
     public readonly operator: UnaryExpressionOperator,
-    private readonly operandValueTypeguard: InternalValueRepresentationTypeguard<O>,
+    private readonly operandValueTypeguard: InternalValidValueRepresentationTypeguard<O>,
   ) {}
 
   protected abstract doEvaluate(
     operandValue: O,
     expression: UnaryExpression,
     context: ValidationContext | undefined,
-  ): T | InternalErrorRepresentation;
+  ): T | InternalErrorValueRepresentation;
 
   evaluate(
     expression: UnaryExpression,
@@ -71,7 +71,7 @@ export abstract class DefaultUnaryOperatorEvaluator<
     wrapperFactories: WrapperFactoryProvider,
     strategy: EvaluationStrategy,
     validationContext: ValidationContext | undefined,
-  ): T | InternalErrorRepresentation {
+  ): T | InternalErrorValueRepresentation {
     assert(expression.operator === this.operator);
     const operandValue = evaluateExpression(
       expression.expression,
@@ -91,15 +91,15 @@ export abstract class DefaultUnaryOperatorEvaluator<
 }
 
 export abstract class DefaultBinaryOperatorEvaluator<
-  L extends InternalValueRepresentation,
-  R extends InternalValueRepresentation,
-  T extends InternalValueRepresentation,
+  L extends InternalValidValueRepresentation,
+  R extends InternalValidValueRepresentation,
+  T extends InternalValidValueRepresentation,
 > implements OperatorEvaluator<BinaryExpression>
 {
   constructor(
     public readonly operator: BinaryExpressionOperator,
-    private readonly leftValueTypeguard: InternalValueRepresentationTypeguard<L>,
-    private readonly rightValueTypeguard: InternalValueRepresentationTypeguard<R>,
+    private readonly leftValueTypeguard: InternalValidValueRepresentationTypeguard<L>,
+    private readonly rightValueTypeguard: InternalValidValueRepresentationTypeguard<R>,
   ) {}
 
   protected abstract doEvaluate(
@@ -107,7 +107,7 @@ export abstract class DefaultBinaryOperatorEvaluator<
     rightValue: R,
     expression: BinaryExpression,
     context: ValidationContext | undefined,
-  ): T | InternalErrorRepresentation;
+  ): T | InternalErrorValueRepresentation;
 
   evaluate(
     expression: BinaryExpression,
@@ -115,7 +115,7 @@ export abstract class DefaultBinaryOperatorEvaluator<
     wrapperFactories: WrapperFactoryProvider,
     strategy: EvaluationStrategy,
     validationContext: ValidationContext | undefined,
-  ): T | InternalErrorRepresentation {
+  ): T | InternalErrorValueRepresentation {
     assert(expression.operator === this.operator);
     const leftValue = evaluateExpression(
       expression.left,
@@ -183,7 +183,7 @@ export abstract class BooleanShortCircuitOperatorEvaluator
     wrapperFactories: WrapperFactoryProvider,
     strategy: EvaluationStrategy,
     validationContext: ValidationContext | undefined,
-  ): boolean | InternalErrorRepresentation {
+  ): boolean | InternalErrorValueRepresentation {
     assert(expression.operator === this.operator);
     const leftValue = evaluateExpression(
       expression.left,
@@ -228,17 +228,17 @@ export abstract class BooleanShortCircuitOperatorEvaluator
 }
 
 export abstract class DefaultTernaryOperatorEvaluator<
-  FirstValue extends InternalValueRepresentation,
-  SecondValue extends InternalValueRepresentation,
-  ThirdValue extends InternalValueRepresentation,
-  ReturnValue extends InternalValueRepresentation,
+  FirstValue extends InternalValidValueRepresentation,
+  SecondValue extends InternalValidValueRepresentation,
+  ThirdValue extends InternalValidValueRepresentation,
+  ReturnValue extends InternalValidValueRepresentation,
 > implements OperatorEvaluator<TernaryExpression>
 {
   constructor(
     public readonly operator: TernaryExpressionOperator,
-    private readonly firstValueTypeguard: InternalValueRepresentationTypeguard<FirstValue>,
-    private readonly secondValueTypeguard: InternalValueRepresentationTypeguard<SecondValue>,
-    private readonly thirdValueTypeguard: InternalValueRepresentationTypeguard<ThirdValue>,
+    private readonly firstValueTypeguard: InternalValidValueRepresentationTypeguard<FirstValue>,
+    private readonly secondValueTypeguard: InternalValidValueRepresentationTypeguard<SecondValue>,
+    private readonly thirdValueTypeguard: InternalValidValueRepresentationTypeguard<ThirdValue>,
   ) {}
 
   protected abstract doEvaluate(
@@ -247,7 +247,7 @@ export abstract class DefaultTernaryOperatorEvaluator<
     thirdValue: ThirdValue,
     expression: TernaryExpression,
     context: ValidationContext | undefined,
-  ): ReturnValue | InternalErrorRepresentation;
+  ): ReturnValue | InternalErrorValueRepresentation;
 
   evaluate(
     expression: TernaryExpression,
@@ -255,7 +255,7 @@ export abstract class DefaultTernaryOperatorEvaluator<
     wrapperFactories: WrapperFactoryProvider,
     strategy: EvaluationStrategy,
     validationContext: ValidationContext | undefined,
-  ): ReturnValue | InternalErrorRepresentation {
+  ): ReturnValue | InternalErrorValueRepresentation {
     // The following linting exception can be removed when a second ternary operator is added
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     assert(expression.operator === this.operator);

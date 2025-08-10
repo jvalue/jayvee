@@ -189,7 +189,9 @@ function checkPropertyDefaultValuesHasCorrectType(
   );
   assert(expectedValuetype !== undefined);
 
-  if (!expectedValuetype.isInternalValueRepresentation(evaluatedExpression)) {
+  if (
+    !expectedValuetype.isInternalValidValueRepresentation(evaluatedExpression)
+  ) {
     props.validationContext.accept(
       'error',
       `This default value is not compatible with value type ${expectedValuetype.getName()}`,

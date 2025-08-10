@@ -11,18 +11,18 @@ import {
   type DecimalValuetype,
   ERROR_TYPEGUARD,
   type IntegerValuetype,
-  type InternalErrorRepresentation,
-  type InternalValueRepresentation,
+  type InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
   type TextValuetype,
   ValueTypeVisitor,
 } from '@jvalue/jayvee-language-server';
 
 // HACK: This is a temporary solution until errors have their own valuetype
 // See "Future changes" in RFC0017
-function wrap<T extends InternalValueRepresentation>(
+function wrap<T extends InternalValidValueRepresentation>(
   f: (value: T) => string,
-): (value: T | InternalErrorRepresentation) => string {
-  return (value: T | InternalErrorRepresentation) => {
+): (value: T | InternalErrorValueRepresentation) => string {
+  return (value: T | InternalErrorValueRepresentation) => {
     if (ERROR_TYPEGUARD(value)) {
       return 'NULL';
     }
@@ -31,32 +31,34 @@ function wrap<T extends InternalValueRepresentation>(
 }
 
 export class SQLValueRepresentationVisitor extends ValueTypeVisitor<
-  (value: InternalValueRepresentation | InternalErrorRepresentation) => string
+  (
+    value: InternalValidValueRepresentation | InternalErrorValueRepresentation,
+  ) => string
 > {
   override visitBoolean(valueType: BooleanValuetype) {
-    return wrap((value: InternalValueRepresentation) => {
-      assert(valueType.isInternalValueRepresentation(value));
+    return wrap((value: InternalValidValueRepresentation) => {
+      assert(valueType.isInternalValidValueRepresentation(value));
       return value ? `'true'` : `'false'`;
     });
   }
 
   override visitDecimal(valueType: DecimalValuetype) {
-    return wrap((value: InternalValueRepresentation) => {
-      assert(valueType.isInternalValueRepresentation(value));
+    return wrap((value: InternalValidValueRepresentation) => {
+      assert(valueType.isInternalValidValueRepresentation(value));
       return value.toString();
     });
   }
 
   override visitInteger(valueType: IntegerValuetype) {
-    return wrap((value: InternalValueRepresentation) => {
-      assert(valueType.isInternalValueRepresentation(value));
+    return wrap((value: InternalValidValueRepresentation) => {
+      assert(valueType.isInternalValidValueRepresentation(value));
       return value.toString();
     });
   }
 
   override visitText(valueType: TextValuetype) {
-    return wrap((value: InternalValueRepresentation) => {
-      assert(valueType.isInternalValueRepresentation(value));
+    return wrap((value: InternalValidValueRepresentation) => {
+      assert(valueType.isInternalValidValueRepresentation(value));
       const escapedValue = escapeSingleQuotes(value);
       return `'${escapedValue}'`;
     });
@@ -65,7 +67,7 @@ export class SQLValueRepresentationVisitor extends ValueTypeVisitor<
   override visitAtomicValueType(
     valueType: AtomicValueType,
   ): (
-    value: InternalValueRepresentation | InternalErrorRepresentation,
+    value: InternalValidValueRepresentation | InternalErrorValueRepresentation,
   ) => string {
     const contained = valueType.getContainedType();
     assert(contained !== undefined);
@@ -73,7 +75,7 @@ export class SQLValueRepresentationVisitor extends ValueTypeVisitor<
   }
 
   override visitRegex(): (
-    value: InternalValueRepresentation | InternalErrorRepresentation,
+    value: InternalValidValueRepresentation | InternalErrorValueRepresentation,
   ) => string {
     throw new Error(
       'No visit implementation given for regex. Cannot be the type of a column.',
@@ -81,7 +83,7 @@ export class SQLValueRepresentationVisitor extends ValueTypeVisitor<
   }
 
   override visitCellRange(): (
-    value: InternalValueRepresentation | InternalErrorRepresentation,
+    value: InternalValidValueRepresentation | InternalErrorValueRepresentation,
   ) => string {
     throw new Error(
       'No visit implementation given for cell ranges. Cannot be the type of a column.',
@@ -89,7 +91,7 @@ export class SQLValueRepresentationVisitor extends ValueTypeVisitor<
   }
 
   override visitConstraint(): (
-    value: InternalValueRepresentation | InternalErrorRepresentation,
+    value: InternalValidValueRepresentation | InternalErrorValueRepresentation,
   ) => string {
     throw new Error(
       'No visit implementation given for constraints. Cannot be the type of a column.',
@@ -97,7 +99,7 @@ export class SQLValueRepresentationVisitor extends ValueTypeVisitor<
   }
 
   override visitValuetypeAssignment(): (
-    value: InternalValueRepresentation | InternalErrorRepresentation,
+    value: InternalValidValueRepresentation | InternalErrorValueRepresentation,
   ) => string {
     throw new Error(
       'No visit implementation given for value type assignments. Cannot be the type of a column.',
@@ -105,7 +107,7 @@ export class SQLValueRepresentationVisitor extends ValueTypeVisitor<
   }
 
   override visitCollection(): (
-    value: InternalValueRepresentation | InternalErrorRepresentation,
+    value: InternalValidValueRepresentation | InternalErrorValueRepresentation,
   ) => string {
     throw new Error(
       'No visit implementation given for collections. Cannot be the type of a column.',
@@ -113,7 +115,7 @@ export class SQLValueRepresentationVisitor extends ValueTypeVisitor<
   }
 
   override visitTransform(): (
-    value: InternalValueRepresentation | InternalErrorRepresentation,
+    value: InternalValidValueRepresentation | InternalErrorValueRepresentation,
   ) => string {
     throw new Error(
       'No visit implementation given for transforms. Cannot be the type of a column.',

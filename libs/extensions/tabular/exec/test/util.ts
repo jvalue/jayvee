@@ -11,8 +11,8 @@ import {
   parseValueToInternalRepresentation,
 } from '@jvalue/jayvee-execution';
 import {
-  type InternalErrorRepresentation,
-  type InternalValueRepresentation,
+  type InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
   type ValueType,
 } from '@jvalue/jayvee-language-server';
 import * as exceljs from 'exceljs';
@@ -113,6 +113,6 @@ function constructTableRow(
 function parseAndValidatePrimitiveValue(
   value: string,
   valueType: ValueType,
-): InternalValueRepresentation | InternalErrorRepresentation {
+): InternalValidValueRepresentation | InternalErrorValueRepresentation {
   return parseValueToInternalRepresentation(value, valueType);
 }

@@ -13,13 +13,13 @@ import { isTransformDefinition } from '../generated/ast';
 import { evaluateExpression } from './evaluate-expression';
 import { EvaluationContext } from './evaluation-context';
 import {
-  type InternalErrorRepresentation,
-  type InternalValueRepresentation,
+  type InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
 } from './internal-value-representation';
 
 export async function executeDefaultTextToTextExpression(
   expression: string,
-  input: InternalValueRepresentation,
+  input: InternalValidValueRepresentation,
 ) {
   return executeExpressionTestHelper(
     expression,
@@ -34,9 +34,11 @@ export async function executeExpressionTestHelper(
   expression: string,
   inputValueName: string,
   inputValueType: 'text',
-  inputValueValue: InternalValueRepresentation,
+  inputValueValue: InternalValidValueRepresentation,
   outputValueType: 'text' | 'integer',
-): Promise<InternalValueRepresentation | InternalErrorRepresentation> {
+): Promise<
+  InternalValidValueRepresentation | InternalErrorValueRepresentation
+> {
   const services = createJayveeServices(NodeFileSystem).Jayvee;
   const parse = parseHelper(services);
 
