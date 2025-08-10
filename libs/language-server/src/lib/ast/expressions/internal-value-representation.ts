@@ -21,7 +21,7 @@ import {
 } from '../generated/ast';
 import { type WrapperFactoryProvider } from '../wrappers';
 
-import { COLLECTION_TYPEGUARD } from './typeguards';
+import { COLLECTION_TYPEGUARD, ERROR_TYPEGUARD } from './typeguards';
 
 abstract class JayveeError extends Error {
   abstract override name: string;
@@ -153,11 +153,15 @@ export function internalValueToString(
   assertUnreachable(valueRepresentation);
 }
 
-export function cloneInternalValue<T extends InternalValueRepresentation>(
-  valueRepresentation: T,
-): T {
+export function cloneInternalValue<
+  T extends InternalValueRepresentation | InternalErrorRepresentation,
+>(valueRepresentation: T): T {
   if (COLLECTION_TYPEGUARD(valueRepresentation)) {
     return valueRepresentation.map(cloneInternalValue) as T;
+  }
+
+  if (ERROR_TYPEGUARD(valueRepresentation)) {
+    return valueRepresentation.clone() as T;
   }
 
   if (
