@@ -33,7 +33,7 @@ export type AtomicInternalValueRepresentation =
 
 export type InternalValueRepresentationTypeguard<
   T extends InternalValueRepresentation,
-> = (value: InternalValueRepresentation) => value is T;
+> = (value: unknown) => value is T;
 
 export function internalValueToString(
   valueRepresentation: InternalValueRepresentation,

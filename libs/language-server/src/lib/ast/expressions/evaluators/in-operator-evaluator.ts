@@ -31,13 +31,13 @@ export class InOperatorEvaluator extends DefaultBinaryOperatorEvaluator<
 
 const isLeftOperandMatchingValueRepresentationTypeguard: InternalValueRepresentationTypeguard<
   string | number
-> = (value: InternalValueRepresentation): value is string | number => {
+> = (value) => {
   return STRING_TYPEGUARD(value) || NUMBER_TYPEGUARD(value);
 };
 
 const isRightOperandMatchingValueRepresentationTypeguard: InternalValueRepresentationTypeguard<
   (string | number)[]
-> = (value: InternalValueRepresentation): value is (string | number)[] => {
+> = (value) => {
   return (
     Array.isArray(value) &&
     value.every(isLeftOperandMatchingValueRepresentationTypeguard)
