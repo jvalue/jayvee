@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/interpreter-lib/src",
   "projectType": "library",
+  "tags": [],
   "targets": {
     "build": {},
     "lint": {
@@ -45,6 +46,5 @@
         "parallel": false
       }
     }
-  },
-  "tags": []
+  }
 }
