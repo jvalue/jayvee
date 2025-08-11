@@ -65,7 +65,10 @@ export function parseValueToInternalRepresentation<
 class InternalRepresentationParserVisitor extends ValueTypeVisitor<
   InternalValidValueRepresentation | InvalidValue
 > {
-  constructor(private value: string, private parseOpts: ParseOpts) {
+  constructor(
+    private value: string,
+    private parseOpts: ParseOpts,
+  ) {
     super();
   }
 
