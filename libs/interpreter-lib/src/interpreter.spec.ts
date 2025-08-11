@@ -54,13 +54,13 @@ describe('Interpreter', () => {
       assert(program !== undefined);
 
       const spy = vi
-        .fn<unknown[], Promise<undefined>>()
+        .fn<(param: unknown) => Promise<undefined>>()
         .mockResolvedValue(undefined);
 
       program.addHook(
         'preBlock',
-        async () => {
-          return spy();
+        async (params) => {
+          return spy(params);
         },
         { blocking: true },
       );
@@ -96,7 +96,7 @@ describe('Interpreter', () => {
       assert(program !== undefined);
 
       const sqlite_spy = vi
-        .fn<unknown[], Promise<undefined>>()
+        .fn<(param: unknown) => Promise<undefined>>()
         .mockResolvedValue(undefined);
 
       program.addHook(
@@ -108,7 +108,7 @@ describe('Interpreter', () => {
       );
 
       const interpreter_spy = vi
-        .fn<unknown[], Promise<undefined>>()
+        .fn<(param: unknown) => Promise<undefined>>()
         .mockResolvedValue(undefined);
 
       program.addHook(
@@ -153,7 +153,7 @@ describe('Interpreter', () => {
       assert(program !== undefined);
 
       const parameter_spy = vi
-        .fn<unknown[], Promise<undefined>>()
+        .fn<(...param: unknown[]) => Promise<undefined>>()
         .mockResolvedValue(undefined);
 
       const EXPECTED_NAMES = [
@@ -216,7 +216,7 @@ describe('Interpreter', () => {
             EXPECTED_NAMES,
           );
 
-          return parameter_spy();
+          return parameter_spy(blocktype, input, output);
         },
         { blocking: true, blocktypes: ['TableTransformer'] },
       );
