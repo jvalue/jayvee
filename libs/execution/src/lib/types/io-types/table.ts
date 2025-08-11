@@ -10,6 +10,7 @@ import {
   type InternalValueRepresentation,
   type TextValuetype,
   type ValueType,
+  cloneInternalValue,
 } from '@jvalue/jayvee-language-server';
 
 import { SQLColumnTypeVisitor } from '../value-types/visitors/sql-column-type-visitor';
@@ -191,7 +192,7 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     cloned.numberOfRows = this.numberOfRows;
     [...this.columns.entries()].forEach(([columnName, column]) => {
       cloned.addColumn(columnName, {
-        values: structuredClone(column.values),
+        values: cloneInternalValue(column.values),
         valueType: column.valueType,
       });
     });

@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { assertUnreachable, isAstNode } from 'langium';
+
 import {
   type BlockTypeProperty,
   type CellRangeLiteral,
@@ -16,10 +18,11 @@ import {
 } from '../generated/ast';
 import type { WrapperFactoryProvider } from '../wrappers';
 
+import { COLLECTION_TYPEGUARD } from './typeguards';
+
 export type InternalValueRepresentation =
   | AtomicInternalValueRepresentation
-  | InternalValueRepresentation[]
-  | [];
+  | InternalValueRepresentation[];
 
 export type AtomicInternalValueRepresentation =
   | boolean
@@ -34,7 +37,7 @@ export type AtomicInternalValueRepresentation =
 
 export type InternalValueRepresentationTypeguard<
   T extends InternalValueRepresentation,
-> = (value: InternalValueRepresentation) => value is T;
+> = (value: unknown) => value is T;
 
 export function internalValueToString(
   valueRepresentation: InternalValueRepresentation,
@@ -87,7 +90,30 @@ export function internalValueToString(
   if (isBlockTypeProperty(valueRepresentation)) {
     return valueRepresentation.name;
   }
-  throw new Error(
-    'Convert of this InternalValueRepresentation is not implemented',
-  );
+  assertUnreachable(valueRepresentation);
+}
+
+export function cloneInternalValue<T extends InternalValueRepresentation>(
+  valueRepresentation: T,
+): T {
+  if (COLLECTION_TYPEGUARD(valueRepresentation)) {
+    return valueRepresentation.map(cloneInternalValue) as T;
+  }
+
+  if (
+    typeof valueRepresentation === 'boolean' ||
+    typeof valueRepresentation === 'number' ||
+    typeof valueRepresentation === 'string'
+  ) {
+    return structuredClone(valueRepresentation);
+  }
+  if (valueRepresentation instanceof RegExp) {
+    const cloned = structuredClone(valueRepresentation);
+    cloned.lastIndex = valueRepresentation.lastIndex;
+    return cloned;
+  }
+  if (isAstNode(valueRepresentation)) {
+    return valueRepresentation;
+  }
+  assertUnreachable(valueRepresentation);
 }
