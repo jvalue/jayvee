@@ -9,11 +9,16 @@ import {
   type AtomicValueType,
   type BooleanValuetype,
   type DecimalValuetype,
+  INVALID_TYPEGUARD,
   type IntegerValuetype,
-  type InternalValueRepresentation,
+  type InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
+  InvalidValue,
   type TextValuetype,
   type ValueType,
   ValueTypeVisitor,
+  internalValueToString,
+  isCellRangeLiteral,
 } from '@jvalue/jayvee-language-server';
 
 export interface ParseOpts {
@@ -27,25 +32,38 @@ const DEFAULT_PARSE_OPTS: ParseOpts = {
 };
 
 export function parseValueToInternalRepresentation<
-  I extends InternalValueRepresentation,
+  I extends InternalValidValueRepresentation,
 >(
   value: string,
   valueType: ValueType<I>,
   parseOpts?: Partial<ParseOpts>,
-): I | undefined {
+): I | InternalErrorValueRepresentation {
   const visitor = new InternalRepresentationParserVisitor(value, {
     ...DEFAULT_PARSE_OPTS,
     ...parseOpts,
   });
   const result = valueType.acceptVisitor(visitor);
-  if (!valueType.isInternalValueRepresentation(result)) {
-    return undefined;
+  if (INVALID_TYPEGUARD(result)) {
+    return result;
+  }
+
+  if (!valueType.isInternalValidValueRepresentation(result)) {
+    if (isCellRangeLiteral(result)) {
+      return new InvalidValue(
+        `A cell range literal is not valid for ${valueType.getName()}`,
+      );
+    }
+    return new InvalidValue(
+      `${internalValueToString(
+        result,
+      )} is not valid for ${valueType.getName()}`,
+    );
   }
   return result;
 }
 
 class InternalRepresentationParserVisitor extends ValueTypeVisitor<
-  InternalValueRepresentation | undefined
+  InternalValidValueRepresentation | InvalidValue
 > {
   constructor(private value: string, private parseOpts: ParseOpts) {
     super();
@@ -64,15 +82,15 @@ class InternalRepresentationParserVisitor extends ValueTypeVisitor<
     return value;
   }
 
-  visitBoolean(vt: BooleanValuetype): boolean | undefined {
+  visitBoolean(vt: BooleanValuetype): boolean | InvalidValue {
     return vt.fromString(this.applyTrimOptions(this.value));
   }
 
-  visitDecimal(vt: DecimalValuetype): number | undefined {
+  visitDecimal(vt: DecimalValuetype): number | InvalidValue {
     return vt.fromString(this.applyTrimOptions(this.value));
   }
 
-  visitInteger(vt: IntegerValuetype): number | undefined {
+  visitInteger(vt: IntegerValuetype): number | InvalidValue {
     return vt.fromString(this.applyTrimOptions(this.value));
   }
 
@@ -82,34 +100,36 @@ class InternalRepresentationParserVisitor extends ValueTypeVisitor<
 
   visitAtomicValueType(
     valueType: AtomicValueType,
-  ): InternalValueRepresentation | undefined {
+  ): InternalValidValueRepresentation | InvalidValue {
     const contained = valueType.getContainedType();
     assert(contained !== undefined);
 
     return contained.acceptVisitor(this);
   }
 
-  visitCellRange(): undefined {
-    return undefined;
+  visitCellRange(): InvalidValue {
+    return new InvalidValue(`Cannot parse cell ranges into internal values`);
   }
 
-  visitCollection(): undefined {
-    return undefined;
+  visitCollection(): InvalidValue {
+    return new InvalidValue(`Cannot parse collections into internal values`);
   }
 
-  visitConstraint(): undefined {
-    return undefined;
+  visitConstraint(): InvalidValue {
+    return new InvalidValue(`Cannot parse constraints into internal values`);
   }
 
-  visitRegex(): undefined {
-    return undefined;
+  visitRegex(): InvalidValue {
+    return new InvalidValue(`Cannot parse regex into internal values`);
   }
 
-  visitTransform(): undefined {
-    return undefined;
+  visitTransform(): InvalidValue {
+    return new InvalidValue(`Cannot parse transforms into internal values`);
   }
 
-  visitValuetypeAssignment(): undefined {
-    return undefined;
+  visitValuetypeAssignment(): InvalidValue {
+    return new InvalidValue(
+      `Cannot parse valuetype assignments into internal values`,
+    );
   }
 }

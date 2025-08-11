@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../../../expressions/internal-value-representation';
+import { type InternalValidValueRepresentation } from '../../../../expressions/internal-value-representation';
 import { type ValueType, type ValueTypeVisitor } from '../../value-type';
 
 import { AbstractCollectionValueType } from './abstract-collection-value-type';
@@ -23,8 +23,8 @@ export class EmptyCollectionValueType extends AbstractCollectionValueType<undefi
     return `Collection`;
   }
 
-  override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation | undefined,
+  override isInternalValidValueRepresentation(
+    operandValue: InternalValidValueRepresentation,
   ): operandValue is [] {
     return Array.isArray(operandValue) && operandValue.length === 0;
   }

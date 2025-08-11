@@ -3,7 +3,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  type InternalValueRepresentation,
+  ERROR_TYPEGUARD,
+  type InternalValidValueRepresentation,
   type PropertyAssignment,
   type PropertySpecification,
   evaluatePropertyValue,
@@ -26,7 +27,7 @@ export function checkBlockTypeSpecificProperties(
     props.wrapperFactories,
     propertySpec.type,
   );
-  if (propValue === undefined) {
+  if (ERROR_TYPEGUARD(propValue)) {
     return;
   }
 
@@ -84,11 +85,11 @@ export function checkBlockTypeSpecificProperties(
 
 function checkArchiveInterpreterProperty(
   propName: string,
-  propValue: InternalValueRepresentation,
+  propValue: InternalValidValueRepresentation,
   property: PropertyAssignment,
   props: JayveeValidationProps,
 ) {
-  const allowedArchiveTypes: InternalValueRepresentation[] = ['zip', 'gz'];
+  const allowedArchiveTypes: InternalValidValueRepresentation[] = ['zip', 'gz'];
   if (propName === 'archiveType') {
     checkPropertyValueOneOf(
       propValue,
@@ -112,7 +113,7 @@ function checkCellWriterProperty(
       props.wrapperFactories,
       props.valueTypeProvider.Primitives.CellRange,
     );
-    if (cellRange === undefined) {
+    if (ERROR_TYPEGUARD(cellRange)) {
       return;
     }
 
@@ -147,8 +148,11 @@ function checkColumnDeleterProperty(
         props.valueTypeProvider.Primitives.CellRange,
       ),
     );
+    if (ERROR_TYPEGUARD(cellRanges)) {
+      return;
+    }
 
-    cellRanges?.forEach((cellRange) => {
+    cellRanges.forEach((cellRange) => {
       if (!props.wrapperFactories.CellRange.canWrap(cellRange)) {
         return;
       }
@@ -169,11 +173,11 @@ function checkColumnDeleterProperty(
 
 function checkGtfsRTInterpreterProperty(
   propName: string,
-  propValue: InternalValueRepresentation,
+  propValue: InternalValidValueRepresentation,
   property: PropertyAssignment,
   props: JayveeValidationProps,
 ) {
-  const allowedEntities: InternalValueRepresentation[] = [
+  const allowedEntities: InternalValidValueRepresentation[] = [
     'trip_update',
     'alert',
     'vehicle',
@@ -191,7 +195,7 @@ function checkGtfsRTInterpreterProperty(
 
 function checkHttpExtractorProperty(
   propName: string,
-  propValue: InternalValueRepresentation,
+  propValue: InternalValidValueRepresentation,
   property: PropertyAssignment,
   props: JayveeValidationProps,
 ) {
@@ -222,7 +226,7 @@ function checkHttpExtractorProperty(
     }
   }
   if (propName === 'retryBackoffStrategy') {
-    const allowedRetryStrategies: InternalValueRepresentation[] = [
+    const allowedRetryStrategies: InternalValidValueRepresentation[] = [
       'exponential',
       'linear',
     ];
@@ -238,7 +242,7 @@ function checkHttpExtractorProperty(
 
 function checkLocalFileExtractorProperty(
   propName: string,
-  propValue: InternalValueRepresentation,
+  propValue: InternalValidValueRepresentation,
   property: PropertyAssignment,
   props: JayveeValidationProps,
 ) {
@@ -271,8 +275,11 @@ function checkRowDeleterProperty(
         props.valueTypeProvider.Primitives.CellRange,
       ),
     );
+    if (ERROR_TYPEGUARD(cellRanges)) {
+      return;
+    }
 
-    cellRanges?.forEach((cellRange) => {
+    cellRanges.forEach((cellRange) => {
       if (!props.wrapperFactories.CellRange.canWrap(cellRange)) {
         return;
       }
@@ -305,7 +312,7 @@ function checkTableInterpreterProperty(
         props.valueTypeProvider.Primitives.ValuetypeAssignment,
       ),
     );
-    if (valueTypeAssignments === undefined) {
+    if (ERROR_TYPEGUARD(valueTypeAssignments)) {
       return;
     }
 
@@ -315,12 +322,12 @@ function checkTableInterpreterProperty(
 
 function checkTextFileInterpreterProperty(
   propName: string,
-  propValue: InternalValueRepresentation,
+  propValue: InternalValidValueRepresentation,
   property: PropertyAssignment,
   props: JayveeValidationProps,
 ) {
   // https://developer.mozilla.org/en-US/docs/Web/API/Encoding_API/Encodings
-  const allowedEncodings: InternalValueRepresentation[] = [
+  const allowedEncodings: InternalValidValueRepresentation[] = [
     'utf8',
     'ibm866',
     'latin2',
@@ -360,7 +367,10 @@ function checkTextLineDeleterProperty(
         props.valueTypeProvider.Primitives.Integer,
       ),
     );
-    lines?.forEach((value, index) => {
+    if (ERROR_TYPEGUARD(lines)) {
+      return;
+    }
+    lines.forEach((value, index) => {
       if (value < minTextLineIndex) {
         props.validationContext.accept(
           'error',
@@ -378,7 +388,7 @@ function checkTextLineDeleterProperty(
 
 function checkTextRangeSelectorProperty(
   propName: string,
-  propValue: InternalValueRepresentation,
+  propValue: InternalValidValueRepresentation,
   property: PropertyAssignment,
   props: JayveeValidationProps,
 ) {
@@ -398,8 +408,8 @@ function checkTextRangeSelectorProperty(
 }
 
 function checkPropertyValueOneOf(
-  propValue: InternalValueRepresentation,
-  allowedValues: InternalValueRepresentation[],
+  propValue: InternalValidValueRepresentation,
+  allowedValues: InternalValidValueRepresentation[],
   propName: string,
   property: PropertyAssignment,
   props: JayveeValidationProps,

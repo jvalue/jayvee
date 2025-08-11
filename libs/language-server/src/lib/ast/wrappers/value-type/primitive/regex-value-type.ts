@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
+import { type InternalValidValueRepresentation } from '../../../expressions/internal-value-representation';
 import { type ValueTypeVisitor } from '../value-type';
 
 import { PrimitiveValueType } from './primitive-value-type';
@@ -20,8 +20,8 @@ export class RegexValuetype extends PrimitiveValueType<RegExp> {
     return 'Regex';
   }
 
-  override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation | undefined,
+  override isInternalValidValueRepresentation(
+    operandValue: InternalValidValueRepresentation,
   ): operandValue is RegExp {
     return operandValue instanceof RegExp;
   }

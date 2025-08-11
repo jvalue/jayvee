@@ -21,7 +21,8 @@ import {
 } from '@jvalue/jayvee-execution';
 import {
   IOType,
-  type InternalValueRepresentation,
+  InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
 } from '@jvalue/jayvee-language-server';
 
 @implementsStatic<BlockExecutorClass>()
@@ -81,9 +82,10 @@ function getHeaders(table: Table): string[] {
 }
 
 function toRows(table: Table): Row[] {
-  const columns: InternalValueRepresentation[][] = [
-    ...table.getColumns().entries(),
-  ].map((column) => column[1].values);
+  const columns: (
+    | InternalValidValueRepresentation
+    | InternalErrorValueRepresentation
+  )[][] = [...table.getColumns().entries()].map((column) => column[1].values);
 
   return transposeArray(columns);
 }

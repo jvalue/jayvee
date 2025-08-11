@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
+import { type InternalValidValueRepresentation } from '../../../expressions/internal-value-representation';
 import {
   type ConstraintDefinition,
   isConstraintDefinition,
@@ -24,8 +24,8 @@ export class ConstraintValuetype extends PrimitiveValueType<ConstraintDefinition
     return 'Constraint';
   }
 
-  override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation | undefined,
+  override isInternalValidValueRepresentation(
+    operandValue: InternalValidValueRepresentation,
   ): operandValue is ConstraintDefinition {
     return isConstraintDefinition(operandValue);
   }

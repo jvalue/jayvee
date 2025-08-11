@@ -7,6 +7,7 @@ import { strict as assert } from 'assert';
 
 import {
   type BlockTypeProperty,
+  ERROR_TYPEGUARD,
   type ReferenceableBlockTypeDefinition,
   evaluateExpression,
 } from '../../ast';
@@ -171,10 +172,10 @@ function checkPropertyDefaultValuesHasCorrectType(
     props.wrapperFactories,
     props.validationContext,
   );
-  if (evaluatedExpression === undefined) {
+  if (ERROR_TYPEGUARD(evaluatedExpression)) {
     props.validationContext.accept(
       'error',
-      `Could not evaluate this expression.`,
+      `Could not evaluate this expression: ${evaluatedExpression.toString()}`,
       {
         node: property,
         property: 'defaultValue',
@@ -188,7 +189,9 @@ function checkPropertyDefaultValuesHasCorrectType(
   );
   assert(expectedValuetype !== undefined);
 
-  if (!expectedValuetype.isInternalValueRepresentation(evaluatedExpression)) {
+  if (
+    !expectedValuetype.isInternalValidValueRepresentation(evaluatedExpression)
+  ) {
     props.validationContext.accept(
       'error',
       `This default value is not compatible with value type ${expectedValuetype.getName()}`,

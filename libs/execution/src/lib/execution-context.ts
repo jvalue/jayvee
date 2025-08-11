@@ -9,8 +9,9 @@ import { inspect } from 'node:util';
 import {
   type BlockDefinition,
   type ConstraintDefinition,
+  ERROR_TYPEGUARD,
   type EvaluationContext,
-  type InternalValueRepresentation,
+  type InternalValidValueRepresentation,
   type PipelineDefinition,
   type PropertyAssignment,
   type TransformDefinition,
@@ -94,7 +95,7 @@ export class ExecutionContext {
     this.logger.setLoggingContext(this.getCurrentNode().name);
   }
 
-  public getPropertyValue<I extends InternalValueRepresentation>(
+  public getPropertyValue<I extends InternalValidValueRepresentation>(
     propertyName: string,
     valueType: ValueType<I>,
   ): I {
@@ -110,7 +111,7 @@ export class ExecutionContext {
       this.wrapperFactories,
       valueType,
     );
-    assert(propertyValue !== undefined);
+    assert(!ERROR_TYPEGUARD(propertyValue));
     return propertyValue;
   }
 
@@ -172,7 +173,7 @@ export class ExecutionContext {
     }
   }
 
-  private getDefaultPropertyValue<I extends InternalValueRepresentation>(
+  private getDefaultPropertyValue<I extends InternalValidValueRepresentation>(
     propertyName: string,
     valueType: ValueType<I>,
   ): I {
@@ -182,7 +183,7 @@ export class ExecutionContext {
 
     const defaultValue = propertySpec.defaultValue;
     assert(defaultValue !== undefined);
-    assert(valueType.isInternalValueRepresentation(defaultValue));
+    assert(valueType.isInternalValidValueRepresentation(defaultValue));
 
     return defaultValue;
   }

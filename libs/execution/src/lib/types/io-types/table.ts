@@ -6,8 +6,10 @@
 import { strict as assert } from 'assert';
 
 import {
+  ERROR_TYPEGUARD,
   IOType,
-  type InternalValueRepresentation,
+  type InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
   type TextValuetype,
   type ValueType,
   cloneInternalValue,
@@ -22,13 +24,16 @@ import {
 } from './io-type-implementation';
 
 export interface TableColumn<
-  T extends InternalValueRepresentation = InternalValueRepresentation,
+  T extends InternalValidValueRepresentation = InternalValidValueRepresentation,
 > {
-  values: T[];
+  values: (T | InternalErrorValueRepresentation)[];
   valueType: ValueType;
 }
 
-export type TableRow = Record<string, InternalValueRepresentation>;
+export type TableRow = Record<
+  string,
+  InternalValidValueRepresentation | InternalErrorValueRepresentation
+>;
 
 /**
  * Invariant: the shape of the table is always a rectangle.
@@ -73,29 +78,14 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
       const column = this.columns.get(columnName);
       assert(column !== undefined);
 
-      assert(column.valueType.isInternalValueRepresentation(value));
+      assert(
+        ERROR_TYPEGUARD(value) ||
+          column.valueType.isInternalValidValueRepresentation(value),
+      );
       column.values.push(value);
     });
 
     this.numberOfRows++;
-  }
-
-  dropRow(rowId: number): void {
-    assert(rowId < this.numberOfRows);
-
-    this.columns.forEach((column) => {
-      column.values.splice(rowId, 1);
-    });
-
-    this.numberOfRows--;
-  }
-
-  dropRows(rowIds: number[]): void {
-    rowIds
-      .sort((a, b) => b - a) // delete descending to avoid messing up row indices
-      .forEach((rowId) => {
-        this.dropRow(rowId);
-      });
   }
 
   getNumberOfRows(): number {
@@ -118,7 +108,12 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     return this.columns.get(name);
   }
 
-  getRow(rowId: number): Map<string, InternalValueRepresentation> {
+  getRow(
+    rowId: number,
+  ): Map<
+    string,
+    InternalValidValueRepresentation | InternalErrorValueRepresentation
+  > {
     const numberOfRows = this.getNumberOfRows();
     if (rowId >= numberOfRows) {
       throw new Error(
@@ -126,7 +121,10 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
       );
     }
 
-    const row = new Map<string, InternalValueRepresentation>();
+    const row = new Map<
+      string,
+      InternalValidValueRepresentation | InternalErrorValueRepresentation
+    >();
     [...this.columns.entries()].forEach(([columnName, column]) => {
       const value = column.values[rowId];
       assert(value !== undefined);

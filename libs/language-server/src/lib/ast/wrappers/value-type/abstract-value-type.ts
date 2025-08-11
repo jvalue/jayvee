@@ -2,12 +2,16 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../expressions';
+import {
+  type InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
+} from '../../expressions';
 
 import { type ValueType, type ValueTypeVisitor } from './value-type';
 
-export abstract class AbstractValueType<I extends InternalValueRepresentation>
-  implements ValueType<I>
+export abstract class AbstractValueType<
+  I extends InternalValidValueRepresentation,
+> implements ValueType<I>
 {
   abstract acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R;
 
@@ -30,8 +34,10 @@ export abstract class AbstractValueType<I extends InternalValueRepresentation>
     return false;
   }
 
-  abstract isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation | undefined,
+  abstract isInternalValidValueRepresentation(
+    operandValue:
+      | InternalValidValueRepresentation
+      | InternalErrorValueRepresentation,
   ): operandValue is I;
 
   abstract getName(): string;

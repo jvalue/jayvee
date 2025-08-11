@@ -2,34 +2,45 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../ast/expressions/internal-value-representation';
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import assert from 'assert';
+
+import {
+  type InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
+  MissingValue,
+} from '../ast/expressions/internal-value-representation';
 import { type ValueType } from '../ast/wrappers/value-type/value-type';
 
-export type InternalValueRepresentationParser = <
-  I extends InternalValueRepresentation,
+export type InternalValidValueRepresentationParser = <
+  I extends InternalValidValueRepresentation,
 >(
   value: string,
   valueType: ValueType<I>,
-) => I | undefined;
+) => I | InternalErrorValueRepresentation;
 
 export class RuntimeParameterProvider {
   private runtimeParameters = new Map<string, string>();
-  private valueParser: InternalValueRepresentationParser | undefined =
+  private valueParser: InternalValidValueRepresentationParser | undefined =
     undefined;
 
-  setValueParser(valueParser: InternalValueRepresentationParser) {
+  setValueParser(valueParser: InternalValidValueRepresentationParser) {
     this.valueParser = valueParser;
   }
 
-  getParsedValue<I extends InternalValueRepresentation>(
+  getParsedValue<I extends InternalValidValueRepresentation>(
     key: string,
     valueType: ValueType<I>,
-  ): I | undefined {
+  ): I | InternalErrorValueRepresentation {
     const stringValue = this.getRawValue(key);
     if (stringValue === undefined) {
-      return undefined;
+      return new MissingValue(
+        `Could not find value for runtime parameter ${key}`,
+      );
     }
-    return this.valueParser?.(stringValue, valueType);
+
+    assert(this.valueParser !== undefined);
+    return this.valueParser(stringValue, valueType);
   }
 
   getRawValue(key: string): string | undefined {
@@ -44,7 +55,7 @@ export class RuntimeParameterProvider {
     return this.runtimeParameters.has(key);
   }
 
-  getReadonlyMap(): ReadonlyMap<string, InternalValueRepresentation> {
+  getReadonlyMap(): ReadonlyMap<string, InternalValidValueRepresentation> {
     return this.runtimeParameters;
   }
 }

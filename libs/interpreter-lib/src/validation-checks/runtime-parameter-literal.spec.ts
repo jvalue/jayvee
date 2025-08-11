@@ -128,7 +128,7 @@ describe('Validation of validateRuntimeParameterLiteral', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
-      `Unable to parse the value "Value 1" as integer.`,
+      'InvalidValue: "Value 1" is not a number',
       expect.any(Object),
     );
   });

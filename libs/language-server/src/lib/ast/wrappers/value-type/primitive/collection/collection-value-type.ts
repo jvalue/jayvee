@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
-  type AtomicInternalValueRepresentation,
-  type InternalValueRepresentation,
+  type AtomicInternalValidValueRepresentation,
+  type InternalValidValueRepresentation,
 } from '../../../../expressions/internal-value-representation';
 import { type ValueType, type ValueTypeVisitor } from '../../value-type';
 
@@ -14,7 +14,7 @@ import {
 } from './abstract-collection-value-type';
 
 export class CollectionValueType<
-  I extends InternalValueRepresentation = InternalValueRepresentation,
+  I extends InternalValidValueRepresentation = InternalValidValueRepresentation,
 > extends AbstractCollectionValueType<I> {
   constructor(public readonly elementType: ValueType<I>) {
     super();
@@ -35,20 +35,20 @@ export class CollectionValueType<
     );
   }
 
-  override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation | undefined,
+  override isInternalValidValueRepresentation(
+    operandValue: InternalValidValueRepresentation,
   ): operandValue is ToArray<I> {
     return (
       Array.isArray(operandValue) &&
       operandValue.every((element) =>
-        this.elementType.isInternalValueRepresentation(element),
+        this.elementType.isInternalValidValueRepresentation(element),
       )
     );
   }
 }
 
 export function isCollectionValueType<
-  I extends AtomicInternalValueRepresentation,
+  I extends AtomicInternalValidValueRepresentation,
 >(v: unknown, elementType: ValueType<I>): v is CollectionValueType<I> {
   return v instanceof CollectionValueType && v.elementType.equals(elementType);
 }

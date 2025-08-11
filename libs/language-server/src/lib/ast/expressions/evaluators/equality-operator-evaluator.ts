@@ -2,25 +2,25 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../internal-value-representation';
+import { type InternalValidValueRepresentation } from '../internal-value-representation';
 import { DefaultBinaryOperatorEvaluator } from '../operator-evaluator';
-import { INTERNAL_VALUE_REPRESENTATION_TYPEGUARD } from '../typeguards';
+import { INTERNAL_VALID_VALUE_REPRESENTATION_TYPEGUARD } from '../typeguards';
 
 export class EqualityOperatorEvaluator extends DefaultBinaryOperatorEvaluator<
-  InternalValueRepresentation,
-  InternalValueRepresentation,
+  InternalValidValueRepresentation,
+  InternalValidValueRepresentation,
   boolean
 > {
   constructor() {
     super(
       '==',
-      INTERNAL_VALUE_REPRESENTATION_TYPEGUARD,
-      INTERNAL_VALUE_REPRESENTATION_TYPEGUARD,
+      INTERNAL_VALID_VALUE_REPRESENTATION_TYPEGUARD,
+      INTERNAL_VALID_VALUE_REPRESENTATION_TYPEGUARD,
     );
   }
   override doEvaluate(
-    left: InternalValueRepresentation,
-    right: InternalValueRepresentation,
+    left: InternalValidValueRepresentation,
+    right: InternalValidValueRepresentation,
   ): boolean {
     return left === right;
   }

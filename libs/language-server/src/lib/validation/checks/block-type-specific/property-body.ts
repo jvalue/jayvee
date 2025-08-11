@@ -2,7 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type PropertyBody, evaluatePropertyValue } from '../../../ast';
+import {
+  ERROR_TYPEGUARD,
+  type PropertyBody,
+  evaluatePropertyValue,
+} from '../../../ast';
 import { type JayveeValidationProps } from '../../validation-registry';
 
 export function checkBlockTypeSpecificPropertyBody(
@@ -47,7 +51,7 @@ function checkTextRangeSelectorPropertyBody(
     props.wrapperFactories,
     props.valueTypeProvider.Primitives.Integer,
   );
-  if (lineFrom === undefined || lineTo === undefined) {
+  if (ERROR_TYPEGUARD(lineFrom) || ERROR_TYPEGUARD(lineTo)) {
     return;
   }
 
@@ -89,7 +93,7 @@ function checkCellWriterPropertyBody(
     props.valueTypeProvider.Primitives.CellRange,
   );
 
-  if (writeValues === undefined || atValue === undefined) {
+  if (ERROR_TYPEGUARD(writeValues) || ERROR_TYPEGUARD(atValue)) {
     return;
   }
 
@@ -147,7 +151,7 @@ function checkInputColumnsMatchTransformationPorts(
     ),
   );
 
-  if (transform === undefined || inputColumns === undefined) {
+  if (ERROR_TYPEGUARD(transform) || ERROR_TYPEGUARD(inputColumns)) {
     return;
   }
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

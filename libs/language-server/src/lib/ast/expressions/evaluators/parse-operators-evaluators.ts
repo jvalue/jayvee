@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { type ValueTypeProvider } from '../../wrappers';
+import { type InvalidValue } from '../internal-value-representation';
 import { DefaultUnaryOperatorEvaluator } from '../operator-evaluator';
 import { STRING_TYPEGUARD } from '../typeguards';
 
@@ -25,13 +26,8 @@ export class AsDecimalOperatorEvaluator extends DefaultUnaryOperatorEvaluator<
   constructor(private readonly valueTypeProvider: ValueTypeProvider) {
     super('asDecimal', STRING_TYPEGUARD);
   }
-  override doEvaluate(operandValue: string): number {
-    const dec =
-      this.valueTypeProvider.Primitives.Decimal.fromString(operandValue);
-    if (dec === undefined) {
-      throw new Error(`Could not parse "${operandValue}" into a Decimal`);
-    }
-    return dec;
+  override doEvaluate(operandValue: string): number | InvalidValue {
+    return this.valueTypeProvider.Primitives.Decimal.fromString(operandValue);
   }
 }
 
@@ -42,13 +38,8 @@ export class AsIntegerOperatorEvaluator extends DefaultUnaryOperatorEvaluator<
   constructor(private readonly valueTypeProvider: ValueTypeProvider) {
     super('asInteger', STRING_TYPEGUARD);
   }
-  override doEvaluate(operandValue: string): number {
-    const int =
-      this.valueTypeProvider.Primitives.Integer.fromString(operandValue);
-    if (int === undefined) {
-      throw new Error(`Could not parse "${operandValue}" into an Integer`);
-    }
-    return int;
+  override doEvaluate(operandValue: string): number | InvalidValue {
+    return this.valueTypeProvider.Primitives.Integer.fromString(operandValue);
   }
 }
 
@@ -59,12 +50,7 @@ export class AsBooleanOperatorEvaluator extends DefaultUnaryOperatorEvaluator<
   constructor(private readonly valueTypeProvider: ValueTypeProvider) {
     super('asBoolean', STRING_TYPEGUARD);
   }
-  override doEvaluate(operandValue: string): boolean {
-    const bool =
-      this.valueTypeProvider.Primitives.Boolean.fromString(operandValue);
-    if (bool === undefined) {
-      throw new Error(`Could not parse "${operandValue}" into a Boolean`);
-    }
-    return bool;
+  override doEvaluate(operandValue: string): boolean | InvalidValue {
+    return this.valueTypeProvider.Primitives.Boolean.fromString(operandValue);
   }
 }
