@@ -23,6 +23,9 @@ import { type WrapperFactoryProvider } from '../wrappers';
 
 import { COLLECTION_TYPEGUARD, ERROR_TYPEGUARD } from './typeguards';
 
+// INFO: `ErroneousValue` extends `Error` in order to make use of the `stack`
+// property.
+// See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/stack
 abstract class ErroneousValue extends Error {
   abstract override name: string;
 
