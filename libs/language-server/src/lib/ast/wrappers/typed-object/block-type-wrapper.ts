@@ -77,8 +77,10 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlockTypeD
           wrapperFactories,
         );
         if (!ERROR_TYPEGUARD(defaultValue)) {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          properties[property.name]!.defaultValue = defaultValue;
+          const propertySpec = properties[property.name];
+          assert(propertySpec !== undefined);
+          propertySpec.defaultValue = defaultValue;
+          properties[property.name] = propertySpec;
         }
       }
     }
