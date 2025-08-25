@@ -119,15 +119,6 @@ export class TransformExecutor {
         !ERROR_TYPEGUARD(newValue) &&
         !isValidValueRepresentation(newValue, outputDetails.valueType, context)
       ) {
-        if (
-          !(
-            typeof newValue === 'string' ||
-            typeof newValue === 'boolean' ||
-            typeof newValue === 'number'
-          )
-        ) {
-          console.log(newValue);
-        }
         assert(
           typeof newValue === 'string' ||
             typeof newValue === 'boolean' ||
