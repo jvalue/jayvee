@@ -90,19 +90,25 @@ export class EvaluationContext {
     if (isTransformPortDefinition(dereferenced)) {
       return (
         this.variableValues.get(dereferenced.name) ??
-        new MissingValue(`Could not find value for ${dereferenced.name}`)
+        new MissingValue(
+          `Could not find value for transform port ${dereferenced.name}`,
+        )
       );
     }
     if (isBlockTypeProperty(dereferenced)) {
       return (
         this.variableValues.get(dereferenced.name) ??
-        new MissingValue(`Could not find value for ${dereferenced.name}`)
+        new MissingValue(
+          `Could not find value for block type property ${dereferenced.name}`,
+        )
       );
     }
     if (isValueTypeAttribute(dereferenced)) {
       return (
         this.variableValues.get(dereferenced.name) ??
-        new MissingValue(`Could not find value for ${dereferenced.name}`)
+        new MissingValue(
+          `Could not find value for value type attribute ${dereferenced.name}`,
+        )
       );
     }
     assertUnreachable(dereferenced);
