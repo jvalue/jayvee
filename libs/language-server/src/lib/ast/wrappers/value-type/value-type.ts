@@ -2,7 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../expressions/internal-value-representation';
+import {
+  type InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
+} from '../../expressions/internal-value-representation';
 
 import { type AtomicValueType } from './atomic-value-type';
 import {
@@ -24,7 +27,7 @@ export interface VisitableValueType {
 }
 
 export interface ValueType<
-  I extends InternalValueRepresentation = InternalValueRepresentation,
+  I extends InternalValidValueRepresentation = InternalValidValueRepresentation,
 > extends VisitableValueType {
   acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R;
 
@@ -53,8 +56,10 @@ export interface ValueType<
    * Typeguard to validate whether a given value is in the correct internal representation of this value type.
    * For example, a TextValuetype has the internal representation string.
    */
-  isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation | undefined,
+  isInternalValidValueRepresentation(
+    operandValue:
+      | InternalValidValueRepresentation
+      | InternalErrorValueRepresentation,
   ): operandValue is I;
 
   /**

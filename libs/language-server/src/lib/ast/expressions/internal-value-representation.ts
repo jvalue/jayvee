@@ -2,6 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import assert from 'assert';
+
 import { assertUnreachable, isAstNode } from 'langium';
 
 import {
@@ -16,15 +19,61 @@ import {
   isTransformDefinition,
   isValuetypeAssignment,
 } from '../generated/ast';
-import type { WrapperFactoryProvider } from '../wrappers';
+import { type WrapperFactoryProvider } from '../wrappers';
 
-import { COLLECTION_TYPEGUARD } from './typeguards';
+import { COLLECTION_TYPEGUARD, ERROR_TYPEGUARD } from './typeguards';
 
-export type InternalValueRepresentation =
-  | AtomicInternalValueRepresentation
-  | InternalValueRepresentation[];
+// INFO: `ErroneousValue` extends `Error` in order to make use of the `stack`
+// property.
+// See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/stack
+abstract class ErroneousValue extends Error {
+  abstract override name: string;
 
-export type AtomicInternalValueRepresentation =
+  constructor(message: string) {
+    super(message);
+  }
+
+  override toString(): string {
+    return `${this.name}: ${this.message}`;
+  }
+
+  abstract clone(): ErroneousValue;
+}
+
+export class InvalidValue extends ErroneousValue {
+  public override name = 'InvalidValue' as const;
+
+  constructor(message: string, stack?: string) {
+    super(message);
+    if (stack !== undefined) {
+      this.stack = stack;
+    }
+  }
+
+  override clone(): InvalidValue {
+    return new InvalidValue(this.message, this.stack);
+  }
+}
+
+export class MissingValue extends ErroneousValue {
+  override name = 'MissingValue' as const;
+
+  override clone(): MissingValue {
+    const cloned = new MissingValue(this.message);
+    if (this.stack !== undefined) {
+      cloned.stack = this.stack;
+    }
+    return cloned;
+  }
+}
+
+export type InternalErrorValueRepresentation = InvalidValue | MissingValue;
+
+export type InternalValidValueRepresentation =
+  | AtomicInternalValidValueRepresentation
+  | (InternalValidValueRepresentation | InternalErrorValueRepresentation)[];
+
+export type AtomicInternalValidValueRepresentation =
   | boolean
   | number
   | string
@@ -35,19 +84,38 @@ export type AtomicInternalValueRepresentation =
   | BlockTypeProperty
   | TransformDefinition;
 
-export type InternalValueRepresentationTypeguard<
-  T extends InternalValueRepresentation,
+export type InternalValidValueRepresentationTypeguard<
+  T extends InternalValidValueRepresentation,
 > = (value: unknown) => value is T;
 
 export function internalValueToString(
-  valueRepresentation: InternalValueRepresentation,
+  valueRepresentation: Exclude<
+    InternalValidValueRepresentation,
+    CellRangeLiteral
+  >,
+): string;
+export function internalValueToString(
+  valueRepresentation: InternalValidValueRepresentation,
   wrapperFactories: WrapperFactoryProvider,
+): string;
+export function internalValueToString(
+  valueRepresentation: InternalValidValueRepresentation,
+  wrapperFactories?: WrapperFactoryProvider,
 ): string {
   if (Array.isArray(valueRepresentation)) {
     return (
       '[ ' +
       valueRepresentation
-        .map((item) => internalValueToString(item, wrapperFactories))
+        .map((value) => {
+          if (isCellRangeLiteral(value)) {
+            assert(wrapperFactories !== undefined);
+            return internalValueToString(value, wrapperFactories);
+          }
+          if (ERROR_TYPEGUARD(value)) {
+            return value.name;
+          }
+          return internalValueToString(value);
+        })
         .join(', ') +
       ' ]'
     );
@@ -76,6 +144,7 @@ export function internalValueToString(
     return valueRepresentation.source;
   }
   if (isCellRangeLiteral(valueRepresentation)) {
+    assert(wrapperFactories !== undefined);
     return wrapperFactories.CellRange.wrap(valueRepresentation).toString();
   }
   if (isConstraintDefinition(valueRepresentation)) {
@@ -93,11 +162,15 @@ export function internalValueToString(
   assertUnreachable(valueRepresentation);
 }
 
-export function cloneInternalValue<T extends InternalValueRepresentation>(
-  valueRepresentation: T,
-): T {
+export function cloneInternalValue<
+  T extends InternalValidValueRepresentation | InternalErrorValueRepresentation,
+>(valueRepresentation: T): T {
   if (COLLECTION_TYPEGUARD(valueRepresentation)) {
     return valueRepresentation.map(cloneInternalValue) as T;
+  }
+
+  if (ERROR_TYPEGUARD(valueRepresentation)) {
+    return valueRepresentation.clone() as T;
   }
 
   if (

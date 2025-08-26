@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
+  ERROR_TYPEGUARD,
   type JayveeValidationProps,
   type PropertyBody,
   type ReferenceableBlockTypeDefinition,
@@ -83,18 +84,10 @@ function checkRuntimeParameterValueParsing(
       runtimeParameterName,
       valueType,
     );
-  if (runtimeParameterValue === undefined) {
-    const rawValue =
-      props.evaluationContext.runtimeParameterProvider.getRawValue(
-        runtimeParameterName,
-      );
-    props.validationContext.accept(
-      'error',
-      `Unable to parse the value "${
-        rawValue ?? ''
-      }" as ${valueType.getName()}.`,
-      { node: runtimeParameter },
-    );
+  if (ERROR_TYPEGUARD(runtimeParameterValue)) {
+    props.validationContext.accept('error', runtimeParameterValue.toString(), {
+      node: runtimeParameter,
+    });
   }
 }
 

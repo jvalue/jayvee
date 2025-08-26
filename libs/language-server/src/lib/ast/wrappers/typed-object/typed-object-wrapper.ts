@@ -6,7 +6,7 @@ import { type AstNode } from 'langium';
 
 import { type ValidationContext } from '../../../validation/validation-context';
 import { type EvaluationContext } from '../../expressions/evaluation-context';
-import { type InternalValueRepresentation } from '../../expressions/internal-value-representation';
+import { type InternalValidValueRepresentation } from '../../expressions/internal-value-representation';
 import {
   type PropertyAssignment,
   type PropertyBody,
@@ -15,7 +15,7 @@ import { type AstNodeWrapper } from '../ast-node-wrapper';
 import { type ValueType } from '../value-type';
 
 export interface PropertySpecification<
-  I extends InternalValueRepresentation = InternalValueRepresentation,
+  I extends InternalValidValueRepresentation = InternalValidValueRepresentation,
 > {
   type: ValueType<I>;
   defaultValue?: I;

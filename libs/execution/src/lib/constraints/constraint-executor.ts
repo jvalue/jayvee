@@ -8,7 +8,9 @@ import { strict as assert } from 'assert';
 import {
   type AstNodeWrapper,
   type ConstraintDefinition,
-  type InternalValueRepresentation,
+  ERROR_TYPEGUARD,
+  type InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
   type ValueTypeAttribute,
   type ValueTypeConstraintInlineDefinition,
   evaluateExpression,
@@ -23,7 +25,7 @@ export class ConstraintExecutor<
   constructor(public readonly astNode: T) {}
 
   isValid(
-    value: InternalValueRepresentation,
+    value: InternalValidValueRepresentation | InternalErrorValueRepresentation,
     context: ExecutionContext,
     attribute: T extends ValueTypeConstraintInlineDefinition
       ? ValueTypeAttribute
@@ -42,8 +44,12 @@ export class ConstraintExecutor<
       context.evaluationContext,
       context.wrapperFactories,
     );
+    if (ERROR_TYPEGUARD(result)) {
+      context.logger.logErr(result.toString());
+      return false;
+    }
     assert(
-      context.valueTypeProvider.Primitives.Boolean.isInternalValueRepresentation(
+      context.valueTypeProvider.Primitives.Boolean.isInternalValidValueRepresentation(
         result,
       ),
     );

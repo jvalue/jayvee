@@ -2,6 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import assert from 'assert';
+
 import { assertUnreachable } from 'langium';
 
 import { type RuntimeParameterProvider } from '../../services';
@@ -20,16 +23,25 @@ import {
 import { type ValueTypeProvider } from '../wrappers';
 import { type ValueType } from '../wrappers/value-type/value-type';
 
-import { type InternalValueRepresentation } from './internal-value-representation';
+import {
+  type InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
+  MissingValue,
+} from './internal-value-representation';
 import { type OperatorEvaluatorRegistry } from './operator-registry';
+
+const NO_KEYWORD_ERROR: MissingValue = new MissingValue(
+  'No value keyword literal',
+);
 
 export class EvaluationContext {
   private readonly variableValues = new Map<
     string,
-    InternalValueRepresentation
+    InternalValidValueRepresentation | InternalErrorValueRepresentation
   >();
-  private valueKeywordValue: InternalValueRepresentation | undefined =
-    undefined;
+  private valueKeywordValue:
+    | InternalValidValueRepresentation
+    | InternalErrorValueRepresentation = NO_KEYWORD_ERROR;
 
   constructor(
     public readonly runtimeParameterProvider: RuntimeParameterProvider,
@@ -39,7 +51,7 @@ export class EvaluationContext {
 
   getValueFor(
     literal: FreeVariableLiteral,
-  ): InternalValueRepresentation | undefined {
+  ): InternalValidValueRepresentation | InternalErrorValueRepresentation {
     if (isReferenceLiteral(literal)) {
       return this.getValueForReference(literal);
     } else if (isValueKeywordLiteral(literal)) {
@@ -50,7 +62,7 @@ export class EvaluationContext {
 
   setValueForReference(
     refText: string,
-    value: InternalValueRepresentation,
+    value: InternalValidValueRepresentation | InternalErrorValueRepresentation,
   ): void {
     this.variableValues.set(refText, value);
   }
@@ -61,11 +73,12 @@ export class EvaluationContext {
 
   getValueForReference(
     referenceLiteral: ReferenceLiteral,
-  ): InternalValueRepresentation | undefined {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const dereferenced = referenceLiteral?.value?.ref;
+  ): InternalValidValueRepresentation | InternalErrorValueRepresentation {
+    const dereferenced = referenceLiteral.value.ref;
     if (dereferenced === undefined) {
-      return undefined;
+      const error = referenceLiteral.value.error;
+      assert(error !== undefined);
+      return new MissingValue(`Could not resolve reference: ${error.message}`);
     }
 
     if (isConstraintDefinition(dereferenced)) {
@@ -75,13 +88,28 @@ export class EvaluationContext {
       return dereferenced;
     }
     if (isTransformPortDefinition(dereferenced)) {
-      return this.variableValues.get(dereferenced.name);
+      return (
+        this.variableValues.get(dereferenced.name) ??
+        new MissingValue(
+          `Could not find value for transform port ${dereferenced.name}`,
+        )
+      );
     }
     if (isBlockTypeProperty(dereferenced)) {
-      return this.variableValues.get(dereferenced.name);
+      return (
+        this.variableValues.get(dereferenced.name) ??
+        new MissingValue(
+          `Could not find value for block type property ${dereferenced.name}`,
+        )
+      );
     }
     if (isValueTypeAttribute(dereferenced)) {
-      return this.variableValues.get(dereferenced.name);
+      return (
+        this.variableValues.get(dereferenced.name) ??
+        new MissingValue(
+          `Could not find value for value type attribute ${dereferenced.name}`,
+        )
+      );
     }
     assertUnreachable(dereferenced);
   }
@@ -90,22 +118,26 @@ export class EvaluationContext {
     return this.runtimeParameterProvider.hasValue(key);
   }
 
-  getValueForRuntimeParameter<I extends InternalValueRepresentation>(
+  getValueForRuntimeParameter<I extends InternalValidValueRepresentation>(
     key: string,
     valueType: ValueType<I>,
-  ): I | undefined {
+  ): I | InternalErrorValueRepresentation {
     return this.runtimeParameterProvider.getParsedValue(key, valueType);
   }
 
-  setValueForValueKeyword(value: InternalValueRepresentation) {
+  setValueForValueKeyword(
+    value: InternalValidValueRepresentation | InternalErrorValueRepresentation,
+  ) {
     this.valueKeywordValue = value;
   }
 
   deleteValueForValueKeyword() {
-    this.valueKeywordValue = undefined;
+    this.valueKeywordValue = NO_KEYWORD_ERROR;
   }
 
-  getValueForValueKeyword(): InternalValueRepresentation | undefined {
+  getValueForValueKeyword():
+    | InternalValidValueRepresentation
+    | InternalErrorValueRepresentation {
     return this.valueKeywordValue;
   }
 }

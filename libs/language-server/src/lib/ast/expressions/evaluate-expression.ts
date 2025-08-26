@@ -16,6 +16,7 @@ import {
   isBlockTypeProperty,
   isCellRangeLiteral,
   isCollectionLiteral,
+  isErrorLiteral,
   isExpression,
   isExpressionLiteral,
   isFreeVariableLiteral,
@@ -29,39 +30,41 @@ import { type ValueType, type WrapperFactoryProvider } from '../wrappers';
 
 import { type EvaluationContext } from './evaluation-context';
 import { EvaluationStrategy } from './evaluation-strategy';
-import { type InternalValueRepresentation } from './internal-value-representation';
-import { isEveryValueDefined } from './typeguards';
+import {
+  type InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
+  InvalidValue,
+  MissingValue,
+  internalValueToString,
+} from './internal-value-representation';
+import { ERROR_TYPEGUARD } from './typeguards';
 
-export function evaluatePropertyValue<T extends InternalValueRepresentation>(
+export function evaluatePropertyValue<
+  T extends InternalValidValueRepresentation,
+>(
   property: PropertyAssignment,
   evaluationContext: EvaluationContext,
   wrapperFactories: WrapperFactoryProvider,
   valueType: ValueType<T>,
-): T | undefined {
+): T | InternalErrorValueRepresentation {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const propertyValue = property?.value;
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   assert(propertyValue !== undefined);
 
-  if (isBlockTypeProperty(propertyValue)) {
-    // Properties of block types are always undefined
-    // because they are set in the block that instantiates the block type
-    return undefined;
-  }
+  // Properties of block types are always undefined
+  // because they are set in the block that instantiates the block type
+  assert(!isBlockTypeProperty(propertyValue));
 
-  let result: InternalValueRepresentation | undefined;
+  let result:
+    | InternalValidValueRepresentation
+    | InternalErrorValueRepresentation;
   if (isRuntimeParameterLiteral(propertyValue)) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const runtimeParameterName = propertyValue?.name;
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (runtimeParameterName === undefined) {
-      result = undefined;
-    } else {
-      result = evaluationContext.getValueForRuntimeParameter(
-        runtimeParameterName,
-        valueType,
-      );
-    }
+    const runtimeParameterName = propertyValue.name;
+    result = evaluationContext.getValueForRuntimeParameter(
+      runtimeParameterName,
+      valueType,
+    );
   } else if (isExpression(propertyValue)) {
     result = evaluateExpression(
       propertyValue,
@@ -73,24 +76,24 @@ export function evaluatePropertyValue<T extends InternalValueRepresentation>(
   }
 
   assert(
-    result === undefined || valueType.isInternalValueRepresentation(result),
+    ERROR_TYPEGUARD(result) ||
+      valueType.isInternalValidValueRepresentation(result),
     `Evaluation result ${
-      result?.toString() ?? 'undefined'
-    } is not valid: Neither undefined, nor of type ${valueType.getName()}`,
+      ERROR_TYPEGUARD(result)
+        ? result.name
+        : internalValueToString(result, wrapperFactories)
+    } is not of type ${valueType.getName()}`,
   );
   return result;
 }
 
 export function evaluateExpression(
-  expression: Expression | undefined,
+  expression: Expression,
   evaluationContext: EvaluationContext,
   wrapperFactories: WrapperFactoryProvider,
   context: ValidationContext | undefined = undefined,
   strategy: EvaluationStrategy = EvaluationStrategy.LAZY,
-): InternalValueRepresentation | undefined {
-  if (expression === undefined) {
-    return undefined;
-  }
+): InternalValidValueRepresentation | InternalErrorValueRepresentation {
   if (isExpressionLiteral(expression)) {
     if (isFreeVariableLiteral(expression)) {
       return evaluationContext.getValueFor(expression);
@@ -147,35 +150,42 @@ function evaluateValueLiteral(
   wrapperFactories: WrapperFactoryProvider,
   validationContext: ValidationContext | undefined = undefined,
   strategy: EvaluationStrategy = EvaluationStrategy.LAZY,
-): InternalValueRepresentation | undefined {
+): InternalValidValueRepresentation | InternalErrorValueRepresentation {
+  if (isErrorLiteral(expression)) {
+    return expression.error === 'invalid'
+      ? new InvalidValue('Created by user')
+      : new MissingValue('Created by user');
+  }
   if (isCollectionLiteral(expression)) {
-    const evaluatedCollection = expression.values.map((v) =>
-      evaluateExpression(
-        v,
+    const evaluatedCollection: InternalValidValueRepresentation[] = [];
+    for (const value of expression.values) {
+      const result = evaluateExpression(
+        value,
         evaluationContext,
         wrapperFactories,
         validationContext,
         strategy,
-      ),
-    );
-    if (!isEveryValueDefined(evaluatedCollection)) {
-      return undefined;
+      );
+      if (ERROR_TYPEGUARD(result)) {
+        return result;
+      }
+      evaluatedCollection.push(result);
     }
     return evaluatedCollection;
   }
   if (isCellRangeLiteral(expression)) {
     if (!wrapperFactories.CellRange.canWrap(expression)) {
-      return undefined;
+      return new InvalidValue(
+        `${internalValueToString(
+          expression,
+          wrapperFactories,
+        )} is not a valid cell range`,
+      );
     }
     return expression;
   }
   if (isRegexLiteral(expression)) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (expression?.value === undefined) {
-      return undefined;
-    }
     return new RegExp(expression.value);
   }
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  return expression?.value;
+  return expression.value;
 }

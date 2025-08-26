@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
+  ERROR_TYPEGUARD,
   type WrapperFactoryProvider,
   internalValueToString,
 } from '@jvalue/jayvee-language-server';
@@ -57,7 +58,12 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
 
       const row = table.getRow(i);
       const rowData = [...row.values()]
-        .map((cell) => internalValueToString(cell, this.wrapperFactories))
+        .map((cell) => {
+          if (ERROR_TYPEGUARD(cell)) {
+            return cell.name;
+          }
+          return internalValueToString(cell, this.wrapperFactories);
+        })
         .join(' | ');
       this.log(`[Row ${i}] ${rowData}`);
     }

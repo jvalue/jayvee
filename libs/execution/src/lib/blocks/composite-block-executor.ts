@@ -10,9 +10,12 @@ import {
   type BlockTypePipeline,
   type BlockTypeProperty,
   type CompositeBlockTypeDefinition,
+  ERROR_TYPEGUARD,
   type EvaluationContext,
   IOType,
-  type InternalValueRepresentation,
+  type InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
+  MissingValue,
   type ValueType,
   type WrapperFactoryProvider,
   evaluateExpression,
@@ -165,11 +168,6 @@ export function createCompositeBlockExecutor(
           context.wrapperFactories,
         );
 
-        assert(
-          propertyValue !== undefined,
-          `Can not get value for block type property ${blockTypeProperty.name}`,
-        );
-
         context.evaluationContext.setValueForReference(
           blockTypeProperty.name,
           propertyValue,
@@ -184,7 +182,7 @@ export function createCompositeBlockExecutor(
       properties: BlockTypeProperty[],
       evaluationContext: EvaluationContext,
       wrapperFactories: WrapperFactoryProvider,
-    ): InternalValueRepresentation | undefined {
+    ): InternalValidValueRepresentation | InternalErrorValueRepresentation {
       const propertyFromBlock = block.body.properties.find(
         (property) => property.name === name,
       );
@@ -197,7 +195,7 @@ export function createCompositeBlockExecutor(
           valueType,
         );
 
-        if (value !== undefined) {
+        if (!ERROR_TYPEGUARD(value)) {
           return value;
         }
       }
@@ -207,7 +205,9 @@ export function createCompositeBlockExecutor(
       );
 
       if (propertyFromBlockType?.defaultValue === undefined) {
-        return;
+        return new MissingValue(
+          `Could not find default value for property ${name}`,
+        );
       }
 
       return evaluateExpression(

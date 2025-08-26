@@ -2,7 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValueRepresentation } from '../../../expressions/internal-value-representation';
+import {
+  type InternalValidValueRepresentation,
+  InvalidValue,
+} from '../../../expressions/internal-value-representation';
 import { type ValueTypeVisitor } from '../value-type';
 
 import { PrimitiveValueType } from './primitive-value-type';
@@ -23,8 +26,8 @@ export class BooleanValuetype extends PrimitiveValueType<boolean> {
     return 'boolean';
   }
 
-  override isInternalValueRepresentation(
-    operandValue: InternalValueRepresentation | undefined,
+  override isInternalValidValueRepresentation(
+    operandValue: InternalValidValueRepresentation,
   ): operandValue is boolean {
     return typeof operandValue === 'boolean';
   }
@@ -40,12 +43,12 @@ Examples: true, false
 `.trim();
   }
 
-  override fromString(s: string): boolean | undefined {
+  override fromString(s: string): boolean | InvalidValue {
     if (TRUE_REGEX.test(s)) {
       return true;
     } else if (FALSE_REGEX.test(s)) {
       return false;
     }
-    return undefined;
+    return new InvalidValue(`"${s}" is not a boolean`);
   }
 }

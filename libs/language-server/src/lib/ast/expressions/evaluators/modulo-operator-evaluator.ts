@@ -4,6 +4,7 @@
 
 import { type ValidationContext } from '../../../validation/validation-context';
 import { type BinaryExpression } from '../../generated/ast';
+import { InvalidValue } from '../internal-value-representation';
 import { DefaultBinaryOperatorEvaluator } from '../operator-evaluator';
 import { NUMBER_TYPEGUARD } from '../typeguards';
 
@@ -21,7 +22,7 @@ export class ModuloOperatorEvaluator extends DefaultBinaryOperatorEvaluator<
     rightValue: number,
     expression: BinaryExpression,
     context: ValidationContext | undefined,
-  ): number | undefined {
+  ): number | InvalidValue {
     const resultingValue = leftValue % rightValue;
 
     if (!isFinite(resultingValue)) {
@@ -29,12 +30,14 @@ export class ModuloOperatorEvaluator extends DefaultBinaryOperatorEvaluator<
         context?.accept('error', 'Arithmetic error: modulo by zero', {
           node: expression,
         });
-      } else {
-        context?.accept('error', 'Unknown arithmetic error', {
-          node: expression,
-        });
+        return new InvalidValue('Cannot compute modulo by zero');
       }
-      return undefined;
+      context?.accept('error', 'Unknown arithmetic error', {
+        node: expression,
+      });
+      return new InvalidValue(
+        `Failed to compute ${leftValue} modulo ${rightValue}`,
+      );
     }
     return resultingValue;
   }

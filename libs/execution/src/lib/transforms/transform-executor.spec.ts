@@ -7,7 +7,9 @@ import assert from 'assert';
 import path from 'node:path';
 
 import {
-  type InternalValueRepresentation,
+  ERROR_TYPEGUARD,
+  type InternalValidValueRepresentation,
+  InvalidValue,
   type JayveeServices,
   type TransformDefinition,
   createJayveeServices,
@@ -32,6 +34,10 @@ import { constructTable, getTestExecutionContext } from '../../../test/utils';
 import { type Table, type TableColumn } from '../types/io-types/table';
 
 import { type PortDetails, TransformExecutor } from './transform-executor';
+
+function expectNoErrorsInColumn(column: TableColumn) {
+  expect(column.values.every((value) => ERROR_TYPEGUARD(value)));
+}
 
 describe('Validation of TransformExecutor', () => {
   let parse: (
@@ -72,10 +78,7 @@ describe('Validation of TransformExecutor', () => {
     input: string,
     inputTable: Table,
     columnNames: string[],
-  ): Promise<{
-    resultingColumn: TableColumn<InternalValueRepresentation>;
-    rowsToDelete: number[];
-  }> {
+  ): Promise<TableColumn<InternalValidValueRepresentation>> {
     const document = await parse(input, { validation: true });
     expectNoParserAndLexerErrors(document);
 
@@ -147,15 +150,15 @@ describe('Validation of TransformExecutor', () => {
       transformColumnNames,
     );
 
-    expect(result.rowsToDelete).toHaveLength(0);
-    expect(result.resultingColumn.valueType).toEqual(
+    expectNoErrorsInColumn(result);
+    expect(result.valueType).toEqual(
       services.ValueTypeProvider.Primitives.Integer,
     );
-    expect(result.resultingColumn.values).toHaveLength(1);
-    expect(result.resultingColumn.values).toEqual(expect.arrayContaining([21]));
+    expect(result.values).toHaveLength(1);
+    expect(result.values).toEqual(expect.arrayContaining([21]));
   });
 
-  it('should diagnose no error on invalid value representation', async () => {
+  it('should evaluate InvalidValue on invalid value representation', async () => {
     const text = readJvTestAsset(
       'transform-executor/invalid-input-output-type-transform.jv',
     );
@@ -187,12 +190,13 @@ describe('Validation of TransformExecutor', () => {
       transformColumnNames,
     );
 
-    expect(result.rowsToDelete).toHaveLength(1);
-    expect(result.rowsToDelete).toEqual(expect.arrayContaining([0]));
-    expect(result.resultingColumn.valueType).toEqual(
+    expect(result.valueType).toEqual(
       services.ValueTypeProvider.Primitives.Text,
     );
-    expect(result.resultingColumn.values).toHaveLength(0);
+    expect(result.values).toHaveLength(1);
+    const [value] = result.values;
+    assert(value !== undefined);
+    expect(value).toBeInstanceOf(InvalidValue);
   });
 
   it('should diagnose no error on valid value', async () => {
@@ -234,14 +238,12 @@ describe('Validation of TransformExecutor', () => {
       transformColumnNames,
     );
 
-    expect(result.rowsToDelete).toHaveLength(0);
-    expect(result.resultingColumn.valueType).toEqual(
+    expectNoErrorsInColumn(result);
+    expect(result.valueType).toEqual(
       services.ValueTypeProvider.Primitives.Integer,
     );
-    expect(result.resultingColumn.values).toHaveLength(1);
-    expect(result.resultingColumn.values).toEqual(
-      expect.arrayContaining([106]),
-    );
+    expect(result.values).toHaveLength(1);
+    expect(result.values).toEqual(expect.arrayContaining([106]));
   });
 
   it('should diagnose error on empty columns map', async () => {
@@ -287,7 +289,7 @@ describe('Validation of TransformExecutor', () => {
     }
   });
 
-  it('should diagnose no error on invalid column type', async () => {
+  it('should evaluate InvalidValue on invalid column type', async () => {
     const text = readJvTestAsset(
       'transform-executor/valid-decimal-integer-transform.jv',
     );
@@ -319,14 +321,16 @@ describe('Validation of TransformExecutor', () => {
       transformColumnNames,
     );
 
-    expect(result.rowsToDelete).toHaveLength(1);
-    expect(result.resultingColumn.valueType).toEqual(
+    expect(result.valueType).toEqual(
       services.ValueTypeProvider.Primitives.Integer,
     );
-    expect(result.resultingColumn.values).toHaveLength(0);
+    expect(result.values).toHaveLength(1);
+    const [value] = result.values;
+    assert(value !== undefined);
+    expect(value).toBeInstanceOf(InvalidValue);
   });
 
-  it('should diagnose no error on invalid row value', async () => {
+  it('should evaluate InvalidValue on invalid row value', async () => {
     const text = readJvTestAsset(
       'transform-executor/valid-decimal-integer-transform.jv',
     );
@@ -358,15 +362,19 @@ describe('Validation of TransformExecutor', () => {
       transformColumnNames,
     );
 
-    expect(result.rowsToDelete).toHaveLength(1);
-    expect(result.resultingColumn.valueType).toEqual(
+    expect(result.valueType).toEqual(
       services.ValueTypeProvider.Primitives.Integer,
     );
-    expect(result.resultingColumn.values).toHaveLength(1);
-    expect(result.resultingColumn.values).toEqual(expect.arrayContaining([21]));
+    expect(result.values).toHaveLength(2);
+    const [a, b] = result.values;
+    assert(a !== undefined);
+    assert(b !== undefined);
+    expect(a).toBeInstanceOf(InvalidValue);
+    expect(b).toBe(21);
+    expect(result.values).toEqual(expect.arrayContaining([21]));
   });
 
-  it('should diagnose no error on expression evaluation error', async () => {
+  it('should evaluate InvalidValue on an erroneous expression', async () => {
     const text = readJvTestAsset(
       'transform-executor/invalid-expression-evaluation-error.jv',
     );
@@ -405,10 +413,12 @@ describe('Validation of TransformExecutor', () => {
       transformColumnNames,
     );
 
-    expect(result.rowsToDelete).toHaveLength(1);
-    expect(result.resultingColumn.valueType).toEqual(
+    expect(result.valueType).toEqual(
       services.ValueTypeProvider.Primitives.Decimal,
     );
-    expect(result.resultingColumn.values).toHaveLength(0);
+    expect(result.values).toHaveLength(1);
+    const [value] = result.values;
+    assert(value !== undefined);
+    expect(value).toBeInstanceOf(InvalidValue);
   });
 });
