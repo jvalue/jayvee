@@ -94,7 +94,9 @@ describe('jv example smoke tests', () => {
       ...defaultOptions,
     });
 
-    expect(httpExtractorMock.nockScopes.every((scope) => scope.isDone()));
+    expect(httpExtractorMock.nockScopes).toSatisfy((scopes: nock.Scope[]) =>
+      scopes.every((scope) => scope.isDone()),
+    );
     expect(sqliteLoaderMock.sqliteClient.run).toBeCalledTimes(3);
     expect(sqliteLoaderMock.sqliteClient.close).toBeCalledTimes(1);
 
@@ -133,7 +135,9 @@ describe('jv example smoke tests', () => {
       ]),
     });
 
-    expect(httpExtractorMock.nockScopes.every((scope) => scope.isDone()));
+    expect(httpExtractorMock.nockScopes).toSatisfy((scopes: nock.Scope[]) =>
+      scopes.every((scope) => scope.isDone()),
+    );
     expect(postgresLoaderMock.pgClient.connect).toBeCalledTimes(1);
     expect(postgresLoaderMock.pgClient.query).toBeCalledTimes(3);
     expect(postgresLoaderMock.pgClient.end).toBeCalledTimes(1);
@@ -189,7 +193,9 @@ describe('jv example smoke tests', () => {
       ...defaultOptions,
     });
 
-    expect(httpExtractorMock.nockScopes.every((scope) => scope.isDone()));
+    expect(httpExtractorMock.nockScopes).toSatisfy((scopes: nock.Scope[]) =>
+      scopes.every((scope) => scope.isDone()),
+    );
     expect(sqliteLoaderMock.sqliteClient.run).toBeCalledTimes(6);
     expect(sqliteLoaderMock.sqliteClient.close).toBeCalledTimes(3);
 
@@ -217,7 +223,9 @@ describe('jv example smoke tests', () => {
       ...defaultOptions,
     });
 
-    expect(httpExtractorMock.nockScopes.every((scope) => scope.isDone()));
+    expect(httpExtractorMock.nockScopes).toSatisfy((scopes: nock.Scope[]) =>
+      scopes.every((scope) => scope.isDone()),
+    );
     expect(sqliteLoaderMock.sqliteClient.run).toBeCalledTimes(33);
     expect(sqliteLoaderMock.sqliteClient.close).toBeCalledTimes(11);
 

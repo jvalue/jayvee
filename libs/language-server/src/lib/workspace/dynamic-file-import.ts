@@ -68,7 +68,7 @@ async function loadFileFromUri(
 
   try {
     return await fileSystemProvider.readFile(uri);
-  } catch (e) {
+  } catch {
     return undefined;
   }
 }

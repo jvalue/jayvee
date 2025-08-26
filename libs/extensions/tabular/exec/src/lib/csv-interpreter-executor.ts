@@ -61,9 +61,9 @@ export class CSVInterpreterExecutor extends AbstractBlockExecutor<
         return R.ok(new Sheet(csvData));
       },
       (reason) => {
-        assert(typeof reason === 'string');
+        assert(reason instanceof Error);
         return R.err({
-          message: reason,
+          message: reason.message,
           diagnostic: {
             node: context.getCurrentNode(),
             property: 'name',
@@ -86,16 +86,20 @@ async function parseAsCSV(
       })
       .on('error', (error) =>
         reject(
-          `Unexpected error while parsing CSV: ${error.name}: ${error.message}`,
+          new Error(
+            `Unexpected error while parsing CSV: ${error.name}: ${error.message}`,
+          ),
         ),
       )
       .on(
         'data-invalid',
         (row: Row | null, rowCount: number, reason?: string) =>
           reject(
-            `Invalid row ${rowCount}: ${
-              reason ?? 'Unknwon reason'
-            }: ${JSON.stringify(row ?? '')}`,
+            new Error(
+              `Invalid row ${rowCount}: ${
+                reason ?? 'Unknwon reason'
+              }: ${JSON.stringify(row ?? '')}`,
+            ),
           ),
       )
       .on('end', () => {

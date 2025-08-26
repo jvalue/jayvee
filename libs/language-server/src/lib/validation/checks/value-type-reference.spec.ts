@@ -180,7 +180,7 @@ describe('Validation of ValueTypeReference', () => {
     );
   });
 
-  it('should diagnose error on reference to generic value type with too few generic parameters', async () => {
+  it('should diagnose error on reference to generic value type with too many generic parameters', async () => {
     const text = readJvTestAsset(
       'value-type-reference/invalid-reference-too-many-generic-parameters.jv',
     );

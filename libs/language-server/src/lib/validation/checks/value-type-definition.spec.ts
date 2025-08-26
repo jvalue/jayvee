@@ -138,7 +138,7 @@ describe('Validation of ValuetypeDefinition', () => {
     );
   });
 
-  it('should diagnose error on duplicate generic on value type', async () => {
+  it('should diagnose error on missing property in inline constraint', async () => {
     const text = readJvTestAsset(
       'value-type-definition/invalid-missing-property-in-inline-constraint.jv',
     );

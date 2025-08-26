@@ -61,15 +61,12 @@ describe('Validation of PropertyAssignment', () => {
       const wrapper = props.wrapperFactories.BlockType.wrap(type);
       expect(wrapper).toBeDefined();
 
-      const propertyAssignments = propertyBody.properties;
-      expect(
-        propertyAssignments.length > 0,
-        'No property assignment found in test file',
-      );
+      const propertyAssignment = propertyBody.properties[0];
+      expect(propertyAssignment).toBeDefined();
+      assert(propertyAssignment !== undefined);
 
       validatePropertyAssignment(
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        propertyAssignments[0]!,
+        propertyAssignment,
         wrapper as TypedObjectWrapper,
         props,
       );

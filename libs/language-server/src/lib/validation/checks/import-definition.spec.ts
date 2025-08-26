@@ -80,7 +80,7 @@ describe('Validation of ImportDefinition', () => {
       expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
     });
 
-    it('should have no error if file exists in deeper directory', async () => {
+    it('should have no error if file exists in higher directory', async () => {
       const relativeTestFilePath =
         'import-definition/wildcard-import/deeper/valid-imported-file-exists-higher-dir.jv';
 

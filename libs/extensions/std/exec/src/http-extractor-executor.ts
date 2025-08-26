@@ -207,8 +207,6 @@ export class HttpExtractorExecutor extends AbstractBlockExecutor<
 
         // When all data is downloaded, create file
         response.on('end', () => {
-          response.headers;
-
           // Infer Mimetype from HTTP-Header, if not inferrable, then default to application/octet-stream
           const mimeType: MimeType | undefined =
             inferMimeTypeFromFileExtensionString(

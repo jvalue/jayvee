@@ -2,8 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import React from 'react';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import styles from './styles.module.css';
 import { useBaseUrlUtils } from '@docusaurus/useBaseUrl';
 
