@@ -154,11 +154,11 @@ function checkInputColumnsMatchTransformationPorts(
   if (ERROR_TYPEGUARD(transform) || ERROR_TYPEGUARD(inputColumns)) {
     return;
   }
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+
   const transformInputPorts = transform?.body?.ports?.filter(
     (x) => x.kind === 'from',
   );
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+
   if (transformInputPorts === undefined) {
     return;
   }

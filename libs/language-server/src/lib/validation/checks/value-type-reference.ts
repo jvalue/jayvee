@@ -20,16 +20,14 @@ function checkGenericsMatchDefinition(
   valueTypeRef: ValueTypeReference,
   props: JayveeValidationProps,
 ): void {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const valueTypeDefinition = valueTypeRef.reference?.ref;
   if (valueTypeDefinition === undefined) {
     return;
   }
 
   const requiredGenerics =
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     valueTypeDefinition.genericDefinition?.generics?.length ?? 0;
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+
   const givenGenerics = valueTypeRef?.genericRefs?.length ?? 0;
 
   if (givenGenerics !== requiredGenerics) {

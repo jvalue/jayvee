@@ -176,7 +176,7 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     acceptor: CompletionAcceptor,
   ) {
     const property = astNode.$container.attribute;
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+
     if (property !== undefined && property.name !== undefined) {
       const proptertyTypeName = property.valueType.reference.ref?.name;
       const labelDetails: CompletionItemLabelDetails =
@@ -205,7 +205,6 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     }
 
     const wrapper =
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       container.type !== undefined
         ? this.wrapperFactories.BlockType.wrap(container.type)
         : undefined;

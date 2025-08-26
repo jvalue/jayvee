@@ -87,7 +87,6 @@ function doCheckMultipleBlockInputs(
   const pipesFromParents = pipelineWrapper.getIngoingPipes(block);
   if (pipesFromParents.length > 1) {
     const parentBlockNames = pipesFromParents.map(
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       (pipe) => '"' + pipe.from?.name + '"',
     );
     for (const pipe of pipesFromParents) {
@@ -144,7 +143,6 @@ function doCheckDefinedBlockIsUsed(
   props: JayveeValidationProps,
 ): void {
   if (
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     block.type === undefined ||
     !props.wrapperFactories.BlockType.canWrap(block.type)
   ) {

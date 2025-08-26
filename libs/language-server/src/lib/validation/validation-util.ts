@@ -64,7 +64,6 @@ function groupNodesByName(
     const referableName = isImportDetails(node) ? node.importName : node.name;
     const referableNode = isImportDetails(node) ? node.element : node;
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (referableName !== undefined) {
       nodesByName.add(referableName, referableNode);
     }

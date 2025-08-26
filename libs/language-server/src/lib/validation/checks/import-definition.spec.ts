@@ -39,7 +39,6 @@ describe('Validation of ImportDefinition', () => {
     const parsedModel = document.parseResult.value;
     assert(isJayveeModel(parsedModel), 'Test file is not valid Jayvee model');
     assert(
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       parsedModel.imports !== undefined && parsedModel.imports.length > 0,
       'Test file does not contain imports',
     );

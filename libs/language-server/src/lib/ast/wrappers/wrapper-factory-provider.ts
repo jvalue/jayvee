@@ -238,7 +238,6 @@ class ValueTypeWrapperFactory {
     if (identifier === undefined) {
       return undefined;
     } else if (isValueTypeReference(identifier)) {
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       const valueTypeDefinition = identifier?.reference?.ref;
       if (valueTypeDefinition?.name === 'Collection') {
         return this.wrapCollection(identifier);
@@ -262,7 +261,6 @@ class ValueTypeWrapperFactory {
   }
 
   wrapCollection(collectionRef: ValueTypeReference): CollectionValueType {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const collectionDefinition = collectionRef?.reference?.ref;
     assert(collectionDefinition?.name === 'Collection');
     const collectionGenerics = collectionRef.genericRefs;
@@ -287,7 +285,7 @@ class ValueTypeWrapperFactory {
   ): PrimitiveValueType | undefined {
     assert(builtinValuetype.isBuiltin);
     const name = builtinValuetype.name;
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+
     if (name === undefined) {
       return undefined;
     }

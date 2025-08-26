@@ -29,7 +29,6 @@ function checkNoMultipleInputs(
   blockType: ReferenceableBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (blockType.inputs === undefined) {
     return;
   }
@@ -51,7 +50,6 @@ function checkNoMultipleOutputs(
   blockType: ReferenceableBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (blockType.outputs === undefined) {
     return;
   }
@@ -73,7 +71,6 @@ function checkOneInput(
   blockType: ReferenceableBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const numberOfInputs = blockType.inputs?.length ?? 0;
 
   if (numberOfInputs < 1) {
@@ -91,7 +88,6 @@ function checkOneOutput(
   blockType: ReferenceableBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const numberOfOutputs = blockType.outputs?.length ?? 0;
 
   if (numberOfOutputs < 1) {
@@ -109,7 +105,6 @@ function checkNoDuplicateProperties(
   blockType: ReferenceableBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (blockType.properties === undefined) {
     return;
   }
@@ -117,7 +112,7 @@ function checkNoDuplicateProperties(
   const propertyMap = new Map<string, BlockTypeProperty[]>();
   for (const property of blockType.properties) {
     const propertyName = property.name;
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+
     if (propertyName === undefined) {
       continue;
     }
@@ -145,7 +140,6 @@ function checkPropertiesDefaultValuesHaveCorrectType(
   blockType: ReferenceableBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (blockType.properties === undefined) {
     return;
   }

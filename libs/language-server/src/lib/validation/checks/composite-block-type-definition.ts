@@ -28,7 +28,6 @@ function checkHasPipeline(
   blockType: CompositeBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (blockType.pipes === undefined) {
     return;
   }
@@ -49,7 +48,6 @@ function checkExactlyOnePipeline(
   blockType: CompositeBlockTypeDefinition,
   props: JayveeValidationProps,
 ): void {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (blockType.pipes === undefined) {
     return;
   }
@@ -77,7 +75,6 @@ export function checkDefinedBlocksAreUsed(
   const pipelineWrapper =
     props.wrapperFactories.Pipeline.wrap(blockTypeDefinition);
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (blockTypeDefinition.blocks === undefined) {
     return;
   }
@@ -94,7 +91,6 @@ function doCheckDefinedBlockIsUsed(
   props: JayveeValidationProps,
 ): void {
   if (
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     block.type === undefined ||
     !props.wrapperFactories.BlockType.canWrap(block.type)
   ) {
@@ -103,9 +99,7 @@ function doCheckDefinedBlockIsUsed(
   const pipes = pipelineWrapper.astNode.pipes;
 
   const isConnectedToInput = pipes.some(
-    (pipe) =>
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      pipe?.blocks?.at(0)?.ref === block,
+    (pipe) => pipe?.blocks?.at(0)?.ref === block,
   );
   if (!isConnectedToInput) {
     const parents = pipelineWrapper.getParentBlocks(block);
@@ -122,9 +116,7 @@ function doCheckDefinedBlockIsUsed(
   }
 
   const isConnectedToOutput = pipes.some(
-    (pipeline) =>
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      pipeline?.blocks?.at(-1)?.ref === block,
+    (pipeline) => pipeline?.blocks?.at(-1)?.ref === block,
   );
   if (!isConnectedToOutput) {
     const children = pipelineWrapper.getChildBlocks(block);

@@ -60,7 +60,7 @@ describe('Validation of ValueTypeReference', () => {
     );
 
     const valueTypeReferences: ValueTypeReference[] = [];
-    // eslint-disable-next-line @typescript-eslint/prefer-for-of
+
     for (let i = 0; i < allValueTypes.length; ++i) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const valueTypeDefinition = allValueTypes[i]!;

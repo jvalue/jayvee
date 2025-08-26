@@ -26,7 +26,6 @@ export class PipelineWrapper<
   constructor(pipesContainer: T, pipeWrapperFactory: IPipeWrapperFactory) {
     this.astNode = pipesContainer;
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (pipesContainer.pipes === undefined) {
       this.allPipes = [];
       return;
@@ -41,7 +40,6 @@ export class PipelineWrapper<
     pipesContainer: PipelineDefinition | CompositeBlockTypeDefinition,
     pipeWrapperFactory: IPipeWrapperFactory,
   ): boolean {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (pipesContainer.pipes === undefined) {
       return true;
     }

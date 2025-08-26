@@ -64,7 +64,6 @@ export class JayveeDefinitionProvider extends DefaultDefinitionProvider {
     ) {
       const importDefinition = sourceAstNode.$container;
       assert(
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         importDefinition !== undefined,
         'Could not traverse to ImportDefinition',
       );

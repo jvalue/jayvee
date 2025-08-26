@@ -165,7 +165,7 @@ export function isElementExported(element: ExportableElement): boolean {
   const model = AstUtils.getContainerOfType(element, isJayveeModel);
   assert(
     model !== undefined,
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+
     `Could not get container of exportable element ${element.name ?? ''}`,
   );
 

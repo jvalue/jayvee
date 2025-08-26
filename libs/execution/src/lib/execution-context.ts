@@ -162,7 +162,6 @@ export class ExecutionContext {
         input,
         context: this,
       });
-      // eslint-disable-next-line no-else-return
     } else {
       return this.hookContext.executePostBlockHooks({
         blocktype,

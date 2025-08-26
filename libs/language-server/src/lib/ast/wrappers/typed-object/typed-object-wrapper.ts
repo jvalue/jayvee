@@ -57,7 +57,6 @@ export abstract class TypedObjectWrapper<N extends AstNode = AstNode>
     validationContext: ValidationContext,
     evaluationContext: EvaluationContext,
   ): void {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const properties = propertyBody?.properties ?? [];
     for (const property of properties) {
       const propertySpecification = this.getPropertySpecification(

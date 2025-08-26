@@ -314,7 +314,6 @@ function inferTypeFromValueKeyword(
   }
 
   const valueType = wrapperFactories.ValueType.wrap(
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     constraintContainer?.valueType,
   );
   if (valueType === undefined) {
@@ -329,7 +328,6 @@ function inferTypeFromReferenceLiteral(
   valueTypeProvider: ValueTypeProvider,
   wrapperFactories: WrapperFactoryProvider,
 ): ValueType | undefined {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const referenced = expression?.value?.ref;
   if (referenced === undefined) {
     return undefined;
@@ -347,7 +345,7 @@ function inferTypeFromReferenceLiteral(
     isValueTypeAttribute(referenced)
   ) {
     const valueType = referenced.valueType;
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+
     if (valueType === undefined) {
       return undefined;
     }
