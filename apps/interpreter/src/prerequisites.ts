@@ -26,9 +26,8 @@ export function assertNodeVersion() {
  * Exits the process if no node process is running.
  */
 function getNodeMajorVersion(): number {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const nodeVersion = process?.versions?.node;
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+
   if (nodeVersion === undefined) {
     console.error('Could not find a nodejs runtime.');
     process.exit(1);

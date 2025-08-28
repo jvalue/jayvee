@@ -261,7 +261,7 @@ describe('Validation of JayveeModel', () => {
     );
   });
 
-  it('should diagnose error on name collision with import', async () => {
+  it('should diagnose error on name collision with import alias', async () => {
     const relativeTestFilePath =
       'jayvee-model/invalid-non-unique-name-with-import-alias.jv';
 

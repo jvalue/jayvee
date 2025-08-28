@@ -60,7 +60,7 @@ describe('Validation of ValueTypeReference', () => {
     );
 
     const valueTypeReferences: ValueTypeReference[] = [];
-    // eslint-disable-next-line @typescript-eslint/prefer-for-of
+
     for (let i = 0; i < allValueTypes.length; ++i) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const valueTypeDefinition = allValueTypes[i]!;
@@ -180,7 +180,7 @@ describe('Validation of ValueTypeReference', () => {
     );
   });
 
-  it('should diagnose error on reference to generic value type with too few generic parameters', async () => {
+  it('should diagnose error on reference to generic value type with too many generic parameters', async () => {
     const text = readJvTestAsset(
       'value-type-reference/invalid-reference-too-many-generic-parameters.jv',
     );

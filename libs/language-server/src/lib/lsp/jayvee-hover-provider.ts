@@ -64,7 +64,6 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
   ): string | undefined {
     const container = property.$container.$container;
     const wrapper =
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       container.type !== undefined
         ? this.wrapperFactories.BlockType.wrap(container.type)
         : undefined;

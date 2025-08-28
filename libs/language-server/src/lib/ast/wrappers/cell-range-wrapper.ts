@@ -60,19 +60,14 @@ export class CellRangeWrapper<N extends CellRangeLiteral = CellRangeLiteral>
 
   static canBeWrapped(cellRange: CellRangeLiteral): boolean {
     if (isCellLiteral(cellRange)) {
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       return isCompleteCellReference(cellRange?.cellId);
     } else if (isColumnLiteral(cellRange)) {
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       return isCompleteColumnId(cellRange?.columnId);
     } else if (isRowLiteral(cellRange)) {
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       return isCompleteRowId(cellRange?.rowId);
     } else if (isRangeLiteral(cellRange)) {
       return (
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         isCompleteCellReference(cellRange?.cellFrom) &&
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         isCompleteCellReference(cellRange?.cellTo)
       );
     }
@@ -141,9 +136,7 @@ function isCompleteCellReference(
 ): boolean {
   if (isCellReference(cellReference)) {
     return (
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       isCompleteColumnId(cellReference?.columnId) &&
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       isCompleteRowId(cellReference?.rowId)
     );
   }

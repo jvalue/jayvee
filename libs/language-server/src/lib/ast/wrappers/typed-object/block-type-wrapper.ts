@@ -110,9 +110,7 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlockTypeD
     }
 
     if (
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       blockTypeDefinition.properties === undefined ||
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       blockTypeDefinition.name === undefined ||
       blockTypeDefinition.inputs[0] === undefined ||
       blockTypeDefinition.outputs[0] === undefined

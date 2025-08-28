@@ -46,6 +46,10 @@ export abstract class FileSystemFile<T> extends FileSystemNode {
   override toDirectoryString(indentation: number): string {
     return ' '.repeat(indentation) + this.name + ` (${this.mimeType})`;
   }
+
+  override toString(): string {
+    return this.name;
+  }
 }
 /**
  * An enumeration of common file extensions. New extensions for Files need to be registered here.

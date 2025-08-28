@@ -27,9 +27,8 @@ function checkRuntimeParameterValuePresence(
   runtimeParameter: RuntimeParameterLiteral,
   props: JayveeValidationProps,
 ) {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const runtimeParameterName = runtimeParameter?.name;
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+
   if (runtimeParameterName === undefined) {
     return;
   }
@@ -53,14 +52,12 @@ function checkRuntimeParameterValueParsing(
   const type: Reference<ReferenceableBlockTypeDefinition> | undefined =
     enclosingPropertyBody.$container.type;
   const wrapper =
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     type !== undefined
       ? props.wrapperFactories.BlockType.wrap(type)
       : undefined;
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const propertyName = runtimeParameter.$container?.name;
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+
   if (propertyName === undefined) {
     return;
   }
@@ -72,9 +69,8 @@ function checkRuntimeParameterValueParsing(
 
   const valueType = propertySpec.type;
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const runtimeParameterName = runtimeParameter?.name;
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+
   if (runtimeParameterName === undefined) {
     return;
   }

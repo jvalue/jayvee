@@ -47,9 +47,8 @@ export function evaluatePropertyValue<
   wrapperFactories: WrapperFactoryProvider,
   valueType: ValueType<T>,
 ): T | InternalErrorValueRepresentation {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const propertyValue = property?.value;
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+
   assert(propertyValue !== undefined);
 
   // Properties of block types are always undefined

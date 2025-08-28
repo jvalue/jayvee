@@ -36,7 +36,7 @@ import { type Table, type TableColumn } from '../types/io-types/table';
 import { type PortDetails, TransformExecutor } from './transform-executor';
 
 function expectNoErrorsInColumn(column: TableColumn) {
-  expect(column.values.every((value) => ERROR_TYPEGUARD(value)));
+  column.values.every((value) => expect(value).not.toSatisfy(ERROR_TYPEGUARD));
 }
 
 describe('Validation of TransformExecutor', () => {
@@ -199,7 +199,7 @@ describe('Validation of TransformExecutor', () => {
     expect(value).toBeInstanceOf(InvalidValue);
   });
 
-  it('should diagnose no error on valid value', async () => {
+  it('should diagnose no error on multiple inputs', async () => {
     const text = readJvTestAsset(
       'transform-executor/valid-multiple-input-transform.jv',
     );

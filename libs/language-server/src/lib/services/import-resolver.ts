@@ -103,7 +103,6 @@ export class JayveeImportResolver {
 
   resolveImportUri(importDefinition: ImportDefinition): URI | undefined {
     if (
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       importDefinition.path === undefined ||
       importDefinition.path.length === 0
     ) {
@@ -150,7 +149,6 @@ export class JayveeImportResolver {
       });
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const namedImports = importDefinition.usedElements ?? [];
 
     const importedElements: ImportDetails[] = [];
@@ -160,7 +158,6 @@ export class JayveeImportResolver {
       );
       if (
         matchingExportedElement === undefined ||
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         matchingExportedElement.element === undefined
       ) {
         continue;

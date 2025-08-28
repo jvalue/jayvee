@@ -38,7 +38,6 @@ export class AtomicValueType
   }
 
   getAttribute(): ValueTypeAttribute | undefined {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     return this.astNode?.attribute;
   }
 
@@ -51,9 +50,8 @@ export class AtomicValueType
       | ValueTypeConstraintInlineDefinition
     )[] = [];
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const constraints = this.astNode?.constraints;
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+
     if (constraints === undefined) {
       return result;
     }
@@ -64,7 +62,6 @@ export class AtomicValueType
         continue;
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       const constraintDefinition = constraint?.definition?.ref;
       if (constraintDefinition === undefined) {
         continue;
@@ -110,12 +107,10 @@ export class AtomicValueType
   }
 
   override getName(): string {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     return this.astNode.name ?? '';
   }
 
   protected override doGetContainedType(): ValueType | undefined {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const supertype = this.astNode?.attribute?.valueType;
     return this.wrapperFactories.ValueType.wrap(supertype);
   }

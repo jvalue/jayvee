@@ -200,7 +200,7 @@ export function parsePipelineMatcherRegExp(
 ): RegExp | undefined {
   try {
     return new RegExp(matcher);
-  } catch (e: unknown) {
+  } catch {
     logger.logErr(
       `Invalid value "${matcher}" for pipeline selection option: -p --pipeline.\n` +
         'Must be a valid regular expression.',

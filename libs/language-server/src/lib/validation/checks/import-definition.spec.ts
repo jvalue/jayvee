@@ -39,7 +39,6 @@ describe('Validation of ImportDefinition', () => {
     const parsedModel = document.parseResult.value;
     assert(isJayveeModel(parsedModel), 'Test file is not valid Jayvee model');
     assert(
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       parsedModel.imports !== undefined && parsedModel.imports.length > 0,
       'Test file does not contain imports',
     );
@@ -81,7 +80,7 @@ describe('Validation of ImportDefinition', () => {
       expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
     });
 
-    it('should have no error if file exists in deeper directory', async () => {
+    it('should have no error if file exists in higher directory', async () => {
       const relativeTestFilePath =
         'import-definition/wildcard-import/deeper/valid-imported-file-exists-higher-dir.jv';
 

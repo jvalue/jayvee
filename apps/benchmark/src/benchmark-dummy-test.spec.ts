@@ -3,6 +3,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 describe('Dummy Test for Benchmark', () => {
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  // eslint-disable-next-line @typescript-eslint/no-empty-function, vitest/expect-expect
   it('should not do anything', async () => {});
 });

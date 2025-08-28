@@ -33,7 +33,6 @@ function checkElementImportedOnlyOnce(
   importDefinition: ImportDefinition,
   props: JayveeValidationProps,
 ): void {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const importedElements = importDefinition.usedElements ?? [];
 
   for (const [i, importedElement] of importedElements.entries()) {
@@ -47,7 +46,6 @@ function checkElementImportedOnlyOnce(
         `Element ${
           importedElement.element
         } is imported ${occurrencesInSameImportDefinition} times from file "${
-          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
           importDefinition.path ?? ''
         }". Remove the duplicate import.`,
         {
@@ -80,7 +78,6 @@ function checkFileImportedOnlyOnce(
   props.validationContext.accept(
     'error',
     `Found ${occurrencesImportsFromPath} import statements for file "${
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       importDefinition.path ?? ''
     }". Combine both import statements.`,
     {
@@ -116,7 +113,6 @@ function checkImportedElementsExist(
     return;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const exportedViaElementDefinition = (resolvedImport.exportableElements ?? [])
     .filter((x) => x.isPublished)
     .map((x) => {
@@ -126,14 +122,13 @@ function checkImportedElementsExist(
       );
       return x.name;
     });
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+
   const exportedViaExportDefinition = (resolvedImport.exports ?? [])
     .map((x) => {
       if (x.alias !== undefined) {
         return x.alias;
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       return x.element?.ref?.name;
     })
     .filter((x) => x !== undefined);
@@ -143,7 +138,6 @@ function checkImportedElementsExist(
     ...exportedViaExportDefinition,
   ];
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   for (const [i, namedImport] of importDefinition.usedElements?.entries() ??
     []) {
     if (!allExports.includes(namedImport.element)) {
