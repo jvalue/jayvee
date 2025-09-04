@@ -62,7 +62,7 @@ export async function extractDocumentFromString(
 ): Promise<LangiumDocument> {
   const document = services.shared.workspace.LangiumDocumentFactory.fromString(
     modelString,
-    URI.parse('memory://jayvee.document'),
+    URI.parse('memory://jvalue.github.io/model.jv'),
   );
 
   await initializeWorkspace(services);

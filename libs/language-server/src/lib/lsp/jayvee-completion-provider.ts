@@ -31,10 +31,9 @@ import {
   type BlockDefinition,
   type ConstraintDefinition,
   type ImportDefinition,
-  PropertyAssignment,
+  type PropertyAssignment,
   type PropertyBody,
   type ValueTypeConstraintReference,
-  ValueTypeReference,
   isBlockDefinition,
   isImportDefinition,
   isJayveeModel,
@@ -78,7 +77,8 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
         return this.completionForBlockType(context, acceptor);
       }
 
-      const isValuetypeDefinitionCompletion = next.type === ValueTypeReference;
+      const isValuetypeDefinitionCompletion =
+        next.type === 'ValueTypeReference';
       if (isValuetypeDefinitionCompletion) {
         return this.completionForValuetype(context, acceptor);
       }
@@ -95,9 +95,9 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
       }
 
       const isFirstPropertyCompletion =
-        isPropertyBody(astNode) && next.type === PropertyAssignment;
+        isPropertyBody(astNode) && next.type === 'PropertyAssignment';
       const isOtherPropertyCompletion =
-        isPropertyAssignment(astNode) && next.type === PropertyAssignment;
+        isPropertyAssignment(astNode) && next.type === 'PropertyAssignment';
       if (isFirstPropertyCompletion || isOtherPropertyCompletion) {
         return this.completionForPropertyName(astNode, context, acceptor);
       }

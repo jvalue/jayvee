@@ -425,7 +425,7 @@ flowchart TB
       assert(graph !== 'No pipelines to graph');
 
       expect(graph.toString()).toBe(`---
-
+title: model.jv
 ---
 flowchart TB
 \tsubgraph ba [CarsPipeline]

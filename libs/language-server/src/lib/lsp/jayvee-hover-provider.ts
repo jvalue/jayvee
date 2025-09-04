@@ -4,7 +4,6 @@
 
 import { type AstNode, type MaybePromise } from 'langium';
 import { AstNodeHoverProvider } from 'langium/lsp';
-import { type Hover } from 'vscode-languageserver-protocol';
 
 import {
   type BuiltinBlockTypeDefinition,
@@ -26,7 +25,7 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
 
   override getAstNodeHoverContent(
     astNode: AstNode,
-  ): MaybePromise<Hover | undefined> {
+  ): MaybePromise<string | undefined> {
     let doc = undefined;
     if (isBuiltinBlockTypeDefinition(astNode)) {
       doc = this.getBlockTypeMarkdownDoc(astNode);
@@ -34,17 +33,7 @@ export class JayveeHoverProvider extends AstNodeHoverProvider {
     if (isPropertyAssignment(astNode)) {
       doc = this.getPropertyMarkdownDoc(astNode);
     }
-
-    if (doc === undefined) {
-      return undefined;
-    }
-    const hover: Hover = {
-      contents: {
-        kind: 'markdown',
-        value: doc,
-      },
-    };
-    return hover;
+    return doc;
   }
 
   private getBlockTypeMarkdownDoc(
