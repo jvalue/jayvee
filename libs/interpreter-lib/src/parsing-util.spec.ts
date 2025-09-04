@@ -161,7 +161,6 @@ describe('Validation of parsing-util', () => {
           ?.replace(cwd, '')
           // eslint-disable-next-line no-control-regex
           .replace(/\u001b\[.*?m/g, '');
-        console.log(JSON.stringify(strippedMessage));
         expect(strippedMessage).toBe(
           'Could not load file /libs/interpreter-lib/test/assets/parsing-util/extractDocumentFromFile/invalid-missing-file.jv. It may not exist, or you may not have access rights',
         );
