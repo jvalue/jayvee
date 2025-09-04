@@ -257,15 +257,19 @@ export class DefaultJayveeInterpreter implements JayveeInterpreter {
   ): Promise<JayveeProgram | undefined> {
     await this.prepareInterpretation();
 
+    let model: JayveeModel | undefined = undefined;
     try {
-      const model = await extractAstNodeFn(this.services, this.loggerFactory);
-      return new JayveeProgram(model);
-    } catch {
+      model = await extractAstNodeFn(this.services, this.loggerFactory);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : JSON.stringify(e);
       this.loggerFactory
         .createLogger()
-        .logErr('Could not extract the AST node of the given model.');
+        .logErr(
+          `Could not extract the AST node of the given model: ${message}`,
+        );
       return undefined;
     }
+    return new JayveeProgram(model);
   }
 
   listMeasurements(): PipelineMeasurement[] {

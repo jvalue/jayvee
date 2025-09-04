@@ -155,9 +155,14 @@ describe('Validation of parsing-util', () => {
       } catch {
         expect(logger.getLogs(DiagnosticSeverity.INFO)).toHaveLength(0);
         expect(logger.getLogs(DiagnosticSeverity.ERROR)).toHaveLength(1);
-        expect(logger.getLogs(DiagnosticSeverity.ERROR)[0]?.message).toMatch(
-          // eslint-disable-next-line no-useless-escape
-          /File [\w\-\/]*\/libs\/interpreter-lib\/test\/assets\/parsing-util\/extractDocumentFromFile\/invalid-missing-file\.jv does not exist\./,
+        const message = logger.getLogs(DiagnosticSeverity.ERROR)[0]?.message;
+        const cwd = process.cwd();
+        const strippedMessage = message
+          ?.replace(cwd, '')
+          // eslint-disable-next-line no-control-regex
+          .replace(/\u001b\[.*?m/g, '');
+        expect(strippedMessage).toBe(
+          'Could not load file /libs/interpreter-lib/test/assets/parsing-util/extractDocumentFromFile/invalid-missing-file.jv. It may not exist, or you may not have access rights',
         );
         expect(logger.getLogs(DiagnosticSeverity.DEBUG)).toHaveLength(0);
         expect(logger.getLogs(DiagnosticSeverity.HINT)).toHaveLength(0);
