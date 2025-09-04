@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import * as fs from 'node:fs';
 import path from 'node:path';
 
 import { type Logger } from '@jvalue/jayvee-execution';
@@ -10,7 +9,7 @@ import {
   type JayveeServices,
   initializeWorkspace,
 } from '@jvalue/jayvee-language-server';
-import { type AstNode, type LangiumDocument, UriUtils } from 'langium';
+import { type AstNode, type LangiumDocument } from 'langium';
 import { type LangiumServices } from 'langium/lsp';
 import { DiagnosticSeverity } from 'vscode-languageserver-protocol';
 import { URI } from 'vscode-uri';
@@ -29,6 +28,7 @@ export async function extractDocumentFromFile(
   services: LangiumServices,
   logger: Logger,
 ): Promise<LangiumDocument> {
+  filePath = path.resolve(filePath);
   const extensions = services.LanguageMetaData.fileExtensions;
   if (!extensions.includes(path.extname(filePath))) {
     const errorMessage = `Please choose a file with ${
@@ -39,36 +39,16 @@ export async function extractDocumentFromFile(
     return Promise.reject(new Error(errorMessage));
   }
 
-  if (!fs.existsSync(filePath)) {
-    const errorMessage = `File ${filePath} does not exist.`;
-    logger.logErr(errorMessage);
-    return Promise.reject(new Error(errorMessage));
-  }
-
-  const fileUri = getFileUriLikeLangiumImpl(filePath);
+  const fileUri = URI.file(filePath);
   const document =
     services.shared.workspace.LangiumDocuments.getDocument(fileUri);
   if (document === undefined) {
-    const errorMessage = `Did not load file ${filePath} correctly.`;
+    const errorMessage = `Could not load file ${filePath}. It may not exist, or you may not have access rights`;
     logger.logErr(errorMessage);
     return Promise.reject(new Error(errorMessage));
   }
 
   return await validateDocument(document, services, logger);
-}
-
-/**
- * Creates the URI for a file path in a way similar to Langium.
- * This is necessary to make sure that the document lookup works on Windows.
- * Fixed https://github.com/jvalue/jayvee/issues/623.
- * Workaround needs to be removed once the issue is fixed in Langium:
- * https://github.com/eclipse-langium/langium/issues/1725
- */
-function getFileUriLikeLangiumImpl(filePath: string): URI {
-  const folderPath = path.dirname(filePath);
-  const folderUri = URI.parse(path.resolve(folderPath));
-  const fileName = path.basename(filePath);
-  return UriUtils.joinPath(folderUri, fileName);
 }
 
 /**
