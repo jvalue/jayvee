@@ -122,6 +122,13 @@ block toTable oftype TableInterpreter {
 }
 ```
 
+Constraints defined on the table's type need to be checked after every
+block modifying to the table.
+This means `CellWriter`, `ColumnDeleter`, `TableInterpreter` and
+`TableTransformer`.
+`RowDeleter` is explicitly excluded here, because deleting a row cannot cause
+remaining rows to become invalid.
+
 Value types with multiple attributes follow the existing behavior that once a
 value becomes invalid, it stays invalid.
 
