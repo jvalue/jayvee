@@ -43,7 +43,7 @@ valuetype Coordinate2D {
 
 ### Usage
 
-Value types are used to define tables, each attribute defining a collumn:
+Value types are used to define tables, each attribute defining a column:
 ```jayvee
 valuetype Coordinate2D {
   property x oftype decimal;
@@ -55,7 +55,7 @@ block toTable oftype TableInterpreter {
   type: Coordinate2D;  // Naming suggestions instead of `type` are welcome
 }
 ```
-replaces the old
+This replaces the current syntax:
 ```jayvee
 block toTable oftype TableInterpreter {
   header: true;
@@ -67,8 +67,8 @@ block toTable oftype TableInterpreter {
 ```
 
 Nested value types are allowed, but only if the inner value has exactly one
-attribute. This is because, table cells cannot really contain multiple values
-(e.g. Arrays, dictionaries).
+attribute. This is because, table cells cannot contain multiple values
+(e.g. arrays, dictionaries).
 
 Conceptually, a value type defines a table. The instance of that value type is a
 row inside the table.
