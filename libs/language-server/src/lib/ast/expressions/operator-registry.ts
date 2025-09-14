@@ -20,6 +20,7 @@ import { EqualityOperatorEvaluator } from './evaluators/equality-operator-evalua
 import { FloorOperatorEvaluator } from './evaluators/floor-operator-evaluator';
 import { GreaterEqualOperatorEvaluator } from './evaluators/greater-equal-operator-evaluator';
 import { GreaterThanOperatorEvaluator } from './evaluators/greater-than-operator-evaluator';
+import { IfOperatorEvaluator } from './evaluators/if-operator-evaluator';
 import { InOperatorEvaluator } from './evaluators/in-operator-evaluator';
 import { InequalityOperatorEvaluator } from './evaluators/inequality-operator-evaluator';
 import { LengthofOperatorEvaluator } from './evaluators/lengthof-operator-evaluator';
@@ -62,6 +63,7 @@ import { BasicArithmeticOperatorTypeComputer } from './type-computers/basic-arit
 import { DivisionOperatorTypeComputer } from './type-computers/division-operator-type-computer';
 import { EqualityOperatorTypeComputer } from './type-computers/equality-operator-type-computer';
 import { ExponentialOperatorTypeComputer } from './type-computers/exponential-operator-type-computer';
+import { IfOperatorTypeComputer } from './type-computers/if-operator-type-computer';
 import { InOperatorTypeComputer } from './type-computers/in-operator-type-computer';
 import { IntegerConversionOperatorTypeComputer } from './type-computers/integer-conversion-operator-type-computer';
 import { LengthofOperatorTypeComputer } from './type-computers/lengthof-operator-type-computer';
@@ -135,6 +137,7 @@ export class DefaultOperatorEvaluatorRegistry
     or: new OrOperatorEvaluator(),
   };
   ternary = {
+    if: new IfOperatorEvaluator(),
     replace: new ReplaceOperatorEvaluator(),
   };
 
@@ -184,6 +187,7 @@ export class DefaultOperatorTypeComputerRegistry
     or: new LogicalOperatorTypeComputer(this.valueTypeProvider),
   };
   ternary = {
+    if: new IfOperatorTypeComputer(this.valueTypeProvider),
     replace: new ReplaceOperatorTypeComputer(this.valueTypeProvider),
   };
 

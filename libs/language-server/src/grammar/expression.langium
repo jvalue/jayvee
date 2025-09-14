@@ -10,7 +10,12 @@ import './terminal'
 import './transform'
 
 Expression:
-  ReplaceExpression;
+  IfExpression;
+
+// The nesting of the following rules implies the precedence of the operators:
+IfExpression infers Expression:
+  ReplaceExpression ({infer TernaryExpression.first=current} operator='if'
+  second=ReplaceExpression 'else' third=ReplaceExpression)*;
 
 // The nesting of the following rules implies the precedence of the operators:
 ReplaceExpression infers Expression:
