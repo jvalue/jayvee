@@ -66,6 +66,14 @@ block toTable oftype TableInterpreter {
 }
 ```
 
+One limitation with the new syntax is that column names have to match the jayvee
+identifier regex `/[_a-zA-Z][\w_]*/`, which excludes many expected names (e.g.
+with spaces).<br>
+The intended solution for this is a new composite block in the standard library,
+combining `CellWriter`, to rename the columns into a compatible format and
+`TableInterpreter`.<br>
+This follows the jayvee design principle of *libraries over language features*.
+
 Conceptually, a value type defines a table. The instance of that value type is a
 row inside the table.
 
