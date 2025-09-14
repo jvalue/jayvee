@@ -66,24 +66,10 @@ block toTable oftype TableInterpreter {
 }
 ```
 
-Nested value types are allowed, but only if the inner value has exactly one
-attribute. This is because, table cells cannot contain multiple values
-(e.g. arrays, dictionaries).
-
 Conceptually, a value type defines a table. The instance of that value type is a
 row inside the table.
 
-Allowed, because the `x` column can just store an integer:
-```jayvee
-valuetype Inner {
-  property x oftype decimal;
-}
-valuetype Outer {
-  property x oftype Inner;
-  property y oftype decimal;
-}
-```
-Not allowed, the `center` column can't be stored in a single column.
+Nested value types are allowed:
 ```jayvee
 valuetype Coordinate2D {
   property x oftype decimal;
@@ -94,6 +80,10 @@ valuetype Circlde {
   property radius oftype decimal;
 }
 ```
+
+At first, the jayvee interpreter will only implement nested value types, where the
+inner type has one attribute. This is because table cells cannot contain
+multiple values (e.g. arrays, dictionaries).
 
 ### Constraints
 
@@ -147,9 +137,9 @@ invalid.
 
 ## Possible Future Changes/Enhancements
 
-- Allow nested value types with multiple attributes. This probably requires
-  dynamically creating a new table and putting foreign keys into the cell the
-  value should be.
+- Implement nested value types with multiple attributes in the interpreter. This
+  probably requires dynamically creating a new table and putting foreign keys
+  into the cell the value should be.
 
 - Define to inline the valuetype into `TableInterpreter` to reduce verbosity.
 
