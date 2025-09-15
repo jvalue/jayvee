@@ -2,26 +2,57 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { type InternalValidValueRepresentation } from '../internal-value-representation';
-import { DefaultBinaryOperatorEvaluator } from '../operator-evaluator';
-import { INTERNAL_VALID_VALUE_REPRESENTATION_TYPEGUARD } from '../typeguards';
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import assert from 'assert';
 
-export class InequalityOperatorEvaluator extends DefaultBinaryOperatorEvaluator<
-  InternalValidValueRepresentation,
-  InternalValidValueRepresentation,
-  boolean
-> {
-  constructor() {
-    super(
-      '!=',
-      INTERNAL_VALID_VALUE_REPRESENTATION_TYPEGUARD,
-      INTERNAL_VALID_VALUE_REPRESENTATION_TYPEGUARD,
+import { type ValidationContext } from '../../../validation';
+import { type BinaryExpression } from '../../generated/ast';
+import { type WrapperFactoryProvider } from '../../wrappers';
+import { evaluateExpression } from '../evaluate-expression';
+import { type EvaluationContext } from '../evaluation-context';
+import { type EvaluationStrategy } from '../evaluation-strategy';
+import {
+  type InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
+} from '../internal-value-representation';
+import { type OperatorEvaluator } from '../operator-evaluator';
+import { INVALID_TYPEGUARD, MISSING_TYPEGUARD } from '../typeguards';
+
+export class InequalityOperatorEvaluator
+  implements OperatorEvaluator<BinaryExpression>
+{
+  public readonly operator = '!=' as const;
+
+  evaluate(
+    expression: BinaryExpression,
+    evaluationContext: EvaluationContext,
+    wrapperFactories: WrapperFactoryProvider,
+    strategy: EvaluationStrategy,
+    validationContext: ValidationContext | undefined,
+  ): InternalValidValueRepresentation | InternalErrorValueRepresentation {
+    assert(expression.operator === this.operator);
+    const leftValue = evaluateExpression(
+      expression.left,
+      evaluationContext,
+      wrapperFactories,
+      validationContext,
+      strategy,
     );
-  }
-  override doEvaluate(
-    left: InternalValidValueRepresentation,
-    right: InternalValidValueRepresentation,
-  ): boolean {
-    return left !== right;
+    const rightValue = evaluateExpression(
+      expression.right,
+      evaluationContext,
+      wrapperFactories,
+      validationContext,
+      strategy,
+    );
+
+    if (INVALID_TYPEGUARD(leftValue)) {
+      return !INVALID_TYPEGUARD(rightValue);
+    }
+    if (MISSING_TYPEGUARD(leftValue)) {
+      return !MISSING_TYPEGUARD(rightValue);
+    }
+
+    return leftValue !== rightValue;
   }
 }

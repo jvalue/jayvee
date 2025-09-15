@@ -34,8 +34,10 @@ export async function executeExpressionTestHelper(
   expression: string,
   inputValueName: string,
   inputValueType: 'text',
-  inputValueValue: InternalValidValueRepresentation,
-  outputValueType: 'text' | 'integer',
+  inputValueValue:
+    | InternalValidValueRepresentation
+    | InternalErrorValueRepresentation,
+  outputValueType: 'text' | 'integer' | 'boolean',
 ): Promise<
   InternalValidValueRepresentation | InternalErrorValueRepresentation
 > {
