@@ -52,7 +52,7 @@ valuetype Coordinate2D {
 
 block toTable oftype TableInterpreter {
   header: true;
-  type: Coordinate2D;  // Naming suggestions instead of `type` are welcome
+  schema: Coordinate2D;
 }
 ```
 This replaces the current syntax:
@@ -70,7 +70,7 @@ Inline definition is also possible:
 ```jayvee
 block toTable oftype TableInterpreter {
   header: true;
-  type: {
+  schema: {
     property x oftype decimal;
     property y oftype decimal;
   }
@@ -120,7 +120,7 @@ As a consequence, constraints can be defined on tables:
 ```jayvee
 block toTable oftype TableInterpreter {
   header: true;
-  type: {
+  schema: {
     property x oftype decimal;
     property y oftype decimal;
 
