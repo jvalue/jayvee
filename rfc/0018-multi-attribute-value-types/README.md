@@ -66,6 +66,17 @@ block toTable oftype TableInterpreter {
 }
 ```
 
+Inline definition is also possible:
+```jayvee
+block toTable oftype TableInterpreter {
+  header: true;
+  type: {
+    property x oftype decimal;
+    property y oftype decimal;
+  }
+}
+```
+
 One limitation with the new syntax is that column names have to match the jayvee
 identifier regex `/[_a-zA-Z][\w_]*/`, which excludes many expected names (e.g.
 with spaces).<br>
@@ -107,16 +118,14 @@ valuetype Coordinate2D {
 
 As a consequence, constraints can be defined on tables:
 ```jayvee
-valuetype Coordinate2D {
-  property x oftype decimal;
-  property y oftype decimal;
-
-  constraint isOn45DegreeLine: x == y;
-}
-
 block toTable oftype TableInterpreter {
   header: true;
-  type: Coordinate2D;
+  type: {
+    property x oftype decimal;
+    property y oftype decimal;
+
+    constraint isOn45DegreeLine: x == y;
+  }
 }
 ```
 
