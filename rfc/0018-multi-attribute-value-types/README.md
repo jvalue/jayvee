@@ -94,7 +94,7 @@ valuetype Coordinate2D {
   property x oftype decimal;
   property y oftype decimal;
 }
-valuetype Circlde {
+valuetype Circle {
   property center oftype Coordinate2D;
   property radius oftype decimal;
 }
