@@ -9,7 +9,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 | | |
 |---|---|
 | Feature Tag | `ternary-if` |
-| Status | `DISCUSSION` | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED -->
+| Status | `ACCEPTED` | <!-- Possible values: DRAFT, DISCUSSION, ACCEPTED, REJECTED -->
 | Responsible | `tungstnballon` |
 <!-- 
   Status Overview:
