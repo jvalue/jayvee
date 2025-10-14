@@ -44,13 +44,9 @@ export class IfOperatorTypeComputer implements TernaryOperatorTypeComputer {
     } else if (thirdOperandType.isConvertibleTo(firstOperandType)) {
       return firstOperandType;
     } else {
-      context?.accept(
-        'error',
-        generateUnexpectedTypeMessage(firstOperandType, thirdOperandType),
-        {
-          node: expression.third,
-        },
-      );
+      context?.accept('error', "The if branches's types must be equal", {
+        node: expression,
+      });
       return undefined;
     }
   }
