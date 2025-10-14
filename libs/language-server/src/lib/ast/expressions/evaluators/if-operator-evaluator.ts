@@ -33,8 +33,13 @@ export class IfOperatorEvaluator
   ): InternalValidValueRepresentation | InternalErrorValueRepresentation {
     assert(expression.operator === this.operator);
 
+    // format: {thenExpresssion} if {conditionExpression} else {elseExpression}
+    const thenExpression = expression.first;
+    const conditionExpression = expression.second;
+    const elseExpression = expression.third;
+
     const condition = evaluateExpression(
-      expression.second,
+      conditionExpression,
       evaluationContext,
       wrapperFactories,
       validationContext,
@@ -47,7 +52,7 @@ export class IfOperatorEvaluator
       return new InvalidValue('If condition did not evaluate to a boolean');
     }
 
-    const branchExpression = condition ? expression.first : expression.third;
+    const branchExpression = condition ? thenExpression : elseExpression;
 
     return evaluateExpression(
       branchExpression,
