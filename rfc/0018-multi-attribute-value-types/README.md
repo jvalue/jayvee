@@ -30,7 +30,7 @@ This RFC allows value types to have multiple attributes.
 
 ## Explanation
 
-Value types can contain multiple attributes:
+Value types can contain multiple properties:
 ```jayvee
 valuetype Coordinate2D {
   property x oftype decimal;
@@ -52,7 +52,7 @@ valuetype Circle {
 
 ### Constraints
 
-Inline constraints are able to reference all attributes:
+Inline constraints are able to reference all properties:
 ```jayvee
 valuetype Coordinate2D {
   property x oftype decimal;
@@ -61,12 +61,25 @@ valuetype Coordinate2D {
   constraint isOn45DegreeLine: x == y;
 }
 ```
+Constraints can also access the properties of contained value types.
+```jayvee
+valuetype Coordinate2D {
+  property x oftype decimal;
+  property y oftype decimal;
+}
+valuetype Circle {
+  property center oftype Coordinate2D;
+  property radius oftype decimal;
 
-Value types with multiple attributes follow the existing behavior that once a
+  constraint someConstraint: center.x == radius;
+}
+```
+
+Value types with multiple properties follow the existing behavior that once a
 value becomes invalid, it stays invalid.
 
 For example, a value of type `Coordinate2D` could become invalid by halving the
-`x` attribute. If the `y` attribute is also halved later, the value stays
+`x` property. If the `y` property is also halved later, the value stays
 invalid.
 
 ## Drawbacks
