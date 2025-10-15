@@ -4,3 +4,4 @@
 
 export * from './constructor-class';
 export * from './registry';
+export * from './array';
