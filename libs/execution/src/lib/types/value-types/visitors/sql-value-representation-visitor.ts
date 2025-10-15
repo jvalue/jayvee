@@ -8,6 +8,7 @@ import { strict as assert } from 'assert';
 import {
   type AtomicValueType,
   type BooleanValuetype,
+  collapseArray,
   type DecimalValuetype,
   ERROR_TYPEGUARD,
   type IntegerValuetype,
@@ -69,9 +70,16 @@ export class SQLValueRepresentationVisitor extends ValueTypeVisitor<
   ): (
     value: InternalValidValueRepresentation | InternalErrorValueRepresentation,
   ) => string {
-    const contained = valueType.getContainedType();
-    assert(contained !== undefined);
-    return contained.acceptVisitor(this);
+    const containedTypes = valueType.getContainedTypes();
+    assert(containedTypes !== undefined);
+    const containedType = collapseArray(containedTypes);
+    if (containedType === undefined) {
+      throw new Error(
+        'Can only determine sql value representation for value types with one' +
+          ' property',
+      );
+    }
+    return containedType.acceptVisitor(this);
   }
 
   override visitRegex(): (

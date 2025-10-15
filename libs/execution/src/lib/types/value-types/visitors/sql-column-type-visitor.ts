@@ -7,6 +7,7 @@ import { strict as assert } from 'assert';
 
 import {
   type AtomicValueType,
+  collapseArray,
   ValueTypeVisitor,
 } from '@jvalue/jayvee-language-server';
 
@@ -28,9 +29,15 @@ export class SQLColumnTypeVisitor extends ValueTypeVisitor<string> {
   }
 
   override visitAtomicValueType(valueType: AtomicValueType): string {
-    const contained = valueType.getContainedType();
-    assert(contained !== undefined);
-    return contained.acceptVisitor(this);
+    const containedTypes = valueType.getContainedTypes();
+    assert(containedTypes !== undefined);
+    const containedType = collapseArray(containedTypes);
+    if (containedType === undefined) {
+      throw new Error(
+        'Can only determine sql column type for value types with one property',
+      );
+    }
+    return containedType.acceptVisitor(this);
   }
 
   override visitRegex(): string {

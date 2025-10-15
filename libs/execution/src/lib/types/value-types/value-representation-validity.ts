@@ -45,16 +45,16 @@ class ValueRepresentationValidityVisitor extends ValueTypeVisitor<boolean> {
   }
 
   override visitAtomicValueType(valueType: AtomicValueType): boolean {
-    const contained = valueType.getContainedType();
-    assert(contained !== undefined);
-    if (!contained.acceptVisitor(this)) {
+    const containedTypes = valueType.getContainedTypes();
+    assert(containedTypes !== undefined);
+    const allPropertiesValid = containedTypes.every((containedType) =>
+      containedType.acceptVisitor(this),
+    );
+    if (!allPropertiesValid) {
       return false;
     }
 
-    const attribute = valueType.getAttribute();
-    assert(attribute !== undefined);
-    const constraints = valueType.getConstraints();
-    for (const constraint of constraints) {
+    for (const constraint of valueType.getConstraints()) {
       this.context.enterNode(constraint);
 
       const valueFulfilledConstraint = isConstraintDefinition(constraint)
@@ -62,7 +62,7 @@ class ValueRepresentationValidityVisitor extends ValueTypeVisitor<boolean> {
         : new ConstraintExecutor(constraint).isValid(
             this.value,
             this.context,
-            attribute,
+            valueType.getProperties(),
           );
 
       this.context.exitNode(constraint);
