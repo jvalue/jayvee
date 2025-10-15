@@ -65,6 +65,11 @@ The following expression is evaluated to the `text` `I love Datypus`: `"I love p
 #### Text manipulation (ternary operators)
 - `replace [...] with [...]` replaces regex matches in a text with a string
 
+#### Control flow (ternary operators)
+- `[...] if [...] else [...]` evaluates the first expression if the second
+expression is true. Otherwise executes the third expression. Nested if
+expressions are currently unsupported.
+
 ### Operator Details
 
 #### `in` Operator
