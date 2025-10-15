@@ -9,7 +9,7 @@ import { type InternalValidValueRepresentation } from '../../expressions/interna
 import {} from '../../expressions/typeguards';
 import {
   type ConstraintDefinition,
-  type ValueTypeAttribute,
+  type ValueTypeProperty,
   type ValueTypeConstraintInlineDefinition,
   type ValuetypeDefinition,
   isValueTypeConstraintInlineDefinition,
@@ -20,6 +20,7 @@ import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
 import { AbstractValueType } from './abstract-value-type';
 import { type ValueTypeProvider } from './primitive';
 import { type ValueType, type ValueTypeVisitor } from './value-type';
+import { collapseArray } from '../../../util';
 
 export class AtomicValueType
   extends AbstractValueType<InternalValidValueRepresentation>
@@ -37,8 +38,8 @@ export class AtomicValueType
     return visitor.visitAtomicValueType(this);
   }
 
-  getAttribute(): ValueTypeAttribute | undefined {
-    return this.astNode?.attribute;
+  getProperties(): ValueTypeProperty[] {
+    return this.astNode?.properties;
   }
 
   getConstraints(): (
@@ -83,46 +84,65 @@ export class AtomicValueType
       return true;
     }
 
-    const supertype = this.getContainedType();
-    if (supertype === undefined) {
+    const containedTypes = this.getContainedTypes();
+    if (containedTypes === undefined) {
       return false;
     }
-    return supertype.isConvertibleTo(target);
+    const containedType = collapseArray(containedTypes);
+    if (containedType === undefined) {
+      return false;
+    }
+    return containedType.isConvertibleTo(target);
   }
 
   override isReferenceableByUser(): boolean {
-    const supertype = this.getContainedType();
-    if (supertype === undefined) {
+    const containedTypes = this.getContainedTypes();
+    if (containedTypes === undefined || containedTypes.length === 0) {
       return false;
     }
-    return supertype.isReferenceableByUser();
+    return containedTypes.every((containedType) =>
+      containedType.isReferenceableByUser(),
+    );
   }
 
   override isAllowedAsRuntimeParameter(): boolean {
-    const supertype = this.getContainedType();
-    if (supertype === undefined) {
+    const containedTypes = this.getContainedTypes();
+    if (containedTypes === undefined || containedTypes.length === 0) {
       return false;
     }
-    return supertype.isAllowedAsRuntimeParameter();
+    return containedTypes.every((containedType) =>
+      containedType.isAllowedAsRuntimeParameter(),
+    );
   }
 
   override getName(): string {
     return this.astNode.name ?? '';
   }
 
-  protected override doGetContainedType(): ValueType | undefined {
-    const supertype = this.astNode?.attribute?.valueType;
-    return this.wrapperFactories.ValueType.wrap(supertype);
+  protected override doGetContainedTypes(): ValueType[] {
+    return (
+      this.astNode?.properties?.map((property) => {
+        const valueType = this.wrapperFactories.ValueType.wrap(
+          property.valueType,
+        );
+        assert(valueType !== undefined);
+        return valueType;
+      }) ?? []
+    );
   }
 
   override isInternalValidValueRepresentation(
     operandValue: InternalValidValueRepresentation,
   ): operandValue is InternalValidValueRepresentation {
-    const supertype = this.getContainedType();
-    if (supertype === undefined) {
+    const containedTypes = this.getContainedTypes();
+    if (containedTypes === undefined) {
       return false;
     }
-    return supertype.isInternalValidValueRepresentation(operandValue);
+    const containedType = collapseArray(containedTypes);
+    if (containedType === undefined) {
+      return false;
+    }
+    return containedType.isInternalValidValueRepresentation(operandValue);
   }
 
   override equals(target: ValueType): boolean {

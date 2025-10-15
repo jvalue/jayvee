@@ -33,9 +33,9 @@ export interface ValueType<
 
   /**
    * Primitive value types never contain types.
-   * Atomic value types may contain an atomic or primitive value type.
+   * Atomic value types may contain one or more atomic or primitive value types.
    */
-  getContainedType(): ValueType | undefined;
+  getContainedTypes(): ValueType[] | undefined;
 
   /**
    * The convertible relation reflects the ability of primitive types to
@@ -63,9 +63,9 @@ export interface ValueType<
   ): operandValue is I;
 
   /**
-   * Checks if there is a cycle in the contained type relation.
+   * Returns the index of the first contained type that is part of a type cycle
    */
-  hasTypeCycle(visited?: ValueType[]): boolean;
+  typeCycleIndex(visited?: ValueType[]): number | undefined;
 
   isAllowedAsRuntimeParameter(): boolean;
   getName(): string;
