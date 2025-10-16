@@ -25,6 +25,7 @@ This RFC allows value types to have multiple attributes.
 
 ## Motivation
 
+- Without this, we cannot handle values comprised of other values.
 - The jayvee interpreter still uses inheritance for value types, going against
   the jayvee design principle of composition over inheritance.
 
