@@ -75,6 +75,14 @@ valuetype Coordinate2D {
   constraint isOn45DegreeLine: x == y;
 }
 ```
+
+Value types with multiple properties follow the existing behavior that once a
+value becomes invalid, it stays invalid.
+
+For example, a value of type `Coordinate2D` could become invalid by halving the
+`x` property, because the coordinate is no longer on the 45 degree line. If the
+`y` property is also halved later, the value stays invalid.
+
 Constraints can also access the properties of nested value types.
 ```jayvee
 valuetype Coordinate2D {
@@ -88,13 +96,6 @@ valuetype Circle {
   constraint someConstraint: center.x == radius;
 }
 ```
-
-Value types with multiple properties follow the existing behavior that once a
-value becomes invalid, it stays invalid.
-
-For example, a value of type `Coordinate2D` could become invalid by halving the
-`x` property. If the `y` property is also halved later, the value stays
-invalid.
 
 ## Drawbacks
 
