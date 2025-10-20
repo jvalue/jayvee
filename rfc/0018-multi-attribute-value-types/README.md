@@ -25,9 +25,12 @@ This RFC allows value types to have multiple attributes.
 
 ## Motivation
 
-- Without this, we cannot handle values comprised of other values.
-- The jayvee interpreter still uses inheritance for value types, going against
-  the jayvee design principle of composition over inheritance.
+Domain-specific values can be multi-dimensional, and we want to support those on the long run.
+Simple example: Cartesian coordinates composed of an x and an y value.
+
+This RFC is a first step into the direction of fully supporting multi-dimensional value types in the future by extending Jayvee to represent such as composite value types (parsing etc. coming in the future). 
+
+Further, on a pure language design level, we intend to move the current that relies on inheritance towards one that relies on composition, closely aligning with the Jayvee design principle "composition over inheritance".
 
 ## Explanation
 
