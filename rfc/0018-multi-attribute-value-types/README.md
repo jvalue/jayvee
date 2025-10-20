@@ -65,7 +65,7 @@ valuetype Coordinate2D {
   constraint isOn45DegreeLine: x == y;
 }
 ```
-Constraints can also access the properties of contained value types.
+Constraints can also access the properties of nested value types.
 ```jayvee
 valuetype Coordinate2D {
   property x oftype decimal;
