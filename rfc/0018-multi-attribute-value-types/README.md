@@ -102,6 +102,10 @@ valuetype Circle {
 ## Alternatives
 
 - Don't introduce multi attribute value types.
+- Valuetypes with multiple properties may become valid again, if one of the
+properties is modified to fulfill all constraints. This was decided against,
+because it conflicts with the existing behavior where no invalid value can
+become valid again.
 
 ## Possible Future Changes/Enhancements
 
