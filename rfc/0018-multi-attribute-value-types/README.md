@@ -54,6 +54,16 @@ valuetype Circle {
 }
 ```
 
+### `invalid` and `missing` properties
+
+- If one or more properties are `invalid` and none are `missing`, the composite
+value is also `invalid`.
+- If one or more properties are `missing` and none are `invalid`, the composite
+value is also `missing`.
+- If one or more properties are `invalid` and one or more properties are
+`missing`, the composite value is `invalid`.
+
+
 ### Constraints
 
 Inline constraints are able to reference all properties:
