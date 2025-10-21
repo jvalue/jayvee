@@ -20,7 +20,7 @@ import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
 import { AbstractValueType } from './abstract-value-type';
 import { type ValueTypeProvider } from './primitive';
 import { type ValueType, type ValueTypeVisitor } from './value-type';
-import { collapseArray } from '../../../util';
+import { onlyElementOrUndefined } from '../../../util';
 
 export class AtomicValueType
   extends AbstractValueType<InternalValidValueRepresentation>
@@ -88,7 +88,7 @@ export class AtomicValueType
     if (containedTypes === undefined) {
       return false;
     }
-    const containedType = collapseArray(containedTypes);
+    const containedType = onlyElementOrUndefined(containedTypes);
     if (containedType === undefined) {
       return false;
     }
@@ -138,7 +138,7 @@ export class AtomicValueType
     if (containedTypes === undefined) {
       return false;
     }
-    const containedType = collapseArray(containedTypes);
+    const containedType = onlyElementOrUndefined(containedTypes);
     if (containedType === undefined) {
       return false;
     }

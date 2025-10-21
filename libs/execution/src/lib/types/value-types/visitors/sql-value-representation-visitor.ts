@@ -8,7 +8,7 @@ import { strict as assert } from 'assert';
 import {
   type AtomicValueType,
   type BooleanValuetype,
-  collapseArray,
+  onlyElementOrUndefined,
   type DecimalValuetype,
   ERROR_TYPEGUARD,
   type IntegerValuetype,
@@ -72,7 +72,7 @@ export class SQLValueRepresentationVisitor extends ValueTypeVisitor<
   ) => string {
     const containedTypes = valueType.getContainedTypes();
     assert(containedTypes !== undefined);
-    const containedType = collapseArray(containedTypes);
+    const containedType = onlyElementOrUndefined(containedTypes);
     if (containedType === undefined) {
       throw new Error(
         'Can only determine sql value representation for value types with one' +

@@ -14,27 +14,36 @@ import {
   isPrimitiveValueType,
 } from '../value-type/primitive';
 import { type ValueType } from '../value-type/value-type';
-import { collapseArray } from '../../../util';
+import { onlyElementOrUndefined } from '../../../util';
+
+function getBasePrimitiveValueType(
+  valueType: ValueType,
+): PrimitiveValueType | undefined {
+  while (!isPrimitiveValueType(valueType)) {
+    const containedTypes = valueType.getContainedTypes();
+    assert(
+      containedTypes !== undefined,
+      'non-primitive value types always have at least one contained type',
+    );
+    const containedType = onlyElementOrUndefined(containedTypes);
+    if (containedType === undefined) {
+      return undefined;
+    }
+    valueType = containedType;
+  }
+  return valueType;
+}
 
 export function pickCommonPrimitiveValuetype(
   valueTypes: ValueType[],
 ): PrimitiveValueType | undefined {
-  const primitiveValueTypes = valueTypes.flatMap((valueType) => {
-    while (!isPrimitiveValueType(valueType)) {
-      const containedTypes = valueType.getContainedTypes();
-      if (containedTypes === undefined) {
-        return [];
-      }
-      const containedType = collapseArray(containedTypes);
-      if (containedType === undefined) {
-        return [];
-      }
-      valueType = containedType;
+  const primitiveValueTypes: PrimitiveValueType[] = [];
+  for (const valueType of valueTypes) {
+    const primitiveValueType = getBasePrimitiveValueType(valueType);
+    if (primitiveValueType === undefined) {
+      return undefined;
     }
-    return [valueType];
-  });
-  if (primitiveValueTypes.length !== valueTypes.length) {
-    return undefined;
+    primitiveValueTypes.push(primitiveValueType);
   }
 
   let resultingType = primitiveValueTypes.pop();
@@ -86,7 +95,7 @@ export function pickCommonAtomicValueType(
       } else if (isAtomicValueType(valueType)) {
         const containedTypes = valueType.getContainedTypes();
         assert(containedTypes !== undefined);
-        const containedType = collapseArray(containedTypes);
+        const containedType = onlyElementOrUndefined(containedTypes);
         if (containedType === undefined) {
           return [];
         }

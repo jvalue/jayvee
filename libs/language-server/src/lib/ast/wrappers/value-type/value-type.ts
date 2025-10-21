@@ -65,7 +65,9 @@ export interface ValueType<
   /**
    * Returns the index of the first contained type that is part of a type cycle
    */
-  typeCycleIndex(visited?: ValueType[]): number | undefined;
+  getIndexOfFirstPropertyInATypeCycle(
+    visited?: ValueType[],
+  ): number | undefined;
 
   isAllowedAsRuntimeParameter(): boolean;
   getName(): string;

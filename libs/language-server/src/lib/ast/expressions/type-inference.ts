@@ -47,7 +47,7 @@ import {
   pickCommonAtomicValueType,
   pickCommonPrimitiveValuetype,
 } from '../wrappers/util/value-type-util';
-import { collapseArray } from '../../util';
+import { onlyElementOrUndefined } from '../../util';
 
 /**
  * @returns The inferred ValueType. `undefined` means that any type could be
@@ -240,7 +240,7 @@ function inferCollectionType(
     return valueTypeProvider.EmptyCollection;
   }
   if (elementValuetypes.length === 1) {
-    const elementValueType = collapseArray(elementValuetypes);
+    const elementValueType = onlyElementOrUndefined(elementValuetypes);
     assert(elementValueType !== undefined);
     return valueTypeProvider.createCollectionValueTypeOf(elementValueType);
   }

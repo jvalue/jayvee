@@ -16,7 +16,7 @@ export abstract class AbstractValueType<
   abstract acceptVisitor<R>(visitor: ValueTypeVisitor<R>): R;
 
   getContainedTypes(): ValueType[] | undefined {
-    if (this.typeCycleIndex() !== undefined) {
+    if (this.getIndexOfFirstPropertyInATypeCycle() !== undefined) {
       return undefined;
     }
     return this.doGetContainedTypes();
@@ -42,7 +42,9 @@ export abstract class AbstractValueType<
 
   abstract getName(): string;
 
-  typeCycleIndex(visited: ValueType[] = []): number | undefined {
+  getIndexOfFirstPropertyInATypeCycle(
+    visited: ValueType[] = [],
+  ): number | undefined {
     const cycleDetected = visited.some((v) => v.equals(this));
     if (cycleDetected) {
       return -1;
@@ -50,7 +52,9 @@ export abstract class AbstractValueType<
     visited.push(this);
 
     const idx = this.doGetContainedTypes().findIndex(
-      (containedType) => containedType.typeCycleIndex(visited) !== undefined,
+      (containedType) =>
+        containedType.getIndexOfFirstPropertyInATypeCycle(visited) !==
+        undefined,
     );
     return idx !== -1 ? idx : undefined;
   }

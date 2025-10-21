@@ -37,7 +37,7 @@ function checkTypeCycle(
   const cycleIdx =
     props.wrapperFactories.ValueType.wrap(
       valueTypeDefinition,
-    )?.typeCycleIndex();
+    )?.getIndexOfFirstPropertyInATypeCycle();
 
   if (cycleIdx !== undefined) {
     assert(

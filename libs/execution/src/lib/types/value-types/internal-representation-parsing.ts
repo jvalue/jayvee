@@ -17,7 +17,7 @@ import {
   type TextValuetype,
   type ValueType,
   ValueTypeVisitor,
-  collapseArray,
+  onlyElementOrUndefined,
   internalValueToString,
   isCellRangeLiteral,
 } from '@jvalue/jayvee-language-server';
@@ -107,7 +107,7 @@ class InternalRepresentationParserVisitor extends ValueTypeVisitor<
   ): InternalValidValueRepresentation | InvalidValue {
     const containedTypes = valueType.getContainedTypes();
     assert(containedTypes !== undefined);
-    const containedType = collapseArray(containedTypes);
+    const containedType = onlyElementOrUndefined(containedTypes);
     if (containedType === undefined) {
       return new InvalidValue(
         `Cannot parse value types with multiple properties`,

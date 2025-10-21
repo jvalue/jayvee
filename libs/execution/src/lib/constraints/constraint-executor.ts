@@ -36,8 +36,8 @@ export class ConstraintExecutor<
     if (properties === undefined) {
       context.evaluationContext.setValueForValueKeyword(value);
     } else {
-      const assignment_for_type_system: ValueTypeProperty[] = properties;
-      for (const property of assignment_for_type_system) {
+      const assignmentForTypeSystem: ValueTypeProperty[] = properties;
+      for (const property of assignmentForTypeSystem) {
         context.evaluationContext.setValueForReference(property.name, value);
       }
     }
