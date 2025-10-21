@@ -175,13 +175,14 @@ export class JayveeCompletionProvider extends DefaultCompletionProvider {
     context: CompletionContext,
     acceptor: CompletionAcceptor,
   ) {
-    const property = astNode.$container.attribute;
-
-    if (property !== undefined && property.name !== undefined) {
-      const proptertyTypeName = property.valueType.reference.ref?.name;
+    for (const property of astNode.$container.properties) {
+      if (property.name === undefined) {
+        continue;
+      }
+      const propertyTypeName = property.valueType.reference.ref?.name;
       const labelDetails: CompletionItemLabelDetails =
-        proptertyTypeName !== undefined
-          ? { detail: ` oftype ${proptertyTypeName}` }
+        propertyTypeName !== undefined
+          ? { detail: ` oftype ${propertyTypeName}` }
           : {};
       acceptor(context, {
         label: property.name,

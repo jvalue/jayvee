@@ -4,6 +4,9 @@
 
 import { assertUnreachable } from 'langium';
 
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import assert from 'assert';
+
 import { type ValidationContext } from '../../validation/validation-context';
 import {
   type CollectionLiteral,
@@ -31,7 +34,7 @@ import {
   isUnaryExpression,
   isValueKeywordLiteral,
   isValueLiteral,
-  isValueTypeAttribute,
+  isValueTypeProperty,
   isValuetypeAssignmentLiteral,
 } from '../generated/ast';
 import { getNextAstNodeContainer } from '../model-util';
@@ -41,10 +44,10 @@ import {
   type WrapperFactoryProvider,
 } from '../wrappers';
 import {
-  getValuetypeHierarchyStack,
   pickCommonAtomicValueType,
   pickCommonPrimitiveValuetype,
 } from '../wrappers/util/value-type-util';
+import { onlyElementOrUndefined } from '../../util';
 
 /**
  * @returns The inferred ValueType. `undefined` means that any type could be
@@ -233,23 +236,17 @@ function inferCollectionType(
     return undefined;
   }
 
-  const stacks = elementValuetypes.map(getValuetypeHierarchyStack);
-
-  if (stacks.length === 0) {
+  if (elementValuetypes.length === 0) {
     return valueTypeProvider.EmptyCollection;
   }
-  if (stacks.length === 1) {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const stack = stacks[0]!;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const resultingInnerType = stack[stack.length - 1]!;
-    return valueTypeProvider.createCollectionValueTypeOf(resultingInnerType);
+  if (elementValuetypes.length === 1) {
+    const elementValueType = onlyElementOrUndefined(elementValuetypes);
+    assert(elementValueType !== undefined);
+    return valueTypeProvider.createCollectionValueTypeOf(elementValueType);
   }
 
-  const primitiveValuetypes = stacks.map((stack) => stack[0]);
-
   const commonPrimitiveValuetype =
-    pickCommonPrimitiveValuetype(primitiveValuetypes);
+    pickCommonPrimitiveValuetype(elementValuetypes);
 
   if (commonPrimitiveValuetype === undefined) {
     validationContext.accept(
@@ -262,7 +259,7 @@ function inferCollectionType(
     return undefined;
   }
 
-  const commonAtomicValueType = pickCommonAtomicValueType(stacks);
+  const commonAtomicValueType = pickCommonAtomicValueType(elementValuetypes);
   if (commonAtomicValueType === undefined) {
     return valueTypeProvider.createCollectionValueTypeOf(
       commonPrimitiveValuetype,
@@ -342,7 +339,7 @@ function inferTypeFromReferenceLiteral(
   if (
     isTransformPortDefinition(referenced) ||
     isBlockTypeProperty(referenced) ||
-    isValueTypeAttribute(referenced)
+    isValueTypeProperty(referenced)
   ) {
     const valueType = referenced.valueType;
 

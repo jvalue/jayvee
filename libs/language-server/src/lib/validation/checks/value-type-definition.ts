@@ -11,7 +11,7 @@ import { strict as assert } from 'assert';
 
 import { type ConstraintDefinition } from '../../ast';
 import {
-  type ValueTypeAttribute,
+  type ValueTypeProperty,
   type ValueTypeConstraintReference,
   type ValuetypeDefinition,
   type ValuetypeGenericDefinition,
@@ -25,33 +25,39 @@ export function validateValueTypeDefinition(
   valueType: ValuetypeDefinition,
   props: JayveeValidationProps,
 ): void {
-  checkSupertypeCycle(valueType, props);
+  checkTypeCycle(valueType, props);
   checkConstraints(valueType, props);
   checkGenericsHaveNoDuplicate(valueType, props);
 }
 
-function checkSupertypeCycle(
+function checkTypeCycle(
   valueTypeDefinition: ValuetypeDefinition,
   props: JayveeValidationProps,
 ): void {
-  const hasCycle =
+  const cycleIdx =
     props.wrapperFactories.ValueType.wrap(
       valueTypeDefinition,
-    )?.hasTypeCycle() ?? false;
-  if (hasCycle) {
+    )?.getIndexOfFirstPropertyInATypeCycle();
+
+  if (cycleIdx !== undefined) {
     assert(
       !valueTypeDefinition.isBuiltin,
       "`builtin` valuetypes don't have cycles",
     );
+    const property = valueTypeDefinition.properties?.[cycleIdx];
     assert(
-      valueTypeDefinition.attribute?.valueType !== undefined,
-      '`hasCycle == true`, so `valueTypeDefinition` MUST have an attribute with a type',
+      property !== undefined,
+      '`cycleIdx !== undefined`, so `valueTypeDefinition` MUST have a property',
+    );
+    assert(
+      property.valueType !== undefined,
+      '`cycleIdx !== undefined`, so `valueTypeDefinition` MUST have a property with a type',
     );
     props.validationContext.accept(
       'error',
       'Could not construct this value type since there is a cycle in the (transitive) "oftype" relation.',
       {
-        node: valueTypeDefinition.attribute,
+        node: property,
         property: 'valueType',
       },
     );
@@ -85,16 +91,16 @@ function checkConstraints(
     if (isValueTypeConstraintInlineDefinition(constraint)) {
       checkConstraintExpression(
         constraint.expression,
-        valueType.attribute?.name,
+        valueType.properties.map((property) => property.name),
         props,
       );
     } else {
       const constraintDef = constraint.definition.ref;
       assert(constraintDef !== undefined);
-      const attribute = constraint.attribute.ref;
-      assert(attribute !== undefined);
-      checkConstraintMatchesAttribute(
-        attribute,
+      const property = constraint.property.ref;
+      assert(property !== undefined);
+      checkConstraintMatchesProperty(
+        property,
         constraintDef,
         constraint,
         props,
@@ -103,14 +109,14 @@ function checkConstraints(
   });
 }
 
-function checkConstraintMatchesAttribute(
-  attribute: ValueTypeAttribute,
+function checkConstraintMatchesProperty(
+  property: ValueTypeProperty,
   constraint: ConstraintDefinition,
   diagnosticNode: ValueTypeConstraintReference,
   props: JayveeValidationProps,
 ): void {
   const actualValuetype = props.wrapperFactories.ValueType.wrap(
-    attribute.valueType,
+    property.valueType,
   );
   const compatibleValuetype = props.wrapperFactories.ValueType.wrap(
     constraint?.valueType,
@@ -124,11 +130,11 @@ function checkConstraintMatchesAttribute(
     props.validationContext.accept(
       'error',
       `'${constraint.name}' cannot constrain '${
-        attribute.name
+        property.name
       }', because '${compatibleValuetype.getName()}' is incompatible with '${actualValuetype.getName()}'`,
       {
         node: diagnosticNode,
-        property: 'attribute',
+        property: 'property',
       },
     );
   }

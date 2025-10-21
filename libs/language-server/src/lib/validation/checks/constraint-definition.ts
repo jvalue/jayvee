@@ -27,12 +27,12 @@ export function validateConstraintDefinition(
   constraint: ConstraintDefinition,
   props: JayveeValidationProps,
 ): void {
-  checkConstraintExpression(constraint.expression, undefined, props);
+  checkConstraintExpression(constraint.expression, [], props);
 }
 
 export function checkConstraintExpression(
   expression: Expression,
-  valueTypePropertyName: string | undefined,
+  valueTypePropertyNames: string[],
   props: JayveeValidationProps,
 ): void {
   const inferredType = inferExpressionType(
@@ -61,14 +61,14 @@ export function checkConstraintExpression(
 
   const foundFittingFreeVariable = findFittingFreeVariable(
     expression,
-    valueTypePropertyName,
+    valueTypePropertyNames,
     props.validationContext,
   );
   if (!foundFittingFreeVariable) {
     const errorMessage =
-      valueTypePropertyName === undefined
+      valueTypePropertyNames.length === 0
         ? 'A constraint expression must contain the `value` keyword'
-        : `An inline constraint expression must contain a reference to the valuetype's property`;
+        : `An inline constraint expression must contain a reference to one of the valuetype's properties`;
     props.validationContext.accept('error', errorMessage, {
       node: expression,
     });
@@ -77,18 +77,15 @@ export function checkConstraintExpression(
 
 function findFittingFreeVariable(
   expression: Expression,
-  valueTypePropertyName: string | undefined,
+  valueTypePropertyNames: string[],
   validationContext: ValidationContext,
 ): boolean {
   return (
     iterateSubExpressionBreadthFirst(
       expression,
-      // INFO: If the anonymous function returns `true` iteration stops early,
-      // if it returns `undefined` the search continues. See
-      // `iterateSubExpressionBreadthFirst`'s documentation for more information
-      (subExpression): true | undefined => {
+      (subExpression): boolean | undefined => {
         if (isValueKeywordLiteral(subExpression)) {
-          if (valueTypePropertyName !== undefined) {
+          if (valueTypePropertyNames.length !== 0) {
             validationContext.accept(
               'error',
               "Inline constraint definitions must not contain the value keyword literal. Use the valuetype's property instead",
@@ -96,16 +93,18 @@ function findFittingFreeVariable(
                 node: subExpression,
               },
             );
-            return undefined;
+            return false;
           }
           return true;
         } else if (isReferenceLiteral(subExpression)) {
-          if (valueTypePropertyName === undefined) {
+          if (valueTypePropertyNames.length === 0) {
             return undefined;
           }
-          return valueTypePropertyName === subExpression.value.ref?.name
-            ? true
-            : undefined;
+          const someNameMatches = valueTypePropertyNames.some(
+            (valueTypePropertyName) =>
+              valueTypePropertyName === subExpression.value.ref?.name,
+          );
+          return someNameMatches ? true : undefined;
         } else if (isFreeVariableLiteral(subExpression)) {
           assertUnreachable(subExpression);
         }

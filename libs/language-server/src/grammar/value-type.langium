@@ -14,15 +14,18 @@ CustomValuetypeDefinition infers ValuetypeDefinition:
   'valuetype' name=ID 
     (genericDefinition=ValuetypeGenericsDefinition)?
   '{'
-    attribute=ValueTypeAttribute
-    (constraints+=ValueTypeConstraintReference | constraints+=ValueTypeConstraintInlineDefinition)*
+    properties+=ValueTypeProperty
+    (properties+=ValueTypeProperty
+    | constraints+=ValueTypeConstraintReference
+    | constraints+=ValueTypeConstraintInlineDefinition)*
   '}';
 
-ValueTypeAttribute:
+ValueTypeProperty:
   'property' name=ID 'oftype' valueType=ValueTypeReference ';';
 
 ValueTypeConstraintReference:
-  'constraint' name=ID ':' definition=[ConstraintDefinition] 'on' attribute=[ValueTypeAttribute] ';';
+  'constraint' name=ID ':' definition=[ConstraintDefinition] 'on'
+  property=[ValueTypeProperty] ';';
 
 ValueTypeConstraintInlineDefinition:
   'constraint' name=ID ':' expression=Expression ';';

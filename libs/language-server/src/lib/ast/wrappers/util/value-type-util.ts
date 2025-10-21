@@ -14,34 +14,44 @@ import {
   isPrimitiveValueType,
 } from '../value-type/primitive';
 import { type ValueType } from '../value-type/value-type';
+import { onlyElementOrUndefined } from '../../../util';
 
-type ValuetypeHierarchyStack = [PrimitiveValueType, ...AtomicValueType[]];
-
-export function getValuetypeHierarchyStack(
+function getBasePrimitiveValueType(
   valueType: ValueType,
-): ValuetypeHierarchyStack {
-  if (isPrimitiveValueType(valueType)) {
-    return [valueType];
-  } else if (isAtomicValueType(valueType)) {
-    const supertype = valueType.getContainedType();
-    assert(supertype !== undefined);
-    return [...getValuetypeHierarchyStack(supertype), valueType];
+): PrimitiveValueType | undefined {
+  while (!isPrimitiveValueType(valueType)) {
+    const containedTypes = valueType.getContainedTypes();
+    assert(
+      containedTypes !== undefined,
+      'non-primitive value types always have at least one contained type',
+    );
+    const containedType = onlyElementOrUndefined(containedTypes);
+    if (containedType === undefined) {
+      return undefined;
+    }
+    valueType = containedType;
   }
-  throw new Error(
-    'Should be unreachable, encountered an unknown kind of value type',
-  );
+  return valueType;
 }
 
 export function pickCommonPrimitiveValuetype(
-  primitiveValuetypes: PrimitiveValueType[],
+  valueTypes: ValueType[],
 ): PrimitiveValueType | undefined {
-  assert(primitiveValuetypes.length > 0);
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  let resultingType: PrimitiveValueType = primitiveValuetypes[0]!;
-  for (let i = 1; i < primitiveValuetypes.length; ++i) {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const currentType = primitiveValuetypes[i]!;
+  const primitiveValueTypes: PrimitiveValueType[] = [];
+  for (const valueType of valueTypes) {
+    const primitiveValueType = getBasePrimitiveValueType(valueType);
+    if (primitiveValueType === undefined) {
+      return undefined;
+    }
+    primitiveValueTypes.push(primitiveValueType);
+  }
 
+  let resultingType = primitiveValueTypes.pop();
+  if (resultingType === undefined) {
+    return undefined;
+  }
+
+  for (const currentType of primitiveValueTypes) {
     if (currentType.isConvertibleTo(resultingType)) {
       continue;
     }
@@ -59,26 +69,46 @@ export function pickCommonPrimitiveValuetype(
 }
 
 export function pickCommonAtomicValueType(
-  stacks: ValuetypeHierarchyStack[],
+  valueTypes: ValueType[],
 ): PrimitiveValueType | AtomicValueType | undefined {
-  const minimumStackLength = Math.min(...stacks.map((stack) => stack.length));
-
+  const expectedLevelLength = valueTypes.length;
+  let currentLevel = valueTypes;
   let resultingType: PrimitiveValueType | AtomicValueType | undefined =
     undefined;
-  for (let stackLevel = 1; stackLevel < minimumStackLength; ++stackLevel) {
-    const typesOfCurrentLevel: (PrimitiveValueType | AtomicValueType)[] =
-      stacks.map(
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        (stack) => stack[stackLevel]!,
-      );
 
-    if (!areAllTypesEqual(typesOfCurrentLevel)) {
+  while (currentLevel.length === expectedLevelLength) {
+    if (!areAllTypesEqual(currentLevel)) {
       // Return the common value type of the previous level
       return resultingType;
     }
 
     // Pick any type of the current level since they are all equal
-    resultingType = typesOfCurrentLevel[0];
+    assert(
+      isPrimitiveValueType(currentLevel[0]) ||
+        isAtomicValueType(currentLevel[0]),
+    );
+    resultingType = currentLevel[0];
+
+    currentLevel = currentLevel.flatMap((valueType) => {
+      if (isPrimitiveValueType(valueType)) {
+        return [];
+      } else if (isAtomicValueType(valueType)) {
+        const containedTypes = valueType.getContainedTypes();
+        assert(containedTypes !== undefined);
+        const containedType = onlyElementOrUndefined(containedTypes);
+        if (containedType === undefined) {
+          return [];
+        }
+        assert(
+          isPrimitiveValueType(containedType) ||
+            isAtomicValueType(containedType),
+        );
+        return [containedType];
+      }
+      throw new Error(
+        'Should be unreachable, encountered an unknown kind of value type',
+      );
+    });
   }
   return resultingType;
 }

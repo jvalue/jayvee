@@ -25,6 +25,16 @@ function checkGenericsMatchDefinition(
     return;
   }
 
+  const numberOfProperties = valueTypeDefinition.properties?.length;
+  if (numberOfProperties > 1) {
+    props.validationContext.accept(
+      'error',
+      'The referenced value type has more than one property. ' +
+        'This is unsupported for now',
+      { node: valueTypeRef },
+    );
+  }
+
   const requiredGenerics =
     valueTypeDefinition.genericDefinition?.generics?.length ?? 0;
 

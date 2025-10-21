@@ -11,7 +11,7 @@ import {
   ERROR_TYPEGUARD,
   type InternalErrorValueRepresentation,
   type InternalValidValueRepresentation,
-  type ValueTypeAttribute,
+  type ValueTypeProperty,
   type ValueTypeConstraintInlineDefinition,
   evaluateExpression,
 } from '@jvalue/jayvee-language-server';
@@ -27,16 +27,19 @@ export class ConstraintExecutor<
   isValid(
     value: InternalValidValueRepresentation | InternalErrorValueRepresentation,
     context: ExecutionContext,
-    attribute: T extends ValueTypeConstraintInlineDefinition
-      ? ValueTypeAttribute
+    properties: T extends ValueTypeConstraintInlineDefinition
+      ? ValueTypeProperty[]
       : void,
   ): boolean {
     const expression = this.astNode.expression;
 
-    if (attribute === undefined) {
+    if (properties === undefined) {
       context.evaluationContext.setValueForValueKeyword(value);
     } else {
-      context.evaluationContext.setValueForReference(attribute.name, value);
+      const assignmentForTypeSystem: ValueTypeProperty[] = properties;
+      for (const property of assignmentForTypeSystem) {
+        context.evaluationContext.setValueForReference(property.name, value);
+      }
     }
 
     const result = evaluateExpression(
@@ -54,10 +57,13 @@ export class ConstraintExecutor<
       ),
     );
 
-    if (attribute === undefined) {
+    if (properties === undefined) {
       context.evaluationContext.deleteValueForValueKeyword();
     } else {
-      context.evaluationContext.deleteValueForReference(attribute.name);
+      const assignment_for_type_system: ValueTypeProperty[] = properties;
+      for (const property of assignment_for_type_system) {
+        context.evaluationContext.deleteValueForReference(property.name);
+      }
     }
 
     return result;

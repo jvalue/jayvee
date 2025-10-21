@@ -18,7 +18,7 @@ import {
   isTransformDefinition,
   isTransformPortDefinition,
   isValueKeywordLiteral,
-  isValueTypeAttribute,
+  isValueTypeProperty,
 } from '../generated/ast';
 import { type ValueTypeProvider } from '../wrappers';
 import { type ValueType } from '../wrappers/value-type/value-type';
@@ -103,11 +103,11 @@ export class EvaluationContext {
         )
       );
     }
-    if (isValueTypeAttribute(dereferenced)) {
+    if (isValueTypeProperty(dereferenced)) {
       return (
         this.variableValues.get(dereferenced.name) ??
         new MissingValue(
-          `Could not find value for value type attribute ${dereferenced.name}`,
+          `Could not find value for value type property ${dereferenced.name}`,
         )
       );
     }

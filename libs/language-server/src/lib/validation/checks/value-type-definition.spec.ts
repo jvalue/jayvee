@@ -148,7 +148,7 @@ describe('Validation of ValuetypeDefinition', () => {
     expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
     expect(validationAcceptorMock).toHaveBeenLastCalledWith(
       'error',
-      `An inline constraint expression must contain a reference to the valuetype's property`,
+      `An inline constraint expression must contain a reference to one of the valuetype's properties`,
       expect.any(Object),
     );
   });
