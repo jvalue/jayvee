@@ -21,6 +21,8 @@ import { AbstractValueType } from './abstract-value-type';
 import { type ValueTypeProvider } from './primitive';
 import { type ValueType, type ValueTypeVisitor } from './value-type';
 import { onlyElementOrUndefined } from '../../../util';
+import { type AstNode, type DiagnosticInfo, type Reference } from 'langium';
+import { type ValidationContext } from '../../../validation';
 
 export class AtomicValueType
   extends AbstractValueType<InternalValidValueRepresentation>
@@ -40,6 +42,40 @@ export class AtomicValueType
 
   getProperties(): ValueTypeProperty[] {
     return this.astNode?.properties;
+  }
+
+  getProperty(name: string): ValueTypeProperty | undefined;
+  getProperty(
+    reference: Reference<ValueTypeProperty>,
+    validationContext?: ValidationContext,
+  ): ValueTypeProperty | undefined;
+  getProperty(
+    reference: string | Reference<ValueTypeProperty>,
+    validationContext?: ValidationContext,
+  ): ValueTypeProperty | undefined {
+    let propertyName: string | undefined = undefined;
+
+    if (typeof reference === 'string') {
+      propertyName = reference;
+    } else if (reference.ref !== undefined) {
+      propertyName = reference.ref.name;
+    } else if (
+      reference.error !== undefined &&
+      validationContext !== undefined
+    ) {
+      const info: DiagnosticInfo<AstNode> = {
+        node: reference.error.info.container,
+        property: reference.error.info.property,
+      };
+      if (reference.error.info.index !== undefined) {
+        info.index = reference.error.info.index;
+      }
+      validationContext.accept('error', reference.error.message, info);
+    }
+
+    return this.astNode?.properties.find(
+      (property) => property.name == propertyName,
+    );
   }
 
   getConstraints(): (

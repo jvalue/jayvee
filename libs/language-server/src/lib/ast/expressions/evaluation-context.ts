@@ -11,9 +11,11 @@ import { type RuntimeParameterProvider } from '../../services';
 import {} from '../../validation/validation-context';
 import {
   type FreeVariableLiteral,
+  type NestedPropertyAccess,
   type ReferenceLiteral,
   isBlockTypeProperty,
   isConstraintDefinition,
+  isNestedPropertyAccess,
   isReferenceLiteral,
   isTransformDefinition,
   isTransformPortDefinition,
@@ -56,6 +58,8 @@ export class EvaluationContext {
       return this.getValueForReference(literal);
     } else if (isValueKeywordLiteral(literal)) {
       return this.getValueForValueKeyword();
+    } else if (isNestedPropertyAccess(literal)) {
+      return this.getValueForNestedAccess(literal);
     }
     assertUnreachable(literal);
   }
@@ -71,6 +75,25 @@ export class EvaluationContext {
     this.variableValues.delete(refText);
   }
 
+  getValueForNestedAccess(
+    nestedAccess: NestedPropertyAccess,
+  ): InternalValidValueRepresentation | InternalErrorValueRepresentation {
+    const dereferenced = nestedAccess.value.ref;
+    if (dereferenced === undefined) {
+      const error = nestedAccess.value.error;
+      assert(error !== undefined);
+      return new MissingValue(`Could not resolve reference: ${error.message}`);
+    }
+    assert(isValueTypeProperty(dereferenced));
+
+    const value = this.variableValues.get(dereferenced.name);
+    if (value === undefined) {
+      return new MissingValue(
+        `Could not find value for value type property ${dereferenced.name}`,
+      );
+    }
+    return value;
+  }
   getValueForReference(
     referenceLiteral: ReferenceLiteral,
   ): InternalValidValueRepresentation | InternalErrorValueRepresentation {
