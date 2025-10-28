@@ -144,7 +144,14 @@ export class ExecutionContext {
     input: IOTypeImplementation | null,
     output?: Result<IOTypeImplementation | null>,
   ) {
-    const node = this.getCurrentNode();
+    let node: StackNode | PipelineDefinition = this.pipeline;
+    for (let i = this.stack.length - 1; i >= 0; i -= 1) {
+      const n = this.stack[i];
+      if (isBlockDefinition(n)) {
+        node = n;
+        break;
+      }
+    }
     assert(
       isBlockDefinition(node),
       `Expected node to be \`BlockDefinition\`: ${inspect(node)}`,
