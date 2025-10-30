@@ -95,6 +95,7 @@ export class EvaluationContext {
         `Could not find value for value type property ${dereferenced.name}`,
       );
     }
+    // TODO: #683
     return value;
   }
   getValueForReference(
