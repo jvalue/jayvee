@@ -81,7 +81,10 @@ export class EvaluationContext {
     const dereferenced = nestedAccess.value.ref;
     if (dereferenced === undefined) {
       const error = nestedAccess.value.error;
-      assert(error !== undefined);
+      assert(
+        error !== undefined,
+        'undefined references always set an error. See https://eclipse-langium.github.io/langium/interfaces/langium.Reference.html#error',
+      );
       return new MissingValue(`Could not resolve reference: ${error.message}`);
     }
     assert(isValueTypeProperty(dereferenced));
