@@ -13,6 +13,8 @@ import {
   type ValueTypeConstraintInlineDefinition,
   type ValuetypeDefinition,
   isValueTypeConstraintInlineDefinition,
+  type NestedPropertyAccess,
+  isNestedPropertyAccess,
 } from '../../generated/ast';
 import { type AstNodeWrapper } from '../ast-node-wrapper';
 import { type WrapperFactoryProvider } from '../wrapper-factory-provider';
@@ -44,21 +46,32 @@ export class AtomicValueType
     return this.astNode?.properties;
   }
 
-  getProperty(name: string): ValueTypeProperty | undefined;
-  getProperty(
-    reference: Reference<ValueTypeProperty>,
-    validationContext?: ValidationContext,
-  ): ValueTypeProperty | undefined;
-  getProperty(
+  private getNestedProperty(
+    nestedPropertyAccess: NestedPropertyAccess,
+  ): ValueTypeProperty | undefined {
+    const property = this.getProperty(nestedPropertyAccess.value);
+
+    return nestedPropertyAccess.nestedAccesses.reduce(
+      (property, propertyName) => {
+        const valueType = this.wrapperFactories.ValueType.wrap(
+          property?.valueType,
+        );
+        return isAtomicValueType(valueType)
+          ? valueType.getProperty(propertyName)
+          : undefined;
+      },
+      property,
+    );
+  }
+
+  private resolvePropertyReference(
     reference: string | Reference<ValueTypeProperty>,
     validationContext?: ValidationContext,
-  ): ValueTypeProperty | undefined {
-    let propertyName: string | undefined = undefined;
-
+  ): string | undefined {
     if (typeof reference === 'string') {
-      propertyName = reference;
+      return reference;
     } else if (reference.ref !== undefined) {
-      propertyName = reference.ref.name;
+      return reference.ref.name;
     } else if (
       reference.error !== undefined &&
       validationContext !== undefined
@@ -72,7 +85,29 @@ export class AtomicValueType
       }
       validationContext.accept('error', reference.error.message, info);
     }
+    return undefined;
+  }
 
+  getProperty(name: string): ValueTypeProperty | undefined;
+  getProperty(
+    reference: Reference<ValueTypeProperty>,
+    validationContext?: ValidationContext,
+  ): ValueTypeProperty | undefined;
+  getProperty(
+    nestedPropertyAccess: NestedPropertyAccess,
+  ): ValueTypeProperty | undefined;
+  getProperty(
+    reference: string | Reference<ValueTypeProperty> | NestedPropertyAccess,
+    validationContext?: ValidationContext,
+  ): ValueTypeProperty | undefined {
+    if (isNestedPropertyAccess(reference)) {
+      return this.getNestedProperty(reference);
+    }
+
+    const propertyName = this.resolvePropertyReference(
+      reference,
+      validationContext,
+    );
     return this.astNode?.properties.find(
       (property) => property.name == propertyName,
     );

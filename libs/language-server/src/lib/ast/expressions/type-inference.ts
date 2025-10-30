@@ -347,26 +347,14 @@ function inferTypeFromReferenceLiteral(
     isBlockTypeProperty(referenced) ||
     isValueTypeProperty(referenced)
   ) {
-    const valueType = referenced.valueType;
-
-    if (valueType === undefined) {
-      return undefined;
-    }
-    let wrappedValueType = wrapperFactories.ValueType.wrap(valueType);
-
-    if (isNestedPropertyAccess(expression)) {
-      wrappedValueType = expression.nestedAccesses.reduce(
-        (valueType, access) => {
-          const accessedProperty = isAtomicValueType(valueType)
-            ? valueType.getProperty(access)?.valueType
-            : undefined;
-          return wrapperFactories.ValueType.wrap(accessedProperty);
-        },
-        wrappedValueType,
-      );
+    const valueType = wrapperFactories.ValueType.wrap(referenced.valueType);
+    if (!isNestedPropertyAccess(expression)) {
+      return valueType;
     }
 
-    return wrappedValueType;
+    assert(isAtomicValueType(valueType));
+    const accessedProperty = valueType.getProperty(expression);
+    return wrapperFactories.ValueType.wrap(accessedProperty?.valueType);
   }
   assertUnreachable(referenced);
 }
