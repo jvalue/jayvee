@@ -152,4 +152,29 @@ describe('Validation of ValuetypeDefinition', () => {
       expect.any(Object),
     );
   });
+
+  it('should have no error on accessing nested properties in inline constraint', async () => {
+    const text = readJvTestAsset(
+      'value-type-definition/valid-constraint-access-nested-property.jv',
+    );
+
+    await parseAndValidateValuetypeDefinition(text);
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(0);
+  });
+
+  it('should diagnose error on accessing non-existing nested property in inline constraint', async () => {
+    const text = readJvTestAsset(
+      'value-type-definition/invalid-constraint-access-nested-property.jv',
+    );
+
+    await parseAndValidateValuetypeDefinition(text);
+
+    expect(validationAcceptorMock).toHaveBeenCalledTimes(1);
+    expect(validationAcceptorMock).toHaveBeenLastCalledWith(
+      'error',
+      'Could not access nested property `nonExistent`',
+      expect.any(Object),
+    );
+  });
 });

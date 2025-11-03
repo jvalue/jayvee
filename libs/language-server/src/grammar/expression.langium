@@ -75,7 +75,7 @@ ErrorLiteral:
   error= "invalid" | "missing";
 
 FreeVariableLiteral:
-  ValueKeywordLiteral | ReferenceLiteral;
+  ValueKeywordLiteral | ReferenceLiteral | NestedPropertyAccess ;
 
 ValueKeywordLiteral:
   value='value';
@@ -89,3 +89,6 @@ Referencable:
   | TransformDefinition
   | TransformPortDefinition
   | ValueTypeProperty;
+
+NestedPropertyAccess:
+  value=[ValueTypeProperty] ('.' nestedAccesses+=ID)+;

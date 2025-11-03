@@ -9,17 +9,25 @@
 // eslint-disable-next-line unicorn/prefer-node-protocol
 import { strict as assert } from 'assert';
 
-import { type ConstraintDefinition } from '../../ast';
+import {
+  isAtomicValueType,
+  type AtomicValueType,
+  type ConstraintDefinition,
+} from '../../ast';
 import {
   type ValueTypeProperty,
   type ValueTypeConstraintReference,
   type ValuetypeDefinition,
   type ValuetypeGenericDefinition,
   isValueTypeConstraintInlineDefinition,
+  type Expression,
+  isNestedPropertyAccess,
+  type NestedPropertyAccess,
 } from '../../ast/generated/ast';
 import { type JayveeValidationProps } from '../validation-registry';
 
 import { checkConstraintExpression } from './constraint-definition';
+import { iterateSubExpressionBreadthFirst } from '../validation-util';
 
 export function validateValueTypeDefinition(
   valueType: ValuetypeDefinition,
@@ -94,6 +102,14 @@ function checkConstraints(
         valueType.properties.map((property) => property.name),
         props,
       );
+      const wrappedValueType = props.wrapperFactories.ValueType.wrap(valueType);
+      if (isAtomicValueType(wrappedValueType)) {
+        onlyValidNestedPropertyAccesses(
+          constraint.expression,
+          wrappedValueType,
+          props,
+        );
+      }
     } else {
       const constraintDef = constraint.definition.ref;
       assert(constraintDef !== undefined);
@@ -184,4 +200,52 @@ function getDuplicateGenerics(
     duplicates.push(...generics.filter((x) => x.name === genericName));
   });
   return duplicates;
+}
+
+function valueTypeCanBeAccessedWith(
+  valueType: AtomicValueType,
+  access: NestedPropertyAccess,
+  props: JayveeValidationProps,
+) {
+  const property = valueType.getProperty(access.value, props.validationContext);
+  if (property === undefined) {
+    const resolved = access.value.ref;
+    if (resolved !== undefined) {
+      props.validationContext.accept(
+        'error',
+        `Could not get property ${resolved.name}`,
+        { node: access },
+      );
+    }
+    return;
+  }
+
+  const wrappedValueType = props.wrapperFactories.ValueType.wrap(
+    property.valueType,
+  );
+  assert(wrappedValueType !== undefined);
+  access.nestedAccesses.forEach((propertyName, idx) => {
+    if (isAtomicValueType(wrappedValueType)) {
+      const property = wrappedValueType.getProperty(propertyName);
+      if (property === undefined) {
+        props.validationContext.accept(
+          'error',
+          `Could not access nested property \`${propertyName}\``,
+          { node: access, property: 'nestedAccesses', index: idx },
+        );
+      }
+    }
+  });
+}
+
+function onlyValidNestedPropertyAccesses(
+  expression: Expression,
+  valueType: AtomicValueType,
+  props: JayveeValidationProps,
+): void {
+  iterateSubExpressionBreadthFirst(expression, (subExpression): undefined => {
+    if (isNestedPropertyAccess(subExpression)) {
+      valueTypeCanBeAccessedWith(valueType, subExpression, props);
+    }
+  });
 }

@@ -12,6 +12,7 @@ import {
   type CollectionLiteral,
   type Expression,
   type ExpressionLiteral,
+  type NestedPropertyAccess,
   type NumericLiteral,
   type ReferenceLiteral,
   type ValueKeywordLiteral,
@@ -24,6 +25,7 @@ import {
   isErrorLiteral,
   isExpressionLiteral,
   isFreeVariableLiteral,
+  isNestedPropertyAccess,
   isNumericLiteral,
   isReferenceLiteral,
   isRegexLiteral,
@@ -39,6 +41,7 @@ import {
 } from '../generated/ast';
 import { getNextAstNodeContainer } from '../model-util';
 import {
+  isAtomicValueType,
   type ValueType,
   type ValueTypeProvider,
   type WrapperFactoryProvider,
@@ -193,7 +196,10 @@ function inferTypeFromExpressionLiteral(
         validationContext,
         wrapperFactories,
       );
-    } else if (isReferenceLiteral(expression)) {
+    } else if (
+      isReferenceLiteral(expression) ||
+      isNestedPropertyAccess(expression)
+    ) {
       return inferTypeFromReferenceLiteral(
         expression,
         valueTypeProvider,
@@ -321,7 +327,7 @@ function inferTypeFromValueKeyword(
 }
 
 function inferTypeFromReferenceLiteral(
-  expression: ReferenceLiteral,
+  expression: ReferenceLiteral | NestedPropertyAccess,
   valueTypeProvider: ValueTypeProvider,
   wrapperFactories: WrapperFactoryProvider,
 ): ValueType | undefined {
@@ -341,12 +347,14 @@ function inferTypeFromReferenceLiteral(
     isBlockTypeProperty(referenced) ||
     isValueTypeProperty(referenced)
   ) {
-    const valueType = referenced.valueType;
-
-    if (valueType === undefined) {
-      return undefined;
+    const valueType = wrapperFactories.ValueType.wrap(referenced.valueType);
+    if (!isNestedPropertyAccess(expression)) {
+      return valueType;
     }
-    return wrapperFactories.ValueType.wrap(valueType);
+
+    assert(isAtomicValueType(valueType));
+    const accessedProperty = valueType.getProperty(expression);
+    return wrapperFactories.ValueType.wrap(accessedProperty?.valueType);
   }
   assertUnreachable(referenced);
 }

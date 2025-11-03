@@ -1,0 +1,15 @@
+// SPDX-FileCopyrightText: 2025 Friedrich-Alexander-Universitat Erlangen-Nurnberg
+//
+// SPDX-License-Identifier: AGPL-3.0-only
+
+valuetype NaturalNumbersWithZero {
+  property number oftype integer;
+
+  constraint IsPositive: number >= 0;
+}
+
+valuetype NaturalNumbersWithoutZero {
+  property naturalNumber oftype NaturalNumbersWithZero ;
+
+  constraint NotZero: naturalNumber.number != 0;
+}

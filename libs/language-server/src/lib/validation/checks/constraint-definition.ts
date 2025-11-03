@@ -13,6 +13,7 @@ import {
   type ConstraintDefinition,
   type Expression,
   isFreeVariableLiteral,
+  isNestedPropertyAccess,
   isReferenceLiteral,
   isValueKeywordLiteral,
 } from '../../ast';
@@ -96,7 +97,10 @@ function findFittingFreeVariable(
             return false;
           }
           return true;
-        } else if (isReferenceLiteral(subExpression)) {
+        } else if (
+          isReferenceLiteral(subExpression) ||
+          isNestedPropertyAccess(subExpression)
+        ) {
           if (valueTypePropertyNames.length === 0) {
             return undefined;
           }
