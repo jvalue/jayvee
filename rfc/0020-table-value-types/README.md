@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Friedrich-Alexander-Universitat Erlangen-Nurnberg
 SPDX-License-Identifier: AGPL-3.0-only
 -->
 
-# RFC 0020: Value types as table schema <!-- TODO: adapt title -->
+# RFC 0020: Value types as table schema
 
 | | |
 |---|---|
@@ -21,77 +21,21 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 ## Summary
 
-This RFC changes the way sheets are parsed into tables, using a multi property
-value type as the table schema definition.
+Table schemata are now defined by value types. Sheet rows are parsed into table
+rows, using transforms and the following new concepts:
+  - New `SheetRow` value type with a new cell access syntax
+  - New syntax to create a table row with an expression
 
 ## Motivation
 
-- Allows users to define how a sheet is parsed into a table.
-- Allows users to reuse table schema definitions.
-- Remove special syntax regarding table definitions.
+- Currently, table schemata cannot be reused.
+- The parsing of table rows is hard-coded.
+- A specific table schema is always parsed the same.
 
 ## Explanation
 
-From now on, value types are used to define a table schema, each property
-defining a column.
-```jayvee
-valuetype Coordinate {
-  x oftype integer;
-  y oftype integer;
-}
-
-block CoordinateTable oftype TableInterpreter {
-  columns: Coordinate;
-}
-```
-The table output by `CoordinateTable` has two columns `x` and `y`, both
-containing integer values.
-
-However, this creates problems if the sheet contains column names with spaces,
-because such a column could not be represented as a value type property.
-Thus, parsing the individual rows must be done explicitly by the user, inside a
-transform (`<>` denotes a placeholder):
-
-```jayvee
-transform <transform> {
-  from <row> oftype SheetRow;
-  to <output> oftype <value type>;
-
-  <output>: <row-creation expression>
-}
-
-block <block> oftype TableInterpreter {
-  columns: <value type>;
-  rowParsedWith: <transform>;
-}
-```
-
-Because `<transform>` parses rows, it needs to conform to:
-- only one input of type `SheetRow`.
-- only one output with the same value type as in `<block>`'s `columns` property.
-- must use a row-creation expression (see below)
-
-### `SheetRow`
-
-`SheetRow` is a new builtin value type only available in transforms that are
-used to parse rows.
-Values of type `SheetRow` can be indexed using brackets:
-- `row[<integer>]`: evaluates to the cell with index `<integer>`
-- `row[<string>]`: evaluates to the cell in column `<string>`
-
-### Row-creation expression
-
-A row-creation expression is similar to creating a JavaScript object:
-```jayvee
-{
-  <value type property>: <expression>,
-  // ...
-}
-```
-
 ### Example
 
-Filling in the placeholders, we arrive at this concrete example:
 ```jayvee
 valuetype Coordinate {
   x oftype integer;
@@ -113,8 +57,42 @@ block CoordinateTable oftype TableInterpreter {
   rowParsedWith: ParseCoordinate;
 }
 ```
+The table output by `CoordinateTable` has two columns `x` and `y`, both
+containing integer values.
 
-### Constraints
+### Table schemata defined by value types
+
+From now on, value types are used to define a table schema, each property
+defining a column.
+
+### Parsing sheet rows into table rows
+
+Parsing sheet rows is done explicitly by the user, inside a transform, with some
+additional restrictions:
+- only one input of type `SheetRow`.
+- only one output with the same value type as in `<block>`'s `columns` property.
+- must create a row with the row-creation syntax
+
+#### New value type `SheetRow`
+
+`SheetRow` is a new builtin value type only available in transforms that are
+used to parse rows.
+Values of type `SheetRow` can be indexed using brackets:
+- `row[<integer>]`: evaluates to the cell with index `<integer>`
+- `row[<string>]`: evaluates to the cell in column `<string>`
+
+#### New row-creation syntax
+
+The row-creation syntax follows this pattern (inspired by the JavaScript object
+syntax):
+```jayvee
+{
+  <value type property>: <expression>,
+  // ...
+}
+```
+
+### Constraint handling
 
 Constraints are validated after every change to a value within the table. For
 example:
@@ -190,8 +168,13 @@ integer.
 
 ## Alternatives
 
+- There are different approaches to handling the nested value types:
+  - Forbid using nested value types as table schema definitions
+  - Save nested value types as dictionaries and serialize to JSON when writing
+    to a database
+
 ## Possible Future Changes/Enhancements
 
-- Use foreign keys to represent nested value types.
+- Use foreign keys to represent nested value types when writing to a database.
 - Allow inlining the transform and value type definitions into the
 TableInterpreter definition
