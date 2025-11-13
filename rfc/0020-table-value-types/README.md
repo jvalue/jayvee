@@ -9,7 +9,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 | | |
 |---|---|
 | Feature Tag | `table-schema-value-types` |
-| Status | `DRAFT` |
+| Status | `ACCEPTED` |
 | Responsible | `jrentlez` |
 <!-- 
   Status Overview:
