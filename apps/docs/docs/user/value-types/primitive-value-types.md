@@ -12,7 +12,7 @@ valuetype GasFillLevel {
 }
 ```
 
-A _Property_ is a named "part" with its own _value type_ (type cycles are
+A _property_ is a named "part" with its own _value type_ (type cycles are
 forbidden). _Value types_ with multiple _properties_ are allowed in the
 language, but not yet supported by the interpreter.
 
@@ -33,8 +33,11 @@ connected via a logical `AND` operation.
 
 _Constraints_ use an _expression_ that evaluates to `true` or `false` and can
 reference every _property_ of the _value type_.
+
 In the above example, `level >= 0 and level <= 100` is evaluated for each value
-of type `GasFillLevel`, `level` being replaced by that properties actual value.
+of type `GasFillLevel`. `level` serves as a variable here for the concrete
+value. For example, for the value `10`, the expression would evaluate to `true`,
+while it would evaluate to `false` for value `-1`.
 
 Refer to the [expression documentation](../expressions.md) for further reading
 on _expressions_.
