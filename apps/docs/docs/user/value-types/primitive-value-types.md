@@ -4,45 +4,58 @@ sidebar_position: 2
 
 # Primitive Value Types
 
-_Primitive value types_ are based on _built-in value types_ and use a collection of _constraints_ to restrict the range of valid values.
-Such _constraints_ are implicitly connected via a logical `AND` relation.
-Note that the _constraints_ need to be applicable to the base-type of the _value type_ - indicated by the identifier after the keyword `oftype`:
+_Primitive value types_ are comprised of _properties_.
+
+```jayvee
+valuetype GasFillLevel {
+    property level oftype integer;
+}
+```
+
+A _Property_ is a named "part" with its own _value type_ (type cycles are
+forbidden). _Value types_ with multiple _properties_ are allowed in the
+language, but not yet supported by the interpreter.
+
+
+## Constraints
+
+_Constraints_ restrict the range of valid values.
+
+```jayvee
+valuetype GasFillLevel {
+    property level oftype integer;
+    constraint levelRange: level >= 0 and level <= 100;
+}
+```
+
+A _value type_ can have zero or more _constraints_, which are implicitly
+connected via a logical `AND` operation.
+
+_Constraints_ use an _expression_ that evaluates to `true` or `false` and can
+reference every _property_ of the _value type_.
+In the above example, `level >= 0 and level <= 100` is evaluated for each value
+of type `GasFillLevel`, `level` being replaced by that properties actual value.
+
+Refer to the [expression documentation](../expressions.md) for further reading
+on _expressions_.
+
+### Outline definition.
+
+_Constraints_ can also be defined outside of value types, allowing them to be
+reused.
 
 ```jayvee
 valuetype GasFillLevel {
     property level oftype integer;
     constraint levelRange: GasFillLevelRange on level;
 }
-```
 
-## Constraints
-
-_Constraints_ for _value types_ declare the validity criteria that each concrete value is checked against.
-
-### Syntax 1: Expression syntax
-
-The syntax of expression-based _constraints_ uses an expression that evaluates to `true` or `false` for the given `value`. The type of the values the expression is working in is indicated ofter the keyword `on`:
-
-```jayvee
 constraint GasFillLevelRange on decimal:
     value >= 0 and value <= 100;
 ```
 
-Refer to the [expression documentation](../expressions.md) for further reading on expressions.
+Since there are no _properties_ to reference from the _constraint_ definition,
+the special `value` keyword represents the tested value.
+Note that reusable _constraints_ need to be applied to exactly one _property_ of
+the _value type_ - indicated by the identifier after the keyword `on`.
 
-### Syntax 2: Block-like syntax
-
-The syntax of _constraints_ is similar to the syntax of _blocks_.
-The availability of property keys and their respective _value types_ is determined by the type of the _constraint_ - indicated by the identifier after the keyword `oftype`:
-
-```jayvee
-constraint GasFillLevelRange oftype RangeConstraint {
-    lowerBound: 0;
-    lowerBoundInclusive: true;
-    upperBound: 100;
-    upperBoundInclusive: true;
-}
-```
-
-Note that the type of _constraint_ also determines its applicability to _value types_.
-For instance, a `RangeConstraint` can only be applied to the numerical types `integer` and `decimal`.

@@ -67,7 +67,7 @@ We differentiate the following kinds of _value types_:
 - _Primitive value types_ can be defined by the user to model domain-specific data types and represent a single value.
   _Constraints_ can be added to a _primitive value types_.
   See [primitive value types](./value-types/primitive-value-types).
-- _Compound value types_: UPCOMING.
+- _Compound value types_: IN DEVELOPMENT.
 
 ```jayvee
 valuetype GasFillLevel {
