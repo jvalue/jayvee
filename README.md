@@ -18,7 +18,7 @@ Data engineers can use Jayvee and its interpreter to clean and preprocess data f
 
 Explore a glimpse of our upcoming features in the following list. This overview is broad and subject to evolution. We're excited to share our vision of the exciting journey ahead, and we invite you to accompany us on this adventure!
 
-- &#9989; Blocks and pipes 
+- &#9989; Blocks and pipes
 - &#9989; Simple value types and constraints
 - &#9989; Natively support table-based data
 - &#9989; Column-based transformations
@@ -26,12 +26,12 @@ Explore a glimpse of our upcoming features in the following list. This overview 
 - &#9989; Compose logic of multiple blocks via composite block types
 - &#9989; Multi-file Jayvee to distribute programs over multiple files
 - &#9989; Jayvee formatter
-- &#8987; Improve the syntax of value types (see [RFC 0014](https://github.com/jvalue/jayvee/pull/409))
+- &#9989; Improve the syntax of value types (see [RFC 0014](https://github.com/jvalue/jayvee/pull/409))
+- &#9989; Composite value types (with multiple fields)
 - &#8987; Reusable libraries (with a package manager)
 - &#8987; Further extractors and sinks
-- &#129300; Composite value types (with multiple fields)
+- &#8987; Valuetypes parsers (to read and write different formats)
 - &#129300; Natively support tree data (XML, JSON)
-- &#129300; Valuetypes parsers (to read and write different formats)
 - &#129300; Customizable invalid value handling (default value, average, median, interpolation, ...)
 - &#129300; VSCode Debugger
 - &#129300; Block types with multiple ports (e.g., for merging different data)
