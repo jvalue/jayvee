@@ -7,9 +7,12 @@ pipeline TestPipeline {
   block TestExtractor oftype TestSheetExtractor {
   }
 
+  valuetype TestValueType {
+  }
+
   block TestBlock oftype TableInterpreter {
-    header: false;
-    columns: [];
+    header: true;
+    columns: TestValueType;
   }
 
   block TestLoader oftype TestTableLoader {

@@ -116,21 +116,13 @@ describe('Validation of TableInterpreterExecutor', () => {
       }
     });
 
-    it('should diagnose empty table on empty column parameter', async () => {
-      const text = readJvTestAsset('valid-empty-columns-with-header.jv');
+    it('should diagnose error on empty column value type', async () => {
+      const text = readJvTestAsset('invalid-empty-columns-with-header.jv');
 
-      const testWorkbook = await readTestWorkbook('test-with-header.xlsx');
-      const result = await parseAndExecuteExecutor(
-        text,
-        testWorkbook.getSheetByName('Sheet1') as R.Sheet,
-      );
-
-      expect(R.isErr(result)).toEqual(false);
-      if (R.isOk(result)) {
-        expect(result.right.ioType).toEqual(IOType.TABLE);
-        expect(result.right.getNumberOfColumns()).toEqual(0);
-        expect(result.right.getNumberOfRows()).toEqual(0);
-      }
+      const document = await parse(text, { validation: true });
+      expect(
+        document.parseResult.parserErrors.map((error) => error.message),
+      ).toContainEqual("Expecting token of type 'property' but found `}`.");
     });
 
     it('should diagnose empty table on wrong header case', async () => {
@@ -262,21 +254,13 @@ describe('Validation of TableInterpreterExecutor', () => {
       }
     });
 
-    it('should diagnose empty table on empty column parameter', async () => {
-      const text = readJvTestAsset('valid-empty-columns-without-header.jv');
+    it('should diagnose error on empty column parameter', async () => {
+      const text = readJvTestAsset('invalid-empty-columns-without-header.jv');
 
-      const testWorkbook = await readTestWorkbook('test-without-header.xlsx');
-      const result = await parseAndExecuteExecutor(
-        text,
-        testWorkbook.getSheetByName('Sheet1') as R.Sheet,
-      );
-
-      expect(R.isErr(result)).toEqual(false);
-      if (R.isOk(result)) {
-        expect(result.right.ioType).toEqual(IOType.TABLE);
-        expect(result.right.getNumberOfColumns()).toEqual(0);
-        expect(result.right.getNumberOfRows()).toEqual(0);
-      }
+      const document = await parse(text, { validation: true });
+      expect(
+        document.parseResult.parserErrors.map((error) => error.message),
+      ).toContainEqual("Expecting token of type 'property' but found `}`.");
     });
 
     it('should diagnose error on empty sheet', async () => {
@@ -291,7 +275,7 @@ describe('Validation of TableInterpreterExecutor', () => {
       expect(R.isOk(result)).toEqual(false);
       if (R.isErr(result)) {
         expect(result.left.message).toEqual(
-          'There are 3 column definitions but the input sheet only has 0 columns',
+          'The value type TestValueType has 3 properties, but the input sheet only has 0 columns',
         );
       }
     });

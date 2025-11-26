@@ -7,13 +7,15 @@ pipeline TestPipeline {
   block TestExtractor oftype TestSheetExtractor {
   }
 
+  valuetype TestValueType {
+    property index oftype integer;
+    property name oftype text;
+    property flag oftype integer;
+  }
+
   block TestBlock oftype TableInterpreter {
     header: false;
-    columns: [
-      "index" oftype integer,
-      "name" oftype text,
-      "flag" oftype integer
-    ];
+    columns: TestValueType;
   }
 
   block TestLoader oftype TestTableLoader {
