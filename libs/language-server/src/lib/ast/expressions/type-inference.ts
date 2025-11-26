@@ -38,6 +38,7 @@ import {
   isValueLiteral,
   isValueTypeProperty,
   isValuetypeAssignmentLiteral,
+  isValuetypeDefinition,
 } from '../generated/ast';
 import { getNextAstNodeContainer } from '../model-util';
 import {
@@ -341,6 +342,9 @@ function inferTypeFromReferenceLiteral(
   }
   if (isTransformDefinition(referenced)) {
     return valueTypeProvider.Primitives.Transform;
+  }
+  if (isValuetypeDefinition(referenced)) {
+    return valueTypeProvider.Primitives.ValuetypeDefinition;
   }
   if (
     isTransformPortDefinition(referenced) ||

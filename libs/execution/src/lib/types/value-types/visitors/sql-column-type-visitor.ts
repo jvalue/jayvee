@@ -64,6 +64,12 @@ export class SQLColumnTypeVisitor extends ValueTypeVisitor<string> {
     );
   }
 
+  override visitValuetypeDefinition(): string {
+    throw new Error(
+      'No visit implementation given for valueType definitions. Cannot be the type of a column.',
+    );
+  }
+
   override visitCollection(): string {
     throw new Error(
       'No visit implementation given for collections. Cannot be the type of a column.',

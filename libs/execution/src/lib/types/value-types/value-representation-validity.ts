@@ -21,6 +21,7 @@ import {
   type ValueType,
   ValueTypeVisitor,
   type ValuetypeAssignmentValuetype,
+  type ValuetypeDefinitionValuetype,
   isConstraintDefinition,
 } from '@jvalue/jayvee-language-server';
 
@@ -105,6 +106,12 @@ class ValueRepresentationValidityVisitor extends ValueTypeVisitor<boolean> {
 
   override visitValuetypeAssignment(
     valueType: ValuetypeAssignmentValuetype,
+  ): boolean {
+    return this.isValidForPrimitiveValuetype(valueType);
+  }
+
+  override visitValuetypeDefinition(
+    valueType: ValuetypeDefinitionValuetype,
   ): boolean {
     return this.isValidForPrimitiveValuetype(valueType);
   }

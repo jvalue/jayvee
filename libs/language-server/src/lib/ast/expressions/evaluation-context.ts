@@ -21,6 +21,7 @@ import {
   isTransformPortDefinition,
   isValueKeywordLiteral,
   isValueTypeProperty,
+  isValuetypeDefinition,
 } from '../generated/ast';
 import { type ValueTypeProvider } from '../wrappers';
 import { type ValueType } from '../wrappers/value-type/value-type';
@@ -137,6 +138,9 @@ export class EvaluationContext {
           `Could not find value for value type property ${dereferenced.name}`,
         )
       );
+    }
+    if (isValuetypeDefinition(dereferenced)) {
+      return dereferenced;
     }
     assertUnreachable(dereferenced);
   }

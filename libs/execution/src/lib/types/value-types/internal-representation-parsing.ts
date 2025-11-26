@@ -86,23 +86,23 @@ class InternalRepresentationParserVisitor extends ValueTypeVisitor<
     return value;
   }
 
-  visitBoolean(vt: BooleanValuetype): boolean | InvalidValue {
+  override visitBoolean(vt: BooleanValuetype): boolean | InvalidValue {
     return vt.fromString(this.applyTrimOptions(this.value));
   }
 
-  visitDecimal(vt: DecimalValuetype): number | InvalidValue {
+  override visitDecimal(vt: DecimalValuetype): number | InvalidValue {
     return vt.fromString(this.applyTrimOptions(this.value));
   }
 
-  visitInteger(vt: IntegerValuetype): number | InvalidValue {
+  override visitInteger(vt: IntegerValuetype): number | InvalidValue {
     return vt.fromString(this.applyTrimOptions(this.value));
   }
 
-  visitText(vt: TextValuetype): string {
+  override visitText(vt: TextValuetype): string {
     return vt.fromString(this.value);
   }
 
-  visitAtomicValueType(
+  override visitAtomicValueType(
     valueType: AtomicValueType,
   ): InternalValidValueRepresentation | InvalidValue {
     const containedTypes = valueType.getContainedTypes();
@@ -116,29 +116,35 @@ class InternalRepresentationParserVisitor extends ValueTypeVisitor<
     return containedType.acceptVisitor(this);
   }
 
-  visitCellRange(): InvalidValue {
+  override visitCellRange(): InvalidValue {
     return new InvalidValue(`Cannot parse cell ranges into internal values`);
   }
 
-  visitCollection(): InvalidValue {
+  override visitCollection(): InvalidValue {
     return new InvalidValue(`Cannot parse collections into internal values`);
   }
 
-  visitConstraint(): InvalidValue {
+  override visitConstraint(): InvalidValue {
     return new InvalidValue(`Cannot parse constraints into internal values`);
   }
 
-  visitRegex(): InvalidValue {
+  override visitRegex(): InvalidValue {
     return new InvalidValue(`Cannot parse regex into internal values`);
   }
 
-  visitTransform(): InvalidValue {
+  override visitTransform(): InvalidValue {
     return new InvalidValue(`Cannot parse transforms into internal values`);
   }
 
-  visitValuetypeAssignment(): InvalidValue {
+  override visitValuetypeAssignment(): InvalidValue {
     return new InvalidValue(
       `Cannot parse valuetype assignments into internal values`,
+    );
+  }
+
+  override visitValuetypeDefinition(): InvalidValue {
+    return new InvalidValue(
+      `Cannot parse valuetype definitions into internal values`,
     );
   }
 }

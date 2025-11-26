@@ -9,6 +9,7 @@ import {
 
 import { type AtomicValueType } from './atomic-value-type';
 import {
+  type ValuetypeDefinitionValuetype,
   type BooleanValuetype,
   type CellRangeValuetype,
   type CollectionValueType,
@@ -85,6 +86,7 @@ export abstract class ValueTypeVisitor<R = unknown> {
   abstract visitRegex(valueType: RegexValuetype): R;
   abstract visitConstraint(valueType: ConstraintValuetype): R;
   abstract visitValuetypeAssignment(valueType: ValuetypeAssignmentValuetype): R;
+  abstract visitValuetypeDefinition(valueType: ValuetypeDefinitionValuetype): R;
   abstract visitCollection(
     valueType: CollectionValueType | EmptyCollectionValueType,
   ): R;

@@ -88,6 +88,7 @@ Referencable:
   | BlockTypeProperty
   | TransformDefinition
   | TransformPortDefinition
+  | CustomValuetypeDefinition
   | ValueTypeProperty;
 
 NestedPropertyAccess:

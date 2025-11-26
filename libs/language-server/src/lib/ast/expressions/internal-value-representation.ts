@@ -13,11 +13,13 @@ import {
   type ConstraintDefinition,
   type TransformDefinition,
   type ValuetypeAssignment,
+  type ValuetypeDefinition,
   isBlockTypeProperty,
   isCellRangeLiteral,
   isConstraintDefinition,
   isTransformDefinition,
   isValuetypeAssignment,
+  isValuetypeDefinition,
 } from '../generated/ast';
 import { type WrapperFactoryProvider } from '../wrappers';
 
@@ -81,6 +83,7 @@ export type AtomicInternalValidValueRepresentation =
   | CellRangeLiteral
   | ConstraintDefinition
   | ValuetypeAssignment
+  | ValuetypeDefinition
   | BlockTypeProperty
   | TransformDefinition;
 
@@ -151,6 +154,9 @@ export function internalValueToString(
     return valueRepresentation.name;
   }
   if (isValuetypeAssignment(valueRepresentation)) {
+    return valueRepresentation.name;
+  }
+  if (isValuetypeDefinition(valueRepresentation)) {
     return valueRepresentation.name;
   }
   if (isTransformDefinition(valueRepresentation)) {

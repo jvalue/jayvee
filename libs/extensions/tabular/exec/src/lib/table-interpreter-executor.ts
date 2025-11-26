@@ -17,6 +17,7 @@ import {
   parseValueToInternalRepresentation,
 } from '@jvalue/jayvee-execution';
 import {
+  AtomicValueType,
   CellIndex,
   ERROR_TYPEGUARD,
   IOType,
@@ -25,15 +26,16 @@ import {
   InvalidValue,
   MissingValue,
   type ValueType,
-  type ValuetypeAssignment,
+  ValueTypeProperty,
   internalValueToString,
+  isAtomicValueType,
 } from '@jvalue/jayvee-language-server';
 
 export interface ColumnDefinitionEntry {
   sheetColumnIndex: number;
   columnName: string;
   valueType: ValueType;
-  astNode: ValuetypeAssignment;
+  astNode: ValueTypeProperty;
 }
 
 @implementsStatic<BlockExecutorClass>()
@@ -56,11 +58,9 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
       'header',
       context.valueTypeProvider.Primitives.Boolean,
     );
-    const columnDefinitions = context.getPropertyValue(
+    const columnsValueTypeDefinition = context.getPropertyValue(
       'columns',
-      context.valueTypeProvider.createCollectionValueTypeOf(
-        context.valueTypeProvider.Primitives.ValuetypeAssignment,
-      ),
+      context.valueTypeProvider.Primitives.ValuetypeDefinition,
     );
     const skipLeadingWhitespace = context.getPropertyValue(
       'skipLeadingWhitespace',
@@ -69,6 +69,15 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
     const skipTrailingWhitespace = context.getPropertyValue(
       'skipTrailingWhitespace',
       context.valueTypeProvider.Primitives.Boolean,
+    );
+
+    const columnsValueType = context.wrapperFactories.ValueType.wrap(
+      columnsValueTypeDefinition,
+    );
+
+    assert(
+      isAtomicValueType(columnsValueType),
+      'This must have been checked earlier at the validation step',
     );
 
     let columnEntries: ColumnDefinitionEntry[];
@@ -86,16 +95,17 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
       const headerRow = inputSheet.getHeaderRow();
 
       columnEntries = this.deriveColumnDefinitionEntriesFromHeader(
-        columnDefinitions,
+        columnsValueType,
         headerRow,
         context,
       );
     } else {
-      if (inputSheet.getNumberOfColumns() < columnDefinitions.length) {
+      if (
+        inputSheet.getNumberOfColumns() <
+        columnsValueType.getProperties().length
+      ) {
         return R.err({
-          message: `There are ${
-            columnDefinitions.length
-          } column definitions but the input sheet only has ${inputSheet.getNumberOfColumns()} columns`,
+          message: `The value type ${columnsValueType.getName()} has ${columnsValueType.getProperties().length} properties, but the input sheet only has ${inputSheet.getNumberOfColumns()} columns`,
           diagnostic: {
             node: context.getOrFailProperty('columns'),
           },
@@ -103,7 +113,7 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
       }
 
       columnEntries = this.deriveColumnDefinitionEntriesWithoutHeader(
-        columnDefinitions,
+        columnsValueType,
         context,
       );
     }
@@ -233,56 +243,53 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
   }
 
   private deriveColumnDefinitionEntriesWithoutHeader(
-    columnDefinitions: ValuetypeAssignment[],
+    columnsValueType: AtomicValueType,
     context: ExecutionContext,
   ): ColumnDefinitionEntry[] {
-    return columnDefinitions.map<ColumnDefinitionEntry>(
-      (columnDefinition, columnDefinitionIndex) => {
-        const columnValuetype = context.wrapperFactories.ValueType.wrap(
-          columnDefinition.type,
-        );
-        assert(columnValuetype !== undefined);
-        return {
-          sheetColumnIndex: columnDefinitionIndex,
-          columnName: columnDefinition.name,
-          valueType: columnValuetype,
-          astNode: columnDefinition,
-        };
-      },
-    );
+    return columnsValueType.getProperties().map((property, propertyIndex) => {
+      const columnValuetype = context.wrapperFactories.ValueType.wrap(
+        property.valueType,
+      );
+      assert(columnValuetype !== undefined);
+      return {
+        sheetColumnIndex: propertyIndex,
+        columnName: property.name,
+        valueType: columnValuetype,
+        astNode: property,
+      };
+    });
   }
 
   private deriveColumnDefinitionEntriesFromHeader(
-    columnDefinitions: ValuetypeAssignment[],
+    columnsValueType: AtomicValueType,
     headerRow: string[],
     context: ExecutionContext,
   ): ColumnDefinitionEntry[] {
     context.logger.logDebug(`Matching header with provided column names`);
 
-    const columnEntries: ColumnDefinitionEntry[] = [];
-    for (const columnDefinition of columnDefinitions) {
+    return columnsValueType.getProperties().flatMap((property) => {
       const indexOfMatchingHeader = headerRow.findIndex(
-        (headerColumnName) => headerColumnName === columnDefinition.name,
+        (headerColumnName) => headerColumnName === property.name,
       );
       if (indexOfMatchingHeader === -1) {
         context.logger.logDebug(
-          `Omitting column "${columnDefinition.name}" as the name was not found in the header`,
+          `Omitting column "${property.name}" as the name was not found in the header`,
         );
-        continue;
+        return [];
       }
       const columnValuetype = context.wrapperFactories.ValueType.wrap(
-        columnDefinition.type,
+        property.valueType,
       );
       assert(columnValuetype !== undefined);
 
-      columnEntries.push({
-        sheetColumnIndex: indexOfMatchingHeader,
-        columnName: columnDefinition.name,
-        valueType: columnValuetype,
-        astNode: columnDefinition,
-      });
-    }
-
-    return columnEntries;
+      return [
+        {
+          sheetColumnIndex: indexOfMatchingHeader,
+          columnName: property.name,
+          valueType: columnValuetype,
+          astNode: property,
+        },
+      ];
+    });
   }
 }
