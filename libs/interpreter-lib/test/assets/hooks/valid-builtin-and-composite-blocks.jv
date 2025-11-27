@@ -28,11 +28,13 @@ pipeline CarsPipeline {
 		];
 	}
 
+  valuetype CarName {
+    property name oftype text;
+  }
+
 	block CarsTableInterpreter oftype TableInterpreter {
 		header: true;
-		columns: [
-			"name" oftype text,
-		];
+		columns: CarName;
 	}
 
 	transform copy {

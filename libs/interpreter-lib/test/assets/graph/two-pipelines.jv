@@ -31,22 +31,24 @@ pipeline CarsPipeline {
     ];
   }
 
+  valuetype Car {
+    property name oftype text;
+    property mpg oftype decimal;
+    property cyl oftype integer;
+    property disp oftype decimal;
+    property hp oftype integer;
+    property drat oftype decimal;
+    property wt oftype decimal;
+    property qsec oftype decimal;
+    property vs oftype integer;
+    property am oftype integer;
+    property gear oftype integer;
+    property carb oftype integer;
+  }
+
   block CarsTableInterpreter oftype TableInterpreter {
     header: true;
-    columns: [
-      "name" oftype text,
-      "mpg" oftype decimal,
-      "cyl" oftype integer,
-      "disp" oftype decimal,
-      "hp" oftype integer,
-      "drat" oftype decimal,
-      "wt" oftype decimal,
-      "qsec" oftype decimal,
-      "vs" oftype integer,
-      "am" oftype integer,
-      "gear" oftype integer,
-      "carb" oftype integer
-    ];
+    columns: Car;
   }
 
   block CarsLoader oftype SQLiteLoader {
