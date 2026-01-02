@@ -4,14 +4,14 @@
 
 import { ValueTypeProvider } from '@jvalue/jayvee-language-server';
 
-import { Table } from './table';
+import { Table, type TableColumn } from './table';
 
 describe('Table', () => {
   let table: Table;
   let valueTypeProvider: ValueTypeProvider;
 
   beforeEach(() => {
-    table = new Table();
+    table = new Table(0, new Map<string, TableColumn>(), []);
     valueTypeProvider = new ValueTypeProvider();
   });
 

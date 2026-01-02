@@ -7,6 +7,7 @@ import { strict as assert } from 'assert';
 
 import {
   ERROR_TYPEGUARD,
+  InvalidValue,
   IOType,
   type InternalErrorValueRepresentation,
   type InternalValidValueRepresentation,
@@ -22,6 +23,9 @@ import {
   type IOTypeImplementation,
   type IoTypeVisitor,
 } from './io-type-implementation';
+import { ConstraintExecutor } from '../../constraints';
+import { type ExecutionContext } from '../../execution-context';
+import { assertUnreachable } from 'langium';
 
 export interface TableColumn<
   T extends InternalValidValueRepresentation = InternalValidValueRepresentation,
@@ -30,7 +34,7 @@ export interface TableColumn<
   valueType: ValueType;
 }
 
-export type TableRow = Record<
+export type TableRow = Map<
   string,
   InternalValidValueRepresentation | InternalErrorValueRepresentation
 >;
@@ -42,12 +46,14 @@ export type TableRow = Record<
 export class Table implements IOTypeImplementation<IOType.TABLE> {
   public readonly ioType = IOType.TABLE;
 
-  private numberOfRows = 0;
-
-  private columns = new Map<string, TableColumn>();
-
-  public constructor(numberOfRows = 0) {
-    this.numberOfRows = numberOfRows;
+  public constructor(
+    private numberOfRows: number,
+    private columns: Map<string, TableColumn>,
+    private constraints: ConstraintExecutor[],
+  ) {
+    assert(this.numberOfRows !== undefined);
+    assert(this.columns !== undefined);
+    assert(this.constraints !== undefined);
   }
 
   addColumn(name: string, column: TableColumn): void {
@@ -60,32 +66,44 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
    * NOTE: This method will only add the row if the table has at least one column!
    * @param row data of this row for each column
    */
-  addRow(row: TableRow): void {
-    const rowLength = Object.keys(row).length;
+  addRow(
+    row: Record<
+      string,
+      InternalValidValueRepresentation | InternalErrorValueRepresentation
+    >,
+  ): void;
+  addRow(row: TableRow): void;
+  addRow(
+    row:
+      | TableRow
+      | Record<
+          string,
+          InternalValidValueRepresentation | InternalErrorValueRepresentation
+        >,
+  ): void {
+    const rowLength = row instanceof Map ? row.size : Object.keys(row).length;
     assert(
       rowLength === this.columns.size,
       `Added row has the wrong dimension (expected: ${this.columns.size}, actual: ${rowLength})`,
     );
-    if (rowLength === 0) {
-      return;
-    }
-    assert(
-      Object.keys(row).every((x) => this.hasColumn(x)),
-      'Added row does not fit the columns in the table',
-    );
 
-    Object.entries(row).forEach(([columnName, value]) => {
+    if (rowLength > 0) {
+      this.numberOfRows++;
+    }
+
+    const rowValues =
+      row instanceof Map ? [...row.entries()] : Object.entries(row);
+
+    for (const [columnName, cellValue] of rowValues) {
       const column = this.columns.get(columnName);
-      assert(column !== undefined);
+      assert(column !== undefined, 'All added rows fit columns in the table');
 
       assert(
-        ERROR_TYPEGUARD(value) ||
-          column.valueType.isInternalValidValueRepresentation(value),
+        ERROR_TYPEGUARD(cellValue) ||
+          column.valueType.isInternalValidValueRepresentation(cellValue),
       );
-      column.values.push(value);
-    });
-
-    this.numberOfRows++;
+      column.values.push(cellValue);
+    }
   }
 
   getNumberOfRows(): number {
@@ -108,12 +126,7 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     return this.columns.get(name);
   }
 
-  getRow(
-    rowId: number,
-  ): Map<
-    string,
-    InternalValidValueRepresentation | InternalErrorValueRepresentation
-  > {
+  getRow(rowId: number): TableRow {
     const numberOfRows = this.getNumberOfRows();
     if (rowId >= numberOfRows) {
       throw new Error(
@@ -131,6 +144,45 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
       row.set(columnName, value);
     });
     return row;
+  }
+
+  private setRowInvalid(rowIdx: number, message: string): void {
+    for (const [columnName, column] of this.columns.entries()) {
+      column.values[rowIdx] = new InvalidValue(message);
+      this.columns.set(columnName, column);
+    }
+  }
+
+  findUnfullfilledRows(
+    onInvalidRow: (
+      constraint: ConstraintExecutor,
+      rowIndex: number,
+      row: TableRow,
+    ) => 'markInvalid' | 'ignore',
+    executionContext: ExecutionContext,
+  ): void {
+    for (let rowIdx = 0; rowIdx < this.numberOfRows; rowIdx++) {
+      const row = this.getRow(rowIdx);
+
+      for (const constraint of this.constraints) {
+        if (constraint.isValid(row, executionContext)) {
+          continue;
+        }
+        const invalidHandling = onInvalidRow(constraint, rowIdx, row);
+        switch (invalidHandling) {
+          case 'markInvalid': {
+            this.setRowInvalid(rowIdx, `Invalid constraint ${constraint.name}`);
+            break;
+          }
+          case 'ignore': {
+            break;
+          }
+          default: {
+            assertUnreachable(invalidHandling);
+          }
+        }
+      }
+    }
   }
 
   static generateDropTableStatement(tableName: string): string {
@@ -186,16 +238,19 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
   }
 
   clone(): Table {
-    const cloned = new Table();
-    cloned.numberOfRows = this.numberOfRows;
-    [...this.columns.entries()].forEach(([columnName, column]) => {
-      cloned.addColumn(columnName, {
+    const copiedColumns = new Map<string, TableColumn>();
+    [...this.columns.entries()].map(([columnName, column]) => {
+      copiedColumns.set(columnName, {
         values: cloneInternalValue(column.values),
         valueType: column.valueType,
       });
     });
 
-    return cloned;
+    const copiedConstraints = this.constraints.map(
+      (constraint) => new ConstraintExecutor(constraint.astNode),
+    );
+
+    return new Table(this.numberOfRows, copiedColumns, copiedConstraints);
   }
 
   acceptVisitor<R>(visitor: IoTypeVisitor<R>): R {

@@ -129,6 +129,7 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
       inputSheet,
       header,
       columnEntries,
+      columnsValueType,
       skipLeadingWhitespace,
       skipTrailingWhitespace,
       context,
@@ -143,19 +144,24 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
     sheet: Sheet,
     header: boolean,
     columnEntries: ColumnDefinitionEntry[],
+    columnsValueType: AtomicValueType,
     skipLeadingWhitespace: boolean,
     skipTrailingWhitespace: boolean,
     context: ExecutionContext,
   ): Table {
-    const table = new Table();
-
-    // add columns
+    const columns = new Map<string, R.TableColumn>();
     columnEntries.forEach((columnEntry) => {
-      table.addColumn(columnEntry.columnName, {
+      columns.set(columnEntry.columnName, {
         values: [],
         valueType: columnEntry.valueType,
       });
     });
+
+    const constraints = columnsValueType
+      .getConstraints()
+      .map((constraint) => new R.ConstraintExecutor(constraint));
+
+    const table = new Table(0, columns, constraints);
 
     // add rows
     sheet.iterateRows((sheetRow, sheetRowIndex) => {
@@ -173,6 +179,15 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
       );
       table.addRow(tableRow);
     });
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    table.findUnfullfilledRows((constraint, rowIdx, _row) => {
+      context.logger.logErr(
+        `Invalid constraint ${constraint.name} on row ${rowIdx}`,
+      );
+      return 'markInvalid';
+    }, context);
+
     return table;
   }
 
@@ -184,7 +199,10 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
     skipTrailingWhitespace: boolean,
     context: ExecutionContext,
   ): R.TableRow {
-    const tableRow: R.TableRow = {};
+    const tableRow: R.TableRow = new Map<
+      string,
+      InternalValidValueRepresentation | InternalErrorValueRepresentation
+    >();
     columnEntries.forEach((columnEntry) => {
       const valueType = columnEntry.valueType;
       const sheetColumnIndex = columnEntry.sheetColumnIndex;
@@ -209,10 +227,10 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
         );
       }
 
-      tableRow[columnEntry.columnName] = parsedValue;
+      tableRow.set(columnEntry.columnName, parsedValue);
     });
 
-    assert(Object.keys(tableRow).length === columnEntries.length);
+    assert(tableRow.size === columnEntries.length);
     return tableRow;
   }
 

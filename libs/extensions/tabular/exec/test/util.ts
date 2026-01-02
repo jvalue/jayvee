@@ -7,6 +7,7 @@ import path from 'node:path';
 import {
   Table,
   type TableRow,
+  type TableColumn,
   Workbook,
   parseValueToInternalRepresentation,
 } from '@jvalue/jayvee-execution';
@@ -71,14 +72,16 @@ export async function createTableFromLocalExcelFile(
   await workBookFromFile.xlsx.readFile(path.resolve(__dirname, fileName));
 
   const workSheet = workBookFromFile.worksheets[0] as exceljs.Worksheet;
-  const table = new Table();
 
+  const columns = new Map<string, TableColumn>();
   columnDefinitions.forEach((columnDefinition) => {
-    table.addColumn(columnDefinition.columnName, {
+    columns.set(columnDefinition.columnName, {
       values: [],
       valueType: columnDefinition.valueType,
     });
   });
+
+  const table = new Table(0, columns, []);
 
   workSheet.eachRow((row) => {
     const tableRow = constructTableRow(row, columnDefinitions);
@@ -91,7 +94,10 @@ function constructTableRow(
   row: exceljs.Row,
   columnDefinitions: ReducedColumnDefinitionEntry[],
 ): TableRow {
-  const tableRow: TableRow = {};
+  const tableRow = new Map<
+    string,
+    InternalValidValueRepresentation | InternalErrorValueRepresentation
+  >();
 
   row.eachCell(
     { includeEmpty: true },
@@ -102,9 +108,9 @@ function constructTableRow(
       const value = cell.text;
       const valueType = columnDefinition.valueType;
 
-      tableRow[columnDefinition.columnName] = parseAndValidatePrimitiveValue(
-        value,
-        valueType,
+      tableRow.set(
+        columnDefinition.columnName,
+        parseAndValidatePrimitiveValue(value, valueType),
       );
     },
   );
