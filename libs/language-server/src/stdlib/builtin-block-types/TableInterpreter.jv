@@ -42,9 +42,9 @@ publish builtin blocktype TableInterpreter {
 	property header oftype boolean: true;
 
 	/**
-	* Collection of value type assignments. Assigns a value type property to each
-  * column (potentially matched with the header or by sequence depending on the
-  * `header` property).
+	* Reference to a valuetype that defines the table schema.
+  * Each of the valuetype's properties symbolizes a column, the property's name
+  * is the column's name and the property's valuetype is the column's valuetype.
 	*/
 	property columns oftype ValuetypeDefinition;
 
