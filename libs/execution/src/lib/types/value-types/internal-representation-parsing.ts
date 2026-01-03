@@ -124,6 +124,10 @@ class InternalRepresentationParserVisitor extends ValueTypeVisitor<
     return new InvalidValue(`Cannot parse collections into internal values`);
   }
 
+  override visitTableRow(): InvalidValue {
+    return new InvalidValue(`Cannot parse table rows into internal values`);
+  }
+
   override visitConstraint(): InvalidValue {
     return new InvalidValue(`Cannot parse constraints into internal values`);
   }

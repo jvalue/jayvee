@@ -13,6 +13,7 @@ import {
   type BooleanValuetype,
   type CellRangeValuetype,
   type CollectionValueType,
+  type TableRowValueType,
   type ConstraintValuetype,
   type DecimalValuetype,
   type EmptyCollectionValueType,
@@ -90,6 +91,7 @@ export abstract class ValueTypeVisitor<R = unknown> {
   abstract visitCollection(
     valueType: CollectionValueType | EmptyCollectionValueType,
   ): R;
+  abstract visitTableRow(valueType: TableRowValueType): R;
   abstract visitTransform(valueType: TransformValuetype): R;
 
   abstract visitAtomicValueType(valueType: AtomicValueType): R;

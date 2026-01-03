@@ -29,6 +29,7 @@ import {
   isNumericLiteral,
   isReferenceLiteral,
   isRegexLiteral,
+  isTableRowLiteral,
   isTernaryExpression,
   isTextLiteral,
   isTransformDefinition,
@@ -39,10 +40,12 @@ import {
   isValueTypeProperty,
   isValuetypeAssignmentLiteral,
   isValuetypeDefinition,
+  type TableRowLiteral,
 } from '../generated/ast';
 import { getNextAstNodeContainer } from '../model-util';
 import {
   isAtomicValueType,
+  type TableRowValueType,
   type ValueType,
   type ValueTypeProvider,
   type WrapperFactoryProvider,
@@ -186,6 +189,13 @@ function inferTypeFromExpressionLiteral(
         valueTypeProvider,
         wrapperFactories,
       );
+    } else if (isTableRowLiteral(expression)) {
+      return inferTableRowType(
+        expression,
+        validationContext,
+        valueTypeProvider,
+        wrapperFactories,
+      );
     } else if (isErrorLiteral(expression)) {
       return undefined;
     }
@@ -295,6 +305,28 @@ function inferCollectionElementTypes(
   }
 
   return undefined;
+}
+
+function inferTableRowType(
+  tableRow: TableRowLiteral,
+  validationContext: ValidationContext,
+  valueTypeProvider: ValueTypeProvider,
+  wrapperFactories: WrapperFactoryProvider,
+): TableRowValueType | undefined {
+  const cellValueTypes = new Map<string, ValueType>();
+  for (const cell of tableRow.cells) {
+    const cellValueType = inferExpressionType(
+      cell.expression,
+      validationContext,
+      valueTypeProvider,
+      wrapperFactories,
+    );
+    if (cellValueType === undefined) {
+      return undefined;
+    }
+    cellValueTypes.set(cell.name, cellValueType);
+  }
+  return valueTypeProvider.createTableRowValueTypeOf(cellValueTypes);
 }
 
 function inferTypeFromValueKeyword(

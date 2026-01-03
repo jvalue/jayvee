@@ -18,10 +18,11 @@ export { type ConstraintValuetype } from './constraint-value-type';
 export { type DecimalValuetype } from './decimal-value-type';
 export { type IntegerValuetype } from './integer-value-type';
 export { type RegexValuetype } from './regex-value-type';
+export { type TableRowValueType } from './table-row-value-type';
 export { type TextValuetype } from './text-value-type';
+export { type TransformValuetype } from './transform-value-type';
 export { type ValuetypeAssignmentValuetype } from './value-type-assignment-value-type';
 export { type ValuetypeDefinitionValuetype } from './value-type-definition-value-type';
-export { type TransformValuetype } from './transform-value-type';
 
 export {
   ValueTypeProvider,
