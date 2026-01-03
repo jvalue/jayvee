@@ -22,6 +22,7 @@ import {
   isFreeVariableLiteral,
   isRegexLiteral,
   isRuntimeParameterLiteral,
+  isTableRowLiteral,
   isTernaryExpression,
   isUnaryExpression,
   isValueLiteral,
@@ -171,6 +172,28 @@ function evaluateValueLiteral(
       evaluatedCollection.push(result);
     }
     return evaluatedCollection;
+  }
+  if (isTableRowLiteral(expression)) {
+    const tableRow = new Map<
+      string,
+      InternalValidValueRepresentation | InternalErrorValueRepresentation
+    >();
+
+    for (const cell of expression.cells) {
+      const cellValue = evaluateExpression(
+        cell.expression,
+        evaluationContext,
+        wrapperFactories,
+        validationContext,
+        strategy,
+      );
+      if (ERROR_TYPEGUARD(cellValue)) {
+        return cellValue;
+      }
+
+      tableRow.set(cell.name, cellValue);
+    }
+    return tableRow;
   }
   if (isCellRangeLiteral(expression)) {
     if (!wrapperFactories.CellRange.canWrap(expression)) {
