@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 // eslint-disable-next-line unicorn/prefer-node-protocol
-import { strict as assert } from 'assert';
+import assert from 'assert';
 
 import {
   ERROR_TYPEGUARD,
@@ -126,12 +126,10 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     return this.columns.get(name);
   }
 
-  getRow(rowId: number): TableRow {
+  getRow(rowId: number): TableRow | undefined {
     const numberOfRows = this.getNumberOfRows();
     if (rowId >= numberOfRows) {
-      throw new Error(
-        `Trying to access table row ${rowId} (of ${numberOfRows} rows)`,
-      );
+      return undefined;
     }
 
     const row = new Map<
@@ -163,6 +161,7 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
   ): void {
     for (let rowIdx = 0; rowIdx < this.numberOfRows; rowIdx++) {
       const row = this.getRow(rowIdx);
+      assert(row !== undefined);
 
       for (const constraint of this.constraints) {
         if (constraint.isValid(row, executionContext)) {

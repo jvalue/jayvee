@@ -20,6 +20,8 @@ import { type Table } from '../types/io-types/table';
 import { findLineBounds } from '../util/string-util';
 
 import { type DebugGranularity } from './debug-configuration';
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import assert from 'assert';
 
 export class DebugLogVisitor implements IoTypeVisitor<void> {
   private readonly PEEK_NUMBER_OF_WORKBOOKS = 5;
@@ -57,6 +59,7 @@ export class DebugLogVisitor implements IoTypeVisitor<void> {
       }
 
       const row = table.getRow(i);
+      assert(row !== undefined);
       const rowData = [...row.values()]
         .map((cell) => {
           if (ERROR_TYPEGUARD(cell)) {
