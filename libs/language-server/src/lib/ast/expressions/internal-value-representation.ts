@@ -23,7 +23,11 @@ import {
 } from '../generated/ast';
 import { type WrapperFactoryProvider } from '../wrappers';
 
-import { COLLECTION_TYPEGUARD, ERROR_TYPEGUARD } from './typeguards';
+import {
+  COLLECTION_TYPEGUARD,
+  ERROR_TYPEGUARD,
+  TABLEROW_TYPEGUARD,
+} from './typeguards';
 
 // INFO: `ErroneousValue` extends `Error` in order to make use of the `stack`
 // property.
@@ -71,8 +75,14 @@ export class MissingValue extends ErroneousValue {
 
 export type InternalErrorValueRepresentation = InvalidValue | MissingValue;
 
+export type TableRow = Map<
+  string,
+  InternalValidValueRepresentation | InternalErrorValueRepresentation
+>;
+
 export type InternalValidValueRepresentation =
   | AtomicInternalValidValueRepresentation
+  | TableRow
   | (InternalValidValueRepresentation | InternalErrorValueRepresentation)[];
 
 export type AtomicInternalValidValueRepresentation =
@@ -86,6 +96,20 @@ export type AtomicInternalValidValueRepresentation =
   | ValuetypeDefinition
   | BlockTypeProperty
   | TransformDefinition;
+
+function internalValueToStringRecursionHelper(
+  value: InternalValidValueRepresentation | InternalErrorValueRepresentation,
+  wrapperFactories?: WrapperFactoryProvider,
+): string {
+  if (isCellRangeLiteral(value)) {
+    assert(wrapperFactories !== undefined);
+    return internalValueToString(value, wrapperFactories);
+  }
+  if (ERROR_TYPEGUARD(value)) {
+    return value.name;
+  }
+  return internalValueToString(value);
+}
 
 export type InternalValidValueRepresentationTypeguard<
   T extends InternalValidValueRepresentation,
@@ -109,19 +133,21 @@ export function internalValueToString(
     return (
       '[ ' +
       valueRepresentation
-        .map((value) => {
-          if (isCellRangeLiteral(value)) {
-            assert(wrapperFactories !== undefined);
-            return internalValueToString(value, wrapperFactories);
-          }
-          if (ERROR_TYPEGUARD(value)) {
-            return value.name;
-          }
-          return internalValueToString(value);
-        })
+        .map((value) =>
+          internalValueToStringRecursionHelper(value, wrapperFactories),
+        )
         .join(', ') +
       ' ]'
     );
+  }
+
+  if (valueRepresentation instanceof Map) {
+    return `{ ${[...valueRepresentation.entries()]
+      .map(
+        ([columnName, cellValue]) =>
+          `${columnName} : ${internalValueToStringRecursionHelper(cellValue, wrapperFactories)}`,
+      )
+      .join(', ')} }`;
   }
 
   if (typeof valueRepresentation === 'boolean') {
@@ -173,6 +199,17 @@ export function cloneInternalValue<
 >(valueRepresentation: T): T {
   if (COLLECTION_TYPEGUARD(valueRepresentation)) {
     return valueRepresentation.map(cloneInternalValue) as T;
+  }
+
+  if (TABLEROW_TYPEGUARD(valueRepresentation)) {
+    const clonedMap = new Map<
+      string,
+      InternalValidValueRepresentation | InternalErrorValueRepresentation
+    >();
+    for (const [columnName, cellValue] of valueRepresentation.entries()) {
+      clonedMap.set(columnName, cellValue);
+    }
+    return clonedMap as T;
   }
 
   if (ERROR_TYPEGUARD(valueRepresentation)) {
