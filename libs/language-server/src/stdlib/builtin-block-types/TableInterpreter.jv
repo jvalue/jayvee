@@ -48,13 +48,8 @@ publish builtin blocktype TableInterpreter {
 	*/
 	property columns oftype ValuetypeDefinition;
 
-	/**
-	* Whether to ignore whitespace before values. Does not apply to `text` cells
-	*/
-	property skipLeadingWhitespace oftype boolean: true;
-
-	/**
-	* Whether to ignore whitespace after values. Does not apply to `text` cells
-	*/
-	property skipTrailingWhitespace oftype boolean: true;
+  /**
+  * This transform to create each table row from the sheet row
+  */
+  property parseWith oftype Transform;
 }
