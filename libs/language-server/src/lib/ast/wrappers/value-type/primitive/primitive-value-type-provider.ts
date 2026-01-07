@@ -18,7 +18,6 @@ import { TextValuetype } from './text-value-type';
 import { TransformValuetype } from './transform-value-type';
 import { ValuetypeAssignmentValuetype } from './value-type-assignment-value-type';
 import { ValuetypeDefinitionValuetype } from './value-type-definition-value-type';
-import { TableRowValueType } from './table-row-value-type';
 
 /**
  * Should be created as singleton due to the equality comparison of primitive value types.
@@ -32,10 +31,6 @@ export class ValueTypeProvider {
     input: ValueType<I>,
   ): CollectionValueType<I> {
     return new CollectionValueType(input);
-  }
-
-  createTableRowValueTypeOf(input: Map<string, ValueType>): TableRowValueType {
-    return new TableRowValueType(input);
   }
 }
 
