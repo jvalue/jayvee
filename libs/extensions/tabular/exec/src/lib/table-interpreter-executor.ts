@@ -8,35 +8,29 @@ import { strict as assert } from 'assert';
 import * as R from '@jvalue/jayvee-execution';
 import {
   AbstractBlockExecutor,
+  TransformExecutor,
   type BlockExecutorClass,
   type ExecutionContext,
   type Sheet,
   Table,
   implementsStatic,
-  isValidValueRepresentation,
-  parseValueToInternalRepresentation,
 } from '@jvalue/jayvee-execution';
 import {
   AtomicValueType,
-  CellIndex,
   ERROR_TYPEGUARD,
-  IOType,
-  InternalErrorValueRepresentation,
-  type InternalValidValueRepresentation,
-  InvalidValue,
-  MissingValue,
-  type ValueType,
-  ValueTypeProperty,
+  evaluateExpression,
   internalValueToString,
+  InvalidValue,
+  IOType,
+  isTableRowLiteral,
+  MISSING_TYPEGUARD,
+  TableRowLiteral,
   isAtomicValueType,
+  MissingValue,
+  onlyElementOrUndefined,
+  TABLEROW_TYPEGUARD,
+  ValueType,
 } from '@jvalue/jayvee-language-server';
-
-export interface ColumnDefinitionEntry {
-  sheetColumnIndex: number;
-  columnName: string;
-  valueType: ValueType;
-  astNode: ValueTypeProperty;
-}
 
 @implementsStatic<BlockExecutorClass>()
 export class TableInterpreterExecutor extends AbstractBlockExecutor<
@@ -62,13 +56,9 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
       'columns',
       context.valueTypeProvider.Primitives.ValuetypeDefinition,
     );
-    const skipLeadingWhitespace = context.getPropertyValue(
-      'skipLeadingWhitespace',
-      context.valueTypeProvider.Primitives.Boolean,
-    );
-    const skipTrailingWhitespace = context.getPropertyValue(
-      'skipTrailingWhitespace',
-      context.valueTypeProvider.Primitives.Boolean,
+    const parseWith = context.getPropertyValue(
+      'parseWith',
+      context.valueTypeProvider.Primitives.Transform,
     );
 
     const columnsValueType = context.wrapperFactories.ValueType.wrap(
@@ -80,10 +70,12 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
       'This must have been checked earlier at the validation step',
     );
 
-    let columnEntries: ColumnDefinitionEntry[];
+    const schema = columnsValueType.getSchema();
 
+    let headerRow: string[] | undefined = undefined;
     if (header) {
-      if (inputSheet.getNumberOfRows() < 1) {
+      headerRow = inputSheet.popHeaderRow();
+      if (headerRow === undefined) {
         return R.err({
           message: 'The input sheet is empty and thus has no header',
           diagnostic: {
@@ -91,14 +83,15 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
           },
         });
       }
-
-      const headerRow = inputSheet.getHeaderRow();
-
-      columnEntries = this.deriveColumnDefinitionEntriesFromHeader(
-        columnsValueType,
-        headerRow,
-        context,
-      );
+      if (headerRow.length !== schema.size) {
+        return R.err({
+          message:
+            'The length of the header does not fit the columns value type',
+          diagnostic: {
+            node: context.getOrFailProperty('header'),
+          },
+        });
+      }
     } else {
       if (
         inputSheet.getNumberOfColumns() <
@@ -111,27 +104,19 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
           },
         });
       }
-
-      columnEntries = this.deriveColumnDefinitionEntriesWithoutHeader(
-        columnsValueType,
-        context,
-      );
     }
 
-    const numberOfTableRows = header
-      ? inputSheet.getNumberOfRows() - 1
-      : inputSheet.getNumberOfRows();
     context.logger.logDebug(
-      `Validating ${numberOfTableRows} row(s) according to the column types`,
+      `Validating ${inputSheet.getNumberOfRows()} row(s) according to the column types`,
     );
+
+    const parseRowTransform = new TransformExecutor(parseWith, context);
 
     const resultingTable = this.constructAndValidateTable(
       inputSheet,
-      header,
-      columnEntries,
+      headerRow,
       columnsValueType,
-      skipLeadingWhitespace,
-      skipTrailingWhitespace,
+      parseRowTransform,
       context,
     );
     context.logger.logDebug(
@@ -142,20 +127,32 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
 
   private constructAndValidateTable(
     sheet: Sheet,
-    header: boolean,
-    columnEntries: ColumnDefinitionEntry[],
+    headerRow: string[] | undefined,
     columnsValueType: AtomicValueType,
-    skipLeadingWhitespace: boolean,
-    skipTrailingWhitespace: boolean,
+    parseRowTransform: TransformExecutor,
     context: ExecutionContext,
   ): Table {
     const columns = new Map<string, R.TableColumn>();
-    columnEntries.forEach((columnEntry) => {
-      columns.set(columnEntry.columnName, {
+    for (const [columnName, columnValueType] of columnsValueType
+      .getSchema()
+      .entries()) {
+      columns.set(columnName, {
         values: [],
-        valueType: columnEntry.valueType,
+        valueType: columnValueType,
       });
-    });
+    }
+    if (headerRow !== undefined) {
+      context.evaluationContext.setHeaderRow(headerRow);
+    }
+
+    const sheetRowReferenceName = onlyElementOrUndefined(
+      parseRowTransform.getInputDetails(),
+    )?.port.name;
+    assert(sheetRowReferenceName !== undefined);
+
+    const parseRowExpression =
+      parseRowTransform.getOutputAssignment().expression;
+    assert(isTableRowLiteral(parseRowExpression));
 
     const constraints = columnsValueType
       .getConstraints()
@@ -164,20 +161,19 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
     const table = new Table(0, columns, constraints);
 
     // add rows
-    sheet.iterateRows((sheetRow, sheetRowIndex) => {
-      if (header && sheetRowIndex === 0) {
-        return;
-      }
-
+    sheet.iterateRows((sheetRow) => {
       const tableRow = this.constructAndValidateTableRow(
+        sheetRowReferenceName,
         sheetRow,
-        sheetRowIndex,
-        columnEntries,
-        skipLeadingWhitespace,
-        skipTrailingWhitespace,
+        columnsValueType.getSchema(),
+        parseRowExpression,
         context,
       );
-      table.addRow(tableRow);
+      if (MISSING_TYPEGUARD(tableRow)) {
+        context.logger.logDebug(tableRow.toString());
+      } else {
+        table.addRow(tableRow);
+      }
     });
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -192,122 +188,53 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
   }
 
   private constructAndValidateTableRow(
+    sheetRowReferenceName: string,
     sheetRow: string[],
-    sheetRowIndex: number,
-    columnEntries: ColumnDefinitionEntry[],
-    skipLeadingWhitespace: boolean,
-    skipTrailingWhitespace: boolean,
+    schema: Map<string, ValueType>,
+    parseRowExpression: TableRowLiteral,
     context: ExecutionContext,
-  ): R.TableRow {
-    const tableRow: R.TableRow = new Map<
-      string,
-      InternalValidValueRepresentation | InternalErrorValueRepresentation
-    >();
-    columnEntries.forEach((columnEntry) => {
-      const valueType = columnEntry.valueType;
-      const sheetColumnIndex = columnEntry.sheetColumnIndex;
-      const value = sheetRow[sheetColumnIndex];
+  ): R.TableRow | MissingValue {
+    context.evaluationContext.setValueForReference(
+      sheetRowReferenceName,
+      sheetRow,
+    );
 
-      const parsedValue =
-        value !== undefined
-          ? this.parseAndValidateValue(
-              value,
-              valueType,
-              skipLeadingWhitespace,
-              skipTrailingWhitespace,
-              context,
-            )
-          : new MissingValue(
-              `The sheet row did not contain a value at index ${sheetColumnIndex}`,
-            );
-      if (ERROR_TYPEGUARD(parsedValue)) {
-        const currentCellIndex = new CellIndex(sheetColumnIndex, sheetRowIndex);
-        context.logger.logDebug(
-          `Invalid value at cell ${currentCellIndex.toString()}: "${value}" does not match the type ${columnEntry.valueType.getName()}`,
-        );
+    const tableRow = evaluateExpression(
+      parseRowExpression,
+      context.evaluationContext,
+      context.wrapperFactories,
+    );
+    assert(TABLEROW_TYPEGUARD(tableRow));
+
+    let missingCount = 0;
+    for (const value of tableRow.values()) {
+      if (MISSING_TYPEGUARD(value)) {
+        context.logger.logDebug(value.toString());
+        missingCount += 1;
       }
-
-      tableRow.set(columnEntry.columnName, parsedValue);
-    });
-
-    assert(tableRow.size === columnEntries.length);
-    return tableRow;
-  }
-
-  private parseAndValidateValue(
-    value: string,
-    valueType: ValueType,
-    skipLeadingWhitespace: boolean,
-    skipTrailingWhitespace: boolean,
-    context: ExecutionContext,
-  ): InternalValidValueRepresentation | InternalErrorValueRepresentation {
-    const parsedValue = parseValueToInternalRepresentation(value, valueType, {
-      skipLeadingWhitespace,
-      skipTrailingWhitespace,
-    });
-
-    if (
-      !ERROR_TYPEGUARD(parsedValue) &&
-      !isValidValueRepresentation(parsedValue, valueType, context)
-    ) {
-      return new InvalidValue(
-        `The following value was not valid for valuetype ${valueType.getName()}: ${internalValueToString(
-          parsedValue,
-          context.wrapperFactories,
-        )}`,
-      );
     }
-    return parsedValue;
-  }
+    if (missingCount === tableRow.size) {
+      return new MissingValue('All values in row were missing. Discarding row');
+    }
 
-  private deriveColumnDefinitionEntriesWithoutHeader(
-    columnsValueType: AtomicValueType,
-    context: ExecutionContext,
-  ): ColumnDefinitionEntry[] {
-    return columnsValueType.getProperties().map((property, propertyIndex) => {
-      const columnValuetype = context.wrapperFactories.ValueType.wrap(
-        property.valueType,
-      );
-      assert(columnValuetype !== undefined);
-      return {
-        sheetColumnIndex: propertyIndex,
-        columnName: property.name,
-        valueType: columnValuetype,
-        astNode: property,
-      };
-    });
-  }
-
-  private deriveColumnDefinitionEntriesFromHeader(
-    columnsValueType: AtomicValueType,
-    headerRow: string[],
-    context: ExecutionContext,
-  ): ColumnDefinitionEntry[] {
-    context.logger.logDebug(`Matching header with provided column names`);
-
-    return columnsValueType.getProperties().flatMap((property) => {
-      const indexOfMatchingHeader = headerRow.findIndex(
-        (headerColumnName) => headerColumnName === property.name,
-      );
-      if (indexOfMatchingHeader === -1) {
-        context.logger.logDebug(
-          `Omitting column "${property.name}" as the name was not found in the header`,
+    assert(tableRow.size === schema.size);
+    for (const [columnName, cellValue] of tableRow) {
+      const entry = [...schema.entries()].find(([cN]) => cN === columnName);
+      assert(entry !== undefined);
+      const [, columnValueType] = entry;
+      if (
+        !ERROR_TYPEGUARD(cellValue) &&
+        !columnValueType.isInternalValidValueRepresentation(cellValue)
+      ) {
+        tableRow.set(
+          columnName,
+          new InvalidValue(
+            `cell value ${internalValueToString(cellValue)} is not a valid value for ${columnValueType.getName()}`,
+          ),
         );
-        return [];
       }
-      const columnValuetype = context.wrapperFactories.ValueType.wrap(
-        property.valueType,
-      );
-      assert(columnValuetype !== undefined);
+    }
 
-      return [
-        {
-          sheetColumnIndex: indexOfMatchingHeader,
-          columnName: property.name,
-          valueType: columnValuetype,
-          astNode: property,
-        },
-      ];
-    });
+    return tableRow;
   }
 }
