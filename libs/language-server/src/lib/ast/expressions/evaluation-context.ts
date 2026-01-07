@@ -46,6 +46,8 @@ export class EvaluationContext {
     | InternalValidValueRepresentation
     | InternalErrorValueRepresentation = NO_KEYWORD_ERROR;
 
+  private headerRow: string[] | undefined = undefined;
+
   constructor(
     public readonly runtimeParameterProvider: RuntimeParameterProvider,
     public readonly operatorRegistry: OperatorEvaluatorRegistry,
@@ -170,5 +172,13 @@ export class EvaluationContext {
     | InternalValidValueRepresentation
     | InternalErrorValueRepresentation {
     return this.valueKeywordValue;
+  }
+
+  getColumnIndex(columnName: string): number | undefined {
+    const columnIdx = this.headerRow?.findIndex((cN) => cN === columnName);
+    return columnIdx === -1 ? undefined : columnIdx;
+  }
+  setHeaderRow(headerRow: string[]): void {
+    this.headerRow = headerRow;
   }
 }

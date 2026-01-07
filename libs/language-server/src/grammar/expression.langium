@@ -22,7 +22,8 @@ ReplaceExpression infers Expression:
   second=BinaryExpression 'with' third=BinaryExpression)*;
 
 infix BinaryExpression on PrimaryExpression:
-  'pow' | 'root' // Higher precedence
+  'cellInColumn' // Higher precedence
+  > 'pow' | 'root'
   > '*' | '/' | '%'
   > '+' | '-'
   > '<' | '<=' | '>' | '>='
