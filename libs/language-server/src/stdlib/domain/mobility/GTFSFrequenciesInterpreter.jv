@@ -2,6 +2,24 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+valuetype Frequencies {
+  property tripId oftype text;
+  property startTime oftype GTFSTime;
+  property endTime oftype GTFSTime;
+  property headwaySecs oftype GTFSNonNegativeInteger;
+}
+transform FrequenciesParser {
+  from r oftype Collection<text>;
+  to frequencies oftype Frequencies;
+
+  frequencies: {
+    tripId: r cellInColumn 0,
+    startTime: r cellInColumn 1,
+    endTime: r cellInColumn 2,
+    headwaySecs: r cellInColumn 3,
+  };
+}
+
 /**
 * A GTFSFrequenciesInterpreter interprets a frequencies.txt file from an extracted ZIP file according to the GTFS standard
 * See https://gtfs.org/schedule/reference/#frequenciestxt
@@ -27,11 +45,7 @@ publish composite blocktype GTFSFrequenciesInterpreter {
 
     block FrequenciesTableInterpreter oftype TableInterpreter {
         header: true;
-        columns: [
-            "trip_id" oftype text,
-            "start_time" oftype GTFSTime,
-            "end_time" oftype GTFSTime,
-            "headway_secs" oftype GTFSNonNegativeInteger
-        ];
+        columns: Frequencies;
+        parseWith: FrequenciesParser;
     }
 }

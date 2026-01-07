@@ -2,6 +2,26 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+valuetype Shape {
+  property shapeId oftype text;
+  property shapePtLat oftype GTFSLatitude;
+  property shapePtLon oftype GTFSLongitude;
+  property shapePtSequence oftype GTFSNonNegativeInteger;
+  property shapeDistTraveled oftype text;
+}
+transform ShapeParser {
+  from r oftype Collection<text>;
+  to shape oftype Shape;
+
+  shape: {
+    shapeId: r cellInColumn 0,
+    shapePtLat: r cellInColumn 1,
+    shapePtLon: r cellInColumn 2,
+    shapePtSequence: r cellInColumn 3,
+    shapeDistTraveled: r cellInColumn 4,
+  };
+}
+
 /**
 * A GTFSShapesInterpreter interprets a shapes.txt file from an extracted ZIP file according to the GTFS standard
 * See https://gtfs.org/schedule/reference/#shapestxt
@@ -27,12 +47,7 @@ publish composite blocktype GTFSShapesInterpreter {
 
     block ShapesTableInterpreter oftype TableInterpreter {
         header: true;
-        columns: [
-            "shape_id" oftype text,
-            "shape_pt_lat" oftype GTFSLatitude,
-            "shape_pt_lon" oftype GTFSLongitude,
-            "shape_pt_sequence" oftype GTFSNonNegativeInteger,
-            "shape_dist_traveled" oftype text
-        ];
+        columns: Shape;
+        parseWith: ShapeParser;
     }
 }
