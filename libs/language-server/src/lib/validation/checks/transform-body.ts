@@ -7,6 +7,7 @@
  */
 
 import {
+  isTableRowLiteral,
   type TransformBody,
   type TransformPortDefinition,
   isTransformPortDefinition,
@@ -18,6 +19,10 @@ import {
   extractReferenceLiterals,
   validateTransformOutputAssignment,
 } from './transform-output-assigment';
+import { onlyElementOrUndefined } from '../../util';
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import assert from 'assert';
+import { isAtomicValueType } from '../../ast';
 
 export function validateTransformBody(
   transformBody: TransformBody,
@@ -33,6 +38,9 @@ export function validateTransformBody(
   checkSingleOutputPort(transformBody, props);
 
   checkAreInputsUsed(transformBody, props);
+
+  checkInputForTableRowTransform(transformBody, props);
+  checkOutputForTableRowTransform(transformBody, props);
 
   for (const property of transformBody.outputAssignments) {
     validateTransformOutputAssignment(property, props);
@@ -105,6 +113,101 @@ function checkSingleOutputPort(
         property: 'name',
       },
     );
+  }
+}
+
+function checkInputForTableRowTransform(
+  transformBody: TransformBody,
+  props: JayveeValidationProps,
+): void {
+  const inputs = transformBody.ports?.filter((x) => x.kind === 'from');
+  const outputAssignments = transformBody?.outputAssignments;
+  if (inputs === undefined || outputAssignments === undefined) {
+    return undefined;
+  }
+
+  const isTableRowTransform = outputAssignments.some((outputAssignment) =>
+    isTableRowLiteral(outputAssignment),
+  );
+  if (!isTableRowTransform) {
+    return;
+  }
+
+  const textCollection = props.valueTypeProvider.createCollectionValueTypeOf(
+    props.valueTypeProvider.Primitives.Text,
+  );
+
+  const input = onlyElementOrUndefined(inputs);
+  const inputValueType = props.wrapperFactories.ValueType.wrap(
+    input?.valueType,
+  );
+  assert(input !== undefined);
+
+  if (inputValueType === undefined) {
+    props.validationContext.accept(
+      'error',
+      'Transforms with a table row expression must have exactly one input',
+      {
+        node: transformBody,
+      },
+    );
+    return;
+  }
+
+  if (!inputValueType.equals(textCollection)) {
+    props.validationContext.accept(
+      'error',
+      'This input must be of type `Collection<text>',
+      {
+        node: input.valueType,
+      },
+    );
+    return;
+  }
+}
+
+function checkOutputForTableRowTransform(
+  transformBody: TransformBody,
+  props: JayveeValidationProps,
+): void {
+  const outputs = transformBody.ports?.filter((x) => x.kind === 'to');
+  const outputAssignments = transformBody?.outputAssignments;
+  if (outputs === undefined || outputAssignments === undefined) {
+    return undefined;
+  }
+
+  const isTableRowTransform = outputAssignments.some((outputAssignment) =>
+    isTableRowLiteral(outputAssignment),
+  );
+  if (!isTableRowTransform) {
+    return;
+  }
+
+  const output = onlyElementOrUndefined(outputs);
+  const outputValueType = props.wrapperFactories.ValueType.wrap(
+    output?.valueType,
+  );
+  assert(output !== undefined);
+  if (outputValueType === undefined) {
+    props.validationContext.accept(
+      'error',
+      'Transforms with a table row expression must have exactly one ouptut',
+      {
+        node: transformBody,
+      },
+    );
+    return;
+  }
+
+  if (!isAtomicValueType(outputValueType)) {
+    props.validationContext.accept(
+      'error',
+      'This must be a user created value type',
+      {
+        node: output.valueType,
+      },
+    );
+    return;
   }
 }
 
