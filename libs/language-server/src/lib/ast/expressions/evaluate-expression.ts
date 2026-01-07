@@ -187,10 +187,6 @@ function evaluateValueLiteral(
         validationContext,
         strategy,
       );
-      if (ERROR_TYPEGUARD(cellValue)) {
-        return cellValue;
-      }
-
       tableRow.set(cell.name, cellValue);
     }
     return tableRow;
