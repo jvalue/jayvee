@@ -46,6 +46,18 @@ export class AtomicValueType
     return this.astNode?.properties;
   }
 
+  getSchema(): Map<string, ValueType> {
+    const schema = new Map<string, ValueType>();
+    for (const property of this.getProperties()) {
+      const valueType = this.wrapperFactories.ValueType.wrap(
+        property.valueType,
+      );
+      assert(valueType !== undefined);
+      schema.set(property.name, valueType);
+    }
+    return schema;
+  }
+
   private getNestedProperty(
     nestedPropertyAccess: NestedPropertyAccess,
   ): ValueTypeProperty | undefined {
