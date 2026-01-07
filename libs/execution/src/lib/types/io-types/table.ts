@@ -118,7 +118,7 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     return this.columns.has(name);
   }
 
-  getColumns(): ReadonlyMap<string, TableColumn> {
+  getColumns(): Map<string, TableColumn> {
     return this.columns;
   }
 

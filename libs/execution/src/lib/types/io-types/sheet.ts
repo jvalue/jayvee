@@ -45,13 +45,8 @@ export class Sheet implements IOTypeImplementation<IOType.SHEET> {
     return this.numberOfColumns;
   }
 
-  getHeaderRow(): string[] {
-    assert(
-      this.getNumberOfRows() > 0,
-      'The sheet is expected to be non-empty and have a header row',
-    );
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return this.data[0]!;
+  popHeaderRow(): string[] | undefined {
+    return this.data.shift();
   }
 
   iterateRows(callbackFn: (row: string[], rowIndex: number) => void) {
