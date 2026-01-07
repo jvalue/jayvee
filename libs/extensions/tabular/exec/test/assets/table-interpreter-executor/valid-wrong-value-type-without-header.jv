@@ -13,9 +13,18 @@ pipeline TestPipeline {
     property flag oftype integer;
   }
 
+  transform Parser {
+    from r oftype Collection<text>;
+    to t oftype TestValueType;
+
+    t: { index: asInteger (r cellInColumn 0), name: r cellInColumn 1, flag:
+    asBoolean (r cellInColumn 2) };
+  }
+
   block TestBlock oftype TableInterpreter {
     header: false;
     columns: TestValueType;
+    parseWith: Parser;
   }
 
   block TestLoader oftype TestTableLoader {
