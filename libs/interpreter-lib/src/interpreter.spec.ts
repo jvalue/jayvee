@@ -200,7 +200,8 @@ describe('Interpreter', () => {
           assert(input != null);
           assert(input instanceof Table);
 
-          expect(input.getNumberOfColumns()).toBe(1);
+          const initial_columns = 12;
+          expect(input.getNumberOfColumns()).toBe(initial_columns);
           expect(input.getColumn('name')?.values).toStrictEqual(EXPECTED_NAMES);
 
           expect(isOk(output)).toBe(true);
@@ -210,7 +211,7 @@ describe('Interpreter', () => {
           assert(out != null);
           assert(out instanceof Table);
 
-          expect(out.getNumberOfColumns()).toBe(2);
+          expect(out.getNumberOfColumns()).toBe(initial_columns + 1);
           expect(out.getColumn('name')?.values).toStrictEqual(EXPECTED_NAMES);
           expect(out.getColumn('nameCopy')?.values).toStrictEqual(
             EXPECTED_NAMES,
