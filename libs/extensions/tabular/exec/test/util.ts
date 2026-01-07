@@ -18,8 +18,6 @@ import {
 } from '@jvalue/jayvee-language-server';
 import * as exceljs from 'exceljs';
 
-import { type ColumnDefinitionEntry } from '../src/lib/table-interpreter-executor';
-
 export async function createWorkbookFromLocalExcelFile(
   fileName: string,
 ): Promise<Workbook> {
@@ -51,10 +49,11 @@ export async function createWorkbookFromLocalExcelFile(
   return workbook;
 }
 
-export type ReducedColumnDefinitionEntry = Pick<
-  ColumnDefinitionEntry,
-  'sheetColumnIndex' | 'columnName' | 'valueType'
->;
+export type ReducedColumnDefinitionEntry = {
+  sheetColumnIndex: number;
+  columnName: string;
+  valueType: ValueType;
+};
 
 /**
  * Creates a Table from the first sheet of the excel file pointed to by {@link fileName}
