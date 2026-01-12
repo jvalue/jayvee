@@ -72,9 +72,10 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
 
     const schema = columnsValueType.getSchema();
 
+    const sheetData = inputSheet.getData().slice();
     let headerRow: string[] | undefined = undefined;
     if (header) {
-      headerRow = inputSheet.popHeaderRow();
+      headerRow = sheetData.shift()?.slice();
       if (headerRow === undefined) {
         return R.err({
           message: 'The input sheet is empty and thus has no header',
@@ -113,7 +114,7 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
     const parseRowTransform = new TransformExecutor(parseWith, context);
 
     const resultingTable = this.constructAndValidateTable(
-      inputSheet,
+      sheetData,
       headerRow,
       columnsValueType,
       parseRowTransform,
@@ -126,7 +127,7 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
   }
 
   private constructAndValidateTable(
-    sheet: Sheet,
+    sheetData: (readonly string[])[],
     headerRow: string[] | undefined,
     columnsValueType: AtomicValueType,
     parseRowTransform: TransformExecutor,
@@ -161,7 +162,7 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
     const table = new Table(0, columns, constraints);
 
     // add rows
-    sheet.iterateRows((sheetRow) => {
+    for (const sheetRow of sheetData) {
       const tableRow = this.constructAndValidateTableRow(
         sheetRowReferenceName,
         sheetRow,
@@ -174,7 +175,7 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
       } else {
         table.addRow(tableRow);
       }
-    });
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     table.forEachUnfulfilledRow((constraint, rowIdx, _row) => {
@@ -189,14 +190,14 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
 
   private constructAndValidateTableRow(
     sheetRowReferenceName: string,
-    sheetRow: string[],
+    sheetRow: readonly string[],
     schema: Map<string, ValueType>,
     parseRowExpression: TableRowLiteral,
     context: ExecutionContext,
   ): R.TableRow | MissingValue {
     context.evaluationContext.setValueForReference(
       sheetRowReferenceName,
-      sheetRow,
+      sheetRow.slice(),
     );
 
     const tableRow = evaluateExpression(

@@ -45,14 +45,6 @@ export class Sheet implements IOTypeImplementation<IOType.SHEET> {
     return this.numberOfColumns;
   }
 
-  popHeaderRow(): string[] | undefined {
-    return this.data.shift();
-  }
-
-  iterateRows(callbackFn: (row: string[], rowIndex: number) => void) {
-    this.data.forEach(callbackFn);
-  }
-
   clone(): Sheet {
     return new Sheet(structuredClone(this.data));
   }
