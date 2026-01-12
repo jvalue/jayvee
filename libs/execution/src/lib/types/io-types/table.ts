@@ -66,35 +66,17 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
    * NOTE: This method will only add the row if the table has at least one column!
    * @param row data of this row for each column
    */
-  addRow(
-    row: Record<
-      string,
-      InternalValidValueRepresentation | InternalErrorValueRepresentation
-    >,
-  ): void;
-  addRow(row: TableRow): void;
-  addRow(
-    row:
-      | TableRow
-      | Record<
-          string,
-          InternalValidValueRepresentation | InternalErrorValueRepresentation
-        >,
-  ): void {
-    const rowLength = row instanceof Map ? row.size : Object.keys(row).length;
+  addRow(row: TableRow): void {
     assert(
-      rowLength === this.columns.size,
-      `Added row has the wrong dimension (expected: ${this.columns.size}, actual: ${rowLength})`,
+      row.size === this.columns.size,
+      `Added row has the wrong dimension (expected: ${this.columns.size}, actual: ${row.size})`,
     );
 
-    if (rowLength > 0) {
+    if (row.size > 0) {
       this.numberOfRows++;
     }
 
-    const rowValues =
-      row instanceof Map ? [...row.entries()] : Object.entries(row);
-
-    for (const [columnName, cellValue] of rowValues) {
+    for (const [columnName, cellValue] of row.entries()) {
       const column = this.columns.get(columnName);
       assert(column !== undefined, 'All added rows fit columns in the table');
 

@@ -2,9 +2,32 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { ValueTypeProvider } from '@jvalue/jayvee-language-server';
+import {
+  type InternalErrorValueRepresentation,
+  type InternalValidValueRepresentation,
+  ValueTypeProvider,
+} from '@jvalue/jayvee-language-server';
 
 import { Table, type TableColumn } from './table';
+
+function addRowWrapper(
+  table: Table,
+  row: Record<
+    string,
+    InternalValidValueRepresentation | InternalErrorValueRepresentation
+  >,
+): void {
+  const tableRow = new Map<
+    string,
+    InternalValidValueRepresentation | InternalErrorValueRepresentation
+  >();
+
+  for (const [columnName, cellValue] of Object.entries(row)) {
+    tableRow.set(columnName, cellValue);
+  }
+
+  return table.addRow(tableRow);
+}
 
 describe('Table', () => {
   let table: Table;
@@ -36,9 +59,9 @@ describe('Table', () => {
         valueType: valueTypeProvider.Primitives.Text,
         values: [],
       });
-      table.addRow({ a: 'a1' });
-      table.addRow({ a: 'a2' });
-      table.addRow({ a: 'a3' });
+      addRowWrapper(table, { a: 'a1' });
+      addRowWrapper(table, { a: 'a2' });
+      addRowWrapper(table, { a: 'a3' });
       table.addColumn('b', {
         valueType: valueTypeProvider.Primitives.Text,
         values: ['b1', 'b2', 'b3'],
@@ -52,9 +75,9 @@ describe('Table', () => {
         valueType: valueTypeProvider.Primitives.Text,
         values: [],
       });
-      table.addRow({ a: 'a1' });
-      table.addRow({ a: 'a2' });
-      table.addRow({ a: 'a3' });
+      addRowWrapper(table, { a: 'a1' });
+      addRowWrapper(table, { a: 'a2' });
+      addRowWrapper(table, { a: 'a3' });
 
       expect(table.getNumberOfRows()).toBe(3);
     });
