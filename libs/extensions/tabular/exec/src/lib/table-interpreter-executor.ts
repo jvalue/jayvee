@@ -177,7 +177,7 @@ export class TableInterpreterExecutor extends AbstractBlockExecutor<
     });
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    table.findUnfullfilledRows((constraint, rowIdx, _row) => {
+    table.forEachUnfulfilledRow((constraint, rowIdx, _row) => {
       context.logger.logErr(
         `Invalid constraint ${constraint.name} on row ${rowIdx}`,
       );

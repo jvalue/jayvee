@@ -98,7 +98,7 @@ export class TableTransformerExecutor extends AbstractBlockExecutor<
     );
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    outputTable.findUnfullfilledRows((constraint, rowIdx, _row) => {
+    outputTable.forEachUnfulfilledRow((constraint, rowIdx, _row) => {
       context.logger.logErr(
         `Invalid constraint ${constraint.name} on row ${rowIdx}`,
       );

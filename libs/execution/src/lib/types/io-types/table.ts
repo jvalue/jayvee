@@ -49,11 +49,11 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
   public constructor(
     private numberOfRows: number,
     private columns: Map<string, TableColumn>,
-    private constraints: ConstraintExecutor[],
+    private constraintExecutors: ConstraintExecutor[],
   ) {
     assert(this.numberOfRows !== undefined);
     assert(this.columns !== undefined);
-    assert(this.constraints !== undefined);
+    assert(this.constraintExecutors !== undefined);
   }
 
   addColumn(name: string, column: TableColumn): void {
@@ -151,7 +151,7 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
     }
   }
 
-  findUnfullfilledRows(
+  forEachUnfulfilledRow(
     onInvalidRow: (
       constraint: ConstraintExecutor,
       rowIndex: number,
@@ -163,7 +163,7 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
       const row = this.getRow(rowIdx);
       assert(row !== undefined);
 
-      for (const constraint of this.constraints) {
+      for (const constraint of this.constraintExecutors) {
         if (constraint.isValid(row, executionContext)) {
           continue;
         }
@@ -245,7 +245,7 @@ export class Table implements IOTypeImplementation<IOType.TABLE> {
       });
     });
 
-    const copiedConstraints = this.constraints.map(
+    const copiedConstraints = this.constraintExecutors.map(
       (constraint) => new ConstraintExecutor(constraint.astNode),
     );
 
