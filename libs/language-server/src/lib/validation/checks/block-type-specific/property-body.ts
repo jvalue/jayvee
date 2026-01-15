@@ -212,7 +212,7 @@ function checkParseWithTransform(
     if (!isTableRowLiteral(outputAssignment.expression)) {
       props.validationContext.accept(
         'error',
-        'Transforms used in TableInterpreter blocks must have one output assignmet using a table row expression',
+        'Transforms used in TableInterpreter blocks must have one output assignment using a table row expression',
         {
           node: outputAssignment.expression,
         },

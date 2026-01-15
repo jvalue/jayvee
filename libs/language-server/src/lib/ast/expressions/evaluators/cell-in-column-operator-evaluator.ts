@@ -96,7 +96,7 @@ export class CellInColumnOperatorEvaluator
 
     if (index >= sheetRowValues.length) {
       return new InvalidValue(
-        `Cannot column ${index} in a sheet with only ${sheetRowValues.length} columns`,
+        `Cannot access column ${index} in a sheet with only ${sheetRowValues.length} columns`,
       );
     }
     const value = sheetRowValues.at(index);

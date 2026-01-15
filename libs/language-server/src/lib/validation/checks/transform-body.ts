@@ -191,7 +191,7 @@ function checkOutputForTableRowTransform(
   if (outputValueType === undefined) {
     props.validationContext.accept(
       'error',
-      'Transforms with a table row expression must have exactly one ouptut',
+      'Transforms with a table row expression must have exactly one output',
       {
         node: transformBody,
       },
