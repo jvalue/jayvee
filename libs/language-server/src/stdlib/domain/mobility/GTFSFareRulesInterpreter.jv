@@ -13,7 +13,7 @@ transform FareRulesParser {
   from r oftype Collection<text>;
   to fareRules oftype FareRules;
 
-  fareAttributes: {
+  fareRules: {
     fareId: r cellInColumn 0,
     routeId: r cellInColumn 1,
     originId: r cellInColumn 2,
