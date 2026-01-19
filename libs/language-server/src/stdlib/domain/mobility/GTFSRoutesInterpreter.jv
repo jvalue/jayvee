@@ -2,6 +2,34 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+valuetype Route {
+  property routeId oftype text;
+  property agencyId oftype text;
+  property routeShortName oftype text;
+  property routeLongName oftype text;
+  property routeDesc oftype text;
+  property routeType oftype integer; // Technically is an enum from 0 - 12
+  property routeUrl oftype text;
+  property routeColor oftype text;
+  property routeTextColor oftype text;
+}
+transform RouteParser {
+  from r oftype Collection<text>;
+  to route oftype Route;
+
+  route: {
+    routeId: r cellInColumn 0,
+    agencyId: r cellInColumn 1,
+    routeShortName: r cellInColumn 2,
+    routeLongName: r cellInColumn 3,
+    routeDesc: r cellInColumn 4,
+    routeType: r cellInColumn 5,
+    routeUrl: r cellInColumn 6,
+    routeColor: r cellInColumn 7,
+    routeTextColor: r cellInColumn 8,
+  };
+}
+
 /**
 * A GTFSRoutesInterpreter interprets a routes.txt file from an extracted ZIP file according to the GTFS standard
 * See https://gtfs.org/schedule/reference/#routestxt
@@ -27,16 +55,7 @@ publish composite blocktype GTFSRoutesInterpreter {
 
     block RoutesTableInterpreter oftype TableInterpreter {
         header: true;
-        columns: [
-            "route_id" oftype text,
-            "agency_id" oftype text,
-            "route_short_name" oftype text,
-            "route_long_name" oftype text,
-            "route_desc" oftype text,
-            "route_type" oftype integer, // Technically is an enum from 0 - 12
-            "route_url" oftype text,
-            "route_color" oftype text,
-            "route_text_color" oftype text
-        ];
+        columns: Route;
+        parseWith: RouteParser;
     }
 }

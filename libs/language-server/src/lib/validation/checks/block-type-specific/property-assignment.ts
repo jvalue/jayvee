@@ -13,7 +13,6 @@ import {
   isRowWrapper,
 } from '../../../ast';
 import { type JayveeValidationProps } from '../../validation-registry';
-import { checkUniqueNames } from '../../validation-util';
 
 export function checkBlockTypeSpecificProperties(
   property: PropertyAssignment,
@@ -308,15 +307,16 @@ function checkTableInterpreterProperty(
       property,
       props.evaluationContext,
       props.wrapperFactories,
-      props.valueTypeProvider.createCollectionValueTypeOf(
-        props.valueTypeProvider.Primitives.ValuetypeAssignment,
-      ),
+      props.valueTypeProvider.Primitives.ValuetypeDefinition,
     );
     if (ERROR_TYPEGUARD(valueTypeAssignments)) {
+      props.validationContext.accept(
+        'error',
+        "The property 'columns' must have a value that is a reference to a value type definition",
+        { node: property },
+      );
       return;
     }
-
-    checkUniqueNames(valueTypeAssignments, props.validationContext, 'column');
   }
 }
 

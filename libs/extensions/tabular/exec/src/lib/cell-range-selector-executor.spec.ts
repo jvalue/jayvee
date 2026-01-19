@@ -96,7 +96,6 @@ describe('Validation of CellRangeSelectorExecutor', () => {
       expect(result.right.ioType).toEqual(IOType.SHEET);
       expect(result.right.getNumberOfColumns()).toEqual(3);
       expect(result.right.getNumberOfRows()).toEqual(16);
-      expect(result.right.getHeaderRow()).toEqual(['0', 'Test', 'true']);
       expect(result.right.getData()).toEqual(
         expect.arrayContaining([
           ['0', 'Test', 'true'],
@@ -121,7 +120,6 @@ describe('Validation of CellRangeSelectorExecutor', () => {
       expect(result.right.ioType).toEqual(IOType.SHEET);
       expect(result.right.getNumberOfColumns()).toEqual(3);
       expect(result.right.getNumberOfRows()).toEqual(2);
-      expect(result.right.getHeaderRow()).toEqual(['', 'Test', 'true']);
       expect(result.right.getData()).toEqual([
         ['', 'Test', 'true'],
         ['', 'Test', 'false'],

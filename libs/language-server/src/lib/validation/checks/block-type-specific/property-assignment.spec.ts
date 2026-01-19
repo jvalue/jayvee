@@ -326,28 +326,6 @@ describe('Validation of block type specific properties', () => {
   });
 
   describe('TableInterpreter block type', () => {
-    it('should diagnose error on non unique column names', async () => {
-      const text = readJvTestAsset(
-        'property-assignment/block-type-specific/table-interpreter/invalid-non-unique-column-names.jv',
-      );
-
-      await parseAndValidatePropertyAssignment(text);
-
-      expect(validationAcceptorMock).toHaveBeenCalledTimes(2);
-      expect(validationAcceptorMock).toHaveBeenNthCalledWith(
-        1,
-        'error',
-        'The column name "name" needs to be unique.',
-        expect.any(Object),
-      );
-      expect(validationAcceptorMock).toHaveBeenNthCalledWith(
-        2,
-        'error',
-        'The column name "name" needs to be unique.',
-        expect.any(Object),
-      );
-    });
-
     it('should diagnose no error', async () => {
       const text = readJvTestAsset(
         'property-assignment/block-type-specific/table-interpreter/valid-correct-table.jv',

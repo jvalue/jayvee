@@ -2,6 +2,26 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+valuetype FareRules {
+  property fareId oftype text;
+  property routeId oftype text;
+  property originId oftype text;
+  property destinationId oftype text;
+  property containsId oftype text;
+}
+transform FareRulesParser {
+  from r oftype Collection<text>;
+  to fareRules oftype FareRules;
+
+  fareRules: {
+    fareId: r cellInColumn 0,
+    routeId: r cellInColumn 1,
+    originId: r cellInColumn 2,
+    destinationId: r cellInColumn 3,
+    containsId: r cellInColumn 4,
+  };
+}
+
 /**
 * A GTFSFareRulesInterpreter interprets a fare_rules.txt file from an extracted ZIP file according to the GTFS standard
 * See https://gtfs.org/schedule/reference/#fare_rulestxt
@@ -27,12 +47,7 @@ publish composite blocktype GTFSFareRulesInterpreter {
 
     block FareRulesTableInterpreter oftype TableInterpreter {
         header: true;
-        columns: [
-            "fare_id" oftype text,
-            "route_id" oftype text,
-            "origin_id" oftype text,
-            "destination_id" oftype text,
-            "contains_id" oftype text
-        ];
+        columns: FareRules;
+        parseWith: FareRulesParser;
     }
 }

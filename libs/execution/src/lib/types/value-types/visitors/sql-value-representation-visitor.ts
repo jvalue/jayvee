@@ -114,6 +114,14 @@ export class SQLValueRepresentationVisitor extends ValueTypeVisitor<
     );
   }
 
+  override visitValuetypeDefinition(): (
+    value: InternalValidValueRepresentation | InternalErrorValueRepresentation,
+  ) => string {
+    throw new Error(
+      'No visit implementation given for valueType definitions. Cannot be the type of a column.',
+    );
+  }
+
   override visitCollection(): (
     value: InternalValidValueRepresentation | InternalErrorValueRepresentation,
   ) => string {

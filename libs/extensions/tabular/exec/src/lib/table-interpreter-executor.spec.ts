@@ -116,21 +116,13 @@ describe('Validation of TableInterpreterExecutor', () => {
       }
     });
 
-    it('should diagnose empty table on empty column parameter', async () => {
-      const text = readJvTestAsset('valid-empty-columns-with-header.jv');
+    it('should diagnose error on empty column value type', async () => {
+      const text = readJvTestAsset('invalid-empty-columns-with-header.jv');
 
-      const testWorkbook = await readTestWorkbook('test-with-header.xlsx');
-      const result = await parseAndExecuteExecutor(
-        text,
-        testWorkbook.getSheetByName('Sheet1') as R.Sheet,
-      );
-
-      expect(R.isErr(result)).toEqual(false);
-      if (R.isOk(result)) {
-        expect(result.right.ioType).toEqual(IOType.TABLE);
-        expect(result.right.getNumberOfColumns()).toEqual(0);
-        expect(result.right.getNumberOfRows()).toEqual(0);
-      }
+      const document = await parse(text, { validation: true });
+      expect(
+        document.parseResult.parserErrors.map((error) => error.message),
+      ).toContainEqual("Expecting token of type 'property' but found `}`.");
     });
 
     it('should diagnose empty table on wrong header case', async () => {
@@ -145,7 +137,7 @@ describe('Validation of TableInterpreterExecutor', () => {
       expect(R.isErr(result)).toEqual(false);
       if (R.isOk(result)) {
         expect(result.right.ioType).toEqual(IOType.TABLE);
-        expect(result.right.getNumberOfColumns()).toEqual(0);
+        expect(result.right.getNumberOfColumns()).toEqual(3);
         expect(result.right.getNumberOfRows()).toEqual(0);
       }
     });
@@ -253,7 +245,10 @@ describe('Validation of TableInterpreterExecutor', () => {
             values: expect.arrayContaining([true, false]) as boolean[],
           }),
         );
-        for (const value of result.right.getRow(0).values()) {
+        const row = result.right.getRow(0);
+        expect(row).toBeDefined();
+        assert(row !== undefined);
+        for (const value of row.values()) {
           if (value === 'name') {
             continue;
           }
@@ -262,21 +257,13 @@ describe('Validation of TableInterpreterExecutor', () => {
       }
     });
 
-    it('should diagnose empty table on empty column parameter', async () => {
-      const text = readJvTestAsset('valid-empty-columns-without-header.jv');
+    it('should diagnose error on empty column parameter', async () => {
+      const text = readJvTestAsset('invalid-empty-columns-without-header.jv');
 
-      const testWorkbook = await readTestWorkbook('test-without-header.xlsx');
-      const result = await parseAndExecuteExecutor(
-        text,
-        testWorkbook.getSheetByName('Sheet1') as R.Sheet,
-      );
-
-      expect(R.isErr(result)).toEqual(false);
-      if (R.isOk(result)) {
-        expect(result.right.ioType).toEqual(IOType.TABLE);
-        expect(result.right.getNumberOfColumns()).toEqual(0);
-        expect(result.right.getNumberOfRows()).toEqual(0);
-      }
+      const document = await parse(text, { validation: true });
+      expect(
+        document.parseResult.parserErrors.map((error) => error.message),
+      ).toContainEqual("Expecting token of type 'property' but found `}`.");
     });
 
     it('should diagnose error on empty sheet', async () => {
@@ -291,7 +278,7 @@ describe('Validation of TableInterpreterExecutor', () => {
       expect(R.isOk(result)).toEqual(false);
       if (R.isErr(result)) {
         expect(result.left.message).toEqual(
-          'There are 3 column definitions but the input sheet only has 0 columns',
+          'The value type TestValueType has 3 properties, but the input sheet only has 0 columns',
         );
       }
     });
@@ -316,64 +303,6 @@ describe('Validation of TableInterpreterExecutor', () => {
         for (const cell of flagColumn.values) {
           expect(cell).toBeInstanceOf(InvalidValue);
         }
-      }
-    });
-
-    it('should skip leading and trailing whitespace on numeric columns but not text columns', async () => {
-      const text = readJvTestAsset('valid-without-header.jv');
-
-      const testWorkbook = await readTestWorkbook('test-with-whitespace.xlsx');
-      const result = await parseAndExecuteExecutor(
-        text,
-        testWorkbook.getSheetByName('Sheet1') as R.Sheet,
-      );
-
-      expect(R.isErr(result)).toEqual(false);
-      assert(R.isOk(result));
-
-      expect(result.right.ioType).toEqual(IOType.TABLE);
-      expect(result.right.getNumberOfColumns()).toEqual(3);
-      expect(result.right.getNumberOfRows()).toEqual(3);
-
-      expect([...result.right.getColumns().keys()]).toStrictEqual([
-        'index',
-        'name',
-        'flag',
-      ]);
-
-      const row = result.right.getRow(0);
-      const index = row.get('index');
-      expect(index).toBe(0);
-      const name = row.get('name');
-      expect(name).toBe('      text with leading whitespace');
-
-      for (let rowIdx = 1; rowIdx < result.right.getNumberOfRows(); rowIdx++) {
-        const row = result.right.getRow(rowIdx);
-        const index = row.get('index');
-        expect(index).toBe(rowIdx);
-      }
-    });
-
-    it('should not skip leading or trailing whitespace if the relevant block properties are false', async () => {
-      const text = readJvTestAsset('valid-without-header-without-trim.jv');
-
-      const testWorkbook = await readTestWorkbook('test-with-whitespace.xlsx');
-      const result = await parseAndExecuteExecutor(
-        text,
-        testWorkbook.getSheetByName('Sheet1') as R.Sheet,
-      );
-
-      expect(R.isErr(result)).toEqual(false);
-      if (R.isOk(result)) {
-        expect(result.right.ioType).toEqual(IOType.TABLE);
-        expect(result.right.getNumberOfColumns()).toEqual(3);
-        expect(result.right.getNumberOfRows()).toEqual(3);
-        const indexColumn = result.right.getColumn('index')?.values;
-        expect(indexColumn).toBeDefined();
-        assert(indexColumn !== undefined);
-        indexColumn.forEach((cell) =>
-          expect(cell).toBeInstanceOf(InvalidValue),
-        );
       }
     });
   });

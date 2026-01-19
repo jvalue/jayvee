@@ -2,6 +2,23 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+valuetype CalendarDates {
+  property serviceId oftype text; // Conditional columns are considered required for now
+  property date oftype GTFSDate;
+  property exceptionType oftype GTFSEnumOneOrTwo; // 1 - Service has been added for the specified date
+                                                  // 2 - Service has been removed for the specified date.
+}
+transform CalendarDatesParser {
+  from r oftype Collection<text>;
+  to dates oftype CalendarDates;
+
+  dates: {
+    serviceId: r cellInColumn "service_id",
+    date: r cellInColumn "date",
+    exceptionType: r cellInColumn "exception_type",
+  };
+}
+
 /**
 * A GTFSCalendarDatesInterpreter interprets a calendar_dates.txt file from an extracted ZIP file according to the GTFS standard
 * See https://gtfs.org/schedule/reference/#calendar_datestxt
@@ -27,11 +44,7 @@ publish composite blocktype GTFSCalendarDatesInterpreter {
 
     block CalendarDatesTableInterpreter oftype TableInterpreter {
         header: true;
-        columns: [
-            "service_id" oftype text,
-            "date" oftype GTFSDate,
-            "exception_type" oftype GTFSEnumOneOrTwo // 1 - Service has been added for the specified date
-                                                     // 2 - Service has been removed for the specified date.
-        ];
+        columns: CalendarDates;
+        parseWith: CalendarDatesParser;
     }
 }

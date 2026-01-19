@@ -89,7 +89,7 @@ export function constructTable(
   columns: TableColumnDefinition[],
   numberOfRows: number,
 ): Table {
-  const table = new Table(numberOfRows);
-  columns.forEach((col) => table.addColumn(col.columnName, col.column));
-  return table;
+  const columnMap = new Map<string, TableColumn>();
+  columns.forEach((col) => columnMap.set(col.columnName, col.column));
+  return new Table(numberOfRows, columnMap, []);
 }

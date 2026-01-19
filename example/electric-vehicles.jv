@@ -49,30 +49,56 @@ pipeline ElectricVehiclesPipeline {
 
   block ElectricVehiclesCSVInterpreter oftype CSVInterpreter { }
 
+  valuetype ElectricVehicle {
+    property vin oftype VehicleIdentificationNumber10;
+    property county oftype text;
+    property city oftype text;
+    property state oftype UsStateCode;
+    property postal oftype text;
+    property modelYear oftype integer;
+    property make oftype text;
+    property model oftype text;
+    property evType oftype text;
+    property cafvEligibility oftype text;
+    property electricRange oftype integer;
+    property baseMSRP oftype integer;
+    property legislativeDistrict oftype text;
+    property dolID oftype integer;
+    property location oftype text;
+    property utility oftype text;
+    property censusTract oftype text;
+  }
+
+  transform ElectricVehicleParser {
+    from r oftype Collection<text>;
+    to ev oftype ElectricVehicle;
+
+    ev: {
+      vin: r cellInColumn "VIN (1-10)",
+      county: asText (r cellInColumn "County"),
+      city: asText (r cellInColumn "City"),
+      state: asText (r cellInColumn "State"),
+      postal: asText (r cellInColumn "Postal Code"),
+      modelYear: asInteger (r cellInColumn "Model Year"),
+      make: asText (r cellInColumn "Make"),
+      model: asText (r cellInColumn "Model"),
+      evType: asText (r cellInColumn "Electric Vehicle Type"),
+      cafvEligibility: asText (r cellInColumn "Clean Alternative Fuel Vehicle (CAFV) Eligibility"),
+      electricRange: asInteger (r cellInColumn "Electric Range"),
+      baseMSRP: asInteger (r cellInColumn "Base MSRP"),
+      legislativeDistrict: asText (r cellInColumn "LegislativeDistrict"),
+      dolID: asInteger (r cellInColumn "DOL Vehicle ID"),
+      location: asText (r cellInColumn "Vehicle Location"),
+      utility: asText (r cellInColumn "Electric Utility"),
+      censusTract: asText (r cellInColumn "2020 Census Tract"),
+    };
+  }
+
+
   block ElectricVehiclesTableInterpreter oftype TableInterpreter {
     header: true;
-    columns: [
-      // 4. Here, a user-deifned value type is used to describe this column.
-      // The capital letter indicates that the value type is not built-in
-      // by convention. The value type itself is defined further below.
-      "VIN (1-10)" oftype VehicleIdentificationNumber10,
-      "County" oftype text,
-      "City" oftype text,
-      "State" oftype UsStateCode, // We can just use the element as if it was defined in this file.
-      "Postal Code" oftype text,
-      "Model Year" oftype integer,
-      "Make" oftype text,
-      "Model" oftype text,
-      "Electric Vehicle Type" oftype text,
-      "Clean Alternative Fuel Vehicle (CAFV) Eligibility" oftype text,
-      "Electric Range" oftype integer,
-      "Base MSRP" oftype integer,
-      "Legislative District" oftype text,
-      "DOL Vehicle ID" oftype integer,
-      "Vehicle Location" oftype text,
-      "Electric Utility" oftype text,
-      "2020 Census Tract" oftype text,
-    ];
+    columns: ElectricVehicle;
+    parseWith: ElectricVehicleParser;
   }
 
   // 5. This block describes the application of a transform function
@@ -81,9 +107,9 @@ pipeline ElectricVehiclesPipeline {
   // by the "use" property.
   block ElectricRangeTransformer oftype TableTransformer {
     inputColumns: [
-      "Electric Range"
+      "electricRange"
     ];
-    outputColumn: "Electric Range (km)";
+    outputColumn: "electricRange (km)";
     uses: MilesToKilometers;
   }
 

@@ -2,6 +2,24 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+valuetype Agency {
+  property agencyId oftype text; // Conditional columns are considered required for now
+  property agencyName oftype text;
+  property agencyUrl oftype GTFSUrl;
+  property agencyTimezone oftype text;
+}
+transform AgencyParser {
+  from r oftype Collection<text>;
+  to agency oftype Agency;
+
+  agency: {
+    agencyId: r cellInColumn "agency_id",
+    agencyName: r cellInColumn "agency_name",
+    agencyUrl: r cellInColumn "agency_url",
+    agencyTimezone: r cellInColumn "agency_timezone",
+  };
+}
+
 /**
 * A GTFSAgencyInterpreter interprets a agency.txt file from an extracted ZIP file according to the GTFS standard
 * See https://gtfs.org/schedule/reference/#agencytxt
@@ -27,11 +45,7 @@ publish composite blocktype GTFSAgencyInterpreter {
 
     block AgencyTableInterpreter oftype TableInterpreter {
         header: true;
-        columns: [
-            "agency_id" oftype text, // Conditional columns are considered required for now
-            "agency_name" oftype text,
-            "agency_url" oftype GTFSUrl,
-            "agency_timezone" oftype text
-        ];
+        columns: Agency;
+        parseWith: AgencyParser;
     }
 }

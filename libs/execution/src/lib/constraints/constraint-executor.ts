@@ -11,34 +11,43 @@ import {
   ERROR_TYPEGUARD,
   type InternalErrorValueRepresentation,
   type InternalValidValueRepresentation,
-  type ValueTypeProperty,
   type ValueTypeConstraintInlineDefinition,
   evaluateExpression,
+  isConstraintDefinition,
 } from '@jvalue/jayvee-language-server';
 
 import { type ExecutionContext } from '../execution-context';
 
-export class ConstraintExecutor<
-  T extends ConstraintDefinition | ValueTypeConstraintInlineDefinition,
-> implements AstNodeWrapper<T>
+export class ConstraintExecutor
+  implements
+    AstNodeWrapper<ConstraintDefinition | ValueTypeConstraintInlineDefinition>
 {
-  constructor(public readonly astNode: T) {}
+  constructor(
+    public readonly astNode:
+      | ConstraintDefinition
+      | ValueTypeConstraintInlineDefinition,
+  ) {}
+
+  get name(): string {
+    return this.astNode.name;
+  }
 
   isValid(
-    value: InternalValidValueRepresentation | InternalErrorValueRepresentation,
+    values: Map<
+      string,
+      InternalValidValueRepresentation | InternalErrorValueRepresentation
+    >,
     context: ExecutionContext,
-    properties: T extends ValueTypeConstraintInlineDefinition
-      ? ValueTypeProperty[]
-      : void,
   ): boolean {
     const expression = this.astNode.expression;
 
-    if (properties === undefined) {
+    if (isConstraintDefinition(this.astNode)) {
+      const value = values.get('value');
+      assert(value !== undefined);
       context.evaluationContext.setValueForValueKeyword(value);
     } else {
-      const assignmentForTypeSystem: ValueTypeProperty[] = properties;
-      for (const property of assignmentForTypeSystem) {
-        context.evaluationContext.setValueForReference(property.name, value);
+      for (const [name, value] of values) {
+        context.evaluationContext.setValueForReference(name, value);
       }
     }
 
@@ -56,15 +65,6 @@ export class ConstraintExecutor<
         result,
       ),
     );
-
-    if (properties === undefined) {
-      context.evaluationContext.deleteValueForValueKeyword();
-    } else {
-      const assignment_for_type_system: ValueTypeProperty[] = properties;
-      for (const property of assignment_for_type_system) {
-        context.evaluationContext.deleteValueForReference(property.name);
-      }
-    }
 
     return result;
   }

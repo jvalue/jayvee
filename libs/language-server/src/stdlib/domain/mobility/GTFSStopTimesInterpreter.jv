@@ -2,6 +2,34 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+valuetype StopTime {
+  property tripId oftype text;
+  property arrivalId oftype GTFSTime;
+  property departureTime oftype GTFSTime;
+  property stopId oftype text;
+  property stopSequence oftype GTFSNonNegativeInteger;
+  property stopHeadsign oftype text;
+  property pickupType oftype text;
+  property dropOffTime oftype text;
+  property shapeDistTraveled oftype text;
+}
+transform StopTimeParser {
+  from r oftype Collection<text>;
+  to stopTime oftype StopTime;
+
+  stopTime: {
+    tripId: r cellInColumn 0,
+    arrivalId: r cellInColumn 1,
+    departureTime: r cellInColumn 2,
+    stopId: r cellInColumn 3,
+    stopSequence: r cellInColumn 4,
+    stopHeadsign: r cellInColumn 5,
+    pickupType: r cellInColumn 6,
+    dropOffTime: r cellInColumn 7,
+    shapeDistTraveled: r cellInColumn 8,
+  };
+}
+
 /**
 * A GTFSStopTimesInterpreter interprets a stop_times.txt file from an extracted ZIP file according to the GTFS standard
 * See https://gtfs.org/schedule/reference/#stop_timestxt
@@ -27,16 +55,7 @@ publish composite blocktype GTFSStopTimesInterpreter {
 
     block StopTimesTableInterpreter oftype TableInterpreter {
         header: true;
-        columns: [
-            "trip_id" oftype text,
-            "arrival_time" oftype GTFSTime,
-            "departure_time" oftype GTFSTime,
-            "stop_id" oftype text,
-            "stop_sequence" oftype GTFSNonNegativeInteger,
-            "stop_headsign" oftype text,
-            "pickup_type" oftype text,
-            "drop_off_time" oftype text,
-            "shape_dist_traveled" oftype text
-        ];
+        columns: StopTime;
+        parseWith: StopTimeParser;
     }
 }

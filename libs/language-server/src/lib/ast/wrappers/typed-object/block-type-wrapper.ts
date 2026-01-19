@@ -119,9 +119,9 @@ export class BlockTypeWrapper extends TypedObjectWrapper<ReferenceableBlockTypeD
     }
 
     if (
-      blockTypeDefinition.properties.some((property) => {
-        return property.valueType.reference.ref === undefined;
-      })
+      blockTypeDefinition.properties.some(
+        (property) => property.valueType.reference.ref === undefined,
+      )
     ) {
       return false;
     }

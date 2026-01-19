@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { assertUnreachable } from 'langium';
+import { assertUnreachable, AstUtils, type AstNode } from 'langium';
 
 // eslint-disable-next-line unicorn/prefer-node-protocol
 import assert from 'assert';
@@ -29,6 +29,7 @@ import {
   isNumericLiteral,
   isReferenceLiteral,
   isRegexLiteral,
+  isTableRowLiteral,
   isTernaryExpression,
   isTextLiteral,
   isTransformDefinition,
@@ -38,9 +39,12 @@ import {
   isValueLiteral,
   isValueTypeProperty,
   isValuetypeAssignmentLiteral,
+  isValuetypeDefinition,
+  type TableRowLiteral,
 } from '../generated/ast';
 import { getNextAstNodeContainer } from '../model-util';
 import {
+  type AtomicValueType,
   isAtomicValueType,
   type ValueType,
   type ValueTypeProvider,
@@ -185,6 +189,13 @@ function inferTypeFromExpressionLiteral(
         valueTypeProvider,
         wrapperFactories,
       );
+    } else if (isTableRowLiteral(expression)) {
+      return inferTableRowType(
+        expression,
+        validationContext,
+        valueTypeProvider,
+        wrapperFactories,
+      );
     } else if (isErrorLiteral(expression)) {
       return undefined;
     }
@@ -296,6 +307,73 @@ function inferCollectionElementTypes(
   return undefined;
 }
 
+export function equalSchemas(
+  a: Map<string, ValueType>,
+  b: Map<string, ValueType>,
+): boolean {
+  if (a.size !== b.size) {
+    return false;
+  }
+  for (const [columnName, cellValue] of a) {
+    assert(cellValue !== undefined);
+    const otherCellValue = b.get(columnName);
+    if (cellValue !== otherCellValue) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function findValueTypeWithSameSchema(
+  schema: Map<string, ValueType>,
+  node: AstNode,
+  wrapperFactories: WrapperFactoryProvider,
+): AtomicValueType | undefined {
+  const root = AstUtils.findRootNode(node);
+  const valueTypesWithSameSchema = AstUtils.streamAllContents(root)
+    .filter((astNode) => isValuetypeDefinition(astNode))
+    .map((valueTypeDefinition) => {
+      const valueType = wrapperFactories.ValueType.wrap(valueTypeDefinition);
+      assert(valueType !== undefined);
+      return valueType;
+    })
+    .filter(
+      (valueType) =>
+        isAtomicValueType(valueType) &&
+        equalSchemas(schema, valueType.getSchema()),
+    )
+    .map((valueType) => {
+      assert(isAtomicValueType(valueType));
+      return valueType;
+    })
+    .toArray();
+
+  return onlyElementOrUndefined(valueTypesWithSameSchema);
+}
+
+function inferTableRowType(
+  tableRow: TableRowLiteral,
+  validationContext: ValidationContext,
+  valueTypeProvider: ValueTypeProvider,
+  wrapperFactories: WrapperFactoryProvider,
+): AtomicValueType | undefined {
+  const schema = new Map<string, ValueType>();
+  for (const cell of tableRow.cells) {
+    const cellValueType = inferExpressionType(
+      cell.expression,
+      validationContext,
+      valueTypeProvider,
+      wrapperFactories,
+    );
+    if (cellValueType === undefined) {
+      return undefined;
+    }
+    schema.set(cell.name, cellValueType);
+  }
+
+  return findValueTypeWithSameSchema(schema, tableRow, wrapperFactories);
+}
+
 function inferTypeFromValueKeyword(
   expression: ValueKeywordLiteral,
   validationContext: ValidationContext,
@@ -341,6 +419,9 @@ function inferTypeFromReferenceLiteral(
   }
   if (isTransformDefinition(referenced)) {
     return valueTypeProvider.Primitives.Transform;
+  }
+  if (isValuetypeDefinition(referenced)) {
+    return valueTypeProvider.Primitives.ValuetypeDefinition;
   }
   if (
     isTransformPortDefinition(referenced) ||

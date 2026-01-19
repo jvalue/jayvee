@@ -3,11 +3,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 pipeline Pipeline {
+  valuetype NaturalNumber {
+    property number oftype integer;
+  }
   block Test oftype TableInterpreter {
-    columns: [
-      "name" oftype text,
-      "version" oftype integer,
-    ];
+    columns: NaturalNumber;
   }
 
   block TestExtractor oftype TestSheetExtractor {

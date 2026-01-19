@@ -96,7 +96,7 @@ describe('Validation of RowDeleterExecutor', () => {
       expect(result.right.ioType).toEqual(IOType.SHEET);
       expect(result.right.getNumberOfColumns()).toEqual(3);
       expect(result.right.getNumberOfRows()).toEqual(15);
-      expect(result.right.getHeaderRow()).toEqual(['1', 'Test', 'false']);
+      expect(result.right.getData()[0]).toEqual(['1', 'Test', 'false']);
       expect(result.right.getData()).not.toEqual(
         expect.arrayContaining([['0', 'Test', 'true']]),
       );
@@ -117,7 +117,7 @@ describe('Validation of RowDeleterExecutor', () => {
       expect(result.right.ioType).toEqual(IOType.SHEET);
       expect(result.right.getNumberOfColumns()).toEqual(3);
       expect(result.right.getNumberOfRows()).toEqual(14);
-      expect(result.right.getHeaderRow()).toEqual(['1', 'Test', 'false']);
+      expect(result.right.getData()[0]).toEqual(['1', 'Test', 'false']);
       expect(result.right.getData()).not.toEqual(
         expect.arrayContaining([
           ['0', 'Test', 'true'],
@@ -158,7 +158,7 @@ describe('Validation of RowDeleterExecutor', () => {
       expect(result.right.ioType).toEqual(IOType.SHEET);
       expect(result.right.getNumberOfColumns()).toEqual(3);
       expect(result.right.getNumberOfRows()).toEqual(15);
-      expect(result.right.getHeaderRow()).toEqual(['1', 'Test', 'false']);
+      expect(result.right.getData()[0]).toEqual(['1', 'Test', 'false']);
       expect(result.right.getData()).not.toEqual(
         expect.arrayContaining([['0', 'Test', 'true']]),
       );

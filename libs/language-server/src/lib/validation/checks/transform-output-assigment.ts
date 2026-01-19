@@ -16,12 +16,16 @@ import {
   isBinaryExpression,
   isExpressionLiteral,
   isReferenceLiteral,
+  isTableRowLiteral,
   isTernaryExpression,
   isTransformPortDefinition,
   isUnaryExpression,
 } from '../../ast/generated/ast';
 import { type JayveeValidationProps } from '../validation-registry';
 import { checkExpressionSimplification } from '../validation-util';
+import { isAtomicValueType } from '../../ast';
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import assert from 'assert';
 
 export function validateTransformOutputAssignment(
   outputAssignment: TransformOutputAssignment,
@@ -51,12 +55,80 @@ function checkOutputValueTyping(
     props.valueTypeProvider,
     props.wrapperFactories,
   );
-  if (inferredType === undefined) {
-    return;
-  }
 
   const expectedType = props.wrapperFactories.ValueType.wrap(outputType);
   if (expectedType === undefined) {
+    return;
+  }
+
+  if (
+    isTableRowLiteral(assignmentExpression) &&
+    !isAtomicValueType(expectedType)
+  ) {
+    props.validationContext.accept(
+      'error',
+      `The output type of a Table Row transform must be user created`,
+      { node: outputType },
+    );
+    return;
+  }
+
+  if (inferredType === undefined && isTableRowLiteral(assignmentExpression)) {
+    assert(isAtomicValueType(expectedType));
+
+    const schema = expectedType.getSchema();
+    for (const [columnName, columnValueType] of schema) {
+      const cell = assignmentExpression.cells.find(
+        (cell) => cell.name == columnName,
+      );
+      if (cell === undefined) {
+        props.validationContext.accept(
+          'error',
+          `The table row expression must contain an assignment for the property ${columnName}`,
+          { node: assignmentExpression },
+        );
+        return;
+      }
+      const cellValueType = inferExpressionType(
+        cell.expression,
+        props.validationContext,
+        props.valueTypeProvider,
+        props.wrapperFactories,
+      );
+      if (cellValueType === undefined) {
+        props.validationContext.accept('error', `Could not infer value type`, {
+          node: cell.expression,
+        });
+        return;
+      }
+      if (
+        !cellValueType.isConvertibleTo(columnValueType) &&
+        !columnValueType.isConvertibleTo(cellValueType)
+      ) {
+        props.validationContext.accept(
+          'error',
+          `${cellValueType.getName()} is not convertible to ${columnValueType.getName()}`,
+          {
+            node: cell.expression,
+          },
+        );
+      }
+    }
+    for (const cell of assignmentExpression.cells) {
+      if (!schema.has(cell.name)) {
+        props.validationContext.accept(
+          'error',
+          `${expectedType.getName()} does not have any properties with name ${cell.name}`,
+          {
+            node: cell,
+          },
+        );
+      }
+    }
+    return;
+  }
+
+  if (inferredType === undefined) {
     return;
   }
 

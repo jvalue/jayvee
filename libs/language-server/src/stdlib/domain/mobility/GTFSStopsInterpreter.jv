@@ -2,6 +2,30 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+valuetype Stop {
+  property stopId oftype text;
+  property stopName oftype text;
+  property stopDesc oftype text;
+  property stopLat oftype GTFSLatitude;
+  property stopLon oftype GTFSLongitude;
+  property zoneId oftype text;
+  property stopUrl oftype text;
+}
+transform StopParser {
+  from r oftype Collection<text>;
+  to stop oftype Stop;
+
+  stop: {
+    stopId: r cellInColumn 0,
+    stopName: r cellInColumn 1,
+    stopDesc: r cellInColumn 2,
+    stopLat: r cellInColumn 3,
+    stopLon: r cellInColumn 4,
+    zoneId: r cellInColumn 5,
+    stopUrl: r cellInColumn 6,
+  };
+}
+
 /**
 * A GTFSStopsInterpreter interprets a stops.txt file from an extracted ZIP file according to the GTFS standard
 * See https://gtfs.org/schedule/reference/#stopstxt
@@ -27,14 +51,7 @@ publish composite blocktype GTFSStopsInterpreter {
 
     block StopsTableInterpreter oftype TableInterpreter {
         header: true;
-        columns: [
-            "stop_id" oftype text,
-            "stop_name" oftype text,
-            "stop_desc" oftype text,
-            "stop_lat" oftype GTFSLatitude,
-            "stop_lon" oftype GTFSLongitude,
-            "zone_id" oftype text,
-            "stop_url" oftype text
-        ];
+        columns: Stop;
+        parseWith: StopParser;
     }
 }

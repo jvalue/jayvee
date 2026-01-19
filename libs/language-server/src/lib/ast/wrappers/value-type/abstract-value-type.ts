@@ -49,13 +49,15 @@ export abstract class AbstractValueType<
     if (cycleDetected) {
       return -1;
     }
-    visited.push(this);
 
     const idx = this.doGetContainedTypes().findIndex(
       (containedType) =>
-        containedType.getIndexOfFirstPropertyInATypeCycle(visited) !==
-        undefined,
+        containedType.getIndexOfFirstPropertyInATypeCycle([
+          ...visited,
+          this,
+        ]) !== undefined,
     );
+
     return idx !== -1 ? idx : undefined;
   }
 }

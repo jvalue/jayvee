@@ -21,7 +21,8 @@ import {
   type ValueType,
   ValueTypeVisitor,
   type ValuetypeAssignmentValuetype,
-  isConstraintDefinition,
+  type ValuetypeDefinitionValuetype,
+  type InternalErrorValueRepresentation,
 } from '@jvalue/jayvee-language-server';
 
 import { ConstraintExecutor } from '../../constraints';
@@ -32,13 +33,27 @@ export function isValidValueRepresentation(
   valueType: ValueType,
   context: ExecutionContext,
 ): boolean {
-  const visitor = new ValueRepresentationValidityVisitor(value, context);
+  const values = new Map<string, InternalValidValueRepresentation>();
+  values.set('value', value);
+  const visitor = new ValueRepresentationValidityVisitor(values, context);
   return valueType.acceptVisitor(visitor);
+}
+
+export function allValueRepresentationsValid(
+  values: Map<string, InternalValidValueRepresentation>,
+  atomicValueType: AtomicValueType,
+  context: ExecutionContext,
+): boolean {
+  const visitor = new ValueRepresentationValidityVisitor(values, context);
+  return atomicValueType.acceptVisitor(visitor);
 }
 
 class ValueRepresentationValidityVisitor extends ValueTypeVisitor<boolean> {
   constructor(
-    private value: InternalValidValueRepresentation,
+    private values: Map<
+      string,
+      InternalValidValueRepresentation | InternalErrorValueRepresentation
+    >,
     private context: ExecutionContext,
   ) {
     super();
@@ -57,13 +72,9 @@ class ValueRepresentationValidityVisitor extends ValueTypeVisitor<boolean> {
     for (const constraint of valueType.getConstraints()) {
       this.context.enterNode(constraint);
 
-      const valueFulfilledConstraint = isConstraintDefinition(constraint)
-        ? new ConstraintExecutor(constraint).isValid(this.value, this.context)
-        : new ConstraintExecutor(constraint).isValid(
-            this.value,
-            this.context,
-            valueType.getProperties(),
-          );
+      const valueFulfilledConstraint = new ConstraintExecutor(
+        constraint,
+      ).isValid(this.values, this.context);
 
       this.context.exitNode(constraint);
 
@@ -109,6 +120,12 @@ class ValueRepresentationValidityVisitor extends ValueTypeVisitor<boolean> {
     return this.isValidForPrimitiveValuetype(valueType);
   }
 
+  override visitValuetypeDefinition(
+    valueType: ValuetypeDefinitionValuetype,
+  ): boolean {
+    return this.isValidForPrimitiveValuetype(valueType);
+  }
+
   override visitCollection(valueType: CollectionValueType): boolean {
     return this.isValidForPrimitiveValuetype(valueType);
   }
@@ -118,6 +135,8 @@ class ValueRepresentationValidityVisitor extends ValueTypeVisitor<boolean> {
   }
 
   private isValidForPrimitiveValuetype(valueType: PrimitiveValueType): boolean {
-    return valueType.isInternalValidValueRepresentation(this.value);
+    const value = this.values.get('value');
+    assert(value !== undefined);
+    return valueType.isInternalValidValueRepresentation(value);
   }
 }

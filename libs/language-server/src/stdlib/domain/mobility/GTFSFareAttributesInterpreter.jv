@@ -2,6 +2,29 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+valuetype FareAttributes {
+  property fareId oftype text;
+  property price oftype GTFSNonNegativeDecimal;
+  property currencyType oftype GTFSCurrency;
+  property paymentMethod oftype GTFSEnumTwo;  // 0 - Fare is paid on board.
+                                              // 1 - Fare must be paid before boarding.
+  property transfers oftype text; // Is required but can be empty (?!) so has to be modelled as text...
+  property transferDuration oftype text;
+}
+transform FareAttributesParser {
+  from r oftype Collection<text>;
+  to fareAttributes oftype FareAttributes;
+
+  fareAttributes: {
+    fareId: r cellInColumn 0,
+    price: r cellInColumn 1,
+    currencyType: r cellInColumn 2,
+    paymentMethod: r cellInColumn 3,
+    transfers: r cellInColumn 4,
+    transferDuration: r cellInColumn 5,
+  };
+}
+
 /**
 * A GTFSFareAttributesInterpreter interprets a fare_attributes.txt file from an extracted ZIP file according to the GTFS standard
 * See https://gtfs.org/schedule/reference/#fare_attributestxt
@@ -27,14 +50,7 @@ publish composite blocktype GTFSFareAttributesInterpreter {
 
     block FareAttributesTableInterpreter oftype TableInterpreter {
         header: true;
-        columns: [
-            "fare_id" oftype text,
-            "price" oftype GTFSNonNegativeDecimal,
-            "currency_type" oftype GTFSCurrency,
-            "payment_method" oftype GTFSEnumTwo, // 0 - Fare is paid on board.
-                                                 // 1 - Fare must be paid before boarding.
-            "transfers" oftype text, // Is required but can be empty (?!) so has to be modelled as text...
-            "transfer_duration" oftype text
-        ];
+        columns: FareAttributes;
+        parseWith: FareAttributesParser;
     }
 }

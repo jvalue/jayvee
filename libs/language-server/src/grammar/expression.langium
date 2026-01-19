@@ -17,13 +17,13 @@ IfExpression infers Expression:
   ReplaceExpression ({infer TernaryExpression.first=current} operator='if'
   second=ReplaceExpression 'else' third=ReplaceExpression)*;
 
-// The nesting of the following rules implies the precedence of the operators:
 ReplaceExpression infers Expression:
   BinaryExpression ({infer TernaryExpression.first=current} operator='replace'
   second=BinaryExpression 'with' third=BinaryExpression)*;
 
 infix BinaryExpression on PrimaryExpression:
-  'pow' | 'root' // Higher precedence
+  'cellInColumn' // Higher precedence
+  > 'pow' | 'root'
   > '*' | '/' | '%'
   > '+' | '-'
   > '<' | '<=' | '>' | '>='
@@ -53,6 +53,7 @@ ValueLiteral:
   | CellRangeLiteral
   | ValuetypeAssignmentLiteral
   | CollectionLiteral
+  | TableRowLiteral
   | ErrorLiteral;
 
 TextLiteral:
@@ -71,6 +72,11 @@ RegexLiteral:
 CollectionLiteral:
   '[' (values+=(Expression) (',' values+=(Expression))*)? ','? ']';
 
+TableRowLiteral:
+  '{' (cells+=(TableCellLiteral) (',' cells+=(TableCellLiteral))*)? ','? '}';
+TableCellLiteral:
+  name=ID ':' expression=Expression;
+
 ErrorLiteral:
   error= "invalid" | "missing";
 
@@ -88,6 +94,7 @@ Referencable:
   | BlockTypeProperty
   | TransformDefinition
   | TransformPortDefinition
+  | CustomValuetypeDefinition
   | ValueTypeProperty;
 
 NestedPropertyAccess:

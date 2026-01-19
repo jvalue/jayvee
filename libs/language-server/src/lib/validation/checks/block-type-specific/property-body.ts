@@ -3,7 +3,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import {
+  type AtomicValueType,
   ERROR_TYPEGUARD,
+  isAtomicValueType,
+  isTableRowLiteral,
+  type TransformDefinition,
   type PropertyBody,
   evaluatePropertyValue,
 } from '../../../ast';
@@ -20,6 +24,8 @@ export function checkBlockTypeSpecificPropertyBody(
       return checkCellWriterPropertyBody(propertyBody, props);
     case 'TableTransformer':
       return checkTableTransformerPropertyBody(propertyBody, props);
+    case 'TableInterpreter':
+      return checkTableInterpreterPropertyBody(propertyBody, props);
     default:
   }
 }
@@ -121,6 +127,98 @@ function checkTableTransformerPropertyBody(
   props: JayveeValidationProps,
 ) {
   checkInputColumnsMatchTransformationPorts(propertyBody, props);
+}
+
+function checkTableInterpreterPropertyBody(
+  propertyBody: PropertyBody,
+  props: JayveeValidationProps,
+): void {
+  const parseWithProperty = propertyBody.properties.find(
+    (property) => property.name == 'parseWith',
+  );
+  if (parseWithProperty === undefined) {
+    return;
+  }
+
+  const transform = evaluatePropertyValue(
+    parseWithProperty,
+    props.evaluationContext,
+    props.wrapperFactories,
+    props.valueTypeProvider.Primitives.Transform,
+  );
+
+  if (ERROR_TYPEGUARD(transform)) {
+    return;
+  }
+
+  const columnsProperty = propertyBody.properties.find(
+    (property) => property.name == 'columns',
+  );
+  if (columnsProperty === undefined) {
+    return;
+  }
+
+  const columns = evaluatePropertyValue(
+    columnsProperty,
+    props.evaluationContext,
+    props.wrapperFactories,
+    props.valueTypeProvider.Primitives.ValuetypeDefinition,
+  );
+  if (ERROR_TYPEGUARD(columns)) {
+    return;
+  }
+
+  const columnsValueType = props.wrapperFactories.ValueType.wrap(columns);
+  if (columnsValueType === undefined) {
+    return;
+  }
+  if (!isAtomicValueType(columnsValueType)) {
+    props.validationContext.accept(
+      'error',
+      'This value type must be user created and reflect the columns that should be in the table',
+      { node: columnsProperty.value },
+    );
+    return;
+  }
+
+  checkParseWithTransform(transform, columnsValueType, props);
+}
+
+function checkParseWithTransform(
+  transform: TransformDefinition,
+  columnsValueType: AtomicValueType,
+  props: JayveeValidationProps,
+): void {
+  for (const port of transform.body.ports) {
+    if (port.kind !== 'to') {
+      continue;
+    }
+
+    const portValueType = props.wrapperFactories.ValueType.wrap(port.valueType);
+    if (portValueType === undefined) {
+      continue;
+    }
+
+    if (!portValueType.equals(columnsValueType)) {
+      props.validationContext.accept(
+        'error',
+        `Expected value type ${columnsValueType.getName()}, but found ${portValueType.getName()}`,
+        { node: port.valueType },
+      );
+    }
+  }
+
+  for (const outputAssignment of transform.body.outputAssignments) {
+    if (!isTableRowLiteral(outputAssignment.expression)) {
+      props.validationContext.accept(
+        'error',
+        'Transforms used in TableInterpreter blocks must have one output assignment using a table row expression',
+        {
+          node: outputAssignment.expression,
+        },
+      );
+    }
+  }
 }
 
 function checkInputColumnsMatchTransformationPorts(

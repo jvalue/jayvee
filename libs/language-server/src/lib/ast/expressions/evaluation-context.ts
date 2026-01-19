@@ -21,6 +21,7 @@ import {
   isTransformPortDefinition,
   isValueKeywordLiteral,
   isValueTypeProperty,
+  isValuetypeDefinition,
 } from '../generated/ast';
 import { type ValueTypeProvider } from '../wrappers';
 import { type ValueType } from '../wrappers/value-type/value-type';
@@ -44,6 +45,8 @@ export class EvaluationContext {
   private valueKeywordValue:
     | InternalValidValueRepresentation
     | InternalErrorValueRepresentation = NO_KEYWORD_ERROR;
+
+  private headerRow: string[] | undefined = undefined;
 
   constructor(
     public readonly runtimeParameterProvider: RuntimeParameterProvider,
@@ -138,6 +141,9 @@ export class EvaluationContext {
         )
       );
     }
+    if (isValuetypeDefinition(dereferenced)) {
+      return dereferenced;
+    }
     assertUnreachable(dereferenced);
   }
 
@@ -166,5 +172,13 @@ export class EvaluationContext {
     | InternalValidValueRepresentation
     | InternalErrorValueRepresentation {
     return this.valueKeywordValue;
+  }
+
+  getColumnIndex(columnName: string): number | undefined {
+    const columnIdx = this.headerRow?.findIndex((cN) => cN === columnName);
+    return columnIdx === -1 ? undefined : columnIdx;
+  }
+  setHeaderRow(headerRow: string[]): void {
+    this.headerRow = headerRow;
   }
 }

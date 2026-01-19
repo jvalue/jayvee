@@ -16,6 +16,7 @@ import {
 } from '../generated/ast';
 
 import {
+  type TableRow,
   type AtomicInternalValidValueRepresentation,
   type InternalErrorValueRepresentation,
   type InternalValidValueRepresentation,
@@ -28,6 +29,7 @@ export const INTERNAL_VALID_VALUE_REPRESENTATION_TYPEGUARD: InternalValidValueRe
   InternalValidValueRepresentation
 > = (value): value is InternalValidValueRepresentation =>
   ATOMIC_INTERNAL_VALUE_REPRESENTATION_TYPEGUARD(value) ||
+  TABLEROW_TYPEGUARD(value) ||
   COLLECTION_TYPEGUARD(value);
 
 export const ATOMIC_INTERNAL_VALUE_REPRESENTATION_TYPEGUARD: InternalValidValueRepresentationTypeguard<
@@ -75,6 +77,17 @@ export const BLOCKTYPEPROPERTY_TYPEGUARD: InternalValidValueRepresentationTypegu
 export const TRANSFORMDEFINITION_TYPEGUARD: InternalValidValueRepresentationTypeguard<
   TransformDefinition
 > = (value) => isTransformDefinition(value);
+
+export const TABLEROW_TYPEGUARD: InternalValidValueRepresentationTypeguard<
+  TableRow
+> = (value): value is TableRow =>
+  value instanceof Map &&
+  [...value.entries()].every(
+    ([key, value]) =>
+      STRING_TYPEGUARD(key) &&
+      (INTERNAL_VALID_VALUE_REPRESENTATION_TYPEGUARD(value) ||
+        ERROR_TYPEGUARD(value)),
+  );
 
 export const COLLECTION_TYPEGUARD: InternalValidValueRepresentationTypeguard<
   (InternalValidValueRepresentation | InternalErrorValueRepresentation)[]

@@ -2,6 +2,30 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+valuetype Trip {
+  property routeId oftype text;
+  property serviceId oftype text;
+  property tripId oftype text;
+  property tripHeadsign oftype text;
+  property directionId oftype text;
+  property blockId oftype text;
+  property shapeId oftype text;
+}
+transform TripParser {
+  from r oftype Collection<text>;
+  to trip oftype Trip;
+
+  trip: {
+    routeId: r cellInColumn 0,
+    serviceId: r cellInColumn 1,
+    tripId: r cellInColumn 2,
+    tripHeadsign: r cellInColumn 3,
+    directionId: r cellInColumn 4,
+    blockId: r cellInColumn 5,
+    shapeId: r cellInColumn 6,
+  };
+}
+
 /**
 * A GTFSTripsInterpreter interprets a trips.txt file from an extracted ZIP file according to the GTFS standard
 * See https://gtfs.org/schedule/reference/#tripstxt
@@ -27,14 +51,7 @@ publish composite blocktype GTFSTripsInterpreter {
 
     block TripsTableInterpreter oftype TableInterpreter {
         header: true;
-        columns: [
-            "route_id" oftype text,
-            "service_id" oftype text,
-            "trip_id" oftype text,
-            "trip_headsign" oftype text,
-            "direction_id" oftype text,
-            "block_id" oftype text,
-            "shape_id" oftype text
-        ];
+        columns: Trip;
+        parseWith: TripParser;
     }
 }

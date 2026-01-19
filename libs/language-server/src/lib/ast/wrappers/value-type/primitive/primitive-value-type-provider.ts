@@ -17,6 +17,7 @@ import { RegexValuetype } from './regex-value-type';
 import { TextValuetype } from './text-value-type';
 import { TransformValuetype } from './transform-value-type';
 import { ValuetypeAssignmentValuetype } from './value-type-assignment-value-type';
+import { ValuetypeDefinitionValuetype } from './value-type-definition-value-type';
 
 /**
  * Should be created as singleton due to the equality comparison of primitive value types.
@@ -43,6 +44,7 @@ export class PrimitiveValueTypeProvider {
   CellRange = new CellRangeValuetype();
   Constraint = new ConstraintValuetype();
   ValuetypeAssignment = new ValuetypeAssignmentValuetype();
+  ValuetypeDefinition = new ValuetypeDefinitionValuetype();
 
   Transform = new TransformValuetype();
 
@@ -56,6 +58,7 @@ export class PrimitiveValueTypeProvider {
       this.CellRange,
       this.Constraint,
       this.ValuetypeAssignment,
+      this.ValuetypeDefinition,
       this.Transform,
     ];
   }

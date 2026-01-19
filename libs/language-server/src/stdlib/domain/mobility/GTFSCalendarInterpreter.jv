@@ -2,6 +2,37 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 
+valuetype Calendar {
+  property serviceId oftype text;
+  property monday oftype GTFSEnumTwo; // 1 - Service is available for all Mondays in the date range.
+                                      // 0 - Service is not available for Mondays in the date range.
+  property tuesday oftype GTFSEnumTwo;
+  property wednesday oftype GTFSEnumTwo;
+  property thursday oftype GTFSEnumTwo;
+  property friday oftype GTFSEnumTwo;
+  property saturday oftype GTFSEnumTwo;
+  property sunday oftype GTFSEnumTwo;
+  property startDate oftype GTFSDate;
+  property endDate oftype GTFSDate;
+}
+transform CalendarParser {
+  from r oftype Collection<text>;
+  to calendar oftype Calendar;
+
+  calendar: {
+    serviceId: r cellInColumn 0,
+    monday: r cellInColumn 1,
+    tuesday: r cellInColumn 2,
+    wednesday: r cellInColumn 3,
+    thursday: r cellInColumn 4,
+    friday: r cellInColumn 5,
+    saturday: r cellInColumn 6,
+    sunday: r cellInColumn 7,
+    startDate: r cellInColumn 8,
+    endDate: r cellInColumn 9,
+  };
+}
+
 /**
 * A GTFSCalendarInterpreter interprets a calendar.txt file from an extracted ZIP file according to the GTFS standard
 * See https://gtfs.org/schedule/reference/#calendartxt
@@ -27,18 +58,7 @@ publish composite blocktype GTFSCalendarInterpreter {
 
     block CalendarTableInterpreter oftype TableInterpreter {
         header: true;
-        columns: [
-            "service_id" oftype text,
-            "monday" oftype GTFSEnumTwo, // 1 - Service is available for all Mondays in the date range.
-                                         // 0 - Service is not available for Mondays in the date range.
-            "tuesday" oftype GTFSEnumTwo,
-            "wednesday" oftype GTFSEnumTwo,
-            "thursday" oftype GTFSEnumTwo,
-            "friday" oftype GTFSEnumTwo,
-            "saturday" oftype GTFSEnumTwo,
-            "sunday" oftype GTFSEnumTwo,
-            "start_date" oftype GTFSDate,
-            "end_date" oftype GTFSDate
-        ];
+        columns: Calendar;
+        parseWith: CalendarParser;
     }
 }

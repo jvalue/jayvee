@@ -96,7 +96,6 @@ describe('Validation of CellWriterExecutor', () => {
       expect(result.right.ioType).toEqual(IOType.SHEET);
       expect(result.right.getNumberOfColumns()).toEqual(3);
       expect(result.right.getNumberOfRows()).toEqual(16);
-      expect(result.right.getHeaderRow()).toEqual(['16', 'Test', 'true']);
       expect(result.right.getData()).toEqual(
         expect.arrayContaining([
           ['16', 'Test', 'true'],
@@ -121,7 +120,6 @@ describe('Validation of CellWriterExecutor', () => {
       expect(result.right.ioType).toEqual(IOType.SHEET);
       expect(result.right.getNumberOfColumns()).toEqual(3);
       expect(result.right.getNumberOfRows()).toEqual(16);
-      expect(result.right.getHeaderRow()).toEqual(['16', 'Test2', '']);
       expect(result.right.getData()).toEqual(
         expect.arrayContaining([
           ['16', 'Test2', ''],

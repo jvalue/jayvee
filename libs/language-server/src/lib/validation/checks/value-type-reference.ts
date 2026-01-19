@@ -14,6 +14,7 @@ export function validateValueTypeReference(
 ): void {
   checkGenericsMatchDefinition(valueTypeRef, props);
   checkIsValueTypeReferenceable(valueTypeRef, props);
+  checkIsValueTypeInTableParsingTransform(valueTypeRef, props);
 }
 
 function checkGenericsMatchDefinition(
@@ -23,16 +24,6 @@ function checkGenericsMatchDefinition(
   const valueTypeDefinition = valueTypeRef.reference?.ref;
   if (valueTypeDefinition === undefined) {
     return;
-  }
-
-  const numberOfProperties = valueTypeDefinition.properties?.length;
-  if (numberOfProperties > 1) {
-    props.validationContext.accept(
-      'error',
-      'The referenced value type has more than one property. ' +
-        'This is unsupported for now',
-      { node: valueTypeRef },
-    );
   }
 
   const requiredGenerics =
@@ -78,4 +69,28 @@ function checkIsValueTypeReferenceable(
       node: valueTypeRef,
     },
   );
+}
+
+function checkIsValueTypeInTableParsingTransform(
+  valueTypeRef: ValueTypeReference,
+  props: JayveeValidationProps,
+) {
+  const valueTypeDefinition = valueTypeRef.reference?.ref;
+  if (valueTypeDefinition === undefined) {
+    return;
+  }
+  const parent = valueTypeRef.$container;
+  if (parent?.$type === 'TransformPortDefinition') {
+    return;
+  }
+
+  const numberOfProperties = valueTypeDefinition.properties?.length;
+  if (numberOfProperties > 1) {
+    props.validationContext.accept(
+      'error',
+      `The referenced value type has more than one property. ` +
+        'This is unsupported for now',
+      { node: valueTypeRef },
+    );
+  }
 }

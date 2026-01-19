@@ -7,13 +7,24 @@ pipeline TestPipeline {
   block TestExtractor oftype TestSheetExtractor {
   }
 
+  valuetype TestValueType {
+    property index oftype integer;
+    property name oftype text;
+    property flag oftype integer;
+  }
+
+  transform Parser {
+    from r oftype Collection<text>;
+    to t oftype TestValueType;
+
+    t: { index: asInteger (r cellInColumn 0), name: r cellInColumn 1, flag:
+    asBoolean (r cellInColumn 2) };
+  }
+
   block TestBlock oftype TableInterpreter {
     header: false;
-    columns: [
-      "index" oftype integer,
-      "name" oftype text,
-      "flag" oftype integer
-    ];
+    columns: TestValueType;
+    parseWith: Parser;
   }
 
   block TestLoader oftype TestTableLoader {
