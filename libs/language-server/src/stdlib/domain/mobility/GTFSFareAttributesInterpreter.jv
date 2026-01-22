@@ -16,12 +16,12 @@ transform FareAttributesParser {
   to fareAttributes oftype FareAttributes;
 
   fareAttributes: {
-    fareId: r cellInColumn 0,
-    price: r cellInColumn 1,
-    currencyType: r cellInColumn 2,
-    paymentMethod: r cellInColumn 3,
-    transfers: r cellInColumn 4,
-    transferDuration: r cellInColumn 5,
+    fareId: r . 0,
+    price: r . 1,
+    currencyType: r . 2,
+    paymentMethod: r . 3,
+    transfers: r . 4,
+    transferDuration: r . 5,
   };
 }
 

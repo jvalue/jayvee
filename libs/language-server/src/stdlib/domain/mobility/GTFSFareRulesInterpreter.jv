@@ -14,11 +14,11 @@ transform FareRulesParser {
   to fareRules oftype FareRules;
 
   fareRules: {
-    fareId: r cellInColumn 0,
-    routeId: r cellInColumn 1,
-    originId: r cellInColumn 2,
-    destinationId: r cellInColumn 3,
-    containsId: r cellInColumn 4,
+    fareId: r . 0,
+    routeId: r . 1,
+    originId: r . 2,
+    destinationId: r . 3,
+    containsId: r . 4,
   };
 }
 

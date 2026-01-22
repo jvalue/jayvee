@@ -18,15 +18,15 @@ transform StopTimeParser {
   to stopTime oftype StopTime;
 
   stopTime: {
-    tripId: r cellInColumn 0,
-    arrivalId: r cellInColumn 1,
-    departureTime: r cellInColumn 2,
-    stopId: r cellInColumn 3,
-    stopSequence: r cellInColumn 4,
-    stopHeadsign: r cellInColumn 5,
-    pickupType: r cellInColumn 6,
-    dropOffTime: r cellInColumn 7,
-    shapeDistTraveled: r cellInColumn 8,
+    tripId: r . 0,
+    arrivalId: r . 1,
+    departureTime: r . 2,
+    stopId: r . 3,
+    stopSequence: r . 4,
+    stopHeadsign: r . 5,
+    pickupType: r . 6,
+    dropOffTime: r . 7,
+    shapeDistTraveled: r . 8,
   };
 }
 

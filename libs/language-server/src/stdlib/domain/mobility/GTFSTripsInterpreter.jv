@@ -16,13 +16,13 @@ transform TripParser {
   to trip oftype Trip;
 
   trip: {
-    routeId: r cellInColumn 0,
-    serviceId: r cellInColumn 1,
-    tripId: r cellInColumn 2,
-    tripHeadsign: r cellInColumn 3,
-    directionId: r cellInColumn 4,
-    blockId: r cellInColumn 5,
-    shapeId: r cellInColumn 6,
+    routeId: r . 0,
+    serviceId: r . 1,
+    tripId: r . 2,
+    tripHeadsign: r . 3,
+    directionId: r . 4,
+    blockId: r . 5,
+    shapeId: r . 6,
   };
 }
 

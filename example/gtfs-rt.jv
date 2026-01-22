@@ -75,16 +75,16 @@ pipeline GtfsRTSimplePipeline {
     to tripUpdate oftype TripUpdate;
 
     tripUpdate: {
-      headerGtfsRealtimeVersion: r cellInColumn "header.gtfs_realtime_version",
-      headerTimestamp: r cellInColumn "header.timestamp",
-      headerIncrementality: r cellInColumn "header.incrementality",
-      entityId: r cellInColumn "entity.id",
-      entityTripUpdateTripTripId: r cellInColumn "entity.trip_update.trip.trip_id",
-      entityTripUpdateTripRouteId: r cellInColumn "entity.trip_update.trip.route_id",
-      entityTripUpdateStopTimeUpdateStopSequence: r cellInColumn "entity.trip_update.stop_time_update.stop_sequence",
-      entityTripUpdateStopTimeUpdateStopId: r cellInColumn "entity.trip_update.stop_time_update.stop_id",
-      entityTripUpdateStopTimeUpdateArrivalTime: r cellInColumn "entity.trip_update.stop_time_update.arrival.time",
-      entityTripUpdateStopTimeUpdateDepartureTime: r cellInColumn "entity.trip_update.stop_time_update.departure.time",
+      headerGtfsRealtimeVersion: r . "header.gtfs_realtime_version",
+      headerTimestamp: r . "header.timestamp",
+      headerIncrementality: r . "header.incrementality",
+      entityId: r . "entity.id",
+      entityTripUpdateTripTripId: r . "entity.trip_update.trip.trip_id",
+      entityTripUpdateTripRouteId: r . "entity.trip_update.trip.route_id",
+      entityTripUpdateStopTimeUpdateStopSequence: r . "entity.trip_update.stop_time_update.stop_sequence",
+      entityTripUpdateStopTimeUpdateStopId: r . "entity.trip_update.stop_time_update.stop_id",
+      entityTripUpdateStopTimeUpdateArrivalTime: r . "entity.trip_update.stop_time_update.arrival.time",
+      entityTripUpdateStopTimeUpdateDepartureTime: r . "entity.trip_update.stop_time_update.departure.time",
     };
   }
   block TripUpdateTableInterpreter oftype TableInterpreter {
@@ -111,16 +111,16 @@ pipeline GtfsRTSimplePipeline {
     to vehiclePosition oftype VehiclePosition;
 
     vehiclePosition: {
-      headerGtfsRealtimeVersion: r cellInColumn "header.gtfs_realtime_version",
-      headerTimestamp: r cellInColumn "header.timestamp",
-      headerIncrementality: r cellInColumn "header.incrementality",
-      entityId: r cellInColumn "entity.id",
-      entityVehiclePositionVehicleDescriptorId: r cellInColumn "entity.vehicle_position.vehicle_descriptor.id",
-      entityVehiclePositionTripTripId: r cellInColumn "entity.vehicle_position.trip.trip_id",
-      entityVehiclePositionTripRouteId: r cellInColumn "entity.vehicle_position.trip.route_id",
-      entityVehiclePositionPositionLatitude: r cellInColumn "entity.vehicle_position.position.latitude",
-      entityVehiclePositionPositionLongitude: r cellInColumn "entity.vehicle_position.position.longitude",
-      entityVehiclePositionTimestamp: r cellInColumn "entity.vehicle_position.timestamp",
+      headerGtfsRealtimeVersion: r . "header.gtfs_realtime_version",
+      headerTimestamp: r . "header.timestamp",
+      headerIncrementality: r . "header.incrementality",
+      entityId: r . "entity.id",
+      entityVehiclePositionVehicleDescriptorId: r . "entity.vehicle_position.vehicle_descriptor.id",
+      entityVehiclePositionTripTripId: r . "entity.vehicle_position.trip.trip_id",
+      entityVehiclePositionTripRouteId: r . "entity.vehicle_position.trip.route_id",
+      entityVehiclePositionPositionLatitude: r . "entity.vehicle_position.position.latitude",
+      entityVehiclePositionPositionLongitude: r . "entity.vehicle_position.position.longitude",
+      entityVehiclePositionTimestamp: r . "entity.vehicle_position.timestamp",
     };
   }
   block VehiclePositionTableInterpreter oftype TableInterpreter {
@@ -144,13 +144,13 @@ pipeline GtfsRTSimplePipeline {
     to alert oftype Alert;
 
     alert: {
-        headerGtfsRealtimeVersion: r cellInColumn "header.gtfs_realtime_version",
-        headerTimestamp: r cellInColumn "header.timestamp",
-        headerIncrementality: r cellInColumn "header.incrementality",
-        entityId: r cellInColumn "entity.id",
-        entityAlertInformedEntityRouteId: r cellInColumn "entity.alert.informed_entity.route_id",
-        entityAlertHeaderText: r cellInColumn "entity.alert.header_text",
-        entityAlertDescriptionText: r cellInColumn "entity.alert.description_text",
+        headerGtfsRealtimeVersion: r . "header.gtfs_realtime_version",
+        headerTimestamp: r . "header.timestamp",
+        headerIncrementality: r . "header.incrementality",
+        entityId: r . "entity.id",
+        entityAlertInformedEntityRouteId: r . "entity.alert.informed_entity.route_id",
+        entityAlertHeaderText: r . "entity.alert.header_text",
+        entityAlertDescriptionText: r . "entity.alert.description_text",
       };
   }
   block AlertTableInterpreter oftype TableInterpreter {

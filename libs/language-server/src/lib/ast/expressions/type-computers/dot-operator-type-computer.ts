@@ -11,9 +11,7 @@ import {
 } from '../../wrappers/value-type';
 import { type BinaryOperatorTypeComputer } from '../operator-type-computer';
 
-export class CellInColumnOperatorTypeComputer
-  implements BinaryOperatorTypeComputer
-{
+export class DotOperatorTypeComputer implements BinaryOperatorTypeComputer {
   constructor(protected readonly valueTypeProvider: ValueTypeProvider) {}
 
   computeType(

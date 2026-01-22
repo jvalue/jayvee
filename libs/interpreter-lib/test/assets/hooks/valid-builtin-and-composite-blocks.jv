@@ -48,18 +48,18 @@ pipeline CarsPipeline {
     to car oftype Car;
 
     car: {
-      name: asText (r cellInColumn "name"),
-      mpg: asDecimal (r cellInColumn "mpg"),
-      cyl: asInteger (r cellInColumn 2),
-      disp: asDecimal (r cellInColumn 3),
-      hp: asInteger (r cellInColumn "hp"),
-      drat: asDecimal (r cellInColumn "drat"),
-      wt: asDecimal (r cellInColumn "wt"),
-      qsec: asDecimal (r cellInColumn "qsec"),
-      vs: asInteger (r cellInColumn "vs"),
-      am: asInteger (r cellInColumn "am"),
-      gear: asInteger (r cellInColumn "gear"),
-      carb: asInteger (r cellInColumn "carb")
+      name: asText (r . "name"),
+      mpg: asDecimal (r . "mpg"),
+      cyl: asInteger (r . 2),
+      disp: asDecimal (r . 3),
+      hp: asInteger (r . "hp"),
+      drat: asDecimal (r . "drat"),
+      wt: asDecimal (r . "wt"),
+      qsec: asDecimal (r . "qsec"),
+      vs: asInteger (r . "vs"),
+      am: asInteger (r . "am"),
+      gear: asInteger (r . "gear"),
+      carb: asInteger (r . "carb")
     };
   }
 

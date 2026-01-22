@@ -16,13 +16,13 @@ transform StopParser {
   to stop oftype Stop;
 
   stop: {
-    stopId: r cellInColumn 0,
-    stopName: r cellInColumn 1,
-    stopDesc: r cellInColumn 2,
-    stopLat: r cellInColumn 3,
-    stopLon: r cellInColumn 4,
-    zoneId: r cellInColumn 5,
-    stopUrl: r cellInColumn 6,
+    stopId: r . 0,
+    stopName: r . 1,
+    stopDesc: r . 2,
+    stopLat: r . 3,
+    stopLon: r . 4,
+    zoneId: r . 5,
+    stopUrl: r . 6,
   };
 }
 

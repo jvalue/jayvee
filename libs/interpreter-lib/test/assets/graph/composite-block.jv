@@ -22,7 +22,7 @@ pipeline CarsPipeline {
   transform parser {
     from r oftype Collection<text>;
     to y oftype CarName;
-    y: { name: asText (r cellInColumn "name") };
+    y: { name: asText (r . "name") };
   }
 
 	block CarsTableInterpreter oftype TableInterpreter {

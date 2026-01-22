@@ -13,10 +13,10 @@ transform AgencyParser {
   to agency oftype Agency;
 
   agency: {
-    agencyId: r cellInColumn "agency_id",
-    agencyName: r cellInColumn "agency_name",
-    agencyUrl: r cellInColumn "agency_url",
-    agencyTimezone: r cellInColumn "agency_timezone",
+    agencyId: r . "agency_id",
+    agencyName: r . "agency_name",
+    agencyUrl: r . "agency_url",
+    agencyTimezone: r . "agency_timezone",
   };
 }
 

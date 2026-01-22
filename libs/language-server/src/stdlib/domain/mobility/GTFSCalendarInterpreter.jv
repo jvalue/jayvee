@@ -20,16 +20,16 @@ transform CalendarParser {
   to calendar oftype Calendar;
 
   calendar: {
-    serviceId: r cellInColumn 0,
-    monday: r cellInColumn 1,
-    tuesday: r cellInColumn 2,
-    wednesday: r cellInColumn 3,
-    thursday: r cellInColumn 4,
-    friday: r cellInColumn 5,
-    saturday: r cellInColumn 6,
-    sunday: r cellInColumn 7,
-    startDate: r cellInColumn 8,
-    endDate: r cellInColumn 9,
+    serviceId: r . 0,
+    monday: r . 1,
+    tuesday: r . 2,
+    wednesday: r . 3,
+    thursday: r . 4,
+    friday: r . 5,
+    saturday: r . 6,
+    sunday: r . 7,
+    startDate: r . 8,
+    endDate: r . 9,
   };
 }
 
