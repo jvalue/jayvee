@@ -32,7 +32,7 @@ RFC 0020 definitions are unnecessarily complicated to users:
 
 ## Explanation
 
-This is the current way of accessing the sheet values of a table row, as
+Below is the current way of accessing the sheet values of a table row, as
 specified in RFC 0020:
 
 ```jayvee
@@ -51,16 +51,16 @@ This syntax introduced two new concepts:
 - `SheetRow` as a special value type.
 - The `[]` syntax to access the values of a sheet row.
 
-This RFC attempts to replace these new concepts with existing ones
+We replace these new concepts with existing ones.
 
 ### `Collection<text>` replaces `SheetRow`
 
 Semantically, `SheetRow` is an array of strings, which is identical to the
-already existing value type `Collection<text>`.
+existing value type `Collection<text>`.
 
 ### `.` replaces `[]`
 
-This is a familiar syntax for accessing a collection.
+`row[2]` is a familiar syntax for accessing a collection.
 But at a deeper level, `[]` is a function that takes a collection and a
 "location" and returns the collection's value at the "location".
 
