@@ -157,7 +157,7 @@ function checkInputForTableRowTransform(
   if (!inputValueType.equals(textCollection)) {
     props.validationContext.accept(
       'error',
-      'This input must be of type `Collection<text>',
+      'This input must be of type `SheetRow',
       {
         node: input.valueType,
       },
