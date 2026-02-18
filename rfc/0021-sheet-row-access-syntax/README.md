@@ -21,19 +21,17 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 ## Summary
 
-This RFC removes some unnecessary definitions of RFC 0020 regarding sheet row
+This RFC removes an unnecessary definition of RFC 0020 regarding sheet row
 access.
 
 ## Motivation
 
-RFC 0020 definitions are unnecessarily complicated to users:
-- `SheetRow` value type
-- `[]` syntax
+The `[]` syntax introduced in RFC 0020 is a completely new concept to new users.
 
 ## Explanation
 
-Below is the current way of accessing the sheet values of a table row, as
-specified in RFC 0020:
+Below is the current way of accessing the values of a sheet row, as specified
+in RFC 0020:
 
 ```jayvee
 transform Parser {
@@ -46,17 +44,6 @@ transform Parser {
   }
 }
 ```
-
-This syntax introduced two new concepts:
-- `SheetRow` as a special value type.
-- The `[]` syntax to access the values of a sheet row.
-
-We replace these new concepts with existing ones.
-
-### `Collection<text>` replaces `SheetRow`
-
-Semantically, `SheetRow` is an array of strings, which is identical to the
-existing value type `Collection<text>`.
 
 ### `.` replaces `[]`
 
