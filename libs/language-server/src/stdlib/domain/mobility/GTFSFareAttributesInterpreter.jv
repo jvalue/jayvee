@@ -12,7 +12,7 @@ valuetype FareAttributes {
   property transferDuration oftype text;
 }
 transform FareAttributesParser {
-  from r oftype Collection<text>;
+  from r oftype SheetRow;
   to fareAttributes oftype FareAttributes;
 
   fareAttributes: {

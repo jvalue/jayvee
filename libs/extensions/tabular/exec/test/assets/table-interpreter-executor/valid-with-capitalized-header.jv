@@ -14,7 +14,7 @@ pipeline TestPipeline {
   }
 
   transform Parser {
-    from r oftype Collection<text>;
+    from r oftype SheetRow;
     to t oftype TestValueType;
 
     t: { Index: asInteger (r . "Index"), Name: r . "Name", Flag: asBoolean (r . "Flag") };

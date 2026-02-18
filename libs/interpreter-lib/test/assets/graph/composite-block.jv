@@ -20,7 +20,7 @@ pipeline CarsPipeline {
   }
 
   transform parser {
-    from r oftype Collection<text>;
+    from r oftype SheetRow;
     to y oftype CarName;
     y: { name: asText (r . "name") };
   }

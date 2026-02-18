@@ -9,7 +9,7 @@ valuetype Frequencies {
   property headwaySecs oftype GTFSNonNegativeInteger;
 }
 transform FrequenciesParser {
-  from r oftype Collection<text>;
+  from r oftype SheetRow;
   to frequencies oftype Frequencies;
 
   frequencies: {

@@ -9,7 +9,7 @@ valuetype CalendarDates {
                                                   // 2 - Service has been removed for the specified date.
 }
 transform CalendarDatesParser {
-  from r oftype Collection<text>;
+  from r oftype SheetRow;
   to dates oftype CalendarDates;
 
   dates: {

@@ -47,7 +47,7 @@ pipeline CarsPipeline {
   }
 
   transform CarParser {
-    from r oftype Collection<text>;
+    from r oftype SheetRow;
     to car oftype Car;
 
     car: {
@@ -127,7 +127,7 @@ pipeline ElectricVehiclesPipeline {
   }
 
   transform ElectricVehicleParser {
-    from r oftype Collection<text>;
+    from r oftype SheetRow;
     to ev oftype ElectricVehicle;
 
     ev: {

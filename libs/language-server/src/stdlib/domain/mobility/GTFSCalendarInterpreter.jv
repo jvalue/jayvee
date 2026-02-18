@@ -16,7 +16,7 @@ valuetype Calendar {
   property endDate oftype GTFSDate;
 }
 transform CalendarParser {
-  from r oftype Collection<text>;
+  from r oftype SheetRow;
   to calendar oftype Calendar;
 
   calendar: {

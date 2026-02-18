@@ -14,7 +14,7 @@ valuetype Route {
   property routeTextColor oftype text;
 }
 transform RouteParser {
-  from r oftype Collection<text>;
+  from r oftype SheetRow;
   to route oftype Route;
 
   route: {

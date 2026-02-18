@@ -9,7 +9,7 @@ valuetype Agency {
   property agencyTimezone oftype text;
 }
 transform AgencyParser {
-  from r oftype Collection<text>;
+  from r oftype SheetRow;
   to agency oftype Agency;
 
   agency: {

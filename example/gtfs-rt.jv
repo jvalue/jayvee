@@ -71,7 +71,7 @@ pipeline GtfsRTSimplePipeline {
     property entityTripUpdateStopTimeUpdateDepartureTime oftype text;
   }
   transform TripUpdateParser {
-    from r oftype Collection<text>;
+    from r oftype SheetRow;
     to tripUpdate oftype TripUpdate;
 
     tripUpdate: {
@@ -107,7 +107,7 @@ pipeline GtfsRTSimplePipeline {
     property entityVehiclePositionTimestamp oftype text;
   }
   transform VehiclePositionParser {
-    from r oftype Collection<text>;
+    from r oftype SheetRow;
     to vehiclePosition oftype VehiclePosition;
 
     vehiclePosition: {
@@ -140,7 +140,7 @@ pipeline GtfsRTSimplePipeline {
     property entityAlertDescriptionText oftype text;
   }
   transform AlertParser {
-    from r oftype Collection<text>;
+    from r oftype SheetRow;
     to alert oftype Alert;
 
     alert: {

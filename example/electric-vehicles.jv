@@ -70,7 +70,7 @@ pipeline ElectricVehiclesPipeline {
   }
 
   transform ElectricVehicleParser {
-    from r oftype Collection<text>;
+    from r oftype SheetRow;
     to ev oftype ElectricVehicle;
 
     ev: {

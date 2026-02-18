@@ -10,7 +10,7 @@ valuetype Shape {
   property shapeDistTraveled oftype text;
 }
 transform ShapeParser {
-  from r oftype Collection<text>;
+  from r oftype SheetRow;
   to shape oftype Shape;
 
   shape: {

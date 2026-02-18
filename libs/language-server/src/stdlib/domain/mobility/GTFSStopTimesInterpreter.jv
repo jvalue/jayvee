@@ -14,7 +14,7 @@ valuetype StopTime {
   property shapeDistTraveled oftype text;
 }
 transform StopTimeParser {
-  from r oftype Collection<text>;
+  from r oftype SheetRow;
   to stopTime oftype StopTime;
 
   stopTime: {

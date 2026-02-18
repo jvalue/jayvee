@@ -10,7 +10,7 @@ valuetype FareRules {
   property containsId oftype text;
 }
 transform FareRulesParser {
-  from r oftype Collection<text>;
+  from r oftype SheetRow;
   to fareRules oftype FareRules;
 
   fareRules: {

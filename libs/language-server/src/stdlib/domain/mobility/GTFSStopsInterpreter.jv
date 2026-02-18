@@ -12,7 +12,7 @@ valuetype Stop {
   property stopUrl oftype text;
 }
 transform StopParser {
-  from r oftype Collection<text>;
+  from r oftype SheetRow;
   to stop oftype Stop;
 
   stop: {
