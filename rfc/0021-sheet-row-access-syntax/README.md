@@ -9,7 +9,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 | | |
 |---|---|
 | Feature Tag | `sheet-row-access-syntax` |
-| Status | `DRAFT` |
+| Status | `ACCEPTED` |
 | Responsible | `jrentlez` |
 <!-- 
   Status Overview:
