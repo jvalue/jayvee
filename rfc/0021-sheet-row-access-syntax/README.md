@@ -64,7 +64,7 @@ coord: {
 
 ## Drawbacks
 
-<!-- TODO: (optional) Discuss the drawbacks of the proposed design. -->
+- Parentheses may be mistaken as a function call
 
 ## Alternatives
 
