@@ -25,10 +25,10 @@ import {
   STRING_TYPEGUARD,
 } from '../typeguards';
 
-export class CellInColumnOperatorEvaluator
+export class DotOperatorEvaluator
   implements OperatorEvaluator<BinaryExpression>
 {
-  public readonly operator = 'cellInColumn' as const;
+  public readonly operator = '.' as const;
 
   evaluate(
     expression: BinaryExpression,

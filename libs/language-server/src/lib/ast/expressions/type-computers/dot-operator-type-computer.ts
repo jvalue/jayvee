@@ -7,13 +7,10 @@ import { type BinaryExpression } from '../../generated/ast';
 import {
   type ValueType,
   type ValueTypeProvider,
-  isCollectionValueType,
 } from '../../wrappers/value-type';
 import { type BinaryOperatorTypeComputer } from '../operator-type-computer';
 
-export class CellInColumnOperatorTypeComputer
-  implements BinaryOperatorTypeComputer
-{
+export class DotOperatorTypeComputer implements BinaryOperatorTypeComputer {
   constructor(protected readonly valueTypeProvider: ValueTypeProvider) {}
 
   computeType(
@@ -22,12 +19,7 @@ export class CellInColumnOperatorTypeComputer
     expression: BinaryExpression,
     context: ValidationContext | undefined,
   ): ValueType | undefined {
-    if (
-      !isCollectionValueType(
-        leftOperandType,
-        this.valueTypeProvider.Primitives.Text,
-      )
-    ) {
+    if (!leftOperandType.equals(this.valueTypeProvider.Primitives.SheetRow)) {
       context?.accept(
         'error',
         `Operator does not support type ${leftOperandType.getName()}`,

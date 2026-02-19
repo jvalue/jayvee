@@ -16,6 +16,7 @@ import { type PrimitiveValueType } from './primitive-value-type';
 import { RegexValuetype } from './regex-value-type';
 import { TextValuetype } from './text-value-type';
 import { TransformValuetype } from './transform-value-type';
+import { SheetRowValueType } from './sheetrow-value-type';
 import { ValuetypeAssignmentValuetype } from './value-type-assignment-value-type';
 import { ValuetypeDefinitionValuetype } from './value-type-definition-value-type';
 
@@ -48,6 +49,8 @@ export class PrimitiveValueTypeProvider {
 
   Transform = new TransformValuetype();
 
+  SheetRow = new SheetRowValueType();
+
   getAll(): PrimitiveValueType[] {
     return [
       this.Boolean,
@@ -60,6 +63,7 @@ export class PrimitiveValueTypeProvider {
       this.ValuetypeAssignment,
       this.ValuetypeDefinition,
       this.Transform,
+      this.SheetRow,
     ];
   }
 }

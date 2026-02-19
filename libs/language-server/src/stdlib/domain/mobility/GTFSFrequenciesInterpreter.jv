@@ -9,14 +9,14 @@ valuetype Frequencies {
   property headwaySecs oftype GTFSNonNegativeInteger;
 }
 transform FrequenciesParser {
-  from r oftype Collection<text>;
+  from r oftype SheetRow;
   to frequencies oftype Frequencies;
 
   frequencies: {
-    tripId: r cellInColumn 0,
-    startTime: r cellInColumn 1,
-    endTime: r cellInColumn 2,
-    headwaySecs: r cellInColumn 3,
+    tripId: r . 0,
+    startTime: r . 1,
+    endTime: r . 2,
+    headwaySecs: r . 3,
   };
 }
 

@@ -22,6 +22,7 @@ export { type TextValuetype } from './text-value-type';
 export { type TransformValuetype } from './transform-value-type';
 export { type ValuetypeAssignmentValuetype } from './value-type-assignment-value-type';
 export { type ValuetypeDefinitionValuetype } from './value-type-definition-value-type';
+export { type SheetRowValueType } from './sheetrow-value-type';
 
 export {
   ValueTypeProvider,

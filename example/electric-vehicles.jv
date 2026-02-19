@@ -70,27 +70,27 @@ pipeline ElectricVehiclesPipeline {
   }
 
   transform ElectricVehicleParser {
-    from r oftype Collection<text>;
+    from r oftype SheetRow;
     to ev oftype ElectricVehicle;
 
     ev: {
-      vin: r cellInColumn "VIN (1-10)",
-      county: asText (r cellInColumn "County"),
-      city: asText (r cellInColumn "City"),
-      state: asText (r cellInColumn "State"),
-      postal: asText (r cellInColumn "Postal Code"),
-      modelYear: asInteger (r cellInColumn "Model Year"),
-      make: asText (r cellInColumn "Make"),
-      model: asText (r cellInColumn "Model"),
-      evType: asText (r cellInColumn "Electric Vehicle Type"),
-      cafvEligibility: asText (r cellInColumn "Clean Alternative Fuel Vehicle (CAFV) Eligibility"),
-      electricRange: asInteger (r cellInColumn "Electric Range"),
-      baseMSRP: asInteger (r cellInColumn "Base MSRP"),
-      legislativeDistrict: asText (r cellInColumn "LegislativeDistrict"),
-      dolID: asInteger (r cellInColumn "DOL Vehicle ID"),
-      location: asText (r cellInColumn "Vehicle Location"),
-      utility: asText (r cellInColumn "Electric Utility"),
-      censusTract: asText (r cellInColumn "2020 Census Tract"),
+      vin: r . "VIN (1-10)",
+      county: asText (r . "County"),
+      city: asText (r . "City"),
+      state: asText (r . "State"),
+      postal: asText (r . "Postal Code"),
+      modelYear: asInteger (r . "Model Year"),
+      make: asText (r . "Make"),
+      model: asText (r . "Model"),
+      evType: asText (r . "Electric Vehicle Type"),
+      cafvEligibility: asText (r . "Clean Alternative Fuel Vehicle (CAFV) Eligibility"),
+      electricRange: asInteger (r . "Electric Range"),
+      baseMSRP: asInteger (r . "Base MSRP"),
+      legislativeDistrict: asText (r . "LegislativeDistrict"),
+      dolID: asInteger (r . "DOL Vehicle ID"),
+      location: asText (r . "Vehicle Location"),
+      utility: asText (r . "Electric Utility"),
+      censusTract: asText (r . "2020 Census Tract"),
     };
   }
 

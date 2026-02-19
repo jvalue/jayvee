@@ -130,6 +130,14 @@ export class SQLValueRepresentationVisitor extends ValueTypeVisitor<
     );
   }
 
+  override visitSheetRow(): (
+    value: InternalValidValueRepresentation | InternalErrorValueRepresentation,
+  ) => string {
+    throw new Error(
+      'No visit implementation given for sheet row. Cannot be the type of a column.',
+    );
+  }
+
   override visitTransform(): (
     value: InternalValidValueRepresentation | InternalErrorValueRepresentation,
   ) => string {

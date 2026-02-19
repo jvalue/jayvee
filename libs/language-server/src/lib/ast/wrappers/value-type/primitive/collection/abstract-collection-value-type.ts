@@ -14,8 +14,4 @@ export abstract class AbstractCollectionValueType<
   override isAllowedAsRuntimeParameter(): boolean {
     return false;
   }
-
-  override isReferenceableByUser(): boolean {
-    return true;
-  }
 }

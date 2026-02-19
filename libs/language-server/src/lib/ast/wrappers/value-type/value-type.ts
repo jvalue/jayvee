@@ -20,6 +20,7 @@ import {
   type RegexValuetype,
   type TextValuetype,
   type TransformValuetype,
+  type SheetRowValueType,
   type ValuetypeAssignmentValuetype,
 } from './primitive';
 
@@ -93,4 +94,6 @@ export abstract class ValueTypeVisitor<R = unknown> {
   abstract visitTransform(valueType: TransformValuetype): R;
 
   abstract visitAtomicValueType(valueType: AtomicValueType): R;
+
+  abstract visitSheetRow(valueType: SheetRowValueType): R;
 }
