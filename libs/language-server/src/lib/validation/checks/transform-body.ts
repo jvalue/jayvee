@@ -133,10 +133,6 @@ function checkInputForTableRowTransform(
     return;
   }
 
-  const textCollection = props.valueTypeProvider.createCollectionValueTypeOf(
-    props.valueTypeProvider.Primitives.Text,
-  );
-
   const input = onlyElementOrUndefined(inputs);
   const inputValueType = props.wrapperFactories.ValueType.wrap(
     input?.valueType,
@@ -154,7 +150,7 @@ function checkInputForTableRowTransform(
     return;
   }
 
-  if (!inputValueType.equals(textCollection)) {
+  if (!inputValueType.equals(props.valueTypeProvider.Primitives.SheetRow)) {
     props.validationContext.accept(
       'error',
       'This input must be of type `SheetRow`',
