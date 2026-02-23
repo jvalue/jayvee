@@ -10,15 +10,15 @@ valuetype Shape {
   property shapeDistTraveled oftype text;
 }
 transform ShapeParser {
-  from r oftype Collection<text>;
+  from r oftype SheetRow;
   to shape oftype Shape;
 
   shape: {
-    shapeId: r cellInColumn 0,
-    shapePtLat: r cellInColumn 1,
-    shapePtLon: r cellInColumn 2,
-    shapePtSequence: r cellInColumn 3,
-    shapeDistTraveled: r cellInColumn 4,
+    shapeId: r . 0,
+    shapePtLat: r . 1,
+    shapePtLon: r . 2,
+    shapePtSequence: r . 3,
+    shapeDistTraveled: r . 4,
   };
 }
 

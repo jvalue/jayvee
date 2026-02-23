@@ -147,4 +147,8 @@ class InternalRepresentationParserVisitor extends ValueTypeVisitor<
       `Cannot parse valuetype definitions into internal values`,
     );
   }
+
+  override visitSheetRow(): InvalidValue {
+    return new InvalidValue(`Cannot parse sheet rows into internal values`);
+  }
 }

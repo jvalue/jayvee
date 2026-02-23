@@ -9,13 +9,13 @@ valuetype CalendarDates {
                                                   // 2 - Service has been removed for the specified date.
 }
 transform CalendarDatesParser {
-  from r oftype Collection<text>;
+  from r oftype SheetRow;
   to dates oftype CalendarDates;
 
   dates: {
-    serviceId: r cellInColumn "service_id",
-    date: r cellInColumn "date",
-    exceptionType: r cellInColumn "exception_type",
+    serviceId: r . "service_id",
+    date: r . "date",
+    exceptionType: r . "exception_type",
   };
 }
 

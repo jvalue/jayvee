@@ -14,10 +14,10 @@ pipeline TestPipeline {
   }
 
   transform Parser {
-    from r oftype Collection<text>;
+    from r oftype SheetRow;
     to t oftype TestValueType;
 
-    t: { index: asInteger (r cellInColumn "index"), name: r cellInColumn "name", flag: asBoolean (r cellInColumn "flag") };
+    t: { index: asInteger (r . "index"), name: r . "name", flag: asBoolean (r . "flag") };
   }
 
   block TestBlock oftype TableInterpreter {

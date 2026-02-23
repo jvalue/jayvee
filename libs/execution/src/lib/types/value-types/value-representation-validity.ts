@@ -6,6 +6,7 @@
 import { strict as assert } from 'assert';
 
 import {
+  type SheetRowValueType,
   type AtomicValueType,
   type BooleanValuetype,
   type CellRangeValuetype,
@@ -127,6 +128,10 @@ class ValueRepresentationValidityVisitor extends ValueTypeVisitor<boolean> {
   }
 
   override visitCollection(valueType: CollectionValueType): boolean {
+    return this.isValidForPrimitiveValuetype(valueType);
+  }
+
+  override visitSheetRow(valueType: SheetRowValueType): boolean {
     return this.isValidForPrimitiveValuetype(valueType);
   }
 

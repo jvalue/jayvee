@@ -15,7 +15,7 @@ import {
 import { AdditionOperatorEvaluator } from './evaluators/addition-operator-evaluator';
 import { AndOperatorEvaluator } from './evaluators/and-operator-evaluator';
 import { CeilOperatorEvaluator } from './evaluators/ceil-operator-evaluator';
-import { CellInColumnOperatorEvaluator } from './evaluators/cell-in-column-operator-evaluator';
+import { DotOperatorEvaluator } from './evaluators/dot-operator-evaluator';
 import { DivisionOperatorEvaluator } from './evaluators/division-operator-evaluator';
 import { EqualityOperatorEvaluator } from './evaluators/equality-operator-evaluator';
 import { FloorOperatorEvaluator } from './evaluators/floor-operator-evaluator';
@@ -61,7 +61,7 @@ import {
   type UnaryExpressionOperator,
 } from './operator-types';
 import { BasicArithmeticOperatorTypeComputer } from './type-computers/basic-arithmetic-operator-type-computer';
-import { CellInColumnOperatorTypeComputer } from './type-computers/cell-in-column-operator-type-computer';
+import { DotOperatorTypeComputer } from './type-computers/dot-operator-type-computer';
 import { DivisionOperatorTypeComputer } from './type-computers/division-operator-type-computer';
 import { EqualityOperatorTypeComputer } from './type-computers/equality-operator-type-computer';
 import { ExponentialOperatorTypeComputer } from './type-computers/exponential-operator-type-computer';
@@ -119,7 +119,7 @@ export class DefaultOperatorEvaluatorRegistry
     lengthof: new LengthofOperatorEvaluator(),
   };
   binary = {
-    cellInColumn: new CellInColumnOperatorEvaluator(),
+    '.': new DotOperatorEvaluator(),
     pow: new PowOperatorEvaluator(),
     root: new RootOperatorEvaluator(),
     '*': new MultiplicationOperatorEvaluator(),
@@ -167,7 +167,7 @@ export class DefaultOperatorTypeComputerRegistry
     lengthof: new LengthofOperatorTypeComputer(this.valueTypeProvider),
   };
   binary = {
-    cellInColumn: new CellInColumnOperatorTypeComputer(this.valueTypeProvider),
+    '.': new DotOperatorTypeComputer(this.valueTypeProvider),
     pow: new ExponentialOperatorTypeComputer(this.valueTypeProvider),
     root: new ExponentialOperatorTypeComputer(this.valueTypeProvider),
     '*': new BasicArithmeticOperatorTypeComputer(this.valueTypeProvider),

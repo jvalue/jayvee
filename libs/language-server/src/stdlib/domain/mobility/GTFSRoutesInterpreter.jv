@@ -14,19 +14,19 @@ valuetype Route {
   property routeTextColor oftype text;
 }
 transform RouteParser {
-  from r oftype Collection<text>;
+  from r oftype SheetRow;
   to route oftype Route;
 
   route: {
-    routeId: r cellInColumn 0,
-    agencyId: r cellInColumn 1,
-    routeShortName: r cellInColumn 2,
-    routeLongName: r cellInColumn 3,
-    routeDesc: r cellInColumn 4,
-    routeType: r cellInColumn 5,
-    routeUrl: r cellInColumn 6,
-    routeColor: r cellInColumn 7,
-    routeTextColor: r cellInColumn 8,
+    routeId: r . 0,
+    agencyId: r . 1,
+    routeShortName: r . 2,
+    routeLongName: r . 3,
+    routeDesc: r . 4,
+    routeType: r . 5,
+    routeUrl: r . 6,
+    routeColor: r . 7,
+    routeTextColor: r . 8,
   };
 }
 

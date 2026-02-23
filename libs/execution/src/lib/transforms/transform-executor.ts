@@ -7,6 +7,7 @@ import { strict as assert } from 'assert';
 
 import {
   ERROR_TYPEGUARD,
+  onlyElementOrUndefined,
   type InternalErrorValueRepresentation,
   type InternalValidValueRepresentation,
   InvalidValue,
@@ -64,9 +65,9 @@ export class TransformExecutor {
 
   getOutputAssignment(): TransformOutputAssignment {
     const outputAssignments = this.transform.body.outputAssignments;
-    assert(outputAssignments.length === 1);
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return outputAssignments[0]!;
+    const outputAssignment = onlyElementOrUndefined(outputAssignments);
+    assert(outputAssignment !== undefined);
+    return outputAssignment;
   }
 
   executeTransform(
