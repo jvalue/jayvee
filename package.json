@@ -16,7 +16,8 @@
     "example:gtfs": "nx run interpreter:run -d example/gtfs-static.jv -dg peek",
     "example:gtfs-rt": "nx run interpreter:run -d example/gtfs-rt.jv -dg peek",
     "example:workbooks": "nx run interpreter:run -d example/workbooks-xlsx.jv -dg peek",
-    "example:vehicles": "nx run interpreter:run -d -e DB_HOST=localhost -e DB_PORT=5432 -e DB_USERNAME=postgres -e DB_PASSWORD=postgres -e DB_DATABASE=postgres example/electric-vehicles.jv -dg peek"
+    "example:vehicles": "nx run interpreter:run -d -e DB_HOST=localhost -e DB_PORT=5432 -e DB_USERNAME=postgres -e DB_PASSWORD=postgres -e DB_DATABASE=postgres example/electric-vehicles.jv -dg peek",
+    "clean": "nx reset && rm -r dist/ tmp/ apps/vs-code-extension/assets/jayvee.tmLanguage.json apps/docs/docs/user/block-types/**/*.md apps/docs/docs/user/value-types/built-in-value-types.md apps/docs/docs/user/examples/*.md apps/docs/src/theme/prism-jayvee.js libs/language-server/src/lib/*/generated libs/monaco-editor/src/lib/{language-configuration,jayvee.tmLanguage}.json"
   },
   "private": true,
   "dependencies": {
