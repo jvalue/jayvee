@@ -13,11 +13,11 @@
       }
     },
     "start": {
-      "executor": "@nx/js:node",
-      "dependsOn": ["generate-language-server"],
+      "executor": "nx:run-commands",
+      "dependsOn": ["generate-language-server", "build"],
       "options": {
-        "watch": false,
-        "buildTarget": "docs-generator:build"
+        "commands": ["node dist/apps/docs-generator/main.js"],
+        "parallel": false
       }
     },
     "generate-language-server": {
