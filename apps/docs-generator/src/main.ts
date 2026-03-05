@@ -131,4 +131,6 @@ ${exampleModel.toString()}
 
 main()
   .then(() => console.log('Finished generating docs!'))
-  .catch((e) => console.error(e));
+  .catch((e) => {
+    throw e;
+  });

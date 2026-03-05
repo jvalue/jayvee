@@ -38,30 +38,15 @@ that fullfil [_constraints_](./primitive-value-types#constraints).`.trim(),
     valueTypes
       .filter((valueType) => valueType.isReferenceableByUser())
       .forEach((valueType) => {
+        const description = valueType.getUserDocDescription();
         assert(
-          valueType.getUserDoc() !== undefined,
+          description !== undefined,
           `Documentation is missing for user extendable value type: ${valueType.getName()}`,
         );
         builder
           .heading(valueType.getName(), 2)
-          .description(valueType.getUserDoc() ?? '', 3)
-          .examples(
-            [
-              {
-                code: `
-block ExampleTableInterpreter oftype TableInterpreter {
-  header: true;
-  columns: [
-    "columnName" oftype ${valueType.getName()}
-  ];
-}`.trim(),
-                description: `A block of type \`TableInterpreter\` that
-              interprets data in the column \`columnName\` as \`${valueType.getName()}\`.
-              `.trim(),
-              },
-            ],
-            3,
-          );
+          .description(description, 3)
+          .examples(valueType.getUserDocExamples(), 3);
       });
 
     return builder.build();
@@ -109,7 +94,7 @@ block ExampleTableInterpreter oftype TableInterpreter {
     return builder.build();
   }
 
-  private extractDocsFromComment(comment?: string | undefined):
+  private extractDocsFromComment(comment?: string):
     | {
         description: string | undefined;
         examples: ExampleDoc[];

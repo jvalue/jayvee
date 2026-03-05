@@ -30,9 +30,9 @@ export class TextValuetype extends PrimitiveValueType<string> {
     return true;
   }
 
-  override getUserDoc(): string {
+  override getUserDocDescription(): string {
     return `
-A text value. 
+A text value.
 Example: "Hello World"
 `.trim();
   }

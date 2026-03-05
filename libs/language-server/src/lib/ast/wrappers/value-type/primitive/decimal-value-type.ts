@@ -43,7 +43,7 @@ export class DecimalValuetype extends PrimitiveValueType<number> {
     return true;
   }
 
-  override getUserDoc(): string {
+  override getUserDocDescription(): string {
     return `
 A decimal value.
 Example: 3.14

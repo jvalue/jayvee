@@ -39,7 +39,7 @@ export class IntegerValuetype extends PrimitiveValueType<number> {
     return true;
   }
 
-  override getUserDoc(): string {
+  override getUserDocDescription(): string {
     return `
 An integer value.
 Example: 3

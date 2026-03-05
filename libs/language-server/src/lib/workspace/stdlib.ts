@@ -39,7 +39,7 @@ export function getStdLib() {
 function parseBuiltinValuetypeToJayvee(valueType: PrimitiveValueType): string {
   const lines: string[] = [];
 
-  const userDoc = valueType.getUserDoc();
+  const userDoc = valueType.getUserDocDescription();
   if (userDoc !== undefined) {
     lines.push(parseAsComment(userDoc));
   }
