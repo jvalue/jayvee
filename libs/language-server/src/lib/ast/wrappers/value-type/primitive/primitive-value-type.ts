@@ -8,6 +8,7 @@ import {
 } from '../../../expressions/internal-value-representation';
 import { AbstractValueType } from '../abstract-value-type';
 import { type ValueType } from '../value-type';
+import { type ExampleDoc } from '../../typed-object/typed-object-wrapper';
 
 export abstract class PrimitiveValueType<
   I extends InternalValidValueRepresentation = InternalValidValueRepresentation,
@@ -33,8 +34,37 @@ export abstract class PrimitiveValueType<
    * Text only, no comment characters.
    * Should be given for all user-referenceable value types {@link isReferenceableByUser}
    */
-  getUserDoc(): string | undefined {
+  getUserDocDescription(): string | undefined {
     return undefined;
+  }
+
+  getUserDocExamples(): ExampleDoc[] {
+    const name = this.getName();
+    const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
+    return [
+      {
+        code: `
+valuetype TableSchema {
+  tableColumn: ${name};
+}
+transfrom tableRowParser {
+  from r oftype SheetRow;
+  to tableRow oftye TableSchema;
+
+  tableRow: {
+    tableColumn: as${capitalizedName} (r . "tableColumn");
+  };
+}
+block ExampleTableInterpreter oftype TableInterpreter {
+  header: true;
+  columns: TableSchema;
+  parseWith: tableRowParser;
+}`.trim(),
+        description:
+          `A block of type \`TableInterpreter\` that interprets data in the column "columnName" as \`${name}\`.
+              `.trim(),
+      },
+    ];
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -36,7 +36,7 @@ export class BooleanValuetype extends PrimitiveValueType<boolean> {
     return true;
   }
 
-  override getUserDoc(): string {
+  override getUserDocDescription(): string {
     return `
 A boolean value.
 Examples: true, false
